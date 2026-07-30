@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
@@ -132,12 +135,18 @@ fun SongDocumentComposable(
         // long-press to select and copy any part of the lyrics. Scripture,
         // YouTube, and patch-text links inside stay tappable.
         SelectionContainer {
+            // Room to scroll the last line clear of the navigation bar the
+            // song draws behind.
+            val bottomInset = WindowInsets.safeDrawing
+                .asPaddingValues()
+                .calculateBottomPadding()
+
             Box(
                 modifier = modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     // body padding: 16px vertical, 8px horizontal (song.html <body>)
-                    .padding(horizontal = 8.dp, vertical = 16.dp),
+                    .padding(start = 8.dp, top = 16.dp, end = 8.dp, bottom = 16.dp + bottomInset),
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     // The song code sits in the left gutter; when the first block is the

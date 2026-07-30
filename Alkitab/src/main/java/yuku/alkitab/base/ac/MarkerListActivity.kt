@@ -97,7 +97,7 @@ class MarkerListActivity : BaseActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        setupEdgeToEdgeDisplay(toolbar)
+        setupEdgeToEdgeDisplayWithoutBottomInset(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         root = findViewById(R.id.root)
@@ -106,6 +106,7 @@ class MarkerListActivity : BaseActivity() {
         bClearFilter = findViewById(R.id.bClearFilter)
         progress = findViewById(R.id.progress)
         lv = findViewById(android.R.id.list)
+        applyScrollPastBottomInset(lv)
 
         filter_kind = Marker.Kind.fromCode(intent.getIntExtra(EXTRA_filter_kind, 0)) ?: error("Must specify marker kind")
         filter_labelId = intent.getLongExtra(EXTRA_filter_labelId, 0)

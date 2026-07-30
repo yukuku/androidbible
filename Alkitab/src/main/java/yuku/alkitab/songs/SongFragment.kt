@@ -9,7 +9,10 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.postDelayed
+import kotlin.math.roundToInt
 import yuku.alkitab.base.fr.base.BaseFragment
 import yuku.alkitab.debug.R
 import yuku.alkitab.songs.newdoc.SongDocument
@@ -18,6 +21,7 @@ import yuku.alkitab.songs.newdoc.SongDocumentRenderer
 
 class SongFragment : BaseFragment(), SongTextZoomable {
     private lateinit var webview: WebView
+    private var bottomInsetDp = 0
 
     private val args by lazy { requireArguments() }
     private val doc: SongDocument by lazy { SongDocumentJson.decode(args.getString(ARG_songJson)!!) }
@@ -44,6 +48,13 @@ class SongFragment : BaseFragment(), SongTextZoomable {
             textZoom = 100
         }
 
+        ViewCompat.setOnApplyWindowInsetsListener(webview) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            bottomInsetDp = (insets.bottom / v.resources.displayMetrics.density).roundToInt()
+            applyBottomInset()
+            windowInsets
+        }
+
         return res
     }
 
@@ -52,10 +63,26 @@ class SongFragment : BaseFragment(), SongTextZoomable {
         renderSong(doc)
     }
 
+    /**
+     * Gives the page room to scroll its last line clear of the navigation bar
+     * it draws behind. The margin belongs to the document rather than to the
+     * WebView, whose padding would shorten the viewport and keep the lyrics
+     * out of the area behind the bar altogether. CSS pixels are device-
+     * independent pixels here, the same unit the template's font sizes use.
+     */
+    private fun applyBottomInset() {
+        webview.evaluateJavascript("document.body.style.marginBottom = '${bottomInsetDp}px';", null)
+    }
+
     private val webViewClient: WebViewClient = object : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
             val activity: Activity? = activity
             return activity is ShouldOverrideUrlLoadingHandler && activity.shouldOverrideUrlLoading(this, request) || super.shouldOverrideUrlLoading(view, request)
+        }
+
+        override fun onPageFinished(view: WebView, url: String?) {
+            super.onPageFinished(view, url)
+            applyBottomInset()
         }
 
         var pendingResize = false

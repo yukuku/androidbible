@@ -224,7 +224,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setupEdgeToEdgeDisplay(toolbar);
+        setupEdgeToEdgeDisplayWithoutBottomInset(toolbar);
 
         final ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -234,6 +234,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         root = findViewById(R.id.root);
         lContent = findViewById(R.id.lContent);
         scrollContent = findViewById(R.id.scrollContent);
+        applyScrollPastBottomInset(scrollContent);
 
         root.setTwofingerEnabled(false);
         root.setListener(root_listener);

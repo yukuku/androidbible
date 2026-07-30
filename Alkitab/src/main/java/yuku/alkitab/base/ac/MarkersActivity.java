@@ -17,6 +17,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,6 +52,7 @@ public class MarkersActivity extends BaseActivity {
 
     RecyclerView lv;
     View bGotoSync;
+    View panelGotoSync;
 
     MarkerFilterAdapter adapter;
     ItemTouchHelper itemTouchHelper;
@@ -64,7 +68,7 @@ public class MarkersActivity extends BaseActivity {
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setupEdgeToEdgeDisplay(toolbar);
+        setupEdgeToEdgeDisplayWithoutBottomInset(toolbar);
         final ActionBar ab = getSupportActionBar();
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
@@ -82,6 +86,29 @@ public class MarkersActivity extends BaseActivity {
         bGotoSync = findViewById(R.id.bGotoSync);
         bGotoSync.setOnClickListener(v -> startActivity(SyncSettingsActivity.createIntent()));
 
+        panelGotoSync = findViewById(R.id.panelGotoSync);
+        final int panelGotoSyncHeight = panelGotoSync.getLayoutParams().height;
+
+        // The sync panel, when shown, is the bar the window bottom belongs to:
+        // it grows by the inset so its background reaches under the navigation
+        // bar while the button stays above.
+        ViewCompat.setOnApplyWindowInsetsListener(panelGotoSync, (v, windowInsets) -> {
+            final Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), insets.bottom);
+            final ViewGroup.LayoutParams lp = v.getLayoutParams();
+            lp.height = panelGotoSyncHeight + insets.bottom;
+            v.setLayoutParams(lp);
+            return windowInsets;
+        });
+
+        lv.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(lv, (v, windowInsets) -> {
+            final Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            final int bottom = panelGotoSync.getVisibility() == View.VISIBLE ? 0 : insets.bottom;
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottom);
+            return windowInsets;
+        });
+
         AppEvents.observe(this, AppEvents.markersReload, () -> adapter.reload());
     }
 
@@ -91,7 +118,9 @@ public class MarkersActivity extends BaseActivity {
 
         // hide sync button if we are already syncing
         final String syncAccountName = Preferences.getString(R.string.pref_syncAccountName_key);
-        findViewById(R.id.panelGotoSync).setVisibility(syncAccountName != null ? View.GONE : View.VISIBLE);
+        panelGotoSync.setVisibility(syncAccountName != null ? View.GONE : View.VISIBLE);
+        // the panel that just appeared or went away decides whether the list takes the bottom inset
+        ViewCompat.requestApplyInsets(lv);
     }
 
     @Override
