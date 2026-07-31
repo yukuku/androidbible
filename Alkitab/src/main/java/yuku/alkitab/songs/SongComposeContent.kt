@@ -50,7 +50,6 @@ import yuku.alkitab.songs.newdoc.Line
 import yuku.alkitab.songs.newdoc.LyricBlock
 import yuku.alkitab.songs.newdoc.PBlock
 import yuku.alkitab.songs.newdoc.RowBlock
-import yuku.alkitab.songs.newdoc.plainText
 import yuku.alkitab.songs.newdoc.ScriptureBlock
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.UnknownBlock
@@ -58,6 +57,7 @@ import yuku.alkitab.songs.newdoc.Verse
 import yuku.alkitab.songs.newdoc.VerseKind
 import yuku.alkitab.songs.newdoc.VerseLine
 import yuku.alkitab.songs.newdoc.YoutubeBlock
+import yuku.alkitab.songs.newdoc.plainText
 
 /**
  * Native Jetpack Compose renderer for a [SongDocument] — the experimental
@@ -255,6 +255,8 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = 
     BasicText(text = content, style = textStyle, modifier = Modifier.fillMaxWidth())
 }
 
+private enum class CellAlign { Start, Center, End }
+
 @Composable
 private fun RowBlockView(
     block: RowBlock,
@@ -273,19 +275,35 @@ private fun RowBlockView(
             val weight = rowItemTextLength(item).coerceAtLeast(1).toFloat()
             // First column hugs the start, last column hugs the end, middle columns
             // center. A single item honors its own align (e.g. a solo composer set to end).
-            val rowAlign = when {
+            val cellAlign = when {
                 items.size == 1 -> when ((item as? PBlock)?.align) {
-                    "end" -> TextAlign.End
-                    "center" -> TextAlign.Center
-                    else -> TextAlign.Start
+                    "end" -> CellAlign.End
+                    "center" -> CellAlign.Center
+                    else -> CellAlign.Start
                 }
-                index == 0 -> TextAlign.Start
-                index == items.lastIndex -> TextAlign.End
-                else -> TextAlign.Center
+                index == 0 -> CellAlign.Start
+                index == items.lastIndex -> CellAlign.End
+                else -> CellAlign.Center
             }
-            Box(modifier = Modifier.weight(weight)) {
+            Box(
+                modifier = Modifier.weight(weight),
+                contentAlignment = when (cellAlign) {
+                    CellAlign.Start -> Alignment.TopStart
+                    CellAlign.Center -> Alignment.TopCenter
+                    CellAlign.End -> Alignment.TopEnd
+                },
+            ) {
                 when (item) {
-                    is PBlock -> PBlockView(item, style, inRow = true, rowAlign = rowAlign)
+                    is PBlock -> PBlockView(
+                        block = item,
+                        style = style,
+                        inRow = true,
+                        rowAlign = when (cellAlign) {
+                            CellAlign.Start -> TextAlign.Start
+                            CellAlign.Center -> TextAlign.Center
+                            CellAlign.End -> TextAlign.End
+                        }
+                    )
                     is ScriptureBlock -> ScriptureView(item.osis, style, onScriptureClick)
                     is YoutubeBlock -> YoutubeView(item, style, onYoutubeClick)
                     is GapBlock -> Spacer(Modifier.width((item.size ?: 1f).em.toDp(style)))
@@ -337,11 +355,9 @@ private fun YoutubeView(block: YoutubeBlock, style: SongComposeStyle, onYoutubeC
             append("YouTube")
         }
     }
-    // .youtube { margin: 0.5em 0; }
     BasicText(
         text = annotated,
         style = roleTextStyle(style, sizeMult = 1f, sansSerif = false),
-        modifier = Modifier.padding(vertical = 0.5f.em.toDp(style)),
     )
 }
 
