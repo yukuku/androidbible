@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+	android:width="24dp"
+	android:height="24dp"
+	android:viewportWidth="960"
+	android:viewportHeight="960">
+	<!-- Material Symbols "ink_highlighter". The artwork is authored in a
+		"0 -960 960 960" viewBox, so the group shifts it down into Android's
+		"0 0 960 960" viewport. -->
+	<group android:translateY="960">
+		<path
+			android:fillColor="#fff"
+			android:pathData="M544-400 440-504 240-304l104 104 200-200Zm-47-161 104 104 199-199-104-104-199 199Zm-84-28 216 216-229 229q-24 24-56 24t-56-24l-2-2-26 26H60l126-126-2-2q-24-24-24-56t24-56l229-229Zm0 0 227-227q24-24 56-24t56 24l104 104q24 24 24 56t-24 56L629-373 413-589Z" />
+	</group>
+</vector>

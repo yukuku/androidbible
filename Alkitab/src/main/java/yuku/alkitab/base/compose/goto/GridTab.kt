@@ -169,7 +169,9 @@ private fun NumericGrid(count: Int, onClick: (Int) -> Unit) {
 private fun GridCell(text: String, color: Color, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        // One step above the screen background so the cells stay readable as
+        // discrete tiles instead of merging into one slab.
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
         modifier = Modifier.fillMaxWidth().height(48.dp).padding(2.dp),
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {

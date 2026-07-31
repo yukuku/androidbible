@@ -353,6 +353,35 @@ public class InternalDb {
     }
 
     /**
+     * Whether at least one of the selected verses currently has a highlight.
+     *
+     * <p>This is not the same as {@link #getHighlightColorRgb(int, IntArrayList)} returning -1:
+     * that also happens when the selected verses carry a mix of colors.
+     */
+    public boolean anyVerseHasHighlight(int ari_bookchapter, IntArrayList selectedVerses_1) {
+        int ariMin = ari_bookchapter & 0xffffff00;
+        int ariMax = ari_bookchapter | 0x000000ff;
+        boolean[] highlighted = new boolean[256];
+
+        try (Cursor c = helper.getReadableDatabase().query(
+            Db.TABLE_Marker, new String[]{Db.Marker.ari}, Db.Marker.ari + ">? and " + Db.Marker.ari + "<=? and " + Db.Marker.kind + "=?",
+            new String[]{String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Marker.Kind.highlight.code)},
+            null, null, null
+        )) {
+            final int col_ari = c.getColumnIndexOrThrow(Db.Marker.ari);
+
+            while (c.moveToNext()) {
+                highlighted[c.getInt(col_ari) & 0xff] = true;
+            }
+        }
+
+        for (int i = 0; i < selectedVerses_1.size(); i++) {
+            if (highlighted[selectedVerses_1.get(i)]) return true;
+        }
+        return false;
+    }
+
+    /**
      * Get the highlight info for a single verse
      */
     public Highlights.Info getHighlightColorRgb(final int ari) {

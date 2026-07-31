@@ -3,6 +3,7 @@ package yuku.alkitab.base.storage
 import android.app.Application
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -531,6 +532,43 @@ class InternalDbTest {
         val ariBc = Ari.encode(0, 1, 0)
         val verses = IntArrayList().apply { add(1); add(2) }
         assertEquals(-1, db.getHighlightColorRgb(ariBc, verses))
+    }
+
+    @Test
+    fun `anyVerseHasHighlight is false when none of the selected verses are highlighted`() {
+        val ariBc = Ari.encode(0, 1, 0)
+        db.updateOrInsertHighlights(ariBc, IntArrayList().apply { add(5) }, 0x111111)
+
+        val verses = IntArrayList().apply { add(1); add(2) }
+        assertFalse(db.anyVerseHasHighlight(ariBc, verses))
+    }
+
+    @Test
+    fun `anyVerseHasHighlight is true when only some of the selected verses are highlighted`() {
+        val ariBc = Ari.encode(0, 1, 0)
+        db.updateOrInsertHighlights(ariBc, IntArrayList().apply { add(2) }, 0x111111)
+
+        val verses = IntArrayList().apply { add(1); add(2); add(3) }
+        assertTrue(db.anyVerseHasHighlight(ariBc, verses))
+    }
+
+    @Test
+    fun `anyVerseHasHighlight is true for mixed colors, where getHighlightColorRgb only reports -1`() {
+        val ariBc = Ari.encode(0, 1, 0)
+        db.updateOrInsertHighlights(ariBc, IntArrayList().apply { add(1) }, 0x111111)
+        db.updateOrInsertHighlights(ariBc, IntArrayList().apply { add(2) }, 0x222222)
+
+        val selected = IntArrayList().apply { add(1); add(2) }
+        assertEquals(-1, db.getHighlightColorRgb(ariBc, selected))
+        assertTrue(db.anyVerseHasHighlight(ariBc, selected))
+    }
+
+    @Test
+    fun `anyVerseHasHighlight ignores highlights in other chapters`() {
+        db.updateOrInsertHighlights(Ari.encode(0, 2, 0), IntArrayList().apply { add(1) }, 0x111111)
+
+        val verses = IntArrayList().apply { add(1) }
+        assertFalse(db.anyVerseHasHighlight(Ari.encode(0, 1, 0), verses))
     }
 
     // endregion

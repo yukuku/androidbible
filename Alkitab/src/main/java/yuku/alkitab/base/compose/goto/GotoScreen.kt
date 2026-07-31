@@ -68,11 +68,14 @@ fun GotoScreen(
     var menuOpen by remember { mutableStateOf(false) }
 
     Scaffold(
+        // Same role the audio bar paints itself with, so the two read as one
+        // surface when the bar is showing over the reader behind this screen.
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         topBar = {
             // Single bar: back button, tabs (taking remaining width), overflow menu —
             // mirroring the legacy XML where TabLayout sat inside Toolbar.
             Surface(
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 tonalElevation = 0.dp,
             ) {
                 Row(
