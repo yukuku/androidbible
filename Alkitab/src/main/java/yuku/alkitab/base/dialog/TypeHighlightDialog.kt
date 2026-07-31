@@ -20,8 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -39,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -102,6 +101,7 @@ class TypeHighlightDialog {
         verseText: CharSequence?,
     ) {
         val activity = context.findActivity() ?: return
+        val hasExistingHighlight = App.services.storage.db.anyVerseHasHighlight(ariBookChapter, selectedVerses)
         ComposeBottomSheetHost.show(activity) { dismiss ->
             HighlightSheetContent(
                 title = title,
@@ -109,6 +109,7 @@ class TypeHighlightDialog {
                 selectedVerseCount = selectedVerses.size(),
                 defaultColorRgb = defaultColorRgb,
                 info = info,
+                hasExistingHighlight = hasExistingHighlight,
                 onPickColor = { colorRgb, range ->
                     applySelection(ariBookChapter, selectedVerses, colorRgb, range, verseText)
                     listener.onOk(colorRgb)
@@ -199,6 +200,7 @@ private fun HighlightSheetContent(
     selectedVerseCount: Int,
     defaultColorRgb: Int,
     info: Highlights.Info?,
+    hasExistingHighlight: Boolean,
     onPickColor: (colorRgb: Int, range: Pair<Int, Int>?) -> Unit,
     onOpenColorPicker: (currentColorRgb: Int, currentRange: Pair<Int, Int>?) -> Unit,
     onDelete: () -> Unit,
@@ -236,7 +238,7 @@ private fun HighlightSheetContent(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = Icons.Filled.Star,
+                painter = painterResource(R.drawable.ic_ink_highlighter),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(24.dp),
@@ -277,8 +279,10 @@ private fun HighlightSheetContent(
         Spacer(Modifier.height(16.dp))
 
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = onDelete) {
-                Text(stringResource(R.string.delete))
+            if (hasExistingHighlight) {
+                TextButton(onClick = onDelete) {
+                    Text(stringResource(R.string.delete))
+                }
             }
             Spacer(Modifier.weight(1f))
             TextButton(onClick = onCancel) {
@@ -293,21 +297,31 @@ private fun HighlightSheetContent(
     }
 }
 
-/** Read-only verse text. Drag-select within it picks the partial-highlight range. */
+/**
+ * Read-only verse text. Drag-select within it picks the partial-highlight range.
+ *
+ * It sits on the reading background so the verse reads the same here as it does
+ * in [yuku.alkitab.base.IsiActivity], where the user just selected it.
+ */
 @Composable
 private fun VerseTextSelectable(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
 ) {
+    val applied = App.services.uiDimensions.applied()
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
         readOnly = true,
         textStyle = LocalTextStyle.current.copy(
-            color = Color(App.services.uiDimensions.applied().fontColor),
+            color = Color(applied.fontColor),
             fontSize = 16.sp,
         ),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color(applied.backgroundColor))
+            .padding(8.dp),
     )
 }
 
