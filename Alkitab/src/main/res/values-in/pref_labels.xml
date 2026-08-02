@@ -30,7 +30,7 @@
     <string name="pref_experimental">Fitur eksperimental</string>
     <string name="pref_experimental_warning">Mungkin belum stabil. Matikan jika bermasalah.</string>
     <string name="pref_useComposeVerseItem_title">Tampilan ayat (Compose)</string>
-    <string name="pref_useComposeVerseItem_summary">Tampilkan tiap ayat dengan implementasi Jetpack Compose yang baru, bukan tampilan lama. Buka sebuah pasal untuk melihat perubahannya.</string>
+    <string name="pref_useComposeVerseItem_summary">Tampilkan teks Alkitab dengan daftar ayat yang sepenuhnya berbasis Jetpack Compose, bukan tampilan lama. Berlaku setelah layar pembacaan dibuka kembali.</string>
     <string name="pref_useComposeGoto_title">Navigasi (Compose)</string>
     <string name="pref_useComposeGoto_summary">Tampilkan layar Navigasi versi Jetpack Compose yang baru, bukan implementasi lama dengan tab.</string>
     <string name="pref_useComposeSong_title">Lirik lagu (Compose)</string>
