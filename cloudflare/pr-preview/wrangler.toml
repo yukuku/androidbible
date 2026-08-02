@@ -1,0 +1,17 @@
+# Cloudflare Worker that serves per-PR plainDebug APK preview builds.
+# Deployed by the pr-apk-preview job in .github/workflows/android.yml.
+# One-time account setup is described in README.md in this directory.
+name = "alkitab-pr"
+compatibility_date = "2026-08-01"
+
+# Each CI upload is a worker *version* with its own immutable preview URL
+# (https://<8-hex>-alkitab-pr.<account-subdomain>.workers.dev), so builds
+# from different PRs never overwrite each other. preview_urls is on by
+# default; stated explicitly because the whole scheme depends on it.
+preview_urls = true
+
+# Assets-only worker: no script. Wrangler serves everything in dist/ as
+# static files. dist/ is staged by make_dist.py at deploy time (gitignored)
+# and contains index.html plus the APK.
+[assets]
+directory = "./dist"
