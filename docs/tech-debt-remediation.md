@@ -63,6 +63,7 @@ This document is an index over the prioritized remediation plan for each tech de
 
 - [REM-21: Migrate Song Storage from Parcelable to JSON](tech-debt-remediation/REM-21-song-json-storage.md) ✅ **2.8** — app-side done; backend redirect branching and `kidung-data` authoring are out of scope (separate repos).
 - [REM-22: Introduce Jetpack Compose for New Screens](tech-debt-remediation/REM-22-jetpack-compose.md) — **2.6** (kicked off; the Goto Compose port is currently gated behind an experimental flag with the legacy screen as default)
+- [REM-45: Migrate the IsiActivity Shell to Compose (Staged)](tech-debt-remediation/REM-45-isiactivity-compose-shell.md) — **2.2** (planned; gated on the Verse (Compose) experimental verse list being promoted to default — see the staged plan for the ordering rationale)
 - [REM-44: Make the Daily-Verse Widget's Version Fallback Explicit](tech-debt-remediation/REM-44-widget-version-fallback.md) — **2.6** (2026-07 audit)
 - [REM-42: Bounded Eviction for the Version Cache](tech-debt-remediation/REM-42-version-cache-eviction.md) — **2.4** (2026-07 audit)
 - [REM-43: Surface or Resolve Cross-Device Sync Conflicts](tech-debt-remediation/REM-43-sync-conflict-handling.md) — **2.4** (long-standing last-write-wins limitation)
@@ -109,6 +110,7 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-44](tech-debt-remediation/REM-44-widget-version-fallback.md) | Explicit widget version fallback (2026-07 audit) | **2.6** | 4 |
 | [REM-42](tech-debt-remediation/REM-42-version-cache-eviction.md) | Bounded version-cache eviction (2026-07 audit) | **2.4** | 4 |
 | [REM-43](tech-debt-remediation/REM-43-sync-conflict-handling.md) | Surface/resolve sync conflicts | **2.4** | 4 |
+| [REM-45](tech-debt-remediation/REM-45-isiactivity-compose-shell.md) | IsiActivity Compose shell (staged; gated on Verse (Compose) default) | **2.2** | 4 |
 
 ## Suggested Execution Order
 
