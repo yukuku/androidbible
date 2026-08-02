@@ -41,22 +41,30 @@ import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.Typeface as ComposeTypeface
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.net.toUri
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.widget.AttributeView
+import yuku.alkitab.base.widget.DictionaryLinkInfo
 import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRendererCompose
@@ -109,6 +117,8 @@ data class AttributeState(
      */
     val progressMarkCaptions: List<String?>,
 )
+
+private const val TAG = "VerseItemCompose"
 
 private const val ATTENTION_DURATION_MS = 2000f
 private const val AUDIO_HIGHLIGHT_FLASH_ALPHA = 0.60f
@@ -259,6 +269,64 @@ internal fun verseItemContentDescription(context: Context, s: VerseItemComposeSt
 }
 
 /**
+ * Runs the rendered verse text through the dictionary app's analyzer content
+ * provider and wraps every recognized word in an underlined, tappable
+ * [LinkAnnotation] that opens the dictionary — the Compose counterpart of the
+ * legacy row's [yuku.alkitab.base.widget.DictionaryLinkSpan] decoration
+ * (a ClickableSpan rendered underlined in the link color, which
+ * `Appearances.applyTextAppearance` pins to the reading font color).
+ *
+ * Returns [render] unchanged when the provider is unavailable, reports
+ * nothing, or the query fails.
+ */
+internal fun addDictionaryLinks(
+    context: Context,
+    render: VerseRendererCompose.Result,
+    linkColor: Int,
+    dictionaryListener: (DictionaryLinkInfo) -> Unit,
+): VerseRendererCompose.Result {
+    // we have to exclude the verse numbers from analyze text
+    val startPos = render.startPosAfterVerseNumber
+    val analyzeString = render.text.text.substring(startPos)
+    if (analyzeString.isEmpty()) return render
+
+    val hits = mutableListOf<DictionaryLinkHit>()
+
+    val uri = "content://org.sabda.kamus.provider/analyze".toUri().buildUpon().appendQueryParameter("text", analyzeString).build()
+    try {
+        context.contentResolver.safeQuery(uri, null, null, null, null)?.use { c ->
+            val col_offset = c.getColumnIndexOrThrow("offset")
+            val col_len = c.getColumnIndexOrThrow("len")
+            val col_key = c.getColumnIndexOrThrow("key")
+
+            while (c.moveToNext()) {
+                val offset = c.getInt(col_offset)
+                val len = c.getInt(col_len)
+                val key = c.getString(col_key)
+
+                val word = analyzeString.substring(offset, offset + len)
+                hits += DictionaryLinkHit(startPos + offset, startPos + offset + len, DictionaryLinkInfo(word, key))
+            }
+        }
+    } catch (e: Exception) {
+        AppLog.e(TAG, "Error when querying dictionary content provider", e)
+        return render
+    }
+    if (hits.isEmpty()) return render
+
+    val decorated = buildAnnotatedString {
+        append(render.text)
+        for (hit in hits) {
+            addStyle(SpanStyle(color = Color(linkColor), textDecoration = TextDecoration.Underline), hit.start, hit.end)
+            addLink(LinkAnnotation.Clickable("dictionary") { dictionaryListener(hit.info) }, hit.start, hit.end)
+        }
+    }
+    return render.copy(text = decorated)
+}
+
+private class DictionaryLinkHit(val start: Int, val end: Int, val info: DictionaryLinkInfo)
+
+/**
  * Maps Android's built-in Typeface singletons to Compose's stock
  * FontFamilies. The stock families have italic and bold variants
  * registered, so FontStyle.Italic / FontWeight.Bold resolve to the
@@ -338,6 +406,19 @@ fun buildVerseItemComposeState(
     val verseNumberFontSizeDp = applied.fontSize2dp * 0.7f * textSizeMult
     val attributeScale = attributeViewScale(applied.fontSize2dp * ui.textSizeMult)
 
+    /*
+     * Dictionary mode is activated on either of these conditions:
+     * 1. user manually activate dictionary mode after selecting verses
+     * 2. automatic lookup is on and this verse is selected (checked)
+     */
+    val render = if (ari in ui.dictionaryModeAris ||
+        checked && Preferences.getBoolean(context.getString(R.string.pref_autoDictionaryAnalyze_key), context.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
+    ) {
+        addDictionaryLinks(context, renderResult, applied.fontColor, listeners.dictionaryListener_)
+    } else {
+        renderResult
+    }
+
     // Pre-resolve progress-mark captions at build time so the accessibility
     // path — which TalkBack can hit repeatedly per row — doesn't run a DB
     // query on every read. Mirrors the values the legacy
@@ -358,7 +439,7 @@ fun buildVerseItemComposeState(
     }
 
     return VerseItemComposeState(
-        render = renderResult,
+        render = render,
         fontSizeDp = fontSizeDp,
         verseNumberFontSizeDp = verseNumberFontSizeDp,
         fontColor = applied.fontColor,
