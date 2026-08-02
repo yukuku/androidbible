@@ -1,3 +1,4 @@
 dist/
+build-info.json
 node_modules/
 upload.log

@@ -32,30 +32,18 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemblePlainDebug bundlePlainDebug
 
-      # Consumed by the pr-apk-preview job below; output-metadata.json rides
-      # along so the preview page can show versionName/versionCode.
-      - name: Upload plain debug APK
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v7
-        with:
-          name: plain-debug-apk
-          if-no-files-found: error
-          retention-days: 14
-          path: |
-            Alkitab/build/outputs/apk/plain/debug/*.apk
-            Alkitab/build/outputs/apk/plain/debug/output-metadata.json
-
-  # Publishes the plainDebug APK of each PR to a Cloudflare Worker (static
-  # assets) and comments a workers.dev download link on the PR. Each upload
-  # is a worker *version* with its own immutable preview URL, so builds
-  # never overwrite each other. See cloudflare/pr-preview/README.md for the
-  # one-time Cloudflare/secrets setup.
+  # Publishes each PR's signed release APKs (all production flavors) to a
+  # Cloudflare Worker (static assets) and comments workers.dev download
+  # links on the PR. Each upload is a worker *version* with its own
+  # immutable preview URL, so builds never overwrite each other. See
+  # cloudflare/pr-preview/README.md for the one-time Cloudflare/secrets
+  # setup.
   pr-apk-preview:
-    # The deploy needs Cloudflare secrets, which GitHub does not expose to
-    # fork PRs (by design), so this only runs for PRs from branches inside
-    # this same repo.
+    # Needs both the signed APKs and the Cloudflare secrets, neither of
+    # which exists for fork PRs, so this runs only for PRs from branches
+    # inside this same repo.
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-    needs: plain-debug
+    needs: signed-release
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -81,18 +69,20 @@ jobs:
             echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set; skipping APK preview deploy (see cloudflare/pr-preview/README.md)."
           fi
 
-      - name: Download plain debug APK
+      # Downloads the preview-only artifact (APKs + metadata, no AABs or
+      # mapping files) staged by signed-release. Files land as
+      # <flavor>/release/*.apk, which is the layout make_dist.py expects.
+      - name: Download release APKs
         if: steps.cf.outputs.enabled == 'true'
         uses: actions/download-artifact@v7
         with:
-          name: plain-debug-apk
+          name: pr-preview-apks
           path: apk
 
       # PR title goes through `env` (not string interpolation into the
       # script) so a crafted title can't inject shell code.
       - name: Stage worker assets
         if: steps.cf.outputs.enabled == 'true'
-        id: stage
         env:
           APK_DIR: apk
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -126,28 +116,17 @@ jobs:
           fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
-      - name: Comment preview link on PR
+      - name: Comment preview links on PR
         if: steps.cf.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          URL: ${{ steps.deploy.outputs.url }}
-          APK_NAME: ${{ steps.stage.outputs.apk_name }}
-          APK_SIZE: ${{ steps.stage.outputs.apk_size }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
         run: |
+          set -euo pipefail
           marker='<!-- alkitab-pr-apk-preview -->'
-          body=$(cat <<EOF
-          $marker
-          ### 📱 APK preview build (plainDebug)
-
-          **[Download APK](${URL}/${APK_NAME})** (${APK_SIZE}) — built from \`${HEAD_SHA:0:7}\` by [this run](${RUN_URL})
-
-          Or open ${URL} on an Android device. This comment always points at the latest build for this PR; earlier builds keep their own URLs.
-          EOF
-          )
+          body=$(python3 cloudflare/pr-preview/render_comment.py)
           existing=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
             --jq "[.[] | select(.body | contains(\"$marker\"))][0].id // empty")
           if [ -n "$existing" ]; then
@@ -263,6 +242,21 @@ jobs:
             Alkitab/build/outputs/apk/sabda_alkitab/release/*.apk
             Alkitab/build/outputs/bundle/sabda_alkitabRelease/*.aab
             Alkitab/build/outputs/mapping/sabda_alkitabRelease/mapping.txt
+
+      # Handoff to the pr-apk-preview job. Deliberately APKs + metadata
+      # only: the AABs and mapping files must not end up on a public
+      # preview URL. Short retention — the per-flavor artifacts above
+      # already keep these same APKs for 14 days.
+      - name: Upload APKs for PR preview
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-preview-apks
+          if-no-files-found: error
+          retention-days: 1
+          path: |
+            Alkitab/build/outputs/apk/*/release/*.apk
+            Alkitab/build/outputs/apk/*/release/output-metadata.json
 
       - name: Create GitHub Pre-Release
         # Only on direct pushes to develop. PRs (even from same-repo branches)

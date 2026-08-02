@@ -52,9 +52,9 @@ Each flavor can override resources in `src/{flavor}/res/` and Java/Kotlin source
 GitHub Actions workflow (`.github/workflows/android.yml`):
 - Triggers on push/PR to `develop` branch
 - Ubuntu latest, JDK 17 (Zulu)
-- `plain-debug` job: runs `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, `assemblePlainDebug`, `bundlePlainDebug`; on PRs it also uploads the plainDebug APK as a workflow artifact
-- `pr-apk-preview` job (same-repo PRs only): publishes that APK to a Cloudflare Worker with static assets and comments an immutable `*.workers.dev` download link on the PR. Skips cleanly when the `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` repo secrets are absent. Setup and details: `cloudflare/pr-preview/README.md`
-- `signed-release` job (pushes to `develop` and same-repo PRs): builds and signs all production flavors using the proprietary overlay repo, uploads per-flavor artifacts, and on `develop` pushes publishes a GitHub pre-release
+- `plain-debug` job: runs `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, `assemblePlainDebug`, `bundlePlainDebug`
+- `signed-release` job (pushes to `develop` and same-repo PRs): builds and signs all production flavors using the proprietary overlay repo, uploads per-flavor artifacts, and on `develop` pushes publishes a GitHub pre-release. On PRs it also uploads a `pr-preview-apks` artifact (APKs and metadata only — no AABs or mapping files)
+- `pr-apk-preview` job (same-repo PRs only): publishes those signed release APKs to a Cloudflare Worker with static assets and comments immutable `*.workers.dev` download links on the PR. Skips cleanly when the `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` repo secrets are absent. Setup and details: `cloudflare/pr-preview/README.md`
 
 ## Release Build
 
