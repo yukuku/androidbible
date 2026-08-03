@@ -316,7 +316,12 @@ class SplitViewManager(
             splitRoot.orientation = LinearLayout.VERTICAL
 
             val totalHeight = splitRoot.height
-            val masterHeight = ((totalHeight - splitHandleThickness) * prop).toInt()
+            // splitRoot may not have been laid out yet (height 0, e.g. when the
+            // split is restored during activity creation); without the clamp
+            // the master pane would get a negative height, which measures as an
+            // UNSPECIFIED (infinite) constraint. The global-layout listener
+            // redistributes the sizes once the real dimensions are known.
+            val masterHeight = ((totalHeight - splitHandleThickness) * prop).toInt().coerceAtLeast(0)
 
             run {
                 // divide the screen space
@@ -334,7 +339,7 @@ class SplitViewManager(
             splitRoot.orientation = LinearLayout.HORIZONTAL
 
             val totalWidth = splitRoot.width
-            val masterWidth = ((totalWidth - splitHandleThickness) * prop).toInt()
+            val masterWidth = ((totalWidth - splitHandleThickness) * prop).toInt().coerceAtLeast(0)
 
             run {
                 // divide the screen space

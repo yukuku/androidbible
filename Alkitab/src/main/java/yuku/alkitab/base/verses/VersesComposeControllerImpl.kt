@@ -3,10 +3,13 @@ package yuku.alkitab.base.verses
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Parcelable
 import android.text.Spanned
 import android.text.style.StyleSpan
 import android.util.AttributeSet
 import android.util.SparseIntArray
+import android.view.AbsSavedState
+import android.view.ViewGroup
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
@@ -52,12 +55,14 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -109,6 +114,20 @@ class VersesComposeView @JvmOverloads constructor(
     @Composable
     override fun Content() {
         controller?.ListContent()
+    }
+
+    /**
+     * This pane keeps the view id of the RecyclerView it replaces (the
+     * reader's inset listeners and layout assertions look the pane up by id),
+     * so a saved hierarchy state written by the RecyclerView implementation
+     * can arrive here under the same id after the Verse (Compose) setting
+     * changes mid-lifecycle (its restart-triggered `recreate()` saves the old
+     * hierarchy's state). Any state stored under this id is ignored instead
+     * of being force-cast: the reader restores its reading position itself,
+     * from the ari it keeps in the activity instance state.
+     */
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        super.onRestoreInstanceState(AbsSavedState.EMPTY_STATE)
     }
 }
 
@@ -579,9 +598,23 @@ class VersesComposeControllerImpl(
 
     override fun setViewLayoutSize(width: Int, height: Int) {
         composeHost.updateLayoutParams {
-            this.width = width
-            this.height = height
+            this.width = coerceValidLayoutDimension(width)
+            this.height = coerceValidLayoutDimension(height)
         }
+    }
+
+    /**
+     * A negative dimension that is not MATCH_PARENT/WRAP_CONTENT would fall
+     * through every branch of `ViewGroup.getChildMeasureSpec` and measure the
+     * pane with an UNSPECIFIED (infinite) constraint — which a vertically
+     * scrollable LazyColumn rejects with an exception, where a RecyclerView
+     * would silently measure its whole content. Treat such values as 0.
+     */
+    private fun coerceValidLayoutDimension(value: Int): Int = when {
+        value >= 0 -> value
+        value == ViewGroup.LayoutParams.MATCH_PARENT -> value
+        value == ViewGroup.LayoutParams.WRAP_CONTENT -> value
+        else -> 0
     }
 
     override fun setEmptyMessage(message: CharSequence?, textColor: Int) {
@@ -1073,6 +1106,14 @@ internal fun buildParallelsAnnotatedString(
     append(")")
 }
 
+/**
+ * The legacy [yuku.alkitab.base.widget.ParallelSpan] is a plain ClickableSpan,
+ * so parallels render underlined (in the link color, which the pericope text
+ * appearance pins to the font color). The underline is carried here by the
+ * link's own styles.
+ */
+private val parallelLinkStyles = TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline))
+
 private fun androidx.compose.ui.text.AnnotatedString.Builder.appendParallelCompose(
     parallel: String,
     parallelListener: (ParallelClickData) -> Unit,
@@ -1096,7 +1137,7 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendParallelCompo
 
         val display = parallel.substring(targetEndPos + 1)
 
-        withLink(LinkAnnotation.Clickable("parallel") { parallelListener(AriParallelClickData(ariRanges.get(0))) }) {
+        withLink(LinkAnnotation.Clickable("parallel", parallelLinkStyles) { parallelListener(AriParallelClickData(ariRanges.get(0))) }) {
             append(display)
         }
         return true
@@ -1104,7 +1145,7 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendParallelCompo
 
     if (!linked()) {
         // fallback if the above code fails
-        withLink(LinkAnnotation.Clickable("parallel") { parallelListener(ReferenceParallelClickData(parallel)) }) {
+        withLink(LinkAnnotation.Clickable("parallel", parallelLinkStyles) { parallelListener(ReferenceParallelClickData(parallel)) }) {
             append(parallel)
         }
     }

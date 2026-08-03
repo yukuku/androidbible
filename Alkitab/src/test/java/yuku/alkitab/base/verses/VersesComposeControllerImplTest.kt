@@ -1,9 +1,14 @@
 package yuku.alkitab.base.verses
 
+import android.os.Parcelable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
+import android.util.SparseArray
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.font.FontStyle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -162,6 +167,61 @@ class VersesComposeControllerImplTest {
     }
 
     @Test
+    fun `setViewLayoutSize clamps invalid negative dimensions that would otherwise measure as infinite constraints`() {
+        val controller = VersesComposeControllerImpl(view, "test")
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+
+        // The split manager can compute a negative pane height before the
+        // split root is laid out; it must never reach the LayoutParams.
+        controller.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, -12)
+        assertEquals(ViewGroup.LayoutParams.MATCH_PARENT, view.layoutParams.width)
+        assertEquals(0, view.layoutParams.height)
+
+        // The special LayoutParams constants and real pixel sizes pass through.
+        controller.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, view.layoutParams.height)
+        controller.setViewLayoutSize(150, 320)
+        assertEquals(150, view.layoutParams.width)
+        assertEquals(320, view.layoutParams.height)
+    }
+
+    @Test
+    fun `restoring a RecyclerView saved state into the Compose pane under the same view id does not throw`() {
+        // The Verse (Compose) setting toggles which view type sits under the
+        // pane's id; a restart triggered by the toggle saves the outgoing
+        // RecyclerView hierarchy and restores it into the Compose pane.
+        val paneId = View.generateViewId()
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+
+        val recyclerView = EmptyableRecyclerView(context)
+        recyclerView.id = paneId
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        val container = SparseArray<Parcelable>()
+        recyclerView.saveHierarchyState(container)
+        assertNotNull(container.get(paneId))
+
+        val composeView = VersesComposeView(context)
+        composeView.id = paneId
+        composeView.restoreHierarchyState(container)
+    }
+
+    @Test
+    fun `restoring a Compose pane saved state into a RecyclerView under the same view id does not throw`() {
+        val paneId = View.generateViewId()
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+
+        val composeView = VersesComposeView(context)
+        composeView.id = paneId
+        val container = SparseArray<Parcelable>()
+        composeView.saveHierarchyState(container)
+
+        val recyclerView = EmptyableRecyclerView(context)
+        recyclerView.id = paneId
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.restoreHierarchyState(container)
+    }
+
+    @Test
     fun `spannedToAnnotatedString maps italic StyleSpans to Compose italic ranges`() {
         val rendered = FormattedTextRenderer.render("@@Before @9italic part@7 after")
         assertTrue(rendered.getSpans(0, rendered.length, StyleSpan::class.java).isNotEmpty())
@@ -196,6 +256,15 @@ class VersesComposeControllerImplTest {
         assertEquals(2, links.size)
         assertEquals("Matthew 1:1", annotated.text.substring(links[0].start, links[0].end))
         assertEquals("Mark 2:2", annotated.text.substring(links[1].start, links[1].end))
+
+        // Underlined like the legacy ClickableSpan-based ParallelSpan.
+        for (link in links) {
+            val clickable = link.item as LinkAnnotation.Clickable
+            assertEquals(
+                androidx.compose.ui.text.style.TextDecoration.Underline,
+                clickable.styles?.style?.textDecoration,
+            )
+        }
 
         // Tapping the second link reports a reference-based parallel.
         val link = links[1].item as LinkAnnotation.Clickable
