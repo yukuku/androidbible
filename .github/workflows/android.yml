@@ -35,9 +35,9 @@ jobs:
   # Publishes each PR's signed release APKs (all production flavors) to a
   # Cloudflare Worker (static assets) and comments workers.dev download
   # links on the PR. Each upload is a worker *version* with its own
-  # immutable preview URL, so builds never overwrite each other. See
-  # tools/cloudflare/pr-preview/README.md for the one-time Cloudflare/secrets
-  # setup.
+  # immutable preview URL, so builds never overwrite each other. See the
+  # "PR APK previews" section of docs/build-system.md for the one-time
+  # Cloudflare/secrets setup.
   pr-apk-preview:
     # Needs both the signed APKs and the Cloudflare secrets, neither of
     # which exists for fork PRs, so this runs only for PRs from branches
@@ -66,7 +66,7 @@ jobs:
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set; skipping APK preview deploy (see tools/cloudflare/pr-preview/README.md)."
+            echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set; skipping APK preview deploy (see docs/build-system.md)."
           fi
 
       # Downloads the preview-only artifact (APKs + metadata, no AABs or

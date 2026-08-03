@@ -54,7 +54,17 @@ GitHub Actions workflow (`.github/workflows/android.yml`):
 - Ubuntu latest, JDK 17 (Zulu)
 - `plain-debug` job: runs `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, `assemblePlainDebug`, `bundlePlainDebug`
 - `signed-release` job (pushes to `develop` and same-repo PRs): builds and signs all production flavors using the proprietary overlay repo, uploads per-flavor artifacts, and on `develop` pushes publishes a GitHub pre-release. On PRs it also uploads a `pr-preview-apks` artifact (APKs and metadata only — no AABs or mapping files)
-- `pr-apk-preview` job (same-repo PRs only): publishes those signed release APKs to a Cloudflare Worker with static assets and comments immutable `*.workers.dev` download links on the PR. Skips cleanly when the `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` repo secrets are absent. Setup and details: `tools/cloudflare/pr-preview/README.md`
+- `pr-apk-preview` job (same-repo PRs only): publishes those signed release APKs to a Cloudflare Worker with static assets and comments immutable `*.workers.dev` download links on the PR
+
+### PR APK previews
+
+Each same-repo PR gets its signed release APKs published to the `alkitab-pr` Cloudflare Worker, and a comment linking to a download page. Fork PRs skip it — they have neither the signing key nor the Cloudflare token.
+
+`wrangler versions upload` creates a new worker *version* per build, each with its own immutable URL (`https://<8-hex>-alkitab-pr.<subdomain>.workers.dev`), so builds never overwrite each other. `tools/cloudflare/pr-preview/make_dist.py` stages the APKs plus a generated `index.html`; `render_comment.py` renders the PR comment.
+
+Configuration is two repository secrets — `CLOUDFLARE_API_TOKEN` (created from the "Edit Cloudflare Workers" token template) and `CLOUDFLARE_ACCOUNT_ID`. Without them the job skips cleanly, so CI stays green. The worker needs no manual creation: the first run bootstraps it via `wrangler deploy`, then retries the version upload.
+
+Two caveats: the APKs are production-signed and share application IDs with the Play Store builds, so installing one replaces the installed app; and preview URLs are public with no documented expiry, so a build stays reachable until its version is deleted (Cloudflare Access can gate them if that is not acceptable).
 
 ## Release Build
 
