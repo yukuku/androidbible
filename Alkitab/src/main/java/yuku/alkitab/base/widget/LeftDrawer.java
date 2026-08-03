@@ -150,6 +150,16 @@ public abstract class LeftDrawer extends NestedScrollView {
 		drawerLayout.closeDrawer(GravityCompat.START);
 	}
 
+	/**
+	 * Turns the edge swipe that opens this drawer on or off. Callers that own a
+	 * competing horizontal drag near the left edge — the split handle parked
+	 * there — switch it off for the duration of their drag, so the touch does
+	 * not also peek the drawer open.
+	 */
+	public void setEdgeSwipeEnabled(boolean enabled) {
+		drawerLayout.setDrawerLockMode(enabled ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+	}
+
 	void bHelp_click() {
 		activity.startActivity(AboutActivity.createIntent());
 	}

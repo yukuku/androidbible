@@ -26,17 +26,27 @@ private const val TAG = "SplitViewManager"
 
 /**
  * Master-pane heights that keep the stacked split's handle clear of the
- * system's mandatory gesture areas at the window top and bottom.
+ * system's mandatory gesture areas.
  *
  * Touches starting inside those areas are claimed by the system (home / app
  * switch, notification shade). Unlike the back-gesture areas along the left
  * and right edges, they cannot be excluded, so a handle parked there could be
  * pressed but never dragged back.
  */
-internal fun masterHeightRange(rootHeight: Int, handleThickness: Int, mandatoryInsetTop: Int, mandatoryInsetBottom: Int): IntRange {
-    val max = (rootHeight - handleThickness - mandatoryInsetBottom).coerceAtLeast(0)
-    return mandatoryInsetTop.coerceAtMost(max)..max
+internal fun masterHeightRange(rootHeight: Int, handleThickness: Int, reservedTop: Int, reservedBottom: Int): IntRange {
+    val max = (rootHeight - handleThickness - reservedBottom).coerceAtLeast(0)
+    return reservedTop.coerceAtMost(max)..max
 }
+
+/**
+ * How much of the window top the stacked split's handle has to stay below.
+ *
+ * While the status bar is showing it occupies the top gesture area, so the
+ * handle may sit flush against the window top. In fullscreen there is no bar
+ * over that area and a drag starting there is taken by the system instead.
+ */
+internal fun reservedTopForHandle(mandatoryInsetTop: Int, statusBarVisible: Boolean): Int =
+    if (statusBarVisible) 0 else mandatoryInsetTop
 
 /**
  * Container for the secondary ("split 1") version metadata. Kept as a single
@@ -105,6 +115,7 @@ class SplitViewManager(
             val splitRoot = host.splitRoot
             val splitHandleButton = host.splitHandleButton
             splitRoot.setOnefingerEnabled(false)
+            host.leftDrawer.setEdgeSwipeEnabled(false)
 
             if (splitHandleButton.orientation == SplitHandleButton.Orientation.vertical) {
                 first = splitHandleButton.top
@@ -137,6 +148,7 @@ class SplitViewManager(
 
         override fun onHandleDragStop() {
             host.splitRoot.setOnefingerEnabled(true)
+            host.leftDrawer.setEdgeSwipeEnabled(true)
 
             if (prop != Float.MIN_VALUE) {
                 Preferences.setFloat(Prefkey.lastSplitProp, prop)
@@ -374,10 +386,15 @@ class SplitViewManager(
     }
 
     private fun masterHeightRange(rootHeight: Int, handleThickness: Int): IntRange {
-        val insets = ViewCompat.getRootWindowInsets(host.splitRoot)
-            ?.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures())
-            ?: Insets.NONE
-        return masterHeightRange(rootHeight, handleThickness, insets.top, insets.bottom)
+        val rootInsets = ViewCompat.getRootWindowInsets(host.splitRoot)
+        val mandatory = rootInsets?.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures()) ?: Insets.NONE
+        val statusBarVisible = rootInsets?.isVisible(WindowInsetsCompat.Type.statusBars()) ?: true
+        return masterHeightRange(
+            rootHeight,
+            handleThickness,
+            reservedTopForHandle(mandatory.top, statusBarVisible),
+            mandatory.bottom,
+        )
     }
 
     private fun closeSplitDisplay() {

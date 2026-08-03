@@ -13,7 +13,8 @@ import org.robolectric.annotation.Config
  * dragged near a window edge: the back gesture along the left and right edges,
  * and the home / app-switch gesture along the bottom. The back-gesture areas
  * are handed to the handle through a system gesture exclusion rect; the bottom
- * area cannot be excluded, so the handle's travel is bounded instead.
+ * area cannot be excluded, so the handle's travel is bounded instead. The top
+ * is only bounded in fullscreen, where no status bar covers the gesture area.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -57,23 +58,35 @@ class SplitHandleGestureTest {
         // 1920 tall root, 24px handle, 48px gesture bar at the bottom: the
         // master pane can grow until the handle's bottom edge reaches the
         // gesture area, not until it reaches the window bottom.
-        val range = masterHeightRange(rootHeight = 1920, handleThickness = 24, mandatoryInsetTop = 0, mandatoryInsetBottom = 48)
+        val range = masterHeightRange(rootHeight = 1920, handleThickness = 24, reservedTop = 0, reservedBottom = 48)
 
         assertEquals(0, range.first)
         assertEquals(1848, range.last)
     }
 
     @Test
-    fun `the stacked split starts below the top mandatory gesture area`() {
-        val range = masterHeightRange(rootHeight = 1920, handleThickness = 24, mandatoryInsetTop = 72, mandatoryInsetBottom = 48)
+    fun `the handle reaches the window top while the status bar is showing`() {
+        val reservedTop = reservedTopForHandle(mandatoryInsetTop = 72, statusBarVisible = true)
+        val range = masterHeightRange(rootHeight = 1920, handleThickness = 24, reservedTop = reservedTop, reservedBottom = 48)
 
+        assertEquals(0, reservedTop)
+        assertEquals(0, range.first)
+        assertEquals(1848, range.last)
+    }
+
+    @Test
+    fun `in fullscreen the handle stays below the top mandatory gesture area`() {
+        val reservedTop = reservedTopForHandle(mandatoryInsetTop = 72, statusBarVisible = false)
+        val range = masterHeightRange(rootHeight = 1920, handleThickness = 24, reservedTop = reservedTop, reservedBottom = 48)
+
+        assertEquals(72, reservedTop)
         assertEquals(72, range.first)
         assertEquals(1848, range.last)
     }
 
     @Test
     fun `without mandatory gesture insets the handle can travel the whole root`() {
-        val range = masterHeightRange(rootHeight = 1920, handleThickness = 24, mandatoryInsetTop = 0, mandatoryInsetBottom = 0)
+        val range = masterHeightRange(rootHeight = 1920, handleThickness = 24, reservedTop = 0, reservedBottom = 0)
 
         assertEquals(0, range.first)
         assertEquals(1896, range.last)
@@ -83,7 +96,7 @@ class SplitHandleGestureTest {
     fun `a root smaller than the reserved areas still yields a usable range`() {
         // Before the split root is laid out its height is 0; the range must
         // stay non-empty so coerceIn does not throw.
-        val range = masterHeightRange(rootHeight = 0, handleThickness = 24, mandatoryInsetTop = 72, mandatoryInsetBottom = 48)
+        val range = masterHeightRange(rootHeight = 0, handleThickness = 24, reservedTop = 72, reservedBottom = 48)
 
         assertEquals(0, range.first)
         assertEquals(0, range.last)
