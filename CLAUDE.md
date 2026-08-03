@@ -155,6 +155,13 @@ S.activeVersion() → MVersion → Version (abstract)
   → VerseItem (custom RelativeLayout with highlight/selection drawing)
 ```
 
+With the "Verse (Compose)" experimental setting enabled, `IsiActivity` swaps the
+two RecyclerViews for `VersesComposeView`s driven by `VersesComposeControllerImpl`
+(a LazyColumn-based implementation of the same `VersesController` interface):
+`VerseRendererCompose` renders verse text to an `AnnotatedString`, rows reuse
+`VerseItemComposeContent`, and pericope headers are composed natively. Dialogs
+(`VersesDialog`, `XrefDialog`) always use the RecyclerView pipeline.
+
 ### ARI (Alkitab Resource Identifier)
 
 The fundamental addressing scheme — a 24-bit integer encoding book, chapter, and verse:

@@ -80,6 +80,7 @@ import yuku.alkitab.base.dialog.XrefDialog
 import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
+import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.settings.SettingsActivity
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
@@ -103,6 +104,8 @@ import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.util.toIntArray
 import yuku.alkitab.base.verses.VerseAttributeLoader
+import yuku.alkitab.base.verses.VersesComposeControllerImpl
+import yuku.alkitab.base.verses.VersesComposeView
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
@@ -542,11 +545,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         floater.setListener(gestureHandler)
 
         // listeners
-        lsSplit0 = VersesControllerImpl(
-            findViewById(R.id.lsSplitView0),
+        val useComposeVerses = ExperimentalFlags.useComposeVerseItem()
+        lsSplit0 = createVersesController(
+            useComposeVerses,
+            R.id.lsSplitView0,
             "lsSplit0",
-            VersesDataModel.EMPTY,
-            VersesUiModel.EMPTY,
             VersesListeners(
                 AttributeListener(), // have to be distinct from lsSplit1
                 lsSplit0_selectedVerses,
@@ -559,11 +562,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         )
 
         // additional setup for split1
-        lsSplit1 = VersesControllerImpl(
-            findViewById(R.id.lsSplitView1),
+        lsSplit1 = createVersesController(
+            useComposeVerses,
+            R.id.lsSplitView1,
             "lsSplit1",
-            VersesDataModel.EMPTY,
-            VersesUiModel.EMPTY,
             VersesListeners(
                 AttributeListener(), // have to be distinct from lsSplit0
                 lsSplit1_selectedVerses,
@@ -743,6 +745,36 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         AppLog.d(TAG, "@@onCreate end")
+    }
+
+    /**
+     * Builds the verses controller for one split pane. With the Verse
+     * (Compose) experimental setting enabled, the pane's RecyclerView is
+     * swapped in place for a [VersesComposeView], keeping the same view id,
+     * child index, and layout params so the split-view manager, the inset
+     * listeners, and the DEBUG layout assertions keep operating on the pane.
+     */
+    private fun createVersesController(
+        useComposeVerses: Boolean,
+        viewId: Int,
+        name: String,
+        listeners: VersesListeners,
+    ): VersesController {
+        return if (useComposeVerses) {
+            val recyclerView = findViewById<View>(viewId)
+            val parent = recyclerView.parent as ViewGroup
+            val childIndex = parent.indexOfChild(recyclerView)
+            val layoutParams = recyclerView.layoutParams
+            parent.removeViewAt(childIndex)
+
+            val composeView = VersesComposeView(this)
+            composeView.id = viewId
+            parent.addView(composeView, childIndex, layoutParams)
+
+            VersesComposeControllerImpl(composeView, name, VersesDataModel.EMPTY, VersesUiModel.EMPTY, listeners)
+        } else {
+            VersesControllerImpl(findViewById(viewId), name, VersesDataModel.EMPTY, VersesUiModel.EMPTY, listeners)
+        }
     }
 
     private fun applyAudioHighlightTo(controller: VersesController, verse_1: Int) {

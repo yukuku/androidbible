@@ -32,8 +32,8 @@
 
     <string name="pref_experimental">Experimental features</string>
     <string name="pref_experimental_warning">May be unstable. Disable if you hit issues.</string>
-    <string name="pref_useComposeVerseItem_title">Verse items (Compose)</string>
-    <string name="pref_useComposeVerseItem_summary">Render each verse with the new Jetpack Compose implementation instead of the legacy custom view. Open a chapter to see the change.</string>
+    <string name="pref_useComposeVerseItem_title">Verse (Compose)</string>
+    <string name="pref_useComposeVerseItem_summary">Show the Bible text with the new, fully Jetpack Compose-based verse list instead of the legacy views. Takes effect when the reader screen is reopened.</string>
     <string name="pref_useComposeGoto_title">Navigation (Compose)</string>
     <string name="pref_useComposeGoto_summary">Show the new Jetpack Compose Navigation screen instead of the legacy tab-based implementation.</string>
     <string name="pref_useComposeSong_title">Song lyrics (Compose)</string>

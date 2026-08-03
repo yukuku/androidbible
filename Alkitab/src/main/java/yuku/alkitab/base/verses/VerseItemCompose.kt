@@ -41,26 +41,37 @@ import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.Typeface as ComposeTypeface
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.net.toUri
 import yuku.afw.storage.Preferences
+import yuku.alkitab.base.App
+import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.widget.AttributeView
+import yuku.alkitab.base.widget.DictionaryLinkInfo
 import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRendererCompose
 import yuku.alkitab.debug.R
+import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.model.Version
+import yuku.alkitab.util.Ari
 
 /**
  * Inputs to a single verse row that don't change between recompositions.
@@ -106,6 +117,8 @@ data class AttributeState(
      */
     val progressMarkCaptions: List<String?>,
 )
+
+private const val TAG = "VerseItemCompose"
 
 private const val ATTENTION_DURATION_MS = 2000f
 private const val AUDIO_HIGHLIGHT_FLASH_ALPHA = 0.60f
@@ -206,48 +219,272 @@ class VerseItemComposeView @JvmOverloads constructor(
         return true
     }
 
-    @SuppressLint("StringFormatMatches", "GetContentDescriptionOverride")
+    @SuppressLint("GetContentDescriptionOverride")
     override fun getContentDescription(): CharSequence {
         val s = state ?: return ""
-        val res = StringBuilder()
-
-        val gutter = s.render.gutterVerseNumber
-        if (gutter != null) {
-            res.append(gutter).append(' ')
-        }
-        res.append(s.render.text.text)
-
-        val bookmarkCount = s.attribute.bookmarkCount
-        if (bookmarkCount == 1) {
-            res.append(' ').append(context.getString(R.string.desc_verse_attribute_one_bookmark))
-        } else if (bookmarkCount > 1) {
-            res.append(' ').append(context.getString(R.string.desc_verse_attribute_multiple_bookmarks, bookmarkCount))
-        }
-
-        val noteCount = s.attribute.noteCount
-        if (noteCount == 1) {
-            res.append(' ').append(context.getString(R.string.desc_verse_attribute_one_note))
-        } else if (noteCount > 1) {
-            res.append(' ').append(context.getString(R.string.desc_verse_attribute_multiple_notes, noteCount))
-        }
-
-        val progressMarkBits = s.attribute.progressMarkBits
-        for (presetId in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
-            if (progressMarkBits and (1 shl AttributeView.PROGRESS_MARK_BITS_START + presetId) != 0) {
-                // Captions are resolved at bind time (see VerseTextComposeHolder)
-                // so this path stays free of DB I/O.
-                s.attribute.progressMarkCaptions.getOrNull(presetId)?.let { caption ->
-                    res.append(' ').append(context.getString(R.string.desc_verse_attribute_progress_mark, caption))
-                }
-            }
-        }
-
-        return res
+        return verseItemContentDescription(context, s)
     }
 }
 
+/**
+ * TalkBack description of a verse row: gutter verse number (when present),
+ * verse text, then attribute summaries. Progress-mark captions come
+ * pre-resolved on [AttributeState.progressMarkCaptions] so this path stays
+ * free of DB I/O.
+ */
+@SuppressLint("StringFormatMatches")
+internal fun verseItemContentDescription(context: Context, s: VerseItemComposeState): CharSequence {
+    val res = StringBuilder()
+
+    val gutter = s.render.gutterVerseNumber
+    if (gutter != null) {
+        res.append(gutter).append(' ')
+    }
+    res.append(s.render.text.text)
+
+    val bookmarkCount = s.attribute.bookmarkCount
+    if (bookmarkCount == 1) {
+        res.append(' ').append(context.getString(R.string.desc_verse_attribute_one_bookmark))
+    } else if (bookmarkCount > 1) {
+        res.append(' ').append(context.getString(R.string.desc_verse_attribute_multiple_bookmarks, bookmarkCount))
+    }
+
+    val noteCount = s.attribute.noteCount
+    if (noteCount == 1) {
+        res.append(' ').append(context.getString(R.string.desc_verse_attribute_one_note))
+    } else if (noteCount > 1) {
+        res.append(' ').append(context.getString(R.string.desc_verse_attribute_multiple_notes, noteCount))
+    }
+
+    val progressMarkBits = s.attribute.progressMarkBits
+    for (presetId in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
+        if (progressMarkBits and (1 shl AttributeView.PROGRESS_MARK_BITS_START + presetId) != 0) {
+            s.attribute.progressMarkCaptions.getOrNull(presetId)?.let { caption ->
+                res.append(' ').append(context.getString(R.string.desc_verse_attribute_progress_mark, caption))
+            }
+        }
+    }
+
+    return res
+}
+
+/**
+ * Runs the rendered verse text through the dictionary app's analyzer content
+ * provider and wraps every recognized word in an underlined, tappable
+ * [LinkAnnotation] that opens the dictionary.
+ *
+ * Returns [render] unchanged when the provider is unavailable, reports
+ * nothing, or the query fails.
+ */
+internal fun addDictionaryLinks(
+    context: Context,
+    render: VerseRendererCompose.Result,
+    linkColor: Int,
+    dictionaryListener: (DictionaryLinkInfo) -> Unit,
+): VerseRendererCompose.Result {
+    // we have to exclude the verse numbers from analyze text
+    val startPos = render.startPosAfterVerseNumber
+    val analyzeString = render.text.text.substring(startPos)
+    if (analyzeString.isEmpty()) return render
+
+    val hits = mutableListOf<DictionaryLinkHit>()
+
+    val uri = "content://org.sabda.kamus.provider/analyze".toUri().buildUpon().appendQueryParameter("text", analyzeString).build()
+    try {
+        context.contentResolver.safeQuery(uri, null, null, null, null)?.use { c ->
+            val col_offset = c.getColumnIndexOrThrow("offset")
+            val col_len = c.getColumnIndexOrThrow("len")
+            val col_key = c.getColumnIndexOrThrow("key")
+
+            while (c.moveToNext()) {
+                val offset = c.getInt(col_offset)
+                val len = c.getInt(col_len)
+                val key = c.getString(col_key)
+
+                val word = analyzeString.substring(offset, offset + len)
+                hits += DictionaryLinkHit(startPos + offset, startPos + offset + len, DictionaryLinkInfo(word, key))
+            }
+        }
+    } catch (e: Exception) {
+        AppLog.e(TAG, "Error when querying dictionary content provider", e)
+        return render
+    }
+    if (hits.isEmpty()) return render
+
+    val decorated = buildAnnotatedString {
+        append(render.text)
+        for (hit in hits) {
+            addStyle(SpanStyle(color = Color(linkColor), textDecoration = TextDecoration.Underline), hit.start, hit.end)
+            addLink(LinkAnnotation.Clickable("dictionary") { dictionaryListener(hit.info) }, hit.start, hit.end)
+        }
+    }
+    return render.copy(text = decorated)
+}
+
+private class DictionaryLinkHit(val start: Int, val end: Int, val info: DictionaryLinkInfo)
+
+/**
+ * Maps Android's built-in Typeface singletons to Compose's stock
+ * FontFamilies. The stock families have italic and bold variants
+ * registered, so FontStyle.Italic / FontWeight.Bold resolve to the
+ * correct glyphs (or synthesise cleanly). A raw FontFamily(Typeface)
+ * wrapper only carries the regular variant and silently renders
+ * italic upright.
+ */
+internal fun composeFontFamilyFor(tf: android.graphics.Typeface?): FontFamily = when (tf) {
+    null, android.graphics.Typeface.DEFAULT -> FontFamily.Default
+    android.graphics.Typeface.SERIF -> FontFamily.Serif
+    android.graphics.Typeface.MONOSPACE -> FontFamily.Monospace
+    android.graphics.Typeface.SANS_SERIF -> FontFamily.SansSerif
+    else -> FontFamily(ComposeTypeface(tf))
+}
+
+/** Whether the attribute column will draw at least one icon. */
+internal val AttributeState.isShowingSomething: Boolean
+    get() = bookmarkCount > 0 ||
+        noteCount > 0 ||
+        (progressMarkBits and AttributeView.PROGRESS_MARK_BIT_MASK) != 0 ||
+        hasMaps
+
+/** Icon scale for the attribute column, stepped by the effective font size in dp. */
+fun attributeViewScale(fontSizeDp: Float) = when {
+    fontSizeDp >= 13 /* 72% */ && fontSizeDp < 24 /* 133% */ -> 1f
+    fontSizeDp < 8 -> 0.5f // 0 ~ 44%
+    fontSizeDp < 18 -> 0.75f // 44% ~ 72%
+    fontSizeDp >= 36 -> 2f // 200% ~
+    else -> 1.5f // 24 to 36 // 133% ~ 200%
+}
+
+/**
+ * Builds the immutable per-row state consumed by [VerseItemComposeContent].
+ * Shared by the RecyclerView-hosted [VerseItemComposeView] rows and the fully
+ * Compose verse list, so both paths render identically.
+ *
+ * @param currentPosition resolves the row's position at interaction time
+ * (a RecyclerView rebind can move a row, so the position must not be captured
+ * eagerly); returns -1 when the row is no longer attached.
+ * @param inlineLinkViewProvider supplies the View handed to
+ * [VerseInlineLinkSpan.onClick] (the row view, or the hosting Compose view).
+ */
+fun buildVerseItemComposeState(
+    context: Context,
+    data: VersesDataModel,
+    ui: VersesUiModel,
+    listeners: VersesListeners,
+    index: Int,
+    checked: Boolean,
+    currentPosition: () -> Int,
+    toggleChecked: (position: Int) -> Unit,
+    inlineLinkViewProvider: () -> android.view.View,
+): VerseItemComposeState {
+    val verse_1 = index + 1
+    val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
+    val text = data.verses_.getVerse(index)
+    val verseNumberText = data.verses_.getVerseNumberText(index)
+    val highlightInfo = data.versesAttributes.highlightInfoMap_[index]
+
+    val renderResult = VerseRendererCompose.render(
+        isVerseNumberShown = ui.isVerseNumberShown,
+        ari = ari,
+        text = text,
+        verseNumberText = verseNumberText,
+        highlightInfo = highlightInfo,
+        checked = checked,
+    )
+
+    val textSizeMult = if (data.verses_ is SingleChapterVerses.WithTextSizeMult) {
+        data.verses_.getTextSizeMult(index)
+    } else {
+        ui.textSizeMult
+    }
+
+    val applied = App.services.uiDimensions.applied()
+    val fontSizeDp = applied.fontSize2dp * textSizeMult
+    val verseNumberFontSizeDp = applied.fontSize2dp * 0.7f * textSizeMult
+    val attributeScale = attributeViewScale(applied.fontSize2dp * ui.textSizeMult)
+
+    /*
+     * Dictionary mode is activated on either of these conditions:
+     * 1. user manually activate dictionary mode after selecting verses
+     * 2. automatic lookup is on and this verse is selected (checked)
+     */
+    val render = if (ari in ui.dictionaryModeAris ||
+        checked && Preferences.getBoolean(context.getString(R.string.pref_autoDictionaryAnalyze_key), context.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
+    ) {
+        addDictionaryLinks(context, renderResult, applied.fontColor, listeners.dictionaryListener_)
+    } else {
+        renderResult
+    }
+
+    // Pre-resolve progress-mark captions so the accessibility path, which
+    // TalkBack can hit repeatedly per row, doesn't run a DB query per read.
+    val progressMarkBits = data.versesAttributes.progressMarkBitsMap_[index]
+    val progressMarkCaptions: List<String?> = (0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT).map { presetId ->
+        if (progressMarkBits and (1 shl (AttributeView.PROGRESS_MARK_BITS_START + presetId)) == 0) {
+            null
+        } else {
+            App.services.storage.db.getProgressMarkByPresetId(presetId)?.let { progressMark ->
+                if (progressMark.caption.isNullOrEmpty()) {
+                    context.getString(AttributeView.getDefaultProgressMarkStringResource(presetId))
+                } else {
+                    progressMark.caption
+                }
+            }
+        }
+    }
+
+    return VerseItemComposeState(
+        render = render,
+        fontSizeDp = fontSizeDp,
+        verseNumberFontSizeDp = verseNumberFontSizeDp,
+        fontColor = applied.fontColor,
+        verseNumberColor = applied.verseNumberColor,
+        lineSpacingMult = applied.lineSpacingMult,
+        typeface = applied.fontFace,
+        fontBold = applied.fontBold,
+        attribute = AttributeState(
+            bookmarkCount = data.versesAttributes.bookmarkCountMap_[index],
+            noteCount = data.versesAttributes.noteCountMap_[index],
+            progressMarkBits = progressMarkBits,
+            hasMaps = data.versesAttributes.hasMapsMap_[index],
+            scale = attributeScale,
+            version = data.version_,
+            versionId = data.versionId_,
+            ari = ari,
+            attributeListener = listeners.attributeListener,
+            progressMarkCaptions = progressMarkCaptions,
+        ),
+        onClick = {
+            when (ui.verseSelectionMode) {
+                VersesController.VerseSelectionMode.none -> Unit
+                VersesController.VerseSelectionMode.singleClick -> {
+                    val position = currentPosition()
+                    if (position != -1) {
+                        listeners.selectedVersesListener.onVerseSingleClick(data.getVerse_1FromPosition(position))
+                    }
+                }
+                VersesController.VerseSelectionMode.multiple -> {
+                    val position = currentPosition()
+                    if (position != -1) {
+                        toggleChecked(position)
+                    }
+                }
+            }
+        },
+        onInlineLinkClick = { type, arif ->
+            listeners.inlineLinkSpanFactory_.create(type, arif).onClick(inlineLinkViewProvider())
+        },
+        onPinDropped = { presetId ->
+            val position = currentPosition()
+            if (position != -1) {
+                listeners.pinDropListener.onPinDropped(presetId, Ari.encodeWithBc(data.ari_bc_, data.getVerse_1FromPosition(position)))
+            }
+        },
+    )
+}
+
 @Composable
-private fun VerseItemComposeContent(
+internal fun VerseItemComposeContent(
     state: VerseItemComposeState,
     checked: Boolean,
     collapsed: Boolean,
@@ -302,7 +539,7 @@ private fun VerseItemComposeContent(
     }
 }
 
-private data class LineMetrics(
+internal data class LineMetrics(
     val lineHeightSp: Float,
     val rowExtraPaddingPx: Int,
     /**
@@ -317,30 +554,45 @@ private data class LineMetrics(
 private fun rememberLineMetrics(state: VerseItemComposeState): LineMetrics {
     val density = LocalDensity.current
     return remember(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, density.density) {
-        val paint = android.text.TextPaint().apply {
-            isAntiAlias = true
-            textSize = state.fontSizeDp * density.density
-            typeface = if (state.fontBold == android.graphics.Typeface.BOLD) {
-                android.graphics.Typeface.create(state.typeface ?: android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
-            } else {
-                state.typeface ?: android.graphics.Typeface.DEFAULT
-            }
-        }
-        val fm = paint.fontMetrics
-        val naturalLineHeightPx = fm.descent - fm.ascent + fm.leading
-        val targetLineHeightPx = naturalLineHeightPx * state.lineSpacingMult
-        val rowExtraPaddingPx = (naturalLineHeightPx * (state.lineSpacingMult - 1f) + 0.5f).toInt()
-        val glyphHeightPx = fm.descent - fm.ascent
-        val gutterTopPaddingPx = if (glyphHeightPx <= 0f) 0 else {
-            ((targetLineHeightPx - glyphHeightPx) * (-fm.ascent) / glyphHeightPx + 0.5f).toInt().coerceAtLeast(0)
-        }
-        LineMetrics(
-            // density.fontScale == 1f upstream → px ↔ sp == /density.
-            lineHeightSp = targetLineHeightPx / density.density,
-            rowExtraPaddingPx = rowExtraPaddingPx,
-            gutterTopPaddingPx = gutterTopPaddingPx,
-        )
+        computeLineMetrics(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, density.density)
     }
+}
+
+/**
+ * Derives Compose line metrics from Android font metrics so text laid out with
+ * `lineHeight` + `LineHeightStyle(Proportional, Trim.None)` matches a TextView
+ * using `setLineSpacing(0, lineSpacingMult)`. The caller composes under a
+ * density with `fontScale == 1f`, so px ↔ sp conversion is `/densityFactor`.
+ */
+internal fun computeLineMetrics(
+    typeface: android.graphics.Typeface?,
+    fontSizeDp: Float,
+    fontBold: Int,
+    lineSpacingMult: Float,
+    densityFactor: Float,
+): LineMetrics {
+    val paint = android.text.TextPaint().apply {
+        isAntiAlias = true
+        textSize = fontSizeDp * densityFactor
+        this.typeface = if (fontBold == android.graphics.Typeface.BOLD) {
+            android.graphics.Typeface.create(typeface ?: android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+        } else {
+            typeface ?: android.graphics.Typeface.DEFAULT
+        }
+    }
+    val fm = paint.fontMetrics
+    val naturalLineHeightPx = fm.descent - fm.ascent + fm.leading
+    val targetLineHeightPx = naturalLineHeightPx * lineSpacingMult
+    val rowExtraPaddingPx = (naturalLineHeightPx * (lineSpacingMult - 1f) + 0.5f).toInt()
+    val glyphHeightPx = fm.descent - fm.ascent
+    val gutterTopPaddingPx = if (glyphHeightPx <= 0f) 0 else {
+        ((targetLineHeightPx - glyphHeightPx) * (-fm.ascent) / glyphHeightPx + 0.5f).toInt().coerceAtLeast(0)
+    }
+    return LineMetrics(
+        lineHeightSp = targetLineHeightPx / densityFactor,
+        rowExtraPaddingPx = rowExtraPaddingPx,
+        gutterTopPaddingPx = gutterTopPaddingPx,
+    )
 }
 
 /**
@@ -367,20 +619,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
         state.typeface,
         state.fontBold,
     ) {
-        // Map Android's built-in Typeface singletons to Compose's stock
-        // FontFamilies. The stock families have italic and bold variants
-        // registered, so FontStyle.Italic / FontWeight.Bold resolve to the
-        // correct glyphs (or synthesise cleanly). A raw FontFamily(Typeface)
-        // wrapper only carries the regular variant and silently renders
-        // italic upright.
-        val tf = state.typeface
-        val fontFamily: FontFamily = when (tf) {
-            null, android.graphics.Typeface.DEFAULT -> FontFamily.Default
-            android.graphics.Typeface.SERIF -> FontFamily.Serif
-            android.graphics.Typeface.MONOSPACE -> FontFamily.Monospace
-            android.graphics.Typeface.SANS_SERIF -> FontFamily.SansSerif
-            else -> FontFamily(ComposeTypeface(tf))
-        }
+        val fontFamily = composeFontFamilyFor(state.typeface)
         TextStyle(
             color = textColor,
             fontSize = state.fontSizeDp.sp,
