@@ -13,9 +13,8 @@ class ExperimentalFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_experimental)
 
-        // The reader activity builds its verse content view (RecyclerView vs
-        // fully Compose) once at creation, so toggling this flag requires the
-        // activity to be restarted for it to take effect.
+        // The reader builds its verse content view once at creation, so this
+        // flag only takes effect after the activity is restarted.
         val prefUseComposeVerseItem = findPreference<CheckBoxPreference>(getString(R.string.pref_useComposeVerseItem_key))
         prefUseComposeVerseItem?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
             // do this after this method returns true

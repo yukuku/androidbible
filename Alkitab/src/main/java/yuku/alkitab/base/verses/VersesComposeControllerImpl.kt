@@ -94,11 +94,9 @@ private const val SCROLLBAR_FADE_DURATION_MS = 400
 private const val EMPTY_MESSAGE_TEXT_SIZE_DP = 14f
 
 /**
- * Host view for the fully Compose-based verse list (the Verse (Compose)
- * experimental setting). A plain [AbstractComposeView] whose content is
- * whatever [VersesComposeControllerImpl] is currently attached; the controller
- * owns all list state so it survives this view's composition being disposed
- * and recreated (e.g. while the reader relocates its toolbar).
+ * Host view for the fully Compose-based verse list. The attached
+ * [VersesComposeControllerImpl] owns all list state, so it survives this view's
+ * composition being disposed and recreated.
  */
 class VersesComposeView @JvmOverloads constructor(
     context: Context,
@@ -117,14 +115,11 @@ class VersesComposeView @JvmOverloads constructor(
     }
 
     /**
-     * This pane keeps the view id of the RecyclerView it replaces (the
-     * reader's inset listeners and layout assertions look the pane up by id),
-     * so a saved hierarchy state written by the RecyclerView implementation
-     * can arrive here under the same id after the Verse (Compose) setting
-     * changes mid-lifecycle (its restart-triggered `recreate()` saves the old
-     * hierarchy's state). Any state stored under this id is ignored instead
-     * of being force-cast: the reader restores its reading position itself,
-     * from the ari it keeps in the activity instance state.
+     * This pane shares its view id with the RecyclerView implementation, so a
+     * hierarchy state saved by that implementation can be restored into this
+     * view when the Verse (Compose) setting changes mid-lifecycle. Such state
+     * is dropped rather than force-cast; the reader restores its reading
+     * position itself, from the ari in the activity instance state.
      */
     override fun onRestoreInstanceState(state: Parcelable?) {
         super.onRestoreInstanceState(AbsSavedState.EMPTY_STATE)
@@ -138,18 +133,7 @@ class VersesComposeView @JvmOverloads constructor(
  *
  * The full controller contract is honored so `IsiActivity`, the split-view
  * manager, gestures, and audio playback drive both implementations
- * identically:
- * - scroll positions are anchored the same way the RecyclerView port anchors
- *   them (a verse "at the top" sits at the view's top edge, ignoring the
- *   scroll-past content padding, except for the very first item);
- * - user scrolls emit [VersesController.VerseScrollListener] callbacks with
- *   the same verse/pericope-block prop semantics, while controller-initiated
- *   snap scrolls stay silent (mirroring RecyclerView, where only drags,
- *   flings, and smooth scrolls produce scroll callbacks);
- * - offscreen item heights, which RecyclerView obtains by measuring a
- *   throwaway holder, are read from a cache of previously laid-out sizes, or
- *   obtained by snapping the item into view first and reading its laid-out
- *   size before applying the final offset in the same frame.
+ * identically.
  */
 class VersesComposeControllerImpl(
     private val composeHost: VersesComposeView,
@@ -189,8 +173,7 @@ class VersesComposeControllerImpl(
     private var paddingBottomPx by mutableIntStateOf(0)
 
     private var emptyMessageState by mutableStateOf<CharSequence?>(null)
-    // Matches the default color of EmptyableRecyclerView's Paint until
-    // setEmptyMessage supplies one.
+    // Default color until setEmptyMessage supplies one.
     private var emptyMessageColorState by mutableIntStateOf(0xff000000.toInt())
     private var scrollbarThumbState by mutableStateOf<Drawable?>(null)
 
@@ -198,24 +181,22 @@ class VersesComposeControllerImpl(
      * The data version most recently reflected by a composition. Scroll
      * commands wait on this before touching [listState], so an index computed
      * against fresh data is never applied while the list still shows the
-     * previous chapter (the LazyColumn equivalent of RecyclerView's
-     * pending-scroll-position-applied-on-next-layout behavior).
+     * previous chapter.
      */
     private val renderedDataVersion = mutableIntStateOf(0)
 
     /**
      * Non-zero while a controller-initiated snap scroll is running, so the
      * scroll-event emitter stays silent for it. Smooth scrolls (audio
-     * highlight) intentionally do not set this: their RecyclerView counterpart
-     * also emits scroll callbacks, which keeps the split panes following the
-     * audio verse.
+     * highlight) intentionally do not set this, so the split panes keep
+     * following the audio verse.
      */
     private var programmaticScrollDepth = 0
 
     /**
      * Laid-out item heights by position, filled as items pass through the
-     * viewport. Only valid for [cacheDataVersion]; used to estimate offscreen
-     * item heights where RecyclerView would measure a throwaway holder.
+     * viewport. Only valid for [cacheDataVersion]; used to estimate the height
+     * of offscreen items.
      */
     private val itemSizeCache = SparseIntArray()
     private var cacheDataVersion = -1
@@ -312,7 +293,7 @@ class VersesComposeControllerImpl(
     /**
      * Runs a scroll operation once the composition has caught up with the data
      * version current at call time, dropping it if the data has changed again
-     * by then (same guard as the RecyclerView implementation's posted scrolls).
+     * by then.
      */
     private fun launchScroll(programmatic: Boolean = true, block: suspend (data: VersesDataModel) -> Unit) {
         val vn = dataVersionNumber.get()
@@ -332,8 +313,7 @@ class VersesComposeControllerImpl(
     /**
      * Scroll offset that puts the item's top at the view's top edge (ignoring
      * the scroll-past top padding), except for the very first item which sits
-     * below the padding — the same anchoring RecyclerView achieves with its
-     * `paddingNegator`.
+     * below the padding.
      */
     private fun snapOffsetPx(position: Int): Int = if (position == 0) 0 else paddingTopPx
 
@@ -416,9 +396,9 @@ class VersesComposeControllerImpl(
                 combinedHeight += size
             }
             if (unknown) {
-                // Snap the block into view so its items get laid out, then
-                // read the real sizes; the final snap below lands in the same
-                // frame, so no intermediate position is ever rendered.
+                // Snap the block into view so its items get laid out and their
+                // real sizes can be read; the final snap below lands in the
+                // same frame, so no intermediate position is ever rendered.
                 listState.scrollToItem(blockStartPos, snapBase)
                 combinedHeight = 0
                 for (p in blockStartPos until versePos) {
@@ -604,11 +584,10 @@ class VersesComposeControllerImpl(
     }
 
     /**
-     * A negative dimension that is not MATCH_PARENT/WRAP_CONTENT would fall
-     * through every branch of `ViewGroup.getChildMeasureSpec` and measure the
-     * pane with an UNSPECIFIED (infinite) constraint — which a vertically
-     * scrollable LazyColumn rejects with an exception, where a RecyclerView
-     * would silently measure its whole content. Treat such values as 0.
+     * A negative dimension that is not MATCH_PARENT/WRAP_CONTENT falls through
+     * every branch of `ViewGroup.getChildMeasureSpec` and measures the pane
+     * with an UNSPECIFIED (infinite) constraint, which a vertically scrollable
+     * LazyColumn rejects with an exception. Treat such values as 0.
      */
     private fun coerceValidLayoutDimension(value: Int): Int = when {
         value >= 0 -> value
@@ -632,9 +611,8 @@ class VersesComposeControllerImpl(
     }
 
     override fun setAudioHighlight(verse_1: Int, color: Int) {
-        // Fast-path: this method is called every 100ms during playback
-        // (mirroring the service's position poll). Bailing out when nothing
-        // actually changed avoids restarting the highlight scroll.
+        // Called every 100ms during playback, so bail out when nothing changed
+        // to avoid restarting the highlight scroll.
         if (audioHighlightVerse1 == verse_1 && audioHighlightColorState == color) return
 
         audioHighlightVerse1 = verse_1
@@ -645,11 +623,7 @@ class VersesComposeControllerImpl(
         if (pos == -1) return
 
         // Smooth-scroll the highlighted verse so its top sits at the upper 10%
-        // of the viewport — keeps a thin slice of the previous verse visible
-        // for context while leaving room for upcoming verses below. Skipped
-        // when the row is already fully visible inside the viewport: yanking
-        // the page when the verse is sitting right in front of the user is
-        // more distracting than helpful.
+        // of the viewport, unless the row is already fully visible.
         launchScroll(programmatic = false) { data ->
             if (pos >= data.itemCount) return@launchScroll
 
@@ -668,9 +642,8 @@ class VersesComposeControllerImpl(
             } else {
                 listState.animateScrollToItem(pos, paddingTopPx)
                 val landed = visibleItemSizePx(pos) ?: return@launchScroll
-                // The item's top now sits at the view's top edge; nudge it
-                // down to the 10% mark (bounded by its height so a very short
-                // viewport can't scroll it back out).
+                // The item's top now sits at the view's top edge; nudge it down
+                // to the 10% mark.
                 if (landed > 0) {
                     val topVisual = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == pos }
                         ?.let { it.offset + paddingTopPx }
@@ -685,9 +658,9 @@ class VersesComposeControllerImpl(
     // --- Scroll event emission (split-pane sync) ---
 
     /**
-     * Mirror of the RecyclerView scroll listener: reports the first visible
-     * verse (or the pericope-header block above it, treated as one anchor
-     * unit) and the fraction of its extent scrolled past the view's top edge.
+     * Reports the first visible verse (or the pericope-header block above it,
+     * treated as one anchor unit) and the fraction of its extent scrolled past
+     * the view's top edge.
      */
     private fun emitVerseScrollEvents() {
         val data = dataWithVersion.data
@@ -718,10 +691,9 @@ class VersesComposeControllerImpl(
         if (verseOrPericope > 0) {
             listeners.verseScrollListener.onVerseScroll(false, verseOrPericope, prop)
         } else {
-            // Contiguous pericope headers above a verse are reported
-            // as a single anchor unit so panes whose versions have
-            // different pericope counts/heights stay aligned across
-            // the whole block instead of bumping at each header.
+            // Contiguous pericope headers above a verse are reported as a
+            // single anchor unit, so panes whose versions have different
+            // pericope counts stay aligned across the whole block.
             var blockStartPos = position
             while (blockStartPos > 0 &&
                 data.getItemViewType(blockStartPos - 1) == ItemType.pericope
@@ -773,9 +745,8 @@ class VersesComposeControllerImpl(
             renderedDataVersion.intValue = dataW.vn
         }
 
-        // Record laid-out item sizes for offscreen-height estimates. Keyed by
-        // the rendered data version so sizes from a previous chapter never
-        // leak into the new one.
+        // Record laid-out item sizes for offscreen-height estimates, keyed by
+        // data version so sizes from another chapter never leak in.
         LaunchedEffect(Unit) {
             snapshotFlow { listState.layoutInfo.visibleItemsInfo }.collect { visible ->
                 val vn = renderedDataVersion.intValue
@@ -804,8 +775,8 @@ class VersesComposeControllerImpl(
                 }
         }
 
-        // Strip fontScale from the density: verse text uses dp sizing (not
-        // sp), so the system font scale must not multiply on top.
+        // Verse text uses dp sizing, so the system font scale must not
+        // multiply on top of it.
         val baseDensity = LocalDensity.current
         val unscaledDensity = remember(baseDensity.density) {
             Density(density = baseDensity.density, fontScale = 1f)
@@ -917,9 +888,8 @@ class VersesComposeControllerImpl(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                // TalkBack reads the row as one unit (verse number, text, and
-                // attribute summaries), matching the View implementations, and
-                // can activate it like the legacy row's View click listener.
+                // TalkBack reads the row as one unit: verse number, text, and
+                // attribute summaries.
                 .clearAndSetSemantics {
                     contentDescription = description
                     onClick {
@@ -939,8 +909,7 @@ class VersesComposeControllerImpl(
                 audioHighlightColor = audioColor,
                 attentionStart = attentionStart,
                 dragHover = dragHover.value,
-                // The overlay stops drawing by itself once the flash has
-                // decayed; there is no per-row state to reset here.
+                // The overlay stops drawing by itself once the flash decays.
                 onAttentionDone = {},
             )
         }
@@ -1079,8 +1048,7 @@ internal fun spannedToAnnotatedString(spanned: Spanned): AnnotatedString = build
 
 /**
  * Builds the "(Matt. 1:1; Mark 1:2; ...)" parallels line with each reference
- * tappable, mirroring the span-based rendering of the RecyclerView pericope
- * holder including its forced line breaks for certain parallel counts.
+ * tappable.
  */
 internal fun buildParallelsAnnotatedString(
     parallels: Array<String>,
@@ -1107,10 +1075,8 @@ internal fun buildParallelsAnnotatedString(
 }
 
 /**
- * The legacy [yuku.alkitab.base.widget.ParallelSpan] is a plain ClickableSpan,
- * so parallels render underlined (in the link color, which the pericope text
- * appearance pins to the font color). The underline is carried here by the
- * link's own styles.
+ * Parallels render underlined, like the ClickableSpan-based
+ * [yuku.alkitab.base.widget.ParallelSpan].
  */
 private val parallelLinkStyles = TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline))
 
@@ -1152,11 +1118,10 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendParallelCompo
 }
 
 /**
- * Fading overlay scrollbar for the verse list, drawn with the same thumb
- * drawable the reader picks for the RecyclerView path (light/dark variants by
- * reading-background luminance). Thumb size and position are estimated from
- * the average laid-out item height — the standard approach for lazy lists,
- * where total content height is unknowable without laying everything out.
+ * Fading overlay scrollbar for the verse list, drawn with the thumb drawable
+ * the reader supplies. Thumb size and position are estimated from the average
+ * laid-out item height, since the total content height of a lazy list is
+ * unknowable without laying everything out.
  */
 @Composable
 private fun Modifier.verseListScrollbar(listState: LazyListState, thumb: Drawable?): Modifier {

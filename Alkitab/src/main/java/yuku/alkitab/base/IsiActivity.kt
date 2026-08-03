@@ -749,13 +749,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     /**
      * Builds the verses controller for one split pane. With the Verse
-     * (Compose) experimental setting enabled, the [yuku.alkitab.base.verses.EmptyableRecyclerView]
-     * placed by the layout is swapped in place for a [VersesComposeView] —
-     * keeping the same view id, child index, and layout params so the
-     * split-view manager, the inset listeners, and the DEBUG layout
-     * assertions all keep operating on the pane view — and the fully
-     * Compose-based controller drives it. Otherwise the RecyclerView-based
-     * controller is used.
+     * (Compose) experimental setting enabled, the pane's RecyclerView is
+     * swapped in place for a [VersesComposeView], keeping the same view id,
+     * child index, and layout params so the split-view manager, the inset
+     * listeners, and the DEBUG layout assertions keep operating on the pane.
      */
     private fun createVersesController(
         useComposeVerses: Boolean,

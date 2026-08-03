@@ -271,10 +271,7 @@ internal fun verseItemContentDescription(context: Context, s: VerseItemComposeSt
 /**
  * Runs the rendered verse text through the dictionary app's analyzer content
  * provider and wraps every recognized word in an underlined, tappable
- * [LinkAnnotation] that opens the dictionary — the Compose counterpart of the
- * legacy row's [yuku.alkitab.base.widget.DictionaryLinkSpan] decoration
- * (a ClickableSpan rendered underlined in the link color, which
- * `Appearances.applyTextAppearance` pins to the reading font color).
+ * [LinkAnnotation] that opens the dictionary.
  *
  * Returns [render] unchanged when the provider is unavailable, reports
  * nothing, or the query fails.
@@ -361,7 +358,7 @@ fun attributeViewScale(fontSizeDp: Float) = when {
 /**
  * Builds the immutable per-row state consumed by [VerseItemComposeContent].
  * Shared by the RecyclerView-hosted [VerseItemComposeView] rows and the fully
- * Compose verse list so both paths render identically.
+ * Compose verse list, so both paths render identically.
  *
  * @param currentPosition resolves the row's position at interaction time
  * (a RecyclerView rebind can move a row, so the position must not be captured
@@ -419,10 +416,8 @@ fun buildVerseItemComposeState(
         renderResult
     }
 
-    // Pre-resolve progress-mark captions at build time so the accessibility
-    // path — which TalkBack can hit repeatedly per row — doesn't run a DB
-    // query on every read. Mirrors the values the legacy
-    // VerseItem.getContentDescription resolves inline.
+    // Pre-resolve progress-mark captions so the accessibility path, which
+    // TalkBack can hit repeatedly per row, doesn't run a DB query per read.
     val progressMarkBits = data.versesAttributes.progressMarkBitsMap_[index]
     val progressMarkCaptions: List<String?> = (0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT).map { presetId ->
         if (progressMarkBits and (1 shl (AttributeView.PROGRESS_MARK_BITS_START + presetId)) == 0) {
@@ -477,8 +472,6 @@ fun buildVerseItemComposeState(
             }
         },
         onInlineLinkClick = { type, arif ->
-            // Reuse the same factory as the legacy path so footnote / xref
-            // dialogs etc. open with identical semantics.
             listeners.inlineLinkSpanFactory_.create(type, arif).onClick(inlineLinkViewProvider())
         },
         onPinDropped = { presetId ->
