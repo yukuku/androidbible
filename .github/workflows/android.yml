@@ -36,7 +36,7 @@ jobs:
   # Cloudflare Worker (static assets) and comments workers.dev download
   # links on the PR. Each upload is a worker *version* with its own
   # immutable preview URL, so builds never overwrite each other. See
-  # cloudflare/pr-preview/README.md for the one-time Cloudflare/secrets
+  # tools/cloudflare/pr-preview/README.md for the one-time Cloudflare/secrets
   # setup.
   pr-apk-preview:
     # Needs both the signed APKs and the Cloudflare secrets, neither of
@@ -66,7 +66,7 @@ jobs:
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set; skipping APK preview deploy (see cloudflare/pr-preview/README.md)."
+            echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set; skipping APK preview deploy (see tools/cloudflare/pr-preview/README.md)."
           fi
 
       # Downloads the preview-only artifact (APKs + metadata, no AABs or
@@ -91,12 +91,12 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           BRANCH: ${{ github.event.pull_request.head.ref }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: python3 cloudflare/pr-preview/make_dist.py
+        run: python3 tools/cloudflare/pr-preview/make_dist.py
 
       - name: Deploy to Cloudflare Workers
         if: steps.cf.outputs.enabled == 'true'
         id: deploy
-        working-directory: cloudflare/pr-preview
+        working-directory: tools/cloudflare/pr-preview
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -126,7 +126,7 @@ jobs:
         run: |
           set -euo pipefail
           marker='<!-- alkitab-pr-apk-preview -->'
-          body=$(python3 cloudflare/pr-preview/render_comment.py)
+          body=$(python3 tools/cloudflare/pr-preview/render_comment.py)
           existing=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
             --jq "[.[] | select(.body | contains(\"$marker\"))][0].id // empty")
           if [ -n "$existing" ]; then

@@ -54,7 +54,7 @@ GitHub Actions workflow (`.github/workflows/android.yml`):
 - Ubuntu latest, JDK 17 (Zulu)
 - `plain-debug` job: runs `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, `assemblePlainDebug`, `bundlePlainDebug`
 - `signed-release` job (pushes to `develop` and same-repo PRs): builds and signs all production flavors using the proprietary overlay repo, uploads per-flavor artifacts, and on `develop` pushes publishes a GitHub pre-release. On PRs it also uploads a `pr-preview-apks` artifact (APKs and metadata only — no AABs or mapping files)
-- `pr-apk-preview` job (same-repo PRs only): publishes those signed release APKs to a Cloudflare Worker with static assets and comments immutable `*.workers.dev` download links on the PR. Skips cleanly when the `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` repo secrets are absent. Setup and details: `cloudflare/pr-preview/README.md`
+- `pr-apk-preview` job (same-repo PRs only): publishes those signed release APKs to a Cloudflare Worker with static assets and comments immutable `*.workers.dev` download links on the PR. Skips cleanly when the `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` repo secrets are absent. Setup and details: `tools/cloudflare/pr-preview/README.md`
 
 ## Release Build
 
