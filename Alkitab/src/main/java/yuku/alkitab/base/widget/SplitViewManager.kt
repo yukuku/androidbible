@@ -5,6 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -20,6 +23,20 @@ import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 
 private const val TAG = "SplitViewManager"
+
+/**
+ * Master-pane heights that keep the stacked split's handle clear of the
+ * system's mandatory gesture areas at the window top and bottom.
+ *
+ * Touches starting inside those areas are claimed by the system (home / app
+ * switch, notification shade). Unlike the back-gesture areas along the left
+ * and right edges, they cannot be excluded, so a handle parked there could be
+ * pressed but never dragged back.
+ */
+internal fun masterHeightRange(rootHeight: Int, handleThickness: Int, mandatoryInsetTop: Int, mandatoryInsetBottom: Int): IntRange {
+    val max = (rootHeight - handleThickness - mandatoryInsetBottom).coerceAtLeast(0)
+    return mandatoryInsetTop.coerceAtMost(max)..max
+}
 
 /**
  * Container for the secondary ("split 1") version metadata. Kept as a single
@@ -113,9 +130,9 @@ class SplitViewManager(
         override fun onHandleDragMoveY(dySinceLast: Float, dySinceStart: Float) {
             val newH = (first + dySinceStart).toInt()
             val maxH = root - handle
-            val height = if (newH < 0) 0 else if (newH > maxH) maxH else newH
+            val height = newH.coerceIn(masterHeightRange(root, handle))
             host.lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, height)
-            prop = height.toFloat() / maxH
+            prop = if (maxH > 0) height.toFloat() / maxH else 0f
         }
 
         override fun onHandleDragStop() {
@@ -320,7 +337,8 @@ class SplitViewManager(
             // the split is restored during activity creation). A negative pane
             // height measures as an UNSPECIFIED (infinite) constraint; the
             // global-layout listener redistributes the real sizes later.
-            val masterHeight = ((totalHeight - splitHandleThickness) * prop).toInt().coerceAtLeast(0)
+            val masterHeight = ((totalHeight - splitHandleThickness) * prop).toInt()
+                .coerceIn(masterHeightRange(totalHeight, splitHandleThickness))
 
             run {
                 // divide the screen space
@@ -353,6 +371,13 @@ class SplitViewManager(
                 height = ViewGroup.LayoutParams.MATCH_PARENT
             }
         }
+    }
+
+    private fun masterHeightRange(rootHeight: Int, handleThickness: Int): IntRange {
+        val insets = ViewCompat.getRootWindowInsets(host.splitRoot)
+            ?.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures())
+            ?: Insets.NONE
+        return masterHeightRange(rootHeight, handleThickness, insets.top, insets.bottom)
     }
 
     private fun closeSplitDisplay() {

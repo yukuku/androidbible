@@ -1,6 +1,7 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import static android.view.MotionEvent.ACTION_CANCEL;
@@ -8,6 +9,9 @@ import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_MOVE;
 import static android.view.MotionEvent.ACTION_UP;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.view.ViewCompat;
+import java.util.Collections;
+import java.util.List;
 
 public class SplitHandleButton extends AppCompatButton {
     public interface SplitHandleButtonListener {
@@ -50,6 +54,22 @@ public class SplitHandleButton extends AppCompatButton {
 
     public void setOrientation(final Orientation orientation) {
         this.orientation = orientation;
+    }
+
+    @Override
+    protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        // A handle parked against a screen edge overlaps the system's back-gesture
+        // area, where a drag that starts on the bar would be swallowed by the
+        // system instead of resizing the panes. Claiming the bar's own bounds
+        // keeps such a drag with us. The system caps exclusions at 200dp per
+        // edge and honors the rects nearest the bottom, so on a full-height bar
+        // only its lower part is guaranteed. The mandatory gesture area at the
+        // window bottom cannot be claimed at all; the split manager instead
+        // keeps the bar out of it.
+        final List<Rect> exclusion = Collections.singletonList(new Rect(0, 0, right - left, bottom - top));
+        ViewCompat.setSystemGestureExclusionRects(this, exclusion);
     }
 
     @Override
