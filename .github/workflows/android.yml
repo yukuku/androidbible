@@ -32,6 +32,109 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemblePlainDebug bundlePlainDebug
 
+  # Publishes each PR's signed release APKs (all production flavors) to a
+  # Cloudflare Worker (static assets) and comments workers.dev download
+  # links on the PR. Each upload is a worker *version* with its own
+  # immutable preview URL, so builds never overwrite each other. See the
+  # "PR APK previews" section of docs/build-system.md for the one-time
+  # Cloudflare/secrets setup.
+  pr-apk-preview:
+    # Needs both the signed APKs and the Cloudflare secrets, neither of
+    # which exists for fork PRs, so this runs only for PRs from branches
+    # inside this same repo.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    needs: signed-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # For posting/updating the preview-link comment on the PR.
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # Secrets can't be read in a job-level `if`, so probe them here and
+      # let every later step key off the result. This keeps CI green on
+      # repos/forks where the Cloudflare secrets are not configured.
+      - name: Check Cloudflare secrets
+        id: cf
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set; skipping APK preview deploy (see docs/build-system.md)."
+          fi
+
+      # Downloads the preview-only artifact (APKs + metadata, no AABs or
+      # mapping files) staged by signed-release. Files land as
+      # <flavor>/release/*.apk, which is the layout make_dist.py expects.
+      - name: Download release APKs
+        if: steps.cf.outputs.enabled == 'true'
+        uses: actions/download-artifact@v7
+        with:
+          name: pr-preview-apks
+          path: apk
+
+      # PR title goes through `env` (not string interpolation into the
+      # script) so a crafted title can't inject shell code.
+      - name: Stage worker assets
+        if: steps.cf.outputs.enabled == 'true'
+        env:
+          APK_DIR: apk
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python3 tools/cloudflare/pr-preview/make_dist.py
+
+      - name: Deploy to Cloudflare Workers
+        if: steps.cf.outputs.enabled == 'true'
+        id: deploy
+        working-directory: tools/cloudflare/pr-preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -o pipefail
+          if ! npx --yes wrangler@4 versions upload 2>&1 | tee upload.log; then
+            # First run on a fresh account: `versions upload` cannot create
+            # the worker, but `deploy` can. Bootstrap once, then retry so
+            # this build still gets a proper immutable preview URL.
+            npx --yes wrangler@4 deploy
+            npx --yes wrangler@4 versions upload 2>&1 | tee upload.log
+          fi
+          url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' upload.log | head -n1)
+          if [ -z "$url" ]; then
+            echo "::error::No workers.dev preview URL found in wrangler output"
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Comment preview links on PR
+        if: steps.cf.outputs.enabled == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          set -euo pipefail
+          marker='<!-- alkitab-pr-apk-preview -->'
+          body=$(python3 tools/cloudflare/pr-preview/render_comment.py)
+          existing=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq "[.[] | select(.body | contains(\"$marker\"))][0].id // empty")
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$existing" -f body="$body"
+          else
+            gh api -X POST "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$body"
+          fi
+
   signed-release:
     # GitHub does not expose repository secrets to PRs from forks (by design),
     # so signed builds only run for: pushes to develop, and PRs from branches
@@ -139,6 +242,21 @@ jobs:
             Alkitab/build/outputs/apk/sabda_alkitab/release/*.apk
             Alkitab/build/outputs/bundle/sabda_alkitabRelease/*.aab
             Alkitab/build/outputs/mapping/sabda_alkitabRelease/mapping.txt
+
+      # Handoff to the pr-apk-preview job. Deliberately APKs + metadata
+      # only: the AABs and mapping files must not end up on a public
+      # preview URL. Short retention — the per-flavor artifacts above
+      # already keep these same APKs for 14 days.
+      - name: Upload APKs for PR preview
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-preview-apks
+          if-no-files-found: error
+          retention-days: 1
+          path: |
+            Alkitab/build/outputs/apk/*/release/*.apk
+            Alkitab/build/outputs/apk/*/release/output-metadata.json
 
       - name: Create GitHub Pre-Release
         # Only on direct pushes to develop. PRs (even from same-repo branches)
