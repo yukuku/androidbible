@@ -5,7 +5,7 @@
 **BRICE:** B=3 R=3 I=1 C=2 E=5 → **2.8**
 **Phase:** 4 — Long-term / Major Refactors
 
-**Status:** App-side done (2026-07-13). Backend (`alkitab-host` redirect branching) and authoring (`kidung-data` `@doc` txt mode / `OutputJson`) are tracked separately and are **not** part of this app-side change — see `docs/features/portable-songs/design.md` §7/§8 and its "Out of scope" note.
+**Status:** App-side done (2026-07-13). Backend redirect branching and authoring (`kidung-data` `@doc` txt mode / `OutputJson`) are tracked separately and are **not** part of this app-side change — see `docs/features/portable-songs/design.md` §7/§8 and its "Out of scope" note.
 
 **Shipped, app-side (`androidbible`):**
 - `Alkitab/src/main/java/yuku/alkitab/songs/newdoc/` — the canonical `SongDocument` model (`kotlinx.serialization`, custom `KSerializer`s for the `Line`/`VerseLine`/`Block` JSON-shape unions), `LegacyParcelDecoder` (pure-JVM, no `android.os.Parcel`, replicates the marshalled wire format including Android-13 length-prefix auto-detection), `LegacySongConverter`, `SongDocumentRenderer` (WebView HTML), `SongDocumentText` (plain-text copy/share), `SongDocumentSearch`.
