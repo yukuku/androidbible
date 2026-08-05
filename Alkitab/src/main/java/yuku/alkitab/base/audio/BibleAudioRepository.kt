@@ -58,6 +58,16 @@ object BibleAudioRepository {
         val template = set.timingUrlTemplate ?: return null
         val url = expandTemplate(template, bookId, chapter_1)
         val body = http.getBody(url) ?: return null
+        parseTiming(body, url)?.let { return it }
+        // The unparseable bytes may be a corrupted entry served from the HTTP
+        // disk cache; fetch once past the cache — replacing the entry — and
+        // give the fresh payload a parse.
+        AppLog.w(TAG, "timing did not parse for $url; refetching past the HTTP cache")
+        val fresh = http.getBodyRevalidating(url) ?: return null
+        return parseTiming(fresh, url)
+    }
+
+    private fun parseTiming(body: String, url: String): ChapterTiming? {
         return try {
             json.decodeFromString(ChapterTiming.serializer(), body)
         } catch (e: SerializationException) {

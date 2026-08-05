@@ -154,7 +154,7 @@ Caching: `ETag` + `Cache-Control: public, max-age=604800`.
 | `200` with `verses: []` | Play without verse highlight; disable verse-skip |
 | `404` on `/audio/file/…` | Error icon on the bar's play button; tap retries |
 | `502` / `503` with `Retry-After` | Treat as temporarily unavailable; no retry loop (only the play button's explicit tap-to-retry re-queries) |
-| Network or parse failure | Empty set list; icon stays hidden rather than showing a dead button |
+| Network or parse failure | Empty set list; icon stays hidden rather than showing a dead button. A parse failure refetches once with `no-cache` first, in case the corrupt bytes were a cached entry |
 
 The app ships **no bundled fallback**. Per-version availability can't be usefully
 baked into the APK, so these endpoints must be live in production before the
