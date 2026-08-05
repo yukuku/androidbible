@@ -402,12 +402,10 @@
     <string name="maps_could_not_open">Не удалось открыть приложение Bible Maps.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Закрыть панель аудио</string>
-    <string name="audio_bar_next_chapter">Следующая глава</string>
     <string name="audio_bar_next_verse">Следующий стих</string>
     <string name="audio_bar_pause">Пауза</string>
     <string name="audio_bar_pick_source_title">Воспроизвести аудио из</string>
     <string name="audio_bar_play">Воспроизвести</string>
-    <string name="audio_bar_prev_chapter">Предыдущая глава</string>
     <string name="audio_bar_prev_verse">Предыдущий стих</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Скорость воспроизведения</string>

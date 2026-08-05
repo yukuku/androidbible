@@ -481,8 +481,6 @@
 	<string name="audio_bar_play">Play</string>
 	<string name="audio_bar_pause">Pause</string>
 	<string name="audio_bar_close">Close audio bar</string>
-	<string name="audio_bar_prev_chapter">Previous chapter</string>
-	<string name="audio_bar_next_chapter">Next chapter</string>
 	<string name="audio_bar_prev_verse">Previous verse</string>
 	<string name="audio_bar_next_verse">Next verse</string>
 	<string name="audio_bar_speed_format">%1$s×</string>
@@ -490,6 +488,7 @@
 	<string name="audio_bar_speed_sheet_title">Playback speed</string>
 	<string name="audio_bar_set_sheet_title">Recording</string>
 	<string name="audio_bar_set_not_available_for_book">Not available for this book</string>
+	<string name="audio_bar_error_retry">Could not load audio. Tap to retry</string>
 	<string name="audio_play_from_verse">Play audio from this verse</string>
 
 </resources>

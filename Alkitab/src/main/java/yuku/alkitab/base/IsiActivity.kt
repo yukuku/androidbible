@@ -92,7 +92,6 @@ import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.audio.AudioBarController
 import yuku.alkitab.base.audio.AudioSetSelections
 import yuku.alkitab.base.audio.AudioSetsRepository
-import yuku.alkitab.base.audio.BibleNeighborResolver
 import yuku.alkitab.base.audio.ui.AudioHighlightColor
 import yuku.alkitab.base.audio.ui.AudioSourceOption
 import yuku.alkitab.base.util.Jumper
@@ -819,20 +818,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
         }
 
-        override fun audioNeighborChapter(versionId: String, direction: Int): Pair<Book, Int>? {
+        override fun audioVersionShortName(versionId: String): String? {
             val s1 = activeSplit1
-            val version = when {
-                versionId == activeSplit0.versionId -> activeSplit0.version
-                s1 != null && versionId == s1.versionId -> s1.version
-                else -> return null
+            return when {
+                versionId == activeSplit0.versionId -> activeSplit0.version.shortName
+                s1 != null && versionId == s1.versionId -> s1.version.shortName
+                else -> null
             }
-            // chapter_1 belongs to split0's reader pane; resolve neighbor against that book id even when audio runs on split1.
-            return BibleNeighborResolver.neighbor(
-                version,
-                activeSplit0.book.bookId,
-                chapter_1,
-                direction,
-            )
         }
 
         override fun audioDisplayChapter(book: Book, chapter_1: Int) {

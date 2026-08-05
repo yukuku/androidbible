@@ -402,12 +402,10 @@
     <string name="maps_could_not_open">İncil Haritaları uygulaması açılamıyor.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Ses çubuğunu kapat</string>
-    <string name="audio_bar_next_chapter">Sonraki bölüm</string>
     <string name="audio_bar_next_verse">Sonraki ayet</string>
     <string name="audio_bar_pause">Durdur</string>
     <string name="audio_bar_pick_source_title">Sesi şuradan oynat</string>
     <string name="audio_bar_play">Oynat</string>
-    <string name="audio_bar_prev_chapter">Önceki bölüm</string>
     <string name="audio_bar_prev_verse">Önceki ayet</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Oynatma hızı</string>

@@ -396,12 +396,10 @@
     <string name="maps_could_not_open">Kon nie die Bybel Kaarte program oopmaak nie.</string>
     <!-- Notification channels -->
     <string name="audio_bar_close">Maak oudio-balk toe</string>
-    <string name="audio_bar_next_chapter">Volgende hoofstuk</string>
     <string name="audio_bar_next_verse">Volgende vers</string>
     <string name="audio_bar_pause">Wag</string>
     <string name="audio_bar_pick_source_title">Speel oudio vanaf</string>
     <string name="audio_bar_play">Speel</string>
-    <string name="audio_bar_prev_chapter">Vorige hoofstuk</string>
     <string name="audio_bar_prev_verse">Vorige vers</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Speelspoed</string>

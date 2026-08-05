@@ -395,12 +395,10 @@
     <string name="maps_could_not_open">未能開啟聖經地圖程式。</string>
     <!-- Notification channels -->
     <string name="audio_bar_close">關閉音訊列</string>
-    <string name="audio_bar_next_chapter">下一章</string>
     <string name="audio_bar_next_verse">下一節</string>
     <string name="audio_bar_pause">暫停</string>
     <string name="audio_bar_pick_source_title">播放音訊來源</string>
     <string name="audio_bar_play">播放</string>
-    <string name="audio_bar_prev_chapter">上一章</string>
     <string name="audio_bar_prev_verse">上一節</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">播放速度</string>

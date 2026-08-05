@@ -398,12 +398,10 @@
     <string name="maps_could_not_open">Nelze otevřít aplikaci Bible Maps.</string>
     <!-- Notification channels -->
     <string name="audio_bar_close">Zavřít zvukovou lištu</string>
-    <string name="audio_bar_next_chapter">Následující kapitola</string>
     <string name="audio_bar_next_verse">Následující verš</string>
     <string name="audio_bar_pause">Pozastavit</string>
     <string name="audio_bar_pick_source_title">Přehrát zvuk z</string>
     <string name="audio_bar_play">Přehrát</string>
-    <string name="audio_bar_prev_chapter">Předchozí kapitola</string>
     <string name="audio_bar_prev_verse">Předchozí verš</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Rychlost přehrávání</string>

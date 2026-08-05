@@ -110,6 +110,16 @@ object AudioSetsRepository {
      */
     fun cachedSetsFor(versionId: String): AudioSets? = cache[versionId]
 
+    /**
+     * Drops the cached answer for [versionId] so the next [setsFor] queries
+     * again. Used by the audio bar's explicitly user-initiated retry after a
+     * load error — the one place a cached negative result gets re-tested;
+     * everything else keeps the no-retry-loop behavior.
+     */
+    fun invalidate(versionId: String) {
+        cache.remove(versionId)
+    }
+
     private suspend fun fetchSets(versionId: String): AudioSets {
         val presetName = presetNameResolver.presetNameFor(versionId)
             ?: return emptySets("")

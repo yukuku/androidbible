@@ -397,12 +397,10 @@
     <string name="maps_could_not_open">သမ္မာကျမ်းစာမြေပုံ အက်ပ်ကို ဖွင့်လို့မရပါ။</string>
     <!-- Notification channels -->
     <string name="audio_bar_close">အသံဘားကို ပိတ်ရန်</string>
-    <string name="audio_bar_next_chapter">နောက်အခန်းကြီး</string>
     <string name="audio_bar_next_verse">နောက်ကျမ်းပိုဒ်</string>
     <string name="audio_bar_pause">ခေတ္တရပ်ဆိုင်းရန်</string>
     <string name="audio_bar_pick_source_title">အသံဖွင့်ရန် ရင်းမြစ်</string>
     <string name="audio_bar_play">ဖွင့်ရန်</string>
-    <string name="audio_bar_prev_chapter">ယခင်အခန်းကြီး</string>
     <string name="audio_bar_prev_verse">ယခင်ကျမ်းပိုဒ်</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">ဖွင့်သည့် အမြန်နှုန်း</string>

@@ -8,19 +8,15 @@ import yuku.alkitab.model.Version
  * Pure-function helper that walks a [Version]'s book list to resolve the
  * chapter immediately before or after the given (book, chapter_1) pair.
  *
- * Used by [BibleAudioService.skipChapter] when the user taps a chapter-skip
- * button — including from places that have no [yuku.alkitab.base.IsiActivity]
- * available (lock-screen notification, Bluetooth media buttons, Android Auto).
+ * Used by [BibleAudioService.skipChapter] for chapter skips issued through
+ * the system transport controls (lock-screen notification, Bluetooth media
+ * buttons, Android Auto) and for end-of-chapter auto-advance — none of which
+ * can rely on a [yuku.alkitab.base.IsiActivity] being alive.
  *
  * Returns `null` at the boundaries of the Bible (i.e. when there is no
  * neighbor in the requested direction). The caller is expected to no-op in
- * that case, matching the in-app audio bar's "invisible-not-gone" pattern at
- * Genesis 1 / Revelation 22.
- *
- * Mirrors the activity-side `audioNeighborChapter` logic in
- * [yuku.alkitab.base.IsiActivity.audioNeighborChapter]. Kept separate so it
- * can be unit-tested without Android, and so the service does not depend on
- * an activity callback when navigating from the notification.
+ * that case. Kept free of Android dependencies so it can be unit-tested
+ * directly.
  */
 object BibleNeighborResolver {
     /**

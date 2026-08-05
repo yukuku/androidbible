@@ -431,8 +431,6 @@
     <string name="audio_bar_play">Putar</string>
     <string name="audio_bar_pause">Jeda</string>
     <string name="audio_bar_close">Tutup bilah audio</string>
-    <string name="audio_bar_prev_chapter">Pasal sebelumnya</string>
-    <string name="audio_bar_next_chapter">Pasal berikutnya</string>
     <string name="audio_bar_prev_verse">Ayat sebelumnya</string>
     <string name="audio_bar_next_verse">Ayat berikutnya</string>
     <string name="audio_bar_pick_source_title">Putar audio dari</string>

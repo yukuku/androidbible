@@ -20,17 +20,21 @@ import androidx.compose.ui.unit.dp
 import yuku.alkitab.debug.R
 
 /**
- * Recording picker for versions with more than one audio set — the same
- * pattern and placement as [SpeedBottomSheet]. Single selection; sets not
- * covering the current book are listed but disabled, with the reason shown,
- * so the list doesn't appear to change size as the user moves through the
- * Bible.
+ * Recording picker — the same pattern and placement as [SpeedBottomSheet].
+ * Single selection across the whole sheet; sets not covering the current book
+ * are listed but disabled, with the reason shown, so the list doesn't appear
+ * to change size as the user moves through the Bible.
+ *
+ * In split view with audio on both sides, one group is shown per version
+ * (headed by the version's short name), and picking a row from the other
+ * version's group moves the audio source to that version as well as selecting
+ * the recording.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioSetBottomSheet(
-    options: List<AudioSetOption>,
-    onSelect: (audioId: String) -> Unit,
+    groups: List<AudioSetGroup>,
+    onSelect: (versionId: String, audioId: String) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -48,8 +52,19 @@ fun AudioSetBottomSheet(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 4.dp),
             )
-            options.forEach { option ->
-                AudioSetRow(option = option, onSelect = onSelect)
+            groups.forEach { group ->
+                // A single group needs no header — the version is implied.
+                if (groups.size > 1) {
+                    Text(
+                        text = group.versionName,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 2.dp),
+                    )
+                }
+                group.options.forEach { option ->
+                    AudioSetRow(option = option, onSelect = { onSelect(group.versionId, option.audioId) })
+                }
             }
         }
     }
@@ -58,13 +73,13 @@ fun AudioSetBottomSheet(
 @Composable
 private fun AudioSetRow(
     option: AudioSetOption,
-    onSelect: (audioId: String) -> Unit,
+    onSelect: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = option.coversCurrentBook) { onSelect(option.audioId) }
+            .clickable(enabled = option.coversCurrentBook, onClick = onSelect)
             .padding(vertical = 8.dp)
             .alpha(if (option.coversCurrentBook) 1f else 0.5f),
     ) {

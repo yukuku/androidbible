@@ -23,6 +23,7 @@ import yuku.alkitab.base.audio.model.AudioSet
 import yuku.alkitab.base.audio.ui.AudioBar
 import yuku.alkitab.base.audio.ui.AudioBarCommand
 import yuku.alkitab.base.audio.ui.AudioBarUiState
+import yuku.alkitab.base.audio.ui.AudioSetGroup
 import yuku.alkitab.base.audio.ui.AudioSetOption
 import yuku.alkitab.base.audio.ui.AudioSourceOption
 import yuku.alkitab.base.util.AppLog
@@ -76,8 +77,8 @@ class AudioBarController(
         /** Resolves a book in [versionId]; null if the version isn't visible or doesn't include the book. */
         fun audioBookInVersion(versionId: String, bookId: Int): Book?
 
-        /** Neighbor chapter in [versionId]; null at Bible boundaries or when [versionId] isn't visible. */
-        fun audioNeighborChapter(versionId: String, direction: Int): Pair<Book, Int>?
+        /** Short display name of a visible version, or null when [versionId] isn't on screen. */
+        fun audioVersionShortName(versionId: String): String?
 
         /** Tell the activity to navigate to [book] / [chapter_1] (the existing `display` flow). */
         fun audioDisplayChapter(book: Book, chapter_1: Int)
@@ -259,17 +260,14 @@ class AudioBarController(
 
     /**
      * Called when the active version changes (split toggled, version swapped).
-     * Stops audio if the source we picked is no longer on screen, otherwise
-     * just refreshes the chapter labels.
+     * Stops audio if the source we picked is no longer on screen.
      */
     fun onActiveVersionChanged() {
         val host = this.host ?: return
         val source = selectedSource
         if (source != null && source.versionId !in host.audioVisibleVersionIds()) {
             hide()
-            return
         }
-        recomputeChapterLabels(host)
     }
 
     /**
@@ -297,7 +295,6 @@ class AudioBarController(
         val availableChapter = chapter1.coerceIn(1, sourceBook.chapter_count)
 
         if (sourceBook.bookId == lastServiceBookId && availableChapter == lastServiceChapter1) {
-            recomputeChapterLabels(host)
             return
         }
 
@@ -316,7 +313,6 @@ class AudioBarController(
             startVerse_1 = 0,
         )
         service?.loadChapter(request) ?: run { pendingLoad = host }
-        recomputeChapterLabels(host)
     }
 
     /**
@@ -547,13 +543,6 @@ class AudioBarController(
             }
             AudioBarCommand.PrevVerse -> svc?.seekToPrevVerse()
             AudioBarCommand.NextVerse -> svc?.seekToNextVerse()
-            // Both in-app and lock-screen chapter skips fan in to the same
-            // service entry point. The service is the single source of truth
-            // for "what chapter is loaded"; AudioBarController.projectToUi
-            // observes the resulting state change and pushes IsiActivity to
-            // navigate so the on-screen chapter follows the audio.
-            AudioBarCommand.PrevChapter -> svc?.skipChapter(-1)
-            AudioBarCommand.NextChapter -> svc?.skipChapter(1)
             AudioBarCommand.Close -> hide()
             AudioBarCommand.Speed -> {
                 _uiState.update { it.copy(showSpeedSheet = true) }
@@ -562,24 +551,15 @@ class AudioBarController(
                 _uiState.update { it.copy(showSpeedSheet = false) }
             }
             AudioBarCommand.OpenSetSheet -> {
-                val source = selectedSource ?: return
-                val sets = setsOfSelectedVersion() ?: return
-                val currentBookId = host.audioCurrentBook().bookId
-                _uiState.update { state ->
-                    state.copy(setOptions = sets.map { set ->
-                        AudioSetOption(
-                            audioId = set.audioId,
-                            title = set.title,
-                            selected = set.audioId == source.audioId,
-                            coversCurrentBook = set.coversBook(currentBookId),
-                        )
-                    })
-                }
+                val groups = buildSetGroups(host)
+                if (groups.isEmpty()) return
+                _uiState.update { it.copy(setGroups = groups) }
             }
             AudioBarCommand.DismissSetSheet -> {
-                _uiState.update { it.copy(setOptions = null) }
+                _uiState.update { it.copy(setGroups = null) }
             }
-            is AudioBarCommand.PickSet -> pickSet(host, cmd.audioId)
+            is AudioBarCommand.PickSet -> pickSet(host, cmd.versionId, cmd.audioId)
+            AudioBarCommand.Retry -> retryLoad(host)
             is AudioBarCommand.SetSpeed -> {
                 svc?.setSpeed(cmd.speed)
                 _uiState.update { it.copy(speed = cmd.speed, showSpeedSheet = false) }
@@ -605,28 +585,79 @@ class AudioBarController(
     }
 
     /**
-     * Switches the session to another recording of the same version: persists
-     * the choice, then reloads the current chapter in the new recording —
-     * seeking to the start of the verse that was playing when timing exists on
-     * both sides, and to the chapter start otherwise. Timing differs per
-     * recording, so a millisecond-preserving switch would land in an arbitrary
-     * place.
+     * The recording-picker sheet's content: one group per visible version
+     * whose set list has resolved non-empty — two groups in split view when
+     * both sides have audio. Rows for sets (or versions) that don't cover the
+     * book being read are listed but disabled.
      */
-    private fun pickSet(host: Host, audioId: String) {
+    private fun buildSetGroups(host: Host): List<AudioSetGroup> {
+        val source = selectedSource ?: return emptyList()
+        val currentBookId = host.audioCurrentBook().bookId
+        return host.audioVisibleVersionIds().distinct().mapNotNull { versionId ->
+            val sets = AudioSetsRepository.cachedSetsFor(versionId)?.sets
+            if (sets.isNullOrEmpty()) return@mapNotNull null
+            val versionName = host.audioVersionShortName(versionId) ?: return@mapNotNull null
+            val bookInVersion = host.audioBookInVersion(versionId, currentBookId) != null
+            AudioSetGroup(
+                versionId = versionId,
+                versionName = versionName,
+                options = sets.map { set ->
+                    AudioSetOption(
+                        audioId = set.audioId,
+                        title = set.title,
+                        selected = versionId == source.versionId && set.audioId == source.audioId,
+                        coversCurrentBook = bookInVersion && set.coversBook(currentBookId),
+                    )
+                },
+            )
+        }
+    }
+
+    /**
+     * Switches the session to another recording — of the same version, or of
+     * the other split's version (the sheet lists both in split view, so this
+     * is also the mid-session way to move audio across the splits). Persists
+     * the per-version choice, then reloads the current chapter in the new
+     * recording — seeking to the start of the verse that was playing when the
+     * incoming recording has timing (a non-zero playing verse implies the
+     * outgoing one did), and to the chapter start otherwise. Timing differs
+     * per recording, so a millisecond-preserving switch would land in an
+     * arbitrary place.
+     */
+    private fun pickSet(host: Host, versionId: String, audioId: String) {
         val source = selectedSource ?: return
-        if (audioId == source.audioId) {
-            _uiState.update { it.copy(setOptions = null) }
+        if (versionId == source.versionId && audioId == source.audioId) {
+            _uiState.update { it.copy(setGroups = null) }
             return
         }
-        val sets = setsOfSelectedVersion() ?: return
-        val newSet = sets.firstOrNull { it.audioId == audioId } ?: return
-        AudioSetSelections.store(source.versionId, newSet.audioId)
-        // A non-zero playing verse implies the outgoing recording had timing.
+        val newSet = AudioSetsRepository.cachedSetsFor(versionId)?.sets
+            ?.firstOrNull { it.audioId == audioId } ?: return
+        val versionName = host.audioVersionShortName(versionId) ?: return
+        AudioSetSelections.store(versionId, newSet.audioId)
         val playingVerse = _uiState.value.verse_1
         startVerse1 = if (newSet.hasTiming && playingVerse > 0) playingVerse else 0
-        selectedSource = source.copy(audioId = newSet.audioId, title = newSet.title)
-        _uiState.update { it.copy(setOptions = null) }
+        selectedSource = AudioSourceOption(
+            versionId = versionId,
+            shortName = versionName,
+            audioId = newSet.audioId,
+            title = newSet.title,
+        )
+        _uiState.update { it.copy(setGroups = null) }
         val request = buildRequest(host) ?: return
+        service?.loadChapter(request) ?: run { pendingLoad = host }
+    }
+
+    /**
+     * Retries a failed chapter load from scratch. The cached set answer for
+     * the source version is dropped after the request is built, so a failure
+     * that came from a set resolution cached as "no audio" (e.g. the network
+     * was down at fetch time) gets a fresh query on this explicitly
+     * user-initiated retry.
+     */
+    private fun retryLoad(host: Host) {
+        val source = selectedSource ?: return
+        val request = buildRequest(host) ?: return
+        AudioSetsRepository.invalidate(source.versionId)
         service?.loadChapter(request) ?: run { pendingLoad = host }
     }
 
@@ -707,12 +738,18 @@ class AudioBarController(
 
         val playingVersionId = state.versionId.takeIf { it.isNotEmpty() }
             ?: selectedSource?.versionId
-        val prevLabel = playingVersionId?.let { neighborChapterLabel(it, -1) }
-        val nextLabel = playingVersionId?.let { neighborChapterLabel(it, +1) }
 
         val selectedSet = selectedSet()
-        val sets = setsOfSelectedVersion()
-        val setTitle = if (selectedSet != null && sets != null && sets.size > 1) selectedSet.title else null
+        // The recording chip appears whenever the sheet has a choice to offer:
+        // several recordings of the source version, or (split view) a second
+        // version with audio to move the source to.
+        val audioCapableVersions = host?.audioVisibleVersionIds()?.distinct()
+            ?.count { AudioSetsRepository.cachedSetsFor(it)?.sets?.isNotEmpty() == true } ?: 0
+        val setTitle = when {
+            selectedSet == null -> null
+            (setsOfSelectedVersion()?.size ?: 0) > 1 || audioCapableVersions > 1 -> selectedSet.title
+            else -> null
+        }
 
         val effectivePreparing = state.preparing || isPending
         _uiState.update { current ->
@@ -726,8 +763,6 @@ class AudioBarController(
                 // otherwise let the live playback verse drive the highlight.
                 verse_1 = if (dragging) current.verse_1 else state.verse_1,
                 speed = state.speed,
-                prevChapterLabel = prevLabel,
-                nextChapterLabel = nextLabel,
                 error = state.error,
                 timingAvailable = computeTimingAvailable(
                     setHasTiming = selectedSet?.hasTiming,
@@ -738,27 +773,6 @@ class AudioBarController(
                 setTitle = setTitle,
             )
         }
-    }
-
-    /**
-     * Label for the neighbor-chapter button, or null when the button should be
-     * unavailable — at a Bible boundary, or at the edge of the selected
-     * recording's book coverage (the same treatment for both).
-     */
-    private fun neighborChapterLabel(versionId: String, direction: Int): String? {
-        val host = this.host ?: return null
-        val (book, chapter) = host.audioNeighborChapter(versionId, direction) ?: return null
-        val set = selectedSet()
-        val currentBookId = host.audioCurrentBook().bookId
-        if (set != null && book.bookId != currentBookId && !set.coversBook(book.bookId)) return null
-        return "${book.shortName} $chapter"
-    }
-
-    private fun recomputeChapterLabels(host: Host) {
-        val source = selectedSource ?: return
-        val prev = neighborChapterLabel(source.versionId, -1)
-        val next = neighborChapterLabel(source.versionId, +1)
-        _uiState.update { it.copy(prevChapterLabel = prev, nextChapterLabel = next) }
     }
 
     companion object {

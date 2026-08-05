@@ -396,12 +396,10 @@
     <string name="maps_could_not_open">Hindi ma buksan ang Mapa sa app ng Bible.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Isara ang audio bar</string>
-    <string name="audio_bar_next_chapter">Susunod na kabanata</string>
     <string name="audio_bar_next_verse">Susunod na taludtod</string>
     <string name="audio_bar_pause">Itigil sandali</string>
     <string name="audio_bar_pick_source_title">Patugtugin ang audio mula sa</string>
     <string name="audio_bar_play">Patugtugin</string>
-    <string name="audio_bar_prev_chapter">Nakaraang kabanata</string>
     <string name="audio_bar_prev_verse">Nakaraang taludtod</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Bilis ng pagpapatugtog</string>
