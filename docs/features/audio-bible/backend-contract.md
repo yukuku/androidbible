@@ -113,9 +113,10 @@ body is the MP3.
   seek. Expect `206` with `Content-Range` for a ranged request.
 - `Content-Type: audio/mpeg`, plus `ETag` / `Last-Modified`.
 - `Cache-Control: public, max-age=2592000` (30 days).
-- `404` — this chapter isn't in this recording. Surface the "Audio not available
-  for this chapter" snackbar (PRD §4.6). Rare within a book listed in `books_1`.
-- `502` with `Retry-After` — upstream trouble. Snackbar with a Retry action.
+- `404` — this chapter isn't in this recording. Surfaces the error state on the
+  bar's play button (PRD §4.6). Rare within a book listed in `books_1`.
+- `502` with `Retry-After` — upstream trouble. Error state on the play button;
+  the retry is user-initiated, not automatic.
 
 ## `GET /audio/timing/<preset>/<audioId>/<book_1>/<chapter_1>.json`
 
@@ -151,8 +152,8 @@ Caching: `ETag` + `Cache-Control: public, max-age=604800`.
 |---|---|
 | `200` with `sets: []` | No audio for this version; hide the toolbar icon |
 | `200` with `verses: []` | Play without verse highlight; disable verse-skip |
-| `404` on `/audio/file/…` | "Audio not available for this chapter" snackbar; bar auto-closes |
-| `502` / `503` with `Retry-After` | Treat as temporarily unavailable; no retry loop |
+| `404` on `/audio/file/…` | Error icon on the bar's play button; tap retries |
+| `502` / `503` with `Retry-After` | Treat as temporarily unavailable; no retry loop (only the play button's explicit tap-to-retry re-queries) |
 | Network or parse failure | Empty set list; icon stays hidden rather than showing a dead button |
 
 The app ships **no bundled fallback**. Per-version availability can't be usefully

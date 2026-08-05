@@ -17,7 +17,7 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 1. User can play/pause audio for the chapter they are reading.
 2. The currently-playing verse is visually highlighted and auto-scrolled into view.
 3. Skip to previous/next verse within the chapter.
-4. Skip to previous/next chapter (with auto-advance at end of chapter when enabled).
+4. Skip to previous/next chapter via the system transport controls (lock screen, Bluetooth), with auto-advance at end of chapter.
 5. Audio keeps playing when the screen is locked or the app is backgrounded (foreground service + lock-screen controls).
 6. Works on at least the versions with audio today: Indonesian TB, AYT, BIMK, Malay AVB, and KJV. TB carries several recordings; see §5.3.
 7. Backend endpoints mediate the relationship to the audio origin — the client does not hard-code upstream URLs.
@@ -58,7 +58,7 @@ A new "Audio" icon in the `IsiActivity` toolbar (`activity_isi.xml`, `app:showAs
 
 Availability is resolved per version, so the first answer isn't available synchronously: `onPrepareOptionsMenu` reads a non-blocking cache peek, hides the icon on a miss, and kicks off the fetch, calling `invalidateOptionsMenu()` when the answer lands. Prefetching on version change means the icon is present on first composition in practice. A brief absence on a genuinely cold open beats a main-thread network call, and beats an icon that is present but dead.
 
-**Preparing state.** The moment the user taps Audio, the work that runs before the first byte of audio plays — audio set lookup (cache), timing fetch if not already cached, ExoPlayer `prepare()` + initial buffer — can take a perceptible fraction of a second on mobile networks. During this window the toolbar icon morphs into an indeterminate spinner, mirroring the Kidung (Songs) play button's behavior: while `MediaController.State == preparing`, `SongViewActivity` hides the play menu item and swaps in an indeterminate `circular_progress` view (`SongViewActivity.kt:178, 443-449, 1088-1090`). We use the exact same pattern — `onPrepareOptionsMenu` hides `R.id.menuAudio` and shows a sibling progress view anchored in the toolbar — so the UX is consistent with the rest of the app. The spinner reverts to the Audio icon when the service reports `ready` (or `error`, in which case the snackbar in §4.6 fires). Tapping during the preparing window is a no-op; a second tap does **not** cancel (that would require tearing down the service mid-prepare and feels unpredictable).
+**Preparing state.** The moment the user taps Audio, the work that runs before the first byte of audio plays — audio set lookup (cache), timing fetch if not already cached, ExoPlayer `prepare()` + initial buffer — can take a perceptible fraction of a second on mobile networks. During this window the toolbar icon morphs into an indeterminate spinner, mirroring the Kidung (Songs) play button's behavior: while `MediaController.State == preparing`, `SongViewActivity` hides the play menu item and swaps in an indeterminate `circular_progress` view (`SongViewActivity.kt:178, 443-449, 1088-1090`). We use the exact same pattern — `onPrepareOptionsMenu` hides `R.id.menuAudio` and shows a sibling progress view anchored in the toolbar — so the UX is consistent with the rest of the app. The spinner reverts to the Audio icon when the service reports `ready` (or `error`, in which case the bar's play button shows the error state from §4.6). Tapping during the preparing window is a no-op; a second tap does **not** cancel (that would require tearing down the service mid-prepare and feels unpredictable).
 
 ### 4.2 Audio bar — fixed-height Compose surface
 
@@ -68,16 +68,16 @@ Height ≈ 96dp:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│  ⏮ Jn 2  ⏮  ▶/⏸ (+progress ring)  ⏭  Jn 4 ⏭   Davar  1.0×   ╳    │
+│  1.0×  Davar          ⏮  ▶/⏸ (+progress ring)  ⏭             ╳   │
 │  ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░░░   0:42 / 3:15                           │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-- **Play/pause** — center; shows a determinate progress ring around the FAB-style button while preparing.
+- **Play/pause** — center; shows a determinate progress ring around the FAB-style button while preparing. On a failed load the button renders an error icon instead; tapping it retries (§4.6).
 - **Prev / next verse** — plain icon-only buttons that seek to the start of the neighboring verse using timing data. No label on the button (the active verse is already conveyed by the highlighted row and the scrubber bubble).
-- **Prev / next chapter** — the button shows the target chapter next to its icon (e.g. `⏮ Jn 2` and `Jn 4 ⏭`), using the same `book.shortName` + chapter format that appears in the main toolbar. At cross-book boundaries the next button reads `⏮ Mt 28` from Mark 1. At the Bible boundaries the label slot is `INVISIBLE` (not gone) so the layout doesn't reflow.
+- **Chapter navigation** — not in the bar. Auto-advance continues into the next chapter at end of playback, the system transport controls (§4.4) carry prev/next-chapter for deliberate jumps, and in-app the reader's own navigation moves the audio with it.
 - **Speed** — taps open the speed bottom sheet (§4.2.2).
-- **Audio set** — a compact button showing the current recording's title, next to the speed control, opening the set bottom sheet (§4.2.3). **Shown only when the version has more than one recording** — most versions have one, and they shouldn't pay for a control that offers no choice.
+- **Audio set** — a compact button showing the current recording's title, next to the speed control, opening the set bottom sheet (§4.2.3). **Shown only when the sheet has a choice to offer** — several recordings of the version, or (split view) a second visible version with audio. The button occupies a flexible slot: a long title ellipsizes rather than squeezing the transport controls.
 - **Close (╳)** — hides the bar; stops audio and clears highlight.
 - **Scrubber** — Material 3 `Slider`. Drag-to-seek with a live preview label that shows `mm:ss · v.7` while dragging — both the proposed position and the verse that would play on release. On release, audio seeks to the start of that verse's `startMs` (snapping to verse boundary feels better than snapping to a raw millisecond, and matches what the tooltip is showing). If timing data is missing, the label falls back to `mm:ss` only and seek is plain.
 
@@ -88,6 +88,8 @@ Tapping `1.0×` opens a small Compose `ModalBottomSheet` with a horizontal `Filt
 #### 4.2.3 Audio set bottom sheet
 
 Tapping the set button opens a `ModalBottomSheet` with a single-selection list of recording titles — same pattern and placement as the speed sheet.
+
+The sheet lists one group per visible version with audio, headed by the version's short name (the header is omitted when there is a single group). In split view with audio on both sides, picking a row from the other version's group moves the audio source to that version as well as selecting the recording (§4.5).
 
 Sets that don't cover the current book are **listed but disabled**, with the reason shown ("not available for this book"). Hiding them would make the list appear to change size as the user moves through the Bible.
 
@@ -117,7 +119,7 @@ A foreground service posts a MediaStyle notification with Play/Pause, Prev-chapt
 When two versions are open in split view, audio plays from exactly one side.
 
 - **Only one side has audio** → that side is the source automatically; no prompt.
-- **Both sides have audio** → the first time the user taps play in this split-view session, a dialog appears: **"Play audio from which version?"** with the two version short names as options (e.g. `TB (top)` / `KJV (bottom)`) and a `Cancel` button. The user's choice is remembered for the rest of the session and reused for subsequent chapters. Switching the source later is done by closing the bar and tapping play again — the dialog reappears. (Or, when we build out the overflow menu in v1.1, via a "Change audio source" item there.)
+- **Both sides have audio** → the first time the user taps play in this split-view session, a dialog appears: **"Play audio from which version?"** with the two version short names as options (e.g. `TB (top)` / `KJV (bottom)`) and a `Cancel` button. The user's choice is remembered for the rest of the session and reused for subsequent chapters. Switching the source later is done from the recording sheet (§4.2.3), which lists both versions' recordings; closing the bar and tapping play again also re-prompts.
 
 Highlight applies only to the chosen side; the other split's rows show no audio highlight, even when the verse numbers coincide. Closing the audio bar, exiting split view, or changing one of the visible versions clears the remembered choice so the next play starts fresh.
 
@@ -127,9 +129,9 @@ This deliberately replaces PR #127's sequential interleaving (which plays verse 
 
 - **Version has no audio:** toolbar icon is hidden.
 - **Selected recording doesn't cover the current book:** toolbar icon is hidden for that book. The selection is *not* silently switched to a recording that does cover it — an unannounced narrator change mid-book is worse than a temporarily absent button.
-- **Network failure on chapter load:** snackbar "Cannot load audio. Retry?" with a Retry action. Audio bar stays open, play button disabled.
+- **Network failure on chapter load:** the play button becomes an error icon; tapping it retries the load from scratch — including re-resolving the version's set list, so a failure cached as "no audio" during resolution isn't sticky. The audio bar stays open.
 - **Timing data missing:** audio plays, but verse-skip buttons and verse highlight are disabled (greyed). No error shown. This is knowable up front from the set's `hasTiming`, so the controls render disabled from the start rather than going inert once an empty timing fetch returns.
-- **Audio URL 404 (e.g. an upstream gap in coverage):** snackbar "Audio not available for this chapter," and the bar auto-closes after 3s.
+- **Audio URL 404 (e.g. an upstream gap in coverage):** the same error state on the play button; the bar stays open so the user can retry or close it.
 
 ## 5. Architecture
 
@@ -359,7 +361,7 @@ Short answer: PR #127 is the better starting point — its separation of player/
 | Recordings per version | One | Several, user-selectable |
 | Split-view audio | Sequential interleaved | Single-source, user-selectable |
 | Lock-screen controls | Absent | First-class |
-| Error UX | Silent log | Snackbar + retry |
+| Error UX | Silent log | Error state + tap-to-retry |
 
 PR #124 is not the better starting point — its reuse of `ExoplayerController` couples two unrelated features, its URL construction bypasses `Connections.okHttp` (defeating the user-agent interceptor and HTTP cache), and it uses display-name keys that break under locale changes. We intend to close #124 with a note thanking the author.
 

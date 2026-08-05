@@ -130,7 +130,9 @@ object AudioSetsRepository {
   no audio-specific special case. A `file/…` version has no preset and
   short-circuits to an empty set list.
 - **In-memory cache** keyed by `versionId`, holding negative results too — a
-  version with no audio must not re-query on every chapter turn.
+  version with no audio must not re-query on every chapter turn. The audio
+  bar's user-initiated retry after a load error (§7.4) is the one path that
+  drops a cached answer and queries again.
 - **Disk cache** is the existing 50 MB OkHttp cache on `Connections.okHttp`,
   honoring the backend's `Cache-Control`. No new file, no bundled asset, no
   hand-rolled ETag bookkeeping.
@@ -227,14 +229,24 @@ version-level check alone would leave a button that only 404s.
 
 ### 7.2 Set picker
 
-When a version has more than one set, the audio bar shows the current set's
-`title` as a compact button next to the speed control. Tapping opens a
-`ModalBottomSheet` with a single-selection list of `title`s — the same pattern
-and placement as `SpeedBottomSheet`, which already establishes this interaction
-in the bar.
+The audio bar shows the current set's `title` as a compact button next to the
+speed control whenever the picker has a choice to offer: the source version
+has more than one set, or (split view) a second visible version has audio.
+Tapping opens a `ModalBottomSheet` with a single-selection list of `title`s —
+the same pattern and placement as `SpeedBottomSheet`, which already
+establishes this interaction in the bar.
 
-- Single-set versions show no button at all. Most versions have one set; they
-  should not pay for a control that offers no choice.
+- The button occupies a weighted row slot, so a long `title` ellipsizes within
+  the leftover space instead of squeezing the transport controls — the same
+  never-shrinks treatment the speed chip gets.
+- When there is no choice — one version on screen, one set — no button is
+  shown at all. Most versions have one set; they should not pay for a control
+  that offers no choice.
+- The sheet lists one group per visible version with audio, headed by the
+  version's short name (the header is omitted when there is a single group).
+  In split view with audio on both sides, picking a row from the other
+  version's group moves the audio source to that version as well as selecting
+  the recording — the mid-session way to move audio across the splits.
 - Sets not covering the current book are listed but disabled, with the reason
   shown ("not available for this book"). Hiding them would make the list appear
   to change size as the user moves through the Bible.
@@ -243,10 +255,10 @@ in the bar.
   to the chapter start otherwise. Timing differs per recording, so a
   millisecond-preserving switch would land in an arbitrary place.
 
-`AudioSourceOption` — currently `(versionId, shortName)` for the split-view
-picker — gains `audioId` and `title`. Split-source selection and set selection
-remain distinct choices: which *version* drives audio, then which *recording* of
-it.
+`AudioSourceOption` — `(versionId, shortName, audioId, title)` — backs the
+split-view source dialog shown on the first play tap. Split-source selection
+and set selection remain distinct choices: which *version* drives audio, then
+which *recording* of it.
 
 ### 7.3 Timing-less sets
 
@@ -256,15 +268,26 @@ disabled, no error is shown. What changes is that it is now knowable *before*
 playback from `AudioSet.hasTiming`, so the controls can be rendered disabled
 from the start rather than becoming inert once a timing fetch comes back empty.
 
+### 7.4 Error state and retry
+
+A failed chapter load — set resolution, MP3, or player error — swaps the play
+button for an error icon; tapping it retries the load. The retry drops the
+source version's cached set answer first (`AudioSetsRepository.invalidate`), so
+a failure that resolved, and was cached, as "no audio" while the network was
+down gets a fresh query. This explicitly user-initiated tap is the one
+exception to the backend contract's no-retry-loop rule.
+
 ## 8. Service layer
 
 - `BibleAudioService.AudioRequest` gains `audioId`.
 - `PlaybackState` gains `audioId`, so the bar can render the active recording
   and detect service-initiated changes after process death.
-- Chapter auto-advance and prev/next respect the selected set's coverage: at a
-  coverage edge the button is disabled, exactly as at a Bible boundary. Auto-advance
-  stops rather than skipping the gap — jumping Job → Esther because Ezra is
-  missing would be more confusing than stopping.
+- Chapter skips live on the system transport controls (lock screen, Bluetooth,
+  Android Auto) and in end-of-chapter auto-advance — the bar itself carries
+  only verse skip. Both respect the selected set's coverage: at a coverage
+  edge they no-op, exactly as at a Bible boundary. Auto-advance stops rather
+  than skipping the gap — jumping Job → Esther because Ezra is missing would
+  be more confusing than stopping.
 - The MediaStyle notification subtitle becomes `"<version short name> · <set
   title>"` when a version has more than one set, and stays the bare version name
   otherwise.
@@ -281,7 +304,7 @@ from the start rather than becoming inert once a timing fetch comes back empty.
 | `audio/AudioBarController.kt` | Set selection, persistence, coverage checks |
 | `audio/BibleAudioService.kt` | `audioId` in `AudioRequest`; coverage-aware neighbors |
 | `audio/PlaybackState.kt` | `audioId` field |
-| `audio/ui/AudioBar.kt` | Set button; `AudioSourceOption` gains `audioId`/`title` |
+| `audio/ui/AudioBar.kt` | Set chip + error/retry state; `AudioSourceOption` gains `audioId`/`title` |
 | `audio/ui/AudioSetBottomSheet.kt` | **New** |
 | `IsiActivity.kt` | Async menu resolution + `invalidateOptionsMenu()` |
 | `model/MVersionInternal.java` | Exposes `preset_name` from build config |
@@ -302,8 +325,9 @@ from the start rather than becoming inert once a timing fetch comes back empty.
 - **Selection** — default is `sets[0]`; a remembered `audioId` is honored;
   a vanished `audioId` falls back to `sets[0]` and rewrites the stored map;
   the map round-trips through preferences with multiple versions.
-- **Coverage-driven UI** — entry point hidden for an uncovered book; neighbor
-  chapter disabled at a coverage edge; auto-advance stops at a gap.
+- **Coverage-driven UI** — entry point hidden for an uncovered book;
+  transport-driven chapter skip no-ops at a coverage edge; auto-advance stops
+  at a gap.
 - **Timing** — normalized ms parse; `hasTiming: false` disables highlight and
   verse-skip from the start.
 
