@@ -34,7 +34,7 @@ lazily and cached per version.
 
 ## 2. Backend contract
 
-The client's view of the contract:
+Pinned in full in [backend-contract.md](backend-contract.md). In summary:
 
 | Endpoint | Purpose |
 |---|---|

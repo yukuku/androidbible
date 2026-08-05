@@ -4,15 +4,15 @@
 **Target branch:** cut a fresh feature branch from `develop` (e.g. `feature/audio-bible`); close #127 and #124 afterwards.
 **Estimated effort:** ~3 sprint-weeks for one engineer (v1 must-haves). Pre-download (v2) is another week.
 
-This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-plan.md) lands (`sets` + `file` + `timing` endpoints) before milestone M3.
+This plan assumes the [PRD](prd.md) is approved and the backend `sets` + `file` + `timing` endpoints are live. The shapes the app depends on are pinned in [backend-contract.md](backend-contract.md).
 
-**Backend status:** the `/audio/*` namespace is specified in the [backend plan](backend-plan.md), and the per-version set contract in [multi-audio-sets-design.md](multi-audio-sets-design.md) §2. Unlike earlier drafts, **the client has no bundled fallback** — availability is per-version and can't be usefully baked into the APK — so the endpoints must be live in production before the client work is testable end to end. Treat that as a hard dependency on M1, not M3.
+**Backend status:** the contract is pinned in [backend-contract.md](backend-contract.md); the client-side design is in [multi-audio-sets-design.md](multi-audio-sets-design.md). **The client has no bundled fallback** — per-version availability can't be usefully baked into the APK — so the endpoints must be live in production before the client work is testable end to end. Treat that as a hard dependency on M1, not M3.
 
 ---
 
 ## 0. Prerequisites
 
-- [x] Read the PRD in `prd.md` and the backend plan in `backend-plan.md`.
+- [x] Read the PRD in `prd.md` and the backend contract in `backend-contract.md`.
 - [x] **Do not cherry-pick from PR #127 or PR #124.** Both PRs will be closed unmerged once this work lands. They are useful as inspiration only — the SABDA timing-API tables in PR #127 have moved to the backend, the activity-scoped player from both PRs is replaced by a `MediaSessionService`, and the entire UI surface is rewritten in Compose. Re-write the player wrapper (`BibleAudioPlayer`), the repository (`BibleAudioRepository`), the highlight tracker, and the verse-overlay code from scratch with the conventions called out in this plan.
 - [x] Confirm `androidx.media3:media3-session` is not yet in the build; add it in M1.
 - [x] Confirm Jetpack Compose is not yet in the build (it isn't — this feature is the project's first Compose surface); add the dependency family + Kotlin Compose Compiler plugin in M1.

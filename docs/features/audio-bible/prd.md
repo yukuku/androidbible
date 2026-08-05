@@ -8,7 +8,7 @@
 
 ## 1. Problem
 
-Users can already read any chapter in the app but cannot *listen* to it. SABDA runs a free Bible-audio service (media.sabda.org) with aligned verse timing (karaoke.sabda.org), and both existing PRs prove the data is usable — but the two implementations disagree on architecture and each has gaps (hard-coded URLs, activity-scoped players, no lock-screen controls, unclear split-view behavior). This PRD defines one coherent feature, with the integration points that will make it sustainable.
+Users can already read any chapter in the app but cannot *listen* to it. SABDA runs a free Bible-audio service with aligned verse timing for some recordings, and both existing PRs prove the data is usable — but the two implementations disagree on architecture and each has gaps (hard-coded URLs, activity-scoped players, no lock-screen controls, unclear split-view behavior). This PRD defines one coherent feature, with the integration points that will make it sustainable.
 
 ## 2. Goals
 
@@ -19,8 +19,8 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 3. Skip to previous/next verse within the chapter.
 4. Skip to previous/next chapter (with auto-advance at end of chapter when enabled).
 5. Audio keeps playing when the screen is locked or the app is backgrounded (foreground service + lock-screen controls).
-6. Works on at least the four SABDA-supported versions today: Indonesian TB, AYT, AVB, and KJV.
-7. Backend endpoints mediate the relationship to sabda.org — the client does not hard-code sabda URLs.
+6. Works on at least the versions with audio today: Indonesian TB, AYT, BIMK, Malay AVB, and KJV. TB carries several recordings; see §5.3.
+7. Backend endpoints mediate the relationship to the audio origin — the client does not hard-code upstream URLs.
 
 **Should have (v1.1):**
 
@@ -367,7 +367,7 @@ PR #124 is not the better starting point — its reuse of `ExoplayerController` 
 
 - PR #127 implementation files (split across packages — keep this in mind when porting):
     - `Alkitab/src/main/java/yuku/alkitab/base/audio/{BibleAudioPlayer,AudioPlaybackController}.kt`
-    - `Alkitab/src/main/java/yuku/alkitab/base/util/BibleAudioRepository.kt` (will move to `base/audio/` and shrink — the SABDA tables go to the backend; see [backend-plan.md §4.3](backend-plan.md))
+    - `Alkitab/src/main/java/yuku/alkitab/base/util/BibleAudioRepository.kt` (will move to `base/audio/` and shrink — all origin/folder/filename construction moves to the backend; see [backend-contract.md](backend-contract.md))
     - `Alkitab/src/main/java/yuku/alkitab/base/model/{MAudio,MTiming}.kt`
     - `Alkitab/src/main/java/yuku/alkitab/base/verses/{VerseItem,VersesController,VersesControllerImpl}.kt` (highlight diff)
     - Resources: `res/drawable/ic_audio_*.xml`, `res/layout/activity_audio.xml`, `res/menu/activity_isi.xml`

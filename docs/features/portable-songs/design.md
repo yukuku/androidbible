@@ -34,7 +34,7 @@ In scope for this design:
 
 Explicitly **out of scope** (unchanged by this design):
 
-- **Web HTML rendering** (`alkitab-host`): the website keeps rendering from its existing pickled-dict pipeline. The canonical JSON is designed so the web can adopt it later without a schema change, but that migration is not part of this work.
+- **Web HTML rendering** (backend): the website keeps rendering from its existing pickled-dict pipeline. The canonical JSON is designed so the web can adopt it later without a schema change, but that migration is not part of this work.
 
 Decisions taken (with rationale) at the end of §11.
 
@@ -300,7 +300,7 @@ This keeps the storage-engine swap (Room) and the payload swap independent, as t
 ## 7. Download path
 
 - **App.** `SongBookUtil.deserializeSongs` (Java `ObjectInputStream` guarded by `SafeObjectInputStream`) is replaced by a JSON parser (Moshi / kotlinx). This removes the Java-deserialization gadget surface entirely — a security win. `OptionalGzipInputStream` stays (the payload is still gzipped). The supported `dataFormatVersion` check (`SongBookUtil.isSupportedDataFormatVersion`) is updated to accept the new JSON version.
-- **Backend** (`alkitab-host`). `get_songs` keeps issuing a 302 redirect, but branches on the requested `dataFormatVersion`: new clients → `…/songs/v1/data/<book>-5.json.gz`; old clients → the existing `<book>-4.ser.gz`. Old installs keep working; the web (pickle/HTML) path is untouched.
+- **Backend.** `get_songs` keeps issuing a 302 redirect, but branches on the requested `dataFormatVersion`: new clients → `…/songs/v1/data/<book>-5.json.gz`; old clients → the existing `<book>-4.ser.gz`. Old installs keep working; the web (pickle/HTML) path is untouched.
 - **`kidung-data`.** A new `OutputJson` (alongside the existing `OutputSer`) emits `<book>-5.json.gz` (the §3.7 wrapper). The book index `song_book_infos.txt` stays as-is (the backend parses it server-side via `parse_infos_content`). Static artifacts are published to `boafiles.kejut.com` as today.
 
 ---
@@ -394,7 +394,7 @@ The reference renderer is in [`song-editor.html`](./song-editor.html). On device
 - `SongBookUtil.deserializeSongs` → JSON parser; drop `SafeObjectInputStream`; update `isSupportedDataFormatVersion`.
 - Rendering: `SongFragment` / `SongViewActivity` switch to the document renderer.
 
-**Backend (`alkitab-host`)**
+**Backend**
 
 - `get_songs` redirect branches on `dataFormatVersion` (serve `-5.json.gz` to new clients, `-4.ser.gz` to old). No web-render change.
 
@@ -428,6 +428,6 @@ The reference renderer is in [`song-editor.html`](./song-editor.html). On device
 
 ## 13. Out of scope / future work
 
-- Web (`alkitab-host`) adopting the canonical JSON for HTML rendering.
+- The website adopting the canonical JSON for HTML rendering.
 - Swapping the (already document-based) JSON further, e.g. richer inline spans (red-letter), audio links, or per-verse scripture.
 - An off-device corpus-conversion tool (not needed: `kidung-data` regenerates the corpus as JSON).

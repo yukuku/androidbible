@@ -3,7 +3,7 @@
 Android-side implementation plan for the migration described in [`design.md`](./design.md): replace the two non-portable song payloads (on-device `Parcel.marshall()` BLOB, gzipped Java-serialized download) with the canonical JSON document model, rescue existing on-device data with a version-agnostic custom Parcelable decoder, and render from a new document model.
 
 - **Status:** implemented — shipped app-side on 2026-07-13 (see [REM-21](../../tech-debt-remediation/REM-21-song-json-storage.md)); this doc is retained as the design/plan record
-- **Scope of this doc:** the `androidbible` app only. The backend (`alkitab-host`) redirect branching and the `kidung-data` `@doc` txt authoring / `OutputJson` are tracked separately (design §7, §8, §10) and are **not** part of this plan.
+- **Scope of this doc:** the `androidbible` app only. The backend redirect branching and the `kidung-data` `@doc` txt authoring / `OutputJson` are tracked separately (design §7, §8, §10) and are **not** part of this plan.
 - **Centerpiece:** §6 — a comprehensive bridge test that drives the *same* representative songs through both the current client code (legacy `Song` + `Parcel` + `songToHtml` + `SongFilter`) and the new JSON document path, and asserts equivalence.
 
 ---
