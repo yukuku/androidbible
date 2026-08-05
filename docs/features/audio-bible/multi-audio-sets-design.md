@@ -135,7 +135,10 @@ object AudioSetsRepository {
   drops a cached answer and queries again.
 - **Disk cache** is the existing 50 MB OkHttp cache on `Connections.okHttp`,
   honoring the backend's `Cache-Control`. No new file, no bundled asset, no
-  hand-rolled ETag bookkeeping.
+  hand-rolled ETag bookkeeping. A body that fails to parse is refetched once
+  with `no-cache` (same for timing payloads): the bytes may be a corrupted
+  cached entry, and the network response replaces it instead of leaving the
+  corruption pinned for its whole freshness lifetime.
 - **`Prefkey.audioCatalog_etag` is deleted.** It exists only to drive the
   manual `If-None-Match` on the catalog fetch; OkHttp does conditional revalidation
   itself.

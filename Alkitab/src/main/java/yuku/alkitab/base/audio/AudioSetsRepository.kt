@@ -123,13 +123,25 @@ object AudioSetsRepository {
     private suspend fun fetchSets(versionId: String): AudioSets {
         val presetName = presetNameResolver.presetNameFor(versionId)
             ?: return emptySets("")
-        val body = http.getBody(BuildConfig.SERVER_HOST + SETS_PATH + presetName)
+        val url = BuildConfig.SERVER_HOST + SETS_PATH + presetName
+        val body = http.getBody(url)
             ?: return emptySets(presetName)
+        parseSets(body)?.let { return it }
+        // The unparseable bytes may be a corrupted entry served from the HTTP
+        // disk cache; fetch once past the cache — replacing the entry — and
+        // give the fresh payload a parse.
+        AppLog.w(TAG, "audio sets for $presetName did not parse; refetching past the HTTP cache")
+        val fresh = http.getBodyRevalidating(url)
+            ?: return emptySets(presetName)
+        return parseSets(fresh) ?: emptySets(presetName)
+    }
+
+    private fun parseSets(body: String): AudioSets? {
         return try {
             json.decodeFromString(AudioSets.serializer(), body)
         } catch (e: SerializationException) {
-            AppLog.w(TAG, "audio sets JSON did not parse for $presetName: ${e.message}")
-            emptySets(presetName)
+            AppLog.w(TAG, "audio sets JSON did not parse: ${e.message}")
+            null
         }
     }
 

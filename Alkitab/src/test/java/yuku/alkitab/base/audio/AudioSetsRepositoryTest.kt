@@ -194,10 +194,40 @@ class AudioSetsRepositoryTest {
     }
 
     @Test
-    fun `an unparseable body resolves to an empty set list`() = runBlocking {
-        AudioSetsRepository.http = FakeHttp { "{ this is not json" }
+    fun `an unparseable body resolves to an empty set list after both fetch attempts`() = runBlocking {
+        val http = FakeHttp { "{ this is not json" }
+        AudioSetsRepository.http = http
         val sets = AudioSetsRepository.setsFor("preset/in-tb")
         assertTrue(sets.sets.isEmpty())
+        assertEquals(
+            "a parse failure triggers one revalidating refetch (the fake's default delegates to getBody)",
+            2,
+            http.calls.get(),
+        )
+    }
+
+    @Test
+    fun `a corrupt cached body is refetched past the HTTP cache and the fresh payload is used`() = runBlocking {
+        // getBody plays the disk cache serving corrupted bytes; the
+        // revalidating fetch plays the network serving the real payload.
+        val http = object : AudioHttp {
+            var plainCalls = 0
+            var revalidatingCalls = 0
+            override suspend fun getBody(url: String): String? {
+                plainCalls++
+                return "{ corrupt bytes from the disk cache"
+            }
+            override suspend fun getBodyRevalidating(url: String): String? {
+                revalidatingCalls++
+                return IN_TB_SETS_JSON
+            }
+        }
+        AudioSetsRepository.http = http
+
+        val sets = AudioSetsRepository.setsFor("preset/in-tb")
+        assertEquals(listOf("alkitabsuara", "davar"), sets.sets.map { it.audioId })
+        assertEquals(1, http.plainCalls)
+        assertEquals(1, http.revalidatingCalls)
     }
 
     @Test

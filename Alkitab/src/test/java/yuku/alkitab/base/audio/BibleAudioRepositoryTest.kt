@@ -169,6 +169,21 @@ class BibleAudioRepositoryTest {
     }
 
     @Test
+    fun `fetchTiming refetches past the HTTP cache when the first body is corrupt`() = runBlocking {
+        // getBody plays the disk cache serving corrupted bytes; the
+        // revalidating fetch plays the network serving the real payload.
+        BibleAudioRepository.http = object : AudioHttp {
+            override suspend fun getBody(url: String): String? = "{ corrupt bytes from the disk cache"
+            override suspend fun getBodyRevalidating(url: String): String? =
+                """{"schema":2,"preset":"in-tb","audioId":"alkitabsuara","book_1":1,"chapter_1":1,"durationMs":1000,"verses":[{"verse_1":1,"startMs":0,"endMs":1000}]}"""
+        }
+        val timing = BibleAudioRepository.fetchTiming("preset/in-tb", "alkitabsuara", bookId = 0, chapter_1 = 1)
+        assertNotNull(timing)
+        assertEquals(1, timing!!.verses.size)
+        assertEquals(1_000L, timing.durationMs)
+    }
+
+    @Test
     fun `fetchTiming returns null when a required timing field is missing`() = runBlocking {
         // durationMs absent — must fail the parse, not default to zero.
         BibleAudioRepository.http = FakeHttp {
