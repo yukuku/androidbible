@@ -5,6 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -20,6 +23,30 @@ import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 
 private const val TAG = "SplitViewManager"
+
+/**
+ * Master-pane heights that keep the stacked split's handle clear of the
+ * system's mandatory gesture areas.
+ *
+ * Touches starting inside those areas are claimed by the system (home / app
+ * switch, notification shade). Unlike the back-gesture areas along the left
+ * and right edges, they cannot be excluded, so a handle parked there could be
+ * pressed but never dragged back.
+ */
+internal fun masterHeightRange(rootHeight: Int, handleThickness: Int, reservedTop: Int, reservedBottom: Int): IntRange {
+    val max = (rootHeight - handleThickness - reservedBottom).coerceAtLeast(0)
+    return reservedTop.coerceAtMost(max)..max
+}
+
+/**
+ * How much of the window top the stacked split's handle has to stay below.
+ *
+ * While the status bar is showing it occupies the top gesture area, so the
+ * handle may sit flush against the window top. In fullscreen there is no bar
+ * over that area and a drag starting there is taken by the system instead.
+ */
+internal fun reservedTopForHandle(mandatoryInsetTop: Int, statusBarVisible: Boolean): Int =
+    if (statusBarVisible) 0 else mandatoryInsetTop
 
 /**
  * Container for the secondary ("split 1") version metadata. Kept as a single
@@ -88,6 +115,7 @@ class SplitViewManager(
             val splitRoot = host.splitRoot
             val splitHandleButton = host.splitHandleButton
             splitRoot.setOnefingerEnabled(false)
+            host.leftDrawer.setEdgeSwipeEnabled(false)
 
             if (splitHandleButton.orientation == SplitHandleButton.Orientation.vertical) {
                 first = splitHandleButton.top
@@ -113,13 +141,14 @@ class SplitViewManager(
         override fun onHandleDragMoveY(dySinceLast: Float, dySinceStart: Float) {
             val newH = (first + dySinceStart).toInt()
             val maxH = root - handle
-            val height = if (newH < 0) 0 else if (newH > maxH) maxH else newH
+            val height = newH.coerceIn(masterHeightRange(root, handle))
             host.lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, height)
-            prop = height.toFloat() / maxH
+            prop = if (maxH > 0) height.toFloat() / maxH else 0f
         }
 
         override fun onHandleDragStop() {
             host.splitRoot.setOnefingerEnabled(true)
+            host.leftDrawer.setEdgeSwipeEnabled(true)
 
             if (prop != Float.MIN_VALUE) {
                 Preferences.setFloat(Prefkey.lastSplitProp, prop)
@@ -320,7 +349,8 @@ class SplitViewManager(
             // the split is restored during activity creation). A negative pane
             // height measures as an UNSPECIFIED (infinite) constraint; the
             // global-layout listener redistributes the real sizes later.
-            val masterHeight = ((totalHeight - splitHandleThickness) * prop).toInt().coerceAtLeast(0)
+            val masterHeight = ((totalHeight - splitHandleThickness) * prop).toInt()
+                .coerceIn(masterHeightRange(totalHeight, splitHandleThickness))
 
             run {
                 // divide the screen space
@@ -353,6 +383,18 @@ class SplitViewManager(
                 height = ViewGroup.LayoutParams.MATCH_PARENT
             }
         }
+    }
+
+    private fun masterHeightRange(rootHeight: Int, handleThickness: Int): IntRange {
+        val rootInsets = ViewCompat.getRootWindowInsets(host.splitRoot)
+        val mandatory = rootInsets?.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures()) ?: Insets.NONE
+        val statusBarVisible = rootInsets?.isVisible(WindowInsetsCompat.Type.statusBars()) ?: true
+        return masterHeightRange(
+            rootHeight,
+            handleThickness,
+            reservedTopForHandle(mandatory.top, statusBarVisible),
+            mandatory.bottom,
+        )
     }
 
     private fun closeSplitDisplay() {
