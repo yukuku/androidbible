@@ -397,12 +397,10 @@
     <string name="maps_could_not_open">성경 지도 앱을 열 수 없습니다.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">오디오 바 닫기</string>
-    <string name="audio_bar_next_chapter">다음 장</string>
     <string name="audio_bar_next_verse">다음 절</string>
     <string name="audio_bar_pause">정지</string>
     <string name="audio_bar_pick_source_title">오디오 재생 소스</string>
     <string name="audio_bar_play">재생</string>
-    <string name="audio_bar_prev_chapter">이전 장</string>
     <string name="audio_bar_prev_verse">이전 절</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">재생 속도</string>

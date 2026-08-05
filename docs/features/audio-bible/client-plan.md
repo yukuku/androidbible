@@ -101,21 +101,21 @@ This plan assumes the [PRD](prd.md) is approved and the backend `sets` + `file` 
     - Owns a `MutableStateFlow<AudioBarUiState>`.
     - `attach(activity: IsiActivity, composeView: ComposeView)` — `composeView.setContent { AudioBar(state, onCommand) }`.
     - Exposes `fun show()` / `fun hide()` / `fun isAvailable: Boolean` for `IsiActivity` to call.
-    - Forwards play/pause/seek/speed/chapter-nav commands to the `BibleAudioService` (M2) via the binder.
-    - Forwards chapter-navigation events back to `IsiActivity.display(book, chapter_1, 0)`.
+    - Forwards play/pause/seek/speed/recording-pick commands to the `BibleAudioService` (M2) via the binder.
+    - Follows service-initiated chapter changes (auto-advance, lock-screen skip) back into `IsiActivity.display(book, chapter_1, 0)`.
 
 #### 3.2 Composable surface
 
 - [x] `audio/ui/AudioTheme.kt` — wraps Compose `MaterialTheme` and bridges the project's existing `?attr/colorSurface*` etc. into Compose `ColorScheme` so dark mode works without a separate Compose theme. Uses `MaterialTheme.colorScheme.surfaceContainerHigh` for the bar background.
 - [x] `audio/ui/AudioBar.kt` — top-level `@Composable`. A fixed-height (≈96dp) `Surface` anchored to the bottom of the host `ComposeView`. Show/hide is synchronous (no slide-in/out animation — the controller adds/removes the Compose content on session start/end, so the activity already commits the layout reflow in one frame).
     - Layout: top row of controls + Slider below.
-    - Top row, left-to-right: prev-chapter (icon + label) | prev-verse | play/pause FAB | next-verse | next-chapter (icon + label) | speed | close.
+    - Top row, left-to-right: speed | recording chip | prev-verse | play/pause FAB | next-verse | close. The recording chip sits in a weighted slot, so a long set title ellipsizes there instead of squeezing the transport controls. Chapter navigation is not in the bar — auto-advance and the system transport controls (M4) cover it.
     - Slider uses Material 3 `Slider` with a custom `SliderState` and a label rendered above the thumb: `"${formatMmSs(snappedMs)} · v.${verse_1}"`. Snap-to-verse on `onValueChangeFinished`.
-    - Play/pause button uses `AnimatedContent` to crossfade between `Icons.Filled.PlayArrow` and `Icons.Filled.Pause` — Compose's idiomatic equivalent of the AVD morph.
+    - Play/pause button uses `AnimatedContent` to crossfade between `Icons.Filled.PlayArrow` and `Icons.Filled.Pause` — Compose's idiomatic equivalent of the AVD morph. In the error state it renders `Icons.Filled.ErrorOutline` instead, and a tap retries the load (§4.6 of PRD).
     - On preparing state: render a `CircularProgressIndicator` overlay around the play/pause button.
-    - Chapter-nav button labels (`Jn 4`) drawn with `Modifier.alpha(if (target != null) 1f else 0f)` — invisible-not-gone, layout doesn't reflow at Bible boundaries.
     - Haptics: `LocalHapticFeedback.current.performHapticFeedback(HapticFeedbackType.LongPress)` on speed change, `HapticFeedbackType.TextHandleMove` on play/pause.
 - [x] `audio/ui/SpeedBottomSheet.kt` — `ModalBottomSheet` with a `FilterChip` row for `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed` (M5).
+- [x] `audio/ui/AudioSetBottomSheet.kt` — `ModalBottomSheet` listing recordings grouped per visible version with audio (§4.2.3 of PRD); picking a row from the other version's group in split view moves the source there. Rows that don't cover the current book are disabled with the reason shown.
 - [x] `audio/ui/AudioHighlightColor.kt` — pure-function logic:
     ```kotlin
     fun pickHighlightColor(readingBackground: Int, verseTextColor: Int): Int {
@@ -177,7 +177,7 @@ The visual scaffolding (Compose audio bar, Material 3 theming, `AnimatedContent`
 
 - [x] Speed persistence: `Prefkey.audioPlaybackSpeed` (default `1.0f`). Read on service `onCreate`, applied to the player immediately, written through `BibleAudioService.setSpeed`.
 - [x] Auto-advance: `BibleAudioService.onEnded` calls `skipChapter(1)`, which uses [`BibleNeighborResolver`](../../../Alkitab/src/main/java/yuku/alkitab/base/audio/BibleNeighborResolver.kt) for cross-book navigation. No-op at the Bible boundary. No repeat toggle in v1.
-- [ ] Snackbar error handling (§4.6 of PRD). Snackbars come from `IsiActivity` (host), not the Compose layer, since they need to overlay the toolbar.
+- [x] Error handling (§4.6 of PRD): the play button renders an error icon on a failed load; tapping it retries, dropping the source version's cached set answer first so a resolution failure re-queries.
 - [x] Split-view source dialog (§4.5 of PRD). On play-tap when split view is active and both visible versions have audio, render a Compose `AlertDialog` with the two version short names and a Cancel. The state is held in `AudioBarController` via `MutableStateFlow`; reset to `null` whenever split view toggles, either visible version changes, or the audio bar is closed.
 - [ ] **Design review pass.** Walk the bottom sheet against this checklist before tagging M5 done:
     - Highlight overlay flashes to 60% on each verse change and settles to 20% in ≈0.3 s; doesn't strobe at 1.0× speed.

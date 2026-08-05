@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
@@ -36,12 +38,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,16 +59,10 @@ import kotlin.math.roundToLong
  *
  *  - [visible]              — drives [AnimatedVisibility]; the controller flips
  *                             this in [yuku.alkitab.base.audio.AudioBarController.show] / `hide`.
- *  - [prevChapterLabel] /
- *    [nextChapterLabel]     — short reference text for the chapter-nav buttons
- *                             (`"Jn 2"`, `"Mt 28"`). null means "Bible boundary";
- *                             the slot is rendered with `alpha = 0f` so the bar
- *                             doesn't reflow.
  *  - [timingAvailable]      — when false, the prev/next-verse buttons grey out
  *                             and the slider label drops the `· v.N` suffix.
- *  - [error]                — non-null disables the play button. M5 will
- *                             surface this via snackbar; M3 just degrades the
- *                             control.
+ *  - [error]                — non-null swaps the play button for an error icon;
+ *                             tapping it retries the load.
  */
 data class AudioBarUiState(
     val visible: Boolean,
@@ -76,16 +72,27 @@ data class AudioBarUiState(
     val durationMs: Long,
     val verse_1: Int,
     val speed: Float,
-    val prevChapterLabel: String?,
-    val nextChapterLabel: String?,
     val error: String?,
     val timingAvailable: Boolean,
     /** Version driving audio, or null. Used to scope the verse highlight to matching panes. */
     val playingVersionId: String?,
+    /**
+     * Title of the selected recording, shown as a compact button next to the
+     * speed control. Null hides the button — versions with a single recording
+     * should not pay for a control that offers no choice.
+     */
+    val setTitle: String?,
     /** When non-null, the source-picker dialog is shown over the bar. */
     val pickerOptions: List<AudioSourceOption>?,
     /** When true, the playback-speed bottom sheet is shown over the bar. */
     val showSpeedSheet: Boolean,
+    /**
+     * When non-null, the recording-picker bottom sheet is shown over the bar.
+     * One group per visible version with audio — two groups in split view when
+     * both sides have audio, so the picker also serves as the mid-session way
+     * to move audio between the splits.
+     */
+    val setGroups: List<AudioSetGroup>?,
 ) {
     companion object {
         val HIDDEN = AudioBarUiState(
@@ -96,24 +103,58 @@ data class AudioBarUiState(
             durationMs = 0L,
             verse_1 = 0,
             speed = 1.0f,
-            prevChapterLabel = null,
-            nextChapterLabel = null,
             error = null,
             timingAvailable = false,
             playingVersionId = null,
+            setTitle = null,
             pickerOptions = null,
             showSpeedSheet = false,
+            setGroups = null,
         )
     }
 }
 
-/** One row in the source-picker dialog. */
-data class AudioSourceOption(val versionId: String, val shortName: String)
+/**
+ * One row in the source-picker dialog: which version drives audio in split
+ * view, carrying the recording that would play for it. Split-source selection
+ * and set selection remain distinct choices — which *version* drives audio,
+ * then which *recording* of it.
+ */
+data class AudioSourceOption(
+    val versionId: String,
+    val shortName: String,
+    /** Recording that plays when this version is picked (the persisted selection, or the default). */
+    val audioId: String,
+    /** Display title of that recording. */
+    val title: String,
+)
+
+/**
+ * One version's recordings in the recording-picker bottom sheet. [versionName]
+ * is rendered as a group header only when more than one group is shown.
+ */
+data class AudioSetGroup(
+    val versionId: String,
+    val versionName: String,
+    val options: List<AudioSetOption>,
+)
+
+/**
+ * One row in the recording-picker bottom sheet. Sets not covering the current
+ * book are listed but disabled ([coversCurrentBook] = false) with the reason
+ * shown — hiding them would make the list appear to change size as the user
+ * moves through the Bible.
+ */
+data class AudioSetOption(
+    val audioId: String,
+    val title: String,
+    val selected: Boolean,
+    val coversCurrentBook: Boolean,
+)
 
 /**
  * Commands raised by the bar's UI. The controller maps these onto
- * [yuku.alkitab.base.audio.BibleAudioService] calls and (for chapter nav) onto
- * the host activity's `display(...)` method.
+ * [yuku.alkitab.base.audio.BibleAudioService] calls.
  *
  * `SeekDrag` is fired continuously while the user drags the slider thumb so
  * the bar can show a live `mm:ss · v.N` preview. `SeekCommit` is fired on
@@ -122,14 +163,17 @@ data class AudioSourceOption(val versionId: String, val shortName: String)
  */
 sealed interface AudioBarCommand {
     data object PlayPause : AudioBarCommand
+    /** Fired instead of [PlayPause] while the bar is in an error state — retries the load. */
+    data object Retry : AudioBarCommand
     data object PrevVerse : AudioBarCommand
     data object NextVerse : AudioBarCommand
-    data object PrevChapter : AudioBarCommand
-    data object NextChapter : AudioBarCommand
     data object Close : AudioBarCommand
     data object Speed : AudioBarCommand
     data class SetSpeed(val speed: Float) : AudioBarCommand
     data object DismissSpeedSheet : AudioBarCommand
+    data object OpenSetSheet : AudioBarCommand
+    data object DismissSetSheet : AudioBarCommand
+    data class PickSet(val versionId: String, val audioId: String) : AudioBarCommand
     data class SeekDrag(val positionMs: Long) : AudioBarCommand
     data class SeekCommit(val positionMs: Long) : AudioBarCommand
     data class PickSource(val versionId: String) : AudioBarCommand
@@ -158,6 +202,13 @@ fun AudioBar(
                 currentSpeed = state.speed,
                 onSelect = { onCommand(AudioBarCommand.SetSpeed(it)) },
                 onDismiss = { onCommand(AudioBarCommand.DismissSpeedSheet) },
+            )
+        }
+        state.setGroups?.let { groups ->
+            AudioSetBottomSheet(
+                groups = groups,
+                onSelect = { versionId, audioId -> onCommand(AudioBarCommand.PickSet(versionId, audioId)) },
+                onDismiss = { onCommand(AudioBarCommand.DismissSetSheet) },
             )
         }
         if (!state.visible) return@AudioTheme
@@ -228,36 +279,27 @@ private fun AudioBarTopRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
 ) {
-    // Icon-only top row: a speed chip on the left, the transport cluster
-    // (chapter/verse skip + play/pause) centered, and a close button on the
-    // right. Chapter-name text labels are intentionally omitted — the toolbar
-    // already shows the current chapter, and on a phone they crowd out the
-    // speed indicator and force the close button to wrap.
+    // A speed chip and the recording chip on the left, the transport cluster
+    // (verse skip + play/pause) centered, and a close button on the right.
+    // Chapter-name text labels are intentionally omitted — the toolbar already
+    // shows the current chapter, and on a phone they crowd out the speed
+    // indicator and force the close button to wrap.
     //
-    // The speed chip and close button take their intrinsic width, and the
-    // cluster is centered between two weighted Spacers that collapse to zero
-    // when the row is tight. Wrapping the speed chip in a `weight(1f)` slot
-    // instead would clip it: a Row measures the non-weighted cluster first
-    // and splits the remaining width equally between weighted slots, and
-    // because the speed label ("0,5×") is wider than the close icon, an equal
-    // split can force the TextButton narrower than its text — which, with
-    // `maxLines = 1, softWrap = false` and no ellipsis, drops the trailing
-    // "×" (worse under large font scales, where the text grows but the icon
-    // buttons don't).
+    // The speed chip, cluster, and close button take their intrinsic width and
+    // never shrink. The recording chip sits inside the left weighted slot, so
+    // however long the set title is, it only ever ellipsizes within the
+    // leftover space — it cannot squeeze the transport controls. The two
+    // weighted slots get equal shares, which keeps the cluster centered and
+    // collapses to zero when the row is tight.
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SpeedButton(state = state, onCommand = onCommand)
 
-        Spacer(Modifier.weight(1f))
-
-        ChapterNavButton(
-            available = state.prevChapterLabel != null,
-            descriptionRes = R.string.audio_bar_prev_chapter,
-            iconRes = R.drawable.ic_audio_skip_previous,
-            onClick = { onCommand(AudioBarCommand.PrevChapter) },
-        )
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+            SetButton(state = state, onCommand = onCommand)
+        }
 
         PrevVerseButton(state = state, onCommand = onCommand)
 
@@ -266,13 +308,6 @@ private fun AudioBarTopRow(
         Spacer(Modifier.width(4.dp))
 
         NextVerseButton(state = state, onCommand = onCommand)
-
-        ChapterNavButton(
-            available = state.nextChapterLabel != null,
-            descriptionRes = R.string.audio_bar_next_chapter,
-            iconRes = R.drawable.ic_audio_skip_next,
-            onClick = { onCommand(AudioBarCommand.NextChapter) },
-        )
 
         Spacer(Modifier.weight(1f))
 
@@ -335,6 +370,29 @@ private fun SpeedButton(
     }
 }
 
+/**
+ * Compact recording chip next to the speed control, showing the selected
+ * set's title. Tapping opens the [AudioSetBottomSheet]. Rendered only when
+ * there is a choice to make ([AudioBarUiState.setTitle] is non-null). The
+ * caller places it inside a weighted slot, so a long title ellipsizes within
+ * the leftover row space instead of squeezing the transport controls.
+ */
+@Composable
+private fun SetButton(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    val title = state.setTitle ?: return
+    TextButton(onClick = { onCommand(AudioBarCommand.OpenSetSheet) }) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
 @Composable
 private fun CloseButton(
     onCommand: (AudioBarCommand) -> Unit,
@@ -347,27 +405,11 @@ private fun CloseButton(
     }
 }
 
-@Composable
-private fun ChapterNavButton(
-    available: Boolean,
-    descriptionRes: Int,
-    iconRes: Int,
-    onClick: () -> Unit,
-) {
-    // `alpha 0` (not GONE / not removed) so the layout doesn't reflow at
-    // Bible boundaries when prev/next is unavailable.
-    IconButton(
-        onClick = onClick,
-        enabled = available,
-        modifier = Modifier.alpha(if (available) 1f else 0f),
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = stringResource(descriptionRes),
-        )
-    }
-}
-
+/**
+ * Play/pause, with two special states sharing the slot: a progress ring while
+ * preparing, and an error icon when the last load failed — tapping the error
+ * icon retries the load instead of toggling playback.
+ */
 @Composable
 private fun PlayPauseButton(
     state: AudioBarUiState,
@@ -379,29 +421,36 @@ private fun PlayPauseButton(
         FilledIconButton(
             onClick = {
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onCommand(AudioBarCommand.PlayPause)
+                onCommand(if (state.error != null) AudioBarCommand.Retry else AudioBarCommand.PlayPause)
             },
-            enabled = state.error == null && !state.preparing,
+            enabled = !state.preparing,
             modifier = Modifier.size(48.dp),
         ) {
-            AnimatedContent(
-                targetState = state.isPlaying,
-                transitionSpec = {
-                    (fadeIn(animationSpec = tween(150)) togetherWith
-                        fadeOut(animationSpec = tween(150)))
-                },
-                label = "playPauseIcon",
-            ) { playing ->
-                if (playing) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_audio_pause),
-                        contentDescription = stringResource(R.string.audio_bar_pause),
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_audio_play),
-                        contentDescription = stringResource(R.string.audio_bar_play),
-                    )
+            if (state.error != null) {
+                Icon(
+                    imageVector = Icons.Filled.ErrorOutline,
+                    contentDescription = stringResource(R.string.audio_bar_error_retry),
+                )
+            } else {
+                AnimatedContent(
+                    targetState = state.isPlaying,
+                    transitionSpec = {
+                        (fadeIn(animationSpec = tween(150)) togetherWith
+                            fadeOut(animationSpec = tween(150)))
+                    },
+                    label = "playPauseIcon",
+                ) { playing ->
+                    if (playing) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_audio_pause),
+                            contentDescription = stringResource(R.string.audio_bar_pause),
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_audio_play),
+                            contentDescription = stringResource(R.string.audio_bar_play),
+                        )
+                    }
                 }
             }
         }
@@ -487,10 +536,12 @@ private fun AudioBarSlider(
 /**
  * Landscape variant — collapses the bar into a single row to reclaim the
  * vertical space the two-row portrait layout costs (worse with split view).
- * Order: slider · spacer · transport cluster · speed · close. The mm:ss
- * position/duration labels are dropped here — the slider conveys progress and
- * keeping the labels would push the control cluster into wrapping on a single
- * row.
+ * Order: slider · spacer · transport cluster · recording chip · speed · close.
+ * The mm:ss position/duration labels are dropped here — the slider conveys
+ * progress and keeping the labels would push the control cluster into
+ * wrapping on a single row. The recording chip sits in its own weighted slot
+ * so a long set title ellipsizes there rather than squeezing the transport
+ * controls.
  */
 @Composable
 private fun AudioBarLandscapeRow(
@@ -514,13 +565,6 @@ private fun AudioBarLandscapeRow(
 
         Spacer(Modifier.weight(1f))
 
-        ChapterNavButton(
-            available = state.prevChapterLabel != null,
-            descriptionRes = R.string.audio_bar_prev_chapter,
-            iconRes = R.drawable.ic_audio_skip_previous,
-            onClick = { onCommand(AudioBarCommand.PrevChapter) },
-        )
-
         PrevVerseButton(state = state, onCommand = onCommand)
 
         Spacer(Modifier.width(4.dp))
@@ -529,12 +573,9 @@ private fun AudioBarLandscapeRow(
 
         NextVerseButton(state = state, onCommand = onCommand)
 
-        ChapterNavButton(
-            available = state.nextChapterLabel != null,
-            descriptionRes = R.string.audio_bar_next_chapter,
-            iconRes = R.drawable.ic_audio_skip_next,
-            onClick = { onCommand(AudioBarCommand.NextChapter) },
-        )
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+            SetButton(state = state, onCommand = onCommand)
+        }
 
         SpeedButton(state = state, onCommand = onCommand)
 
@@ -599,13 +640,13 @@ private fun AudioBarPreviewPlaying() {
             durationMs = 195_000L,
             verse_1 = 7,
             speed = 1.0f,
-            prevChapterLabel = "Jn 2",
-            nextChapterLabel = "Jn 4",
             error = null,
             timingAvailable = true,
             playingVersionId = "preset/in-tb",
+            setTitle = "Alkitab Suara — a deliberately long recording title",
             pickerOptions = null,
             showSpeedSheet = false,
+            setGroups = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -624,13 +665,13 @@ private fun AudioBarPreviewPreparing() {
             durationMs = 0L,
             verse_1 = 0,
             speed = 1.0f,
-            prevChapterLabel = "Jn 2",
-            nextChapterLabel = "Jn 4",
             error = null,
             timingAvailable = false,
             playingVersionId = "preset/in-tb",
+            setTitle = null,
             pickerOptions = null,
             showSpeedSheet = false,
+            setGroups = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -639,7 +680,7 @@ private fun AudioBarPreviewPreparing() {
 
 @Preview(showBackground = true, backgroundColor = 0xFF121212, widthDp = 400, uiMode = 32)
 @Composable
-private fun AudioBarPreviewDarkBoundary() {
+private fun AudioBarPreviewDarkError() {
     AudioBar(
         state = AudioBarUiState(
             visible = true,
@@ -649,13 +690,13 @@ private fun AudioBarPreviewDarkBoundary() {
             durationMs = 60_000L,
             verse_1 = 0,
             speed = 1.0f,
-            prevChapterLabel = null, // Bible boundary — invisible-not-gone
-            nextChapterLabel = "Mt 1",
-            error = null,
+            error = "ERROR_CODE_IO_NETWORK_CONNECTION_FAILED", // play button becomes a retry
             timingAvailable = false, // some chapters have audio but no timing
             playingVersionId = "preset/in-tb",
+            setTitle = null,
             pickerOptions = null,
             showSpeedSheet = false,
+            setGroups = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -674,16 +715,16 @@ private fun AudioBarPreviewWithPicker() {
             durationMs = 0L,
             verse_1 = 0,
             speed = 1.0f,
-            prevChapterLabel = "Jn 2",
-            nextChapterLabel = "Jn 4",
             error = null,
             timingAvailable = false,
             playingVersionId = null,
+            setTitle = null,
             pickerOptions = listOf(
-                AudioSourceOption(versionId = "preset/in-tb", shortName = "TB"),
-                AudioSourceOption(versionId = "preset/en-kjv", shortName = "KJV"),
+                AudioSourceOption(versionId = "preset/in-tb", shortName = "TB", audioId = "alkitabsuara", title = "Alkitab Suara"),
+                AudioSourceOption(versionId = "preset/en-kjv", shortName = "KJV", audioId = "wordproject", title = "wordproject"),
             ),
             showSpeedSheet = false,
+            setGroups = null,
         ),
         onCommand = {},
         modifier = Modifier,

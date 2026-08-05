@@ -397,12 +397,10 @@
     <string name="maps_could_not_open">聖書マップのアプリを開くことができませんでした。</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">オーディオバーを閉じる</string>
-    <string name="audio_bar_next_chapter">次の章</string>
     <string name="audio_bar_next_verse">次の節</string>
     <string name="audio_bar_pause">一時停止</string>
     <string name="audio_bar_pick_source_title">オーディオの再生元</string>
     <string name="audio_bar_play">再生</string>
-    <string name="audio_bar_prev_chapter">前の章</string>
     <string name="audio_bar_prev_verse">前の節</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">再生速度</string>

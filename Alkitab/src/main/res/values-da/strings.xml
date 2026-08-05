@@ -396,12 +396,10 @@
     <string name="maps_could_not_open">Kunne ikke åbne Bibelkort-appen.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Luk lydbjælken</string>
-    <string name="audio_bar_next_chapter">Næste kapitel</string>
     <string name="audio_bar_next_verse">Næste vers</string>
     <string name="audio_bar_pause">Pause</string>
     <string name="audio_bar_pick_source_title">Afspil lyd fra</string>
     <string name="audio_bar_play">Afspil</string>
-    <string name="audio_bar_prev_chapter">Foregående kapitel</string>
     <string name="audio_bar_prev_verse">Foregående vers</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Afspilningshastighed</string>

@@ -11,6 +11,10 @@ package yuku.alkitab.base.audio
  *  - [versionId]   — versionId of the source currently loaded, or `""` when
  *                    nothing is loaded. Scopes the verse highlight to panes
  *                    whose version matches.
+ *  - [audioId]     — recording identifier of the loaded audio set, or `""`
+ *                    when nothing is loaded. Lets the bar render the active
+ *                    recording and reconstruct the selected set after process
+ *                    death or a service-initiated change.
  *  - [bookId]      — bookId of the chapter currently loaded into the service,
  *                    or `-1` when nothing is loaded. Lets [AudioBarController]
  *                    detect service-initiated chapter changes (e.g. lock-screen
@@ -31,6 +35,7 @@ data class PlaybackState(
     val isPlaying: Boolean,
     val preparing: Boolean,
     val versionId: String,
+    val audioId: String,
     val bookId: Int,
     val chapter_1: Int,
     val verse_1: Int,
@@ -54,6 +59,7 @@ data class PlaybackState(
             isPlaying = false,
             preparing = false,
             versionId = "",
+            audioId = "",
             bookId = -1,
             chapter_1 = 0,
             verse_1 = 0,

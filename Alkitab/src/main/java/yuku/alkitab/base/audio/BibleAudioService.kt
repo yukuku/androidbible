@@ -109,6 +109,8 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     /** Parameters for [loadChapter]. The display fields drive the lock-screen metadata. */
     data class AudioRequest(
         val versionId: String,
+        /** Recording identifier of the audio set to play. */
+        val audioId: String,
         val bookId: Int,
         val chapter_1: Int,
         val displayTitle: String,
@@ -359,6 +361,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 preparing = true,
                 isPlaying = false,
                 versionId = request.versionId,
+                audioId = request.audioId,
                 bookId = request.bookId,
                 chapter_1 = request.chapter_1,
                 verse_1 = 0,
@@ -371,6 +374,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         loadJob = scope.launch {
             val url = BibleAudioRepository.buildChapterUrl(
                 request.versionId,
+                request.audioId,
                 request.bookId,
                 request.chapter_1,
             )
@@ -408,6 +412,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         timingJob = scope.launch {
             val timing = BibleAudioRepository.fetchTiming(
                 request.versionId,
+                request.audioId,
                 request.bookId,
                 request.chapter_1,
             )
@@ -521,7 +526,9 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     /**
      * Loads the chapter immediately before ([direction] = -1) or after
      * ([direction] = 1) the currently-loaded one. No-op when nothing has been
-     * loaded, when [direction] is invalid, or at the Bible boundary.
+     * loaded, when [direction] is invalid, at the Bible boundary, or at the
+     * edge of the selected recording's book coverage (auto-advance stops at a
+     * coverage gap instead of skipping it).
      *
      * Used both by:
      *  - the in-app audio bar's prev/next-chapter buttons (via
@@ -538,24 +545,28 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         val current = currentRequest ?: return
         val resolvedVersion = App.services.versions.getVersionFromVersionId(current.versionId)?.version
         val version = resolvedVersion ?: App.services.versions.activeVersion()
-        val (book, chapter1) = BibleNeighborResolver.neighbor(
+        val selectedSet = AudioSetsRepository.cachedSetsFor(current.versionId)
+            ?.sets?.firstOrNull { it.audioId == current.audioId }
+        val (book, chapter1) = BibleNeighborResolver.coverageAwareNeighbor(
             version,
             current.bookId,
             current.chapter_1,
             direction,
+            selectedSet,
         ) ?: return
 
-        // Reuse the most recent displaySubtitle when we have no resolved
-        // Version to query — keeps notification metadata stable rather than
-        // flipping to a different version's short name across chapter skips.
-        val versionShortName = resolvedVersion?.shortName ?: current.displaySubtitle
+        // The version and recording don't change across a chapter skip, so the
+        // displaySubtitle (version short name, plus the set title for
+        // multi-set versions) carries over as-is — keeps notification metadata
+        // stable.
         loadChapter(
             AudioRequest(
                 versionId = current.versionId,
+                audioId = current.audioId,
                 bookId = book.bookId,
                 chapter_1 = chapter1,
                 displayTitle = "${book.shortName} $chapter1",
-                displaySubtitle = versionShortName,
+                displaySubtitle = current.displaySubtitle,
                 startVerse_1 = 0,
             )
         )

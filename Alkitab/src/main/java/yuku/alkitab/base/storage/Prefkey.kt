@@ -127,15 +127,17 @@ enum class Prefkey {
     gotoAskForVerse,
 
     /**
-     * Audio bible: ETag of the most recently fetched `/audio/catalog` response.
-     * Sent as `If-None-Match` on subsequent fetches for 304 short-circuit.
-     */
-    audioCatalog_etag,
-
-    /**
      * Audio bible: playback speed (float, 0.5–2.0). Default 1.0.
      */
     audioPlaybackSpeed,
+
+    /**
+     * Audio bible: which recording plays for each version, as a JSON object
+     * mapping versionId to audioId, e.g. `{"preset/in-tb": "davar"}`. One key
+     * holds the whole map since per-version enum keys are not expressible.
+     * Managed by [yuku.alkitab.base.audio.AudioSetSelections].
+     */
+    audioSelectedSets,
 
     /**
      * One-shot completion flag for the REM-32 `SongInfo` / `SongBookInfo`

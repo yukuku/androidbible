@@ -397,12 +397,10 @@
     <string name="maps_could_not_open">Não foi possível abrir o aplicativo Mapas da Bíblia.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Fechar a barra de áudio</string>
-    <string name="audio_bar_next_chapter">Capítulo seguinte</string>
     <string name="audio_bar_next_verse">Versículo seguinte</string>
     <string name="audio_bar_pause">Pausa</string>
     <string name="audio_bar_pick_source_title">Reproduzir áudio de</string>
     <string name="audio_bar_play">Reproduzir</string>
-    <string name="audio_bar_prev_chapter">Capítulo anterior</string>
     <string name="audio_bar_prev_verse">Versículo anterior</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Velocidade de reprodução</string>

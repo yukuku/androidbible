@@ -395,12 +395,10 @@
     <string name="maps_could_not_open">Dili ma abli ang Bible Maps app.</string>
     <!-- Notification channels -->
     <string name="audio_bar_close">Isira ang audio bar</string>
-    <string name="audio_bar_next_chapter">Sunod na kapitulo</string>
     <string name="audio_bar_next_verse">Sunod na bersikulo</string>
     <string name="audio_bar_pause">Hunong</string>
     <string name="audio_bar_pick_source_title">Ipatugtog ang audio gikan sa</string>
     <string name="audio_bar_play">Patugtog</string>
-    <string name="audio_bar_prev_chapter">Miaging kapitulo</string>
     <string name="audio_bar_prev_verse">Miaging bersikulo</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Katulin sa pagpatugtog</string>

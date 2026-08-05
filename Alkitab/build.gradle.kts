@@ -130,13 +130,14 @@ android {
         buildConfigField("String", "RIBKA_FUNCTIONS_HOST", "\"$ribkaFunctionsHost\"")
         buildConfigField("String", "LAST_COMMIT_HASH", "\"$gitCommitHash\"")
 
-        // Audio catalog identifier for the internal Bible version. The
-        // bundled internal version reports `MVersion.getVersionId() == "internal"`,
-        // which never matches a `preset/*` catalog entry; this field tells
-        // AudioCatalogRepository what catalog row to use when the user is
-        // reading the internal version. Empty string means "internal has no
-        // audio for this flavor". Each productFlavor overrides this below.
-        buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"\"")
+        // Preset name of the bundled internal Bible version. The internal
+        // version is a preset build (TB, KJV, …) but reports
+        // `MVersion.getVersionId() == "internal"`; this field records which
+        // preset it corresponds to, exposed via MVersionInternal.getPresetName()
+        // like every other MVersion subtype. Empty string means the flavor's
+        // internal version has no preset identity (so e.g. per-version audio
+        // resolves to an empty set list). Each productFlavor overrides this below.
+        buildConfigField("String", "INTERNAL_VERSION_PRESET_NAME", "\"\"")
     }
 
     androidResources {
@@ -183,24 +184,24 @@ android {
 
     productFlavors {
         // Use this for development. The plain build's bundled `ddd_*` files are
-        // Indonesian-language placeholders, so for dev convenience we map the
-        // internal version to TB audio so the bottom sheet has something to play.
+        // Indonesian-language placeholders, so for dev convenience we give the
+        // internal version TB's preset identity so audio has something to play.
         create("plain") {
-            buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"preset/in-tb\"")
+            buildConfigField("String", "INTERNAL_VERSION_PRESET_NAME", "\"in-tb\"")
         }
 
         // The following flavors are for release
         create("yuku_alkitab") {
             applicationId = "yuku.alkitab"
-            buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"preset/in-tb\"")
+            buildConfigField("String", "INTERNAL_VERSION_PRESET_NAME", "\"in-tb\"")
         }
         create("yuku_quick_bible") {
             applicationId = "yuku.alkitab.kjv"
-            buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"preset/en-kjv\"")
+            buildConfigField("String", "INTERNAL_VERSION_PRESET_NAME", "\"en-kjv\"")
         }
         create("sabda_alkitab") {
             applicationId = "org.sabda.alkitab"
-            buildConfigField("String", "INTERNAL_VERSION_AUDIO_ID", "\"preset/in-tb\"")
+            buildConfigField("String", "INTERNAL_VERSION_PRESET_NAME", "\"in-tb\"")
         }
     }
 

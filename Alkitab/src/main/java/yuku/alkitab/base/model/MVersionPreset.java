@@ -20,6 +20,11 @@ public class MVersionPreset extends MVersion {
 	}
 
 	@Override
+	public String getPresetName() {
+		return preset_name;
+	}
+
+	@Override
 	public Version getVersion() {
 		throw new RuntimeException("THIS SHOULD NOT HAPPEN: preset should not have any actual data file to read from.");
 	}

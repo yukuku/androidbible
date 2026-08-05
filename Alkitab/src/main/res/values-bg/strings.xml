@@ -397,12 +397,10 @@
     <string name="maps_could_not_open">Приложението Bible Maps не е открито.</string>
     <!-- Notification channels -->
     <string name="audio_bar_close">Затвори аудио лентата</string>
-    <string name="audio_bar_next_chapter">Следваща глава</string>
     <string name="audio_bar_next_verse">Следващ стих</string>
     <string name="audio_bar_pause">Пауза</string>
     <string name="audio_bar_pick_source_title">Възпроизведи аудио от</string>
     <string name="audio_bar_play">Възпроизведи</string>
-    <string name="audio_bar_prev_chapter">Предишна глава</string>
     <string name="audio_bar_prev_verse">Предишен стих</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Скорост на възпроизвеждане</string>

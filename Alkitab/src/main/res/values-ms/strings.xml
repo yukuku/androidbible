@@ -396,12 +396,10 @@
     <string name="maps_could_not_open">Tidak dapat membuka aplikasi Peta-Peta Alkitab.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Tutup bar audio</string>
-    <string name="audio_bar_next_chapter">Bab seterusnya</string>
     <string name="audio_bar_next_verse">Ayat seterusnya</string>
     <string name="audio_bar_pause">Jeda</string>
     <string name="audio_bar_pick_source_title">Mainkan audio dari</string>
     <string name="audio_bar_play">Main</string>
-    <string name="audio_bar_prev_chapter">Bab sebelumnya</string>
     <string name="audio_bar_prev_verse">Ayat sebelumnya</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Kelajuan main</string>

@@ -402,12 +402,10 @@
     <string name="maps_could_not_open">Kan de Bijbel kaarten app niet openen.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Sluit audiobalk</string>
-    <string name="audio_bar_next_chapter">Volgend hoofdstuk</string>
     <string name="audio_bar_next_verse">Volgend vers</string>
     <string name="audio_bar_pause">Pauze</string>
     <string name="audio_bar_pick_source_title">Audio afspelen van</string>
     <string name="audio_bar_play">Afspelen</string>
-    <string name="audio_bar_prev_chapter">Vorig hoofdstuk</string>
     <string name="audio_bar_prev_verse">Vorig vers</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Afspeelsnelheid</string>

@@ -396,12 +396,10 @@
     <string name="maps_could_not_open">Nevar atvērt Bībeles Kartes aplikāciju.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Aizvērt audio joslu</string>
-    <string name="audio_bar_next_chapter">Nākošā nodaļa</string>
     <string name="audio_bar_next_verse">Nākošais pants</string>
     <string name="audio_bar_pause">Pauze</string>
     <string name="audio_bar_pick_source_title">Atskaņot audio no</string>
     <string name="audio_bar_play">Atskaņot</string>
-    <string name="audio_bar_prev_chapter">Iepriekšējā nodaļa</string>
     <string name="audio_bar_prev_verse">Iepriekšējais pants</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Atskaņošanas ātrums</string>

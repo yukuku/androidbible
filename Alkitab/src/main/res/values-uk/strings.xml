@@ -398,12 +398,10 @@
     <string name="maps_could_not_open">Не вдалося відкрити програму Bible Maps.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Закрити панель аудіо</string>
-    <string name="audio_bar_next_chapter">Наступний розділ</string>
     <string name="audio_bar_next_verse">Наступний вірш</string>
     <string name="audio_bar_pause">Пауза</string>
     <string name="audio_bar_pick_source_title">Відтворити аудіо з</string>
     <string name="audio_bar_play">Відтворити</string>
-    <string name="audio_bar_prev_chapter">Попередній розділ</string>
     <string name="audio_bar_prev_verse">Попередній вірш</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Швидкість відтворення</string>

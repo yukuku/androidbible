@@ -402,12 +402,10 @@
     <string name="maps_could_not_open">Không thể mở ứng dụng Kinh Thánh.</string>
 	<!-- Notification channels -->
     <string name="audio_bar_close">Đóng thanh âm thanh</string>
-    <string name="audio_bar_next_chapter">Chương sau</string>
     <string name="audio_bar_next_verse">Câu sau</string>
     <string name="audio_bar_pause">Tạm dừng</string>
     <string name="audio_bar_pick_source_title">Phát âm thanh từ</string>
     <string name="audio_bar_play">Phát</string>
-    <string name="audio_bar_prev_chapter">Chương trước</string>
     <string name="audio_bar_prev_verse">Câu trước</string>
     <string name="audio_bar_speed_format">%1$s×</string>
     <string name="audio_bar_speed_sheet_title">Tốc độ phát</string>
