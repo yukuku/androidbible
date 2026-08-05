@@ -4,9 +4,9 @@
 **Target branch:** cut a fresh feature branch from `develop` (e.g. `feature/audio-bible`); close #127 and #124 afterwards.
 **Estimated effort:** ~3 sprint-weeks for one engineer (v1 must-haves). Pre-download (v2) is another week.
 
-This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-plan.md) lands (at least catalog + timing endpoints) before milestone M3.
+This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-plan.md) lands (`sets` + `file` + `timing` endpoints) before milestone M3.
 
-**Backend status:** the [backend plan](backend-plan.md) is now grounded in the real `alkitab-host` stack (Python 3.12 / Flask on App Engine Standard, NDB Datastore for the timing cache, `web.cache` LRU for in-memory hits, top-level `/audio/*` namespace served by the `web-py3` service). No `dispatch.yaml` change is required — the catch-all already routes `/audio/*` to web-py3. The client is therefore unblocked: we ship with the bundled fallback catalog and the feature works end-to-end against `media.sabda.org` even if the backend deploy slips.
+**Backend status:** the `/audio/*` namespace is specified in the [backend plan](backend-plan.md), and the per-version set contract in [multi-audio-sets-design.md](multi-audio-sets-design.md) §2. Unlike earlier drafts, **the client has no bundled fallback** — availability is per-version and can't be usefully baked into the APK — so the endpoints must be live in production before the client work is testable end to end. Treat that as a hard dependency on M1, not M3.
 
 ---
 
@@ -22,9 +22,9 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 ## 1. Milestones
 
-### M1 — Skeleton, deps, & catalog (≈ 3 days, +1 for the Compose bootstrap)
+### M1 — Skeleton, deps, & audio sets (≈ 3 days, +1 for the Compose bootstrap)
 
-**Goal:** app builds with the new dependency family wired in (media3-session, Compose 1.11.0, Compose Compiler plugin); catalog loads from backend with a bundled fallback.
+**Goal:** app builds with the new dependency family wired in (media3-session, Compose 1.11.0, Compose Compiler plugin); audio sets resolve per version from the backend.
 
 - [x] Add `androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidxMedia3" }` to `gradle/libs.versions.toml` and `implementation(libs.androidx.media3.session)` in `Alkitab/build.gradle.kts`.
 - [x] Add Compose 1.11.0 to the project as **the first Compose surface in the codebase**:
@@ -41,21 +41,20 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
     - Add `id("org.jetbrains.kotlin.plugin.compose") apply false` to the root `build.gradle.kts` plugin list (root project alias).
 - [x] Verify `./gradlew assemblePlainDebug` succeeds with the new deps in place. If `compose-material3:1.5.0` is not yet published, bump to the most recent stable that pairs with `compose-ui:1.11.0`.
 - [x] Create package `yuku.alkitab.base.audio` and skeleton files per PRD §5.7.
-- [x] Model classes: `AudioVersion.kt`, `ChapterTiming.kt`, `VerseTiming.kt`, `AudioCatalog.kt`.
-- [x] `AudioCatalogRepository`:
+- [x] Model classes: `AudioSets.kt` (`AudioSets` + `AudioSet`), `ChapterTiming.kt`, `VerseTiming.kt`. No default parameter values — every field is required, so a backend contract change fails loudly at parse time instead of yielding a silently-empty model.
+- [x] `AudioSetsRepository`:
     - Uses `Connections.okHttp` and `BuildConfig.SERVER_HOST` (defined at `Alkitab/build.gradle.kts:123`; resolves to `https://alkitab.app` for production flavors).
-    - `GET ${SERVER_HOST}/audio/catalog?${App.getAppIdentifierParamsEncoded()}` with conditional `If-None-Match` when we have an ETag. Mirror the `appIdentifier`/`packageName`/`versionCode` query-param style used by `VersionConfigUpdaterService` (`Alkitab/src/main/java/yuku/alkitab/base/sv/VersionConfigUpdaterService.java:93`) and `DevotionDownloader` (`DevotionDownloader.java:51`).
-    - 200 → parse JSON, persist to `files/audio_catalog.json`, store ETag in `Prefkey.audioCatalog_etag`.
-    - 304 → keep current cache.
-    - Non-2xx → fall back to bundled `Alkitab/src/main/assets/audio_catalog.json` (checked in with the four known SABDA versions; same shape as the live `/audio/catalog` response). The feature works end-to-end on the bundled fallback alone, so client and backend can ship independently.
-    - `suspend fun loadCatalog(): AudioCatalog` returns the cached+merged view.
-    - `fun isAudioAvailable(versionId: String): Boolean` for the toolbar icon visibility.
-- [x] Add a Prefkey entry `audioCatalog_etag` (and `audioPlaybackSpeed` for M5) in `Prefkey.kt`.
-- [x] Per-flavor `BuildConfig.INTERNAL_VERSION_AUDIO_ID` in `Alkitab/build.gradle.kts` (see PRD §5.4.1). Default `""` in `defaultConfig`; override `"preset/in-tb"` for `plain`/`yuku_alkitab`/`sabda_alkitab` and `"preset/en-kjv"` for `yuku_quick_bible`. Wire the substitution into `AudioCatalogRepository.findEntry` so `MVersion.getVersionId() == "internal"` resolves to the correct catalog row.
-- [x] Background refresh: piggyback on the existing `VersionConfigUpdaterService` (see `docs/backend-communication.md:39-41`) — add a parallel catalog fetch so we don't spawn a new worker.
-- [x] Unit tests (`Alkitab/src/test/java/.../audio/AudioCatalogRepositoryTest.kt`): parsing, ETag handling, cache fallback.
+    - `GET ${SERVER_HOST}/audio/sets/<preset>`. OkHttp's 50MB disk cache handles conditional revalidation from the backend's `Cache-Control`/`ETag` — no manual `If-None-Match`, no `files/` copy, no bundled asset.
+    - `suspend fun setsFor(versionId: String): AudioSets` — resolves the preset name, fetches, parses.
+    - `fun cachedSetsFor(versionId: String): AudioSets?` — non-blocking peek for `onPrepareOptionsMenu`.
+    - In-memory cache keyed by `versionId`, **including negative results**, so a version without audio doesn't re-query on every chapter turn.
+    - Network/parse failure → empty set list; the toolbar icon stays hidden rather than showing a dead button.
+- [x] Add Prefkey entries `audioSelectedSets` (JSON map of `versionId` → chosen `audioId`) and `audioPlaybackSpeed` (for M5) in `Prefkey.kt`.
+- [x] Per-flavor `BuildConfig.INTERNAL_VERSION_PRESET_NAME` in `Alkitab/build.gradle.kts` (see PRD §5.4.1). Default `""` in `defaultConfig`; override `"in-tb"` for `plain`/`yuku_alkitab`/`sabda_alkitab` and `"en-kjv"` for `yuku_quick_bible`. Have `MVersionInternal` expose it as its `preset_name`, matching `MVersionPreset`/`MVersionDb`, so audio reads `preset_name` uniformly with no audio-specific branch. This is a general version property, not an audio field.
+- [x] No background prefetch: there is nothing global left to fetch, so `VersionConfigUpdaterService` is untouched. Sets resolve lazily on version change.
+- [x] Unit tests (`Alkitab/src/test/java/.../audio/AudioSetsRepositoryTest.kt`): parsing, preset-name resolution across all `MVersion` subtypes, negative caching, `coversBook` boundaries.
 
-**Exit criteria:** `./gradlew testPlainDebugUnitTest` green; the repository returns a populated catalog on device against staging.
+**Exit criteria:** `./gradlew testPlainDebugUnitTest` green; the repository returns a populated set list on device for `preset/in-tb` and an empty one for a version with no audio.
 
 ### M2 — Player + repository (≈ 3 days)
 
@@ -63,9 +62,9 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 
 - [x] `BibleAudioPlayer.kt` — write from scratch. Single-responsibility wrapper around media3 ExoPlayer with a `Listener` (`onReady`, `onEnded`, `onError`). Main-thread-only API. Use the OkHttp `DataSource.Factory` pattern from `yuku.alkitab.songs.ExoplayerController.kt:8-17` (same project convention, same dependency).
 - [x] `BibleAudioRepository.kt` — written from scratch, lives at `yuku.alkitab.base.audio.BibleAudioRepository`. Surface:
-    - `suspend fun buildChapterUrl(versionId, bookId, chapter_1): String?` — expands the catalog's `chapterUrlTemplate` against `${SERVER_HOST}` (the backend issues a 302 to the real CDN).
-    - `suspend fun fetchTiming(versionId, bookId, chapter_1): ChapterTiming?` — `GET ${SERVER_HOST}/audio/timing?...` via `Connections.okHttp`; parses the v1 JSON schema (see backend plan §4); returns `null` on network/parse failure, an empty `verses` list when the backend signals "no timing for this chapter". OkHttp's 50MB disk cache supplies implicit per-URL caching via the `Cache-Control` headers set by the backend.
-    - **No SABDA URLs** in the client. All book-code / filename / SABDA-folder construction lives on the backend (`audio/adapters.py`). Verify with `grep -r "sabda" Alkitab/src/main` after the PR is up: zero hits expected.
+    - `suspend fun buildChapterUrl(versionId, audioId, bookId, chapter_1): String?` — expands the set's `mp3UrlTemplate` against `${SERVER_HOST}`, substituting `{book_1}` = `bookId + 1` and `{chapter_1}`. The backend streams the bytes; there is no redirect to follow.
+    - `suspend fun fetchTiming(versionId, audioId, bookId, chapter_1): ChapterTiming?` — expands the set's `timingUrlTemplate` via `Connections.okHttp`; timings arrive already normalized to integer milliseconds. Returns `null` on network/parse failure, an empty `verses` list when the set has no timing for that chapter. OkHttp's 50MB disk cache supplies implicit per-URL caching via the backend's `Cache-Control`. Skip the call entirely when `AudioSet.hasTiming` is false.
+    - **No upstream URLs** in the client. All origin-host, folder, and filename construction lives on the backend; the client only expands templates it was handed. Verify with `grep -ri "sabda" Alkitab/src/main` after the PR is up: zero hits expected.
 - [x] `HighlightTracker.kt` — a small class that owns a `StateFlow<Int>` of currently-active `verse_1`. Input: `positionMs` + timing list. Internal: a last-index hint so we don't re-binary-search every tick. 100ms poll interval (same as PR #127).
 - [x] `BibleAudioService.kt` — `androidx.media3.session.MediaSessionService`:
     - Owns a `BibleAudioPlayer`.
@@ -143,7 +142,7 @@ This plan assumes the [PRD](prd.md) is approved and the [backend plan](backend-p
 #### 3.4 Toolbar icon
 
 - [x] Menu item in `res/menu/activity_isi.xml`: `<item android:id="@+id/menuAudio" app:showAsAction="always" android:icon="@drawable/ic_audio" android:title="@string/menu_audio" />`. Matches `menuSearch`'s `always` treatment — never spills into overflow. Wire into `IsiActivity.buildMenu` / `onOptionsItemSelected` (see `IsiActivity.kt:1368-1399`).
-- [x] Visibility — observe the catalog. Set `menuItem.isVisible = repo.isAudioAvailable(visibleVersionId0) || repo.isAudioAvailable(visibleVersionId1)`. Refresh on active-version change and on split-view enter/exit. Hiding (not disabling) is intentional — a permanently-greyed icon is more confusing than no icon.
+- [x] Visibility — read `repo.cachedSetsFor(versionId)` (non-blocking) in `onPrepareOptionsMenu`; on a miss, hide the icon, launch `setsFor(versionId)`, and call `invalidateOptionsMenu()` when it resolves. Visible when a set exists **and** the selected set covers the current book — coverage is ragged upstream, so a version-level check alone leaves a button that only 404s. In split view, visible if either visible version qualifies. Refresh on active-version change, chapter change, and split-view enter/exit. Hiding (not disabling) is intentional — a permanently-greyed icon is more confusing than no icon.
 - [x] Preparing-state spinner: cloned the Kidung pattern. Added `R.id.audio_progress_circular` (`ProgressBar`, `style="?android:attr/progressBarStyleSmallTitle"`) to the toolbar in `activity_isi_content.xml`, initially `GONE`. `buildMenu` hides `menuAudio` and shows the spinner when `audioBinder.isPreparing`, otherwise the inverse. The audio-bar state collector calls `invalidateOptionsMenu()` only when `preparing` actually flips, so the 100 ms position-poll doesn't churn the menu.
 
 #### 3.5 Tests
@@ -229,20 +228,21 @@ Out of scope for the first merge. Confirmed design for when we pick it up:
 
 Add to `Prefkey.kt`:
 ```kotlin
-audioCatalog_etag,
+audioSelectedSets,   // JSON: {"preset/in-tb": "davar"}
 audioPlaybackSpeed,
 ```
 
 ### 2.4 Proprietary assets
 
-No change expected — SABDA audio is available for all flavors. If we later add a flavor-specific catalog (e.g. a flavor that ships without audio for licensing reasons), we can resolve it at the backend level by keying the catalog on `applicationId`. The catalog request already carries `App.getAppIdentifierParamsEncoded()`.
+No change expected — audio availability is resolved per version at request time, so a flavor that must ship without audio for licensing reasons is handled entirely backend-side by excluding its presets. Note that `INTERNAL_VERSION_PRESET_NAME` (§M1) is a build-config value per flavor, not an asset.
 
 ## 3. Testing strategy
 
 ### Unit tests (JUnit + Robolectric where needed)
 
-- `AudioCatalogRepositoryTest` — ETag, bundled fallback, JSON parse.
-- `ChapterTimingParsingTest` — schema v1, missing/out-of-range verses.
+- `AudioSetsRepositoryTest` — JSON parse, preset-name resolution across every `MVersion` subtype (including `MVersionInternal` with an empty build-config value), negative caching, `coversBook` boundaries at Genesis and Revelation.
+- `AudioSetSelectionTest` — default is `sets[0]`; a remembered `audioId` is honored; a vanished one falls back and rewrites the stored map; the map round-trips through preferences with several versions.
+- `ChapterTimingParsingTest` — normalized millisecond schema, missing/out-of-range verses.
 - `HighlightTrackerTest` — monotonic progress, rewind, seek across verses.
 - `NextChapterNavigatorTest` — cross-book, end-of-Bible boundary.
 
@@ -265,7 +265,8 @@ See M4's matrix. Add:
 
 | Risk | Mitigation |
 |---|---|
-| Backend endpoints not ready by M3 | Bundled `assets/audio_catalog.json` mirrors the SABDA versions, letting the client ship independently |
+| Backend endpoints not ready | **No mitigation — hard blocker.** Per-version availability can't be baked into the APK, so there is no bundled fallback. The endpoints must be live before M1 is testable end to end |
+| A recording disappears upstream, stranding a saved selection | Selection falls back to `sets[0]` and rewrites the stored map on the next resolve |
 | media3-session API churn (still pre-1.0 in some releases) | Pin version; wrap in our own interface |
 | Foreground-service restrictions on API 34+ | Declare `foregroundServiceType="mediaPlayback"` and grant permission; test on API 34/35/36 |
 | ANR on timing fetch blocking first-play | Timing fetch is async; first-play kicks off audio immediately, highlight activates when timing arrives |

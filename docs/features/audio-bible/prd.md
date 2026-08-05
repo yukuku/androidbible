@@ -1,14 +1,8 @@
 # PRD: Bible Audio Playback with Verse Highlighting
 
 **Status:** Draft v1 (2026-04)
-**Owners:** yukuku (client), backend owner TBD (`yukuku/alkitab-host`)
+**Owners:** yukuku (client), backend owner TBD
 **Related PRs:** [#127](https://github.com/yukuku/androidbible/pull/127) (yukuku), [#124](https://github.com/yukuku/androidbible/pull/124) (elpafras) — both open, both implementations of this feature.
-
-> **§5.3–§5.5 are superseded by [multi-audio-sets-design.md](multi-audio-sets-design.md).**
-> A Bible version can carry several audio sets (different narrators/recordings),
-> and availability is queried per version rather than downloaded as a global
-> catalog. Everything else below — foreground service, Compose audio bar,
-> highlighting, split-view behavior — still applies as written.
 
 ---
 
@@ -45,7 +39,7 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 
 - Video playback.
 - Audio editing, bookmarking a moment inside a verse.
-- Multi-voice or dramatized audio catalogs (just the existing SABDA streams).
+- Dramatized or multi-voice productions (sound effects, cast recordings). A version may offer several *narrator* recordings — see §5.3 — but each is a plain single-voice reading.
 - Verse-by-verse interleaving of two versions in split view. (See §5.6 — we deliberately replace #127/#124's "dual mode" with a simpler behavior.)
 
 ## 3. Users & Scenarios
@@ -60,9 +54,11 @@ Users can already read any chapter in the app but cannot *listen* to it. SABDA r
 
 ### 4.1 Entry point
 
-A new "Audio" icon in the `IsiActivity` toolbar (`activity_isi.xml`, `app:showAsAction="always"` — same treatment as the existing Search action, never pushed to overflow). The icon is shown **only when the currently-visible version has audio available** per the catalog (see §5.3); when the user switches to a version without audio the icon is hidden outright (via `menuItem.isVisible = false`), rather than being present-but-disabled. In split view, the icon appears if **either** visible version has audio; if both do, the split-source picker from §4.5 decides which one plays. Tapping the icon toggles the audio bar.
+A new "Audio" icon in the `IsiActivity` toolbar (`activity_isi.xml`, `app:showAsAction="always"` — same treatment as the existing Search action, never pushed to overflow). The icon is shown **only when the currently-visible version has audio covering the current book** (see §5.3); when the user switches to a version without audio, or opens a book the selected recording doesn't cover, the icon is hidden outright (via `menuItem.isVisible = false`), rather than being present-but-disabled. Book coverage is ragged — a recording may skip whole books — so a version-level check alone would leave a button that only 404s. In split view, the icon appears if **either** visible version has audio; if both do, the split-source picker from §4.5 decides which one plays. Tapping the icon toggles the audio bar.
 
-**Preparing state.** The moment the user taps Audio, the work that runs before the first byte of audio plays — catalog lookup (cache), timing fetch if not already cached, ExoPlayer `prepare()` + initial buffer — can take a perceptible fraction of a second on mobile networks. During this window the toolbar icon morphs into an indeterminate spinner, mirroring the Kidung (Songs) play button's behavior: while `MediaController.State == preparing`, `SongViewActivity` hides the play menu item and swaps in an indeterminate `circular_progress` view (`SongViewActivity.kt:178, 443-449, 1088-1090`). We use the exact same pattern — `onPrepareOptionsMenu` hides `R.id.menuAudio` and shows a sibling progress view anchored in the toolbar — so the UX is consistent with the rest of the app. The spinner reverts to the Audio icon when the service reports `ready` (or `error`, in which case the snackbar in §4.6 fires). Tapping during the preparing window is a no-op; a second tap does **not** cancel (that would require tearing down the service mid-prepare and feels unpredictable).
+Availability is resolved per version, so the first answer isn't available synchronously: `onPrepareOptionsMenu` reads a non-blocking cache peek, hides the icon on a miss, and kicks off the fetch, calling `invalidateOptionsMenu()` when the answer lands. Prefetching on version change means the icon is present on first composition in practice. A brief absence on a genuinely cold open beats a main-thread network call, and beats an icon that is present but dead.
+
+**Preparing state.** The moment the user taps Audio, the work that runs before the first byte of audio plays — audio set lookup (cache), timing fetch if not already cached, ExoPlayer `prepare()` + initial buffer — can take a perceptible fraction of a second on mobile networks. During this window the toolbar icon morphs into an indeterminate spinner, mirroring the Kidung (Songs) play button's behavior: while `MediaController.State == preparing`, `SongViewActivity` hides the play menu item and swaps in an indeterminate `circular_progress` view (`SongViewActivity.kt:178, 443-449, 1088-1090`). We use the exact same pattern — `onPrepareOptionsMenu` hides `R.id.menuAudio` and shows a sibling progress view anchored in the toolbar — so the UX is consistent with the rest of the app. The spinner reverts to the Audio icon when the service reports `ready` (or `error`, in which case the snackbar in §4.6 fires). Tapping during the preparing window is a no-op; a second tap does **not** cancel (that would require tearing down the service mid-prepare and feels unpredictable).
 
 ### 4.2 Audio bar — fixed-height Compose surface
 
@@ -72,7 +68,7 @@ Height ≈ 96dp:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│  ⏮ Jn 2   ⏮   ▶/⏸ (+progress ring)   ⏭   Jn 4 ⏭   1.0×   ╳       │
+│  ⏮ Jn 2  ⏮  ▶/⏸ (+progress ring)  ⏭  Jn 4 ⏭   Davar  1.0×   ╳    │
 │  ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░░░   0:42 / 3:15                           │
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -81,12 +77,21 @@ Height ≈ 96dp:
 - **Prev / next verse** — plain icon-only buttons that seek to the start of the neighboring verse using timing data. No label on the button (the active verse is already conveyed by the highlighted row and the scrubber bubble).
 - **Prev / next chapter** — the button shows the target chapter next to its icon (e.g. `⏮ Jn 2` and `Jn 4 ⏭`), using the same `book.shortName` + chapter format that appears in the main toolbar. At cross-book boundaries the next button reads `⏮ Mt 28` from Mark 1. At the Bible boundaries the label slot is `INVISIBLE` (not gone) so the layout doesn't reflow.
 - **Speed** — taps open the speed bottom sheet (§4.2.2).
+- **Audio set** — a compact button showing the current recording's title, next to the speed control, opening the set bottom sheet (§4.2.3). **Shown only when the version has more than one recording** — most versions have one, and they shouldn't pay for a control that offers no choice.
 - **Close (╳)** — hides the bar; stops audio and clears highlight.
 - **Scrubber** — Material 3 `Slider`. Drag-to-seek with a live preview label that shows `mm:ss · v.7` while dragging — both the proposed position and the verse that would play on release. On release, audio seeks to the start of that verse's `startMs` (snapping to verse boundary feels better than snapping to a raw millisecond, and matches what the tooltip is showing). If timing data is missing, the label falls back to `mm:ss` only and seek is plain.
 
 #### 4.2.2 Speed bottom sheet
 
 Tapping `1.0×` opens a small Compose `ModalBottomSheet` with a horizontal `FilterChip` row: `0.5×, 0.8×, 1.0×, 1.25×, 1.5×, 1.75×, 2.0×`. Single-selection. Persisted via `Prefkey.audioPlaybackSpeed`. The thumb-friendly bottom-sheet pattern matches what Spotify, YouTube Music, and Audible do for the same control.
+
+#### 4.2.3 Audio set bottom sheet
+
+Tapping the set button opens a `ModalBottomSheet` with a single-selection list of recording titles — same pattern and placement as the speed sheet.
+
+Sets that don't cover the current book are **listed but disabled**, with the reason shown ("not available for this book"). Hiding them would make the list appear to change size as the user moves through the Bible.
+
+Switching sets reloads the current chapter in the new recording, seeking to the start of the verse that was playing when both recordings have timing, and to the chapter start otherwise. Timing differs per recording, so preserving the raw millisecond would land somewhere arbitrary.
 
 ### 4.3 Verse highlight
 
@@ -121,8 +126,9 @@ This deliberately replaces PR #127's sequential interleaving (which plays verse 
 ### 4.6 Error and empty states
 
 - **Version has no audio:** toolbar icon is hidden.
+- **Selected recording doesn't cover the current book:** toolbar icon is hidden for that book. The selection is *not* silently switched to a recording that does cover it — an unannounced narrator change mid-book is worse than a temporarily absent button.
 - **Network failure on chapter load:** snackbar "Cannot load audio. Retry?" with a Retry action. Audio bar stays open, play button disabled.
-- **Timing data missing:** audio plays, but verse-skip buttons and verse highlight are disabled (greyed). No error shown.
+- **Timing data missing:** audio plays, but verse-skip buttons and verse highlight are disabled (greyed). No error shown. This is knowable up front from the set's `hasTiming`, so the controls render disabled from the start rather than going inert once an empty timing fetch returns.
 - **Audio URL 404 (e.g. an upstream gap in coverage):** snackbar "Audio not available for this chapter," and the bar auto-closes after 3s.
 
 ## 5. Architecture
@@ -147,14 +153,14 @@ This deliberately replaces PR #127's sequential interleaving (which plays verse 
           │   fetches audio URL + timing
  ┌────────▼───────────────────────────────────────┐
  │           BibleAudioRepository                  │   Data layer
- │  ├─ AudioCatalog (cached)                       │
+ │  ├─ AudioSets (cached per version)              │
  │  ├─ TimingCache (disk)                          │
  │  └─ BackendApi (Retrofit-shape over OkHttp)     │
  └────────┬───────────────────────────────────────┘
           │   HTTPS (api.alkitab.app)
  ┌────────▼───────────────────────────────────────┐
- │               alkitab-host backend              │   Backend
- │  /audio/catalog, /audio/chapter, /audio/timing  │
+ │                    backend                      │   Backend
+ │     /audio/sets, /audio/file, /audio/timing     │
  └─────────────────────────────────────────────────┘
 ```
 
@@ -169,32 +175,50 @@ Both existing PRs put ExoPlayer directly in `IsiActivity`, so audio dies on conf
 
 ExoPlayer's media3 library already includes all of this; the incremental complexity over #127's standalone ExoPlayer is small.
 
-### 5.3 Backend-mediated audio catalog
+### 5.3 Backend-mediated audio sets
 
 Both PRs hard-code the list of supported versions and the sabda URL-building scheme inside the app. This creates two problems:
 
 1. Adding a fifth supported version (e.g. ESV when SABDA adds it) requires an app release.
 2. If sabda.org changes their folder scheme or CDN, every installed app breaks until users update.
 
-**Decision:** the client asks the backend for a catalog describing which versions have audio and how to fetch it. The catalog is cached locally (ETag) and refreshed periodically (like `version_config.json` already is). Individual chapter URLs and timing JSON are served by the backend, which is free to proxy, redirect, or bake them into a CDN as needed.
+**Decision:** the client asks the backend which audio it has for **one version at a time**, and gets back URL templates to expand. Chapter audio and timing JSON are served by the backend, which is free to proxy, redirect, or bake them into a CDN as needed. The app never learns the origin host.
+
+A version can carry **several audio sets** — different recordings of the same text, distinguished by an opaque `audioId` (`alkitabsuara`, `davar`, `hosanna`, `wordproject`, …). They differ in narrator, in which books they cover, and in whether verse timing exists. The user picks one, and the choice persists per version (§5.5).
+
+Availability is queried per version rather than downloaded as a single catalog of every audio-capable version. Upstream has 94 recording trees, 44 of which match real app versions, each with a growing set list and a per-set book-coverage array — a global document has no bound, and the app only ever needs the version in front of the user.
+
+Endpoints, all on `${SERVER_HOST}`:
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /audio/sets/<preset>` | Which recordings exist for one version, with per-set book coverage |
+| `GET /audio/file/<preset>/<audioId>/<book_1>/<chapter_1>.mp3` | Chapter audio, proxied and edge-cached |
+| `GET /audio/timing/<preset>/<audioId>/<book_1>/<chapter_1>.json` | Verse timing, normalized to integer milliseconds |
+
+`<preset>` is the version's preset name (`preset/in-tb` → `in-tb`). Book and chapter are **1-based** in every audio URL, matching the backend and its origin so a URL can be read against its source by eye. `Ari`'s `bookId` is 0-based, so `book_1 = bookId + 1` happens once in `BibleAudioRepository` and nowhere else; the `_1` suffix is this codebase's existing marker for 1-based values.
 
 This adds one layer of indirection but removes the brittle coupling.
 
 ### 5.4 Models
 
 ```kotlin
-data class AudioCatalog(
-    val etag: String,
-    val entries: List<AudioVersion>,
+data class AudioSets(
+    val schema: Int,
+    val preset: String,               // e.g. "in-tb"
+    val sets: List<AudioSet>,         // ordered; sets[0] is the default
 )
 
-data class AudioVersion(
-    val versionId: String,            // matches MVersion.getVersionId(), e.g. "preset/in-tb"
-    val shortName: String,            // for display when needed (e.g. split-source picker)
-    val displayLocaleHint: String?,   // for ordering when user has no active version
-    val chapterUrlTemplate: String,   // e.g. "/audio/chapter?versionId=preset%2Fin-tb&bookId={bookId}&chapter_1={chapter_1}"
-    val timingUrlTemplate: String?,   // nullable: some versions have audio but no timing
-)
+data class AudioSet(
+    val audioId: String,              // opaque recording id, e.g. "alkitabsuara"
+    val title: String,                // display name; falls back to audioId server-side
+    val hasTiming: Boolean,           // false → plays, but no verse highlight
+    val books_1: List<Int>,           // 1-based book coverage; ragged upstream
+    val mp3UrlTemplate: String,       // "/audio/file/in-tb/davar/{book_1}/{chapter_1}.mp3"
+    val timingUrlTemplate: String?,   // null exactly when hasTiming is false
+) {
+    fun coversBook(bookId: Int): Boolean = (bookId + 1) in books_1
+}
 
 data class VerseTiming(
     val verse_1: Int,     // 1-based
@@ -203,36 +227,43 @@ data class VerseTiming(
 )
 
 data class ChapterTiming(
-    val versionId: String,
-    val bookId: Int,
+    val preset: String,
+    val audioId: String,
+    val book_1: Int,
     val chapter_1: Int,
     val durationMs: Long,
     val verses: List<VerseTiming>,
-    val generatedAt: Long,  // server timestamp; lets client cache per-chapter
 )
 ```
+
+An empty `sets` list means "no audio for this version" — a normal `200`, not an error.
+
+`books_1` arrives as a `List<Int>` and is converted to a `Set<Int>` once at parse time, since `coversBook` is consulted on every menu preparation.
 
 `MAudio` from PR #124 (`audio1..audio5`) is rejected — the slot-numbered fields don't map onto anything meaningful. `MAudio` from PR #127 is close to this but pins the sabda folder name in the client; we keep the shape and push the folder-name responsibility to the backend.
 
 ### 5.4.1 Internal-version mapping (per flavor)
 
-The bundled internal version reports `MVersion.getVersionId() == "internal"` (see [MVersionInternal.java](../../../Alkitab/src/main/java/yuku/alkitab/base/model/MVersionInternal.java)) — that string never matches a `preset/*` row in the catalog, so a user reading the internal version on, say, the `yuku_alkitab` build would see no audio icon at all.
+Every `MVersion` subtype carries a `preset_name` naming the version it was built from — `MVersionPreset.preset_name` and `MVersionDb.preset_name` are what `/versions/get_yes?preset_name=…` downloads against. `MVersionInternal` (see [MVersionInternal.java](../../../Alkitab/src/main/java/yuku/alkitab/base/model/MVersionInternal.java)) is the exception: it reports `getVersionId() == "internal"` and nothing else, so a user reading the internal version on, say, the `yuku_alkitab` build would see no audio icon at all.
 
-To bridge this, each product flavor declares **`BuildConfig.INTERNAL_VERSION_AUDIO_ID`** in [Alkitab/build.gradle.kts](../../../Alkitab/build.gradle.kts), naming the catalog row that the internal version should resolve to:
+The bundled version *is* a preset build — TB on `yuku_alkitab` and `sabda_alkitab`, KJV on `yuku_quick_bible` — the app just never recorded which. So we record it generally rather than inventing an audio-only lookup: each product flavor declares **`BuildConfig.INTERNAL_VERSION_PRESET_NAME`** in [Alkitab/build.gradle.kts](../../../Alkitab/build.gradle.kts), and `MVersionInternal` exposes it as its `preset_name` like every other subtype.
 
-| Flavor | Internal version content | `INTERNAL_VERSION_AUDIO_ID` |
+| Flavor | Internal version content | `INTERNAL_VERSION_PRESET_NAME` |
 |---|---|---|
-| `plain` (open-source dev build) | placeholder Indonesian (`ddd_*`) | `preset/in-tb` (so dev builds can play audio) |
-| `yuku_alkitab` | TB | `preset/in-tb` |
-| `yuku_quick_bible` | KJV | `preset/en-kjv` |
-| `sabda_alkitab` | TB | `preset/in-tb` |
+| `plain` (open-source dev build) | placeholder Indonesian (`ddd_*`) | `in-tb` (so dev builds can play audio) |
+| `yuku_alkitab` | TB | `in-tb` |
+| `yuku_quick_bible` | KJV | `en-kjv` |
+| `sabda_alkitab` | TB | `in-tb` |
 
-`AudioCatalogRepository.findEntry(versionId)` performs the substitution before lookup: when `versionId == "internal"`, it looks up `BuildConfig.INTERNAL_VERSION_AUDIO_ID` instead. Empty value = the flavor has no audio for its internal version (toolbar icon stays hidden). Adding a new flavor that doesn't set the override gets the empty default.
+This is deliberately **not** an audio-specific field — anything else that wants to know which preset the bundled version corresponds to (update checks, diagnostics, version-list grouping) gets the answer for free.
+
+`AudioSetsRepository` then reads `preset_name` uniformly across every version type, with no audio-specific special case. Empty value = the flavor's internal version has no preset identity, so audio resolves to an empty set list and the toolbar icon stays hidden. A new flavor that doesn't set the field gets that default. A `file/…` version has no preset either, and short-circuits the same way.
 
 ### 5.5 Persistence
 
-- `AudioCatalog` cached at `files/audio_catalog.json` with ETag stored in `Prefkey`.
-- `ChapterTiming` cached via OkHttp's existing 50MB disk cache (`Connections.okHttp`), keyed on the normalized URL. No custom SQLite tables.
+- `AudioSets` cached in memory per `versionId` — including negative results, so a version without audio doesn't re-query on every chapter turn — and on disk via OkHttp's existing 50MB cache (`Connections.okHttp`), honoring the backend's `Cache-Control`. No bundled asset, no hand-rolled ETag bookkeeping.
+- `ChapterTiming` cached via the same OkHttp disk cache, keyed on the normalized URL. No custom SQLite tables.
+- Selected audio set per version in `Prefkey.audioSelectedSets`, a JSON object (`{"preset/in-tb": "davar"}`). One key rather than a key per version — `Prefkey` is an enum, so per-version keys aren't expressible, and the map holds one entry per version the user has actually played. A remembered `audioId` that no longer exists falls back to `sets[0]` and rewrites the stored map.
 - Playback-speed preference in `Prefkey.audioPlaybackSpeed` (new enum entry).
 - Last position (for "resume where you left off") is stored in-memory on the service only — not persisted across kills, since most users will re-open the chapter anyway.
 
@@ -252,8 +283,8 @@ New Kotlin files live under `Alkitab/src/main/java/yuku/alkitab/base/audio/`. Th
 
 ```
 audio/
-├─ AudioCatalog.kt
-├─ AudioCatalogRepository.kt
+├─ AudioSets.kt                ← AudioSets + AudioSet
+├─ AudioSetsRepository.kt
 ├─ BibleAudioRepository.kt
 ├─ BibleAudioPlayer.kt
 ├─ BibleAudioService.kt        ← media3 MediaSessionService
@@ -261,6 +292,7 @@ audio/
 ├─ ui/
 │  ├─ AudioBar.kt              ← Compose @Composable: the fixed-height bar from §4.2
 │  ├─ SpeedBottomSheet.kt      ← Compose: ModalBottomSheet with FilterChip row
+│  ├─ AudioSetBottomSheet.kt   ← Compose: recording picker, shown only when a version has >1 set
 │  ├─ AudioTheme.kt            ← Compose MaterialTheme bridged from app's ?attr/colorSurface*
 │  └─ AudioHighlightColor.kt   ← yellow / fallback contrast logic
 ├─ AudioBarController.kt       ← Kotlin glue between IsiActivity (View) and Compose UI; holds StateFlow<UiState>
@@ -308,7 +340,7 @@ Compose adds ~2 MB to the APK. We accept this once, since the audio bar is the m
 
 ## 7. Rollout
 
-1. Land the backend catalog/timing endpoints in `alkitab-host` and deploy them to production. Availability is all-or-nothing — no feature flag, no remote kill switch.
+1. Land the backend `sets`/`file`/`timing` endpoints and deploy them to production. The client has no bundled fallback, so this must be live first. Availability is all-or-nothing — no client feature flag, no remote kill switch.
 2. Ship the client on a feature branch, merge to `develop` only when M1–M4 of the client plan are done and the manual test matrix passes.
 3. Release as part of the next normal version bump. If something breaks, fix-forward with a patch release, the same as any other feature.
 
@@ -323,7 +355,8 @@ Short answer: PR #127 is the better starting point — its separation of player/
 | | PR #127 | This PRD |
 |---|---|---|
 | Player ownership | Activity | Foreground MediaSessionService |
-| Version/URL catalog | Hard-coded in client | Served by backend |
+| Version/URL resolution | Hard-coded in client | Queried per version from backend |
+| Recordings per version | One | Several, user-selectable |
 | Split-view audio | Sequential interleaved | Single-source, user-selectable |
 | Lock-screen controls | Absent | First-class |
 | Error UX | Silent log | Snackbar + retry |

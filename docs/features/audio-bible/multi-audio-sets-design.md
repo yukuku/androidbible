@@ -1,13 +1,8 @@
 # Multiple Audio Sets per Bible Version — Client Design
 
 **Status:** Design, ready for implementation
-**Scope:** `Alkitab` app. Backend counterpart: `yukuku/alkitab-host` →
-`AUDIO_MULTI_SET.md`.
-
-Supersedes the catalog sections of [prd.md](prd.md) §5.3–§5.5 and
-[client-plan.md](client-plan.md). Everything else in the PRD — the foreground
-`MediaSessionService`, the Compose audio bar, verse highlighting, split-view
-single-source behavior — is unaffected and stands as written.
+**Scope:** `Alkitab` app. See [prd.md](prd.md) §5.3–§5.5 for how this fits the
+wider feature, and [client-plan.md](client-plan.md) for the build order.
 
 The audio feature has not shipped, so this is a **clean break**. No migration,
 no compatibility shim, no reading of the old cache format.
@@ -39,8 +34,7 @@ lazily and cached per version.
 
 ## 2. Backend contract
 
-Full specification in `alkitab-host` → `AUDIO_MULTI_SET.md` §3. The client's
-view of it:
+The client's view of the contract:
 
 | Endpoint | Purpose |
 |---|---|
@@ -83,23 +77,29 @@ Replacing `AudioCatalog` and `AudioVersion` in
 ```kotlin
 @Serializable
 data class AudioSets(
-    val schema: Int = 2,
-    val preset: String = "",
-    val sets: List<AudioSet> = emptyList(),
+    val schema: Int,
+    val preset: String,
+    val sets: List<AudioSet>,
 )
 
 @Serializable
 data class AudioSet(
     val audioId: String,
     val title: String,
-    val hasTiming: Boolean = false,
-    val books_1: List<Int> = emptyList(),
+    val hasTiming: Boolean,
+    val books_1: List<Int>,
     val mp3UrlTemplate: String,
-    val timingUrlTemplate: String? = null,
+    val timingUrlTemplate: String?,
 ) {
     fun coversBook(bookId: Int): Boolean = (bookId + 1) in books_1
 }
 ```
+
+Every field is required. The backend always emits all of them — `sets` is `[]`
+rather than absent when a version has no audio, and `timingUrlTemplate` is
+explicitly `null` rather than omitted when `hasTiming` is false. Defaults would
+turn a backend contract change into a silently-empty model at parse time
+instead of a loud failure, which is exactly the bug class worth failing on.
 
 `ChapterTiming` keeps its shape but is re-keyed on the new address: `versionId`
 and `bookId` give way to `preset`, `audioId`, `book_1`, `chapter_1`.
@@ -122,11 +122,13 @@ object AudioSetsRepository {
 }
 ```
 
-- **Version → preset.** `preset/in-tb` → `in-tb`. `internal` resolves through
-  `BuildConfig.INTERNAL_VERSION_AUDIO_ID` exactly as it does today; that
-  per-flavor mapping is the only reason the bundled TB/KJV versions can play
-  audio at all, and it is unchanged. A `file/…` versionId has no preset and
-  short-circuits to empty.
+- **Version → preset name.** Every `MVersion` subtype already carries a
+  `preset_name` — `MVersionPreset.preset_name` and `MVersionDb.preset_name` are
+  what `/versions/get_yes?preset_name=…` downloads against — except
+  `MVersionInternal`, which exposes only `getVersionId() == "internal"`. §5 of
+  this document closes that gap, so audio resolves a preset name uniformly with
+  no audio-specific special case. A `file/…` version has no preset and
+  short-circuits to an empty set list.
 - **In-memory cache** keyed by `versionId`, holding negative results too — a
   version with no audio must not re-query on every chapter turn.
 - **Disk cache** is the existing 50 MB OkHttp cache on `Connections.okHttp`,
@@ -145,7 +147,39 @@ Deleted outright: `AudioCatalog.kt`, `AudioVersion.kt`,
 `Alkitab/src/main/assets/audio_catalog.json`, `Prefkey.audioCatalog_etag`, and
 `AudioCatalogRepositoryTest`'s catalog-file fixtures.
 
-## 5. Selection and persistence
+## 5. Giving the internal version a preset name
+
+`MVersionInternal` reports `getVersionId() == "internal"` and nothing else. Its
+siblings carry a `preset_name` naming the version they were built from, and the
+version manager already relies on it.
+
+The bundled version *is* a preset build — TB on `yuku_alkitab` and
+`sabda_alkitab`, KJV on `yuku_quick_bible` — the app just never recorded which.
+So the fix is to record it generally, not to invent an audio-only lookup:
+
+- Add a per-flavor `BuildConfig.INTERNAL_VERSION_PRESET_NAME` in
+  `Alkitab/build.gradle.kts`, defaulting to `""`.
+- Have `MVersionInternal` expose it as its `preset_name`, matching the other
+  subtypes.
+
+| Flavor | Internal version content | `INTERNAL_VERSION_PRESET_NAME` |
+|---|---|---|
+| `plain` (open-source dev build) | placeholder Indonesian (`ddd_*`) | `in-tb` (so dev builds can play audio) |
+| `yuku_alkitab` | TB | `in-tb` |
+| `yuku_quick_bible` | KJV | `en-kjv` |
+| `sabda_alkitab` | TB | `in-tb` |
+
+An empty value means the flavor's internal version has no preset identity; audio
+resolves to an empty set list and the toolbar icon stays hidden. A new flavor
+that doesn't set the field gets that default.
+
+This is deliberately **not** an audio-specific field. `preset_name` is an
+existing, general property of a Bible version, and the internal version simply
+lacked it. Anything else that wants to know which preset the bundled version
+corresponds to — update checks, diagnostics, version-list grouping — gets the
+answer for free.
+
+## 6. Selection and persistence
 
 Which recording plays is a per-version user choice.
 
@@ -162,12 +196,12 @@ Which recording plays is a per-version user choice.
   a dead entry point.
 - **Coverage-aware fallback:** if the remembered set does not cover the current
   book, the bar still shows it as selected but the entry point is hidden for
-  that book (§6). It does **not** silently switch recordings — an unannounced
+  that book (§7.1). It does **not** silently switch recordings — an unannounced
   narrator change mid-book is worse than a temporarily absent button.
 
-## 6. UI
+## 7. UI
 
-### 6.1 Toolbar entry point
+### 7.1 Toolbar entry point
 
 The audio icon's visibility currently comes from a synchronous
 `AudioCatalogRepository.isAudioAvailable(versionId)` inside
@@ -191,7 +225,7 @@ Visibility is now `sets.isNotEmpty() && selectedSet.coversBook(currentBookId)`.
 Book coverage is ragged upstream — `in-tb/davar` has no books 11–14 — so a
 version-level check alone would leave a button that only 404s.
 
-### 6.2 Set picker
+### 7.2 Set picker
 
 When a version has more than one set, the audio bar shows the current set's
 `title` as a compact button next to the speed control. Tapping opens a
@@ -214,7 +248,7 @@ picker — gains `audioId` and `title`. Split-source selection and set selection
 remain distinct choices: which *version* drives audio, then which *recording* of
 it.
 
-### 6.3 Timing-less sets
+### 7.3 Timing-less sets
 
 `hasTiming: false` is common (`davar`, `wordproject`, `in-tb/hosanna`). The PRD
 already specifies this state — audio plays, verse highlight and verse-skip are
@@ -222,7 +256,7 @@ disabled, no error is shown. What changes is that it is now knowable *before*
 playback from `AudioSet.hasTiming`, so the controls can be rendered disabled
 from the start rather than becoming inert once a timing fetch comes back empty.
 
-## 7. Service layer
+## 8. Service layer
 
 - `BibleAudioService.AudioRequest` gains `audioId`.
 - `PlaybackState` gains `audioId`, so the bar can render the active recording
@@ -235,7 +269,7 @@ from the start rather than becoming inert once a timing fetch comes back empty.
   title>"` when a version has more than one set, and stays the bare version name
   otherwise.
 
-## 8. File-level impact
+## 9. File-level impact
 
 | File | Change |
 |---|---|
@@ -250,14 +284,16 @@ from the start rather than becoming inert once a timing fetch comes back empty.
 | `audio/ui/AudioBar.kt` | Set button; `AudioSourceOption` gains `audioId`/`title` |
 | `audio/ui/AudioSetBottomSheet.kt` | **New** |
 | `IsiActivity.kt` | Async menu resolution + `invalidateOptionsMenu()` |
+| `model/MVersionInternal.java` | Exposes `preset_name` from build config |
+| `Alkitab/build.gradle.kts` | `INTERNAL_VERSION_PRESET_NAME` per flavor, replacing `INTERNAL_VERSION_AUDIO_ID` |
 | `sv/VersionConfigUpdaterService.java` | Audio catalog refresh removed |
 | `storage/Prefkey.kt` | `audioCatalog_etag` removed; `audioSelectedSets` added |
 | `assets/audio_catalog.json` | **Deleted** |
 
-## 9. Test plan
+## 10. Test plan
 
 - **`AudioSetsRepository`** — version→preset mapping including `internal` via
-  `INTERNAL_VERSION_AUDIO_ID` and the empty-override case; `file/…` versions
+  `INTERNAL_VERSION_PRESET_NAME` and the empty-default case; `file/…` versions
   short-circuit; negative results cached; concurrent `setsFor` for one version
   issues a single request.
 - **`AudioSet.coversBook`** — 0-based to 1-based conversion at both ends
@@ -275,7 +311,7 @@ Existing `AudioCatalogRepositoryTest` is replaced by `AudioSetsRepositoryTest`.
 `BibleAudioRepositoryTest` gains `audioId` cases. `HighlightTrackerTest`,
 `BibleNeighborResolverTest`, and `AudioHighlightColorTest` are unaffected.
 
-## 10. Sequencing
+## 11. Sequencing
 
 The backend must land first — the app has no bundled fallback any more, so
 `/audio/sets/*` has to be live before the client change is useful.
@@ -288,7 +324,7 @@ The backend must land first — the app has no bundled fallback any more, so
 
 Steps 2–4 are one user-visible feature and ship together.
 
-## 11. Open items
+## 12. Open items
 
 - **Offline pre-download** (PRD §2 v2 item) now has to key its cache directory
   on `audioId` as well: `files/audio/<versionId>/<audioId>/<bookId>/<chapter>.mp3`.
