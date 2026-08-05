@@ -4,6 +4,12 @@
 **Owners:** yukuku (client), backend owner TBD (`yukuku/alkitab-host`)
 **Related PRs:** [#127](https://github.com/yukuku/androidbible/pull/127) (yukuku), [#124](https://github.com/yukuku/androidbible/pull/124) (elpafras) — both open, both implementations of this feature.
 
+> **§5.3–§5.5 are superseded by [multi-audio-sets-design.md](multi-audio-sets-design.md).**
+> A Bible version can carry several audio sets (different narrators/recordings),
+> and availability is queried per version rather than downloaded as a global
+> catalog. Everything else below — foreground service, Compose audio bar,
+> highlighting, split-view behavior — still applies as written.
+
 ---
 
 ## 1. Problem
