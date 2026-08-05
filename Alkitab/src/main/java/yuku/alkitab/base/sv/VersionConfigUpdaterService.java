@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.Date;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.audio.AudioCatalogRepository;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.events.AppEvents;
@@ -67,13 +66,6 @@ public class VersionConfigUpdaterService extends IntentService {
 			} finally {
 				AppEvents.emitVersionListRefreshingStatus(false);
 			}
-
-			// Piggyback the audio catalog refresh on the same worker so we don't
-			// spawn a separate background service (see docs/features/audio-bible/).
-			// Failures are non-fatal — the catalog falls back to the previously
-			// stored override or the bundled assets/audio_catalog.json.
-			final AudioCatalogRepository.RefreshResult result = AudioCatalogRepository.refreshBlocking();
-			AppLog.d(TAG, "audio catalog refresh: " + result);
 		}
 	}
 

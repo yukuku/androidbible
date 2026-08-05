@@ -19,9 +19,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import yuku.alkitab.base.audio.model.AudioSet
 import yuku.alkitab.base.audio.ui.AudioBar
 import yuku.alkitab.base.audio.ui.AudioBarCommand
 import yuku.alkitab.base.audio.ui.AudioBarUiState
+import yuku.alkitab.base.audio.ui.AudioSetOption
 import yuku.alkitab.base.audio.ui.AudioSourceOption
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.model.Book
@@ -158,14 +160,13 @@ class AudioBarController(
 
     /**
      * Whether the toolbar audio icon should be shown for the currently visible
-     * version(s). Reads the catalog synchronously (cached after the first call;
-     * see [AudioCatalogRepository]).
+     * version(s). A non-blocking peek: the host builds its source options from
+     * [AudioSetsRepository.cachedSetsFor], so an unresolved version reads as
+     * unavailable until its fetch lands and the menu is re-prepared (the
+     * activity kicks that off — see the async resolution in `IsiActivity`).
      */
     val isAvailable: Boolean
-        get() {
-            val ids = host?.audioVisibleVersionIds() ?: return false
-            return ids.any { AudioCatalogRepository.isAudioAvailable(it) }
-        }
+        get() = host?.audioAvailableSources()?.isNotEmpty() == true
 
     /** True while the audio bar is on screen — drives the toolbar audio-icon variant. */
     val isBarVisible: Boolean
@@ -273,7 +274,9 @@ class AudioBarController(
 
     /**
      * Called from `IsiActivity.display()` so the audio follows the reader.
-     * Closes the bar if the new book is not in the selected version.
+     * Closes the bar if the new book is not in the selected version, or not
+     * covered by the selected recording — loading it would only 404, and
+     * silently switching recordings mid-browse is worse than closing.
      */
     fun onChapterChanged() {
         if (!requestedVisible) return
@@ -283,6 +286,11 @@ class AudioBarController(
         val chapter1 = host.audioCurrentChapter1()
         val sourceBook = host.audioBookInVersion(source.versionId, readerBook.bookId)
         if (sourceBook == null) {
+            hide()
+            return
+        }
+        val set = selectedSet()
+        if (set != null && !set.coversBook(sourceBook.bookId)) {
             hide()
             return
         }
@@ -300,10 +308,11 @@ class AudioBarController(
 
         val request = BibleAudioService.AudioRequest(
             versionId = source.versionId,
+            audioId = source.audioId,
             bookId = sourceBook.bookId,
             chapter_1 = availableChapter,
             displayTitle = "${sourceBook.shortName} $availableChapter",
-            displaySubtitle = source.shortName,
+            displaySubtitle = displaySubtitle(source),
             startVerse_1 = 0,
         )
         service?.loadChapter(request) ?: run { pendingLoad = host }
@@ -486,12 +495,39 @@ class AudioBarController(
         startVerse1 = 0
         return BibleAudioService.AudioRequest(
             versionId = source.versionId,
+            audioId = source.audioId,
             bookId = sourceBook.bookId,
             chapter_1 = availableChapter,
             displayTitle = "${sourceBook.shortName} $availableChapter",
-            displaySubtitle = source.shortName,
+            displaySubtitle = displaySubtitle(source),
             startVerse_1 = sv,
         )
+    }
+
+    /**
+     * The recording selected for the current session, resolved against the
+     * cached set list. Null while nothing is selected or the cache is cold
+     * (e.g. right after process death).
+     */
+    private fun selectedSet(): AudioSet? {
+        val source = selectedSource ?: return null
+        return AudioSetsRepository.cachedSetsFor(source.versionId)
+            ?.sets?.firstOrNull { it.audioId == source.audioId }
+    }
+
+    /** Set list of the selected source's version, or null while unresolved. */
+    private fun setsOfSelectedVersion(): List<AudioSet>? {
+        val source = selectedSource ?: return null
+        return AudioSetsRepository.cachedSetsFor(source.versionId)?.sets
+    }
+
+    /**
+     * Notification subtitle: `"<version short name> · <set title>"` when the
+     * version has more than one recording, the bare version name otherwise.
+     */
+    private fun displaySubtitle(source: AudioSourceOption): String {
+        val sets = AudioSetsRepository.cachedSetsFor(source.versionId)?.sets
+        return if (sets != null && sets.size > 1) "${source.shortName} · ${source.title}" else source.shortName
     }
 
     private fun onCommand(cmd: AudioBarCommand) {
@@ -525,6 +561,25 @@ class AudioBarController(
             AudioBarCommand.DismissSpeedSheet -> {
                 _uiState.update { it.copy(showSpeedSheet = false) }
             }
+            AudioBarCommand.OpenSetSheet -> {
+                val source = selectedSource ?: return
+                val sets = setsOfSelectedVersion() ?: return
+                val currentBookId = host.audioCurrentBook().bookId
+                _uiState.update { state ->
+                    state.copy(setOptions = sets.map { set ->
+                        AudioSetOption(
+                            audioId = set.audioId,
+                            title = set.title,
+                            selected = set.audioId == source.audioId,
+                            coversCurrentBook = set.coversBook(currentBookId),
+                        )
+                    })
+                }
+            }
+            AudioBarCommand.DismissSetSheet -> {
+                _uiState.update { it.copy(setOptions = null) }
+            }
+            is AudioBarCommand.PickSet -> pickSet(host, cmd.audioId)
             is AudioBarCommand.SetSpeed -> {
                 svc?.setSpeed(cmd.speed)
                 _uiState.update { it.copy(speed = cmd.speed, showSpeedSheet = false) }
@@ -549,6 +604,32 @@ class AudioBarController(
         }
     }
 
+    /**
+     * Switches the session to another recording of the same version: persists
+     * the choice, then reloads the current chapter in the new recording —
+     * seeking to the start of the verse that was playing when timing exists on
+     * both sides, and to the chapter start otherwise. Timing differs per
+     * recording, so a millisecond-preserving switch would land in an arbitrary
+     * place.
+     */
+    private fun pickSet(host: Host, audioId: String) {
+        val source = selectedSource ?: return
+        if (audioId == source.audioId) {
+            _uiState.update { it.copy(setOptions = null) }
+            return
+        }
+        val sets = setsOfSelectedVersion() ?: return
+        val newSet = sets.firstOrNull { it.audioId == audioId } ?: return
+        AudioSetSelections.store(source.versionId, newSet.audioId)
+        // A non-zero playing verse implies the outgoing recording had timing.
+        val playingVerse = _uiState.value.verse_1
+        startVerse1 = if (newSet.hasTiming && playingVerse > 0) playingVerse else 0
+        selectedSource = source.copy(audioId = newSet.audioId, title = newSet.title)
+        _uiState.update { it.copy(setOptions = null) }
+        val request = buildRequest(host) ?: return
+        service?.loadChapter(request) ?: run { pendingLoad = host }
+    }
+
     private fun projectToUi(state: PlaybackState) {
         val host = this.host
 
@@ -569,7 +650,19 @@ class AudioBarController(
                 ensureComposeContent()
                 host?.audioAvailableSources()
                     ?.firstOrNull { it.versionId == state.versionId }
-                    ?.let { selectedSource = it }
+                    ?.let { option ->
+                        // Prefer the recording the service is actually playing
+                        // over the option's (selection-derived) one, so the bar
+                        // reflects the live session even if the persisted
+                        // selection changed while we were away.
+                        val playingSet = AudioSetsRepository.cachedSetsFor(option.versionId)
+                            ?.sets?.firstOrNull { it.audioId == state.audioId }
+                        selectedSource = if (playingSet != null) {
+                            option.copy(audioId = playingSet.audioId, title = playingSet.title)
+                        } else {
+                            option
+                        }
+                    }
                 host?.audioBarVisibilityChanged(true)
             }
         }
@@ -614,12 +707,12 @@ class AudioBarController(
 
         val playingVersionId = state.versionId.takeIf { it.isNotEmpty() }
             ?: selectedSource?.versionId
-        val prevLabel = playingVersionId
-            ?.let { host?.audioNeighborChapter(it, -1) }
-            ?.let { (b, c) -> "${b.shortName} $c" }
-        val nextLabel = playingVersionId
-            ?.let { host?.audioNeighborChapter(it, +1) }
-            ?.let { (b, c) -> "${b.shortName} $c" }
+        val prevLabel = playingVersionId?.let { neighborChapterLabel(it, -1) }
+        val nextLabel = playingVersionId?.let { neighborChapterLabel(it, +1) }
+
+        val selectedSet = selectedSet()
+        val sets = setsOfSelectedVersion()
+        val setTitle = if (selectedSet != null && sets != null && sets.size > 1) selectedSet.title else null
 
         val effectivePreparing = state.preparing || isPending
         _uiState.update { current ->
@@ -636,22 +729,35 @@ class AudioBarController(
                 prevChapterLabel = prevLabel,
                 nextChapterLabel = nextLabel,
                 error = state.error,
-                // M3 has no first-class signal for this; infer from "we got
-                // a non-zero verse hit" once the service has had a chance to
-                // process timing. Until then the prev/next-verse buttons stay
-                // disabled, which is the spec.
-                timingAvailable = state.verse_1 > 0 || current.timingAvailable,
+                timingAvailable = computeTimingAvailable(
+                    setHasTiming = selectedSet?.hasTiming,
+                    stateVerse1 = state.verse_1,
+                    currentTimingAvailable = current.timingAvailable,
+                ),
                 playingVersionId = playingVersionId,
+                setTitle = setTitle,
             )
         }
     }
 
+    /**
+     * Label for the neighbor-chapter button, or null when the button should be
+     * unavailable — at a Bible boundary, or at the edge of the selected
+     * recording's book coverage (the same treatment for both).
+     */
+    private fun neighborChapterLabel(versionId: String, direction: Int): String? {
+        val host = this.host ?: return null
+        val (book, chapter) = host.audioNeighborChapter(versionId, direction) ?: return null
+        val set = selectedSet()
+        val currentBookId = host.audioCurrentBook().bookId
+        if (set != null && book.bookId != currentBookId && !set.coversBook(book.bookId)) return null
+        return "${book.shortName} $chapter"
+    }
+
     private fun recomputeChapterLabels(host: Host) {
         val source = selectedSource ?: return
-        val prev = host.audioNeighborChapter(source.versionId, -1)
-            ?.let { (b, c) -> "${b.shortName} $c" }
-        val next = host.audioNeighborChapter(source.versionId, +1)
-            ?.let { (b, c) -> "${b.shortName} $c" }
+        val prev = neighborChapterLabel(source.versionId, -1)
+        val next = neighborChapterLabel(source.versionId, +1)
         _uiState.update { it.copy(prevChapterLabel = prev, nextChapterLabel = next) }
     }
 
@@ -672,5 +778,23 @@ class AudioBarController(
          */
         internal fun shouldReshowNow(reshowPending: Boolean, state: PlaybackState): Boolean =
             reshowPending && state.isActive
+
+        /**
+         * Whether verse highlight and verse-skip should be enabled. A selected
+         * recording known to have no timing ([setHasTiming] = false) disables
+         * them from the start — knowable before playback from the set list —
+         * rather than leaving them to go inert once an empty timing fetch
+         * returns. Otherwise (timing expected, or the set unknown on a cold
+         * cache) they enable once the first non-zero verse hit arrives and
+         * latch on. Pure for unit testing.
+         */
+        internal fun computeTimingAvailable(
+            setHasTiming: Boolean?,
+            stateVerse1: Int,
+            currentTimingAvailable: Boolean,
+        ): Boolean = when (setHasTiming) {
+            false -> false
+            else -> stateVerse1 > 0 || currentTimingAvailable
+        }
     }
 }

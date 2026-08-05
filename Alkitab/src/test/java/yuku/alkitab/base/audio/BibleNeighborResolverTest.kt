@@ -3,6 +3,7 @@ package yuku.alkitab.base.audio
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import yuku.alkitab.base.audio.model.AudioSet
 import yuku.alkitab.model.Book
 import yuku.alkitab.model.Version
 
@@ -120,5 +121,65 @@ class BibleNeighborResolverTest {
         val prevOut = BibleNeighborResolver.neighbor(version, bookId = 30, chapter_1 = 1, direction = -1)!!
         assertEquals(0, prevOut.first.bookId)
         assertEquals(10, prevOut.second)
+    }
+
+    // -- coverageAwareNeighbor ----------------------------------------------------
+
+    private fun setCovering(vararg bookIds: Int): AudioSet = AudioSet(
+        audioId = "x",
+        title = "X",
+        hasTiming = false,
+        books_1 = bookIds.map { it + 1 }.toSet(),
+        mp3UrlTemplate = "/audio/file/p/x/{book_1}/{chapter_1}.mp3",
+        timingUrlTemplate = null,
+    )
+
+    @Test
+    fun `a coverage edge behaves like a Bible boundary in both directions`() {
+        // The set covers Genesis only, so leaving it in either direction stops.
+        val genesisOnly = setCovering(0)
+        assertNull(
+            "auto-advance and next-chapter must stop at the coverage gap",
+            BibleNeighborResolver.coverageAwareNeighbor(version, bookId = 0, chapter_1 = 10, direction = 1, set = genesisOnly),
+        )
+        assertNull(
+            BibleNeighborResolver.coverageAwareNeighbor(version, bookId = 30, chapter_1 = 1, direction = -1, set = setCovering(30, 39)),
+        )
+    }
+
+    @Test
+    fun `a covered cross-book neighbor passes through`() {
+        val (book, chapter) = BibleNeighborResolver.coverageAwareNeighbor(
+            version, bookId = 0, chapter_1 = 10, direction = 1, set = setCovering(0, 30),
+        )!!
+        assertEquals(30, book.bookId)
+        assertEquals(1, chapter)
+    }
+
+    @Test
+    fun `within-book steps are never coverage-gated`() {
+        // The chapter currently playing proves the book is covered, so a
+        // same-book step needs no coverage consultation.
+        val (book, chapter) = BibleNeighborResolver.coverageAwareNeighbor(
+            version, bookId = 0, chapter_1 = 3, direction = 1, set = setCovering(30),
+        )!!
+        assertEquals(0, book.bookId)
+        assertEquals(4, chapter)
+    }
+
+    @Test
+    fun `a null set applies no coverage gate`() {
+        val (book, chapter) = BibleNeighborResolver.coverageAwareNeighbor(
+            version, bookId = 0, chapter_1 = 10, direction = 1, set = null,
+        )!!
+        assertEquals(30, book.bookId)
+        assertEquals(1, chapter)
+    }
+
+    @Test
+    fun `the Bible boundary still resolves to null regardless of coverage`() {
+        assertNull(
+            BibleNeighborResolver.coverageAwareNeighbor(version, bookId = 39, chapter_1 = 5, direction = 1, set = setCovering(0, 30, 39)),
+        )
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
@@ -42,6 +43,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,10 +84,18 @@ data class AudioBarUiState(
     val timingAvailable: Boolean,
     /** Version driving audio, or null. Used to scope the verse highlight to matching panes. */
     val playingVersionId: String?,
+    /**
+     * Title of the selected recording, shown as a compact button next to the
+     * speed control. Null hides the button — versions with a single recording
+     * should not pay for a control that offers no choice.
+     */
+    val setTitle: String?,
     /** When non-null, the source-picker dialog is shown over the bar. */
     val pickerOptions: List<AudioSourceOption>?,
     /** When true, the playback-speed bottom sheet is shown over the bar. */
     val showSpeedSheet: Boolean,
+    /** When non-null, the recording-picker bottom sheet is shown over the bar. */
+    val setOptions: List<AudioSetOption>?,
 ) {
     companion object {
         val HIDDEN = AudioBarUiState(
@@ -101,14 +111,41 @@ data class AudioBarUiState(
             error = null,
             timingAvailable = false,
             playingVersionId = null,
+            setTitle = null,
             pickerOptions = null,
             showSpeedSheet = false,
+            setOptions = null,
         )
     }
 }
 
-/** One row in the source-picker dialog. */
-data class AudioSourceOption(val versionId: String, val shortName: String)
+/**
+ * One row in the source-picker dialog: which version drives audio in split
+ * view, carrying the recording that would play for it. Split-source selection
+ * and set selection remain distinct choices — which *version* drives audio,
+ * then which *recording* of it.
+ */
+data class AudioSourceOption(
+    val versionId: String,
+    val shortName: String,
+    /** Recording that plays when this version is picked (the persisted selection, or the default). */
+    val audioId: String,
+    /** Display title of that recording. */
+    val title: String,
+)
+
+/**
+ * One row in the recording-picker bottom sheet. Sets not covering the current
+ * book are listed but disabled ([coversCurrentBook] = false) with the reason
+ * shown — hiding them would make the list appear to change size as the user
+ * moves through the Bible.
+ */
+data class AudioSetOption(
+    val audioId: String,
+    val title: String,
+    val selected: Boolean,
+    val coversCurrentBook: Boolean,
+)
 
 /**
  * Commands raised by the bar's UI. The controller maps these onto
@@ -130,6 +167,9 @@ sealed interface AudioBarCommand {
     data object Speed : AudioBarCommand
     data class SetSpeed(val speed: Float) : AudioBarCommand
     data object DismissSpeedSheet : AudioBarCommand
+    data object OpenSetSheet : AudioBarCommand
+    data object DismissSetSheet : AudioBarCommand
+    data class PickSet(val audioId: String) : AudioBarCommand
     data class SeekDrag(val positionMs: Long) : AudioBarCommand
     data class SeekCommit(val positionMs: Long) : AudioBarCommand
     data class PickSource(val versionId: String) : AudioBarCommand
@@ -158,6 +198,13 @@ fun AudioBar(
                 currentSpeed = state.speed,
                 onSelect = { onCommand(AudioBarCommand.SetSpeed(it)) },
                 onDismiss = { onCommand(AudioBarCommand.DismissSpeedSheet) },
+            )
+        }
+        state.setOptions?.let { options ->
+            AudioSetBottomSheet(
+                options = options,
+                onSelect = { onCommand(AudioBarCommand.PickSet(it)) },
+                onDismiss = { onCommand(AudioBarCommand.DismissSetSheet) },
             )
         }
         if (!state.visible) return@AudioTheme
@@ -228,11 +275,12 @@ private fun AudioBarTopRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
 ) {
-    // Icon-only top row: a speed chip on the left, the transport cluster
-    // (chapter/verse skip + play/pause) centered, and a close button on the
-    // right. Chapter-name text labels are intentionally omitted — the toolbar
-    // already shows the current chapter, and on a phone they crowd out the
-    // speed indicator and force the close button to wrap.
+    // Icon-only top row: a speed chip (plus the recording chip for multi-set
+    // versions) on the left, the transport cluster (chapter/verse skip +
+    // play/pause) centered, and a close button on the right. Chapter-name text
+    // labels are intentionally omitted — the toolbar already shows the current
+    // chapter, and on a phone they crowd out the speed indicator and force the
+    // close button to wrap.
     //
     // The speed chip and close button take their intrinsic width, and the
     // cluster is centered between two weighted Spacers that collapse to zero
@@ -249,6 +297,7 @@ private fun AudioBarTopRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SpeedButton(state = state, onCommand = onCommand)
+        SetButton(state = state, onCommand = onCommand)
 
         Spacer(Modifier.weight(1f))
 
@@ -331,6 +380,33 @@ private fun SpeedButton(
             style = MaterialTheme.typography.labelLarge,
             maxLines = 1,
             softWrap = false,
+        )
+    }
+}
+
+/**
+ * Compact recording chip next to the speed control, showing the selected
+ * set's title. Tapping opens the [AudioSetBottomSheet]. Rendered only when
+ * the version has more than one recording ([AudioBarUiState.setTitle] is
+ * non-null); ellipsized under a width cap so a long title cannot crowd the
+ * transport cluster out of the row.
+ */
+@Composable
+private fun SetButton(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    val title = state.setTitle ?: return
+    TextButton(
+        onClick = { onCommand(AudioBarCommand.OpenSetSheet) },
+        modifier = Modifier.widthIn(max = 120.dp),
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -536,6 +612,7 @@ private fun AudioBarLandscapeRow(
             onClick = { onCommand(AudioBarCommand.NextChapter) },
         )
 
+        SetButton(state = state, onCommand = onCommand)
         SpeedButton(state = state, onCommand = onCommand)
 
         CloseButton(onCommand = onCommand)
@@ -604,8 +681,10 @@ private fun AudioBarPreviewPlaying() {
             error = null,
             timingAvailable = true,
             playingVersionId = "preset/in-tb",
+            setTitle = "Davar",
             pickerOptions = null,
             showSpeedSheet = false,
+            setOptions = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -629,8 +708,10 @@ private fun AudioBarPreviewPreparing() {
             error = null,
             timingAvailable = false,
             playingVersionId = "preset/in-tb",
+            setTitle = null,
             pickerOptions = null,
             showSpeedSheet = false,
+            setOptions = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -654,8 +735,10 @@ private fun AudioBarPreviewDarkBoundary() {
             error = null,
             timingAvailable = false, // some chapters have audio but no timing
             playingVersionId = "preset/in-tb",
+            setTitle = null,
             pickerOptions = null,
             showSpeedSheet = false,
+            setOptions = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -679,11 +762,13 @@ private fun AudioBarPreviewWithPicker() {
             error = null,
             timingAvailable = false,
             playingVersionId = null,
+            setTitle = null,
             pickerOptions = listOf(
-                AudioSourceOption(versionId = "preset/in-tb", shortName = "TB"),
-                AudioSourceOption(versionId = "preset/en-kjv", shortName = "KJV"),
+                AudioSourceOption(versionId = "preset/in-tb", shortName = "TB", audioId = "alkitabsuara", title = "Alkitab Suara"),
+                AudioSourceOption(versionId = "preset/en-kjv", shortName = "KJV", audioId = "wordproject", title = "wordproject"),
             ),
             showSpeedSheet = false,
+            setOptions = null,
         ),
         onCommand = {},
         modifier = Modifier,

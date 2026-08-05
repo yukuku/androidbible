@@ -90,7 +90,8 @@ import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.audio.AudioBarController
-import yuku.alkitab.base.audio.AudioCatalogRepository
+import yuku.alkitab.base.audio.AudioSetSelections
+import yuku.alkitab.base.audio.AudioSetsRepository
 import yuku.alkitab.base.audio.BibleNeighborResolver
 import yuku.alkitab.base.audio.ui.AudioHighlightColor
 import yuku.alkitab.base.audio.ui.AudioSourceOption
@@ -708,14 +709,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
 
-        // Audio bar (M3): attach the Compose host and wire up the menu refresh.
-        // The catalog load is async, so we have to trigger a menu rebuild once
-        // it lands — otherwise the toolbar icon shows up only on the second
-        // resume of the activity.
-        lifecycleScope.launch {
-            AudioCatalogRepository.loadCatalog()
-            invalidateOptionsMenu()
-        }
+        // Audio bar: attach the Compose host and wire up the menu refresh.
+        // Audio-set availability is resolved per version and asynchronously
+        // (see resolveAudioSetsAsync), so the toolbar icon appears once the
+        // answer for the visible version(s) lands.
+        resolveAudioSetsAsync()
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
         lifecycleScope.launch {
@@ -739,6 +737,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
         lifecycleScope.launch {
             AppEvents.activeVersionChanged.collect {
+                resolveAudioSetsAsync()
                 audioBinder.onActiveVersionChanged()
                 invalidateOptionsMenu()
             }
@@ -805,13 +804,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         )
 
         override fun audioAvailableSources(): List<AudioSourceOption> = buildList {
-            if (AudioCatalogRepository.isAudioAvailable(activeSplit0.versionId)) {
-                add(AudioSourceOption(activeSplit0.versionId, activeSplit0.version.shortName))
-            }
+            audioSourceOptionFor(activeSplit0.versionId, activeSplit0.version.shortName)?.let(::add)
             activeSplit1?.let { s1 ->
-                if (AudioCatalogRepository.isAudioAvailable(s1.versionId)) {
-                    add(AudioSourceOption(s1.versionId, s1.version.shortName))
-                }
+                audioSourceOptionFor(s1.versionId, s1.version.shortName)?.let(::add)
             }
         }
 
@@ -851,6 +846,40 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         override fun audioBarVisibilityChanged(visible: Boolean) {
+            invalidateOptionsMenu()
+        }
+    }
+
+    /**
+     * The audio source option for [versionId], or null when the version has no
+     * audio for the current book: sets not yet resolved (cache miss — the
+     * async fetch fills it and re-prepares the menu), no sets at all, or the
+     * selected recording not covering the book being read. Book coverage is
+     * ragged upstream, so a version-level check alone would leave a toolbar
+     * button that only 404s; and the recording is not silently switched to one
+     * that covers the book — the entry point hides instead.
+     */
+    private fun audioSourceOptionFor(versionId: String, shortName: String): AudioSourceOption? {
+        val sets = AudioSetsRepository.cachedSetsFor(versionId)?.sets ?: return null
+        val selected = AudioSetSelections.resolve(versionId, sets) ?: return null
+        if (!selected.coversBook(activeSplit0.book.bookId)) return null
+        return AudioSourceOption(versionId, shortName, selected.audioId, selected.title)
+    }
+
+    /**
+     * Resolves audio-set availability for the visible version(s) off the main
+     * thread, then re-prepares the toolbar menu so the audio icon reflects the
+     * answer. `onPrepareOptionsMenu` itself only peeks the in-memory cache —
+     * an unresolved version keeps the icon hidden until this lands. A brief
+     * absence on a genuinely cold first open beats a blocking network call on
+     * the main thread, and an icon that is present but dead.
+     */
+    private fun resolveAudioSetsAsync() {
+        val versionIds = listOfNotNull(activeSplit0.versionId, activeSplit1?.versionId)
+            .filter { AudioSetsRepository.cachedSetsFor(it) == null }
+        if (versionIds.isEmpty()) return
+        lifecycleScope.launch {
+            versionIds.forEach { AudioSetsRepository.setsFor(it) }
             invalidateOptionsMenu()
         }
     }
@@ -1345,14 +1374,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         menu.clear()
         menuInflater.inflate(R.menu.activity_isi, menu)
 
-        // Audio bar (M3): hide the icon when none of the visible versions
-        // have audio, and swap to the active variant (small accent dot in the
-        // upper-end corner) while the bar is open so the user can tell at a
-        // glance that an audio session is engaged. Both drawables are 24dp
-        // — same toolbar slot, no reflow on the swap. While the player is
-        // preparing, hide the icon entirely and reveal the toolbar spinner
-        // (Kidung pattern) so the user has a single source of "I tapped, it's
-        // working on it" feedback in the activity chrome.
+        // Audio bar: hide the icon when none of the visible versions have
+        // audio covering the current book, and swap to the active variant
+        // (small accent dot in the upper-end corner) while the bar is open so
+        // the user can tell at a glance that an audio session is engaged. Both
+        // drawables are 24dp — same toolbar slot, no reflow on the swap. While
+        // the player is preparing, hide the icon entirely and reveal the
+        // toolbar spinner (Kidung pattern) so the user has a single source of
+        // "I tapped, it's working on it" feedback in the activity chrome.
+        // Availability is a non-blocking cache peek; on a miss the icon stays
+        // hidden and the async resolution below re-prepares the menu once the
+        // per-version answer lands.
+        resolveAudioSetsAsync()
         val menuAudio = menu.findItem(R.id.menuAudio)
         val preparing = audioBinder.isPreparing
         if (menuAudio != null) {

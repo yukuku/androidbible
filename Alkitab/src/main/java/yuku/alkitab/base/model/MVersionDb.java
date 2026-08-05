@@ -49,6 +49,11 @@ public class MVersionDb extends MVersion {
 		return "file/" + filename;
 	}
 
+	@Override
+	public String getPresetName() {
+		return preset_name;
+	}
+
 	/**
 	 * Return the preset_name of a version id, if possible. Null otherwise.
 	 */
