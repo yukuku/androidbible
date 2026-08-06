@@ -189,21 +189,7 @@ The mixed codebase means the remaining Java code can't use Kotlin features (exte
 
 ## TD-13: Test Coverage
 
-43 test files now exist under `Alkitab/src/test` (all Alkitab-module unit tests unless noted). Coverage grew from ~10 pre-existing files through REM-18 and the audio/Room/portable-songs work:
-
-**Storage & DAO:** `InternalDbTest`, `InternalDbHelperMigrationTest`, `DevotionDaoTest`, `PerVersionDaoTest`, `ProgressMarkDaoTest`, `ReadingPlanDaoTest`, `VersionDaoTest`, `SongDbTest`, `SongRoomDaoTest`, `SongRoomDatabaseMigrationTest`, `SongDbDataMigrationTest` (Robolectric where needed)
-
-**Sync:** `SyncDeltaTest`, `Sync_MabelTest`, `Sync_PinsTest`, `Sync_RpTest`
-
-**Reader & rendering:** `VerseRendererTest` (39 characterization tests), `FormattedTextRendererTest`, `VerseActionModeControllerTest`, `VerseTextFormatterTest`, `VerseItemSideBySideSnapshotTest`, `GotoButtonBalanceWrapTest`, `GotoButtonSideBySideSnapshotTest`
-
-**Audio (Bible audio feature):** `AudioBarControllerReshowTest`, `AudioCatalogRepositoryTest`, `AudioPlaybackCoordinatorTest`, `BibleAudioRepositoryTest`, `BibleNeighborResolverTest`, `HighlightTrackerTest`, `AudioHighlightColorTest`
-
-**Search / util:** `SearchEngineTest`, `QueryTokenizerTest`, `HighlightsTest`, `JumperTest`, `TargetDecoderTest`, `RemoveSpecialCodesTest`, `DownloadMapperTest`
-
-**Songs:** `SongBookUtilTest`, `PortableSongsBridgeTest` (drives the same songs through the legacy Parcelable path and the JSON `SongDocument` path and asserts equivalence)
-
-**Other:** `ProviderTest` (content provider), `AppServicesTest`, `JsonFileExportTest`, `VersionTest`, `GetVersionInitialsTest`; `DesktopVerseFinderTest`/`DesktopVerseParserTest` (tools/AlkitabConverter); `LauncherTest`/`VerseProviderTest` (AlkitabIntegration, androidTest)
+Unit tests under `Alkitab/src/test` (plus a few in other modules, e.g. `AlkitabYes2`, `AlkitabIntegration`) now cover storage/DAOs, sync, reader/rendering, Bible audio, search/util, songs, and the content provider — grown from a near-empty baseline through REM-18 and the audio/Room/portable-songs work. Browse `Alkitab/src/test` directly for the current file list rather than relying on an enumeration here, which drifts out of date as tests are added, renamed, or moved.
 
 **Still not tested:** YES2 reader/writer round-trip, devotion downloading (the DAO is tested, the downloader is not), reading-plan progress logic, widget update flow.
 

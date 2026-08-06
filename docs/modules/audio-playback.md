@@ -43,7 +43,3 @@ reset → preparing → playing ⇄ paused → complete
 - The verse action-mode item "Play audio from this verse" is offered only when a visible version has a recording with verse timing that covers the book being read. When the recording that would play lacks timing, the recording sheet opens first, listing only recordings with timing (grouped per version, like the audio bar's recording chip), and the pick starts playback at the requested verse.
 - Song audio: `SongViewActivity`'s toolbar drives `SongAudioController`, whose service keeps playing (with notification) after the activity is backgrounded.
 - Starting either kind of audio stops the other via `AudioPlaybackCoordinator`.
-
-## Tests
-
-`AudioPlaybackCoordinatorTest`, `BibleAudioRepositoryTest`, `AudioCatalogRepositoryTest`, `BibleNeighborResolverTest`, `HighlightTrackerTest`, `AudioBarControllerReshowTest`, `AudioBarControllerPlayFromVerseTest`, `AudioHighlightColorTest` (unit tests under `Alkitab/src/test`).
