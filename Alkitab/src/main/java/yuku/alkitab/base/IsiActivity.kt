@@ -182,7 +182,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     // --- VerseActionModeActions overrides ---
     override fun uncheckAllVersesSplit0() { lsSplit0.uncheckAllVerses(true) }
     override fun onActionModeDestroyed() { actionMode = null }
-    override fun isAudioAvailableForVerseAction(): Boolean = audioBinder.isAvailable
+    override fun isAudioAvailableForVerseAction(): Boolean = audioBinder.isPlayFromVerseAvailable
     override fun playAudioFromVerse(verse_1: Int) { audioBinder.showFromVerse(verse_1) }
 
     // --- ReaderGestureActions overrides (state is read via ReaderGestureHost below) ---
