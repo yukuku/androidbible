@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.test.core.app.ApplicationProvider
+import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -166,6 +167,35 @@ class VersesComposeListCompositionTest {
         }
     }
 
+    /**
+     * Like [pumpLayout], but advances the clock so Choreographer frame
+     * callbacks — and with them the frame clock that Compose animations
+     * suspend on — actually fire.
+     */
+    private fun pumpFrames(harness: Harness, frames: Int = 60) {
+        repeat(frames) {
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(20, TimeUnit.MILLISECONDS)
+            harness.view.measure(
+                View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(VIEWPORT_HEIGHT_PX, View.MeasureSpec.EXACTLY),
+            )
+            harness.view.layout(0, 0, VIEWPORT_WIDTH_PX, VIEWPORT_HEIGHT_PX)
+        }
+    }
+
+    /** Runs [block] with every uncaught exception collected instead of merely logged. */
+    private fun collectingUncaughtExceptions(block: () -> Unit): List<Throwable> {
+        val caught = mutableListOf<Throwable>()
+        val previous = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { _, e -> caught += e }
+        try {
+            block()
+        } finally {
+            Thread.setDefaultUncaughtExceptionHandler(previous)
+        }
+        return caught
+    }
+
     @Test
     fun `composing a chapter with verses and a pericope header lays out items and reports verse 1 at the top`() {
         val harness = composeList(30)
@@ -281,6 +311,29 @@ class VersesComposeListCompositionTest {
         harness.controller.setAudioHighlight(0, 0)
         pumpLayout(harness)
         assertEquals(1, harness.controller.getVerse_1BasedOnScroll())
+    }
+
+    @Test
+    // Own sdk for a fresh Robolectric sandbox, so the Choreographer this test
+    // drives is the one the frame clock posts its callbacks to.
+    @Config(sdk = [32])
+    fun `audio highlight on an offscreen verse smooth-scrolls it into view`() {
+        val harness = composeList(60)
+
+        // The animated scroll suspends on the frame clock, which the scroll
+        // coroutine's context must carry — it is launched from the host view's
+        // lifecycle scope, not from a composition.
+        val caught = collectingUncaughtExceptions {
+            harness.controller.setAudioHighlight(30, 0x40ff0000)
+            pumpFrames(harness)
+        }
+        assertEquals("scroll coroutine failed: ${caught.firstOrNull()}", emptyList<Throwable>(), caught)
+
+        val pos = harness.controller.versesDataModel.getPositionIgnoringPericopeFromVerse(30)
+        val item = harness.controller.listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == pos }
+        assertTrue("verse 30 was never scrolled into view", item != null)
+        // Landed near the upper 10% of the viewport, as setAudioHighlight aims for.
+        assertEquals((VIEWPORT_HEIGHT_PX * 0.10f), item!!.offset.toFloat(), 8f)
     }
 
     @Test

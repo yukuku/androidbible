@@ -27,6 +27,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MonotonicFrameClock
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.AbstractComposeView
+import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -92,6 +94,17 @@ private const val TAG = "VersesComposeCtl"
 private const val SCROLLBAR_FADE_DELAY_MS = 1000L
 private const val SCROLLBAR_FADE_DURATION_MS = 400
 private const val EMPTY_MESSAGE_TEXT_SIZE_DP = 14f
+
+/**
+ * The Choreographer-backed frame clock that Compose UI itself runs on. Needed
+ * to drive animations from coroutines that are not launched from a composition
+ * (which would carry a clock in their context already).
+ */
+private val uiFrameClock: MonotonicFrameClock by lazy {
+    checkNotNull(AndroidUiDispatcher.Main[MonotonicFrameClock]) {
+        "AndroidUiDispatcher.Main carries no MonotonicFrameClock"
+    }
+}
 
 /**
  * Host view for the fully Compose-based verse list. The attached
@@ -294,11 +307,16 @@ class VersesComposeControllerImpl(
      * Runs a scroll operation once the composition has caught up with the data
      * version current at call time, dropping it if the data has changed again
      * by then.
+     *
+     * The coroutine runs on the host view's lifecycle scope, which carries no
+     * [MonotonicFrameClock]; the Choreographer-backed one is added because
+     * animated scrolls suspend on `withFrameNanos` and throw without a clock in
+     * context.
      */
     private fun launchScroll(programmatic: Boolean = true, block: suspend (data: VersesDataModel) -> Unit) {
         val vn = dataVersionNumber.get()
         val scope = composeHost.findViewTreeLifecycleOwner()?.lifecycleScope ?: return
-        scope.launch {
+        scope.launch(uiFrameClock) {
             snapshotFlow { renderedDataVersion.intValue }.first { it >= vn }
             if (vn != dataVersionNumber.get()) return@launch
             if (programmatic) programmaticScrollDepth++
