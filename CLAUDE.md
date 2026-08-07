@@ -9,6 +9,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Official site: https://alkitab.app
 - Developer docs: https://alkitab.app/developer
 
+## Branches
+
+**`develop` is the main integration branch — base all work on `develop` and target every PR at `develop`, never `master`.** The repo follows git-flow: `master` only receives merges from `release/*` branches when a version ships.
+
 ## Build Commands
 
 ```bash
