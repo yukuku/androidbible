@@ -190,10 +190,6 @@ class AudioBarController(
     val isBarVisible: Boolean
         get() = _uiState.value.visible
 
-    /** True while the player is buffering — drives the toolbar's preparing-state spinner swap. */
-    val isPreparing: Boolean
-        get() = _uiState.value.preparing
-
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val localBinder = binder as? BibleAudioService.LocalBinder ?: return

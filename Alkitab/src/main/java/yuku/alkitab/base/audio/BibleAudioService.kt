@@ -191,8 +191,8 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     private val playerListener = object : BibleAudioPlayer.Listener {
         override fun onBuffering() {
             // Re-buffering after a seek (or initial buffer) — re-arm the
-            // preparing flag so the bar's progress ring + the toolbar spinner
-            // come back. We deliberately reuse `preparing` rather than adding
+            // preparing flag so the bar's progress ring comes back. We
+            // deliberately reuse `preparing` rather than adding
             // a separate `buffering` field: from the user's POV, both states
             // are "we asked to play but no audio is coming out yet", which is
             // what the spinner communicates.
@@ -349,6 +349,12 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         AudioPlaybackCoordinator.acquire(this)
         loadJob?.cancel()
         timingJob?.cancel()
+        // The position poll reads the player, which still holds the outgoing
+        // chapter until the load job below swaps the media item — left running,
+        // its next tick would overwrite the position/duration reset in the
+        // state update with the old chapter's values. Polling resumes when the
+        // player reaches READY (or on an explicit play()).
+        positionJob?.cancel()
         currentRequest = request
         hasActiveSession = true
         pendingStartVerse1 = request.startVerse_1

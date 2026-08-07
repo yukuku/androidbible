@@ -7,7 +7,7 @@ package yuku.alkitab.base.audio
  *  - [isPlaying]   — true while the player is actually playing audio (not just
  *                    "play was requested but still buffering"; that's [preparing]).
  *  - [preparing]   — true between `loadChapter` and the player firing READY.
- *                    Drives the toolbar-icon spinner and the bar's progress ring.
+ *                    Drives the bar's play-button progress ring.
  *  - [versionId]   — versionId of the source currently loaded, or `""` when
  *                    nothing is loaded. Scopes the verse highlight to panes
  *                    whose version matches.
