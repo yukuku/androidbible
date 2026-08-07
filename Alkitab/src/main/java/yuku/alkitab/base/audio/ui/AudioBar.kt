@@ -32,8 +32,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,12 +43,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import yuku.alkitab.base.audio.PlaybackState
 import yuku.alkitab.debug.R
 import kotlin.math.roundToLong
@@ -409,6 +413,11 @@ private fun CloseButton(
  * Play/pause, with two special states sharing the slot: a progress ring while
  * preparing, and an error icon when the last load failed — tapping the error
  * icon retries the load instead of toggling playback.
+ *
+ * The preparing visuals (ring + disabled swap) are debounced by
+ * [PREPARING_INDICATION_DELAY_MS]: a load that completes within the window —
+ * a verse skip landing in already-buffered data, a chapter served from the
+ * HTTP cache — never flashes the ring at all.
  */
 @Composable
 private fun PlayPauseButton(
@@ -416,6 +425,7 @@ private fun PlayPauseButton(
     onCommand: (AudioBarCommand) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
+    val showPreparing = debouncedPreparing(state.preparing)
 
     Box(contentAlignment = Alignment.Center) {
         FilledIconButton(
@@ -423,7 +433,7 @@ private fun PlayPauseButton(
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onCommand(if (state.error != null) AudioBarCommand.Retry else AudioBarCommand.PlayPause)
             },
-            enabled = !state.preparing,
+            enabled = !showPreparing,
             modifier = Modifier.size(48.dp),
         ) {
             if (state.error != null) {
@@ -454,7 +464,7 @@ private fun PlayPauseButton(
                 }
             }
         }
-        if (state.preparing) {
+        if (showPreparing) {
             CircularProgressIndicator(
                 modifier = Modifier.size(48.dp),
                 strokeWidth = 2.dp,
@@ -462,6 +472,29 @@ private fun PlayPauseButton(
         }
     }
 }
+
+/**
+ * `true` only once [preparing] has been continuously true for
+ * [PREPARING_INDICATION_DELAY_MS]; drops back to false immediately when
+ * [preparing] does. In inspection mode the delay is skipped so previews can
+ * pin the preparing state.
+ */
+@Composable
+private fun debouncedPreparing(preparing: Boolean): Boolean {
+    if (LocalInspectionMode.current) return preparing
+    var show by remember { mutableStateOf(false) }
+    LaunchedEffect(preparing) {
+        if (preparing) {
+            delay(PREPARING_INDICATION_DELAY_MS)
+            show = true
+        } else {
+            show = false
+        }
+    }
+    return show
+}
+
+private const val PREPARING_INDICATION_DELAY_MS = 100L
 
 @Composable
 private fun AudioBarSliderRow(
@@ -493,7 +526,7 @@ private fun AudioBarSliderRow(
         )
 
         Text(
-            text = formatMmSs(state.durationMs),
+            text = durationLabelText(state.durationMs),
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
             color = LocalContentColor.current.copy(alpha = 0.7f),
             modifier = Modifier
@@ -619,12 +652,21 @@ private fun SourcePickerDialog(
     )
 }
 
-private fun formatMmSs(ms: Long): String {
+internal fun formatMmSs(ms: Long): String {
     val totalSec = (ms / 1000L).coerceAtLeast(0L)
     val mm = totalSec / 60L
     val ss = totalSec % 60L
     return "%d:%02d".format(mm, ss)
 }
+
+/**
+ * Duration label text: blank while the player hasn't reported a real duration
+ * (nothing loaded, or a new file still preparing) — a "0:00" there would read
+ * as a measurement rather than "unknown". The position label keeps rendering
+ * "0:00" in that state so the reset to the start stays visible.
+ */
+internal fun durationLabelText(durationMs: Long): String =
+    if (durationMs > 0L) formatMmSs(durationMs) else ""
 
 // -- Previews ------------------------------------------------------------------
 
