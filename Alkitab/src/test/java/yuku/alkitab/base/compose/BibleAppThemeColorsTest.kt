@@ -38,14 +38,14 @@ class BibleAppThemeColorsTest {
     }
 
     @Test
-    fun `secondary carries the escape color used for interesting texts on the View side`() {
-        assertEquals(res(R.color.escape), BibleAppDarkColorScheme.secondary.toArgb())
+    fun `secondaryContainer is exactly the XML toolbar color and onSecondary the status bar color`() {
+        assertEquals(res(R.color.primary), BibleAppDarkColorScheme.secondaryContainer.toArgb())
+        assertEquals(res(R.color.primary_dark), BibleAppDarkColorScheme.onSecondary.toArgb())
     }
 
     @Test
-    fun `tertiaryContainer is exactly the XML toolbar color and onTertiary the status bar color`() {
-        assertEquals(res(R.color.primary), BibleAppDarkColorScheme.tertiaryContainer.toArgb())
-        assertEquals(res(R.color.primary_dark), BibleAppDarkColorScheme.onTertiary.toArgb())
+    fun `tertiary carries the escape color, the rarest slot for the rarest View color`() {
+        assertEquals(res(R.color.escape), BibleAppDarkColorScheme.tertiary.toArgb())
     }
 
     @Test

@@ -231,7 +231,7 @@ class ComposeThemeSnapshotTest {
                 Text("Title on background", style = MaterialTheme.typography.titleLarge)
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text("Primary text", color = MaterialTheme.colorScheme.primary)
-                    Text("Secondary text", color = MaterialTheme.colorScheme.secondary)
+                    Text("Tertiary text", color = MaterialTheme.colorScheme.tertiary)
                     Text("Variant text", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -269,7 +269,7 @@ class ComposeThemeSnapshotTest {
                     "secondaryCont" to MaterialTheme.colorScheme.secondaryContainer,
                 )
                 RoleSwatchRow(
-                    "tertiaryCont" to MaterialTheme.colorScheme.tertiaryContainer,
+                    "tertiary" to MaterialTheme.colorScheme.tertiary,
                     "surface" to MaterialTheme.colorScheme.surface,
                     "surfContHigh" to MaterialTheme.colorScheme.surfaceContainerHigh,
                     "surfContHighest" to MaterialTheme.colorScheme.surfaceContainerHighest,

@@ -33,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
@@ -73,9 +74,11 @@ fun GotoScreen(
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         topBar = {
             // Single bar: back button, tabs (taking remaining width), overflow menu —
-            // mirroring the legacy XML where TabLayout sat inside Toolbar.
+            // mirroring the legacy XML where TabLayout sat inside Toolbar, painted
+            // with the same blue-gray the View toolbars wear.
             Surface(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 tonalElevation = 0.dp,
             ) {
                 Row(
@@ -89,6 +92,8 @@ fun GotoScreen(
                         PrimaryTabRow(
                             selectedTabIndex = pagerState.currentPage,
                             modifier = Modifier.fillMaxWidth(),
+                            containerColor = Color.Transparent,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                             divider = {},
                         ) {
                             val titles = listOf(

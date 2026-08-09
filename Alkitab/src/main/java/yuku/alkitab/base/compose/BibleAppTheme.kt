@@ -12,18 +12,20 @@ import yuku.alkitab.base.util.BookColorUtil
  * surfaces read as part of the same app as the View-based screens:
  *
  *  - [Accent] = `@color/accent` (Light Blue A200), the interactive color of
- *    every View control via `colorAccent`.
- *  - [Escape] = `@color/escape` (Teal 300), the "something interesting" text
- *    color used across lists and panels.
+ *    every View control via `colorAccent`: tab indicators, checkboxes,
+ *    links, dialog buttons.
  *  - [ChromeBlueGray] / [ChromeBlueGrayDark] = `@color/primary` /
- *    `@color/primary_dark` (Blue Gray 700/900), the toolbar and status bar.
+ *    `@color/primary_dark` (Blue Gray 700/900) — the toolbar and status bar,
+ *    the most visible identity color of the View screens.
+ *  - [Escape] = `@color/escape` (Teal 300), used sparingly on the View side
+ *    for occasional "something interesting" texts.
  *  - [WindowGray] = `@color/window` (Gray 800), the window background.
  */
 private object BrandColors {
     val Accent = Color(0xFF40C4FF)
-    val Escape = Color(0xFF4DB6AC)
     val ChromeBlueGray = Color(0xFF455A64)
     val ChromeBlueGrayDark = Color(0xFF263238)
+    val Escape = Color(0xFF4DB6AC)
     val WindowGray = Color(0xFF303030)
 }
 
@@ -31,15 +33,19 @@ private object BrandColors {
  * Static dark color scheme built from [BrandColors]. Deliberately NOT the
  * Material dynamic scheme: dynamic colors come from the device wallpaper, so
  * the same screen would be purple on one phone and green on another while the
- * XML screens around it stay teal/light-blue — the palette must be the app's
- * own on every device.
+ * XML screens around it stay blue-gray/light-blue — the palette must be the
+ * app's own on every device.
  *
- * Role mapping:
+ * Role mapping, weighted the way the View screens actually use the colors:
  *  - `primary` carries the light-blue accent, taking the role `colorAccent`
  *    plays for View widgets (buttons, tab indicators, checkboxes, links).
- *  - `secondary` carries the teal escape color.
- *  - `tertiary` carries the blue-gray chrome family; `tertiaryContainer` is
- *    exactly the XML toolbar color.
+ *  - The `secondary` family carries the blue-gray chrome:
+ *    `secondaryContainer` is exactly the XML toolbar color, so the M3
+ *    components that lean on it (tonal buttons, selected chips and segmented
+ *    buttons) and the Compose top bars pick up the same blue-gray the View
+ *    toolbars wear, and `onSecondary` is exactly the XML status bar color.
+ *  - The `tertiary` family carries the teal escape color — deliberately the
+ *    least-used slot, because escape is rare on the View side too.
  *  - The neutral surface ladder is anchored on the pure-gray XML window
  *    background: `surface` equals `@color/window`, containers step up from it
  *    only slightly so elevated Compose surfaces stay in the same gray family
@@ -57,15 +63,15 @@ val BibleAppDarkColorScheme: ColorScheme = darkColorScheme(
     onPrimaryContainer = Color(0xFFC3E7FF),
     inversePrimary = Color(0xFF006590),
 
-    secondary = BrandColors.Escape,
-    onSecondary = Color(0xFF003732),
-    secondaryContainer = Color(0xFF00504A),
-    onSecondaryContainer = Color(0xFFB2DFDB),
+    secondary = Color(0xFFB0BEC5),
+    onSecondary = BrandColors.ChromeBlueGrayDark,
+    secondaryContainer = BrandColors.ChromeBlueGray,
+    onSecondaryContainer = Color(0xFFECEFF1),
 
-    tertiary = Color(0xFFB0BEC5),
-    onTertiary = BrandColors.ChromeBlueGrayDark,
-    tertiaryContainer = BrandColors.ChromeBlueGray,
-    onTertiaryContainer = Color(0xFFECEFF1),
+    tertiary = BrandColors.Escape,
+    onTertiary = Color(0xFF003732),
+    tertiaryContainer = Color(0xFF00504A),
+    onTertiaryContainer = Color(0xFFB2DFDB),
 
     background = BrandColors.WindowGray,
     onBackground = Color(0xFFEDEDED),
