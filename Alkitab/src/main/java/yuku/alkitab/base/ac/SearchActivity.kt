@@ -504,6 +504,8 @@ class SearchActivity : BaseActivity() {
                 return@openVersionsDialog
             }
 
+            val versionChanged = mv.versionId != searchInVersionId
+
             searchInVersion = selectedVersion
             searchInVersionId = mv.versionId
             textSizeMult = App.services.storage.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
@@ -515,6 +517,11 @@ class SearchActivity : BaseActivity() {
 
             @Suppress("NotifyDataSetChanged")
             adapter.notifyDataSetChanged()
+
+            // The results on screen belong to the previous version, so redo the search against the newly picked one.
+            if (versionChanged) {
+                search(searchView.query.toString())
+            }
         }
     }
 
