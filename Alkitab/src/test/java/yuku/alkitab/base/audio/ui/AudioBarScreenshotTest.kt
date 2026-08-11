@@ -22,6 +22,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import org.robolectric.shadows.ShadowDialog
 import yuku.alkitab.base.audio.AudioLogEntry
 
 /**
@@ -72,7 +73,16 @@ class AudioBarScreenshotTest {
         if (settleAnimations) {
             repeat(30) { Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(32)) }
         }
-        val bitmap = measureAndDraw(composeView)
+        // ModalBottomSheet renders into its own android.app.Dialog window, not
+        // into composeView's own hierarchy — draw that window's decor view
+        // instead when one is showing, or the sheet would be invisible in the
+        // captured bitmap.
+        val dialog = ShadowDialog.getLatestDialog()
+        val bitmap = if (dialog != null && dialog.isShowing) {
+            measureAndDraw(dialog.window!!.decorView)
+        } else {
+            measureAndDraw(composeView)
+        }
         FileOutputStream(File(outputDir, "$name.png")).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
