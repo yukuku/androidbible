@@ -661,6 +661,12 @@ class AudioBarController(
                 dragging = false
                 svc?.seekTo(cmd.positionMs)
             }
+            AudioBarCommand.OpenLogSheet -> {
+                _uiState.update { it.copy(showLogSheet = true) }
+            }
+            AudioBarCommand.DismissLogSheet -> {
+                _uiState.update { it.copy(showLogSheet = false) }
+            }
         }
     }
 
@@ -849,6 +855,7 @@ class AudioBarController(
                 verse_1 = if (dragging) current.verse_1 else state.verse_1,
                 speed = state.speed,
                 error = state.error,
+                logs = state.logs,
                 timingAvailable = computeTimingAvailable(
                     setHasTiming = selectedSet?.hasTiming,
                     stateVerse1 = state.verse_1,

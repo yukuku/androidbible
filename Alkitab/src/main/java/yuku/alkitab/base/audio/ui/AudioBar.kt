@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
@@ -51,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import yuku.alkitab.base.audio.AudioLogEntry
 import yuku.alkitab.base.audio.PlaybackState
 import yuku.alkitab.debug.R
 import kotlin.math.roundToLong
@@ -67,6 +70,14 @@ import kotlin.math.roundToLong
  *                             and the slider label drops the `· v.N` suffix.
  *  - [error]                — non-null swaps the play button for an error icon;
  *                             tapping it retries the load.
+ *  - [logs]                 — timestamped HTTP/player-state log for the
+ *                             chapter currently loading (see
+ *                             [yuku.alkitab.base.audio.PlaybackState.logs]).
+ *                             Its last entry drives the status line's text;
+ *                             tapping the line shows the whole list via
+ *                             [showLogSheet].
+ *  - [showLogSheet]         — when true, [AudioLogBottomSheet] is shown over
+ *                             the bar.
  */
 data class AudioBarUiState(
     val visible: Boolean,
@@ -78,6 +89,8 @@ data class AudioBarUiState(
     val speed: Float,
     val error: String?,
     val timingAvailable: Boolean,
+    val logs: List<AudioLogEntry>,
+    val showLogSheet: Boolean,
     /** Version driving audio, or null. Used to scope the verse highlight to matching panes. */
     val playingVersionId: String?,
     /**
@@ -109,6 +122,8 @@ data class AudioBarUiState(
             speed = 1.0f,
             error = null,
             timingAvailable = false,
+            logs = emptyList(),
+            showLogSheet = false,
             playingVersionId = null,
             setTitle = null,
             pickerOptions = null,
@@ -182,6 +197,9 @@ sealed interface AudioBarCommand {
     data class SeekCommit(val positionMs: Long) : AudioBarCommand
     data class PickSource(val versionId: String) : AudioBarCommand
     data object CancelPicker : AudioBarCommand
+    /** Fired by tapping the slow-load/error status line — opens [AudioLogBottomSheet]. */
+    data object OpenLogSheet : AudioBarCommand
+    data object DismissLogSheet : AudioBarCommand
 }
 
 /**
@@ -213,6 +231,12 @@ fun AudioBar(
                 groups = groups,
                 onSelect = { versionId, audioId -> onCommand(AudioBarCommand.PickSet(versionId, audioId)) },
                 onDismiss = { onCommand(AudioBarCommand.DismissSetSheet) },
+            )
+        }
+        if (state.showLogSheet) {
+            AudioLogBottomSheet(
+                logs = state.logs,
+                onDismiss = { onCommand(AudioBarCommand.DismissLogSheet) },
             )
         }
         if (!state.visible) return@AudioTheme
@@ -308,7 +332,7 @@ private fun AudioBarTopRow(
         PrevVerseButton(state = state, onCommand = onCommand)
 
         Spacer(Modifier.width(4.dp))
-        PlayPauseButton(state = state, onCommand = onCommand)
+        PlayPauseWithStatus(state = state, onCommand = onCommand)
         Spacer(Modifier.width(4.dp))
 
         NextVerseButton(state = state, onCommand = onCommand)
@@ -408,6 +432,83 @@ private fun CloseButton(
         )
     }
 }
+
+/**
+ * [PlayPauseButton] plus [AudioLoadStatusLine] stacked directly above it —
+ * the pairing the play/pause slot and the status line always occupy in both
+ * [AudioBarTopRow] and [AudioBarLandscapeRow]. The column collapses to just
+ * the button's height when the status line has nothing to show, so this adds
+ * no vertical space in the common case.
+ */
+@Composable
+private fun PlayPauseWithStatus(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        AudioLoadStatusLine(state = state, onCommand = onCommand)
+        PlayPauseButton(state = state, onCommand = onCommand)
+    }
+}
+
+/**
+ * Small tappable status line shown above the play button while a chapter load
+ * is taking unusually long, or once it has failed:
+ *  - **Slow load** — [state.preparing] has held continuously for
+ *    [SLOW_LOAD_STATUS_DELAY_MS] with no error yet. Shows the most recent
+ *    [AudioBarUiState.logs] entry, so the user sees exactly what the HTTP
+ *    layer is doing (DNS, connecting, waiting for headers, …) instead of a
+ *    bare spinner with no explanation for the delay.
+ *  - **Error** — [state.error] is non-null. Shown immediately, no delay —
+ *    this is the detail behind the error icon the play button just became.
+ *
+ * Tapping the line opens [AudioLogBottomSheet] with the full timestamped log.
+ */
+@Composable
+private fun AudioLoadStatusLine(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    val slowLoad = slowLoadStatusVisible(state.preparing)
+    if (state.error == null && !slowLoad) return
+    val text = state.logs.lastOrNull()?.message
+        ?: state.error
+        ?: stringResource(R.string.audio_bar_loading_status_fallback)
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+        color = if (state.error != null) MaterialTheme.colorScheme.error else LocalContentColor.current.copy(alpha = 0.7f),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+            .widthIn(max = 140.dp)
+            .clickable { onCommand(AudioBarCommand.OpenLogSheet) },
+    )
+}
+
+/**
+ * `true` only once [preparing] has been continuously true for
+ * [SLOW_LOAD_STATUS_DELAY_MS]; drops back to false immediately when
+ * [preparing] does — mirrors [debouncedPreparing] but at the much longer
+ * delay the status line is gated on. In inspection mode the delay is skipped
+ * so previews can pin the slow-load state.
+ */
+@Composable
+private fun slowLoadStatusVisible(preparing: Boolean): Boolean {
+    if (LocalInspectionMode.current) return preparing
+    var show by remember { mutableStateOf(false) }
+    LaunchedEffect(preparing) {
+        if (preparing) {
+            delay(SLOW_LOAD_STATUS_DELAY_MS)
+            show = true
+        } else {
+            show = false
+        }
+    }
+    return show
+}
+
+private const val SLOW_LOAD_STATUS_DELAY_MS = 5_000L
 
 /**
  * Play/pause, with two special states sharing the slot: a progress ring while
@@ -601,7 +702,7 @@ private fun AudioBarLandscapeRow(
         PrevVerseButton(state = state, onCommand = onCommand)
 
         Spacer(Modifier.width(4.dp))
-        PlayPauseButton(state = state, onCommand = onCommand)
+        PlayPauseWithStatus(state = state, onCommand = onCommand)
         Spacer(Modifier.width(4.dp))
 
         NextVerseButton(state = state, onCommand = onCommand)
@@ -684,6 +785,8 @@ private fun AudioBarPreviewPlaying() {
             speed = 1.0f,
             error = null,
             timingAvailable = true,
+            logs = emptyList(),
+            showLogSheet = false,
             playingVersionId = "preset/in-tb",
             setTitle = "Alkitab Suara — a deliberately long recording title",
             pickerOptions = null,
@@ -709,6 +812,44 @@ private fun AudioBarPreviewPreparing() {
             speed = 1.0f,
             error = null,
             timingAvailable = false,
+            logs = emptyList(),
+            showLogSheet = false,
+            playingVersionId = "preset/in-tb",
+            setTitle = null,
+            pickerOptions = null,
+            showSpeedSheet = false,
+            setGroups = null,
+        ),
+        onCommand = {},
+        modifier = Modifier,
+    )
+}
+
+// Preparing past the 5 s status-line threshold — LocalInspectionMode skips
+// the debounce delay, so `preparing = true` here pins the status line on
+// with the most recent HTTP log entry.
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 400)
+@Composable
+private fun AudioBarPreviewSlowLoad() {
+    AudioBar(
+        state = AudioBarUiState(
+            visible = true,
+            isPlaying = false,
+            preparing = true,
+            positionMs = 0L,
+            durationMs = 0L,
+            verse_1 = 0,
+            speed = 1.0f,
+            error = null,
+            timingAvailable = false,
+            logs = listOf(
+                AudioLogEntry(0L, "Loading Genesis 1"),
+                AudioLogEntry(1_000L, "HTTP request started: https://audio.example/gen1.mp3"),
+                AudioLogEntry(1_200L, "DNS lookup started (audio.example)"),
+                AudioLogEntry(4_800L, "Connecting to 93.184.216.34:443"),
+                AudioLogEntry(5_600L, "Waiting for response headers"),
+            ),
+            showLogSheet = false,
             playingVersionId = "preset/in-tb",
             setTitle = null,
             pickerOptions = null,
@@ -734,6 +875,14 @@ private fun AudioBarPreviewDarkError() {
             speed = 1.0f,
             error = "ERROR_CODE_IO_NETWORK_CONNECTION_FAILED", // play button becomes a retry
             timingAvailable = false, // some chapters have audio but no timing
+            logs = listOf(
+                AudioLogEntry(0L, "Loading Genesis 1"),
+                AudioLogEntry(1_000L, "HTTP request started: https://audio.example/gen1.mp3"),
+                AudioLogEntry(1_200L, "DNS lookup started (audio.example)"),
+                AudioLogEntry(6_500L, "Connect failed: Unable to resolve host"),
+                AudioLogEntry(6_600L, "Player error: ERROR_CODE_IO_NETWORK_CONNECTION_FAILED — Unable to connect"),
+            ),
+            showLogSheet = false,
             playingVersionId = "preset/in-tb",
             setTitle = null,
             pickerOptions = null,
@@ -759,6 +908,8 @@ private fun AudioBarPreviewWithPicker() {
             speed = 1.0f,
             error = null,
             timingAvailable = false,
+            logs = emptyList(),
+            showLogSheet = false,
             playingVersionId = null,
             setTitle = null,
             pickerOptions = listOf(

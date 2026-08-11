@@ -88,6 +88,14 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         private const val POSITION_POLL_INTERVAL_MS = 100L
         private const val ARTWORK_SIZE_PX = 256
 
+        /**
+         * Cap on [PlaybackState.logs] length. A single chapter load can emit
+         * dozens of HTTP events per byte-range fetch as the player buffers
+         * ahead; this bounds memory for a chapter that keeps re-buffering
+         * instead of ever reaching a steady state.
+         */
+        private const val MAX_LOG_ENTRIES = 500
+
         /** Default playback speed when nothing is persisted yet. */
         private const val DEFAULT_PLAYBACK_SPEED = 1.0f
 
@@ -245,7 +253,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
     override fun onCreate() {
         super.onCreate()
-        player = BibleAudioPlayer(applicationContext)
+        player = BibleAudioPlayer(applicationContext, ::appendLog)
         player.setListener(playerListener)
 
         // Restore the previously-chosen playback speed (or stay at 1.0× the
@@ -360,7 +368,10 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         pendingStartVerse1 = request.startVerse_1
         playerReadyForSeek = false
         timingLoaded = false
-        // New chapter — reset highlight from any previous chapter and clear errors.
+        // New chapter — reset highlight from any previous chapter and clear
+        // errors. The log is reset here too: a retry is a fresh load attempt,
+        // and mixing its events with the failed attempt's would make the log
+        // sheet read as one confusing, non-chronological HTTP conversation.
         highlightTracker.setTiming(emptyList())
         _playbackState.update {
             it.copy(
@@ -374,6 +385,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 positionMs = 0L,
                 durationMs = 0L,
                 error = null,
+                logs = listOf(AudioLogEntry(System.currentTimeMillis(), "Loading ${request.displayTitle}")),
             )
         }
 
@@ -385,6 +397,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 request.chapter_1,
             )
             if (url == null) {
+                appendLog("No audio available for this version")
                 _playbackState.update {
                     it.copy(preparing = false, error = "no_audio_for_version")
                 }
@@ -614,6 +627,19 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             // a metadata-only notification (title + artist).
             AppLog.w(TAG, "Failed to decode launcher icon artwork: ${e.message}")
             null
+        }
+    }
+
+    /**
+     * Appends [message] to [PlaybackState.logs] with the current wall-clock
+     * time. Passed to [BibleAudioPlayer] as its `onLogEvent` callback, so this
+     * fires from both HTTP connection-state events and player state
+     * transitions — always on the main thread, same as every other
+     * `_playbackState` mutation.
+     */
+    private fun appendLog(message: String) {
+        _playbackState.update {
+            it.copy(logs = (it.logs + AudioLogEntry(System.currentTimeMillis(), message)).takeLast(MAX_LOG_ENTRIES))
         }
     }
 

@@ -49,9 +49,16 @@ import yuku.alkitab.base.connection.Connections
  * configuration (audio-only renderer, MP3-only extractor, OkHttp-backed
  * data-source) but does not extend it — songs and bible audio have different
  * state machines and different error UX.
+ *
+ * [onLogEvent] receives a timestamped-by-the-caller trace of what the load is
+ * actually doing: every OkHttp connection-state transition for the chapter
+ * fetch (via [AudioHttpEventLogger], on a client scoped to this player only —
+ * the app's shared [Connections.okHttp] is left untouched) plus this player's
+ * own buffering/ready/error transitions. [BibleAudioService] feeds this into
+ * [PlaybackState.logs] for the audio bar's status line and log bottom sheet.
  */
 @OptIn(UnstableApi::class)
-class BibleAudioPlayer(appContext: Context) {
+class BibleAudioPlayer(appContext: Context, private val onLogEvent: (String) -> Unit) {
 
     interface Listener {
         /**
@@ -77,14 +84,24 @@ class BibleAudioPlayer(appContext: Context) {
     private val playerListener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
-                Player.STATE_BUFFERING -> listener?.onBuffering()
-                Player.STATE_READY -> listener?.onReady()
-                Player.STATE_ENDED -> listener?.onEnded()
+                Player.STATE_BUFFERING -> {
+                    onLogEvent("Player buffering")
+                    listener?.onBuffering()
+                }
+                Player.STATE_READY -> {
+                    onLogEvent("Player ready")
+                    listener?.onReady()
+                }
+                Player.STATE_ENDED -> {
+                    onLogEvent("Player reached end of chapter")
+                    listener?.onEnded()
+                }
                 else -> Unit
             }
         }
 
         override fun onPlayerError(error: PlaybackException) {
+            onLogEvent("Player error: ${error.errorCodeName}" + (error.message?.let { " — $it" } ?: ""))
             listener?.onError(error)
         }
     }
@@ -103,7 +120,14 @@ class BibleAudioPlayer(appContext: Context) {
         val mp3ExtractorFactory = ExtractorsFactory {
             arrayOf<Extractor>(Mp3Extractor())
         }
-        val okHttpDataSourceFactory = OkHttpDataSource.Factory(Connections.okHttp)
+        // A client scoped to this player, not the app-wide Connections.okHttp,
+        // so the per-call event logging below only ever fires for chapter
+        // audio fetches — newBuilder() still shares the connection pool and
+        // disk cache with the shared client.
+        val loggingOkHttpClient = Connections.okHttp.newBuilder()
+            .eventListenerFactory { AudioHttpEventLogger(onLogEvent) }
+            .build()
+        val okHttpDataSourceFactory = OkHttpDataSource.Factory(loggingOkHttpClient)
             .setUserAgent(Connections.httpUserAgent)
 
         // USAGE_MEDIA + CONTENT_TYPE_SPEECH gives the right ducking behavior for

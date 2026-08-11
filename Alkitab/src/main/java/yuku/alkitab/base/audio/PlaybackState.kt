@@ -30,6 +30,11 @@ package yuku.alkitab.base.audio
  *  - [error]       — non-null when the player or repository hit an error this
  *                    session; the UI snackbars and offers retry. Cleared on
  *                    the next successful `loadChapter`.
+ *  - [logs]        — timestamped HTTP-connection and player-state events for
+ *                    the chapter currently loading, oldest first. Reset at
+ *                    the start of every `loadChapter` (so a retry starts a
+ *                    fresh log). Drives the audio bar's slow-load status line
+ *                    and its log bottom sheet — see [yuku.alkitab.base.audio.ui.AudioBarUiState].
  */
 data class PlaybackState(
     val isPlaying: Boolean,
@@ -43,6 +48,7 @@ data class PlaybackState(
     val durationMs: Long,
     val speed: Float,
     val error: String?,
+    val logs: List<AudioLogEntry>,
 ) {
     /**
      * True while a chapter is loaded into the service (playing, paused, or
@@ -67,6 +73,7 @@ data class PlaybackState(
             durationMs = 0L,
             speed = 1.0f,
             error = null,
+            logs = emptyList(),
         )
     }
 }

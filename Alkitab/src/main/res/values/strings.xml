@@ -489,6 +489,9 @@
 	<string name="audio_bar_set_sheet_title">Recording</string>
 	<string name="audio_bar_set_not_available_for_book">Not available for this book</string>
 	<string name="audio_bar_error_retry">Could not load audio. Tap to retry</string>
+	<string name="audio_bar_loading_status_fallback">Loading…</string>
+	<string name="audio_bar_log_sheet_title">Load log</string>
+	<string name="audio_bar_log_sheet_empty">No events logged yet.</string>
 	<string name="audio_play_from_verse">Play audio from this verse</string>
 
 </resources>
