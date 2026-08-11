@@ -26,6 +26,16 @@ import okhttp3.Response
  */
 internal class AudioHttpEventLogger(private val onEvent: (String) -> Unit) : EventListener() {
 
+    /**
+     * Set by [connectEnd] to record that this call actually established a new
+     * TCP connection, read by [connectionAcquired] to tell a fresh connection
+     * apart from one handed out of the pool. [Connection] itself exposes no
+     * "is this new" flag — [connectStart]/[connectEnd] only fire when a new
+     * connection is being made, so their absence before [connectionAcquired]
+     * is what "reused" means.
+     */
+    private var establishedNewConnection = false
+
     override fun callStart(call: Call) {
         onEvent("HTTP request started: ${call.request().url}")
     }
@@ -51,6 +61,7 @@ internal class AudioHttpEventLogger(private val onEvent: (String) -> Unit) : Eve
     }
 
     override fun connectEnd(call: Call, inetSocketAddress: InetSocketAddress, proxy: Proxy, protocol: Protocol?) {
+        establishedNewConnection = true
         onEvent("Connected" + (protocol?.let { " ($it)" } ?: ""))
     }
 
@@ -59,7 +70,7 @@ internal class AudioHttpEventLogger(private val onEvent: (String) -> Unit) : Eve
     }
 
     override fun connectionAcquired(call: Call, connection: Connection) {
-        onEvent("Connection acquired" + if (connection.newConnection()) " (new)" else " (reused)")
+        onEvent("Connection acquired" + if (establishedNewConnection) " (new)" else " (reused)")
     }
 
     override fun connectionReleased(call: Call, connection: Connection) {
