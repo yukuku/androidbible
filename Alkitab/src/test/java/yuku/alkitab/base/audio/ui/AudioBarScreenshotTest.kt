@@ -76,10 +76,14 @@ class AudioBarScreenshotTest {
         // ModalBottomSheet renders into its own android.app.Dialog window, not
         // into composeView's own hierarchy — draw that window's decor view
         // instead when one is showing, or the sheet would be invisible in the
-        // captured bitmap.
+        // captured bitmap. Its Compose content is anchored to the window size
+        // it was actually shown at (via `dialog.show()`'s real WindowManager
+        // layout pass), so re-measuring it at our own viewport width like
+        // measureAndDraw does would shift the sheet's computed offset —
+        // draw it at its already-laid-out size instead.
         val dialog = ShadowDialog.getLatestDialog()
         val bitmap = if (dialog != null && dialog.isShowing) {
-            measureAndDraw(dialog.window!!.decorView)
+            drawAsLaidOut(dialog.window!!.decorView)
         } else {
             measureAndDraw(composeView)
         }
@@ -158,6 +162,17 @@ class AudioBarScreenshotTest {
 
         val w = view.measuredWidth.coerceAtLeast(1)
         val h = view.measuredHeight.coerceAtLeast(1)
+        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(AndroidColor.WHITE)
+        view.draw(canvas)
+        return bitmap
+    }
+
+    /** Draws [view] at whatever size it was already measured/laid out to — see [drawAsLaidOut] callers. */
+    private fun drawAsLaidOut(view: View): Bitmap {
+        val w = view.width.coerceAtLeast(1)
+        val h = view.height.coerceAtLeast(1)
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         canvas.drawColor(AndroidColor.WHITE)
