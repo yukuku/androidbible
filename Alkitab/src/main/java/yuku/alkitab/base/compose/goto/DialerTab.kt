@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -26,6 +27,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -151,6 +153,8 @@ fun DialerTab(
                 value = selectedBook.shortName,
                 onValueChange = {},
                 readOnly = true,
+                // Same per-book color the legacy dialer paints its book spinner with.
+                textStyle = LocalTextStyle.current.copy(color = bookForegroundColor(selectedBook.bookId)),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = bookMenuOpen) },
                 modifier = Modifier
                     .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
@@ -278,7 +282,13 @@ private fun DialerField(text: String, isActive: Boolean, onClick: () -> Unit) {
 @Composable
 private fun KeypadDigit(d: String, onDigit: (String) -> Unit, modifier: Modifier) {
     Box(modifier = modifier.height(56.dp).padding(2.dp), contentAlignment = Alignment.Center) {
-        TextButton(onClick = { onDigit(d) }, modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        TextButton(
+            onClick = { onDigit(d) },
+            // Plain keypad digits like the legacy dialer's white keypad text —
+            // the accent stays reserved for the OK action.
+            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        ) {
             Text(d, fontSize = 28.sp, fontWeight = FontWeight.Normal)
         }
     }
