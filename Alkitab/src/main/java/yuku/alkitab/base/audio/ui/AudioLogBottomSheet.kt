@@ -83,7 +83,9 @@ private fun AudioLogEntryRow(entry: AudioLogEntry) {
             style = MaterialTheme.typography.bodySmall,
             fontFamily = FontFamily.Monospace,
             color = LocalContentColor.current.copy(alpha = 0.6f),
-            modifier = Modifier.width(84.dp),
+            maxLines = 1,
+            softWrap = false,
+            modifier = Modifier.width(96.dp),
         )
         Text(
             text = entry.message,
