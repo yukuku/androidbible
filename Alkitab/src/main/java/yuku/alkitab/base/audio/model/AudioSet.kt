@@ -6,9 +6,11 @@ import kotlinx.serialization.Serializable
  * One recording of a Bible version. Recordings of the same text differ in
  * narrator, in which books they cover, and in whether verse timing exists.
  *
- * The URL templates are relative paths on `BuildConfig.SERVER_HOST`; the
- * client expands `{book_1}` and `{chapter_1}` via literal string replace and
- * never assembles a media path from parts.
+ * The URL templates are URL references resolved against
+ * `BuildConfig.SERVER_HOST`: a path-absolute template lands on the backend
+ * host, an absolute URL points wherever it says. The client expands `{book_1}`
+ * and `{chapter_1}` via literal string replace and never assembles a media
+ * path from parts.
  *
  * Every field is required. See [AudioSets] for why the models declare no
  * default parameter values. [timingUrlTemplate] is explicitly `null` (not
