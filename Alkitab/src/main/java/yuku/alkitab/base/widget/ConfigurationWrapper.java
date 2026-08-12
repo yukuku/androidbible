@@ -38,6 +38,26 @@ public class ConfigurationWrapper {
 		return new ContextWrapper(base.createConfigurationContext(config));
 	}
 
+	/**
+	 * A context whose resources resolve strings in the app's configured
+	 * language, independent of the device locale.
+	 *
+	 * For components that never go through {@link #wrap}: only activities do,
+	 * via {@code BaseActivity.attachBaseContext}, so a service or any other
+	 * non-UI component resolving strings against its own context gets the
+	 * device language and silently ignores the in-app language preference.
+	 *
+	 * Unlike {@link #wrap} this copies the configuration rather than mutating
+	 * the caller's, and leaves font scale alone: callers here are producing
+	 * strings, not laying out text.
+	 */
+	@NonNull
+	public static Context localizedContext(@NonNull final Context base) {
+		final Configuration config = new Configuration(base.getResources().getConfiguration());
+		config.setLocale(getLocaleFromPreferences());
+		return base.createConfigurationContext(config);
+	}
+
 	private static final AtomicInteger serialCounter = new AtomicInteger();
 
 	public static int getSerialCounter() {

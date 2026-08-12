@@ -47,10 +47,30 @@ import yuku.alkitab.debug.R
  * OkHttp connection-state transition for the chapter fetch (via
  * [AudioHttpEventLogger]) plus this player's own buffering/ready/error
  * transitions. [BibleAudioService] feeds this into [PlaybackState.logs] for the
- * audio bar's status line and log bottom sheet.
+ * audio bar's status line and log bottom sheet. Each event carries the
+ * [logGeneration] it belongs to so the service can drop stale ones.
  */
 @OptIn(UnstableApi::class)
-class BibleAudioPlayer(appContext: Context, private val onLogEvent: (AudioLogMessage) -> Unit) {
+class BibleAudioPlayer(
+    appContext: Context,
+    private val onLogEvent: (generation: Int, message: AudioLogMessage) -> Unit,
+) {
+
+    /**
+     * Identifies the chapter load that subsequent log events belong to. The
+     * service bumps this before swapping the media item.
+     *
+     * Loading a new chapter cancels the outgoing one's in-flight HTTP calls,
+     * and OkHttp reports that cancellation through the *old* calls' event
+     * listeners, which fire after the new load has already reset the log.
+     * Stamping each call with the generation current when it was created lets
+     * the service tell those teardown events apart from the new chapter's own.
+     *
+     * Volatile because calls are created on media3's loader threads while the
+     * service writes this from the main thread.
+     */
+    @Volatile
+    var logGeneration: Int = 0
 
     interface Listener {
         /**
@@ -77,15 +97,15 @@ class BibleAudioPlayer(appContext: Context, private val onLogEvent: (AudioLogMes
         override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
                 Player.STATE_BUFFERING -> {
-                    onLogEvent(AudioLogMessage(R.string.audio_log_player_buffering))
+                    onLogEvent(logGeneration, AudioLogMessage(R.string.audio_log_player_buffering))
                     listener?.onBuffering()
                 }
                 Player.STATE_READY -> {
-                    onLogEvent(AudioLogMessage(R.string.audio_log_player_ready))
+                    onLogEvent(logGeneration, AudioLogMessage(R.string.audio_log_player_ready))
                     listener?.onReady()
                 }
                 Player.STATE_ENDED -> {
-                    onLogEvent(AudioLogMessage(R.string.audio_log_player_ended))
+                    onLogEvent(logGeneration, AudioLogMessage(R.string.audio_log_player_ended))
                     listener?.onEnded()
                 }
                 else -> Unit
@@ -96,6 +116,7 @@ class BibleAudioPlayer(appContext: Context, private val onLogEvent: (AudioLogMes
             val code = stripErrorCodePrefix(error.errorCodeName)
             val detail = error.message
             onLogEvent(
+                logGeneration,
                 if (detail != null) {
                     AudioLogMessage(R.string.audio_log_player_error_detail, listOf(code, detail))
                 } else {
@@ -125,7 +146,14 @@ class BibleAudioPlayer(appContext: Context, private val onLogEvent: (AudioLogMes
         // newBuilder() still shares the connection pool and disk cache with the
         // shared client.
         val loggingOkHttpClient = Connections.okHttp.newBuilder()
-            .eventListenerFactory { AudioHttpEventLogger(onLogEvent) }
+            .eventListenerFactory {
+                // Snapshot the generation when the call is created, not when
+                // each event fires: a call belongs to whichever chapter load
+                // started it, and its cancellation events arrive after the
+                // next load has already bumped [logGeneration].
+                val generation = logGeneration
+                AudioHttpEventLogger { message -> onLogEvent(generation, message) }
+            }
             .build()
         val okHttpDataSourceFactory = OkHttpDataSource.Factory(loggingOkHttpClient)
             .setUserAgent(Connections.httpUserAgent)

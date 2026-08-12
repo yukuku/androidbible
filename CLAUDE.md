@@ -271,6 +271,7 @@ Detailed documentation for each major feature module:
 - GIDs (globally unique IDs) are used alongside database `_id` for sync-capable entities
 - `Ari` encoding is used universally for verse references — never store book/chapter/verse separately
 - Version IDs follow format `"internal"`, `"preset/[name]"`, or `"file/[path]"`
+- **IMPORTANT. The app has its own in-app language setting (`pref_language`), independent of the device locale.** Only activities pick it up automatically: `BaseActivity.attachBaseContext` runs the context through `ConfigurationWrapper.wrap`, so anything resolving strings against an activity (including Compose `stringResource`, whose `LocalContext` is the activity) is already correct. Everything else is not. A `Service`, a `BroadcastReceiver`, a `Worker`, `App.context`, or any `applicationContext` resolves against the *device* locale, so `getString` there prints the wrong language for every user whose in-app choice differs from their device. When such a component produces user-visible text, resolve it against `ConfigurationWrapper.localizedContext(...)` instead. Cache that context rather than rebuilding it per string, and rebuild when `ConfigurationWrapper.getSerialCounter()` changes, which is how a language change is signalled. Prefer keeping the string resource unresolved (a res id plus args) until it reaches whatever component knows the right context — see `AudioLogMessage`.
 
 ## Unit Testing
 
