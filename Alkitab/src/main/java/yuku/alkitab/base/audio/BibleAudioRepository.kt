@@ -2,6 +2,7 @@ package yuku.alkitab.base.audio
 
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import yuku.alkitab.base.audio.model.AudioSet
 import yuku.alkitab.base.audio.model.ChapterTiming
 import yuku.alkitab.base.util.AppLog
@@ -31,8 +32,9 @@ object BibleAudioRepository {
     /**
      * Resolves the absolute chapter MP3 URL for
      * `(versionId, audioId, bookId, chapter_1)`, or null when [versionId] has
-     * no recording with [audioId]. The caller should never have asked:
-     * toolbar-icon visibility is gated on the resolved set list.
+     * no recording with [audioId], or the recording's template does not resolve
+     * to a URL. On the missing-recording path the caller should never have
+     * asked: toolbar-icon visibility is gated on the resolved set list.
      */
     suspend fun buildChapterUrl(versionId: String, audioId: String, bookId: Int, chapter_1: Int): String? {
         val set = resolveSet(versionId, audioId) ?: return null
@@ -47,6 +49,7 @@ object BibleAudioRepository {
      *  - no recording with [audioId] for [versionId],
      *  - a recording without timing (`timingUrlTemplate` is null, so the
      *    request is skipped entirely),
+     *  - a `timingUrlTemplate` that does not resolve to a URL,
      *  - any non-2xx response or I/O error,
      *  - JSON parse failure.
      *
@@ -56,7 +59,7 @@ object BibleAudioRepository {
     suspend fun fetchTiming(versionId: String, audioId: String, bookId: Int, chapter_1: Int): ChapterTiming? {
         val set = resolveSet(versionId, audioId) ?: return null
         val template = set.timingUrlTemplate ?: return null
-        val url = expandTemplate(template, bookId, chapter_1)
+        val url = expandTemplate(template, bookId, chapter_1) ?: return null
         val body = http.getBody(url) ?: return null
         parseTiming(body, url)?.let { return it }
         // The unparseable bytes may be a corrupted entry served from the HTTP
@@ -79,10 +82,24 @@ object BibleAudioRepository {
     private suspend fun resolveSet(versionId: String, audioId: String): AudioSet? =
         AudioSetsRepository.setsFor(versionId).sets.firstOrNull { it.audioId == audioId }
 
-    private fun expandTemplate(template: String, bookId: Int, chapter_1: Int): String {
+    private val serverBase by lazy { BuildConfig.SERVER_HOST.toHttpUrl() }
+
+    /**
+     * Substitutes the placeholders in [template] and resolves the result
+     * against [serverBase] the way a browser resolves an href: a path-absolute
+     * template lands on the backend host, an absolute URL is taken as it
+     * stands. Null when the expansion is not a resolvable URL reference.
+     */
+    private fun expandTemplate(template: String, bookId: Int, chapter_1: Int): String? {
         val book_1 = bookId + 1
-        return BuildConfig.SERVER_HOST + template
+        val expanded = template
             .replace("{book_1}", book_1.toString())
             .replace("{chapter_1}", chapter_1.toString())
+        val resolved = serverBase.resolve(expanded)
+        if (resolved == null) {
+            AppLog.w(TAG, "audio URL template did not resolve: $expanded")
+            return null
+        }
+        return resolved.toString()
     }
 }

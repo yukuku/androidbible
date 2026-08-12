@@ -86,8 +86,8 @@ GET /audio/sets/in-tb
 | `title` | Display name. Falls back to the raw `audioId` when the backend has no mapping, so an unlabelled set reads as its slug rather than disappearing. |
 | `hasTiming` | `false` → the recording plays but has no verse timing. Known up front, so highlight and verse-skip render disabled from the start. |
 | `books_1` | 1-based book coverage. Ragged — a recording may omit whole books. |
-| `mp3UrlTemplate` | Expand `{book_1}` and `{chapter_1}`; resolve against `SERVER_HOST`. |
-| `timingUrlTemplate` | `null` exactly when `hasTiming` is false. |
+| `mp3UrlTemplate` | Expand `{book_1}` and `{chapter_1}`, then resolve against `SERVER_HOST` as a URL reference. A path-absolute template (`/audio/file/…`) lands on the backend host; an absolute `https://…` template is used as it stands. Which form a recording uses is the backend's choice, per recording. |
+| `timingUrlTemplate` | Same resolution rules as `mp3UrlTemplate`. `null` exactly when `hasTiming` is false. |
 
 **Guarantees the client relies on:**
 

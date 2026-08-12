@@ -1,5 +1,6 @@
 package yuku.alkitab.base.audio
 
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -182,15 +183,83 @@ class AudioSetsRepositoryTest {
     }
 
     @Test
-    fun `a transport failure resolves to an empty set list and is cached as a negative result`() = runBlocking {
+    fun `a transport failure resolves to an empty set list and is cached only for the cooldown`() = runBlocking {
         val http = FakeHttp { null }
         AudioSetsRepository.http = http
+        var now = 0L
+        AudioSetsRepository.nanoTime = { now }
 
         val sets = AudioSetsRepository.setsFor("preset/in-tb")
         assertTrue(sets.sets.isEmpty())
 
+        now += TimeUnit.SECONDS.toNanos(29)
         AudioSetsRepository.setsFor("preset/in-tb")
-        assertEquals("no retry loop: the failure is cached", 1, http.calls.get())
+        assertEquals("no retry loop: within the cooldown the failure is cached", 1, http.calls.get())
+
+        now += TimeUnit.SECONDS.toNanos(2)
+        AudioSetsRepository.setsFor("preset/in-tb")
+        assertEquals("past the cooldown the failure is re-queried", 2, http.calls.get())
+    }
+
+    @Test
+    fun `an expired failure reads as unresolved so menu preparation kicks off a fresh query`() = runBlocking {
+        AudioSetsRepository.http = FakeHttp { null }
+        var now = 0L
+        AudioSetsRepository.nanoTime = { now }
+
+        AudioSetsRepository.setsFor("preset/in-tb")
+        assertNotNull("within the cooldown the failed answer is served", AudioSetsRepository.cachedSetsFor("preset/in-tb"))
+
+        now += TimeUnit.SECONDS.toNanos(31)
+        assertNull(
+            "an expired failure must read as unresolved, otherwise the audio icon stays hidden forever",
+            AudioSetsRepository.cachedSetsFor("preset/in-tb"),
+        )
+    }
+
+    @Test
+    fun `a recovered fetch after a failed one replaces the cached answer for good`() = runBlocking {
+        var body: String? = null
+        val http = FakeHttp { body }
+        AudioSetsRepository.http = http
+        var now = 0L
+        AudioSetsRepository.nanoTime = { now }
+
+        assertTrue(AudioSetsRepository.setsFor("preset/in-tb").sets.isEmpty())
+
+        body = IN_TB_SETS_JSON
+        now += TimeUnit.SECONDS.toNanos(31)
+        assertEquals(2, AudioSetsRepository.setsFor("preset/in-tb").sets.size)
+
+        now += TimeUnit.DAYS.toNanos(1)
+        assertEquals("a resolved answer never expires", 2, AudioSetsRepository.setsFor("preset/in-tb").sets.size)
+        assertEquals(2, http.calls.get())
+    }
+
+    @Test
+    fun `a version with no preset identity is a resolved answer and never expires`() = runBlocking {
+        val http = FakeHttp { IN_TB_SETS_JSON }
+        AudioSetsRepository.http = http
+        var now = 0L
+        AudioSetsRepository.nanoTime = { now }
+
+        assertTrue(AudioSetsRepository.setsFor("file//sdcard/some.yes").sets.isEmpty())
+        now += TimeUnit.DAYS.toNanos(1)
+        assertNotNull(AudioSetsRepository.cachedSetsFor("file//sdcard/some.yes"))
+        assertEquals(0, http.calls.get())
+    }
+
+    @Test
+    fun `an empty answer from the server never expires`() = runBlocking {
+        val http = FakeHttp { """{"schema":2,"preset":"in-tb","sets":[]}""" }
+        AudioSetsRepository.http = http
+        var now = 0L
+        AudioSetsRepository.nanoTime = { now }
+
+        assertTrue(AudioSetsRepository.setsFor("preset/in-tb").sets.isEmpty())
+        now += TimeUnit.DAYS.toNanos(1)
+        AudioSetsRepository.setsFor("preset/in-tb")
+        assertEquals("'no recordings' is an answer, not a failure", 1, http.calls.get())
     }
 
     @Test

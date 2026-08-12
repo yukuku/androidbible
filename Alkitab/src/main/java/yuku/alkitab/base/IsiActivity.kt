@@ -709,10 +709,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
 
         // Audio bar: attach the Compose host and wire up the menu refresh.
-        // Audio-set availability is resolved per version and asynchronously
-        // (see resolveAudioSetsAsync), so the toolbar icon appears once the
-        // answer for the visible version(s) lands.
-        resolveAudioSetsAsync()
+        // Audio-set availability is resolved per version and asynchronously by
+        // resolveAudioSetsAsync, which onStart drives, so the toolbar icon
+        // appears once the answer for the visible version(s) lands.
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
         lifecycleScope.launch {
@@ -1214,6 +1213,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // across recreation (rotation) or while we were backgrounded. Covers
         // both a freshly recreated activity and a return on the same instance.
         audioBinder.reshowIfSessionActive()
+
+        // Also the recovery point for a version whose audio-set resolution
+        // failed: returning to the reader is when the connectivity that hid the
+        // icon is most likely to have come back.
+        resolveAudioSetsAsync()
     }
 
     override fun onDestroy() {

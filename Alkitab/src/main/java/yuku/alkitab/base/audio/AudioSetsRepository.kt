@@ -1,6 +1,7 @@
 package yuku.alkitab.base.audio
 
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -30,10 +31,14 @@ import yuku.alkitab.debug.BuildConfig
  *   name (a `file/…` version, or an internal version whose flavor declares
  *   none) short-circuits to an empty set list without a network request.
  * - **In-memory cache** keyed by versionId, holding negative results too, so a
- *   version with no audio does not re-query on every chapter turn. Network
- *   and parse failures also resolve (and cache) as an empty set list, per the
- *   backend contract's error-handling table: the entry point stays hidden
- *   rather than showing a dead button, and there is no retry loop.
+ *   version with no audio does not re-query on every chapter turn. "No
+ *   recordings" from the server is a resolved answer, kept for the life of the
+ *   process.
+ * - **Failures expire** after [FAILURE_RETRY_AFTER_NANOS]. They resolve to an
+ *   empty set list too, per the backend contract's error-handling table, so the
+ *   entry point stays hidden rather than showing a dead button. Keeping that
+ *   for the life of the process would let one flaky moment at startup hide
+ *   audio with nothing on screen to retry from.
  * - **Disk cache** is the 50 MB OkHttp cache on `Connections.okHttp`, honoring
  *   the backend's `Cache-Control`. There is no app-managed file, no bundled
  *   asset, and no hand-rolled ETag bookkeeping.
@@ -45,6 +50,9 @@ object AudioSetsRepository {
 
     private const val TAG = "AudioSetsRepo"
     private const val SETS_PATH = "/audio/sets/"
+
+    /** Long enough that an outage cannot become a request per chapter turn. */
+    private val FAILURE_RETRY_AFTER_NANOS = TimeUnit.SECONDS.toNanos(30)
 
     // ignoreUnknownKeys tolerates additive fields (e.g. `generatedAt`), but the
     // parse stays strict about missing fields: the models declare no default
@@ -65,7 +73,13 @@ object AudioSetsRepository {
     internal var presetNameResolver: PresetNameResolver = defaultPresetNameResolver
     internal var http: AudioHttp = defaultHttp
 
-    private val cache = ConcurrentHashMap<String, AudioSets>()
+    /** Clock seam so the failure cooldown is testable without a real wait. */
+    internal var nanoTime: () -> Long = System::nanoTime
+
+    /** [staleAtNanos] is null for a resolved answer, a deadline for a failed one. */
+    private class Entry(val sets: AudioSets, val staleAtNanos: Long?)
+
+    private val cache = ConcurrentHashMap<String, Entry>()
 
     /**
      * In-flight requests keyed by versionId, so concurrent [setsFor] callers
@@ -84,19 +98,19 @@ object AudioSetsRepository {
     /**
      * Returns the audio sets for [versionId], from the in-memory cache when
      * resolved before, otherwise fetching from the backend. Never throws: any
-     * failure resolves to an empty set list, which is cached like any other
-     * answer.
+     * failure resolves to an empty set list, cached only until the cooldown
+     * described on this class expires.
      */
     suspend fun setsFor(versionId: String): AudioSets {
-        cache[versionId]?.let { return it }
+        liveEntry(versionId)?.let { return it.sets }
         val deferred = mutex.withLock {
-            cache[versionId]?.let { return it }
+            liveEntry(versionId)?.let { return it.sets }
             inFlight.getOrPut(versionId) {
                 scope.async {
-                    val result = fetchSets(versionId)
-                    cache[versionId] = result
+                    val entry = resolveEntry(versionId)
+                    cache[versionId] = entry
                     mutex.withLock { inFlight.remove(versionId) }
-                    result
+                    entry.sets
                 }
             }
         }
@@ -105,35 +119,51 @@ object AudioSetsRepository {
 
     /**
      * Non-blocking peek at the in-memory cache. Null means [versionId] has not
-     * been resolved yet this process. Callers (menu preparation) hide the
-     * entry point and kick off [setsFor], re-preparing once it lands.
+     * been resolved yet, or its last resolution failed and the cooldown has
+     * passed. Callers (menu preparation) hide the entry point and kick off
+     * [setsFor], re-preparing once it lands.
      */
-    fun cachedSetsFor(versionId: String): AudioSets? = cache[versionId]
+    fun cachedSetsFor(versionId: String): AudioSets? = liveEntry(versionId)?.sets
 
     /**
      * Drops the cached answer for [versionId] so the next [setsFor] queries
-     * again. The audio bar's user-initiated retry after a load error is the
-     * only place a cached negative result gets re-tested; everything else
-     * keeps the no-retry-loop behavior.
+     * again. The audio bar's user-initiated retry uses this to re-test an
+     * answer without waiting out the failure cooldown.
      */
     fun invalidate(versionId: String) {
         cache.remove(versionId)
     }
 
-    private suspend fun fetchSets(versionId: String): AudioSets {
+    /** The cached entry for [versionId], dropping and reporting an expired one as absent. */
+    private fun liveEntry(versionId: String): Entry? {
+        val entry = cache[versionId] ?: return null
+        val staleAt = entry.staleAtNanos ?: return entry
+        // Compare by subtraction so the check survives nanoTime()'s wraparound.
+        if (nanoTime() - staleAt < 0) return entry
+        cache.remove(versionId, entry)
+        return null
+    }
+
+    /** Only a transport or parse failure gets a deadline; everything else is an answer. */
+    private suspend fun resolveEntry(versionId: String): Entry {
         val presetName = presetNameResolver.presetNameFor(versionId)
-            ?: return emptySets("")
+            ?: return Entry(emptySets(""), null)
+        val sets = fetchSets(presetName)
+            ?: return Entry(emptySets(presetName), nanoTime() + FAILURE_RETRY_AFTER_NANOS)
+        return Entry(sets, null)
+    }
+
+    /** Null on any transport or parse failure, so the caller can tell it apart from an empty answer. */
+    private suspend fun fetchSets(presetName: String): AudioSets? {
         val url = BuildConfig.SERVER_HOST + SETS_PATH + presetName
-        val body = http.getBody(url)
-            ?: return emptySets(presetName)
+        val body = http.getBody(url) ?: return null
         parseSets(body)?.let { return it }
         // The unparseable bytes may be a corrupted entry served from the HTTP
         // disk cache. Fetch once past the cache, which also replaces the
         // entry, and give the fresh payload a parse.
         AppLog.w(TAG, "audio sets for $presetName did not parse; refetching past the HTTP cache")
-        val fresh = http.getBodyRevalidating(url)
-            ?: return emptySets(presetName)
-        return parseSets(fresh) ?: emptySets(presetName)
+        val fresh = http.getBodyRevalidating(url) ?: return null
+        return parseSets(fresh)
     }
 
     private fun parseSets(body: String): AudioSets? {
@@ -174,5 +204,6 @@ object AudioSetsRepository {
         inFlight.clear()
         presetNameResolver = defaultPresetNameResolver
         http = defaultHttp
+        nanoTime = System::nanoTime
     }
 }

@@ -90,7 +90,43 @@ class BibleAudioRepositoryTest {
         assertTrue(url!!.contains("/audio/file/in-tb/alkitabsuara/42/3.mp3"))
     }
 
+    @Test
+    fun `buildChapterUrl uses an absolute template as it stands instead of pasting it onto SERVER_HOST`() = runBlocking {
+        AudioSetsRepository.resetForTest()
+        AudioSetsRepository.presetNameResolver = AudioSetsRepository.PresetNameResolver { "in-tb" }
+        AudioSetsRepository.http = AudioHttp { ABSOLUTE_TEMPLATE_SETS_JSON }
+
+        val url = BibleAudioRepository.buildChapterUrl("preset/in-tb", "remote", bookId = 41, chapter_1 = 3)
+        assertEquals("https://audio.example.test/in-tb/remote/42/3.mp3", url)
+    }
+
+    @Test
+    fun `buildChapterUrl returns null for a template that is not a resolvable URL reference`() = runBlocking {
+        AudioSetsRepository.resetForTest()
+        AudioSetsRepository.presetNameResolver = AudioSetsRepository.PresetNameResolver { "in-tb" }
+        AudioSetsRepository.http = AudioHttp {
+            setsJson(mp3UrlTemplate = "http://", timingUrlTemplate = null)
+        }
+
+        assertNull(BibleAudioRepository.buildChapterUrl("preset/in-tb", "remote", bookId = 0, chapter_1 = 1))
+    }
+
     // -- fetchTiming --------------------------------------------------------------
+
+    @Test
+    fun `fetchTiming uses an absolute timing template as it stands`() = runBlocking {
+        AudioSetsRepository.resetForTest()
+        AudioSetsRepository.presetNameResolver = AudioSetsRepository.PresetNameResolver { "in-tb" }
+        AudioSetsRepository.http = AudioHttp { ABSOLUTE_TEMPLATE_SETS_JSON }
+        val http = FakeHttp {
+            """{"schema":2,"preset":"in-tb","audioId":"remote","book_1":42,"chapter_1":3,"durationMs":1000,"verses":[]}"""
+        }
+        BibleAudioRepository.http = http
+
+        assertNotNull(BibleAudioRepository.fetchTiming("preset/in-tb", "remote", bookId = 41, chapter_1 = 3))
+        assertEquals("https://audio.example.test/in-tb/remote/42/3.json", http.urls.single())
+    }
+
 
     @Test
     fun `fetchTiming parses the documented timing response`() = runBlocking {
@@ -190,5 +226,24 @@ class BibleAudioRepositoryTest {
             """{"schema":2,"preset":"in-tb","audioId":"alkitabsuara","book_1":1,"chapter_1":1,"verses":[]}"""
         }
         assertNull(BibleAudioRepository.fetchTiming("preset/in-tb", "alkitabsuara", bookId = 0, chapter_1 = 1))
+    }
+
+    companion object {
+        private fun setsJson(mp3UrlTemplate: String, timingUrlTemplate: String?): String {
+            val timing = timingUrlTemplate?.let { "\"$it\"" } ?: "null"
+            return """
+                {"schema":2,"preset":"in-tb","sets":[
+                  {"audioId":"remote","title":"Remote","hasTiming":${timingUrlTemplate != null},
+                   "books_1":[${(1..66).joinToString(",")}],
+                   "mp3UrlTemplate":"$mp3UrlTemplate","timingUrlTemplate":$timing}
+                ]}
+            """.trimIndent()
+        }
+
+        /** One recording whose templates point at a host of their own. */
+        val ABSOLUTE_TEMPLATE_SETS_JSON = setsJson(
+            mp3UrlTemplate = "https://audio.example.test/in-tb/remote/{book_1}/{chapter_1}.mp3",
+            timingUrlTemplate = "https://audio.example.test/in-tb/remote/{book_1}/{chapter_1}.json",
+        )
     }
 }
