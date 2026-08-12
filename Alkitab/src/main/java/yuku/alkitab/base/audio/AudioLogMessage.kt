@@ -7,8 +7,9 @@ import androidx.annotation.StringRes
  * A log event before it is turned into display text: the string resource for
  * the event plus its format arguments. Producers (the HTTP event listener,
  * the player, the audio bar) emit these; [BibleAudioService] resolves them
- * against its own [Context] when appending to [PlaybackState.logs], so the
- * log reads in the user's language.
+ * when appending to [PlaybackState.logs], against a [Context] carrying the
+ * app's configured language rather than the device's, so the log reads in the
+ * language the user picked in settings.
  *
  * Keeping the resource id unresolved at the producer means those producers
  * need no [Context] and stay unit-testable by asserting on ids and args.

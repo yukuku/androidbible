@@ -1,6 +1,7 @@
 package yuku.alkitab.base.audio
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -34,6 +35,7 @@ import yuku.alkitab.base.IsiActivity
 import yuku.alkitab.base.App
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.base.widget.ConfigurationWrapper
 import yuku.alkitab.debug.R
 
 /**
@@ -90,6 +92,24 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
          * without reaching a steady state.
          */
         private const val MAX_LOG_ENTRIES = 500
+
+        /**
+         * The log after recording [entry]. Returns [logs] untouched when
+         * [eventGeneration] is not [currentGeneration], which is how a
+         * superseded chapter load's trailing cancellation events are kept out
+         * of the new chapter's log. Otherwise appends, keeping at most
+         * [maxEntries] newest. Pure for unit testing.
+         */
+        internal fun appendLogEntry(
+            logs: List<AudioLogEntry>,
+            entry: AudioLogEntry,
+            eventGeneration: Int,
+            currentGeneration: Int,
+            maxEntries: Int = MAX_LOG_ENTRIES,
+        ): List<AudioLogEntry> {
+            if (eventGeneration != currentGeneration) return logs
+            return (logs + entry).takeLast(maxEntries)
+        }
 
         private const val DEFAULT_PLAYBACK_SPEED = 1.0f
 
@@ -183,6 +203,17 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     /** Persisted playback speed, loaded once at service start and updated on every [setSpeed] call. */
     private var persistedSpeed: Float = DEFAULT_PLAYBACK_SPEED
 
+    /** Backing cache for [localizedContext], keyed by the configuration serial it was built at. */
+    private var localizedContext: Context? = null
+    private var localizedContextSerial = -1
+
+    /**
+     * Which chapter load the log is currently accumulating. Bumped on every
+     * [loadChapter] and on [stop]; log events stamped with an older value are
+     * dropped. See [BibleAudioPlayer.logGeneration].
+     */
+    private var loadGeneration = 0
+
     private val playerListener = object : BibleAudioPlayer.Listener {
         override fun onBuffering() {
             // `preparing` doubles as the buffering flag rather than having a
@@ -234,7 +265,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
     override fun onCreate() {
         super.onCreate()
-        player = BibleAudioPlayer(applicationContext, ::appendLog)
+        player = BibleAudioPlayer(applicationContext) { generation, message -> appendLog(generation, message) }
         player.setListener(playerListener)
 
         // Apply the persisted speed to the player up front so the first chapter
@@ -347,7 +378,12 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         timingLoaded = false
         // The log resets here because a retry is a fresh load attempt; mixing
         // its events with the failed attempt's would make the log sheet read as
-        // one non-chronological HTTP conversation.
+        // one non-chronological HTTP conversation. Bumping the generation
+        // before the media item is swapped keeps the outgoing chapter's
+        // cancellation events out of the new log, since those arrive from
+        // OkHttp after this reset. See [BibleAudioPlayer.logGeneration].
+        loadGeneration++
+        player.logGeneration = loadGeneration
         highlightTracker.setTiming(emptyList())
         _playbackState.update {
             it.copy(
@@ -364,7 +400,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 logs = listOf(
                     AudioLogEntry(
                         System.currentTimeMillis(),
-                        getString(R.string.audio_log_loading, request.displayTitle),
+                        localizedContext().getString(R.string.audio_log_loading, request.displayTitle),
                     )
                 ),
             )
@@ -516,6 +552,11 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         positionJob?.cancel()
         currentRequest = null
         hasActiveSession = false
+        // Same reason as in [loadChapter]: the in-flight calls being torn down
+        // here report their cancellation afterwards, and must not land in the
+        // log the IDLE reset just cleared.
+        loadGeneration++
+        player.logGeneration = loadGeneration
         player.pause()
         _playbackState.value = PlaybackState.IDLE
         stopSelf()
@@ -615,16 +656,48 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     fun logUiEvent(message: AudioLogMessage) = appendLog(message)
 
     /**
-     * Resolves [message] against this service's resources and appends it to
+     * Resolves [message] against [localizedContext] and appends it to
      * [PlaybackState.logs]. Also serves as [BibleAudioPlayer]'s `onLogEvent`
      * callback, so HTTP connection-state and player-state events land here too,
      * always on the main thread like every other `_playbackState` mutation.
      */
-    private fun appendLog(message: AudioLogMessage) {
-        val entry = AudioLogEntry(System.currentTimeMillis(), message.resolve(this))
+    private fun appendLog(message: AudioLogMessage) = appendLog(loadGeneration, message)
+
+    /**
+     * Appends [message] if it belongs to the chapter load currently on screen.
+     * Events stamped with an older [generation] come from a superseded load
+     * whose HTTP calls are only now reporting their cancellation, and showing
+     * them would attribute the previous chapter's teardown to the new one.
+     * See [BibleAudioPlayer.logGeneration].
+     */
+    private fun appendLog(generation: Int, message: AudioLogMessage) {
+        if (generation != loadGeneration) return
+        val entry = AudioLogEntry(System.currentTimeMillis(), message.resolve(localizedContext()))
         _playbackState.update {
-            it.copy(logs = (it.logs + entry).takeLast(MAX_LOG_ENTRIES))
+            it.copy(logs = appendLogEntry(it.logs, entry, generation, loadGeneration))
         }
+    }
+
+    /**
+     * Context for resolving every user-visible string this service produces.
+     *
+     * A Service never goes through `BaseActivity.attachBaseContext`, so its own
+     * resources follow the device locale: resolving against `this` would print
+     * the log in the device language even when the user has picked a different
+     * one in the app's settings.
+     *
+     * Cached, and rebuilt when the language preference changes, which is what
+     * [ConfigurationWrapper.getSerialCounter] tracks. Rebuilding per call would
+     * mean a `createConfigurationContext` for each of the dozens of HTTP events
+     * a single chapter load emits.
+     */
+    private fun localizedContext(): Context {
+        val serial = ConfigurationWrapper.getSerialCounter()
+        if (serial != localizedContextSerial || localizedContext == null) {
+            localizedContext = ConfigurationWrapper.localizedContext(this)
+            localizedContextSerial = serial
+        }
+        return localizedContext ?: this
     }
 
     private fun startPositionPolling() {
