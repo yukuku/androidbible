@@ -190,7 +190,7 @@ class AudioSetsRepositoryTest {
         assertTrue(sets.sets.isEmpty())
 
         AudioSetsRepository.setsFor("preset/in-tb")
-        assertEquals("no retry loop — the failure is cached", 1, http.calls.get())
+        assertEquals("no retry loop: the failure is cached", 1, http.calls.get())
     }
 
     @Test

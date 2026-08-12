@@ -6,8 +6,8 @@ import androidx.annotation.VisibleForTesting
  * Process-wide arbiter guaranteeing that at most one logical audio session
  * (Bible chapter audio or kidung/hymn audio) is active at a time.
  *
- * OS audio-focus arbitration alone is unreliable here — the legacy hymn player
- * kept playing over Bible audio — so mutual exclusion is enforced in code:
+ * OS audio-focus arbitration alone is unreliable here: the hymn player can go
+ * on playing over Bible audio. Mutual exclusion is therefore enforced in code:
  * whoever [acquire]s last wins, and the previous owner is told to
  * [Session.stopPlayback] (a full stop, not a pause).
  *

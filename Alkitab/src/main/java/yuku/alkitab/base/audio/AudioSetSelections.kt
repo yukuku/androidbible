@@ -10,14 +10,14 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 
 /**
- * Which recording plays for each version — a per-version user choice persisted
+ * Which recording plays for each version: a per-version user choice persisted
  * as a JSON object in [Prefkey.audioSelectedSets], e.g.
- * `{"preset/in-tb": "davar"}`. One preference key holds the whole map:
+ * `{"preset/in-tb": "davar"}`. One preference key holds the whole map, because
  * [Prefkey] is an enum, so per-version keys are not expressible, and the map
  * stays small (one entry per version the user has actually played).
  *
  * Selection rules ([resolve]):
- * - **Default** is `sets[0]`, i.e. backend order — editorial control over
+ * - **Default** is `sets[0]`, i.e. backend order, so editorial control over
  *   which recording a new user hears lives server-side.
  * - A **remembered** audioId is honored when it is still in the set list.
  * - A remembered audioId **absent from a later response** (upstream dropped
@@ -26,7 +26,7 @@ import yuku.alkitab.base.util.AppLog
  *   entry point.
  *
  * A remembered set that merely doesn't cover the current book is NOT switched
- * here — coverage gating is the caller's concern, and an unannounced narrator
+ * here. Coverage gating is the caller's concern, and an unannounced narrator
  * change mid-book is worse than a temporarily absent button.
  */
 object AudioSetSelections {

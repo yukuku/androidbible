@@ -26,9 +26,10 @@ internal fun interface AudioHttp {
      * fetch [url] from the network. Callers use this when a body fails to
      * parse: the bytes may be a corrupted entry served from the disk cache,
      * and a network fetch both yields the origin's current payload and
-     * replaces the cached entry — otherwise the corruption would be pinned
-     * for the entry's whole freshness lifetime. The default delegates to
-     * [getBody], which is correct for implementations without a cache.
+     * replaces the cached entry. Without that replacement the corruption would
+     * be pinned for the entry's whole freshness lifetime. The default
+     * delegates to [getBody], which is correct for implementations without a
+     * cache.
      */
     suspend fun getBodyRevalidating(url: String): String? = getBody(url)
 }
@@ -36,7 +37,7 @@ internal fun interface AudioHttp {
 /**
  * Production [AudioHttp] over [Connections.okHttp]. The client's 50 MB disk
  * cache handles revalidation from the response headers (`ETag`,
- * `Cache-Control`) — the app does no manual conditional-request bookkeeping.
+ * `Cache-Control`), so the app does no manual conditional-request bookkeeping.
  */
 internal object OkHttpAudioHttp : AudioHttp {
 

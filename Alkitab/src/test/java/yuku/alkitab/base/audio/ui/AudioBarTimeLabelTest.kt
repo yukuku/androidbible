@@ -3,10 +3,7 @@ package yuku.alkitab.base.audio.ui
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/**
- * Tests for the audio bar's mm:ss label helpers. Pure string formatting —
- * plain JUnit, no Android framework involved.
- */
+/** Tests for the audio bar's mm:ss label helpers. */
 class AudioBarTimeLabelTest {
 
     @Test

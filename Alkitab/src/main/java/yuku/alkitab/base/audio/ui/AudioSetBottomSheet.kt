@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.dp
 import yuku.alkitab.debug.R
 
 /**
- * Recording picker — the same pattern and placement as [SpeedBottomSheet].
+ * Recording picker, using the same pattern and placement as [SpeedBottomSheet].
  * Single selection across the whole sheet; sets not covering the current book
- * are listed but disabled, with the reason shown, so the list doesn't appear
- * to change size as the user moves through the Bible.
+ * are listed but disabled, with the reason shown, so the list doesn't appear to
+ * change size as the user moves through the Bible.
  *
  * In split view with audio on both sides, one group is shown per version
  * (headed by the version's short name), and picking a row from the other
@@ -53,7 +53,7 @@ fun AudioSetBottomSheet(
                 modifier = Modifier.padding(bottom = 4.dp),
             )
             groups.forEach { group ->
-                // A single group needs no header — the version is implied.
+                // A single group needs no header: the version is implied.
                 if (groups.size > 1) {
                     Text(
                         text = group.versionName,

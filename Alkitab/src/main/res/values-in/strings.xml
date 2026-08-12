@@ -435,8 +435,73 @@
     <string name="audio_bar_next_verse">Ayat berikutnya</string>
     <string name="audio_bar_pick_source_title">Putar audio dari</string>
     <string name="audio_bar_speed_sheet_title">Kecepatan putar</string>
+    <string name="audio_bar_set_sheet_title">Rekaman</string>
+    <string name="audio_bar_set_not_available_for_book">Tidak tersedia untuk kitab ini</string>
+    <string name="audio_bar_error_retry">Audio gagal dimuat. Ketuk untuk mencoba lagi</string>
+    <string name="audio_bar_loading_status_fallback">Memuat…</string>
+    <string name="audio_bar_log_sheet_empty">Belum ada peristiwa yang tercatat.</string>
     <string name="audio_play_from_verse">Putar audio dari ayat ini</string>
     <string name="audio_bar_speed_format">%1$s×</string>
+
+    <!-- Audio load log: HTTP connection states -->
+    <string name="audio_log_http_started">Permintaan HTTP dimulai: %1$s</string>
+    <string name="audio_log_dns_start">Pencarian DNS dimulai (%1$s)</string>
+    <string name="audio_log_dns_end">Pencarian DNS selesai: %1$s</string>
+    <string name="audio_log_connecting">Menghubungi %1$s:%2$d</string>
+    <string name="audio_log_tls_start">Jabat tangan TLS dimulai</string>
+    <string name="audio_log_tls_end">Jabat tangan TLS selesai</string>
+    <string name="audio_log_tls_end_version">Jabat tangan TLS selesai (%1$s)</string>
+    <string name="audio_log_connected">Terhubung</string>
+    <string name="audio_log_connected_protocol">Terhubung (%1$s)</string>
+    <string name="audio_log_connect_failed">Gagal terhubung: %1$s</string>
+    <string name="audio_log_connection_acquired_new">Koneksi diperoleh (baru)</string>
+    <string name="audio_log_connection_acquired_reused">Koneksi diperoleh (dipakai ulang)</string>
+    <string name="audio_log_connection_released">Koneksi dilepas</string>
+    <string name="audio_log_request_headers_start">Mengirim header permintaan</string>
+    <string name="audio_log_request_headers_sent">Header permintaan terkirim</string>
+    <string name="audio_log_request_headers_sent_range">Header permintaan terkirim (Range: %1$s)</string>
+    <string name="audio_log_request_failed">Permintaan gagal: %1$s</string>
+    <string name="audio_log_response_headers_start">Menunggu header tanggapan</string>
+    <string name="audio_log_response_headers_end">Header tanggapan diterima: HTTP %1$d</string>
+    <string name="audio_log_response_body_text">Isi tanggapan: %1$s</string>
+    <string name="audio_log_error_body_unreadable">Tidak dapat membaca isi tanggapan galat: %1$s</string>
+    <string name="audio_log_response_failed">Tanggapan gagal: %1$s</string>
+    <string name="audio_log_response_body_start">Menerima isi tanggapan</string>
+    <string name="audio_log_response_body_end">Isi tanggapan diterima (%1$d bita)</string>
+    <string name="audio_log_call_end">Permintaan HTTP selesai</string>
+    <string name="audio_log_call_failed">Permintaan HTTP gagal: %1$s</string>
+
+    <!-- Audio load log: player and load states -->
+    <string name="audio_log_player_buffering">Pemutar menyangga</string>
+    <string name="audio_log_player_ready">Pemutar siap</string>
+    <string name="audio_log_player_ended">Pemutar mencapai akhir pasal</string>
+    <string name="audio_log_player_error">Galat pemutar: %1$s</string>
+    <string name="audio_log_player_error_detail">Galat pemutar: %1$s (%2$s)</string>
+    <string name="audio_log_loading">Memuat %1$s</string>
+    <string name="audio_log_no_audio">Tidak ada audio untuk versi ini</string>
+
+    <!-- Audio load log: user interactions and bar state -->
+    <string name="audio_log_ui_play_pause">Pengguna menekan putar/jeda</string>
+    <string name="audio_log_ui_retry">Pengguna menekan coba lagi</string>
+    <string name="audio_log_ui_prev_verse">Pengguna menekan ayat sebelumnya</string>
+    <string name="audio_log_ui_next_verse">Pengguna menekan ayat berikutnya</string>
+    <string name="audio_log_ui_close">Pengguna menutup bilah audio</string>
+    <string name="audio_log_ui_open_speed">Pengguna membuka panel kecepatan</string>
+    <string name="audio_log_ui_dismiss_speed">Pengguna menutup panel kecepatan</string>
+    <string name="audio_log_ui_open_set">Pengguna membuka panel rekaman</string>
+    <string name="audio_log_ui_dismiss_set">Pengguna menutup panel rekaman</string>
+    <string name="audio_log_ui_open_log">Pengguna membuka panel catatan</string>
+    <string name="audio_log_ui_dismiss_log">Pengguna menutup panel catatan</string>
+    <string name="audio_log_ui_cancel_picker">Pengguna membatalkan pemilih sumber</string>
+    <string name="audio_log_ui_set_speed">Pengguna mengatur kecepatan ke %1$s×</string>
+    <string name="audio_log_ui_pick_set">Pengguna memilih rekaman %1$s (%2$s)</string>
+    <string name="audio_log_ui_pick_source">Pengguna memilih sumber %1$s</string>
+    <string name="audio_log_ui_seek">Pengguna melompat ke %1$d md</string>
+    <string name="audio_log_state_transition">Status bilah: %1$s ke %2$s</string>
+    <string name="audio_log_state_paused">jeda</string>
+    <string name="audio_log_state_preparing">menyiapkan</string>
+    <string name="audio_log_state_playing">memutar</string>
+    <string name="audio_log_state_error">galat</string>
     <string name="color_picker_channel_red">MERAH</string>
     <string name="color_picker_channel_green">HIJAU</string>
     <string name="color_picker_channel_blue">BIRU</string>

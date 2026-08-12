@@ -10,7 +10,7 @@ import yuku.alkitab.model.Version
  *
  * Used by [BibleAudioService.skipChapter] for chapter skips issued through
  * the system transport controls (lock-screen notification, Bluetooth media
- * buttons, Android Auto) and for end-of-chapter auto-advance — none of which
+ * buttons, Android Auto) and for end-of-chapter auto-advance. None of those
  * can rely on a [yuku.alkitab.base.IsiActivity] being alive.
  *
  * Returns `null` at the boundaries of the Bible (i.e. when there is no
@@ -43,12 +43,12 @@ object BibleNeighborResolver {
      * Like [neighbor], but additionally treats the edge of [set]'s book
      * coverage as a boundary: a neighbor that crosses into a book the selected
      * recording does not cover resolves to null, so chapter prev/next disables
-     * and auto-advance stops exactly as at a Bible boundary — jumping over the
+     * and auto-advance stops exactly as at a Bible boundary. Jumping over the
      * gap would be more confusing than stopping.
      *
      * A null [set] applies no coverage gate (coverage unknown, e.g. a cold
-     * cache after process death — the chapter load itself then surfaces any
-     * real gap). Within-book steps are never gated: the chapter currently
+     * cache after process death, where the chapter load itself then surfaces
+     * any real gap). Within-book steps are never gated: the chapter currently
      * playing proves the book is covered.
      */
     fun coverageAwareNeighbor(

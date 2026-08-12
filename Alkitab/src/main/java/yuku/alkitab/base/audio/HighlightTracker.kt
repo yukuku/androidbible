@@ -8,22 +8,20 @@ import yuku.alkitab.base.audio.model.VerseTiming
 /**
  * Maps an audio playback position to the currently-active 1-based verse number.
  *
- * Owns a [StateFlow] of the active `verse_1` (`0` when no verse is active —
- * either because the chapter hasn't reached verse 1 yet, or because no timing
- * data is loaded). The UI layer (M3) collects this flow to drive the verse
- * highlight and auto-scroll.
+ * Owns a [StateFlow] of the active `verse_1`, which is `0` when no verse is
+ * active (the chapter hasn't reached verse 1 yet, or no timing data is loaded).
+ * The UI collects this flow to drive the verse highlight and auto-scroll.
  *
- * Polling cadence (positionMs updates) is owned by the caller — typically the
- * service drives this at 100ms while the player is playing. This class is
- * intentionally pull-based on its position input rather than tying itself to
- * a Player; that keeps it deterministic and unit-testable.
+ * The caller owns the polling cadence; the service drives this at 100 ms while
+ * the player is playing. Being pull-based on its position input rather than
+ * tied to a Player keeps the class deterministic and unit-testable.
  *
- * Optimisation: we cache the index of the last verse that matched (`lastIndex`)
- * so monotonic forward progress costs O(1) lookups (just a bound check on the
- * current cell). Backwards seeks fall through to a binary search.
+ * The index of the last verse that matched is cached (`lastIndex`) so monotonic
+ * forward progress costs an O(1) bound check. Backwards seeks fall through to a
+ * binary search.
  *
- * Threading: not synchronised — call `setTiming` and `update` from the same
- * thread (in practice, the main thread on the service side).
+ * Threading: not synchronised. Call `setTiming` and `update` from the same
+ * thread (in practice the main thread, on the service side).
  */
 class HighlightTracker {
 
@@ -64,11 +62,10 @@ class HighlightTracker {
      * Strategy:
      *  1. If [lastIndex] is valid and the position still falls inside that
      *     verse's window, return it without a search. (Steady-state hit.)
-     *  2. If the position has advanced past [lastIndex] but lies inside a
-     *     later verse, walk forward — bounded by the size of the gap, but
-     *     usually 1 step. (Common forward-progress hit.)
-     *  3. Otherwise binary-search the full list. (Cold start, rewind, or
-     *     seek across many verses.)
+     *  2. If the position has advanced past [lastIndex] but lies inside a later
+     *     verse, walk forward, usually a single step. (Forward-progress hit.)
+     *  3. Otherwise binary-search the full list. (Cold start, rewind, or seek
+     *     across many verses.)
      */
     private fun resolveVerse(positionMs: Long): Int {
         if (verses.isEmpty()) return 0
@@ -80,7 +77,7 @@ class HighlightTracker {
             if (positionMs >= cached.startMs && positionMs < cached.endMs) {
                 return cached.verse_1
             }
-            // Forward walk — also fast for monotonic playback at 100ms ticks.
+            // Forward walk, also fast for monotonic playback at 100 ms ticks.
             if (positionMs >= cached.endMs) {
                 var i = li + 1
                 while (i < verses.size) {
@@ -100,7 +97,7 @@ class HighlightTracker {
                 lastIndex = -1
                 return 0
             }
-            // Backwards seek — fall through to binary search.
+            // Backwards seek; fall through to binary search.
         }
 
         return binarySearch(positionMs)
@@ -128,9 +125,9 @@ class HighlightTracker {
     /**
      * Pure (non-mutating) lookup: returns the `verse_1` whose window contains
      * [positionMs], or `0` if none. Unlike [update], this does NOT touch the
-     * cached [lastIndex] or the [verse1] flow — used by the slider's drag
-     * preview where we want to compute "what verse would the thumb land on?"
-     * without disturbing playback's monotonic forward-walk fast path.
+     * cached [lastIndex] or the [verse1] flow, so the slider's drag preview can
+     * ask "what verse would the thumb land on?" without disturbing playback's
+     * monotonic forward-walk fast path.
      */
     fun peekVerseAt(positionMs: Long): Int {
         if (verses.isEmpty()) return 0
@@ -159,9 +156,9 @@ class HighlightTracker {
      * Returns the `startMs` of the verse that comes after [positionMs], or
      * `null` if no later verse exists or no timing is loaded.
      *
-     * "After" means strictly past the current verse window — if the user is
-     * inside verse N, the next-verse target is N+1's start. Tapping next
-     * during a gap between verses jumps to the upcoming verse.
+     * "After" means strictly past the current verse window: inside verse N, the
+     * target is N+1's start. Tapping next during a gap between verses jumps to
+     * the upcoming verse.
      */
     fun getNextVerseStartMs(positionMs: Long): Long? {
         if (verses.isEmpty()) return null
@@ -181,7 +178,6 @@ class HighlightTracker {
     fun getPrevVerseStartMs(positionMs: Long): Long? {
         if (verses.isEmpty()) return null
 
-        // Are we inside a verse window?
         val currentIdx = verses.indexOfFirst { positionMs >= it.startMs && positionMs < it.endMs }
         if (currentIdx >= 0) {
             val current = verses[currentIdx]
@@ -191,15 +187,15 @@ class HighlightTracker {
             return verses.getOrNull(currentIdx - 1)?.startMs
         }
 
-        // In a gap — return the latest verse whose end is before us.
+        // In a gap: return the latest verse whose end is before us.
         return verses.lastOrNull { it.endMs <= positionMs }?.startMs
     }
 
     companion object {
         /**
          * "Restart-current vs. go-to-previous" cutoff for the prev-verse
-         * button. Matches what music players use (≈2–3 s). Picked at 2 s so
-         * a quick double-tap reliably skips two verses back.
+         * button, in the 2-3 s range music players conventionally use. Picked at
+         * the low end so a quick double-tap reliably skips two verses back.
          */
         const val PREV_VERSE_RESTART_THRESHOLD_MS = 2_000L
     }

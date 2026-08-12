@@ -22,40 +22,39 @@ import androidx.media3.extractor.Extractor
 import androidx.media3.extractor.ExtractorsFactory
 import androidx.media3.extractor.mp3.Mp3Extractor
 import yuku.alkitab.base.connection.Connections
+import yuku.alkitab.debug.R
 
 /**
- * Single-responsibility wrapper around media3 [ExoPlayer] for Bible chapter audio.
- *
- * Responsibilities:
- *  - Build an audio-only ExoPlayer that fetches over [Connections.okHttp] (for
- *    user-agent + 50 MB disk cache) and decodes MP3 only (we never serve other
- *    formats from the audio backend).
- *  - Forward state transitions to a [Listener]: [Listener.onReady] when the
- *    chapter is buffered enough to play, [Listener.onEnded] when playback hits
- *    the end of the stream, [Listener.onError] on any [PlaybackException].
+ * Wrapper around media3 [ExoPlayer] for Bible chapter audio. Builds an
+ * audio-only, MP3-only player that fetches over [Connections.okHttp] (for its
+ * user-agent and disk cache) and forwards state transitions to a [Listener].
  *
  * Out of scope:
- *  - Foreground-service / MediaSession lifecycle — owned by [BibleAudioService].
- *  - Highlight / verse tracking — owned by [HighlightTracker].
- *  - Audio focus / becoming-noisy — handled inside this class via
- *    [ExoPlayer.Builder.setAudioAttributes] +
- *    [ExoPlayer.Builder.setHandleAudioBecomingNoisy] (built-in media3 behavior).
+ *  - Foreground-service / MediaSession lifecycle, owned by [BibleAudioService].
+ *  - Highlight / verse tracking, owned by [HighlightTracker].
+ *  - Audio focus and becoming-noisy, which media3 handles from the
+ *    [ExoPlayer.Builder.setAudioAttributes] and
+ *    [ExoPlayer.Builder.setHandleAudioBecomingNoisy] configuration below.
  *
- * Threading: every public method must be called on the main thread; this is the
- * same constraint media3 itself imposes on [Player]. The internal listener also
- * dispatches to the main thread because that's where ExoPlayer lives.
+ * Threading: every public method must be called on the main thread, the same
+ * constraint media3 imposes on [Player].
  *
- * Mirrors [yuku.alkitab.songs.ExoplayerController]'s data-source / renderer
- * configuration (audio-only renderer, MP3-only extractor, OkHttp-backed
- * data-source) but does not extend it — songs and bible audio have different
- * state machines and different error UX.
+ * Mirrors [yuku.alkitab.songs.ExoplayerController]'s data-source and renderer
+ * configuration without extending it, because songs and bible audio have
+ * different state machines and different error UX.
+ *
+ * [onLogEvent] receives a trace of what the load is actually doing: every
+ * OkHttp connection-state transition for the chapter fetch (via
+ * [AudioHttpEventLogger]) plus this player's own buffering/ready/error
+ * transitions. [BibleAudioService] feeds this into [PlaybackState.logs] for the
+ * audio bar's status line and log bottom sheet.
  */
 @OptIn(UnstableApi::class)
-class BibleAudioPlayer(appContext: Context) {
+class BibleAudioPlayer(appContext: Context, private val onLogEvent: (AudioLogMessage) -> Unit) {
 
     interface Listener {
         /**
-         * Player is loading data — either initial buffering after [prepare], or
+         * Player is loading data: initial buffering after [prepare], or
          * re-buffering after a [seekTo] target that wasn't already cached. The
          * service uses this to flip the bar's `preparing` flag back to true so
          * the spinner returns when the user seeks ahead and presses play.
@@ -77,14 +76,32 @@ class BibleAudioPlayer(appContext: Context) {
     private val playerListener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
-                Player.STATE_BUFFERING -> listener?.onBuffering()
-                Player.STATE_READY -> listener?.onReady()
-                Player.STATE_ENDED -> listener?.onEnded()
+                Player.STATE_BUFFERING -> {
+                    onLogEvent(AudioLogMessage(R.string.audio_log_player_buffering))
+                    listener?.onBuffering()
+                }
+                Player.STATE_READY -> {
+                    onLogEvent(AudioLogMessage(R.string.audio_log_player_ready))
+                    listener?.onReady()
+                }
+                Player.STATE_ENDED -> {
+                    onLogEvent(AudioLogMessage(R.string.audio_log_player_ended))
+                    listener?.onEnded()
+                }
                 else -> Unit
             }
         }
 
         override fun onPlayerError(error: PlaybackException) {
+            val code = stripErrorCodePrefix(error.errorCodeName)
+            val detail = error.message
+            onLogEvent(
+                if (detail != null) {
+                    AudioLogMessage(R.string.audio_log_player_error_detail, listOf(code, detail))
+                } else {
+                    AudioLogMessage(R.string.audio_log_player_error, listOf(code))
+                }
+            )
             listener?.onError(error)
         }
     }
@@ -103,13 +120,21 @@ class BibleAudioPlayer(appContext: Context) {
         val mp3ExtractorFactory = ExtractorsFactory {
             arrayOf<Extractor>(Mp3Extractor())
         }
-        val okHttpDataSourceFactory = OkHttpDataSource.Factory(Connections.okHttp)
+        // A client scoped to this player, not the app-wide Connections.okHttp,
+        // so the event logging only ever fires for chapter audio fetches.
+        // newBuilder() still shares the connection pool and disk cache with the
+        // shared client.
+        val loggingOkHttpClient = Connections.okHttp.newBuilder()
+            .eventListenerFactory { AudioHttpEventLogger(onLogEvent) }
+            .build()
+        val okHttpDataSourceFactory = OkHttpDataSource.Factory(loggingOkHttpClient)
             .setUserAgent(Connections.httpUserAgent)
 
-        // USAGE_MEDIA + CONTENT_TYPE_SPEECH gives the right ducking behavior for
-        // spoken-word audio (other apps' notifications duck us politely; calls
-        // pause us). `handleAudioFocus = true` flips on media3's built-in focus
-        // request — pause on transient loss, duck on can-duck, resume on regain.
+        // USAGE_MEDIA with CONTENT_TYPE_SPEECH gives the right ducking behavior
+        // for spoken-word audio: other apps' notifications duck us politely,
+        // calls pause us. `handleAudioFocus = true` (below) flips on media3's
+        // built-in focus request: pause on transient loss, duck on can-duck,
+        // resume on regain.
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(C.USAGE_MEDIA)
             .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
@@ -118,24 +143,20 @@ class BibleAudioPlayer(appContext: Context) {
         // ExoPlayer's default LoadControl keeps zero back buffer and only ~50 s
         // of forward buffer, so prev-verse seeks (and any rewind past the
         // currently-playing window) re-fetch and re-decode the MP3 from the
-        // network. Bible chapters are short (typical ≤ 30 min, ~30 MB at
-        // 128 kbps) and our nav UX taps prev/next verse aggressively, so it's
-        // worth keeping the entire chapter in the player's sample queue once
-        // it's been buffered.
-        //
-        // Numbers below are picked for a "play-and-scrub-around" workflow:
-        //  - back buffer ~30 min covers Psalms 119 (the longest chapter) and
+        // network. Bible chapters are short (typically under 30 min, ~30 MB at
+        // 128 kbps) and the nav UX taps prev/next verse aggressively, so it is
+        // worth keeping a whole chapter in the player's sample queue once
+        // buffered. The numbers below are picked for that scrub-around workflow:
+        //  - 30 min of back buffer covers the longest chapter (Psalm 119) and
         //    keeps every previously-played verse instantly seekable.
-        //  - maxBufferMs = 30 min lets the player keep loading well past the
-        //    "comfort" zone so next-verse taps land in already-buffered
-        //    samples even if the user races ahead of the playhead.
-        //  - minBufferMs left at default (50 s) — eager-loading comfort
-        //    threshold, no need to be aggressive about cellular bandwidth.
-        //    Note that minBufferMs does NOT gate playback start; that's
-        //    bufferForPlaybackMs (2.5 s default), which we also leave alone.
-        //  - retainBackBufferFromKeyframe = true: MP3 has a keyframe per
-        //    frame, so this is essentially "keep all PCM samples until the
-        //    back buffer wraps".
+        //  - maxBufferMs of 30 min lets the player keep loading well past the
+        //    comfort zone, so next-verse taps land in already-buffered samples
+        //    even if the user races ahead of the playhead.
+        //  - minBufferMs stays at its default: it is only the eager-loading
+        //    comfort threshold and does NOT gate playback start. That is
+        //    bufferForPlaybackMs, which is also left alone.
+        //  - retainBackBufferFromKeyframe = true: MP3 has a keyframe per frame,
+        //    so this keeps all samples until the back buffer wraps.
         val loadControl = DefaultLoadControl.Builder()
             .setBufferDurationsMs(
                 /* minBufferMs = */ DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
@@ -147,9 +168,8 @@ class BibleAudioPlayer(appContext: Context) {
                 /* backBufferDurationMs = */ 30 * 60_000,
                 /* retainBackBufferFromKeyframe = */ true,
             )
-            // -1 = pick a target byte budget per renderer based on the
-            // configured durations. We don't want an explicit byte cap to
-            // override the duration-based one we just set.
+            // Unset so the byte budget is derived from the durations above
+            // rather than an explicit cap overriding them.
             .setTargetBufferBytes(C.LENGTH_UNSET)
             .build()
 
@@ -171,9 +191,8 @@ class BibleAudioPlayer(appContext: Context) {
     }
 
     /**
-     * Loads [url] as the current media item, prepares the player, and arms
-     * playback to start as soon as buffering completes. Replaces any previous
-     * media item.
+     * Replaces the current media item with [url] and arms playback to start as
+     * soon as buffering completes.
      */
     @MainThread
     fun prepare(url: String) {
@@ -183,10 +202,9 @@ class BibleAudioPlayer(appContext: Context) {
     }
 
     /**
-     * Starts (or resumes) playback. If the player has already finished the
-     * current chapter ([Player.STATE_ENDED]), this seeks back to the start
-     * so tapping play again replays the chapter from the beginning, matching
-     * how native media apps treat the play button at end-of-stream.
+     * Starts (or resumes) playback. At [Player.STATE_ENDED] this seeks back to
+     * the start so tapping play replays the chapter, matching how native media
+     * apps treat the play button at end-of-stream.
      */
     @MainThread
     fun play() {

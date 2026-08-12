@@ -10,12 +10,12 @@ import kotlinx.serialization.Serializable
  * client expands `{book_1}` and `{chapter_1}` via literal string replace and
  * never assembles a media path from parts.
  *
- * Every field is required — see [AudioSets] for why the models declare no
+ * Every field is required. See [AudioSets] for why the models declare no
  * default parameter values. [timingUrlTemplate] is explicitly `null` (not
  * omitted) exactly when [hasTiming] is false.
  *
  * [books_1] arrives as a JSON array; declaring it as a [Set] converts it once
- * at parse time so [coversBook] is O(1) — it is consulted on every menu
+ * at parse time so [coversBook] is O(1), and it is consulted on every menu
  * preparation.
  */
 @Serializable
@@ -26,7 +26,7 @@ data class AudioSet(
     val title: String,
     /** False → the recording plays but verse highlight and verse-skip are disabled. */
     val hasTiming: Boolean,
-    /** 1-based book coverage. Ragged — a recording may omit whole books. */
+    /** 1-based book coverage. Ragged: a recording may omit whole books. */
     val books_1: Set<Int>,
     val mp3UrlTemplate: String,
     val timingUrlTemplate: String?,

@@ -14,8 +14,8 @@ import yuku.alkitab.debug.BuildConfig
 /**
  * Plain-JUnit tests for [BibleAudioRepository]. The set list comes from
  * [AudioSetsRepository] driven through its test seams, and the timing fetch
- * goes through [BibleAudioRepository]'s own [AudioHttp] seam — no live server,
- * no Android framework.
+ * goes through [BibleAudioRepository]'s own [AudioHttp] seam, so no live
+ * server and no Android framework are needed.
  */
 class BibleAudioRepositoryTest {
 
@@ -185,7 +185,7 @@ class BibleAudioRepositoryTest {
 
     @Test
     fun `fetchTiming returns null when a required timing field is missing`() = runBlocking {
-        // durationMs absent — must fail the parse, not default to zero.
+        // durationMs absent: must fail the parse, not default to zero.
         BibleAudioRepository.http = FakeHttp {
             """{"schema":2,"preset":"in-tb","audioId":"alkitabsuara","book_1":1,"chapter_1":1,"verses":[]}"""
         }
