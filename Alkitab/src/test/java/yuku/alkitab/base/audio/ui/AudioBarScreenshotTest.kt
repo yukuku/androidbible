@@ -26,12 +26,14 @@ import org.robolectric.shadows.ShadowDialog
 import yuku.alkitab.base.audio.AudioLogEntry
 
 /**
- * One-off visual snapshot of the audio bar's load-status UI (the status line
- * above the play button, and the log bottom sheet it opens), rendered through
- * Robolectric's native graphics pipeline to real PNGs for human review. Same
- * technique as [yuku.alkitab.base.verses.VerseItemSideBySideSnapshotTest].
- * Not a pixel-diff regression test; PNGs are written under
- * `build/snapshots/audio-bar/` for eyeballing.
+ * Visual snapshot of the audio bar's load-status UI: the status line above the
+ * play button, and the log bottom sheet it opens. Rendered through
+ * Robolectric's native graphics pipeline to real PNGs under
+ * `build/snapshots/audio-bar/`, the same technique as
+ * [yuku.alkitab.base.verses.VerseItemSideBySideSnapshotTest]. Not a pixel-diff
+ * regression test; the PNGs are written for a human to eyeball, which is how
+ * the status line's width cap and its error-vs-last-log-entry precedence were
+ * caught.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34], qualifiers = "w400dp-h800dp-mdpi")
