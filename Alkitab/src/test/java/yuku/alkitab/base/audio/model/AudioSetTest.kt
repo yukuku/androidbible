@@ -65,7 +65,7 @@ class AudioSetTest {
 
     @Test
     fun `a missing required field fails the parse instead of defaulting`() {
-        // No `sets` key at all — must not silently read as an empty list.
+        // No `sets` key at all: must not silently read as an empty list.
         assertThrows(SerializationException::class.java) {
             json.decodeFromString(AudioSets.serializer(), """{"schema":2,"preset":"in-tb"}""")
         }
@@ -81,7 +81,7 @@ class AudioSetTest {
                 """.trimIndent()
             )
         }
-        // A set omitting timingUrlTemplate — the contract requires an explicit null.
+        // A set omitting timingUrlTemplate; the contract requires an explicit null.
         assertThrows(SerializationException::class.java) {
             json.decodeFromString(
                 AudioSets.serializer(),

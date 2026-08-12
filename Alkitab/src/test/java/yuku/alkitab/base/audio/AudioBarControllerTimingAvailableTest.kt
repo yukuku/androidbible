@@ -5,7 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Pure-logic tests for [AudioBarController.computeTimingAvailable] — whether
+ * Pure-logic tests for [AudioBarController.computeTimingAvailable]: whether
  * verse highlight and verse-skip are enabled, given what the selected
  * recording declares up front and what playback has observed so far.
  */

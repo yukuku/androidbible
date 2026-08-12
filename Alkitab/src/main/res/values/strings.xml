@@ -490,8 +490,67 @@
 	<string name="audio_bar_set_not_available_for_book">Not available for this book</string>
 	<string name="audio_bar_error_retry">Could not load audio. Tap to retry</string>
 	<string name="audio_bar_loading_status_fallback">Loading…</string>
-	<string name="audio_bar_log_sheet_title">Load log</string>
 	<string name="audio_bar_log_sheet_empty">No events logged yet.</string>
+
+	<!-- Audio load log: HTTP connection states -->
+	<string name="audio_log_http_started">HTTP request started: %1$s</string>
+	<string name="audio_log_dns_start">DNS lookup started (%1$s)</string>
+	<string name="audio_log_dns_end">DNS lookup finished: %1$s</string>
+	<string name="audio_log_connecting">Connecting to %1$s:%2$d</string>
+	<string name="audio_log_tls_start">TLS handshake starting</string>
+	<string name="audio_log_tls_end">TLS handshake completed</string>
+	<string name="audio_log_tls_end_version">TLS handshake completed (%1$s)</string>
+	<string name="audio_log_connected">Connected</string>
+	<string name="audio_log_connected_protocol">Connected (%1$s)</string>
+	<string name="audio_log_connect_failed">Connect failed: %1$s</string>
+	<string name="audio_log_connection_acquired_new">Connection acquired (new)</string>
+	<string name="audio_log_connection_acquired_reused">Connection acquired (reused)</string>
+	<string name="audio_log_connection_released">Connection released</string>
+	<string name="audio_log_request_headers_start">Sending request headers</string>
+	<string name="audio_log_request_headers_sent">Request headers sent</string>
+	<string name="audio_log_request_headers_sent_range">Request headers sent (Range: %1$s)</string>
+	<string name="audio_log_request_failed">Request failed: %1$s</string>
+	<string name="audio_log_response_headers_start">Waiting for response headers</string>
+	<string name="audio_log_response_headers_end">Response headers received: HTTP %1$d</string>
+	<string name="audio_log_response_body_text">Response body: %1$s</string>
+	<string name="audio_log_error_body_unreadable">Could not read error body: %1$s</string>
+	<string name="audio_log_response_failed">Response failed: %1$s</string>
+	<string name="audio_log_response_body_start">Receiving response body</string>
+	<string name="audio_log_response_body_end">Response body received (%1$d bytes)</string>
+	<string name="audio_log_call_end">HTTP request finished</string>
+	<string name="audio_log_call_failed">HTTP request failed: %1$s</string>
+
+	<!-- Audio load log: player and load states -->
+	<string name="audio_log_player_buffering">Player buffering</string>
+	<string name="audio_log_player_ready">Player ready</string>
+	<string name="audio_log_player_ended">Player reached end of chapter</string>
+	<string name="audio_log_player_error">Player error: %1$s</string>
+	<string name="audio_log_player_error_detail">Player error: %1$s (%2$s)</string>
+	<string name="audio_log_loading">Loading %1$s</string>
+	<string name="audio_log_no_audio">No audio available for this version</string>
+
+	<!-- Audio load log: user interactions and bar state -->
+	<string name="audio_log_ui_play_pause">User pressed play/pause</string>
+	<string name="audio_log_ui_retry">User pressed retry</string>
+	<string name="audio_log_ui_prev_verse">User pressed previous verse</string>
+	<string name="audio_log_ui_next_verse">User pressed next verse</string>
+	<string name="audio_log_ui_close">User closed the audio bar</string>
+	<string name="audio_log_ui_open_speed">User opened the speed sheet</string>
+	<string name="audio_log_ui_dismiss_speed">User dismissed the speed sheet</string>
+	<string name="audio_log_ui_open_set">User opened the recording sheet</string>
+	<string name="audio_log_ui_dismiss_set">User dismissed the recording sheet</string>
+	<string name="audio_log_ui_open_log">User opened the log sheet</string>
+	<string name="audio_log_ui_dismiss_log">User dismissed the log sheet</string>
+	<string name="audio_log_ui_cancel_picker">User cancelled the source picker</string>
+	<string name="audio_log_ui_set_speed">User set speed to %1$s×</string>
+	<string name="audio_log_ui_pick_set">User picked recording %1$s (%2$s)</string>
+	<string name="audio_log_ui_pick_source">User picked source %1$s</string>
+	<string name="audio_log_ui_seek">User seeked to %1$d ms</string>
+	<string name="audio_log_state_transition">Bar state: %1$s to %2$s</string>
+	<string name="audio_log_state_paused">paused</string>
+	<string name="audio_log_state_preparing">preparing</string>
+	<string name="audio_log_state_playing">playing</string>
+	<string name="audio_log_state_error">error</string>
 	<string name="audio_play_from_verse">Play audio from this verse</string>
 
 </resources>

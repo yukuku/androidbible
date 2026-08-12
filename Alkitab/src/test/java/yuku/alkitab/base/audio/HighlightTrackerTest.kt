@@ -5,8 +5,8 @@ import org.junit.Test
 import yuku.alkitab.base.audio.model.VerseTiming
 
 /**
- * Pure-logic tests for [HighlightTracker]. No Android framework needed — the
- * class is a plain Kotlin object over `StateFlow`, and `StateFlow.value`
+ * Pure-logic tests for [HighlightTracker]. No Android framework is needed:
+ * the class is a plain Kotlin object over `StateFlow`, and `StateFlow.value`
  * resolves synchronously in the same thread.
  */
 class HighlightTrackerTest {
@@ -40,8 +40,6 @@ class HighlightTrackerTest {
         val t = HighlightTracker()
         t.setTiming(contiguous)
 
-        // Walk position from 0ms to 3000ms in 100ms steps. Capture every
-        // distinct value emitted by verse1.
         val emitted = mutableListOf<Int>()
         var last = -1
         for (ms in 0..3000 step 100) {
@@ -53,15 +51,14 @@ class HighlightTrackerTest {
             }
         }
 
-        // We expect 1, 2, 3, 0 — each verse for its window, then 0 once we
-        // pass endMs of the last verse (3000ms is exactly at the boundary).
+        // 3000ms sits exactly at the last verse's endMs, which is exclusive,
+        // so the walk ends back at the no-highlight sentinel.
         assertEquals(listOf(1, 2, 3, 0), emitted)
     }
 
     @Test
     fun `position before the first verse start resolves to 0`() {
         val t = HighlightTracker()
-        // First verse starts at 500ms.
         t.setTiming(
             listOf(
                 VerseTiming(verse_1 = 1, startMs = 500L, endMs = 1500L),
@@ -81,13 +78,10 @@ class HighlightTrackerTest {
         val t = HighlightTracker()
         t.setTiming(contiguous)
 
-        // Forward to verse 3.
         t.update(2500L)
         assertEquals(3, t.verse1.value)
-        // Rewind hard to verse 1.
         t.update(100L)
         assertEquals(1, t.verse1.value)
-        // Forward again to verse 2.
         t.update(1500L)
         assertEquals(2, t.verse1.value)
     }
@@ -98,7 +92,6 @@ class HighlightTrackerTest {
         t.setTiming(contiguous)
         t.update(500L)
         assertEquals(1, t.verse1.value)
-        // Seek to a position past the last verse's endMs.
         t.update(5000L)
         assertEquals(0, t.verse1.value)
     }
@@ -138,10 +131,9 @@ class HighlightTrackerTest {
         val t = HighlightTracker()
         t.setTiming(contiguous)
 
-        // First update: 0 -> 1, must emit.
         t.update(100L)
         val firstSnapshot = t.verse1.value
-        // Multiple updates inside the same verse: must NOT emit a new value.
+        // Further updates inside the same verse must NOT emit a new value.
         t.update(200L)
         t.update(500L)
         t.update(999L)
@@ -167,13 +159,13 @@ class HighlightTrackerTest {
         t.update(500L)
         assertEquals(1, t.verse1.value)
 
-        // Peek deep into a different verse — should NOT touch the StateFlow.
+        // Peeking deep into a different verse must not touch the StateFlow.
         assertEquals(3, t.peekVerseAt(2500L))
         assertEquals(1, t.verse1.value)
 
-        // And the next steady-state forward walk should still hit the fast
-        // path (verse 1 -> verse 2 in one step), proving the cached lastIndex
-        // wasn't invalidated.
+        // The next steady-state forward walk must still hit the fast path
+        // (verse 1 to verse 2 in one step), proving the cached lastIndex was
+        // not invalidated.
         t.update(1100L)
         assertEquals(2, t.verse1.value)
     }
@@ -296,7 +288,6 @@ class HighlightTrackerTest {
     fun `getPrevVerseStartMs returns null when there is no earlier verse`() {
         val t = HighlightTracker()
         t.setTiming(contiguous)
-        // At the very first verse, can't go further back.
         assertEquals(null, t.getPrevVerseStartMs(100L))
     }
 

@@ -47,7 +47,7 @@ class AudioSetSelectionsTest {
     @Test
     fun `the default selection is the first set, in backend order`() {
         assertEquals("alkitabsuara", AudioSetSelections.resolve("preset/in-tb", sets)?.audioId)
-        assertNull("nothing stored — the default must not be written back", stored)
+        assertNull("nothing stored: the default must not be written back", stored)
     }
 
     @Test

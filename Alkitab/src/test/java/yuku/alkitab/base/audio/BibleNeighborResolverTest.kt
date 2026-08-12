@@ -8,10 +8,10 @@ import yuku.alkitab.model.Book
 import yuku.alkitab.model.Version
 
 /**
- * Pure-logic tests for [BibleNeighborResolver]. We use a tiny fake [Version]
- * with three books (10 / 1 / 5 chapters) to exercise within-book navigation,
- * cross-book navigation, and Bible-boundary handling without needing a real
- * loaded YES2 file.
+ * Pure-logic tests for [BibleNeighborResolver], over a tiny fake [Version]
+ * with three books (10 / 1 / 5 chapters) so within-book navigation, cross-book
+ * navigation, and Bible-boundary handling are exercised without a real loaded
+ * YES2 file.
  */
 class BibleNeighborResolverTest {
 

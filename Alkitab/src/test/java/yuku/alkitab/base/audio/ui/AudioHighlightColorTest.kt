@@ -51,12 +51,10 @@ class AudioHighlightColorTest {
 
     @Test
     fun `yellow paper background falls back to a neutral so the highlight is visible`() {
-        // The bug this regression-tests: a yellow-on-yellow highlight is
-        // invisible because the composite is essentially the same color as
-        // the surrounding bg. Even though the verse text remains readable,
-        // the user can't *find* the highlighted verse — see the screenshot
-        // attached to the bug report. With the LAB-distance gate, yellow is
-        // rejected on these paper themes.
+        // A yellow-on-yellow highlight is invisible because the composite is
+        // essentially the same color as the surrounding bg. Even though the
+        // verse text remains readable, the user can't *find* the highlighted
+        // verse. The LAB-distance gate rejects yellow on these paper themes.
         val cases = listOf(
             // Common bible-app "paper" / "manila" looks.
             Color.rgb(0xFA, 0xF0, 0x9C),
@@ -67,7 +65,7 @@ class AudioHighlightColorTest {
         for (bg in cases) {
             val pick = AudioHighlightColor.pickHighlightColor(bg, text)
             assertNotEquals(
-                "yellow chosen on yellow paper bg=#${Integer.toHexString(bg)} — highlight invisible",
+                "yellow chosen on yellow paper bg=#${Integer.toHexString(bg)}, highlight invisible",
                 yellow20,
                 pick,
             )
@@ -98,7 +96,7 @@ class AudioHighlightColorTest {
     @Test
     fun `picked overlay always meets WCAG AA contrast for verse text`() {
         val cases = listOf(
-            // (background, text) — span light, sepia, dark, and yellow paper.
+            // (background, text) pairs spanning light, sepia, dark, and yellow paper.
             Color.WHITE to Color.BLACK,
             Color.rgb(0xF4, 0xEC, 0xD8) to Color.rgb(0x44, 0x33, 0x22),
             Color.BLACK to Color.WHITE,

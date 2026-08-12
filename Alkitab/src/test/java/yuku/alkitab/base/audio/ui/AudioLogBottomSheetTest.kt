@@ -7,8 +7,7 @@ import org.junit.Test
 
 /**
  * Tests for the load-log timestamp formatter behind the audio bar's log
- * bottom sheet. Pure string formatting — plain JUnit, no Android framework
- * involved. Builds the expected instant via [ZonedDateTime] in the same
+ * bottom sheet. The expected instant is built via [ZonedDateTime] in the same
  * [ZoneId.systemDefault] the formatter itself uses, so the assertion holds
  * regardless of the JVM's actual default zone.
  */

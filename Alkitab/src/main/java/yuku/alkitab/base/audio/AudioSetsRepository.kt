@@ -29,14 +29,14 @@ import yuku.alkitab.debug.BuildConfig
  *   `BuildConfig.INTERNAL_VERSION_PRESET_NAME`. A version without a preset
  *   name (a `file/…` version, or an internal version whose flavor declares
  *   none) short-circuits to an empty set list without a network request.
- * - **In-memory cache** keyed by versionId, holding negative results too — a
- *   version with no audio must not re-query on every chapter turn. Network
+ * - **In-memory cache** keyed by versionId, holding negative results too, so a
+ *   version with no audio does not re-query on every chapter turn. Network
  *   and parse failures also resolve (and cache) as an empty set list, per the
  *   backend contract's error-handling table: the entry point stays hidden
  *   rather than showing a dead button, and there is no retry loop.
- * - **Disk cache** is the existing 50 MB OkHttp cache on
- *   `Connections.okHttp`, honoring the backend's `Cache-Control` — no
- *   app-managed file, no bundled asset, no hand-rolled ETag bookkeeping.
+ * - **Disk cache** is the 50 MB OkHttp cache on `Connections.okHttp`, honoring
+ *   the backend's `Cache-Control`. There is no app-managed file, no bundled
+ *   asset, and no hand-rolled ETag bookkeeping.
  * - Concurrent [setsFor] calls for the same version share a single request.
  *
  * Thread safety: every public method is safe to call from any thread.
@@ -83,7 +83,7 @@ object AudioSetsRepository {
 
     /**
      * Returns the audio sets for [versionId], from the in-memory cache when
-     * resolved before, otherwise fetching from the backend. Never throws — any
+     * resolved before, otherwise fetching from the backend. Never throws: any
      * failure resolves to an empty set list, which is cached like any other
      * answer.
      */
@@ -105,16 +105,16 @@ object AudioSetsRepository {
 
     /**
      * Non-blocking peek at the in-memory cache. Null means [versionId] has not
-     * been resolved yet this process — callers (menu preparation) hide the
+     * been resolved yet this process. Callers (menu preparation) hide the
      * entry point and kick off [setsFor], re-preparing once it lands.
      */
     fun cachedSetsFor(versionId: String): AudioSets? = cache[versionId]
 
     /**
      * Drops the cached answer for [versionId] so the next [setsFor] queries
-     * again. Used by the audio bar's explicitly user-initiated retry after a
-     * load error — the one place a cached negative result gets re-tested;
-     * everything else keeps the no-retry-loop behavior.
+     * again. The audio bar's user-initiated retry after a load error is the
+     * only place a cached negative result gets re-tested; everything else
+     * keeps the no-retry-loop behavior.
      */
     fun invalidate(versionId: String) {
         cache.remove(versionId)
@@ -128,8 +128,8 @@ object AudioSetsRepository {
             ?: return emptySets(presetName)
         parseSets(body)?.let { return it }
         // The unparseable bytes may be a corrupted entry served from the HTTP
-        // disk cache; fetch once past the cache — replacing the entry — and
-        // give the fresh payload a parse.
+        // disk cache. Fetch once past the cache, which also replaces the
+        // entry, and give the fresh payload a parse.
         AppLog.w(TAG, "audio sets for $presetName did not parse; refetching past the HTTP cache")
         val fresh = http.getBodyRevalidating(url)
             ?: return emptySets(presetName)

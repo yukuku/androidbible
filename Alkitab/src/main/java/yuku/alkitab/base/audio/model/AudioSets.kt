@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * Response of the backend's `GET /audio/sets/<preset>`: every recording that
  * exists for one Bible version. See docs/features/audio-bible/backend-contract.md.
  *
- * [sets] is ordered — `sets[0]` is the default recording for the version. An
+ * [sets] is ordered: `sets[0]` is the default recording for the version. An
  * empty [sets] means "no audio for this version", which is a normal answer,
  * not an error.
  *

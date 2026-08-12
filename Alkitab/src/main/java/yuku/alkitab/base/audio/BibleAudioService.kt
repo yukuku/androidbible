@@ -38,34 +38,30 @@ import yuku.alkitab.debug.R
 
 /**
  * Foreground [MediaSessionService] that owns a [BibleAudioPlayer] and exposes
- * playback state to the M3 Compose UI via a local binder + [StateFlow].
+ * playback state to the Compose UI via a local binder plus [StateFlow].
  *
  * Two binding paths share the same service instance:
- *  - **MediaSession (system)** — `super.onBind(intent)` returns the standard
+ *  - **MediaSession (system)**: `super.onBind(intent)` returns the standard
  *    media3 stub so the OS can drive playback through MediaController, lock
  *    screen, Bluetooth, Android Auto, etc.
- *  - **Local (in-app)** — clients send `Intent` with [ACTION_LOCAL_BIND] to
- *    receive a [LocalBinder]; they can then read [playbackState] and call
- *    [loadChapter] / [play] / [pause] / [seekTo] / [setSpeed] / [stop]
- *    directly. Used by the M3 `AudioBarController`.
+ *  - **Local (in-app)**: clients bind with [ACTION_LOCAL_BIND] to receive a
+ *    [LocalBinder], then read [playbackState] and call [loadChapter] / [play] /
+ *    [pause] / [seekTo] / [setSpeed] / [stop] directly. Used by the audio bar.
  *
  * Foreground transitions are handled entirely by media3. The activity calls
- * `Context.startService(...)` (not `startForegroundService`) from
- * [yuku.alkitab.base.audio.AudioBarController.ensureBound] — that keeps the
+ * `Context.startService(...)` rather than `startForegroundService` from
+ * [yuku.alkitab.base.audio.AudioBarController.ensureBound], which keeps the
  * service alive across activity teardown without arming the 5-second
- * `startForeground` deadline. media3's `MediaNotificationManager` then
- * promotes us to foreground itself the moment the player enters a
- * user-engaged state (BUFFERING/READY): it calls
- * `ContextCompat.startForegroundService(...)` and `Service.startForeground`
- * back-to-back inside the same main-thread frame, with the real MediaStyle
- * notification (chapter title, version, artwork, transport controls). The
- * `mediaPlayback` foreground-service-type exemption covers the
- * background-start restriction on Android 12+. The channel id matches the
- * one created in `App.staticInit()`.
+ * `startForeground` deadline. media3's `MediaNotificationManager` then promotes
+ * us to foreground itself the moment the player enters a user-engaged state
+ * (BUFFERING/READY), calling `ContextCompat.startForegroundService(...)` and
+ * `Service.startForeground` back-to-back inside the same main-thread frame with
+ * the real MediaStyle notification. The `mediaPlayback` foreground-service-type
+ * exemption covers the background-start restriction on Android 12+.
  *
- * Audio focus, becoming-noisy, lock-screen / Bluetooth media-button handling
- * all come for free with `MediaSession` + the audio attributes set on the
- * [BibleAudioPlayer]'s ExoPlayer.
+ * Audio focus, becoming-noisy, and lock-screen / Bluetooth media-button
+ * handling all come for free with `MediaSession` plus the audio attributes set
+ * on the [BibleAudioPlayer]'s ExoPlayer.
  */
 @OptIn(UnstableApi::class)
 class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session {
@@ -76,10 +72,9 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
         /**
          * Notification channel id; must match the channel created at app startup
-         * (`App.staticInit()`). media3 will auto-create the channel here too if
-         * we forget, but we want IMPORTANCE_LOW + no sound, which means we have
-         * to be the ones to create it first — channel attributes are immutable
-         * after creation.
+         * (`App.staticInit()`). Channel attributes are immutable after creation,
+         * so we have to create it first to get IMPORTANCE_LOW and no sound;
+         * otherwise media3 auto-creates it with its own defaults.
          */
         const val NOTIFICATION_CHANNEL_ID = "audio_bible"
 
@@ -91,12 +86,11 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         /**
          * Cap on [PlaybackState.logs] length. A single chapter load can emit
          * dozens of HTTP events per byte-range fetch as the player buffers
-         * ahead; this bounds memory for a chapter that keeps re-buffering
-         * instead of ever reaching a steady state.
+         * ahead, so this bounds memory for a chapter that keeps re-buffering
+         * without reaching a steady state.
          */
         private const val MAX_LOG_ENTRIES = 500
 
-        /** Default playback speed when nothing is persisted yet. */
         private const val DEFAULT_PLAYBACK_SPEED = 1.0f
 
         private const val TAG = "BibleAudioService"
@@ -104,10 +98,10 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         /**
          * Process-wide flag (the service is local and single-instance) that lets
          * [AudioBarController] decide whether to re-show the audio bar after the
-         * activity is recreated or returns from the background — *without*
-         * binding (which would spin the service up via `BIND_AUTO_CREATE` for
-         * users who never started audio). Set true while a chapter is loaded,
-         * cleared on stop / destroy.
+         * activity is recreated or returns from the background *without* binding.
+         * Binding would spin the service up via `BIND_AUTO_CREATE` even for users
+         * who never started audio. Set true while a chapter is loaded, cleared on
+         * stop / destroy.
          */
         @Volatile
         var hasActiveSession: Boolean = false
@@ -132,21 +126,19 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     )
 
     /**
-     * Local IPC binder for in-process clients (the M3 audio bar). Must NOT
-     * be an `inner class` — the Binder framework can hold a JNI global
-     * reference to a returned Binder for an indeterminate amount of time
-     * after `unbindService`, and an inner class's implicit `this$0` field
-     * would keep the entire service (ExoPlayer, MediaSession, foreground
-     * notification context, etc.) alive too. Using a static class plus a
-     * [WeakReference] lets the service get garbage-collected as soon as
-     * `onDestroy` releases its strong references, even while the system
-     * still has the binder pinned.
+     * Local IPC binder for in-process clients (the audio bar). Must NOT be an
+     * `inner class`: the Binder framework can hold a JNI global reference to a
+     * returned Binder for an indeterminate time after `unbindService`, and an
+     * inner class's implicit `this$0` field would keep the entire service
+     * (ExoPlayer, MediaSession, foreground notification context) alive with it.
+     * A static class plus a weak reference lets the service be garbage-collected
+     * as soon as `onDestroy` releases its strong references, even while the
+     * system still has the binder pinned.
      *
-     * `service` returns null after the service has been destroyed — clients
-     * (see `AudioBarController.serviceConnection`) cache the strong service
-     * reference at `onServiceConnected` time and clear it on unbind, so the
-     * window where `binder.service` is consulted is always inside a
-     * still-bound lifetime.
+     * `service` returns null once the service has been destroyed. Clients (see
+     * `AudioBarController.serviceConnection`) cache the strong reference at
+     * `onServiceConnected` and clear it on unbind, so `binder.service` is only
+     * ever consulted inside a still-bound lifetime.
      */
     class LocalBinder internal constructor(service: BibleAudioService) : Binder() {
         private val ref = java.lang.ref.WeakReference(service)
@@ -174,20 +166,15 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     /**
      * Deferred initial-seek state for [AudioRequest.startVerse_1]. The seek can
      * only run once BOTH the player is READY ([playerReadyForSeek]) and timing
-     * has resolved ([timingLoaded]) — the two arrive asynchronously and in
-     * either order. [tryInitialSeek] is called from both completion points and
-     * fires (or gives up, falling back to position 0) when both are ready.
+     * has resolved ([timingLoaded]); the two arrive asynchronously and in either
+     * order. [tryInitialSeek] is called from both completion points and fires
+     * (or gives up, falling back to position 0) when both are ready.
      */
     private var pendingStartVerse1 = 0
     private var playerReadyForSeek = false
     private var timingLoaded = false
 
-    /**
-     * Lazily-decoded app-icon bytes used as the lock-screen / notification
-     * artwork. Decoded from the per-flavor `R.mipmap.ic_launcher` (which can be
-     * an adaptive XML on API 26+, hence going through [ResourcesCompat] +
-     * [Drawable.draw] instead of [android.graphics.BitmapFactory.decodeResource]).
-     */
+    /** Lazily-decoded app-icon bytes used as the lock-screen / notification artwork. */
     private val appIconArtworkBytes: ByteArray? by lazy { decodeAppIconArtwork() }
 
     private val _playbackState = MutableStateFlow(PlaybackState.IDLE)
@@ -198,12 +185,9 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
     private val playerListener = object : BibleAudioPlayer.Listener {
         override fun onBuffering() {
-            // Re-buffering after a seek (or initial buffer) — re-arm the
-            // preparing flag so the bar's progress ring comes back. We
-            // deliberately reuse `preparing` rather than adding
-            // a separate `buffering` field: from the user's POV, both states
-            // are "we asked to play but no audio is coming out yet", which is
-            // what the spinner communicates.
+            // `preparing` doubles as the buffering flag rather than having a
+            // separate field: to the user both states are "we asked to play but
+            // no audio is coming out yet", which is what the spinner says.
             _playbackState.update { it.copy(preparing = true) }
         }
 
@@ -227,12 +211,9 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             _playbackState.update {
                 it.copy(isPlaying = false, positionMs = player.durationMs)
             }
-            // Auto-advance: at end-of-chapter, transparently load the next
-            // chapter and keep playing. Cross-book traversal goes through
-            // [BibleNeighborResolver]; at the Bible boundary [skipChapter] is
-            // a no-op and we simply stay parked at the end of Revelation 22.
-            // The next loadChapter resets the position to 0 and resumes
-            // playback (playWhenReady = true).
+            // Auto-advance to the next chapter. At the Bible boundary
+            // skipChapter is a no-op, so we stay parked at the end of
+            // Revelation 22.
             if (currentRequest != null) {
                 skipChapter(1)
             }
@@ -245,7 +226,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 it.copy(
                     preparing = false,
                     isPlaying = false,
-                    error = error.errorCodeName,
+                    error = stripErrorCodePrefix(error.errorCodeName),
                 )
             }
         }
@@ -256,10 +237,8 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         player = BibleAudioPlayer(applicationContext, ::appendLog)
         player.setListener(playerListener)
 
-        // Restore the previously-chosen playback speed (or stay at 1.0× the
-        // first time). Applied to the player immediately so the first chapter
-        // load already plays at the right speed instead of reverting to 1.0×
-        // until the user opens the speed sheet again.
+        // Apply the persisted speed to the player up front so the first chapter
+        // load already plays at the right speed.
         persistedSpeed = Preferences.getFloat(Prefkey.audioPlaybackSpeed, DEFAULT_PLAYBACK_SPEED)
         player.setSpeed(persistedSpeed)
         _playbackState.update { it.copy(speed = persistedSpeed) }
@@ -273,11 +252,11 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             PendingIntent.FLAG_IMMUTABLE,
         )
 
-        // Wrap the inner ExoPlayer so the system's transport controls (lock-
+        // Wrap the inner ExoPlayer so the system's transport controls (lock
         // screen, Bluetooth, Android Auto) skip *chapters* instead of media
-        // items. See [BibleChapterNavigatingPlayer] for the rationale; the
-        // short version is "we only ever have one MediaItem queued, so the
-        // standard skipNext/skipPrevious would otherwise be no-ops."
+        // items. Only one MediaItem is ever queued, so the standard
+        // skipNext/skipPrevious would otherwise be no-ops. See
+        // BibleChapterNavigatingPlayer.
         val mediaSessionPlayer = BibleChapterNavigatingPlayer(
             inner = player.exoPlayer,
             onSeekToNextChapter = { skipChapter(1) },
@@ -299,7 +278,6 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 .build()
         )
 
-        // Mirror highlight changes into the playback state.
         scope.launch {
             highlightTracker.verse1.collect { v ->
                 _playbackState.update { it.copy(verse_1 = v) }
@@ -357,21 +335,19 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         AudioPlaybackCoordinator.acquire(this)
         loadJob?.cancel()
         timingJob?.cancel()
-        // The position poll reads the player, which still holds the outgoing
-        // chapter until the load job below swaps the media item — left running,
-        // its next tick would overwrite the position/duration reset in the
-        // state update with the old chapter's values. Polling resumes when the
-        // player reaches READY (or on an explicit play()).
+        // The player still holds the outgoing chapter until the load job below
+        // swaps the media item, so a poll tick would overwrite the
+        // position/duration reset below with the old chapter's values. Polling
+        // resumes when the player reaches READY (or on an explicit play()).
         positionJob?.cancel()
         currentRequest = request
         hasActiveSession = true
         pendingStartVerse1 = request.startVerse_1
         playerReadyForSeek = false
         timingLoaded = false
-        // New chapter — reset highlight from any previous chapter and clear
-        // errors. The log is reset here too: a retry is a fresh load attempt,
-        // and mixing its events with the failed attempt's would make the log
-        // sheet read as one confusing, non-chronological HTTP conversation.
+        // The log resets here because a retry is a fresh load attempt; mixing
+        // its events with the failed attempt's would make the log sheet read as
+        // one non-chronological HTTP conversation.
         highlightTracker.setTiming(emptyList())
         _playbackState.update {
             it.copy(
@@ -385,7 +361,12 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 positionMs = 0L,
                 durationMs = 0L,
                 error = null,
-                logs = listOf(AudioLogEntry(System.currentTimeMillis(), "Loading ${request.displayTitle}")),
+                logs = listOf(
+                    AudioLogEntry(
+                        System.currentTimeMillis(),
+                        getString(R.string.audio_log_loading, request.displayTitle),
+                    )
+                ),
             )
         }
 
@@ -397,7 +378,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 request.chapter_1,
             )
             if (url == null) {
-                appendLog("No audio available for this version")
+                appendLog(AudioLogMessage(R.string.audio_log_no_audio))
                 _playbackState.update {
                     it.copy(preparing = false, error = "no_audio_for_version")
                 }
@@ -407,10 +388,9 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             val metadataBuilder = MediaMetadata.Builder()
                 .setTitle(request.displayTitle)
                 .setArtist(request.displaySubtitle)
-            // The artwork is the same on every chapter for v1 (see PRD §4.4).
-            // We attach the bytes inline rather than a Uri because the default
+            // Bytes are attached inline rather than as a Uri because the default
             // BitmapLoader only resolves http/file/content schemes, not the
-            // android.resource://… we'd otherwise need for the launcher icon.
+            // android.resource://... a launcher icon would need.
             appIconArtworkBytes?.let { bytes ->
                 metadataBuilder.setArtworkData(bytes, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
             }
@@ -423,11 +403,11 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             player.exoPlayer.prepare()
         }
 
-        // Stay on Dispatchers.Main.immediate (the scope's default) so
-        // setTiming runs on the same thread as positionJob's update calls —
-        // HighlightTracker is not thread-safe by design. The repository
-        // already does its own withContext(Dispatchers.IO) for the network
-        // hop, so the blocking work is still off the main thread.
+        // Stay on Dispatchers.Main.immediate (the scope's default) so setTiming
+        // runs on the same thread as positionJob's update calls;
+        // HighlightTracker is not thread-safe by design. The repository does its
+        // own withContext(Dispatchers.IO) for the network hop, so the blocking
+        // work is still off the main thread.
         timingJob = scope.launch {
             val timing = BibleAudioRepository.fetchTiming(
                 request.versionId,
@@ -513,8 +493,8 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
     /**
      * Returns the `verse_1` that [positionMs] falls inside, or `0` if none.
-     * Pure read — used by the slider's live drag preview so the verse
-     * highlight in the reader can follow the thumb without committing a seek.
+     * Pure read, used by the slider's live drag preview so the verse highlight
+     * in the reader can follow the thumb without committing a seek.
      */
     fun peekVerseAt(positionMs: Long): Int = highlightTracker.peekVerseAt(positionMs)
 
@@ -555,10 +535,10 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
      *  - the system transport controls (lock-screen / Bluetooth headset),
      *    routed through [BibleChapterNavigatingPlayer].
      *
-     * The activity does not need to be alive for this to work — the
-     * [yuku.alkitab.model.Version] is resolved through [App.services]. When the activity
-     * *is* alive, `AudioBarController` observes the resulting state change and
-     * navigates `IsiActivity` to keep both surfaces in sync.
+     * The activity does not need to be alive for this to work; the
+     * [yuku.alkitab.model.Version] is resolved through [App.services]. When the
+     * activity *is* alive, `AudioBarController` observes the resulting state
+     * change and navigates `IsiActivity` to keep both surfaces in sync.
      */
     fun skipChapter(direction: Int) {
         val current = currentRequest ?: return
@@ -575,8 +555,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         ) ?: return
 
         // The version and recording don't change across a chapter skip, so the
-        // displaySubtitle (version short name, plus the set title for
-        // multi-set versions) carries over as-is — keeps notification metadata
+        // displaySubtitle carries over as-is, keeping notification metadata
         // stable.
         loadChapter(
             AudioRequest(
@@ -593,15 +572,13 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
     /**
      * Decodes the launcher icon to PNG bytes for use as MediaSession artwork.
-     * Goes through [ResourcesCompat.getDrawable] + draw-into-bitmap so that
-     * adaptive-icon XML (`mipmap-anydpi-v26/ic_launcher.xml`, used by every
-     * production flavor) is handled correctly — `BitmapFactory.decodeResource`
-     * returns null for those.
+     * Goes through [ResourcesCompat.getDrawable] plus draw-into-bitmap because
+     * `BitmapFactory.decodeResource` returns null for the adaptive-icon XML
+     * (`mipmap-anydpi-v26/ic_launcher.xml`) every production flavor ships.
      *
-     * Sized at 256×256 px: bigger than the typical lock-screen large-icon
-     * slot (192 dp ≈ 384 px on xxhdpi, but the system downscales fine) and
-     * still small enough that the encoded PNG comes in under ~50 KB, which
-     * keeps the [MediaMetadata] cheap to ship across IPC.
+     * 256 px square keeps the encoded PNG under ~50 KB, so the [MediaMetadata]
+     * stays cheap to ship across IPC, and the system downscales it to whatever
+     * the lock-screen large-icon slot needs.
      */
     private fun decodeAppIconArtwork(): ByteArray? {
         return try {
@@ -618,28 +595,35 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                     baos.toByteArray()
                 }
             } finally {
-                // Always recycle, even if compress() throws — long-running
+                // Always recycle, even if compress() throws; long-running
                 // services accumulate native bitmap memory otherwise.
                 bitmap.recycle()
             }
         } catch (e: Exception) {
-            // Failing to decode artwork should NOT break audio — fall back to
-            // a metadata-only notification (title + artist).
+            // Failing to decode artwork must not break audio. Fall back to a
+            // metadata-only notification.
             AppLog.w(TAG, "Failed to decode launcher icon artwork: ${e.message}")
             null
         }
     }
 
     /**
-     * Appends [message] to [PlaybackState.logs] with the current wall-clock
-     * time. Passed to [BibleAudioPlayer] as its `onLogEvent` callback, so this
-     * fires from both HTTP connection-state events and player state
-     * transitions — always on the main thread, same as every other
-     * `_playbackState` mutation.
+     * Records a UI-originated event (a button press on the bar, a bar state
+     * transition) into the same log as the HTTP and player events, so the log
+     * sheet reads as one chronological account. Called by [AudioBarController].
      */
-    private fun appendLog(message: String) {
+    fun logUiEvent(message: AudioLogMessage) = appendLog(message)
+
+    /**
+     * Resolves [message] against this service's resources and appends it to
+     * [PlaybackState.logs]. Also serves as [BibleAudioPlayer]'s `onLogEvent`
+     * callback, so HTTP connection-state and player-state events land here too,
+     * always on the main thread like every other `_playbackState` mutation.
+     */
+    private fun appendLog(message: AudioLogMessage) {
+        val entry = AudioLogEntry(System.currentTimeMillis(), message.resolve(this))
         _playbackState.update {
-            it.copy(logs = (it.logs + AudioLogEntry(System.currentTimeMillis(), message)).takeLast(MAX_LOG_ENTRIES))
+            it.copy(logs = (it.logs + entry).takeLast(MAX_LOG_ENTRIES))
         }
     }
 

@@ -3,9 +3,7 @@ package yuku.alkitab.base.audio.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,10 +27,16 @@ private val LOG_TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS"
 
 /**
  * Full timestamped log behind the audio bar's status line: every HTTP
- * connection-state transition and player state transition recorded for the
- * chapter currently (or most recently) loading — see [AudioLogEntry] and
- * [yuku.alkitab.base.audio.PlaybackState.logs]. Opened by tapping the status
- * line, which only ever surfaces the single latest entry.
+ * connection-state transition, player state transition, and user interaction
+ * recorded for the chapter currently (or most recently) loading. See
+ * [AudioLogEntry] and [yuku.alkitab.base.audio.PlaybackState.logs]. Opened by
+ * tapping the status line, which only ever surfaces the single latest entry.
+ *
+ * The sheet opens partially expanded and can be dragged out to full screen: a
+ * stuck load can accumulate hundreds of entries, and diagnosing one means
+ * reading a long run of them at once. The log list therefore takes the sheet's
+ * remaining height rather than a fixed cap, so dragging up actually reveals
+ * more rows.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +44,7 @@ fun AudioLogBottomSheet(
     logs: List<AudioLogEntry>,
     onDismiss: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
@@ -50,11 +54,6 @@ fun AudioLogBottomSheet(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            Text(
-                text = stringResource(R.string.audio_bar_log_sheet_title),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp),
-            )
             if (logs.isEmpty()) {
                 Text(
                     text = stringResource(R.string.audio_bar_log_sheet_empty),
@@ -63,7 +62,7 @@ fun AudioLogBottomSheet(
                     modifier = Modifier.padding(bottom = 16.dp),
                 )
             } else {
-                LazyColumn(modifier = Modifier.heightIn(max = 420.dp)) {
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
                     items(logs) { entry -> AudioLogEntryRow(entry) }
                 }
             }
@@ -71,6 +70,13 @@ fun AudioLogBottomSheet(
     }
 }
 
+/**
+ * The timestamp column takes its intrinsic width. [LOG_TIMESTAMP_FORMATTER]
+ * is fixed-width and the font is monospace, so every row's timestamp measures
+ * identically and the message column lines up anyway; a hard-coded dp width
+ * would instead clip or wrap the timestamp under a wider locale digit or a
+ * font change.
+ */
 @Composable
 private fun AudioLogEntryRow(entry: AudioLogEntry) {
     Row(
@@ -85,7 +91,7 @@ private fun AudioLogEntryRow(entry: AudioLogEntry) {
             color = LocalContentColor.current.copy(alpha = 0.6f),
             maxLines = 1,
             softWrap = false,
-            modifier = Modifier.width(96.dp),
+            modifier = Modifier.padding(end = 8.dp),
         )
         Text(
             text = entry.message,
