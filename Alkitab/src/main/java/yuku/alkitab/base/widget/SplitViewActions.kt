@@ -25,4 +25,13 @@ interface SplitViewActions {
 
     /** Replace split-1's data model — used to clear the pane when the split version can't display the current book. */
     fun setSplit1DataModel(model: VersesDataModel)
+
+    /**
+     * The set of versions on screen changed, so anything keyed on it has to be
+     * re-resolved: audio-set availability for the new version, the audio bar's
+     * recording chooser, and the toolbar menu. Opening, closing, or swapping
+     * the split version does not touch the globally active version, so it
+     * raises no `activeVersionChanged` event for those to hang off.
+     */
+    fun onVisibleVersionsChanged()
 }

@@ -193,7 +193,7 @@ class ComposeThemeSnapshotTest {
                     logs = emptyList(),
                     showLogSheet = false,
                     playingVersionId = "preset/in-tb",
-                    setTitle = "Alkitab Suara",
+                    canChooseSet = true,
                     pickerOptions = null,
                     showSpeedSheet = false,
                     setGroups = null,

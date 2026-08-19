@@ -398,6 +398,7 @@
     <string name="audio_bar_next_verse">下一節</string>
     <string name="audio_bar_pause">暫停</string>
     <string name="audio_bar_pick_source_title">播放音訊來源</string>
+    <string name="audio_bar_select_audio">選擇音訊</string>
     <string name="audio_bar_play">播放</string>
     <string name="audio_bar_prev_verse">上一節</string>
     <string name="audio_bar_speed_format">%1$s×</string>

@@ -248,6 +248,7 @@ class SplitViewManager(
         closeSplitDisplay()
 
         configureTextAppearancePanelForSplitVersion()
+        actions.onVisibleVersionsChanged()
     }
 
     /**
@@ -303,6 +304,7 @@ class SplitViewManager(
             host.splitHandleButton.setLabel2("${version.initials} \u25bc")
 
             configureTextAppearancePanelForSplitVersion()
+            actions.onVisibleVersionsChanged()
 
             return true
         } catch (e: Throwable) { // so we don't crash on the beginning of the app

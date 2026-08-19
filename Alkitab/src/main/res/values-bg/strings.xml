@@ -400,6 +400,7 @@
     <string name="audio_bar_next_verse">Следващ стих</string>
     <string name="audio_bar_pause">Пауза</string>
     <string name="audio_bar_pick_source_title">Възпроизведи аудио от</string>
+    <string name="audio_bar_select_audio">Изберете аудио</string>
     <string name="audio_bar_play">Възпроизведи</string>
     <string name="audio_bar_prev_verse">Предишен стих</string>
     <string name="audio_bar_speed_format">%1$s×</string>

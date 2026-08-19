@@ -401,6 +401,7 @@
     <string name="audio_bar_next_verse">Наступний вірш</string>
     <string name="audio_bar_pause">Пауза</string>
     <string name="audio_bar_pick_source_title">Відтворити аудіо з</string>
+    <string name="audio_bar_select_audio">Вибрати аудіо</string>
     <string name="audio_bar_play">Відтворити</string>
     <string name="audio_bar_prev_verse">Попередній вірш</string>
     <string name="audio_bar_speed_format">%1$s×</string>

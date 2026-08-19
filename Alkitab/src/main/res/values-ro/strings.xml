@@ -405,6 +405,7 @@
     <string name="audio_bar_next_verse">Versetul următor</string>
     <string name="audio_bar_pause">Pauză</string>
     <string name="audio_bar_pick_source_title">Redă audio din</string>
+    <string name="audio_bar_select_audio">Selectați audio</string>
     <string name="audio_bar_play">Redă</string>
     <string name="audio_bar_prev_verse">Versetul precedent</string>
     <string name="audio_bar_speed_format">%1$s×</string>

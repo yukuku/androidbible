@@ -364,6 +364,7 @@
     <string name="audio_bar_next_verse">Következő versszak</string>
     <string name="audio_bar_pause">Szünet</string>
     <string name="audio_bar_pick_source_title">Hang lejátszása innen</string>
+    <string name="audio_bar_select_audio">Hang kiválasztása</string>
     <string name="audio_bar_play">Lejátszás</string>
     <string name="audio_bar_prev_verse">Előző versszak</string>
     <string name="audio_bar_speed_format">%1$s×</string>

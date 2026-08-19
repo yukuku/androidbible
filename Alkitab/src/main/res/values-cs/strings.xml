@@ -401,6 +401,7 @@
     <string name="audio_bar_next_verse">Následující verš</string>
     <string name="audio_bar_pause">Pozastavit</string>
     <string name="audio_bar_pick_source_title">Přehrát zvuk z</string>
+    <string name="audio_bar_select_audio">Vybrat zvuk</string>
     <string name="audio_bar_play">Přehrát</string>
     <string name="audio_bar_prev_verse">Předchozí verš</string>
     <string name="audio_bar_speed_format">%1$s×</string>

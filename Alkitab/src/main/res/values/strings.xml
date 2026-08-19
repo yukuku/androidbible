@@ -485,6 +485,7 @@
 	<string name="audio_bar_next_verse">Next verse</string>
 	<string name="audio_bar_speed_format">%1$s×</string>
 	<string name="audio_bar_pick_source_title">Play audio from</string>
+	<string name="audio_bar_select_audio">Select audio</string>
 	<string name="audio_bar_speed_sheet_title">Playback speed</string>
 	<string name="audio_bar_set_sheet_title">Recording</string>
 	<string name="audio_bar_set_not_available_for_book">Not available for this book</string>

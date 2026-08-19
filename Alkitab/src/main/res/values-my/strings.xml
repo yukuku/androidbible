@@ -400,6 +400,7 @@
     <string name="audio_bar_next_verse">နောက်ကျမ်းပိုဒ်</string>
     <string name="audio_bar_pause">ခေတ္တရပ်ဆိုင်းရန်</string>
     <string name="audio_bar_pick_source_title">အသံဖွင့်ရန် ရင်းမြစ်</string>
+    <string name="audio_bar_select_audio">အသံရွေးရန်</string>
     <string name="audio_bar_play">ဖွင့်ရန်</string>
     <string name="audio_bar_prev_verse">ယခင်ကျမ်းပိုဒ်</string>
     <string name="audio_bar_speed_format">%1$s×</string>

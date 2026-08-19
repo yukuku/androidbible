@@ -405,6 +405,7 @@
     <string name="audio_bar_next_verse">Câu sau</string>
     <string name="audio_bar_pause">Tạm dừng</string>
     <string name="audio_bar_pick_source_title">Phát âm thanh từ</string>
+    <string name="audio_bar_select_audio">Chọn âm thanh</string>
     <string name="audio_bar_play">Phát</string>
     <string name="audio_bar_prev_verse">Câu trước</string>
     <string name="audio_bar_speed_format">%1$s×</string>

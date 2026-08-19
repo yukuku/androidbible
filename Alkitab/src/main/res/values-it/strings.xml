@@ -406,6 +406,7 @@
     <string name="audio_bar_next_verse">Versetto successivo</string>
     <string name="audio_bar_pause">Pausa</string>
     <string name="audio_bar_pick_source_title">Riproduci audio da</string>
+    <string name="audio_bar_select_audio">Seleziona audio</string>
     <string name="audio_bar_play">Riproduci</string>
     <string name="audio_bar_prev_verse">Versetto precedente</string>
     <string name="audio_bar_speed_format">%1$s×</string>

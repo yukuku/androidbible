@@ -399,6 +399,7 @@
     <string name="audio_bar_next_verse">Næste vers</string>
     <string name="audio_bar_pause">Pause</string>
     <string name="audio_bar_pick_source_title">Afspil lyd fra</string>
+    <string name="audio_bar_select_audio">Vælg lyd</string>
     <string name="audio_bar_play">Afspil</string>
     <string name="audio_bar_prev_verse">Foregående vers</string>
     <string name="audio_bar_speed_format">%1$s×</string>

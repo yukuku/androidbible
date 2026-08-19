@@ -400,6 +400,7 @@
     <string name="audio_bar_next_verse">ข้อต่อไป</string>
     <string name="audio_bar_pause">หยุดฟัง</string>
     <string name="audio_bar_pick_source_title">เล่นเสียงจาก</string>
+    <string name="audio_bar_select_audio">เลือกเสียง</string>
     <string name="audio_bar_play">ฟัง</string>
     <string name="audio_bar_prev_verse">ข้อก่อน</string>
     <string name="audio_bar_speed_format">%1$s×</string>

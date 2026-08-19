@@ -405,6 +405,7 @@
     <string name="audio_bar_next_verse">Sonraki ayet</string>
     <string name="audio_bar_pause">Durdur</string>
     <string name="audio_bar_pick_source_title">Sesi şuradan oynat</string>
+    <string name="audio_bar_select_audio">Ses seç</string>
     <string name="audio_bar_play">Oynat</string>
     <string name="audio_bar_prev_verse">Önceki ayet</string>
     <string name="audio_bar_speed_format">%1$s×</string>

@@ -399,6 +399,7 @@
     <string name="audio_bar_next_verse">Nākošais pants</string>
     <string name="audio_bar_pause">Pauze</string>
     <string name="audio_bar_pick_source_title">Atskaņot audio no</string>
+    <string name="audio_bar_select_audio">Izvēlēties audio</string>
     <string name="audio_bar_play">Atskaņot</string>
     <string name="audio_bar_prev_verse">Iepriekšējais pants</string>
     <string name="audio_bar_speed_format">%1$s×</string>

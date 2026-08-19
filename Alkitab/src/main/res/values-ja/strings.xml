@@ -400,6 +400,7 @@
     <string name="audio_bar_next_verse">次の節</string>
     <string name="audio_bar_pause">一時停止</string>
     <string name="audio_bar_pick_source_title">オーディオの再生元</string>
+    <string name="audio_bar_select_audio">オーディオを選択</string>
     <string name="audio_bar_play">再生</string>
     <string name="audio_bar_prev_verse">前の節</string>
     <string name="audio_bar_speed_format">%1$s×</string>

@@ -405,6 +405,7 @@
     <string name="audio_bar_next_verse">Próximo versículo</string>
     <string name="audio_bar_pause">Pausar</string>
     <string name="audio_bar_pick_source_title">Reproduzir áudio de</string>
+    <string name="audio_bar_select_audio">Selecionar áudio</string>
     <string name="audio_bar_play">Reproduzir</string>
     <string name="audio_bar_prev_verse">Versículo anterior</string>
     <string name="audio_bar_speed_format">%1$s×</string>

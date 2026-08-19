@@ -400,6 +400,7 @@
     <string name="audio_bar_next_verse">다음 절</string>
     <string name="audio_bar_pause">정지</string>
     <string name="audio_bar_pick_source_title">오디오 재생 소스</string>
+    <string name="audio_bar_select_audio">오디오 선택</string>
     <string name="audio_bar_play">재생</string>
     <string name="audio_bar_prev_verse">이전 절</string>
     <string name="audio_bar_speed_format">%1$s×</string>
