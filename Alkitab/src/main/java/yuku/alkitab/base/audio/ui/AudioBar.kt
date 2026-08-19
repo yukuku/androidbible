@@ -1,37 +1,41 @@
 package yuku.alkitab.base.audio.ui
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,22 +45,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToLong
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import yuku.alkitab.base.audio.AudioLogEntry
 import yuku.alkitab.base.audio.PlaybackState
 import yuku.alkitab.debug.R
-import kotlin.math.roundToLong
 
 /**
  * UI-facing snapshot consumed by [AudioBar]. The controller projects
@@ -174,6 +180,7 @@ data class AudioSetOption(
  */
 sealed interface AudioBarCommand {
     data object PlayPause : AudioBarCommand
+
     /** Fired instead of [PlayPause] while the bar is in an error state; retries the load. */
     data object Retry : AudioBarCommand
     data object PrevVerse : AudioBarCommand
@@ -189,14 +196,14 @@ sealed interface AudioBarCommand {
     data class SeekCommit(val positionMs: Long) : AudioBarCommand
     data class PickSource(val versionId: String) : AudioBarCommand
     data object CancelPicker : AudioBarCommand
+
     /** Fired by tapping the slow-load/error status line. Opens [AudioLogBottomSheet]. */
     data object OpenLogSheet : AudioBarCommand
     data object DismissLogSheet : AudioBarCommand
 }
 
 /**
- * Top-level audio bar surface. Anchored at the bottom of `IsiActivity`'s
- * [androidx.compose.ui.platform.ComposeView] host. Shown and hidden
+ * Top-level audio bar surface. Shown and hidden
  * synchronously: the controller adds and removes the Compose content on
  * session start/end, so an enter/exit transition would only delay the layout
  * reflow the activity already commits when the host view appears.
@@ -232,12 +239,7 @@ fun AudioBar(
             )
         }
         if (!state.visible) return@AudioTheme
-        // Pull the bottom system inset out of WindowInsets so the bar
-        // a) extends its background all the way under the gesture pill, and
-        // b) keeps actual controls above the inset so the slider's mm:ss
-        // labels aren't clipped. The bar's height is deliberately left
-        // unconstrained: the Material 3 Slider's thumb shadow overflows the
-        // visible track, and a fixed-height container clips it.
+
         val bottomInset = WindowInsets.safeDrawing
             .asPaddingValues()
             .calculateBottomPadding()
@@ -247,43 +249,42 @@ fun AudioBar(
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             modifier = modifier.fillMaxWidth(),
         ) {
-            // Hoisted above the orientation branch so an in-progress seek drag
-            // survives rotation (and process death, via rememberSaveable)
-            // instead of resetting to the playback position.
-            var dragValue by rememberSaveable { mutableStateOf<Float?>(null) }
-            val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-            // The status line spans the bar's full width above the controls in
-            // both orientations. Inside the transport cluster it would have to
-            // be capped narrow enough not to shove the prev/next buttons apart,
-            // ellipsizing messages with plenty of bar left over.
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 8.dp,
-                        end = 8.dp,
-                        top = 4.dp,
-                        bottom = 4.dp + bottomInset,
-                    ),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                AudioLoadStatusLine(state = state, onCommand = onCommand)
-                if (landscape) {
-                    AudioBarLandscapeRow(
-                        state = state,
-                        onCommand = onCommand,
-                        dragValue = dragValue,
-                        onDragValueChange = { dragValue = it },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                } else {
-                    AudioBarTopRow(state = state, onCommand = onCommand)
-                    AudioBarSliderRow(
-                        state = state,
-                        onCommand = onCommand,
-                        dragValue = dragValue,
-                        onDragValueChange = { dragValue = it },
-                    )
+            BoxWithConstraints {
+                var dragValue by rememberSaveable { mutableStateOf<Float?>(null) }
+                val isWide = maxWidth >= 600.dp
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 8.dp,
+                            end = 8.dp,
+                            top = 4.dp,
+                            bottom = 4.dp + bottomInset,
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    AudioLoadStatusLine(state = state, onCommand = onCommand)
+                    if (isWide) {
+                        AudioBarWideRow(
+                            state = state,
+                            onCommand = onCommand,
+                            dragValue = dragValue,
+                            onDragValueChange = { dragValue = it },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    } else {
+                        AudioBarTopRow(state = state, onCommand = onCommand)
+                        AudioBarSliderRow(
+                            state = state,
+                            onCommand = onCommand,
+                            dragValue = dragValue,
+                            onDragValueChange = { dragValue = it },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                        )
+                    }
                 }
             }
         }
@@ -295,37 +296,24 @@ private fun AudioBarTopRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
 ) {
-    // Chapter-name labels are deliberately absent: the toolbar already shows
-    // the current chapter, and on a phone they crowd out the speed indicator
-    // and force the close button to wrap.
-    //
-    // The speed chip, transport cluster, and close button take their intrinsic
-    // width and never shrink. The recording chip sits inside the left weighted
-    // slot, so however long the set title is it only ellipsizes within the
-    // leftover space instead of squeezing the transport controls. The two
-    // weighted slots get equal shares, which keeps the cluster centered and
-    // collapses to zero when the row is tight.
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SpeedButton(state = state, onCommand = onCommand)
-
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
-            SetButton(state = state, onCommand = onCommand)
+            Row {
+                SpeedButton(state = state, onCommand = onCommand)
+                SetChooserButton(onCommand = onCommand)
+            }
         }
 
         PrevVerseButton(state = state, onCommand = onCommand)
-
-        Spacer(Modifier.width(4.dp))
         PlayPauseButton(state = state, onCommand = onCommand)
-        Spacer(Modifier.width(4.dp))
-
         NextVerseButton(state = state, onCommand = onCommand)
 
-        Spacer(Modifier.weight(1f))
-
-        CloseButton(onCommand = onCommand)
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+            CloseButton(onCommand = onCommand)
+        }
     }
 }
 
@@ -361,9 +349,6 @@ private fun NextVerseButton(
     }
 }
 
-// `softWrap = false` keeps locales that render with a comma decimal (e.g.
-// "1,0×" in Indonesian) from wrapping into a stacked "1," / "0×" when the row
-// is tight.
 @Composable
 private fun SpeedButton(
     state: AudioBarUiState,
@@ -372,7 +357,6 @@ private fun SpeedButton(
     val locale = appLocale()
     TextButton(
         onClick = { onCommand(AudioBarCommand.Speed) },
-        modifier = Modifier.padding(horizontal = 4.dp),
     ) {
         Text(
             text = stringResource(R.string.audio_bar_speed_format, formatSpeedNumber(state.speed, locale)),
@@ -390,17 +374,13 @@ private fun SpeedButton(
  * within the leftover row space instead of squeezing the transport controls.
  */
 @Composable
-private fun SetButton(
-    state: AudioBarUiState,
+private fun SetChooserButton(
     onCommand: (AudioBarCommand) -> Unit,
 ) {
-    val title = state.setTitle ?: return
-    TextButton(onClick = { onCommand(AudioBarCommand.OpenSetSheet) }) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+    IconButton(onClick = { onCommand(AudioBarCommand.OpenSetSheet) }) {
+        Icon(
+            imageVector = Icons.Outlined.Face,
+            contentDescription = stringResource(R.string.audio_bar_pick_source_title),
         )
     }
 }
@@ -421,7 +401,7 @@ private fun CloseButton(
  * Small tappable status line shown above the play button while a chapter load
  * is taking unusually long, or once it has failed:
  *  - **Slow load**: preparing has held continuously for
- *    [SLOW_LOAD_STATUS_DELAY_MS] with no error yet. Shows the most recent
+ *    [SLOW_LOAD_STATUS_DELAY] with no error yet. Shows the most recent
  *    [AudioBarUiState.logs] entry, so the user sees what the HTTP layer is
  *    doing (DNS, connecting, waiting for headers) instead of a bare spinner
  *    with no explanation for the delay.
@@ -458,7 +438,7 @@ private fun AudioLoadStatusLine(
 
 /**
  * `true` only once [preparing] has been continuously true for
- * [SLOW_LOAD_STATUS_DELAY_MS]; drops back to false immediately when [preparing]
+ * [SLOW_LOAD_STATUS_DELAY]; drops back to false immediately when [preparing]
  * does. Same shape as [debouncedPreparing], at the much longer delay the status
  * line is gated on. In inspection mode the delay is skipped so previews can pin
  * the slow-load state.
@@ -469,7 +449,7 @@ private fun slowLoadStatusVisible(preparing: Boolean): Boolean {
     var show by remember { mutableStateOf(false) }
     LaunchedEffect(preparing) {
         if (preparing) {
-            delay(SLOW_LOAD_STATUS_DELAY_MS)
+            delay(SLOW_LOAD_STATUS_DELAY)
             show = true
         } else {
             show = false
@@ -478,17 +458,23 @@ private fun slowLoadStatusVisible(preparing: Boolean): Boolean {
     return show
 }
 
-private const val SLOW_LOAD_STATUS_DELAY_MS = 5_000L
+private val SLOW_LOAD_STATUS_DELAY = 5_000.milliseconds
 
 /**
  * Play/pause, with two special states sharing the slot: a progress ring while
  * preparing, and an error icon when the last load failed. Tapping the error
- * icon retries the load instead of toggling playback.
+ * icon retries the load instead of toggling playback. Long-pressing opens
+ * [AudioLogBottomSheet], the same sheet [AudioLoadStatusLine] opens on tap.
  *
  * The preparing visuals (ring plus disabled swap) are debounced by
- * [PREPARING_INDICATION_DELAY_MS], so a load that completes within the window
+ * [PREPARING_INDICATION_DELAY], so a load that completes within the window
  * never flashes the ring at all. That covers a verse skip landing in
  * already-buffered data, or a chapter served from the HTTP cache.
+ *
+ * Built from a plain [Box] with [combinedClickable] rather than
+ * [FilledIconButton]: that component only exposes a single [onClick], and
+ * layering a second gesture detector around it to catch long-press races the
+ * button's own internal one for the down event instead of sharing it.
  */
 @Composable
 private fun PlayPauseButton(
@@ -497,20 +483,38 @@ private fun PlayPauseButton(
 ) {
     val haptic = LocalHapticFeedback.current
     val showPreparing = debouncedPreparing(state.preparing)
+    val enabled = !showPreparing
+    val colors = IconButtonDefaults.filledIconButtonColors()
+    val containerColor = if (enabled) colors.containerColor else colors.disabledContainerColor
+    val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
 
     Box(contentAlignment = Alignment.Center) {
-        FilledIconButton(
-            onClick = {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onCommand(if (state.error != null) AudioBarCommand.Retry else AudioBarCommand.PlayPause)
-            },
-            enabled = !showPreparing,
-            modifier = Modifier.size(48.dp),
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(IconButtonDefaults.filledShape)
+                .background(containerColor)
+                .combinedClickable(
+                    interactionSource = null,
+                    indication = ripple(),
+                    enabled = enabled,
+                    role = Role.Button,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onCommand(if (state.error != null) AudioBarCommand.Retry else AudioBarCommand.PlayPause)
+                    },
+                    onLongClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onCommand(AudioBarCommand.OpenLogSheet)
+                    },
+                ),
+            contentAlignment = Alignment.Center,
         ) {
             if (state.error != null) {
                 Icon(
                     imageVector = Icons.Filled.ErrorOutline,
                     contentDescription = stringResource(R.string.audio_bar_error_retry),
+                    tint = contentColor,
                 )
             } else {
                 AnimatedContent(
@@ -525,11 +529,13 @@ private fun PlayPauseButton(
                         Icon(
                             painter = painterResource(R.drawable.ic_audio_pause),
                             contentDescription = stringResource(R.string.audio_bar_pause),
+                            tint = contentColor,
                         )
                     } else {
                         Icon(
                             painter = painterResource(R.drawable.ic_audio_play),
                             contentDescription = stringResource(R.string.audio_bar_play),
+                            tint = contentColor,
                         )
                     }
                 }
@@ -546,7 +552,7 @@ private fun PlayPauseButton(
 
 /**
  * `true` only once [preparing] has been continuously true for
- * [PREPARING_INDICATION_DELAY_MS]; drops back to false immediately when
+ * [PREPARING_INDICATION_DELAY]; drops back to false immediately when
  * [preparing] does. In inspection mode the delay is skipped so previews can
  * pin the preparing state.
  */
@@ -556,7 +562,7 @@ private fun debouncedPreparing(preparing: Boolean): Boolean {
     var show by remember { mutableStateOf(false) }
     LaunchedEffect(preparing) {
         if (preparing) {
-            delay(PREPARING_INDICATION_DELAY_MS)
+            delay(PREPARING_INDICATION_DELAY)
             show = true
         } else {
             show = false
@@ -565,27 +571,28 @@ private fun debouncedPreparing(preparing: Boolean): Boolean {
     return show
 }
 
-private const val PREPARING_INDICATION_DELAY_MS = 100L
+private val PREPARING_INDICATION_DELAY = 100.milliseconds
 
 @Composable
 private fun AudioBarSliderRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
     dragValue: Float?,
+    modifier: Modifier = Modifier,
     onDragValueChange: (Float?) -> Unit,
 ) {
     val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = formatMmSs(effectivePosition),
-            style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
-            modifier = Modifier.width(40.dp),
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .widthIn(min = 24.dp),
         )
 
         AudioBarSlider(
@@ -598,11 +605,11 @@ private fun AudioBarSliderRow(
 
         Text(
             text = durationLabelText(state.durationMs),
-            style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
+            style = MaterialTheme.typography.labelSmall,
             color = LocalContentColor.current.copy(alpha = 0.7f),
             modifier = Modifier
                 .padding(start = 8.dp)
-                .width(40.dp),
+                .widthIn(min = 24.dp),
         )
     }
 }
@@ -633,16 +640,8 @@ private fun AudioBarSlider(
     )
 }
 
-/**
- * Landscape variant, collapsing the bar into a single row to reclaim the
- * vertical space the two-row portrait layout costs (worse with split view).
- * The mm:ss position/duration labels are omitted here: the slider conveys
- * progress, and keeping the labels would push the control cluster into
- * wrapping. The recording chip sits in its own weighted slot so a long set
- * title ellipsizes there rather than squeezing the transport controls.
- */
 @Composable
-private fun AudioBarLandscapeRow(
+private fun AudioBarWideRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
     dragValue: Float?,
@@ -653,31 +652,30 @@ private fun AudioBarLandscapeRow(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        AudioBarSlider(
-            state = state,
-            onCommand = onCommand,
-            dragValue = dragValue,
-            onDragValueChange = onDragValueChange,
-            modifier = Modifier.weight(2f),
-        )
 
-        Spacer(Modifier.weight(1f))
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+            Row {
+                SpeedButton(state = state, onCommand = onCommand)
+                SetChooserButton(onCommand = onCommand)
+            }
+        }
 
         PrevVerseButton(state = state, onCommand = onCommand)
-
-        Spacer(Modifier.width(4.dp))
         PlayPauseButton(state = state, onCommand = onCommand)
-        Spacer(Modifier.width(4.dp))
-
         NextVerseButton(state = state, onCommand = onCommand)
 
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
-            SetButton(state = state, onCommand = onCommand)
+            Row {
+                AudioBarSliderRow(
+                    state = state,
+                    onCommand = onCommand,
+                    dragValue = dragValue,
+                    onDragValueChange = onDragValueChange,
+                    modifier = Modifier.weight(1f),
+                )
+                CloseButton(onCommand = onCommand)
+            }
         }
-
-        SpeedButton(state = state, onCommand = onCommand)
-
-        CloseButton(onCommand = onCommand)
     }
 }
 
@@ -724,28 +722,49 @@ internal fun formatMmSs(ms: Long): String {
     return "%d:%02d".format(mm, ss)
 }
 
-/**
- * Duration label text: blank while the player hasn't reported a real duration
- * (nothing loaded, or a new file still preparing), because a "0:00" there would
- * read as a measurement rather than "unknown". The position label keeps
- * rendering "0:00" in that state so the reset to the start stays visible.
- */
 internal fun durationLabelText(durationMs: Long): String =
     if (durationMs > 0L) formatMmSs(durationMs) else ""
 
 // -- Previews ------------------------------------------------------------------
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 400)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 320)
 @Composable
-private fun AudioBarPreviewPlaying() {
+private fun AudioBarPreviewNarrow() {
     AudioBar(
         state = AudioBarUiState(
             visible = true,
             isPlaying = true,
             preparing = false,
             positionMs = 42_000L,
-            durationMs = 195_000L,
+            durationMs = 9_195_000L,
             verse_1 = 7,
+            speed = 1.0f,
+            error = null,
+            timingAvailable = true,
+            logs = emptyList(),
+            showLogSheet = false,
+            playingVersionId = "preset/in-tb",
+            setTitle = "Alkitab Suara, a deliberately long recording title",
+            pickerOptions = null,
+            showSpeedSheet = false,
+            setGroups = null,
+        ),
+        onCommand = {},
+        modifier = Modifier,
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 600)
+@Composable
+private fun AudioBarPreviewWide() {
+    AudioBar(
+        state = AudioBarUiState(
+            visible = true,
+            isPlaying = true,
+            preparing = false,
+            positionMs = 142_000L,
+            durationMs = 195_000L,
+            verse_1 = 777,
             speed = 1.0f,
             error = null,
             timingAvailable = true,
@@ -789,9 +808,6 @@ private fun AudioBarPreviewPreparing() {
     )
 }
 
-// Preparing past the 5 s status-line threshold. LocalInspectionMode skips the
-// debounce delay, so `preparing = true` here pins the status line on with the
-// most recent HTTP log entry.
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 400)
 @Composable
 private fun AudioBarPreviewSlowLoad() {

@@ -23,7 +23,7 @@ import java.text.NumberFormat
 import java.util.Locale
 import yuku.alkitab.debug.R
 
-val AUDIO_SPEEDS: List<Float> = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f)
+private val AUDIO_SPEEDS = floatArrayOf(0.5f, 0.7f, 0.85f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 3.0f)
 
 fun formatSpeedNumber(speed: Float, locale: Locale): String {
     val nf = NumberFormat.getNumberInstance(locale).apply {
