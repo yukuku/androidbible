@@ -659,7 +659,7 @@ class MarkerListActivity : BaseActivity() {
                     val snippet = if (currentlyUsedFilter != null) SearchEngine.hilite(verseText, rt, hiliteColor) else SpannableStringBuilder(verseText)
                     val info = Highlights.decode(caption)
                     if (info != null) {
-                        val span = BackgroundColorSpan(Highlights.alphaMix(info.colorRgb))
+                        val span = BackgroundColorSpan(Highlights.blendOver(info.colorRgb, App.services.uiDimensions.applied().backgroundColor))
                         if (info.shouldRenderAsPartialForVerseText(verseText)) {
                             snippet.setSpan(span, info.partial!!.startOffset, info.partial!!.endOffset, 0)
                         } else {

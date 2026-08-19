@@ -39,9 +39,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -210,24 +214,24 @@ private fun HighlightSheetContent(
     val showVerseText = selectedVerseCount == 1 && verseText != null
     val verseTextString = verseText?.toString().orEmpty()
 
-    val initialSelection = remember(verseText, info) {
-        if (showVerseText && info != null && info.shouldRenderAsPartialForVerseText(verseText)) {
-            TextRange(info.partial!!.startOffset, info.partial!!.endOffset)
-        } else if (showVerseText) {
-            TextRange(0, verseTextString.length)
-        } else {
-            TextRange.Zero
+    // The range the stored highlight covers, or null when this verse has no highlight yet.
+    val existingRange = remember(verseText, info, defaultColorRgb) {
+        when {
+            !showVerseText || defaultColorRgb == -1 -> null
+            info != null && info.shouldRenderAsPartialForVerseText(verseText) ->
+                info.partial!!.startOffset to info.partial!!.endOffset
+            else -> 0 to verseTextString.length
         }
     }
-    var textFieldValue by remember {
-        mutableStateOf(TextFieldValue(verseTextString, selection = initialSelection))
-    }
 
-    fun currentRange(): Pair<Int, Int>? = if (showVerseText) {
-        val sel = textFieldValue.selection
-        sel.start to sel.end
-    } else {
-        null
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(verseTextString)) }
+
+    // Drag-selecting picks a new range. With nothing selected the sheet keeps whatever the
+    // highlight already covers, so re-coloring a partial highlight stays partial.
+    fun currentRange(): Pair<Int, Int>? = when {
+        !showVerseText -> null
+        !textFieldValue.selection.collapsed -> textFieldValue.selection.start to textFieldValue.selection.end
+        else -> existingRange ?: (0 to verseTextString.length)
     }
 
     Column(
@@ -258,6 +262,8 @@ private fun HighlightSheetContent(
             VerseTextSelectable(
                 value = textFieldValue,
                 onValueChange = { textFieldValue = it },
+                highlightColorRgb = if (defaultColorRgb == -1) null else defaultColorRgb,
+                highlightRange = existingRange,
             )
             Spacer(Modifier.height(12.dp))
         }
@@ -298,7 +304,8 @@ private fun HighlightSheetContent(
 }
 
 /**
- * Read-only verse text. Drag-select within it picks the partial-highlight range.
+ * Read-only verse text, showing the highlight the verse currently carries. Drag-select within
+ * it picks the partial-highlight range.
  *
  * It sits on the reading background so the verse reads the same here as it does
  * in [yuku.alkitab.base.IsiActivity], where the user just selected it.
@@ -307,12 +314,32 @@ private fun HighlightSheetContent(
 private fun VerseTextSelectable(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
+    highlightColorRgb: Int?,
+    highlightRange: Pair<Int, Int>?,
 ) {
     val applied = App.services.uiDimensions.applied()
+    val backgroundColor = applied.backgroundColor
+    val transformation = remember(highlightColorRgb, highlightRange, backgroundColor) {
+        if (highlightColorRgb == null || highlightRange == null) {
+            VisualTransformation.None
+        } else {
+            val blended = Color(Highlights.blendOver(highlightColorRgb, backgroundColor))
+            VisualTransformation { text ->
+                val start = minOf(highlightRange.first, highlightRange.second).coerceIn(0, text.length)
+                val end = maxOf(highlightRange.first, highlightRange.second).coerceIn(start, text.length)
+                val styled = AnnotatedString.Builder(text)
+                    .apply { addStyle(SpanStyle(background = blended), start, end) }
+                    .toAnnotatedString()
+                TransformedText(styled, OffsetMapping.Identity)
+            }
+        }
+    }
+
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
         readOnly = true,
+        visualTransformation = transformation,
         textStyle = LocalTextStyle.current.copy(
             color = Color(applied.fontColor),
             fontSize = 16.sp,
@@ -320,7 +347,7 @@ private fun VerseTextSelectable(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(6.dp))
-            .background(Color(applied.backgroundColor))
+            .background(Color(backgroundColor))
             .padding(8.dp),
     )
 }
@@ -366,12 +393,13 @@ private fun ColorSwatch(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val backgroundColor = App.services.uiDimensions.applied().backgroundColor
     Box(
         modifier = modifier
             .height(44.dp)
             .clip(RoundedCornerShape(6.dp))
-            // 0xa0 alpha matches the highlight overlay rendered on verses.
-            .background(Color(0xa0000000.toInt() or rgb))
+            .background(Color(backgroundColor))
+            .background(Color(Highlights.blendOver(rgb, backgroundColor)))
             .border(
                 width = if (selected) 3.dp else 0.5.dp,
                 color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
