@@ -24,14 +24,14 @@ The primary Bible text file format. Each `.yes` file contains one complete Bible
 
 ### Sections
 
-| Section | Content |
-|---------|---------|
-| `versionInfo` | Metadata: shortName, longName, description, locale, buildTime, book_count, hasPericopes, textEncoding |
-| `booksInfo` | Per-book metadata (names, chapter counts, verse counts) |
-| `text` | Verse text data, may be Snappy-compressed. Organized by book/chapter with offset tables for random access |
-| `xrefs` | Cross-reference entries |
-| `footnotes` | Footnote entries |
-| `pericopies` | Section headers (pericopes) with ARI positions |
+| Section       | Content                                                                                                   |
+|---------------|-----------------------------------------------------------------------------------------------------------|
+| `versionInfo` | Metadata: shortName, longName, description, locale, buildTime, book_count, hasPericopes, textEncoding     |
+| `booksInfo`   | Per-book metadata (names, chapter counts, verse counts)                                                   |
+| `text`        | Verse text data, may be Snappy-compressed. Organized by book/chapter with offset tables for random access |
+| `xrefs`       | Cross-reference entries                                                                                   |
+| `footnotes`   | Footnote entries                                                                                          |
+| `pericopies`  | Section headers (pericopes) with ARI positions                                                            |
 
 ### Text Encoding
 
@@ -60,14 +60,14 @@ The `prefix` determines all filenames. Version ID is always `"internal"` (from `
 
 ### File Inventory
 
-| File | Format | Purpose |
-|------|--------|---------|
-| `{prefix}_index_bt.bt` | Bintex | Book/chapter/verse index with byte offsets into text files |
+| File                                    | Format     | Purpose                                                      |
+|-----------------------------------------|------------|--------------------------------------------------------------|
+| `{prefix}_index_bt.bt`                  | Bintex     | Book/chapter/verse index with byte offsets into text files   |
 | `{prefix}_k01.txt` – `{prefix}_k66.txt` | UTF-8 text | Verse text, one file per book (66 books), one verse per line |
-| `{prefix}_pericope_index_bt.bt` | Bintex | ARI → offset mapping for pericope blocks |
-| `{prefix}_pericope_blocks_bt.bt` | Bintex | Pericope titles and parallel passage references |
-| `{prefix}_footnotes_bt.bt` | Bintex | Footnote entries indexed by ARIF |
-| `{prefix}_xrefs_bt.bt` | Bintex | Cross-reference entries indexed by ARIF |
+| `{prefix}_pericope_index_bt.bt`         | Bintex     | ARI → offset mapping for pericope blocks                     |
+| `{prefix}_pericope_blocks_bt.bt`        | Bintex     | Pericope titles and parallel passage references              |
+| `{prefix}_footnotes_bt.bt`              | Bintex     | Footnote entries indexed by ARIF                             |
+| `{prefix}_xrefs_bt.bt`                  | Bintex     | Cross-reference entries indexed by ARIF                      |
 
 ### Reader: `InternalReader.java`
 
@@ -152,14 +152,14 @@ Read by `XrefsSection.Reader` and `FootnotesSection.Reader`. Lookup uses unsigne
 
 ### Differences from YES2
 
-| Aspect | Internal | YES2 |
-|--------|----------|------|
-| Verse text | Plain UTF-8 text, one file per book | Binary section, optionally Snappy-compressed |
-| Index | Bintex with chapter byte offsets | Bintex section index with complex structure |
-| Reader class | `InternalReader` | `Yes2Reader` |
-| Location | `assets/internal/` (bundled in APK) | App data directory (downloaded) |
-| Registration | Hardcoded singleton via `app_config.xml` | `Version` table in SQLite |
-| Pericope format | `Yes1PericopeIndex` (v2/v3) | `Yes2PericopeIndex` (different encoding) |
+| Aspect          | Internal                                 | YES2                                         |
+|-----------------|------------------------------------------|----------------------------------------------|
+| Verse text      | Plain UTF-8 text, one file per book      | Binary section, optionally Snappy-compressed |
+| Index           | Bintex with chapter byte offsets         | Bintex section index with complex structure  |
+| Reader class    | `InternalReader`                         | `Yes2Reader`                                 |
+| Location        | `assets/internal/` (bundled in APK)      | App data directory (downloaded)              |
+| Registration    | Hardcoded singleton via `app_config.xml` | `Version` table in SQLite                    |
+| Pericope format | `Yes1PericopeIndex` (v2/v3)              | `Yes2PericopeIndex` (different encoding)     |
 
 ### Creation Tool
 
@@ -173,32 +173,32 @@ A compact binary encoding used within YES2 sections, internal Bible files, and R
 
 ### Raw Types (No Type Tag)
 
-| Function | Bytes | Encoding |
-|----------|-------|----------|
-| `readInt()` / `writeInt()` | 4 | 32-bit big-endian signed integer |
-| `readUint8()` / `writeUint8()` | 1 | 8-bit unsigned |
-| `readUint16()` / `writeUint16()` | 2 | 16-bit big-endian unsigned |
-| `readChar()` / `writeChar()` | 2 | 16-bit big-endian unsigned (Java char) |
-| `readFloat()` / `writeFloat()` | 4 | IEEE 754 single-precision, big-endian |
+| Function                         | Bytes | Encoding                               |
+|----------------------------------|-------|----------------------------------------|
+| `readInt()` / `writeInt()`       | 4     | 32-bit big-endian signed integer       |
+| `readUint8()` / `writeUint8()`   | 1     | 8-bit unsigned                         |
+| `readUint16()` / `writeUint16()` | 2     | 16-bit big-endian unsigned             |
+| `readChar()` / `writeChar()`     | 2     | 16-bit big-endian unsigned (Java char) |
+| `readFloat()` / `writeFloat()`   | 4     | IEEE 754 single-precision, big-endian  |
 
 ### Variable-Length Unsigned Integer (VarUint)
 
 Encodes non-negative integers with 1-5 bytes. High bits of the first byte indicate the encoding length:
 
-| Range | First Byte Pattern | Total Bytes |
-|-------|--------------------|-------------|
-| 0 – 127 | `0xxxxxxx` | 1 |
-| 128 – 16,383 | `10xxxxxx` + 1 byte | 2 |
-| 16,384 – 2,097,151 | `110xxxxx` + 2 bytes | 3 |
-| 2,097,152 – 268,435,455 | `1110xxxx` + 3 bytes | 4 |
-| 268,435,456 – 2,147,483,647 | `11110000` + 4 bytes | 5 |
+| Range                       | First Byte Pattern   | Total Bytes |
+|-----------------------------|----------------------|-------------|
+| 0 – 127                     | `0xxxxxxx`           | 1           |
+| 128 – 16,383                | `10xxxxxx` + 1 byte  | 2           |
+| 16,384 – 2,097,151          | `110xxxxx` + 2 bytes | 3           |
+| 2,097,152 – 268,435,455     | `1110xxxx` + 3 bytes | 4           |
+| 268,435,456 – 2,147,483,647 | `11110000` + 4 bytes | 5           |
 
 ### String Types (Raw, No Type Tag)
 
-| Function | Format |
-|----------|--------|
-| `readShortString()` | LEN (1 byte) + LEN × 16-bit chars. Max 255 chars. |
-| `writeLongString()` | LEN (4 bytes) + LEN × 16-bit chars. |
+| Function                                 | Format                                                                                                                                                                                                                                                                    |
+|------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `readShortString()`                      | LEN (1 byte) + LEN × 16-bit chars. Max 255 chars.                                                                                                                                                                                                                         |
+| `writeLongString()`                      | LEN (4 bytes) + LEN × 16-bit chars.                                                                                                                                                                                                                                       |
 | `readAutoString()` / `writeAutoString()` | KIND (1 byte) + LEN + data. KIND: `0x01` = 8-bit short (LEN=1 byte), `0x02` = 16-bit short (LEN=1 byte), `0x11` = 8-bit long (LEN=4 bytes), `0x12` = 16-bit long (LEN=4 bytes). 8-bit strings store 1 byte/char (ISO-8859-1); 16-bit strings store 2 bytes/char (UTF-16). |
 
 ### VALUE Types (Self-Describing with Type Tag)
@@ -207,53 +207,53 @@ Each value is prefixed by a type tag byte that indicates the encoding.
 
 **VALUE Integer:**
 
-| Tag | Encoding |
-|-----|----------|
-| `0x01`–`0x07` | Immediate: the tag byte itself is the value (1–7) |
-| `0x0e` | Value 0 |
-| `0x0f` | Value -1 |
-| `0x10` + 1 byte | Unsigned 8-bit |
-| `0x11` + 1 byte | Negative 8-bit (bitwise NOT of stored byte) |
-| `0x20` + 2 bytes | Unsigned 16-bit (big-endian) |
-| `0x21` + 2 bytes | Negative 16-bit |
-| `0x30` + 3 bytes | Unsigned 24-bit |
-| `0x31` + 3 bytes | Negative 24-bit |
-| `0x40` + 4 bytes | Unsigned 32-bit |
-| `0x41` + 4 bytes | Negative 32-bit |
+| Tag              | Encoding                                          |
+|------------------|---------------------------------------------------|
+| `0x01`–`0x07`    | Immediate: the tag byte itself is the value (1–7) |
+| `0x0e`           | Value 0                                           |
+| `0x0f`           | Value -1                                          |
+| `0x10` + 1 byte  | Unsigned 8-bit                                    |
+| `0x11` + 1 byte  | Negative 8-bit (bitwise NOT of stored byte)       |
+| `0x20` + 2 bytes | Unsigned 16-bit (big-endian)                      |
+| `0x21` + 2 bytes | Negative 16-bit                                   |
+| `0x30` + 3 bytes | Unsigned 24-bit                                   |
+| `0x31` + 3 bytes | Negative 24-bit                                   |
+| `0x40` + 4 bytes | Unsigned 32-bit                                   |
+| `0x41` + 4 bytes | Negative 32-bit                                   |
 
 **VALUE String:**
 
-| Tag | Encoding |
-|-----|----------|
-| `0x0c` | null |
-| `0x0d` | Empty string |
-| `0x51`–`0x5f` | 8-bit string, length = tag & 0x0f (1–15), followed by that many bytes |
-| `0x61`–`0x6f` | 16-bit string, length = tag & 0x0f (1–15), followed by length×2 bytes |
-| `0x70` + 1-byte LEN | 8-bit string, length < 256 |
-| `0x71` + 1-byte LEN | 16-bit string, length < 256 |
-| `0x72` + 4-byte LEN | 8-bit string, any length |
-| `0x73` + 4-byte LEN | 16-bit string, any length |
+| Tag                 | Encoding                                                              |
+|---------------------|-----------------------------------------------------------------------|
+| `0x0c`              | null                                                                  |
+| `0x0d`              | Empty string                                                          |
+| `0x51`–`0x5f`       | 8-bit string, length = tag & 0x0f (1–15), followed by that many bytes |
+| `0x61`–`0x6f`       | 16-bit string, length = tag & 0x0f (1–15), followed by length×2 bytes |
+| `0x70` + 1-byte LEN | 8-bit string, length < 256                                            |
+| `0x71` + 1-byte LEN | 16-bit string, length < 256                                           |
+| `0x72` + 4-byte LEN | 8-bit string, any length                                              |
+| `0x73` + 4-byte LEN | 16-bit string, any length                                             |
 
 Writer automatically chooses 8-bit encoding if all chars are ≤ 0xFF, 16-bit otherwise.
 
 **VALUE Int Array:**
 
-| Tag | Encoding |
-|-----|----------|
-| `0xc0` + 1-byte LEN | uint8 array, ≤ 255 elements |
+| Tag                 | Encoding                     |
+|---------------------|------------------------------|
+| `0xc0` + 1-byte LEN | uint8 array, ≤ 255 elements  |
 | `0xc1` + 1-byte LEN | uint16 array, ≤ 255 elements |
-| `0xc4` + 1-byte LEN | int32 array, ≤ 255 elements |
-| `0xc8` + 4-byte LEN | uint8 array, any length |
-| `0xc9` + 4-byte LEN | uint16 array, any length |
-| `0xcc` + 4-byte LEN | int32 array, any length |
+| `0xc4` + 1-byte LEN | int32 array, ≤ 255 elements  |
+| `0xc8` + 4-byte LEN | uint8 array, any length      |
+| `0xc9` + 4-byte LEN | uint16 array, any length     |
+| `0xcc` + 4-byte LEN | int32 array, any length      |
 
 Writer automatically picks the smallest element size that fits all values.
 
 **VALUE Simple Map:**
 
-| Tag | Encoding |
-|-----|----------|
-| `0x90` | Empty map |
+| Tag                   | Encoding                                                                                                                                                          |
+|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `0x90`                | Empty map                                                                                                                                                         |
 | `0x91` + 1-byte COUNT | Map with COUNT entries. Each entry: 1-byte key length + key bytes (8-bit chars) + VALUE (int, string, array, or nested map). Max 255 entries, keys max 255 chars. |
 
 ### Files

@@ -36,7 +36,7 @@ See the [Developer page](https://alkitab.app/developer) for more information.
 Building
 --------
 
-Requirements: JDK 17 (Zulu recommended) and the Android SDK, including the NDK — the `Snappy` module contains native C++. The SDK and NDK versions are pinned in `gradle/libs.versions.toml`.
+Requirements: JDK 21 (Zulu recommended) and the Android SDK, including the NDK — the `Snappy` module contains native C++. The SDK and NDK versions are pinned in `gradle/libs.versions.toml`.
 
 The main app module is `:Alkitab`. For local development, the supported open-source build is the `plain` flavor.
 

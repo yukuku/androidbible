@@ -20,19 +20,19 @@ YES2 binary file
 
 Verse text uses inline formatting codes prefixed with `@`:
 
-| Code | Meaning |
-|------|---------|
-| `@@` | Marks verse as having formatting (must be first) |
-| `@0` | Paragraph level 0 (no indent) |
-| `@1`–`@4` | Paragraph indent levels 1–4 |
-| `@^` | Continuation indent |
-| `@6` | Red letter start (Jesus' words) |
-| `@5` | Red letter end |
-| `@9` | Italic start |
-| `@7` | Italic end |
-| `@8` | Line break / blank line |
+| Code      | Meaning                                          |
+|-----------|--------------------------------------------------|
+| `@@`      | Marks verse as having formatting (must be first) |
+| `@0`      | Paragraph level 0 (no indent)                    |
+| `@1`–`@4` | Paragraph indent levels 1–4                      |
+| `@^`      | Continuation indent                              |
+| `@6`      | Red letter start (Jesus' words)                  |
+| `@5`      | Red letter end                                   |
+| `@9`      | Italic start                                     |
+| `@7`      | Italic end                                       |
+| `@8`      | Line break / blank line                          |
 | `@<tag@>` | Start of special inline element (xref, footnote) |
-| `@/` | End of special inline element |
+| `@/`      | End of special inline element                    |
 
 ## VerseRenderer
 
