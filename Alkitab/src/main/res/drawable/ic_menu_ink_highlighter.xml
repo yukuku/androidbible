@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The icons alongside this one in the action-mode overflow are 40dp bitmaps whose glyph is
+	inset to 24dp. The popup row sizes its icon slot to the drawable's intrinsic width, so a bare
+	24dp vector would pull both the glyph and the label 16dp left of its neighbours. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+	android:drawable="@drawable/ic_ink_highlighter"
+	android:inset="8dp" />

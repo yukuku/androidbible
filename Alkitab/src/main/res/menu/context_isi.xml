@@ -79,7 +79,7 @@
 				android:title="@string/tulis_catatan" />
 			<item
 				android:id="@+id/menuAddHighlight"
-				android:icon="@drawable/ic_menu_add_highlight"
+				android:icon="@drawable/ic_menu_ink_highlighter"
 				android:title="@string/highlight_stabilo" />
 		</menu>
 	</item>

@@ -235,7 +235,7 @@ object VerseRendererCompose {
 
     private fun applyHighlight(text: AnnotatedString, highlightInfo: Highlights.Info?, startPosAfterVerseNumber: Int): AnnotatedString {
         if (highlightInfo == null) return text
-        val background = Color(Highlights.alphaMix(highlightInfo.colorRgb))
+        val background = Color(Highlights.blendOver(highlightInfo.colorRgb, App.services.uiDimensions.applied().backgroundColor))
         val builder = AnnotatedString.Builder(text)
         val verseBody = text.subSequence(startPosAfterVerseNumber, text.length)
         if (highlightInfo.shouldRenderAsPartialForVerseText(verseBody.text)) {

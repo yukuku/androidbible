@@ -53,6 +53,7 @@ class VerseRendererTest {
 
     private val FONT_RED = 0xff112233.toInt()
     private val VERSE_NUMBER_COLOR = 0xff445566.toInt()
+    private val BACKGROUND = 0xfff0f0f0.toInt()
     private val INDENT_FIRST = 10
     private val INDENT_REST = 20
     private val INDENT_1 = 30
@@ -72,6 +73,7 @@ class VerseRendererTest {
         dims = S.CalculatedDimensions().apply {
             fontRedColor = FONT_RED
             verseNumberColor = VERSE_NUMBER_COLOR
+            backgroundColor = BACKGROUND
             indentParagraphFirst = INDENT_FIRST
             indentParagraphRest = INDENT_REST
             indentSpacing1 = INDENT_1
@@ -504,7 +506,7 @@ class VerseRendererTest {
         // The background must start after "1  " (the verse-number prefix), not at 0.
         assertEquals(3, sb.getSpanStart(bgs[0]))
         assertEquals(sb.length, sb.getSpanEnd(bgs[0]))
-        assertEquals(Highlights.alphaMix(0x00ff00), bgs[0].backgroundColor)
+        assertEquals(Highlights.blendOver(0x00ff00, BACKGROUND), bgs[0].backgroundColor)
     }
 
     @Test
