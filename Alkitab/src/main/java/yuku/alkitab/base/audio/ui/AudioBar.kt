@@ -23,9 +23,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -80,8 +81,8 @@ data class AudioBarUiState(
     val showLogSheet: Boolean,
     /** Non-null scopes the verse highlight to the pane playing this version. */
     val playingVersionId: String?,
-    /** Compact recording-title button next to the speed control; null hides it. */
-    val setTitle: String?,
+    /** False when the visible versions offer at most one recording, which hides the chooser. */
+    val canChooseSet: Boolean,
     /** When non-null, the source-picker dialog is shown over the bar. */
     val pickerOptions: List<AudioSourceOption>?,
     /** When true, the playback-speed bottom sheet is shown over the bar. */
@@ -102,7 +103,7 @@ data class AudioBarUiState(
             logs = emptyList(),
             showLogSheet = false,
             playingVersionId = null,
-            setTitle = null,
+            canChooseSet = false,
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
@@ -254,7 +255,9 @@ private fun AudioBarTopRow(
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
             Row {
                 SpeedButton(state = state, onCommand = onCommand)
-                SetChooserButton(onCommand = onCommand)
+                if (state.canChooseSet) {
+                    SetChooserButton(onCommand = onCommand)
+                }
             }
         }
 
@@ -308,6 +311,7 @@ private fun SpeedButton(
     val locale = appLocale()
     TextButton(
         onClick = { onCommand(AudioBarCommand.Speed) },
+        colors = ButtonDefaults.textButtonColors(contentColor = LocalContentColor.current),
     ) {
         Text(
             text = stringResource(R.string.audio_bar_speed_format, formatSpeedNumber(state.speed, locale)),
@@ -324,7 +328,7 @@ private fun SetChooserButton(
 ) {
     IconButton(onClick = { onCommand(AudioBarCommand.OpenSetSheet) }) {
         Icon(
-            imageVector = Icons.Outlined.Face,
+            imageVector = Icons.AutoMirrored.Filled.List,
             contentDescription = stringResource(R.string.audio_bar_select_audio),
         )
     }
@@ -560,7 +564,9 @@ private fun AudioBarWideRow(
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
             Row {
                 SpeedButton(state = state, onCommand = onCommand)
-                SetChooserButton(onCommand = onCommand)
+                if (state.canChooseSet) {
+                    SetChooserButton(onCommand = onCommand)
+                }
             }
         }
 
@@ -645,7 +651,7 @@ private fun AudioBarPreviewNarrow() {
             logs = emptyList(),
             showLogSheet = false,
             playingVersionId = "preset/in-tb",
-            setTitle = "Alkitab Suara, a deliberately long recording title",
+            canChooseSet = true,
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
@@ -672,7 +678,7 @@ private fun AudioBarPreviewWide() {
             logs = emptyList(),
             showLogSheet = false,
             playingVersionId = "preset/in-tb",
-            setTitle = "Alkitab Suara, a deliberately long recording title",
+            canChooseSet = true,
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
@@ -699,7 +705,7 @@ private fun AudioBarPreviewPreparing() {
             logs = emptyList(),
             showLogSheet = false,
             playingVersionId = "preset/in-tb",
-            setTitle = null,
+            canChooseSet = false,
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
@@ -732,7 +738,7 @@ private fun AudioBarPreviewSlowLoad() {
             ),
             showLogSheet = false,
             playingVersionId = "preset/in-tb",
-            setTitle = null,
+            canChooseSet = false,
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
@@ -765,7 +771,7 @@ private fun AudioBarPreviewDarkError() {
             ),
             showLogSheet = false,
             playingVersionId = "preset/in-tb",
-            setTitle = null,
+            canChooseSet = false,
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
@@ -792,7 +798,7 @@ private fun AudioBarPreviewWithPicker() {
             logs = emptyList(),
             showLogSheet = false,
             playingVersionId = null,
-            setTitle = null,
+            canChooseSet = false,
             pickerOptions = listOf(
                 AudioSourceOption(versionId = "preset/in-tb", shortName = "TB", audioId = "alkitabsuara", title = "Alkitab Suara"),
                 AudioSourceOption(versionId = "preset/en-kjv", shortName = "KJV", audioId = "wordproject", title = "wordproject"),

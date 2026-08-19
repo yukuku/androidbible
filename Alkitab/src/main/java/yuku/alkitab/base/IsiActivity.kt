@@ -865,6 +865,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         lifecycleScope.launch {
             versionIds.forEach { AudioSetsRepository.setsFor(it) }
             invalidateOptionsMenu()
+            audioBinder.refreshSetChoices()
         }
     }
 

@@ -140,6 +140,13 @@ class AudioBarController(
     private var selectedSource: AudioSourceOption? = null
 
     /**
+     * Whether the recording sheet currently on screen was opened by the
+     * play-from-verse flow, which lists only recordings with timing. Kept so
+     * [refreshSetChoices] rebuilds the open sheet in the mode it was opened in.
+     */
+    private var setSheetTimedOnly = false
+
+    /**
      * 1-based verse the next chapter load should seek to, or `0` for the
      * chapter start. Set by [showFromVerse] (and by [pickSet] when switching
      * recordings mid-verse) and cleared by [dispatchLoad] only once a request
@@ -269,7 +276,9 @@ class AudioBarController(
         val source = selectedSource
         if (source != null && source.versionId !in host.audioVisibleVersionIds()) {
             hide()
+            return
         }
+        refreshSetChoices()
     }
 
     /**
@@ -381,6 +390,7 @@ class AudioBarController(
         }
         requestedVisible = true
         ensureComposeContent()
+        setSheetTimedOnly = true
         _uiState.update { it.copy(setGroups = groups) }
         host.audioBarVisibilityChanged(true)
     }
@@ -419,7 +429,13 @@ class AudioBarController(
         ensureComposeContent()
         ensureBound()
         _uiState.update {
-            it.copy(visible = true, preparing = service == null, pickerOptions = null, setGroups = null)
+            it.copy(
+                visible = true,
+                preparing = service == null,
+                pickerOptions = null,
+                setGroups = null,
+                canChooseSet = canChooseSet(host),
+            )
         }
         host.audioBarVisibilityChanged(true)
         val request = buildRequest(host) ?: return
@@ -567,10 +583,28 @@ class AudioBarController(
      */
     private fun selectedSet(): AudioSet? = selectedSource?.let(::resolvedSet)
 
-    /** Set list of the selected source's version, or null while unresolved. */
-    private fun setsOfSelectedVersion(): List<AudioSet>? {
-        val source = selectedSource ?: return null
-        return AudioSetsRepository.cachedSetsFor(source.versionId)?.sets
+    private fun canChooseSet(host: Host): Boolean = canChooseSet(
+        versionIds = host.audioVisibleVersionIds(),
+        setsOf = { versionId -> AudioSetsRepository.cachedSetsFor(versionId)?.sets },
+    )
+
+    /**
+     * Recomputes the parts of the UI state derived from which versions are on
+     * screen and what the set cache holds: the chooser button's visibility, and
+     * the sheet's contents while it is open. Neither is driven by
+     * [PlaybackState], so without this they would sit stale until the next
+     * position tick, and indefinitely while paused.
+     */
+    fun refreshSetChoices() {
+        val host = this.host ?: return
+        _uiState.update { current ->
+            current.copy(
+                canChooseSet = canChooseSet(host),
+                setGroups = current.setGroups?.let { previous ->
+                    buildSetGroups(host, timedOnly = setSheetTimedOnly).ifEmpty { previous }
+                },
+            )
+        }
     }
 
     /**
@@ -610,6 +644,7 @@ class AudioBarController(
             AudioBarCommand.OpenSetSheet -> {
                 val groups = buildSetGroups(host, timedOnly = false)
                 if (groups.isEmpty()) return
+                setSheetTimedOnly = false
                 _uiState.update { it.copy(setGroups = groups) }
             }
             AudioBarCommand.DismissSetSheet -> {
@@ -812,16 +847,6 @@ class AudioBarController(
             ?: selectedSource?.versionId
 
         val selectedSet = selectedSet()
-        // The recording chip appears whenever the sheet has a choice to offer:
-        // several recordings of the source version, or (split view) a second
-        // version with audio to move the source to.
-        val audioCapableVersions = host?.audioVisibleVersionIds()?.distinct()
-            ?.count { AudioSetsRepository.cachedSetsFor(it)?.sets?.isNotEmpty() == true } ?: 0
-        val setTitle = when {
-            selectedSet == null -> null
-            (setsOfSelectedVersion()?.size ?: 0) > 1 || audioCapableVersions > 1 -> selectedSet.title
-            else -> null
-        }
 
         val effectivePreparing = state.preparing || isPending
         val previousUiState = _uiState.value
@@ -842,7 +867,7 @@ class AudioBarController(
                     currentTimingAvailable = current.timingAvailable,
                 ),
                 playingVersionId = playingVersionId,
-                setTitle = setTitle,
+                canChooseSet = host != null && canChooseSet(host),
             )
         }
         // Logging re-enters here via the service's state flow, but the
@@ -974,6 +999,17 @@ class AudioBarController(
                 },
             )
         }
+
+        /**
+         * Whether the recording chooser has more than one recording to offer,
+         * counted across every visible version. In split view a single
+         * recording on each side is still a choice, since picking the other
+         * side's moves audio across the splits. Pure for unit testing.
+         */
+        internal fun canChooseSet(
+            versionIds: List<String>,
+            setsOf: (versionId: String) -> List<AudioSet>?,
+        ): Boolean = versionIds.distinct().sumOf { setsOf(it)?.size ?: 0 } > 1
 
         /**
          * Whether any listed recording can actually serve the book being read.
