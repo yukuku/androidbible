@@ -434,6 +434,7 @@
     <string name="audio_bar_prev_verse">Ayat sebelumnya</string>
     <string name="audio_bar_next_verse">Ayat berikutnya</string>
     <string name="audio_bar_pick_source_title">Putar audio dari</string>
+    <string name="audio_bar_select_audio">Pilih audio</string>
     <string name="audio_bar_speed_sheet_title">Kecepatan putar</string>
     <string name="audio_bar_set_sheet_title">Rekaman</string>
     <string name="audio_bar_set_not_available_for_book">Tidak tersedia untuk kitab ini</string>

@@ -399,6 +399,7 @@
     <string name="audio_bar_next_verse">Susunod na taludtod</string>
     <string name="audio_bar_pause">Itigil sandali</string>
     <string name="audio_bar_pick_source_title">Patugtugin ang audio mula sa</string>
+    <string name="audio_bar_select_audio">Pumili ng audio</string>
     <string name="audio_bar_play">Patugtugin</string>
     <string name="audio_bar_prev_verse">Nakaraang taludtod</string>
     <string name="audio_bar_speed_format">%1$s×</string>

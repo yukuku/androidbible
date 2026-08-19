@@ -399,6 +399,7 @@
     <string name="audio_bar_next_verse">Volgende vers</string>
     <string name="audio_bar_pause">Wag</string>
     <string name="audio_bar_pick_source_title">Speel oudio vanaf</string>
+    <string name="audio_bar_select_audio">Kies oudio</string>
     <string name="audio_bar_play">Speel</string>
     <string name="audio_bar_prev_verse">Vorige vers</string>
     <string name="audio_bar_speed_format">%1$s×</string>

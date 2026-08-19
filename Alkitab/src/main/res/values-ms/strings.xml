@@ -399,6 +399,7 @@
     <string name="audio_bar_next_verse">Ayat seterusnya</string>
     <string name="audio_bar_pause">Jeda</string>
     <string name="audio_bar_pick_source_title">Mainkan audio dari</string>
+    <string name="audio_bar_select_audio">Pilih audio</string>
     <string name="audio_bar_play">Main</string>
     <string name="audio_bar_prev_verse">Ayat sebelumnya</string>
     <string name="audio_bar_speed_format">%1$s×</string>

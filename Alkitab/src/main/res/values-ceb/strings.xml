@@ -398,6 +398,7 @@
     <string name="audio_bar_next_verse">Sunod na bersikulo</string>
     <string name="audio_bar_pause">Hunong</string>
     <string name="audio_bar_pick_source_title">Ipatugtog ang audio gikan sa</string>
+    <string name="audio_bar_select_audio">Pilia ang audio</string>
     <string name="audio_bar_play">Patugtog</string>
     <string name="audio_bar_prev_verse">Miaging bersikulo</string>
     <string name="audio_bar_speed_format">%1$s×</string>

@@ -64,19 +64,6 @@ import yuku.alkitab.base.audio.AudioLogEntry
 import yuku.alkitab.base.audio.PlaybackState
 import yuku.alkitab.debug.R
 
-/**
- * UI-facing snapshot consumed by [AudioBar]. The controller projects
- * [PlaybackState] plus chapter-navigation context into this and pushes it
- * through a `StateFlow`. Keep the data class flat and primitive-typed: the
- * Compose recomposition cost is proportional to its hash.
- *
- *  - [timingAvailable]: when false, the prev/next-verse buttons grey out.
- *  - [error]: non-null swaps the play button for an error icon; tapping it
- *    retries the load.
- *  - [logs]: timestamped HTTP/player-state log for the chapter currently
- *    loading (see [yuku.alkitab.base.audio.PlaybackState.logs]). Its last entry
- *    drives the status line's text; tapping the line opens the whole list.
- */
 data class AudioBarUiState(
     val visible: Boolean,
     val isPlaying: Boolean,
@@ -89,24 +76,14 @@ data class AudioBarUiState(
     val timingAvailable: Boolean,
     val logs: List<AudioLogEntry>,
     val showLogSheet: Boolean,
-    /** Version driving audio, or null. Used to scope the verse highlight to matching panes. */
+    /** Non-null scopes the verse highlight to the pane playing this version. */
     val playingVersionId: String?,
-    /**
-     * Title of the selected recording, shown as a compact button next to the
-     * speed control. Null hides the button: a version with a single recording
-     * should not pay for a control that offers no choice.
-     */
+    /** Compact recording-title button next to the speed control; null hides it. */
     val setTitle: String?,
     /** When non-null, the source-picker dialog is shown over the bar. */
     val pickerOptions: List<AudioSourceOption>?,
     /** When true, the playback-speed bottom sheet is shown over the bar. */
     val showSpeedSheet: Boolean,
-    /**
-     * When non-null, the recording-picker bottom sheet is shown over the bar.
-     * One group per visible version with audio, so in split view with audio on
-     * both sides the picker doubles as the mid-session way to move audio
-     * between the splits.
-     */
     val setGroups: List<AudioSetGroup>?,
 ) {
     companion object {
@@ -131,37 +108,21 @@ data class AudioBarUiState(
     }
 }
 
-/**
- * One row in the source-picker dialog: which version drives audio in split
- * view, carrying the recording that would play for it. Split-source selection
- * and set selection are distinct choices: which *version* drives audio, then
- * which *recording* of it.
- */
+/** Which version drives audio in split view, vs. which recording of it ([AudioSetGroup]). */
 data class AudioSourceOption(
     val versionId: String,
     val shortName: String,
-    /** Recording that plays when this version is picked (the persisted selection, or the default). */
     val audioId: String,
-    /** Display title of that recording. */
     val title: String,
 )
 
-/**
- * One version's recordings in the recording-picker bottom sheet. [versionName]
- * is rendered as a group header only when more than one group is shown.
- */
 data class AudioSetGroup(
     val versionId: String,
     val versionName: String,
     val options: List<AudioSetOption>,
 )
 
-/**
- * One row in the recording-picker bottom sheet. Sets not covering the current
- * book are listed but disabled ([coversCurrentBook] = false) with the reason
- * shown. Hiding them would make the list appear to change size as the user
- * moves through the Bible.
- */
+/** Sets not covering the current book stay listed but disabled, so the list doesn't reshape as the user moves through the Bible. */
 data class AudioSetOption(
     val audioId: String,
     val title: String,
@@ -169,19 +130,9 @@ data class AudioSetOption(
     val coversCurrentBook: Boolean,
 )
 
-/**
- * Commands raised by the bar's UI. The controller maps these onto
- * [yuku.alkitab.base.audio.BibleAudioService] calls.
- *
- * `SeekDrag` is fired continuously while the user drags the slider thumb so
- * the bar can show a live position preview. `SeekCommit` is fired on release;
- * the controller decides whether to snap to a verse boundary or issue a plain
- * seek (depending on whether timing is available).
- */
+/** Commands raised by the bar's UI; the controller maps these onto [yuku.alkitab.base.audio.BibleAudioService] calls. */
 sealed interface AudioBarCommand {
     data object PlayPause : AudioBarCommand
-
-    /** Fired instead of [PlayPause] while the bar is in an error state; retries the load. */
     data object Retry : AudioBarCommand
     data object PrevVerse : AudioBarCommand
     data object NextVerse : AudioBarCommand
@@ -192,21 +143,23 @@ sealed interface AudioBarCommand {
     data object OpenSetSheet : AudioBarCommand
     data object DismissSetSheet : AudioBarCommand
     data class PickSet(val versionId: String, val audioId: String) : AudioBarCommand
+
+    /** Fired continuously while dragging the slider thumb, for a live position preview. */
     data class SeekDrag(val positionMs: Long) : AudioBarCommand
+
+    /** Fired on release; the controller decides whether to snap to a verse boundary. */
     data class SeekCommit(val positionMs: Long) : AudioBarCommand
     data class PickSource(val versionId: String) : AudioBarCommand
     data object CancelPicker : AudioBarCommand
-
-    /** Fired by tapping the slow-load/error status line. Opens [AudioLogBottomSheet]. */
     data object OpenLogSheet : AudioBarCommand
     data object DismissLogSheet : AudioBarCommand
 }
 
 /**
- * Top-level audio bar surface. Shown and hidden
- * synchronously: the controller adds and removes the Compose content on
- * session start/end, so an enter/exit transition would only delay the layout
- * reflow the activity already commits when the host view appears.
+ * Top-level audio bar surface. Shown and hidden synchronously with the
+ * controller adding/removing this Compose content on session start/end; an
+ * enter/exit transition would only delay the layout reflow the activity
+ * already commits when the host view appears.
  */
 @Composable
 fun AudioBar(
@@ -367,12 +320,6 @@ private fun SpeedButton(
     }
 }
 
-/**
- * Compact recording chip showing the selected set's title, rendered only when
- * there is a choice to make ([AudioBarUiState.setTitle] is non-null). The
- * caller must place it inside a weighted slot so a long title ellipsizes
- * within the leftover row space instead of squeezing the transport controls.
- */
 @Composable
 private fun SetChooserButton(
     onCommand: (AudioBarCommand) -> Unit,
@@ -380,7 +327,7 @@ private fun SetChooserButton(
     IconButton(onClick = { onCommand(AudioBarCommand.OpenSetSheet) }) {
         Icon(
             imageVector = Icons.Outlined.Face,
-            contentDescription = stringResource(R.string.audio_bar_pick_source_title),
+            contentDescription = stringResource(R.string.audio_bar_select_audio),
         )
     }
 }
@@ -397,19 +344,6 @@ private fun CloseButton(
     }
 }
 
-/**
- * Small tappable status line shown above the play button while a chapter load
- * is taking unusually long, or once it has failed:
- *  - **Slow load**: preparing has held continuously for
- *    [SLOW_LOAD_STATUS_DELAY] with no error yet. Shows the most recent
- *    [AudioBarUiState.logs] entry, so the user sees what the HTTP layer is
- *    doing (DNS, connecting, waiting for headers) instead of a bare spinner
- *    with no explanation for the delay.
- *  - **Error**: [AudioBarUiState.error] is non-null. Shown immediately with no
- *    delay, since it is the detail behind the error icon on the play button.
- *
- * Tapping the line opens [AudioLogBottomSheet] with the full timestamped log.
- */
 @Composable
 private fun AudioLoadStatusLine(
     state: AudioBarUiState,
@@ -417,9 +351,7 @@ private fun AudioLoadStatusLine(
 ) {
     val slowLoad = slowLoadStatusVisible(state.preparing)
     if (state.error == null && !slowLoad) return
-    // In the error state the error itself is the message, not whatever
-    // happened to be logged last: a trailing state-transition entry would
-    // otherwise hide the failure the icon is pointing at.
+    // The error is the message; a trailing log entry would bury it.
     val text = state.error
         ?: state.logs.lastOrNull()?.message
         ?: stringResource(R.string.audio_bar_loading_status_fallback)
@@ -436,13 +368,6 @@ private fun AudioLoadStatusLine(
     )
 }
 
-/**
- * `true` only once [preparing] has been continuously true for
- * [SLOW_LOAD_STATUS_DELAY]; drops back to false immediately when [preparing]
- * does. Same shape as [debouncedPreparing], at the much longer delay the status
- * line is gated on. In inspection mode the delay is skipped so previews can pin
- * the slow-load state.
- */
 @Composable
 private fun slowLoadStatusVisible(preparing: Boolean): Boolean {
     if (LocalInspectionMode.current) return preparing
@@ -460,22 +385,9 @@ private fun slowLoadStatusVisible(preparing: Boolean): Boolean {
 
 private val SLOW_LOAD_STATUS_DELAY = 5_000.milliseconds
 
-/**
- * Play/pause, with two special states sharing the slot: a progress ring while
- * preparing, and an error icon when the last load failed. Tapping the error
- * icon retries the load instead of toggling playback. Long-pressing opens
- * [AudioLogBottomSheet], the same sheet [AudioLoadStatusLine] opens on tap.
- *
- * The preparing visuals (ring plus disabled swap) are debounced by
- * [PREPARING_INDICATION_DELAY], so a load that completes within the window
- * never flashes the ring at all. That covers a verse skip landing in
- * already-buffered data, or a chapter served from the HTTP cache.
- *
- * Built from a plain [Box] with [combinedClickable] rather than
- * [FilledIconButton]: that component only exposes a single [onClick], and
- * layering a second gesture detector around it to catch long-press races the
- * button's own internal one for the down event instead of sharing it.
- */
+// Box+combinedClickable, not FilledIconButton: that component only exposes a
+// single onClick, and layering a separate long-press detector around it
+// would race its internal gesture detector for the down event.
 @Composable
 private fun PlayPauseButton(
     state: AudioBarUiState,
@@ -550,12 +462,6 @@ private fun PlayPauseButton(
     }
 }
 
-/**
- * `true` only once [preparing] has been continuously true for
- * [PREPARING_INDICATION_DELAY]; drops back to false immediately when
- * [preparing] does. In inspection mode the delay is skipped so previews can
- * pin the preparing state.
- */
 @Composable
 private fun debouncedPreparing(preparing: Boolean): Boolean {
     if (LocalInspectionMode.current) return preparing
@@ -679,7 +585,6 @@ private fun AudioBarWideRow(
     }
 }
 
-/** Shown when split view is active and both visible versions have audio. */
 @Composable
 private fun SourcePickerDialog(
     options: List<AudioSourceOption>,
@@ -724,8 +629,6 @@ internal fun formatMmSs(ms: Long): String {
 
 internal fun durationLabelText(durationMs: Long): String =
     if (durationMs > 0L) formatMmSs(durationMs) else ""
-
-// -- Previews ------------------------------------------------------------------
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 320)
 @Composable
@@ -853,8 +756,8 @@ private fun AudioBarPreviewDarkError() {
             durationMs = 60_000L,
             verse_1 = 0,
             speed = 1.0f,
-            error = "IO_NETWORK_CONNECTION_FAILED", // play button becomes a retry
-            timingAvailable = false, // some chapters have audio but no timing
+            error = "IO_NETWORK_CONNECTION_FAILED",
+            timingAvailable = false,
             logs = listOf(
                 AudioLogEntry(0L, "Loading Genesis 1"),
                 AudioLogEntry(1_000L, "HTTP request started: https://audio.example/gen1.mp3"),

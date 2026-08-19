@@ -399,6 +399,7 @@
     <string name="audio_bar_next_verse">Επόμενος στίχος</string>
     <string name="audio_bar_pause">Παύση</string>
     <string name="audio_bar_pick_source_title">Αναπαραγωγή ήχου από</string>
+    <string name="audio_bar_select_audio">Επιλογή ήχου</string>
     <string name="audio_bar_play">Αναπαραγωγή</string>
     <string name="audio_bar_prev_verse">Προηγούμενος στίχος</string>
     <string name="audio_bar_speed_format">%1$s×</string>
