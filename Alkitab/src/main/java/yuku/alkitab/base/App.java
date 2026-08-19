@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.multidex.MultiDex;
 import androidx.preference.PreferenceManager;
 import com.google.gson.Gson;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -122,11 +121,6 @@ public class App extends yuku.afw.App {
 
     public static Gson getDefaultGson() {
         return GsonWrapper.INSTANCE.gson;
-    }
-
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
     }
 
     public static String getAppIdentifierParamsEncoded() {

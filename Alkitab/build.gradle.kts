@@ -125,7 +125,6 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = buildVersionCode
         versionName = "5.0.0-b0"
-        multiDexEnabled = true
         buildConfigField("String", "SERVER_HOST", "\"$serverHost\"")
         buildConfigField("String", "RIBKA_FUNCTIONS_HOST", "\"$ribkaFunctionsHost\"")
         buildConfigField("String", "LAST_COMMIT_HASH", "\"$gitCommitHash\"")
@@ -404,7 +403,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.multidex)
     implementation(libs.androidx.percentlayout)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.recyclerview)
