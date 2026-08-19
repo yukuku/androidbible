@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.outlined.Face
@@ -193,28 +195,24 @@ fun AudioBar(
         }
         if (!state.visible) return@AudioTheme
 
-        val bottomInset = WindowInsets.safeDrawing
-            .asPaddingValues()
-            .calculateBottomPadding()
         Surface(
             tonalElevation = 6.dp,
             shadowElevation = 6.dp,
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             modifier = modifier.fillMaxWidth(),
         ) {
-            BoxWithConstraints {
+            BoxWithConstraints(
+                modifier = Modifier.windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+                ),
+            ) {
                 var dragValue by rememberSaveable { mutableStateOf<Float?>(null) }
                 val isWide = maxWidth >= 600.dp
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            start = 8.dp,
-                            end = 8.dp,
-                            top = 4.dp,
-                            bottom = 4.dp + bottomInset,
-                        ),
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     AudioLoadStatusLine(state = state, onCommand = onCommand)
