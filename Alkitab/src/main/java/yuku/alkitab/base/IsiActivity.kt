@@ -728,9 +728,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
         lifecycleScope.launch {
             AppEvents.activeVersionChanged.collect {
-                resolveAudioSetsAsync()
-                audioBinder.onActiveVersionChanged()
-                invalidateOptionsMenu()
+                onVisibleVersionsChanged()
             }
         }
 
@@ -867,6 +865,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             invalidateOptionsMenu()
             audioBinder.refreshSetChoices()
         }
+    }
+
+    override fun onVisibleVersionsChanged() {
+        resolveAudioSetsAsync()
+        audioBinder.onActiveVersionChanged()
+        invalidateOptionsMenu()
     }
 
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
