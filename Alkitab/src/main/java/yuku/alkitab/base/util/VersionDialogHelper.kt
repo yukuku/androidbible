@@ -37,16 +37,12 @@ import yuku.alkitab.debug.R
 import yuku.alkitab.versionmanager.VersionsActivity
 
 /**
- * UI helpers for letting the user pick a Bible version. Previously lived on
- * [S]; moved here as part of REM-24 so the service locator is purely
- * non-UI state. The [VersionManager] is injected so callers can substitute
- * a fake in tests instead of relying on [S].
+ * UI helpers for letting the user pick a Bible version. The [VersionManager] is injected so
+ * callers can substitute a fake in tests instead of relying on [S].
  */
 object VersionDialogHelper {
     fun openVersionsDialog(activity: Activity, versionManager: VersionManager, selectedVersionId: String, onVersionSelected: (MVersion) -> Unit) {
         val versions = versionManager.getAvailableVersions()
-
-        // determine the currently selected one
         val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
 
         val rows = versions.map { mv -> mv.toRow { onVersionSelected(mv) } }
@@ -55,8 +51,6 @@ object VersionDialogHelper {
 
     fun openVersionsDialogWithNone(activity: Activity, versionManager: VersionManager, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
         val versions = versionManager.getAvailableVersions()
-
-        // determine the currently selected one
         val selected = if (selectedVersionId == null) {
             0 // "none"
         } else {
@@ -112,10 +106,10 @@ private fun VersionListSheetContent(
 ) {
     val listState = rememberLazyListState()
 
-    // A LazyColumn starts scrolled to the top already, which is what we want, unless the
-    // checked item wouldn't be fully on screen there — then bring it into view instead. An item
-    // merely poking into the viewport by a pixel still counts as "visible" per layoutInfo, which
-    // would leave the checked item at the clipped bottom edge, so only fully visible items count.
+    // A LazyColumn starts scrolled to the top already, which is what we want, unless the checked
+    // item wouldn't be fully on screen there, in which case bring it into view instead. layoutInfo
+    // counts an item as visible even when only a sliver of it pokes into the viewport, so the
+    // check requires full visibility to avoid leaving the checked item clipped at the bottom edge.
     LaunchedEffect(selectedIndex) {
         if (selectedIndex > 0) {
             snapshotFlow { listState.layoutInfo.visibleItemsInfo }
