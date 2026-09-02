@@ -1,6 +1,7 @@
 package yuku.alkitab.base.util
 
 import android.app.Activity
+import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,6 +21,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -51,18 +53,13 @@ object VersionDialogHelper {
 
     fun openVersionsDialogWithNone(activity: Activity, versionManager: VersionManager, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
         val versions = versionManager.getAvailableVersions()
-        val selected = if (selectedVersionId == null) {
-            0 // "none"
-        } else {
-            versions.indexOfFirst { it.versionId == selectedVersionId } + 1
-        }
+        val selected = selectedVersionId?.let { id -> versions.indexOfFirst { it.versionId == id } } ?: -1
 
-        val noneRow = VersionRow(primary = activity.getString(R.string.split_version_none), secondary = null, onClick = { onVersionSelected(null) })
-        val rows = listOf(noneRow) + versions.map { mv -> mv.toRow { onVersionSelected(mv) } }
-        showVersionListSheet(activity, rows, selected)
+        val rows = versions.map { mv -> mv.toRow { onVersionSelected(mv) } }
+        showVersionListSheet(activity, rows, selected, onClose = { onVersionSelected(null) })
     }
 
-    private fun showVersionListSheet(activity: Activity, rows: List<VersionRow>, selected: Int) {
+    private fun showVersionListSheet(activity: Activity, rows: List<VersionRow>, selected: Int, onClose: (() -> Unit)? = null) {
         ComposeBottomSheetHost.show(activity) { dismiss ->
             VersionListSheetContent(
                 rows = rows,
@@ -75,6 +72,7 @@ object VersionDialogHelper {
                     activity.startActivity(VersionsActivity.createIntent())
                     dismiss()
                 },
+                onClose = onClose?.let { close -> { close(); dismiss() } },
             )
         }
     }
@@ -103,6 +101,7 @@ private fun VersionListSheetContent(
     selectedIndex: Int,
     onRowClick: (VersionRow) -> Unit,
     onManageVersions: () -> Unit,
+    onClose: (() -> Unit)?,
 ) {
     val listState = rememberLazyListState()
 
@@ -138,18 +137,23 @@ private fun VersionListSheetContent(
                 .heightIn(max = sheetHeight)
                 .navigationBarsPadding(),
         ) {
-            LazyColumn(
-                state = listState,
-                contentPadding = PaddingValues(top = 8.dp),
-                modifier = Modifier.weight(weight = 1f, fill = false),
-            ) {
-                itemsIndexed(rows) { index, row ->
-                    VersionRowItem(
-                        primary = row.primary,
-                        secondary = row.secondary,
-                        selected = index == selectedIndex,
-                        onClick = { onRowClick(row) },
-                    )
+            // The stretch-overscroll effect on a fling that runs the list past its bounds can
+            // leak residual motion into the sheet's own drag handling, briefly expanding it past
+            // its capped height before it springs back; disabling it here keeps the sheet still.
+            CompositionLocalProvider(LocalOverscrollFactory provides null) {
+                LazyColumn(
+                    state = listState,
+                    contentPadding = PaddingValues(top = 8.dp),
+                    modifier = Modifier.weight(weight = 1f, fill = false),
+                ) {
+                    itemsIndexed(rows) { index, row ->
+                        VersionRowItem(
+                            primary = row.primary,
+                            secondary = row.secondary,
+                            selected = index == selectedIndex,
+                            onClick = { onRowClick(row) },
+                        )
+                    }
                 }
             }
             HorizontalDivider()
@@ -157,8 +161,13 @@ private fun VersionListSheetContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = if (onClose != null) Arrangement.SpaceBetween else Arrangement.End,
             ) {
+                if (onClose != null) {
+                    TextButton(onClick = onClose) {
+                        Text(stringResource(R.string.split_version_none))
+                    }
+                }
                 TextButton(onClick = onManageVersions) {
                     Text(stringResource(R.string.versi_lainnya))
                 }
