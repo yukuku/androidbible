@@ -38,6 +38,16 @@ FLAVOR_LABELS = {
     "sabda_alkitab": "Sabda Alkitab",
 }
 
+# Gradle's outputFileName (Alkitab/build.gradle.kts) starts every flavor's
+# APK with the literal "Alkitab" prefix; swap it for a per-flavor one here
+# rather than in the shared Gradle naming, which other consumers still use.
+FLAVOR_APK_PREFIXES = {
+    "yuku_alkitab": "Alkitab",
+    "yuku_quick_bible": "QuickBible",
+    "sabda_alkitab": "SabdaAlkitab",
+}
+GRADLE_APK_PREFIX = "Alkitab"
+
 PAGE = """<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
@@ -124,6 +134,13 @@ def flavor_order(name: str) -> tuple[int, str]:
     return (known.index(name), "") if name in known else (len(known), name)
 
 
+def apk_file_name(flavor: str, gradle_name: str) -> str:
+    prefix = FLAVOR_APK_PREFIXES.get(flavor)
+    if prefix is None or not gradle_name.startswith(GRADLE_APK_PREFIX):
+        return gradle_name
+    return prefix + gradle_name.removeprefix(GRADLE_APK_PREFIX)
+
+
 def collect_apks(apk_dir: Path) -> list[dict]:
     """One entry per flavor directory found under apk_dir."""
     apks = []
@@ -153,7 +170,7 @@ def collect_apks(apk_dir: Path) -> list[dict]:
                 "applicationId": meta.get("applicationId", "?"),
                 "versionName": str(element.get("versionName", "?")),
                 "versionCode": str(element.get("versionCode", "?")),
-                "file": apk.name,
+                "file": apk_file_name(flavor_dir.name, apk.name),
                 "size": human_size(apk.stat().st_size),
                 "path": apk,
             }
