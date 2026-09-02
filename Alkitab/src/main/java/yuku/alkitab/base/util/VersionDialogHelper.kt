@@ -3,10 +3,12 @@ package yuku.alkitab.base.util
 import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -111,43 +113,61 @@ private fun VersionListSheetContent(
     val listState = rememberLazyListState()
 
     // A LazyColumn starts scrolled to the top already, which is what we want, unless the
-    // checked item wouldn't be on screen there — then bring it into view instead.
+    // checked item wouldn't be fully on screen there — then bring it into view instead. An item
+    // merely poking into the viewport by a pixel still counts as "visible" per layoutInfo, which
+    // would leave the checked item at the clipped bottom edge, so only fully visible items count.
     LaunchedEffect(selectedIndex) {
         if (selectedIndex > 0) {
             snapshotFlow { listState.layoutInfo.visibleItemsInfo }
                 .filter { it.isNotEmpty() }
                 .first()
-            val lastVisible = listState.layoutInfo.visibleItemsInfo.last().index
-            if (selectedIndex > lastVisible) {
+            val viewportEnd = listState.layoutInfo.viewportEndOffset
+            val lastFullyVisible = listState.layoutInfo.visibleItemsInfo
+                .lastOrNull { it.offset + it.size <= viewportEnd }
+                ?.index
+                ?: -1
+            if (selectedIndex > lastFullyVisible) {
                 listState.scrollToItem(selectedIndex)
             }
         }
     }
 
-    Column(modifier = Modifier.navigationBarsPadding()) {
-        LazyColumn(
-            state = listState,
-            contentPadding = PaddingValues(top = 8.dp),
-            modifier = Modifier.weight(weight = 1f, fill = false),
-        ) {
-            itemsIndexed(rows) { index, row ->
-                VersionRowItem(
-                    primary = row.primary,
-                    secondary = row.secondary,
-                    selected = index == selectedIndex,
-                    onClick = { onRowClick(row) },
-                )
-            }
-        }
-        HorizontalDivider()
-        Row(
+    // Cap the sheet height so its rounded top stays a bit below the status bar (a
+    // ModalBottomSheet's expanded height otherwise reaches right up to it), matching the
+    // song search sheet. Shorter lists still wrap to their content instead of stretching.
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val sheetHeight = maxHeight - 48.dp
+
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.End,
+                .heightIn(max = sheetHeight)
+                .navigationBarsPadding(),
         ) {
-            TextButton(onClick = onManageVersions) {
-                Text(stringResource(R.string.versi_lainnya))
+            LazyColumn(
+                state = listState,
+                contentPadding = PaddingValues(top = 8.dp),
+                modifier = Modifier.weight(weight = 1f, fill = false),
+            ) {
+                itemsIndexed(rows) { index, row ->
+                    VersionRowItem(
+                        primary = row.primary,
+                        secondary = row.secondary,
+                        selected = index == selectedIndex,
+                        onClick = { onRowClick(row) },
+                    )
+                }
+            }
+            HorizontalDivider()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                TextButton(onClick = onManageVersions) {
+                    Text(stringResource(R.string.versi_lainnya))
+                }
             }
         }
     }
