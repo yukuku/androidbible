@@ -6,6 +6,8 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
+import android.widget.ListView
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import yuku.alkitab.base.S
 import yuku.alkitab.base.model.MVersion
@@ -28,7 +30,7 @@ object VersionDialogHelper {
 
         val secondaryColor = resolveSecondaryTextColor(activity)
         val options: Array<CharSequence> = versions.map { formatVersionLabel(it, secondaryColor) }.toTypedArray()
-        MaterialAlertDialogBuilder(activity)
+        val dialog = MaterialAlertDialogBuilder(activity)
             .setSingleChoiceItems(options, selected) { dialog, index ->
                 if (index >= 0) {
                     val mv = versions[index]
@@ -40,6 +42,7 @@ object VersionDialogHelper {
                 activity.startActivity(VersionsActivity.createIntent())
             }
             .show()
+        scrollToTopIfSelectedFits(dialog, selected)
     }
 
     fun openVersionsDialogWithNone(activity: Activity, versionManager: VersionManager, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
@@ -54,7 +57,7 @@ object VersionDialogHelper {
 
         val secondaryColor = resolveSecondaryTextColor(activity)
         val options: Array<CharSequence> = (listOf<CharSequence>(activity.getString(R.string.split_version_none)) + versions.map { formatVersionLabel(it, secondaryColor) }).toTypedArray()
-        MaterialAlertDialogBuilder(activity)
+        val dialog = MaterialAlertDialogBuilder(activity)
             .setSingleChoiceItems(options, selected) { dialog, index ->
                 when {
                     index == 0 -> onVersionSelected(null)
@@ -66,6 +69,27 @@ object VersionDialogHelper {
                 activity.startActivity(VersionsActivity.createIntent())
             }
             .show()
+        scrollToTopIfSelectedFits(dialog, selected)
+    }
+
+    /**
+     * [MaterialAlertDialogBuilder.setSingleChoiceItems] scrolls the list so the checked item
+     * lands as the first visible row. When the checked item is close enough to the top that it
+     * would already be on screen with the list scrolled all the way up, that jump is unnecessary
+     * and disorienting, so scroll back to the top in that case. If the checked item is far enough
+     * down the list that scrolling to the top would hide it, leave the list where the library put it.
+     */
+    private fun scrollToTopIfSelectedFits(dialog: AlertDialog, selected: Int) {
+        if (selected <= 0) return
+        val listView: ListView = dialog.listView ?: return
+        listView.post {
+            listView.setSelectionFromTop(0, 0)
+            listView.post {
+                if (selected > listView.lastVisiblePosition) {
+                    listView.setSelection(selected)
+                }
+            }
+        }
     }
 
     /**
