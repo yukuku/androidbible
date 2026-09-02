@@ -38,11 +38,9 @@ FLAVOR_LABELS = {
     "sabda_alkitab": "Sabda Alkitab",
 }
 
-# Gradle's outputFileName (Alkitab/build.gradle.kts) always starts every
-# flavor's APK with the literal "Alkitab" prefix, so the three production
-# downloads are otherwise indistinguishable by filename alone. Swap it here
-# for the per-flavor prefix instead of touching the shared Gradle naming,
-# which other consumers (local builds, CI artifact names) still rely on.
+# Gradle's outputFileName (Alkitab/build.gradle.kts) starts every flavor's
+# APK with the literal "Alkitab" prefix; swap it for a per-flavor one here
+# rather than in the shared Gradle naming, which other consumers still use.
 FLAVOR_APK_PREFIXES = {
     "yuku_alkitab": "Alkitab",
     "yuku_quick_bible": "QuickBible",
