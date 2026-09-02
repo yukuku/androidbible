@@ -9,56 +9,51 @@ import kotlinx.coroutines.withContext
  * Integration with the separate "Alkitab GPT" app (an AI Bible-study companion by SABDA),
  * reachable from the verse action mode when the user already has it installed.
  *
- * Every PackageManager lookup here is a binder round-trip to system_server, which can stall
- * for tens of milliseconds under load, so resolution is a suspending call meant for a
- * background dispatcher. [resolveLaunchIntent] answers both questions the caller has (is it
- * installed, and how do we open it) in one pass, so nothing has to touch PackageManager again
- * on the main thread when the user taps the menu item.
+ * Alkitab GPT exposes `ChatPopUpActivity` under [ACTION_SHOW_CHAT_POPUP] and reads the verse
+ * context from the extras below (its `ChatContextFactory`). The intent is deliberately left
+ * flagless: that activity uses a translucent theme and finishes itself in `onPause`, so it is
+ * meant to appear as a popup on top of the calling app's task.
  */
 object AlkitabGptIntegration {
     const val PACKAGE_NAME = "org.sabda.gpt"
 
-    /**
-     * The verse-lookup action, following the same `org.sabda.<app>.action.VIEW` convention as
-     * the Pedia and Tafsiran integrations. Older builds of Alkitab GPT may not declare it; see
-     * [resolveLaunchIntent] for the fallback.
-     */
-    private const val ACTION_VIEW = "org.sabda.gpt.action.VIEW"
-
-    const val EXTRA_ARI = "ari"
-    const val EXTRA_REFERENCE = "reference"
-    const val EXTRA_VERSE_TEXT = "verseText"
+    const val ACTION_SHOW_CHAT_POPUP = "org.sabda.gpt.action.SHOW_CHAT_POPUP"
 
     /**
-     * A ready-to-start intent template for Alkitab GPT, or null when the app is not installed.
-     *
-     * Prefers the verse-lookup action so the app can open straight to the selected verse, and
-     * falls back to the launcher entry point when that action is not declared. The fallback
-     * still carries the verse extras: an app that does not understand them ignores them, and
-     * the user at least lands in Alkitab GPT instead of nowhere.
-     *
-     * Suspends on [Dispatchers.IO] rather than blocking the caller's thread.
+     * The host-app name Alkitab GPT recognises as this app. It keys the popup's header colors,
+     * its logo, and the `apps_alkitab` prefix on the chat thread, so it has to match exactly.
      */
-    suspend fun resolveLaunchIntent(context: Context): Intent? = withContext(Dispatchers.IO) {
-        val pm = context.packageManager
+    const val SOURCE = "Apps Alkitab"
 
-        val viewIntent = Intent(ACTION_VIEW).setPackage(PACKAGE_NAME)
-        if (viewIntent.resolveActivity(pm) != null) {
-            return@withContext viewIntent
-        }
+    const val EXTRA_BOOK_NAME = "bookName"
+    const val EXTRA_CHAPTER = "chapter"
+    const val EXTRA_VERSE_START = "verseStart"
+    const val EXTRA_VERSE_END = "verseEnd"
+    const val EXTRA_SOURCE = "source"
 
-        pm.getLaunchIntentForPackage(PACKAGE_NAME)
+    /**
+     * Whether Alkitab GPT is installed and new enough to accept a chat-popup request.
+     *
+     * PackageManager lookups are binder calls into system_server and can stall for a noticeable
+     * time on a loaded device, so this suspends on [Dispatchers.IO] instead of blocking the
+     * caller's thread.
+     */
+    suspend fun isChatPopupAvailable(context: Context): Boolean = withContext(Dispatchers.IO) {
+        chatPopupIntent().resolveActivity(context.packageManager) != null
     }
 
     /**
-     * Copies [template] (as returned by [resolveLaunchIntent]) and attaches the selected verse.
-     * The template is reused across taps, so it must not be mutated in place.
+     * A chat-popup request for the given passage. [verseStart_1] and [verseEnd_1] are the ends of
+     * the selection: Alkitab GPT renders them as "Kejadian 1:1-3", collapsing to a single verse
+     * when they are equal.
      */
-    fun withVerse(template: Intent, ari: Int, reference: String, verseText: String?): Intent =
-        Intent(template)
-            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            .putExtra(EXTRA_ARI, ari)
-            .putExtra(EXTRA_REFERENCE, reference)
-            .putExtra(EXTRA_VERSE_TEXT, verseText)
+    fun chatPopupIntent(bookName: String, chapter_1: Int, verseStart_1: Int, verseEnd_1: Int): Intent =
+        chatPopupIntent()
+            .putExtra(EXTRA_BOOK_NAME, bookName)
+            .putExtra(EXTRA_CHAPTER, chapter_1)
+            .putExtra(EXTRA_VERSE_START, verseStart_1)
+            .putExtra(EXTRA_VERSE_END, verseEnd_1)
+            .putExtra(EXTRA_SOURCE, SOURCE)
+
+    private fun chatPopupIntent() = Intent(ACTION_SHOW_CHAT_POPUP).setPackage(PACKAGE_NAME)
 }

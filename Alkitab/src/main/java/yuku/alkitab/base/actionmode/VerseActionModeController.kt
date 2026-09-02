@@ -164,7 +164,7 @@ class VerseActionModeController(
         // that runs off the main thread, so its result can land after the action mode was created;
         // deciding visibility here (rather than in onCreateActionMode) means every `invalidate()`
         // picks up the answer as soon as it arrives.
-        menu.findItem(R.id.menuAlkitabGpt).isVisible = host.alkitabGptLaunchIntent != null
+        menu.findItem(R.id.menuAlkitabGpt).isVisible = host.hasAlkitabGpt
 
         val menuRibkaReport = menu.findItem(R.id.menuRibkaReport)
         menuRibkaReport.isVisible = single && actions.checkRibkaEligibility() != RibkaEligibility.None
@@ -415,16 +415,20 @@ class VerseActionModeController(
             }
 
             R.id.menuAlkitabGpt -> {
-                val template = host.alkitabGptLaunchIntent
-                if (template != null) {
-                    val ari = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, selected.get(0))
-                    val reference = VerseTextFormatter.referenceFromSelectedVerses(selected, host.activeSplit0Book, host.chapter_1)
 
-                    try {
-                        host.activity.startActivity(AlkitabGptIntegration.withVerse(template, ari, reference, plainTextOfSelectedVerses(selected)))
-                    } catch (e: Exception) {
-                        AppLog.e(TAG, "Alkitab GPT starting", e)
-                    }
+                // Alkitab GPT takes a passage, not a verse list, so a non-contiguous selection is
+                // sent as the range that spans it.
+                val intent = AlkitabGptIntegration.chatPopupIntent(
+                    bookName = host.activeSplit0Book.shortName,
+                    chapter_1 = host.chapter_1,
+                    verseStart_1 = selected.get(0),
+                    verseEnd_1 = selected.get(selected.size() - 1),
+                )
+
+                try {
+                    host.activity.startActivity(intent)
+                } catch (e: Exception) {
+                    AppLog.e(TAG, "Alkitab GPT starting", e)
                 }
                 true
             }
@@ -576,15 +580,6 @@ class VerseActionModeController(
             actions.uncheckAllVersesSplit0()
         }
     }
-
-    /**
-     * The selected verses of the primary split as plain text, one verse per line, with the
-     * inline formatting codes stripped.
-     */
-    private fun plainTextOfSelectedVerses(selectedVerses_1: IntArrayList): String =
-        (0 until selectedVerses_1.size())
-            .mapNotNull { FormattedVerseText.removeSpecialCodes(host.dataSplit0.getVerseText(selectedVerses_1.get(it))) }
-            .joinToString("\n")
 
     /**
      * Resolves the two "copy/share" preferences and the split/non-split version

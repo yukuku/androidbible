@@ -8,7 +8,7 @@ import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,6 +20,9 @@ import org.robolectric.shadows.ShadowPackageManager
 /**
  * Robolectric is required here: the whole point of [AlkitabGptIntegration] is what PackageManager
  * answers, so the tests install and omit the companion app through `ShadowPackageManager`.
+ *
+ * The key names and the action asserted below are Alkitab GPT's published contract (its README
+ * and `ChatContextFactory`), so these tests double as a guard against drifting away from it.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
@@ -35,68 +38,57 @@ class AlkitabGptIntegrationTest {
     }
 
     @Test
-    fun `resolveLaunchIntent returns null when Alkitab GPT is not installed`() = runBlocking {
-        assertNull(AlkitabGptIntegration.resolveLaunchIntent(context))
+    fun `isChatPopupAvailable is false when Alkitab GPT is not installed`() = runBlocking {
+        assertFalse(AlkitabGptIntegration.isChatPopupAvailable(context))
     }
 
     @Test
-    fun `resolveLaunchIntent prefers the verse-lookup action when Alkitab GPT declares it`() = runBlocking {
-        installViewActivity()
-        installLauncherActivity()
+    fun `isChatPopupAvailable is false when only the launcher activity is present, so a build too old for the popup never shows the menu item`() = runBlocking {
+        installActivity("MainActivity", IntentFilter(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_LAUNCHER)
+            addCategory(Intent.CATEGORY_DEFAULT)
+        })
 
-        val intent = AlkitabGptIntegration.resolveLaunchIntent(context)
-
-        assertEquals("org.sabda.gpt.action.VIEW", intent?.action)
-        assertEquals(AlkitabGptIntegration.PACKAGE_NAME, intent?.getPackage())
+        assertFalse(AlkitabGptIntegration.isChatPopupAvailable(context))
     }
 
     @Test
-    fun `resolveLaunchIntent falls back to the launcher entry point when the verse-lookup action is not declared`() = runBlocking {
-        installLauncherActivity()
+    fun `isChatPopupAvailable is true once Alkitab GPT declares the chat-popup action`() = runBlocking {
+        installChatPopupActivity()
 
-        val intent = AlkitabGptIntegration.resolveLaunchIntent(context)
-
-        assertEquals(Intent.ACTION_MAIN, intent?.action)
-        assertEquals(AlkitabGptIntegration.PACKAGE_NAME, intent?.component?.packageName)
+        assertTrue(AlkitabGptIntegration.isChatPopupAvailable(context))
     }
 
     @Test
-    fun `withVerse attaches the verse extras to a copy, leaving the shared template untouched`() {
-        val template = Intent("org.sabda.gpt.action.VIEW").setPackage(AlkitabGptIntegration.PACKAGE_NAME)
+    fun `chatPopupIntent targets Alkitab GPT's chat popup and carries the passage in the keys its ChatContextFactory reads`() {
+        val intent = AlkitabGptIntegration.chatPopupIntent(bookName = "Kejadian", chapter_1 = 1, verseStart_1 = 1, verseEnd_1 = 3)
 
-        val intent = AlkitabGptIntegration.withVerse(template, ari = 257, reference = "Gen 1:1", verseText = "In the beginning...")
+        assertEquals("org.sabda.gpt.action.SHOW_CHAT_POPUP", intent.action)
+        assertEquals("org.sabda.gpt", intent.getPackage())
+        assertEquals("Kejadian", intent.getStringExtra("bookName"))
+        assertEquals(1, intent.getIntExtra("chapter", -1))
+        assertEquals(1, intent.getIntExtra("verseStart", -1))
+        assertEquals(3, intent.getIntExtra("verseEnd", -1))
+        assertEquals("Apps Alkitab", intent.getStringExtra("source"))
+    }
 
-        assertEquals("org.sabda.gpt.action.VIEW", intent.action)
-        assertEquals(AlkitabGptIntegration.PACKAGE_NAME, intent.getPackage())
-        assertEquals(257, intent.getIntExtra(AlkitabGptIntegration.EXTRA_ARI, 0))
-        assertEquals("Gen 1:1", intent.getStringExtra(AlkitabGptIntegration.EXTRA_REFERENCE))
-        assertEquals("In the beginning...", intent.getStringExtra(AlkitabGptIntegration.EXTRA_VERSE_TEXT))
-        assertEquals(
-            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK,
-            intent.flags,
+    @Test
+    fun `chatPopupIntent carries no flags, because the chat popup is a translucent activity meant to sit on top of the calling task`() {
+        val intent = AlkitabGptIntegration.chatPopupIntent(bookName = "Kejadian", chapter_1 = 1, verseStart_1 = 1, verseEnd_1 = 1)
+
+        assertEquals(0, intent.flags)
+    }
+
+    private fun installChatPopupActivity() {
+        installActivity(
+            "ChatPopUpActivity",
+            IntentFilter(AlkitabGptIntegration.ACTION_SHOW_CHAT_POPUP).apply { addCategory(Intent.CATEGORY_DEFAULT) },
         )
-
-        assertFalse(template.hasExtra(AlkitabGptIntegration.EXTRA_ARI))
     }
 
-    private fun installViewActivity() {
-        val component = ComponentName(AlkitabGptIntegration.PACKAGE_NAME, "${AlkitabGptIntegration.PACKAGE_NAME}.ViewActivity")
+    private fun installActivity(simpleName: String, filter: IntentFilter) {
+        val component = ComponentName(AlkitabGptIntegration.PACKAGE_NAME, "${AlkitabGptIntegration.PACKAGE_NAME}.$simpleName")
         shadowPm.addActivityIfNotPresent(component)
-        shadowPm.addIntentFilterForActivity(
-            component,
-            IntentFilter("org.sabda.gpt.action.VIEW").apply { addCategory(Intent.CATEGORY_DEFAULT) },
-        )
-    }
-
-    private fun installLauncherActivity() {
-        val component = ComponentName(AlkitabGptIntegration.PACKAGE_NAME, "${AlkitabGptIntegration.PACKAGE_NAME}.MainActivity")
-        shadowPm.addActivityIfNotPresent(component)
-        shadowPm.addIntentFilterForActivity(
-            component,
-            IntentFilter(Intent.ACTION_MAIN).apply {
-                addCategory(Intent.CATEGORY_LAUNCHER)
-                addCategory(Intent.CATEGORY_DEFAULT)
-            },
-        )
+        shadowPm.addIntentFilterForActivity(component, filter)
     }
 }
