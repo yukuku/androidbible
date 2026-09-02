@@ -2,6 +2,7 @@ package yuku.alkitab.base.compose
 
 import android.app.Activity
 import android.view.ViewGroup
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -36,6 +37,11 @@ object ComposeBottomSheetHost {
                     ModalBottomSheet(
                         sheetState = sheetState,
                         sheetGesturesEnabled = sheetGesturesEnabled,
+                        dragHandle = if (sheetGesturesEnabled) {
+                            { BottomSheetDefaults.DragHandle() }
+                        } else {
+                            null
+                        },
                         onDismissRequest = {
                             // Run the hide animation before tearing down so back-press
                             // and tap-outside don't snap the sheet away.

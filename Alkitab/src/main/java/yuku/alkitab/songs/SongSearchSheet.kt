@@ -43,6 +43,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
@@ -60,6 +62,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -80,7 +83,10 @@ import yuku.alkitab.debug.R
 object SongSearchSheet {
     fun show(activity: ComponentActivity, onSongSelected: (SongInfo) -> Unit) {
         val viewModel = ViewModelProvider(activity)[SongSearchViewModel::class.java]
-        ComposeBottomSheetHost.show(activity) { dismiss ->
+        // Gestures are off for the same reason as the version picker: a fling that runs the
+        // results list past its bounds leaks residual motion into the sheet's own drag handling,
+        // briefly expanding it before it springs back.
+        ComposeBottomSheetHost.show(activity, sheetGesturesEnabled = false) { dismiss ->
             SongSearchSheetContent(
                 viewModel = viewModel,
                 onSongSelected = { songInfo ->
@@ -135,7 +141,12 @@ class SongSearchViewModel : ViewModel() {
     private fun startSearch() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            _uiState.update { it.copy(loading = true) }
+            // Most searches finish in well under this delay, so the progress bar never shows for
+            // them; cancelling it once the search resolves is what keeps it from flashing on screen.
+            val loadingJob = launch {
+                delay(LOADING_INDICATOR_DELAY_MS)
+                _uiState.update { it.copy(loading = true) }
+            }
             val s = _uiState.value
             val filter = s.filterString.trim().takeIf { it.isNotEmpty() }
             val res = withContext(Dispatchers.IO) {
@@ -147,8 +158,13 @@ class SongSearchViewModel : ViewModel() {
                 }
             }
             // if this job was cancelled by a newer search, withContext throws and we never get here
+            loadingJob.cancel()
             _uiState.update { it.copy(loading = false, results = res) }
         }
+    }
+
+    companion object {
+        private const val LOADING_INDICATOR_DELAY_MS = 200L
     }
 }
 
@@ -160,6 +176,7 @@ private fun SongSearchSheetContent(
     val state by viewModel.uiState.collectAsState()
     var query by remember { mutableStateOf(state.filterString) }
     val keyboard = LocalSoftwareKeyboardController.current
+    val queryFocusRequester = remember { FocusRequester() }
 
     // Compiled once per committed filter, reused to highlight matched substrings in every
     // visible result (same idea as the verse search hit highlighting).
@@ -167,6 +184,8 @@ private fun SongSearchSheetContent(
 
     LaunchedEffect(Unit) {
         viewModel.searchIfNeeded()
+        queryFocusRequester.requestFocus()
+        keyboard?.show()
     }
 
     // Cap the sheet height so its rounded top stays a bit below the status bar
@@ -192,7 +211,8 @@ private fun SongSearchSheetContent(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .focusRequester(queryFocusRequester),
                 placeholder = { Text(stringResource(R.string.search)) },
                 leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                 trailingIcon = if (query.isNotEmpty()) {
