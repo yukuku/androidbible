@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 object ComposeBottomSheetHost {
     @OptIn(ExperimentalMaterial3Api::class)
     @JvmStatic
-    fun show(activity: Activity, content: @Composable (dismiss: () -> Unit) -> Unit) {
+    fun show(activity: Activity, sheetGesturesEnabled: Boolean = true, content: @Composable (dismiss: () -> Unit) -> Unit) {
         val root = activity.findViewById<ViewGroup>(android.R.id.content) ?: return
         val composeView = ComposeView(activity)
         composeView.setContent {
@@ -35,6 +35,7 @@ object ComposeBottomSheetHost {
                 if (visible) {
                     ModalBottomSheet(
                         sheetState = sheetState,
+                        sheetGesturesEnabled = sheetGesturesEnabled,
                         onDismissRequest = {
                             // Run the hide animation before tearing down so back-press
                             // and tap-outside don't snap the sheet away.
