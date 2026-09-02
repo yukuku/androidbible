@@ -62,6 +62,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -140,7 +141,12 @@ class SongSearchViewModel : ViewModel() {
     private fun startSearch() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            _uiState.update { it.copy(loading = true) }
+            // Most searches finish in well under this delay, so the progress bar never shows for
+            // them; cancelling it once the search resolves is what keeps it from flashing on screen.
+            val loadingJob = launch {
+                delay(LOADING_INDICATOR_DELAY_MS)
+                _uiState.update { it.copy(loading = true) }
+            }
             val s = _uiState.value
             val filter = s.filterString.trim().takeIf { it.isNotEmpty() }
             val res = withContext(Dispatchers.IO) {
@@ -152,8 +158,13 @@ class SongSearchViewModel : ViewModel() {
                 }
             }
             // if this job was cancelled by a newer search, withContext throws and we never get here
+            loadingJob.cancel()
             _uiState.update { it.copy(loading = false, results = res) }
         }
+    }
+
+    companion object {
+        private const val LOADING_INDICATOR_DELAY_MS = 200L
     }
 }
 
