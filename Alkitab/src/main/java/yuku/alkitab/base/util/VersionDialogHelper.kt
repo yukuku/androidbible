@@ -1,15 +1,34 @@
 package yuku.alkitab.base.util
 
 import android.app.Activity
-import android.graphics.Typeface
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.StyleSpan
-import android.widget.ListView
-import androidx.appcompat.app.AlertDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import yuku.alkitab.base.S
+import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.services.VersionManager
 import yuku.alkitab.debug.R
@@ -28,21 +47,8 @@ object VersionDialogHelper {
         // determine the currently selected one
         val selected = versions.indexOfFirst { it.versionId == selectedVersionId }
 
-        val secondaryColor = resolveSecondaryTextColor(activity)
-        val options: Array<CharSequence> = versions.map { formatVersionLabel(it, secondaryColor) }.toTypedArray()
-        val dialog = MaterialAlertDialogBuilder(activity)
-            .setSingleChoiceItems(options, selected) { dialog, index ->
-                if (index >= 0) {
-                    val mv = versions[index]
-                    onVersionSelected(mv)
-                    dialog.dismiss()
-                }
-            }
-            .setPositiveButton(R.string.versi_lainnya) { _, _ ->
-                activity.startActivity(VersionsActivity.createIntent())
-            }
-            .show()
-        scrollToTopIfSelectedFits(dialog, selected)
+        val rows = versions.map { mv -> mv.toRow { onVersionSelected(mv) } }
+        showVersionListSheet(activity, rows, selected)
     }
 
     fun openVersionsDialogWithNone(activity: Activity, versionManager: VersionManager, selectedVersionId: String?, onVersionSelected: (MVersion?) -> Unit) {
@@ -55,75 +61,122 @@ object VersionDialogHelper {
             versions.indexOfFirst { it.versionId == selectedVersionId } + 1
         }
 
-        val secondaryColor = resolveSecondaryTextColor(activity)
-        val options: Array<CharSequence> = (listOf<CharSequence>(activity.getString(R.string.split_version_none)) + versions.map { formatVersionLabel(it, secondaryColor) }).toTypedArray()
-        val dialog = MaterialAlertDialogBuilder(activity)
-            .setSingleChoiceItems(options, selected) { dialog, index ->
-                when {
-                    index == 0 -> onVersionSelected(null)
-                    index > 0 -> onVersionSelected(versions[index - 1])
-                }
-                dialog.dismiss()
-            }
-            .setPositiveButton(R.string.versi_lainnya) { _, _ ->
-                activity.startActivity(VersionsActivity.createIntent())
-            }
-            .show()
-        scrollToTopIfSelectedFits(dialog, selected)
+        val noneRow = VersionRow(primary = activity.getString(R.string.split_version_none), secondary = null, onClick = { onVersionSelected(null) })
+        val rows = listOf(noneRow) + versions.map { mv -> mv.toRow { onVersionSelected(mv) } }
+        showVersionListSheet(activity, rows, selected)
     }
 
-    /**
-     * [MaterialAlertDialogBuilder.setSingleChoiceItems] scrolls the list so the checked item
-     * lands as the first visible row. When the checked item is close enough to the top that it
-     * would already be on screen with the list scrolled all the way up, that jump is unnecessary
-     * and disorienting, so scroll back to the top in that case. If the checked item is far enough
-     * down the list that scrolling to the top would hide it, leave the list where the library put it.
-     */
-    private fun scrollToTopIfSelectedFits(dialog: AlertDialog, selected: Int) {
-        if (selected <= 0) return
-        val listView: ListView = dialog.listView ?: return
-        listView.post {
-            listView.setSelectionFromTop(0, 0)
-            listView.post {
-                if (selected > listView.lastVisiblePosition) {
-                    listView.setSelection(selected)
-                }
-            }
+    private fun showVersionListSheet(activity: Activity, rows: List<VersionRow>, selected: Int) {
+        ComposeBottomSheetHost.show(activity) { dismiss ->
+            VersionListSheetContent(
+                rows = rows,
+                selectedIndex = selected,
+                onRowClick = { row ->
+                    row.onClick()
+                    dismiss()
+                },
+                onManageVersions = {
+                    activity.startActivity(VersionsActivity.createIntent())
+                    dismiss()
+                },
+            )
         }
     }
 
     /**
-     * Builds a two-line label for a version row: shortName (bold) above
-     * longName (smaller, muted). Falls back to bold longName alone when
-     * the version has no shortName, to stay consistent with the version
-     * manager row, where longName is promoted into the bold primary slot
-     * in the same situation.
+     * Builds a row for a version: shortName (bold) as the primary line, with longName as a
+     * smaller, muted secondary line. Falls back to bold longName alone when the version has no
+     * shortName, to stay consistent with the version manager row, where longName is promoted
+     * into the bold primary slot in the same situation.
      */
-    private fun formatVersionLabel(mv: MVersion, secondaryColor: Int): CharSequence {
-        val shortName = mv.shortName
-        val sb = SpannableStringBuilder()
-        if (shortName.isNullOrBlank()) {
-            sb.append(mv.longName)
-            sb.setSpan(StyleSpan(Typeface.BOLD), 0, sb.length, 0)
-            return sb
-        }
+    private fun MVersion.toRow(onClick: () -> Unit): VersionRow {
+        val shortName = shortName?.takeIf { it.isNotBlank() }
+        return VersionRow(
+            primary = shortName ?: longName,
+            secondary = shortName?.let { longName },
+            onClick = onClick,
+        )
+    }
+}
 
-        sb.append(shortName)
-        sb.setSpan(StyleSpan(Typeface.BOLD), 0, sb.length, 0)
-        sb.append("\n")
-        val longStart = sb.length
-        sb.append(mv.longName)
-        sb.setSpan(RelativeSizeSpan(0.92f), longStart, sb.length, 0)
-        sb.setSpan(ForegroundColorSpan(secondaryColor), longStart, sb.length, 0)
-        return sb
+private class VersionRow(val primary: String, val secondary: String?, val onClick: () -> Unit)
+
+@Composable
+private fun VersionListSheetContent(
+    rows: List<VersionRow>,
+    selectedIndex: Int,
+    onRowClick: (VersionRow) -> Unit,
+    onManageVersions: () -> Unit,
+) {
+    val listState = rememberLazyListState()
+
+    // A LazyColumn starts scrolled to the top already, which is what we want, unless the
+    // checked item wouldn't be on screen there — then bring it into view instead.
+    LaunchedEffect(selectedIndex) {
+        if (selectedIndex > 0) {
+            snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+                .filter { it.isNotEmpty() }
+                .first()
+            val lastVisible = listState.layoutInfo.visibleItemsInfo.last().index
+            if (selectedIndex > lastVisible) {
+                listState.scrollToItem(selectedIndex)
+            }
+        }
     }
 
-    private fun resolveSecondaryTextColor(activity: Activity): Int {
-        val ta = activity.theme.obtainStyledAttributes(intArrayOf(android.R.attr.textColorSecondary))
-        return try {
-            ta.getColor(0, 0xff898989.toInt())
-        } finally {
-            ta.recycle()
+    Column(modifier = Modifier.navigationBarsPadding()) {
+        LazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(top = 8.dp),
+            modifier = Modifier.weight(weight = 1f, fill = false),
+        ) {
+            itemsIndexed(rows) { index, row ->
+                VersionRowItem(
+                    primary = row.primary,
+                    secondary = row.secondary,
+                    selected = index == selectedIndex,
+                    onClick = { onRowClick(row) },
+                )
+            }
+        }
+        HorizontalDivider()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            TextButton(onClick = onManageVersions) {
+                Text(stringResource(R.string.versi_lainnya))
+            }
+        }
+    }
+}
+
+@Composable
+private fun VersionRowItem(
+    primary: String,
+    secondary: String?,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(selected = selected, onClick = onClick)
+        Column(modifier = Modifier.padding(start = 8.dp)) {
+            Text(text = primary, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            if (secondary != null) {
+                Text(
+                    text = secondary,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
