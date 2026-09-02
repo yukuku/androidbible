@@ -91,6 +91,15 @@
 		app:showAsAction="never"
 		tools:ignore="HardcodedText" />
 
+	<!-- Shown only when the separate "Alkitab GPT" app is installed; visibility is set in code
+	     once the asynchronous package lookup finishes. -->
+	<item
+		android:id="@+id/menuAlkitabGpt"
+		android:title="Alkitab GPT"
+		android:visible="false"
+		app:showAsAction="never"
+		tools:ignore="HardcodedText" />
+
 	<!-- For the following 3 items, the showAsAction value is set in code -->
 	<item
 		android:id="@+id/menuGuide"

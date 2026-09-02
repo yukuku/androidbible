@@ -83,6 +83,7 @@ import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.settings.SettingsActivity
 import yuku.alkitab.base.storage.Prefkey
+import yuku.alkitab.base.util.AlkitabGptIntegration
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.BackForwardListController
@@ -286,6 +287,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             false
         }
     }
+
+    /**
+     * Non-null once [resolveAlkitabGptAsync] has found the separate "Alkitab GPT" app installed.
+     * Stays null on devices without it, which is what keeps the menu item hidden.
+     */
+    override var alkitabGptLaunchIntent: Intent? = null
+        private set
 
     /**
      * Container class to make sure that the fields are changed simultaneously.
@@ -705,6 +713,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
         }
 
+        resolveAlkitabGptAsync()
+
         lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
 
@@ -733,6 +743,24 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         AppLog.d(TAG, "@@onCreate end")
+    }
+
+    /**
+     * Looks up the separate "Alkitab GPT" app in the background and, when it is installed, keeps
+     * the intent that opens it in [alkitabGptLaunchIntent].
+     *
+     * PackageManager lookups are binder calls into system_server and can stall for a noticeable
+     * time on a loaded device, so this must never run on the main thread. The action mode may
+     * already be showing when the answer lands (the user can select a verse before this
+     * finishes), hence the `invalidate()`: it re-runs `onPrepareActionMode`, which is where the
+     * menu item's visibility is decided.
+     */
+    private fun resolveAlkitabGptAsync() {
+        lifecycleScope.launch {
+            val intent = AlkitabGptIntegration.resolveLaunchIntent(this@IsiActivity) ?: return@launch
+            alkitabGptLaunchIntent = intent
+            actionMode?.invalidate()
+        }
     }
 
     /**

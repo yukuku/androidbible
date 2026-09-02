@@ -1,5 +1,6 @@
 package yuku.alkitab.base.actionmode
 
+import android.content.Intent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import yuku.alkitab.base.model.MVersion
@@ -41,6 +42,13 @@ interface VerseActionModeHost {
     val dataSplit1: VersesDataModel
 
     val hasEsvsbAsal: Boolean
+
+    /**
+     * Ready-to-start intent template for the separate "Alkitab GPT" app, or null when that app
+     * is not installed on the device (also null until the asynchronous lookup finishes, which is
+     * why the controller re-reads this on every `onPrepareActionMode` rather than caching it).
+     */
+    val alkitabGptLaunchIntent: Intent?
 
     /**
      * Set to false by the Activity when it wants to keep the checked verses

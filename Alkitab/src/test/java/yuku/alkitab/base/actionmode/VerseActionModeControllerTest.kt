@@ -1,5 +1,6 @@
 package yuku.alkitab.base.actionmode
 
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -19,15 +20,18 @@ import io.mockk.verify
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.config.AppConfig
+import yuku.alkitab.base.util.AlkitabGptIntegration
 import yuku.alkitab.base.util.ExtensionManager
 import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.verses.VersesDataModel
@@ -82,6 +86,7 @@ class VerseActionModeControllerTest {
         every { host.root } returns android.widget.FrameLayout(activity)
         every { host.chapter_1 } returns 1
         every { host.hasEsvsbAsal } returns false
+        every { host.alkitabGptLaunchIntent } returns null
         every { host.activeSplit0Book } returns makeBook("Gen")
         every { host.activeSplit0Version } returns mockk(relaxed = true) {
             every { shortName } returns "KJV"
@@ -232,6 +237,35 @@ class VerseActionModeControllerTest {
     }
 
     @Test
+    fun `onPrepareActionMode hides the Alkitab GPT item when that app is not installed`() {
+        every { host.selectedVersesSplit0_1 } returns ints(1)
+        every { host.alkitabGptLaunchIntent } returns null
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+
+        assertFalse(menu.findItem(R.id.menuAlkitabGpt).isVisible)
+    }
+
+    @Test
+    fun `onPrepareActionMode reveals the Alkitab GPT item once the asynchronous lookup has found the app installed`() {
+        every { host.selectedVersesSplit0_1 } returns ints(1)
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+
+        // The lookup is still pending when the action mode is created, so the item starts hidden.
+        controller.onPrepareActionMode(mode, menu)
+        assertFalse(menu.findItem(R.id.menuAlkitabGpt).isVisible)
+
+        // The result lands and the action mode is invalidated, which re-runs onPrepareActionMode.
+        every { host.alkitabGptLaunchIntent } returns Intent(Intent.ACTION_VIEW).setPackage(AlkitabGptIntegration.PACKAGE_NAME)
+        controller.onPrepareActionMode(mode, menu)
+        assertTrue(menu.findItem(R.id.menuAlkitabGpt).isVisible)
+    }
+
+    @Test
     fun `onPrepareActionMode hides Guide, Commentary, and Dictionary when AppConfig disables them`() {
         every { host.selectedVersesSplit0_1 } returns ints(1)
         every { AppConfig.get() } returns newAppConfig(menuGuide = false, menuCommentary = false, menuDictionary = false)
@@ -303,6 +337,45 @@ class VerseActionModeControllerTest {
         // Ari.encode(bookId=0, chapter=1, verse=2) = (0<<16) | (1<<8) | 2 = 258
         // Ari.encode(bookId=0, chapter=1, verse=3) = 259
         assertEquals(setOf(258, 259), arisSlot.captured)
+    }
+
+    @Test
+    fun `clicking the Alkitab GPT menu item starts the resolved intent with the ARI, reference, and plain verse text of the selection`() {
+        val template = Intent("org.sabda.gpt.action.VIEW").setPackage(AlkitabGptIntegration.PACKAGE_NAME)
+
+        every { host.activeSplit0Book } returns makeBook("Gen").apply { bookId = 0 }
+        every { host.selectedVersesSplit0_1 } returns ints(1, 2)
+        every { host.dataSplit0 } returns makeData("@@In the @9beginning@7...", "And the earth...")
+        every { host.alkitabGptLaunchIntent } returns template
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuAlkitabGpt))
+
+        val started = shadowOf(activity).nextStartedActivity
+        assertEquals("org.sabda.gpt.action.VIEW", started.action)
+        assertEquals(AlkitabGptIntegration.PACKAGE_NAME, started.getPackage())
+        // Ari.encode(bookId=0, chapter=1, verse=1) = (1<<8) | 1 = 257
+        assertEquals(257, started.getIntExtra(AlkitabGptIntegration.EXTRA_ARI, 0))
+        assertEquals("Gen 1:1-2", started.getStringExtra(AlkitabGptIntegration.EXTRA_REFERENCE))
+        assertEquals("In the beginning...\nAnd the earth...", started.getStringExtra(AlkitabGptIntegration.EXTRA_VERSE_TEXT))
+
+        // The template is shared across taps, so it must not have picked up the extras itself.
+        assertFalse(template.hasExtra(AlkitabGptIntegration.EXTRA_ARI))
+    }
+
+    @Test
+    fun `clicking the Alkitab GPT menu item starts nothing when the app is not installed`() {
+        every { host.selectedVersesSplit0_1 } returns ints(1)
+        every { host.alkitabGptLaunchIntent } returns null
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuAlkitabGpt))
+
+        assertNull(shadowOf(activity).nextStartedActivity)
     }
 
     @Test
