@@ -54,7 +54,6 @@ object VersionDialogHelper {
         val versions = versionManager.getAvailableVersions()
         val selected = selectedVersionId?.let { id -> versions.indexOfFirst { it.versionId == id } } ?: -1
 
-        // Nothing to close when the split isn't currently open.
         val onClose: (() -> Unit)? = if (selectedVersionId != null) {
             { onVersionSelected(null) }
         } else {
@@ -113,10 +112,8 @@ private fun VersionListSheetContent(
 ) {
     val listState = rememberLazyListState()
 
-    // A LazyColumn starts scrolled to the top already, which is what we want, unless the checked
-    // item wouldn't be fully on screen there, in which case bring it into view instead. layoutInfo
-    // counts an item as visible even when only a sliver of it pokes into the viewport, so the
-    // check requires full visibility to avoid leaving the checked item clipped at the bottom edge.
+    // Scrolls the checked item into view only if it isn't fully visible at the top; layoutInfo
+    // counts a barely-clipped item as visible, so "fully" avoids leaving it stuck at the edge.
     LaunchedEffect(selectedIndex) {
         if (selectedIndex > 0) {
             snapshotFlow { listState.layoutInfo.visibleItemsInfo }
@@ -133,9 +130,7 @@ private fun VersionListSheetContent(
         }
     }
 
-    // Cap the sheet height so its rounded top stays a bit below the status bar (a
-    // ModalBottomSheet's expanded height otherwise reaches right up to it), matching the
-    // song search sheet. Shorter lists still wrap to their content instead of stretching.
+    // Caps the sheet height a bit below the status bar, matching the song search sheet.
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val sheetHeight = maxHeight - 48.dp
 

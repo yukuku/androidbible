@@ -37,7 +37,6 @@ object ComposeBottomSheetHost {
                     ModalBottomSheet(
                         sheetState = sheetState,
                         sheetGesturesEnabled = sheetGesturesEnabled,
-                        // The handle implies a drag gesture that isn't there when disabled.
                         dragHandle = if (sheetGesturesEnabled) {
                             { BottomSheetDefaults.DragHandle() }
                         } else {
