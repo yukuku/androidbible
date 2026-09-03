@@ -17,13 +17,6 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowPackageManager
 
-/**
- * Robolectric is required here: the whole point of [AlkitabGptIntegration] is what PackageManager
- * answers, so the tests install and omit the companion app through `ShadowPackageManager`.
- *
- * The key names and the action asserted below are Alkitab GPT's published contract (its README
- * and `ChatContextFactory`), so these tests double as a guard against drifting away from it.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
 class AlkitabGptIntegrationTest {

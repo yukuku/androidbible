@@ -288,10 +288,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
     }
 
-    /**
-     * True once [resolveAlkitabGptAsync] has found the separate "Alkitab GPT" app installed.
-     * Stays false on devices without it, which is what keeps the menu item hidden.
-     */
     override var hasAlkitabGpt = false
         private set
 
@@ -745,15 +741,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         AppLog.d(TAG, "@@onCreate end")
     }
 
-    /**
-     * Looks up the separate "Alkitab GPT" app in the background and records the answer in
-     * [hasAlkitabGpt].
-     *
-     * The lookup itself suspends on an IO dispatcher, so the main thread never waits on
-     * PackageManager. The action mode may already be showing when the answer lands (the user can
-     * select a verse before this finishes), hence the `invalidate()`: it re-runs
-     * `onPrepareActionMode`, which is where the menu item's visibility is decided.
-     */
     private fun resolveAlkitabGptAsync() {
         lifecycleScope.launch {
             if (!AlkitabGptIntegration.isChatPopupAvailable(this@IsiActivity)) return@launch

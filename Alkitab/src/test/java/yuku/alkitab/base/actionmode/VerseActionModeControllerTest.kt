@@ -253,11 +253,9 @@ class VerseActionModeControllerTest {
         val menu = inflateMenu()
         controller.onCreateActionMode(mode, menu)
 
-        // The lookup is still pending when the action mode is created, so the item starts hidden.
         controller.onPrepareActionMode(mode, menu)
         assertFalse(menu.findItem(R.id.menuAlkitabGpt).isVisible)
 
-        // The result lands and the action mode is invalidated, which re-runs onPrepareActionMode.
         every { host.hasAlkitabGpt } returns true
         controller.onPrepareActionMode(mode, menu)
         assertTrue(menu.findItem(R.id.menuAlkitabGpt).isVisible)

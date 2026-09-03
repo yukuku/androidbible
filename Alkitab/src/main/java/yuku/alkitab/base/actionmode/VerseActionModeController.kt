@@ -160,10 +160,6 @@ class VerseActionModeController(
         // do not show dictionary item if not needed because of auto-lookup from
         menuDictionary.isVisible = c.menuDictionary && !Preferences.getBoolean(host.activity.getString(R.string.pref_autoDictionaryAnalyze_key), host.activity.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
 
-        // Alkitab GPT is only offered when that app is already installed. The lookup that answers
-        // that runs off the main thread, so its result can land after the action mode was created;
-        // deciding visibility here (rather than in onCreateActionMode) means every `invalidate()`
-        // picks up the answer as soon as it arrives.
         menu.findItem(R.id.menuAlkitabGpt).isVisible = host.hasAlkitabGpt
 
         val menuRibkaReport = menu.findItem(R.id.menuRibkaReport)
@@ -416,8 +412,6 @@ class VerseActionModeController(
 
             R.id.menuAlkitabGpt -> {
 
-                // Alkitab GPT takes a passage, not a verse list, so a non-contiguous selection is
-                // sent as the range that spans it.
                 val intent = AlkitabGptIntegration.chatPopupIntent(
                     bookName = host.activeSplit0Book.shortName,
                     chapter_1 = host.chapter_1,

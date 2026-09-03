@@ -42,11 +42,6 @@ interface VerseActionModeHost {
 
     val hasEsvsbAsal: Boolean
 
-    /**
-     * Whether the separate "Alkitab GPT" app is installed and can take a chat-popup request.
-     * False until the asynchronous lookup finishes, which is why the controller re-reads this on
-     * every `onPrepareActionMode` rather than caching it.
-     */
     val hasAlkitabGpt: Boolean
 
     /**
