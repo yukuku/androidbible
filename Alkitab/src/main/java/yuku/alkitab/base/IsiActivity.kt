@@ -83,6 +83,7 @@ import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.settings.SettingsActivity
 import yuku.alkitab.base.storage.Prefkey
+import yuku.alkitab.base.util.AlkitabGptIntegration
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.BackForwardListController
@@ -286,6 +287,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             false
         }
     }
+
+    override var hasAlkitabGpt = false
+        private set
 
     /**
      * Container class to make sure that the fields are changed simultaneously.
@@ -705,6 +709,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
         }
 
+        resolveAlkitabGptAsync()
+
         lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
 
@@ -733,6 +739,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         AppLog.d(TAG, "@@onCreate end")
+    }
+
+    private fun resolveAlkitabGptAsync() {
+        lifecycleScope.launch {
+            if (!AlkitabGptIntegration.isChatPopupAvailable(this@IsiActivity)) return@launch
+            hasAlkitabGpt = true
+            actionMode?.invalidate()
+        }
     }
 
     /**

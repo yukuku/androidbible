@@ -91,6 +91,13 @@
 		app:showAsAction="never"
 		tools:ignore="HardcodedText" />
 
+	<item
+		android:id="@+id/menuAlkitabGpt"
+		android:title="Alkitab GPT"
+		android:visible="false"
+		app:showAsAction="never"
+		tools:ignore="HardcodedText" />
+
 	<!-- For the following 3 items, the showAsAction value is set in code -->
 	<item
 		android:id="@+id/menuGuide"

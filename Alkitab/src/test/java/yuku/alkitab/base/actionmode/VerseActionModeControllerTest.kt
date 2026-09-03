@@ -25,9 +25,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.config.AppConfig
+import yuku.alkitab.base.util.AlkitabGptIntegration
 import yuku.alkitab.base.util.ExtensionManager
 import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.verses.VersesDataModel
@@ -82,6 +84,7 @@ class VerseActionModeControllerTest {
         every { host.root } returns android.widget.FrameLayout(activity)
         every { host.chapter_1 } returns 1
         every { host.hasEsvsbAsal } returns false
+        every { host.hasAlkitabGpt } returns false
         every { host.activeSplit0Book } returns makeBook("Gen")
         every { host.activeSplit0Version } returns mockk(relaxed = true) {
             every { shortName } returns "KJV"
@@ -232,6 +235,33 @@ class VerseActionModeControllerTest {
     }
 
     @Test
+    fun `onPrepareActionMode hides the Alkitab GPT item when that app is not installed`() {
+        every { host.selectedVersesSplit0_1 } returns ints(1)
+        every { host.hasAlkitabGpt } returns false
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+
+        assertFalse(menu.findItem(R.id.menuAlkitabGpt).isVisible)
+    }
+
+    @Test
+    fun `onPrepareActionMode reveals the Alkitab GPT item once the asynchronous lookup has found the app installed`() {
+        every { host.selectedVersesSplit0_1 } returns ints(1)
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+
+        controller.onPrepareActionMode(mode, menu)
+        assertFalse(menu.findItem(R.id.menuAlkitabGpt).isVisible)
+
+        every { host.hasAlkitabGpt } returns true
+        controller.onPrepareActionMode(mode, menu)
+        assertTrue(menu.findItem(R.id.menuAlkitabGpt).isVisible)
+    }
+
+    @Test
     fun `onPrepareActionMode hides Guide, Commentary, and Dictionary when AppConfig disables them`() {
         every { host.selectedVersesSplit0_1 } returns ints(1)
         every { AppConfig.get() } returns newAppConfig(menuGuide = false, menuCommentary = false, menuDictionary = false)
@@ -303,6 +333,44 @@ class VerseActionModeControllerTest {
         // Ari.encode(bookId=0, chapter=1, verse=2) = (0<<16) | (1<<8) | 2 = 258
         // Ari.encode(bookId=0, chapter=1, verse=3) = 259
         assertEquals(setOf(258, 259), arisSlot.captured)
+    }
+
+    @Test
+    fun `clicking the Alkitab GPT menu item opens the chat popup on the book, chapter, and verse range of the selection`() {
+        every { host.activeSplit0Book } returns makeBook("Kejadian")
+        every { host.chapter_1 } returns 3
+        every { host.selectedVersesSplit0_1 } returns ints(15, 16, 17)
+        every { host.hasAlkitabGpt } returns true
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuAlkitabGpt))
+
+        val started = shadowOf(activity).nextStartedActivity
+        assertEquals(AlkitabGptIntegration.ACTION_SHOW_CHAT_POPUP, started.action)
+        assertEquals(AlkitabGptIntegration.PACKAGE_NAME, started.getPackage())
+        assertEquals("Kejadian", started.getStringExtra(AlkitabGptIntegration.EXTRA_BOOK_NAME))
+        assertEquals(3, started.getIntExtra(AlkitabGptIntegration.EXTRA_CHAPTER, -1))
+        assertEquals(15, started.getIntExtra(AlkitabGptIntegration.EXTRA_VERSE_START, -1))
+        assertEquals(17, started.getIntExtra(AlkitabGptIntegration.EXTRA_VERSE_END, -1))
+        assertEquals(AlkitabGptIntegration.SOURCE, started.getStringExtra(AlkitabGptIntegration.EXTRA_SOURCE))
+    }
+
+    @Test
+    fun `clicking the Alkitab GPT menu item sends a non-contiguous selection as the range that spans it`() {
+        every { host.activeSplit0Book } returns makeBook("Kejadian")
+        every { host.selectedVersesSplit0_1 } returns ints(2, 5, 9)
+        every { host.hasAlkitabGpt } returns true
+
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+        controller.onPrepareActionMode(mode, menu)
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuAlkitabGpt))
+
+        val started = shadowOf(activity).nextStartedActivity
+        assertEquals(2, started.getIntExtra(AlkitabGptIntegration.EXTRA_VERSE_START, -1))
+        assertEquals(9, started.getIntExtra(AlkitabGptIntegration.EXTRA_VERSE_END, -1))
     }
 
     @Test

@@ -42,6 +42,8 @@ interface VerseActionModeHost {
 
     val hasEsvsbAsal: Boolean
 
+    val hasAlkitabGpt: Boolean
+
     /**
      * Set to false by the Activity when it wants to keep the checked verses
      * visible after the action mode is destroyed (e.g. during some split-view

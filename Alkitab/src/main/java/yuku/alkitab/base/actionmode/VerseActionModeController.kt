@@ -19,6 +19,7 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog
 import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
+import yuku.alkitab.base.util.AlkitabGptIntegration
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.ExtensionManager
@@ -158,6 +159,8 @@ class VerseActionModeController(
 
         // do not show dictionary item if not needed because of auto-lookup from
         menuDictionary.isVisible = c.menuDictionary && !Preferences.getBoolean(host.activity.getString(R.string.pref_autoDictionaryAnalyze_key), host.activity.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
+
+        menu.findItem(R.id.menuAlkitabGpt).isVisible = host.hasAlkitabGpt
 
         val menuRibkaReport = menu.findItem(R.id.menuRibkaReport)
         menuRibkaReport.isVisible = single && actions.checkRibkaEligibility() != RibkaEligibility.None
@@ -403,6 +406,23 @@ class VerseActionModeController(
                     host.activity.startActivity(intent)
                 } catch (e: Exception) {
                     AppLog.e(TAG, "ESVSB starting", e)
+                }
+                true
+            }
+
+            R.id.menuAlkitabGpt -> {
+
+                val intent = AlkitabGptIntegration.chatPopupIntent(
+                    bookName = host.activeSplit0Book.shortName,
+                    chapter_1 = host.chapter_1,
+                    verseStart_1 = selected.get(0),
+                    verseEnd_1 = selected.get(selected.size() - 1),
+                )
+
+                try {
+                    host.activity.startActivity(intent)
+                } catch (e: Exception) {
+                    AppLog.e(TAG, "Alkitab GPT starting", e)
                 }
                 true
             }
