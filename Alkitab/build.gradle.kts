@@ -102,6 +102,7 @@ val proprietaryFlavors = mapOf(
     "sabda_alkitab" to "org.sabda.alkitab",
 )
 val proprietaryDir: String? = providers.environmentVariable("ALKITAB_PROPRIETARY_DIR").orNull
+val releaseKeystore: String? = providers.environmentVariable("SIGN_KEYSTORE").orNull
 
 // Server endpoints inlined here (and in AlkitabFeedback) — these are app-specific
 // constants previously held in root build.gradle's ext block.
@@ -111,11 +112,13 @@ val ribkaFunctionsHostDebug = "http://10.0.3.2:5001/pulau-ribka/us-central1/"
 
 android {
     signingConfigs {
-        create("release") {
-            keyAlias = System.getenv("SIGN_ALIAS")
-            keyPassword = System.getenv("SIGN_PASSWORD")
-            storeFile = file(System.getenv("SIGN_KEYSTORE") ?: "/dev/null")
-            storePassword = System.getenv("SIGN_PASSWORD")
+        if (releaseKeystore != null) {
+            create("release") {
+                keyAlias = System.getenv("SIGN_ALIAS")
+                keyPassword = System.getenv("SIGN_PASSWORD")
+                storeFile = file(releaseKeystore)
+                storePassword = System.getenv("SIGN_PASSWORD")
+            }
         }
     }
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -172,7 +175,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = releaseKeystore?.let { signingConfigs.getByName("release") }
         }
     }
     lint {
