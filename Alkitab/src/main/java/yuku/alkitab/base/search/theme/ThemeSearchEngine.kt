@@ -5,6 +5,10 @@ import java.io.File
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import yuku.alkitab.base.App
+import yuku.alkitab.base.model.MVersionDb
+import yuku.alkitab.base.model.MVersionInternal
+import yuku.alkitab.base.model.MVersionPreset
 import yuku.alkitab.base.search.theme.index.RankedAri
 import yuku.alkitab.base.search.theme.index.SemanticIndexReader
 import yuku.alkitab.base.search.theme.model.ByteLevelBpeTokenizer
@@ -43,7 +47,13 @@ class ThemeSearchEngine internal constructor(
         readyPack = ModelPackRepository(context)::readyPack,
         semanticFactory = ProductionSemanticRanker.factory(context.applicationContext),
         lexicalSearch = { version, versionId, tokens, allowedBooks, limit ->
-            Bm25IndexCache.getOrBuild(version, versionId, QueryNormalizer.from(context.applicationContext))
+            Bm25IndexCache.getOrBuild(
+                context.cacheDir,
+                version,
+                versionId,
+                versionRevision(versionId),
+                QueryNormalizer.from(context.applicationContext),
+            )
                 .search(tokens, allowedBooks, limit)
         },
         normalizer = QueryNormalizer.from(context.applicationContext),
@@ -109,6 +119,19 @@ class ThemeSearchEngine internal constructor(
     companion object {
         const val DEFAULT_RESULT_LIMIT = 30
         private const val CANDIDATE_LIMIT = 200
+    }
+}
+
+private fun versionRevision(versionId: String): Long {
+    val versions = App.services.versions
+    val model = versions.getVersionFromVersionId(versionId)
+        ?: versions.activeMVersion().takeIf { it.versionId == versionId }
+    return when (model) {
+        is MVersionDb -> model.modifyTime.toLong().takeIf { it != 0L }
+            ?: File(model.filename).lastModified()
+        is MVersionPreset -> model.modifyTime.toLong()
+        is MVersionInternal -> App.getVersionCode().toLong()
+        else -> 0L
     }
 }
 
