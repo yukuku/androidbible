@@ -12,8 +12,8 @@ data class TokenizedInput(
 /** Exact byte-level BPE path used by the pinned Granite tokenizer. */
 class ByteLevelBpeTokenizer(
     private val data: TokenizerData,
-) {
-    fun encode(text: String, maxLength: Int): TokenizedInput {
+) : EmbeddingTokenizer {
+    override fun encode(text: String, maxLength: Int): TokenizedInput {
         require(maxLength >= 2) { "maxLength must hold start and return tokens" }
         val content = ArrayList<Int>()
         val matcher = PRE_TOKEN_PATTERN.matcher(text)
@@ -90,4 +90,8 @@ class ByteLevelBpeTokenizer(
             }
         }
     }
+}
+
+fun interface EmbeddingTokenizer {
+    fun encode(text: String, maxLength: Int): TokenizedInput
 }
