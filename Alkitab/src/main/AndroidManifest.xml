@@ -23,6 +23,14 @@
 		android:name="android.hardware.touchscreen"
 		android:required="false" />
 
+	<!-- Android 11+ package visibility for the only TTS engine this app uses. -->
+	<queries>
+		<package android:name="com.google.android.tts" />
+		<intent>
+			<action android:name="android.intent.action.TTS_SERVICE" />
+		</intent>
+	</queries>
+
 	<application
 		android:name="yuku.alkitab.base.App"
 		android:allowBackup="true"
