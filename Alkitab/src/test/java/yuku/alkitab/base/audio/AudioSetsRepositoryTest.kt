@@ -198,6 +198,7 @@ class AudioSetsRepositoryTest {
 
         val sets = AudioSetsRepository.setsFor("preset/in-tb")
         assertTrue(sets.sets.isEmpty())
+        assertEquals(false, AudioSetsRepository.cachedLookupFailed("preset/in-tb"))
         assertEquals(2, sets.schema)
 
         AudioSetsRepository.setsFor("preset/in-tb")
@@ -213,6 +214,7 @@ class AudioSetsRepositoryTest {
 
         val sets = AudioSetsRepository.setsFor("preset/in-tb")
         assertTrue(sets.sets.isEmpty())
+        assertTrue(AudioSetsRepository.cachedLookupFailed("preset/in-tb"))
 
         now += TimeUnit.SECONDS.toNanos(29)
         AudioSetsRepository.setsFor("preset/in-tb")
@@ -279,6 +281,7 @@ class AudioSetsRepositoryTest {
         AudioSetsRepository.nanoTime = { now }
 
         assertTrue(AudioSetsRepository.setsFor("preset/in-tb").sets.isEmpty())
+        assertEquals(false, AudioSetsRepository.cachedLookupFailed("preset/in-tb"))
         now += TimeUnit.DAYS.toNanos(1)
         AudioSetsRepository.setsFor("preset/in-tb")
         assertEquals("'no recordings' is an answer, not a failure", 1, http.calls.get())

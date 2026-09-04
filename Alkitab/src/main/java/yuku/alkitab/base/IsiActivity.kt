@@ -153,6 +153,8 @@ import yuku.devoxx.flowlayout.FlowLayout
 private const val TAG = "IsiActivity"
 private const val EXTRA_verseUrl = "verseUrl"
 private const val INSTANCE_STATE_ari = "ari"
+const val EXTRA_START_LISTENING = "startRecordedNarration"
+const val EXTRA_START_LISTENING_AUDIO_ID = "startRecordedNarrationAudioId"
 
 class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseActionModeHost, VerseActionModeActions, ReaderGestureHost, ReaderGestureActions, SplitViewHost, SplitViewActions {
     override var uncheckVersesWhenActionModeDestroyed = true
@@ -762,6 +764,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // appears once the answer for the visible version(s) lands.
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
+        if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_START_LISTENING, false)) {
+            lifecycleScope.launch {
+                AudioSetsRepository.setsFor(activeSplit0.versionId)
+                intent.getStringExtra(EXTRA_START_LISTENING_AUDIO_ID)?.let { audioId ->
+                    AudioSetSelections.store(activeSplit0.versionId, audioId)
+                }
+                invalidateOptionsMenu()
+                audioBinder.refreshSetChoices()
+                audioBinder.showFromVerse(Ari.toVerse(openingAri).coerceAtLeast(1))
+            }
+        }
         lifecycleScope.launch {
             // 100 ms tick rate while playing — this collector only drives the
             // verse highlight, never invalidateOptionsMenu(); menu refreshes

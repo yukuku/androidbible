@@ -18,10 +18,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.ImageButton
+import android.widget.ProgressBar
+import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.Keep
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
@@ -30,18 +34,34 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.cursoradapter.widget.CursorAdapter
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.EXTRA_START_LISTENING
+import yuku.alkitab.base.EXTRA_START_LISTENING_AUDIO_ID
 import yuku.alkitab.base.accessibility.ListeningAccessibilityText
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.base.audio.AudioSetSelections
+import yuku.alkitab.base.audio.AudioSetsRepository
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.storage.Prefkey
+import yuku.alkitab.base.search.theme.SearchMode
+import yuku.alkitab.base.search.theme.ThemeSearchEngine
+import yuku.alkitab.base.search.theme.ThemeSearchError
+import yuku.alkitab.base.search.theme.pack.ModelPackRepository
+import yuku.alkitab.base.search.theme.pack.ModelPackState
+import yuku.alkitab.base.speech.BiblePassageFactory
+import yuku.alkitab.base.speech.BibleSpeechController
+import yuku.alkitab.base.speech.GoogleTextToSpeechEngine
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.ClipboardUtil
@@ -65,6 +85,7 @@ private const val ID_CLEAR_HISTORY = -1L
 private const val COLINDEX_ID = 0
 private const val COLINDEX_QUERY_STRING = 1
 private const val TAG = "SearchActivity"
+private const val STATE_SEARCH_MODE = "searchMode"
 
 class SearchActivity : BaseActivity() {
     private lateinit var root: View
@@ -81,6 +102,11 @@ class SearchActivity : BaseActivity() {
     private lateinit var cFilterSingleBook: CheckBox
     private lateinit var tFilterAdvanced: TextView
     private lateinit var bEditFilter: View
+    private lateinit var searchModeGroup: RadioGroup
+    private lateinit var themePackPanel: View
+    private lateinit var themePackStatus: TextView
+    private lateinit var themePackProgress: ProgressBar
+    private lateinit var themePackAction: Button
 
     private var hiliteColor = 0
     private var selectedBookIds = SparseBooleanArray()
@@ -88,6 +114,15 @@ class SearchActivity : BaseActivity() {
     private var filterUserAction = 0 // when it's not user action, set to nonzero
     private val adapter = SearchAdapter(IntArrayList(), emptyList())
     private val accessibilityText by lazy { ListeningAccessibilityText.from(this) }
+    private val modelPackRepository by lazy { ModelPackRepository(applicationContext) }
+    private val themeSearchEngineDelegate = lazy { ThemeSearchEngine(applicationContext) }
+    private val themeSearchEngine by themeSearchEngineDelegate
+    private val biblePassageFactory = BiblePassageFactory()
+    private var bibleSpeechController: BibleSpeechController? = null
+    private var themeSearchJob: Job? = null
+    private var searchGeneration = 0L
+    private var searchMode = SearchMode.Exact
+    private var modelPackState: ModelPackState = ModelPackState.Absent
 
     private var searchInVersion: Version = App.services.versions.activeVersion()
     private var searchInVersionId: String = App.services.versions.activeVersionId()
@@ -134,6 +169,12 @@ class SearchActivity : BaseActivity() {
                     }
                     ClipboardUtil.copyToClipboard(sb)
                     Snackbar.make(root, R.string.search_selected_verse_copied, Snackbar.LENGTH_SHORT).show()
+                    mode.finish()
+                    true
+                }
+
+                R.id.menuListenSelected -> {
+                    listenToSelectedResults()
                     mode.finish()
                     true
                 }
@@ -236,6 +277,40 @@ class SearchActivity : BaseActivity() {
         cFilterSingleBook = findViewById(R.id.cFilterSingleBook)
         tFilterAdvanced = findViewById(R.id.tFilterAdvanced)
         bEditFilter = findViewById(R.id.bEditFilter)
+        searchModeGroup = findViewById(R.id.searchModeGroup)
+        themePackPanel = findViewById(R.id.themePackPanel)
+        themePackStatus = findViewById(R.id.themePackStatus)
+        themePackProgress = findViewById(R.id.themePackProgress)
+        themePackAction = findViewById(R.id.themePackAction)
+
+        searchMode = SearchMode.restore(savedInstanceState?.getString(STATE_SEARCH_MODE))
+        searchModeGroup.check(
+            if (searchMode == SearchMode.Exact) R.id.searchModeExact else R.id.searchModeTheme
+        )
+        searchModeGroup.setOnCheckedChangeListener { _, checkedId ->
+            val newMode = if (checkedId == R.id.searchModeTheme) SearchMode.ThemeOffline else SearchMode.Exact
+            if (newMode != searchMode) {
+                searchMode = newMode
+                themeSearchJob?.cancel()
+                searchGeneration++
+                actionMode?.finish()
+                adapter.setData(IntArrayList(), emptyList())
+                updateSearchModeUi()
+            }
+        }
+        themePackAction.setOnClickListener {
+            when (modelPackState) {
+                ModelPackState.Absent, is ModelPackState.Failed -> modelPackRepository.install()
+                is ModelPackState.Ready -> modelPackRepository.remove()
+                is ModelPackState.Downloading -> Unit
+            }
+        }
+        lifecycleScope.launch {
+            modelPackRepository.state.collectLatest { state ->
+                modelPackState = state
+                renderModelPackState(state)
+            }
+        }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -329,7 +404,22 @@ class SearchActivity : BaseActivity() {
 
         displaySearchInVersion()
 
+        updateSearchModeUi()
+
         searchView.requestFocus()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(STATE_SEARCH_MODE, searchMode.name)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroy() {
+        themeSearchJob?.cancel()
+        if (themeSearchEngineDelegate.isInitialized()) themeSearchEngine.close()
+        bibleSpeechController?.close()
+        bibleSpeechController = null
+        super.onDestroy()
     }
 
     private fun ViewGroup.findAutoCompleteTextView(): AutoCompleteTextView? {
@@ -355,10 +445,61 @@ class SearchActivity : BaseActivity() {
     private fun displaySearchInVersion() {
         val versionInitials = searchInVersion.initials
         bVersion.text = versionInitials
-        searchView.queryHint = getString(R.string.search_in_version_short_name_placeholder, versionInitials)
+        searchView.queryHint = if (searchMode == SearchMode.Exact) {
+            getString(R.string.search_in_version_short_name_placeholder, versionInitials)
+        } else {
+            getString(R.string.search_theme_hint)
+        }
 
         @Suppress("NotifyDataSetChanged")
         adapter.notifyDataSetChanged()
+    }
+
+    private fun updateSearchModeUi() {
+        themePackPanel.isVisible = searchMode == SearchMode.ThemeOffline
+        panelFilter.isVisible = true
+        displaySearchInVersion()
+        tSearchStatus.isVisible = false
+        lsSearchResults.isVisible = false
+        tSearchTips.isVisible = true
+        tSearchTips.text = if (searchMode == SearchMode.Exact) {
+            SpannableStringBuilder(getText(R.string.search_syntax_tips)).apply {
+                while (true) {
+                    val pos = TextUtils.indexOf(this, "[q]")
+                    if (pos < 0) break
+                    replace(pos, pos + 3, "\"")
+                }
+            }
+        } else {
+            getText(R.string.search_theme_hint)
+        }
+        renderModelPackState(modelPackState)
+    }
+
+    private fun renderModelPackState(state: ModelPackState) {
+        if (!::themePackPanel.isInitialized) return
+        themePackProgress.isVisible = state is ModelPackState.Downloading
+        themePackAction.isEnabled = state !is ModelPackState.Downloading
+        when (state) {
+            ModelPackState.Absent -> {
+                themePackStatus.setText(R.string.search_theme_pack_absent)
+                themePackAction.setText(R.string.search_theme_pack_install)
+            }
+            is ModelPackState.Downloading -> {
+                val percent = if (state.total <= 0) 0 else ((state.bytes * 100) / state.total).toInt().coerceIn(0, 100)
+                themePackProgress.progress = percent
+                themePackStatus.text = getString(R.string.search_theme_pack_downloading, percent)
+                themePackAction.setText(R.string.search_theme_pack_install)
+            }
+            is ModelPackState.Ready -> {
+                themePackStatus.setText(R.string.search_theme_pack_ready)
+                themePackAction.setText(R.string.search_theme_pack_remove)
+            }
+            is ModelPackState.Failed -> {
+                themePackStatus.setText(R.string.search_theme_pack_failed)
+                themePackAction.setText(R.string.search_theme_pack_retry)
+            }
+        }
     }
 
     private fun configureFilterDisplayOldNewTest() {
@@ -556,10 +697,9 @@ class SearchActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    @JvmInline
-    value class SearchRequest(val query: SearchEngineQuery)
+    data class SearchRequest(val query: SearchEngineQuery, val generation: Long)
 
-    data class SearchResult(val query: SearchEngineQuery, val result: IntArrayList)
+    data class SearchResult(val query: SearchEngineQuery, val result: IntArrayList, val generation: Long)
 
     /**
      * So we can delay a bit before updating suggestions.
@@ -591,10 +731,11 @@ class SearchActivity : BaseActivity() {
                     "CPU (thread) time: $debugstats_cpuTimeMs ms"
             )
 
-            return SearchResult(query, result)
+            return SearchResult(query, result, request.generation)
         }
 
         override fun onResult(searchResult: SearchResult) {
+            if (searchMode != SearchMode.Exact || searchResult.generation != searchGeneration) return
             val (query, result) = searchResult
             progressbar.isVisible = false
             bSearch.isVisible = true
@@ -671,6 +812,11 @@ class SearchActivity : BaseActivity() {
     private fun search(query_string: String) {
         if (query_string.isBlank()) return
 
+        if (searchMode == SearchMode.ThemeOffline) {
+            searchTheme(query_string)
+            return
+        }
+
         val query = SearchEngineQuery()
         query.query_string = query_string
         query.bookIds = selectedBookIds
@@ -683,7 +829,110 @@ class SearchActivity : BaseActivity() {
         searchHistoryAdapter.setData(addSearchHistoryEntry(query_string))
         searchView.findAutoCompleteTextView()?.dismissDropDown()
 
-        searcher.submit(SearchRequest(query))
+        searcher.submit(SearchRequest(query, ++searchGeneration))
+    }
+
+    private fun searchTheme(queryString: String) {
+        val generation = ++searchGeneration
+        themeSearchJob?.cancel()
+        progressbar.isVisible = true
+        bSearch.isVisible = false
+        tSearchStatus.setText(R.string.search_in_progress_accessibility)
+        tSearchStatus.isVisible = true
+        searchHistoryAdapter.setData(addSearchHistoryEntry(queryString))
+        searchView.findAutoCompleteTextView()?.dismissDropDown()
+
+        val allowedBooks = BooleanArray(66) { bookId -> selectedBookIds[bookId, false] }
+        val version = searchInVersion
+        val versionId = searchInVersionId
+        themeSearchJob = lifecycleScope.launch {
+            val response = themeSearchEngine.search(version, versionId, queryString, allowedBooks)
+            if (generation != searchGeneration || searchMode != SearchMode.ThemeOffline) return@launch
+            progressbar.isVisible = false
+            bSearch.isVisible = true
+
+            when (response.error) {
+                ThemeSearchError.PACK_REQUIRED -> {
+                    tSearchStatus.setText(R.string.search_theme_pack_required)
+                    tSearchTips.setText(R.string.search_theme_pack_required)
+                    tSearchTips.isVisible = true
+                    lsSearchResults.isVisible = false
+                    return@launch
+                }
+                ThemeSearchError.MODEL_ERROR -> {
+                    tSearchStatus.setText(R.string.search_theme_model_error)
+                    tSearchTips.setText(R.string.search_theme_model_error)
+                    tSearchTips.isVisible = true
+                    lsSearchResults.isVisible = false
+                    return@launch
+                }
+                null -> Unit
+            }
+
+            val results = IntArrayList(response.aris.size)
+            response.aris.forEach(results::add)
+            actionMode?.finish()
+            adapter.setData(results, emptyList())
+            val count = results.size()
+            tSearchStatus.text = getString(R.string.size_hasil, count)
+            tSearchStatus.isVisible = true
+            tSearchTips.isVisible = count == 0
+            if (count == 0) tSearchTips.text = TextUtils.expandTemplate(getText(R.string.search_no_result), queryString)
+            lsSearchResults.isVisible = count > 0
+            if (count > 0) {
+                val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.hideSoftInputFromWindow(searchView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+                searchView.clearFocus()
+                lsSearchResults.requestFocus()
+            }
+            AppLog.d(TAG, "Theme search results: $count; total ${response.elapsedMs} ms")
+        }
+    }
+
+    private fun listenToSelectedResults() {
+        val aris = adapter.checkedPositions.sorted().map { adapter.searchResults[it] }
+        if (aris.isEmpty()) return
+        lifecycleScope.launch {
+            val sets = AudioSetsRepository.setsFor(searchInVersionId)
+            if (AudioSetsRepository.cachedLookupFailed(searchInVersionId)) {
+                offerGoogleTtsAfterRecordingLookupFailure(aris)
+                return@launch
+            }
+            val bookId = Ari.toBook(aris.first())
+            val recording = sets.sets.firstOrNull { it.coversBook(bookId) }
+            if (recording != null) {
+                AudioSetSelections.store(searchInVersionId, recording.audioId)
+                startActivity(
+                    Launcher.openAppAtBibleLocationWithVerseSelected(aris.first())
+                        .putExtra(EXTRA_START_LISTENING, true)
+                        .putExtra(EXTRA_START_LISTENING_AUDIO_ID, recording.audioId)
+                )
+            } else {
+                speakAris(aris)
+            }
+        }
+    }
+
+    private fun offerGoogleTtsAfterRecordingLookupFailure(aris: List<Int>) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.tts_recording_failed_title)
+            .setMessage(R.string.search_recording_check_failed)
+            .setNegativeButton(R.string.tts_cancel, null)
+            .setPositiveButton(R.string.tts_use_google) { _, _ -> speakAris(aris) }
+            .show()
+    }
+
+    private fun speakAris(aris: List<Int>) {
+        val passages = biblePassageFactory.fromAris(searchInVersion, searchInVersionId, aris)
+        if (passages.isEmpty()) {
+            Toast.makeText(this, R.string.tts_no_readable_text, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val controller = bibleSpeechController
+            ?: BibleSpeechController(GoogleTextToSpeechEngine(applicationContext)).also {
+                bibleSpeechController = it
+            }
+        controller.speak(passages)
     }
 
     fun loadSearchHistory(): SearchHistory {

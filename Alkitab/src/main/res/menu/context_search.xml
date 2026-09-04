@@ -11,4 +11,9 @@
 		android:icon="@drawable/ic_baseline_content_copy_24_white"
 		android:title="@string/search_copy_selected_verses" />
 
+	<item
+		android:id="@+id/menuListenSelected"
+		android:icon="@drawable/ic_audio"
+		android:title="@string/search_listen_selected" />
+
 </menu>

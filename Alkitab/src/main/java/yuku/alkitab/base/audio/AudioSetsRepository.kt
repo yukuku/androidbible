@@ -130,6 +130,9 @@ object AudioSetsRepository {
      */
     fun cachedSetsFor(versionId: String): AudioSets? = liveEntry(versionId)?.sets
 
+    /** True only when the cached empty answer came from a transport/parse failure. */
+    fun cachedLookupFailed(versionId: String): Boolean = liveEntry(versionId)?.staleAtNanos != null
+
     /**
      * Drops the cached answer for [versionId] so the next [setsFor] queries
      * again. The audio bar's user-initiated retry uses this to re-test an

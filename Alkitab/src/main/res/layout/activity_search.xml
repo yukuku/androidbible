@@ -35,6 +35,38 @@
 
 	</androidx.appcompat.widget.Toolbar>
 
+	<RadioGroup
+		android:id="@+id/searchModeGroup"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:paddingHorizontal="12dp"
+		android:importantForAccessibility="yes">
+
+		<RadioButton
+			android:id="@+id/searchModeExact"
+			android:layout_width="0dp"
+			android:layout_height="48dp"
+			android:layout_weight="1"
+			android:checked="true"
+			android:text="@string/search_mode_exact" />
+
+		<RadioButton
+			android:id="@+id/searchModeTheme"
+			android:layout_width="0dp"
+			android:layout_height="48dp"
+			android:layout_weight="1"
+			android:text="@string/search_mode_theme_offline" />
+	</RadioGroup>
+
+	<include
+		android:id="@+id/themePackPanel"
+		layout="@layout/search_theme_pack_status"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone"
+		tools:visibility="visible" />
+
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">

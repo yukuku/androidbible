@@ -212,6 +212,8 @@ class AudioBarController(
         get() {
             val host = host ?: return RecordedAudioAvailability.Unavailable
             val bookId = host.audioCurrentBook().bookId
+            val failedVersion = host.audioVisibleVersionIds().firstOrNull(AudioSetsRepository::cachedLookupFailed)
+            if (failedVersion != null) return RecordedAudioAvailability.Failed("catalog:$failedVersion")
             val coveringSource = host.audioAvailableSources().firstOrNull { source ->
                 resolvedSet(source)?.coversBook(bookId) == true
             }
