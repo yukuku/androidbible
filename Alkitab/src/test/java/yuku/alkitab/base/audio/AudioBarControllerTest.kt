@@ -54,16 +54,16 @@ class AudioBarControllerTest {
     @Test
     fun `recorded availability distinguishes coverage from playback failure`() {
         assertEquals(
-            RecordedAudioAvailability.Available,
-            AudioBarController.recordedAudioAvailability(hasCoveringSet = true, playbackFailed = false),
+            RecordedAudioAvailability.Available("human"),
+            AudioBarController.recordedAudioAvailability(audioId = "human", playbackFailed = false),
         )
         assertEquals(
-            RecordedAudioAvailability.Failed,
-            AudioBarController.recordedAudioAvailability(hasCoveringSet = true, playbackFailed = true),
+            RecordedAudioAvailability.Failed("human"),
+            AudioBarController.recordedAudioAvailability(audioId = "human", playbackFailed = true),
         )
         assertEquals(
             RecordedAudioAvailability.Unavailable,
-            AudioBarController.recordedAudioAvailability(hasCoveringSet = false, playbackFailed = true),
+            AudioBarController.recordedAudioAvailability(audioId = null, playbackFailed = true),
         )
     }
 }

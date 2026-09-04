@@ -41,10 +41,10 @@ data class AudioDownloadRequest(
     val url: String,
 )
 
-enum class RecordedAudioAvailability {
-    Available,
-    Unavailable,
-    Failed,
+sealed interface RecordedAudioAvailability {
+    data class Available(val audioId: String) : RecordedAudioAvailability
+    data object Unavailable : RecordedAudioAvailability
+    data class Failed(val audioId: String) : RecordedAudioAvailability
 }
 
 /**
@@ -212,11 +212,11 @@ class AudioBarController(
         get() {
             val host = host ?: return RecordedAudioAvailability.Unavailable
             val bookId = host.audioCurrentBook().bookId
-            val hasCoveringSet = host.audioAvailableSources().any { source ->
+            val coveringSource = host.audioAvailableSources().firstOrNull { source ->
                 resolvedSet(source)?.coversBook(bookId) == true
             }
             return recordedAudioAvailability(
-                hasCoveringSet = hasCoveringSet,
+                audioId = coveringSource?.audioId,
                 playbackFailed = selectedSource != null && _uiState.value.error != null,
             )
         }
@@ -1027,12 +1027,12 @@ class AudioBarController(
         }
 
         internal fun recordedAudioAvailability(
-            hasCoveringSet: Boolean,
+            audioId: String?,
             playbackFailed: Boolean,
         ): RecordedAudioAvailability = when {
-            !hasCoveringSet -> RecordedAudioAvailability.Unavailable
-            playbackFailed -> RecordedAudioAvailability.Failed
-            else -> RecordedAudioAvailability.Available
+            audioId == null -> RecordedAudioAvailability.Unavailable
+            playbackFailed -> RecordedAudioAvailability.Failed(audioId)
+            else -> RecordedAudioAvailability.Available(audioId)
         }
 
         /**
