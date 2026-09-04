@@ -10,12 +10,15 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import yuku.afw.App as AfwApp
 import yuku.alkitab.base.audio.builtin.BuiltInAudioCatalog
+import yuku.alkitab.base.audio.download.AudioChapterDownloadStore
 import yuku.alkitab.debug.BuildConfig
 
 /**
@@ -28,6 +31,9 @@ import yuku.alkitab.debug.BuildConfig
 @Config(application = Application::class, sdk = [34])
 class BibleAudioRepositoryTest {
 
+    @get:Rule
+    val temporaryFolder = TemporaryFolder()
+
     private class FakeHttp(private val bodyByUrl: (String) -> String?) : AudioHttp {
         val calls = AtomicInteger()
         val urls = mutableListOf<String>()
@@ -37,8 +43,6 @@ class BibleAudioRepositoryTest {
             return bodyByUrl(url)
         }
     }
-
-    private val defaultRepositoryHttp = BibleAudioRepository.http
 
     @Before
     fun setUp() {
@@ -58,10 +62,30 @@ class BibleAudioRepositoryTest {
     @After
     fun tearDown() {
         AudioSetsRepository.resetForTest()
-        BibleAudioRepository.http = defaultRepositoryHttp
+        BibleAudioRepository.resetForTest()
     }
 
     // -- buildChapterUrl ----------------------------------------------------------
+
+    @Test
+    fun `downloaded chapter URI wins over the network catalog URL`() = runBlocking {
+        val store = AudioChapterDownloadStore(temporaryFolder.root)
+        val temp = store.tempFile(BuiltInAudioCatalog.AUDIO_ID, 0, 1)
+        temp.writeBytes("ID3offline".toByteArray())
+        store.publishTemp(BuiltInAudioCatalog.AUDIO_ID, 0, 1, temp)
+        BibleAudioRepository.downloadStoreProvider = { store }
+        AudioSetsRepository.presetNameResolver = AudioSetsRepository.PresetNameResolver { "en-web" }
+
+        val url = BibleAudioRepository.buildChapterUrl(
+            "preset/en-web",
+            BuiltInAudioCatalog.AUDIO_ID,
+            bookId = 0,
+            chapter_1 = 1,
+        )
+
+        assertTrue(url!!.startsWith("file:"))
+        assertTrue(url.endsWith("/01/001.mp3"))
+    }
 
     @Test
     fun `built-in locator resolves through the bundled manifest`() = runBlocking {

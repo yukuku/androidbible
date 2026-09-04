@@ -3,8 +3,10 @@ package yuku.alkitab.base.audio
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import yuku.alkitab.base.App
 import yuku.alkitab.base.audio.model.AudioSet
 import yuku.alkitab.base.audio.builtin.BuiltInAudioCatalog
+import yuku.alkitab.base.audio.download.AudioChapterDownloadStore
 import yuku.alkitab.base.audio.model.ChapterTiming
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.BuildConfig
@@ -29,6 +31,9 @@ object BibleAudioRepository {
     private val json = Json { ignoreUnknownKeys = true }
 
     internal var http: AudioHttp = OkHttpAudioHttp
+    internal var downloadStoreProvider: () -> AudioChapterDownloadStore = {
+        AudioChapterDownloadStore(App.context)
+    }
 
     /**
      * Resolves the absolute chapter MP3 URL for
@@ -40,6 +45,7 @@ object BibleAudioRepository {
     suspend fun buildChapterUrl(versionId: String, audioId: String, bookId: Int, chapter_1: Int): String? {
         val set = resolveSet(versionId, audioId) ?: return null
         if (set.mp3UrlTemplate == BuiltInAudioCatalog.LOCATOR) {
+            downloadStoreProvider().localUri(audioId, bookId, chapter_1)?.let { return it.toString() }
             return AudioSetsRepository.builtInCatalogProvider().chapterUrl(audioId, bookId, chapter_1)
         }
         return expandTemplate(set.mp3UrlTemplate, bookId, chapter_1)
@@ -105,5 +111,10 @@ object BibleAudioRepository {
             return null
         }
         return resolved.toString()
+    }
+
+    internal fun resetForTest() {
+        http = OkHttpAudioHttp
+        downloadStoreProvider = { AudioChapterDownloadStore(App.context) }
     }
 }

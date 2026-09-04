@@ -19,6 +19,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import yuku.alkitab.base.audio.builtin.BuiltInAudioCatalog
+import yuku.alkitab.base.audio.download.AudioChapterDownloadGateway
+import yuku.alkitab.base.audio.download.AudioChapterDownloads
+import yuku.alkitab.base.audio.download.DownloadState
 import yuku.alkitab.base.audio.model.AudioSet
 import yuku.alkitab.base.audio.ui.AudioBar
 import yuku.alkitab.base.audio.ui.AudioBarCommand
@@ -29,6 +33,19 @@ import yuku.alkitab.base.audio.ui.AudioSourceOption
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
+
+data class AudioDownloadRequest(
+    val audioId: String,
+    val bookId: Int,
+    val chapter1: Int,
+    val url: String,
+)
+
+enum class RecordedAudioAvailability {
+    Available,
+    Unavailable,
+    Failed,
+}
 
 /**
  * Glue layer between the View-based [yuku.alkitab.base.IsiActivity] and the
@@ -48,7 +65,9 @@ import yuku.alkitab.model.Book
  */
 class AudioBarController(
     private val context: Context,
+    private val downloads: AudioChapterDownloadGateway,
 ) {
+    constructor(context: Context) : this(context, AudioChapterDownloads(context))
     /**
      * The activity-side surface the controller needs to read from to compute
      * chapter labels and to navigate when the user taps prev/next chapter.
@@ -88,6 +107,7 @@ class AudioBarController(
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var collectJob: Job? = null
+    private var downloadJob: Job? = null
 
     private var host: Host? = null
     private var composeView: ComposeView? = null
@@ -187,6 +207,20 @@ class AudioBarController(
     val isBarVisible: Boolean
         get() = _uiState.value.visible
 
+    /** Current narration status consumed by the explicit TTS fallback policy. */
+    val recordedAudioAvailability: RecordedAudioAvailability
+        get() {
+            val host = host ?: return RecordedAudioAvailability.Unavailable
+            val bookId = host.audioCurrentBook().bookId
+            val hasCoveringSet = host.audioAvailableSources().any { source ->
+                resolvedSet(source)?.coversBook(bookId) == true
+            }
+            return recordedAudioAvailability(
+                hasCoveringSet = hasCoveringSet,
+                playbackFailed = selectedSource != null && _uiState.value.error != null,
+            )
+        }
+
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val localBinder = binder as? BibleAudioService.LocalBinder ?: return
@@ -279,6 +313,7 @@ class AudioBarController(
             return
         }
         refreshSetChoices()
+        observeDownloadState(host)
     }
 
     /**
@@ -325,6 +360,7 @@ class AudioBarController(
             displaySubtitle = displaySubtitle(source),
             startVerse_1 = 0,
         )
+        observeDownloadState(host)
         dispatchLoad(host, request)
     }
 
@@ -437,6 +473,7 @@ class AudioBarController(
                 canChooseSet = canChooseSet(host),
             )
         }
+        observeDownloadState(host)
         host.audioBarVisibilityChanged(true)
         val request = buildRequest(host) ?: return
         dispatchLoad(host, request)
@@ -451,6 +488,8 @@ class AudioBarController(
         lastServiceBookId = -1
         lastServiceChapter1 = 0
         service?.stop()
+        downloadJob?.cancel()
+        downloadJob = null
         _uiState.update { AudioBarUiState.HIDDEN }
         host?.audioBarVisibilityChanged(false)
         teardownComposeContent()
@@ -659,6 +698,17 @@ class AudioBarController(
             }
             is AudioBarCommand.PickSet -> pickSet(host, cmd.versionId, cmd.audioId)
             AudioBarCommand.Retry -> retryLoad(host)
+            AudioBarCommand.DownloadChapter -> {
+                val request = currentDownloadRequest(host) ?: return
+                downloads.enqueue(request.audioId, request.bookId, request.chapter1, request.url)
+                observeDownloadState(host)
+            }
+            AudioBarCommand.RemoveDownloadedChapter -> {
+                val request = currentDownloadRequest(host) ?: return
+                downloads.remove(request.audioId, request.bookId, request.chapter1)
+                _uiState.update { it.copy(downloadState = DownloadState.NotDownloaded) }
+                observeDownloadState(host)
+            }
             is AudioBarCommand.SetSpeed -> {
                 svc?.setSpeed(cmd.speed)
                 _uiState.update { it.copy(speed = cmd.speed, showSpeedSheet = false) }
@@ -683,6 +733,29 @@ class AudioBarController(
             }
             AudioBarCommand.DismissLogSheet -> {
                 _uiState.update { it.copy(showLogSheet = false) }
+            }
+        }
+    }
+
+    private fun currentDownloadRequest(host: Host): AudioDownloadRequest? {
+        val source = selectedSource ?: return null
+        val readerBook = host.audioCurrentBook()
+        val sourceBook = host.audioBookInVersion(source.versionId, readerBook.bookId) ?: return null
+        val chapter1 = host.audioCurrentChapter1().coerceIn(1, sourceBook.chapter_count)
+        return downloadRequest(source, sourceBook.bookId, chapter1, AudioSetsRepository.builtInCatalogProvider())
+    }
+
+    private fun observeDownloadState(host: Host) {
+        downloadJob?.cancel()
+        downloadJob = null
+        val request = currentDownloadRequest(host)
+        if (request == null) {
+            _uiState.update { it.copy(downloadState = null) }
+            return
+        }
+        downloadJob = scope.launch {
+            downloads.workFlow(request.audioId, request.bookId, request.chapter1).collect { state ->
+                _uiState.update { it.copy(downloadState = state) }
             }
         }
     }
@@ -898,6 +971,9 @@ class AudioBarController(
             AudioBarCommand.DismissSetSheet -> AudioLogMessage(R.string.audio_log_ui_dismiss_set)
             AudioBarCommand.OpenLogSheet -> AudioLogMessage(R.string.audio_log_ui_open_log)
             AudioBarCommand.DismissLogSheet -> AudioLogMessage(R.string.audio_log_ui_dismiss_log)
+            AudioBarCommand.DownloadChapter,
+            AudioBarCommand.RemoveDownloadedChapter,
+            -> null
             AudioBarCommand.CancelPicker -> AudioLogMessage(R.string.audio_log_ui_cancel_picker)
             is AudioBarCommand.SetSpeed -> AudioLogMessage(R.string.audio_log_ui_set_speed, listOf(cmd.speed.toString()))
             is AudioBarCommand.PickSet -> AudioLogMessage(R.string.audio_log_ui_pick_set, listOf(cmd.audioId, cmd.versionId))
@@ -938,6 +1014,26 @@ class AudioBarController(
          */
         internal fun shouldBindForReshow(requestedVisible: Boolean, hasActiveSession: Boolean): Boolean =
             !requestedVisible && hasActiveSession
+
+        internal fun downloadRequest(
+            source: AudioSourceOption,
+            bookId: Int,
+            chapter1: Int,
+            catalog: BuiltInAudioCatalog,
+        ): AudioDownloadRequest? {
+            if (source.audioId != BuiltInAudioCatalog.AUDIO_ID) return null
+            val url = catalog.chapterUrl(source.audioId, bookId, chapter1) ?: return null
+            return AudioDownloadRequest(source.audioId, bookId, chapter1, url)
+        }
+
+        internal fun recordedAudioAvailability(
+            hasCoveringSet: Boolean,
+            playbackFailed: Boolean,
+        ): RecordedAudioAvailability = when {
+            !hasCoveringSet -> RecordedAudioAvailability.Unavailable
+            playbackFailed -> RecordedAudioAvailability.Failed
+            else -> RecordedAudioAvailability.Available
+        }
 
         /**
          * Whether a pending reshow should fire for [state]: only once the first

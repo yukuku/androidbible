@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.DownloadDone
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -55,6 +57,8 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,6 +69,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import yuku.alkitab.base.audio.AudioLogEntry
 import yuku.alkitab.base.audio.PlaybackState
+import yuku.alkitab.base.audio.download.DownloadState
 import yuku.alkitab.debug.R
 
 data class AudioBarUiState(
@@ -88,6 +93,8 @@ data class AudioBarUiState(
     /** When true, the playback-speed bottom sheet is shown over the bar. */
     val showSpeedSheet: Boolean,
     val setGroups: List<AudioSetGroup>?,
+    /** Non-null only for the bundled recording, whose chapters can be kept offline. */
+    val downloadState: DownloadState?,
 ) {
     companion object {
         val HIDDEN = AudioBarUiState(
@@ -107,6 +114,7 @@ data class AudioBarUiState(
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            downloadState = null,
         )
     }
 }
@@ -156,6 +164,8 @@ sealed interface AudioBarCommand {
     data object CancelPicker : AudioBarCommand
     data object OpenLogSheet : AudioBarCommand
     data object DismissLogSheet : AudioBarCommand
+    data object DownloadChapter : AudioBarCommand
+    data object RemoveDownloadedChapter : AudioBarCommand
 }
 
 /**
@@ -266,7 +276,10 @@ private fun AudioBarTopRow(
         NextVerseButton(state = state, onCommand = onCommand)
 
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
-            CloseButton(onCommand = onCommand)
+            Row {
+                DownloadButton(state = state, onCommand = onCommand)
+                CloseButton(onCommand = onCommand)
+            }
         }
     }
 }
@@ -343,6 +356,47 @@ private fun CloseButton(
             painter = painterResource(R.drawable.ic_audio_close),
             contentDescription = stringResource(R.string.audio_bar_close),
         )
+    }
+}
+
+@Composable
+private fun DownloadButton(
+    state: AudioBarUiState,
+    onCommand: (AudioBarCommand) -> Unit,
+) {
+    val downloadState = state.downloadState ?: return
+    val label = when (downloadState) {
+        DownloadState.NotDownloaded -> stringResource(R.string.audio_bar_download_chapter)
+        is DownloadState.Downloading -> {
+            if (downloadState.total > 0L) {
+                val percent = ((downloadState.bytes * 100L) / downloadState.total).coerceIn(0L, 100L)
+                stringResource(R.string.audio_bar_downloading_percent, percent)
+            } else {
+                stringResource(R.string.audio_bar_downloading)
+            }
+        }
+        DownloadState.Downloaded -> stringResource(R.string.audio_bar_remove_download)
+        DownloadState.Failed -> stringResource(R.string.audio_bar_retry_download)
+    }
+    val downloading = downloadState is DownloadState.Downloading
+    IconButton(
+        onClick = {
+            onCommand(
+                if (downloadState == DownloadState.Downloaded) {
+                    AudioBarCommand.RemoveDownloadedChapter
+                } else {
+                    AudioBarCommand.DownloadChapter
+                },
+            )
+        },
+        enabled = !downloading,
+        modifier = Modifier.semantics { contentDescription = label },
+    ) {
+        when (downloadState) {
+            is DownloadState.Downloading -> CircularProgressIndicator(modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
+            DownloadState.Downloaded -> Icon(Icons.Filled.DownloadDone, contentDescription = null)
+            DownloadState.NotDownloaded, DownloadState.Failed -> Icon(Icons.Filled.Download, contentDescription = null)
+        }
     }
 }
 
@@ -576,6 +630,7 @@ private fun AudioBarWideRow(
 
         Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
             Row {
+                DownloadButton(state = state, onCommand = onCommand)
                 AudioBarSliderRow(
                     state = state,
                     onCommand = onCommand,
@@ -655,6 +710,7 @@ private fun AudioBarPreviewNarrow() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            downloadState = DownloadState.NotDownloaded,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -682,6 +738,7 @@ private fun AudioBarPreviewWide() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            downloadState = DownloadState.Downloaded,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -709,6 +766,7 @@ private fun AudioBarPreviewPreparing() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            downloadState = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -742,6 +800,7 @@ private fun AudioBarPreviewSlowLoad() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            downloadState = null,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -775,6 +834,7 @@ private fun AudioBarPreviewDarkError() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            downloadState = DownloadState.Failed,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -805,6 +865,7 @@ private fun AudioBarPreviewWithPicker() {
             ),
             showSpeedSheet = false,
             setGroups = null,
+            downloadState = null,
         ),
         onCommand = {},
         modifier = Modifier,

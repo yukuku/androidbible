@@ -19,18 +19,24 @@ sealed interface DownloadState {
     data object Failed : DownloadState
 }
 
+interface AudioChapterDownloadGateway {
+    fun enqueue(audioId: String, bookId: Int, chapter1: Int, url: String)
+    fun workFlow(audioId: String, bookId: Int, chapter1: Int): Flow<DownloadState>
+    fun remove(audioId: String, bookId: Int, chapter1: Int): Boolean
+}
+
 /** Schedules and observes unique per-chapter offline audio work. */
 class AudioChapterDownloads(
     private val workManager: WorkManager,
     private val store: AudioChapterDownloadStore,
-) {
+) : AudioChapterDownloadGateway {
 
     constructor(context: Context) : this(
         WorkManager.getInstance(context.applicationContext),
         AudioChapterDownloadStore(context.applicationContext),
     )
 
-    fun enqueue(audioId: String, bookId: Int, chapter1: Int, url: String) {
+    override fun enqueue(audioId: String, bookId: Int, chapter1: Int, url: String) {
         val request = OneTimeWorkRequestBuilder<AudioChapterDownloadWorker>()
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .setInputData(
@@ -46,7 +52,7 @@ class AudioChapterDownloads(
         workManager.enqueueUniqueWork(workName(audioId, bookId, chapter1), ExistingWorkPolicy.KEEP, request)
     }
 
-    fun workFlow(audioId: String, bookId: Int, chapter1: Int): Flow<DownloadState> =
+    override fun workFlow(audioId: String, bookId: Int, chapter1: Int): Flow<DownloadState> =
         workManager.getWorkInfosForUniqueWorkFlow(workName(audioId, bookId, chapter1)).map { infos ->
             val latest = infos.lastOrNull()
             when (latest?.state) {
@@ -67,7 +73,7 @@ class AudioChapterDownloads(
             }
         }
 
-    fun remove(audioId: String, bookId: Int, chapter1: Int): Boolean {
+    override fun remove(audioId: String, bookId: Int, chapter1: Int): Boolean {
         workManager.cancelUniqueWork(workName(audioId, bookId, chapter1))
         return store.remove(audioId, bookId, chapter1)
     }

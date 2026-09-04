@@ -440,6 +440,11 @@
     <string name="audio_bar_set_not_available_for_book">Tidak tersedia untuk kitab ini</string>
     <string name="audio_bar_error_retry">Audio gagal dimuat. Ketuk untuk mencoba lagi</string>
     <string name="audio_bar_loading_status_fallback">Memuat…</string>
+    <string name="audio_bar_download_chapter">Unduh pasal untuk offline</string>
+    <string name="audio_bar_downloading">Mengunduh pasal</string>
+    <string name="audio_bar_downloading_percent">Mengunduh pasal: %1$d%%</string>
+    <string name="audio_bar_remove_download">Tersimpan offline. Hapus unduhan pasal</string>
+    <string name="audio_bar_retry_download">Unduhan gagal. Coba unduh pasal lagi</string>
     <string name="audio_bar_log_sheet_empty">Belum ada peristiwa yang tercatat.</string>
     <string name="audio_play_from_verse">Putar audio dari ayat ini</string>
     <string name="audio_bar_speed_format">%1$s×</string>

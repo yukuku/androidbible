@@ -197,6 +197,7 @@ class ComposeThemeSnapshotTest {
                     pickerOptions = null,
                     showSpeedSheet = false,
                     setGroups = null,
+                    downloadState = null,
                 ),
                 onCommand = {},
                 modifier = Modifier,
