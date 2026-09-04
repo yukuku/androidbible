@@ -1,5 +1,7 @@
 package yuku.alkitab.base.audio
 
+import android.app.Application
+import androidx.test.core.app.ApplicationProvider
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +18,11 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import yuku.afw.App as AfwApp
+import yuku.alkitab.base.audio.builtin.BuiltInAudioCatalog
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.model.MVersionInternal
@@ -28,6 +35,8 @@ import yuku.alkitab.model.Version
  * and the version→preset resolution ([AudioSetsRepository.PresetNameResolver])
  * are seams, so no live server and no Android framework are needed.
  */
+@RunWith(RobolectricTestRunner::class)
+@Config(application = Application::class, sdk = [34])
 class AudioSetsRepositoryTest {
 
     /** Counting fake transport; the body per URL comes from [bodyByUrl]. */
@@ -84,6 +93,7 @@ class AudioSetsRepositoryTest {
 
     @Before
     fun setUp() {
+        AfwApp.initWithAppContext(ApplicationProvider.getApplicationContext())
         AudioSetsRepository.resetForTest()
         installResolver()
     }
@@ -131,6 +141,18 @@ class AudioSetsRepositoryTest {
     }
 
     // -- setsFor ------------------------------------------------------------------
+
+    @Test
+    fun `WEB built-in recording resolves without HTTP`() = runBlocking {
+        AudioSetsRepository.presetNameResolver = AudioSetsRepository.PresetNameResolver { "en-web" }
+        AudioSetsRepository.http = AudioHttp { error("HTTP must not be called for bundled audio") }
+
+        val sets = AudioSetsRepository.setsFor("preset/en-web")
+
+        assertEquals(1, sets.schema)
+        assertEquals("en-web", sets.preset)
+        assertEquals(BuiltInAudioCatalog.AUDIO_ID, sets.sets.single().audioId)
+    }
 
     @Test
     fun `setsFor fetches, parses, and caches the set list for a preset version`() = runBlocking {

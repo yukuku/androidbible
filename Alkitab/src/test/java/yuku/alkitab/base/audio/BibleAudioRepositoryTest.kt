@@ -1,5 +1,7 @@
 package yuku.alkitab.base.audio
 
+import android.app.Application
+import androidx.test.core.app.ApplicationProvider
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -9,6 +11,11 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import yuku.afw.App as AfwApp
+import yuku.alkitab.base.audio.builtin.BuiltInAudioCatalog
 import yuku.alkitab.debug.BuildConfig
 
 /**
@@ -17,6 +24,8 @@ import yuku.alkitab.debug.BuildConfig
  * goes through [BibleAudioRepository]'s own [AudioHttp] seam, so no live
  * server and no Android framework are needed.
  */
+@RunWith(RobolectricTestRunner::class)
+@Config(application = Application::class, sdk = [34])
 class BibleAudioRepositoryTest {
 
     private class FakeHttp(private val bodyByUrl: (String) -> String?) : AudioHttp {
@@ -33,6 +42,7 @@ class BibleAudioRepositoryTest {
 
     @Before
     fun setUp() {
+        AfwApp.initWithAppContext(ApplicationProvider.getApplicationContext())
         AudioSetsRepository.resetForTest()
         AudioSetsRepository.presetNameResolver = AudioSetsRepository.PresetNameResolver { versionId ->
             when (versionId) {
@@ -52,6 +62,21 @@ class BibleAudioRepositoryTest {
     }
 
     // -- buildChapterUrl ----------------------------------------------------------
+
+    @Test
+    fun `built-in locator resolves through the bundled manifest`() = runBlocking {
+        AudioSetsRepository.presetNameResolver = AudioSetsRepository.PresetNameResolver { "en-web" }
+        AudioSetsRepository.http = AudioHttp { error("HTTP must not be called for bundled audio metadata") }
+
+        val url = BibleAudioRepository.buildChapterUrl(
+            "preset/en-web",
+            BuiltInAudioCatalog.AUDIO_ID,
+            bookId = 39,
+            chapter_1 = 1,
+        )
+
+        assertEquals("https://audiotreasure.com/content/WEBD_AT/40_Matt_01.mp3", url)
+    }
 
     @Test
     fun `buildChapterUrl expands the set's template with the one bookId to book_1 conversion`() = runBlocking {

@@ -12,6 +12,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import yuku.alkitab.base.App
+import yuku.alkitab.base.audio.builtin.BuiltInAudioCatalog
 import yuku.alkitab.base.audio.model.AudioSet
 import yuku.alkitab.base.audio.model.AudioSets
 import yuku.alkitab.base.model.MVersion
@@ -69,9 +70,13 @@ object AudioSetsRepository {
         presetNameFor(versionId, App.services.versions)
     }
     private val defaultHttp: AudioHttp = OkHttpAudioHttp
+    private val defaultBuiltInCatalog by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        BuiltInAudioCatalog(App.context)
+    }
 
     internal var presetNameResolver: PresetNameResolver = defaultPresetNameResolver
     internal var http: AudioHttp = defaultHttp
+    internal var builtInCatalogProvider: () -> BuiltInAudioCatalog = { defaultBuiltInCatalog }
 
     /** Clock seam so the failure cooldown is testable without a real wait. */
     internal var nanoTime: () -> Long = System::nanoTime
@@ -148,6 +153,9 @@ object AudioSetsRepository {
     private suspend fun resolveEntry(versionId: String): Entry {
         val presetName = presetNameResolver.presetNameFor(versionId)
             ?: return Entry(emptySets(""), null)
+        builtInCatalogProvider().audioSetForPreset(presetName)?.let { builtIn ->
+            return Entry(AudioSets(schema = 1, preset = presetName, sets = listOf(builtIn)), null)
+        }
         val sets = fetchSets(presetName)
             ?: return Entry(emptySets(presetName), nanoTime() + FAILURE_RETRY_AFTER_NANOS)
         return Entry(sets, null)
@@ -204,6 +212,7 @@ object AudioSetsRepository {
         inFlight.clear()
         presetNameResolver = defaultPresetNameResolver
         http = defaultHttp
+        builtInCatalogProvider = { defaultBuiltInCatalog }
         nanoTime = System::nanoTime
     }
 }

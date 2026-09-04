@@ -4,6 +4,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import yuku.alkitab.base.audio.model.AudioSet
+import yuku.alkitab.base.audio.builtin.BuiltInAudioCatalog
 import yuku.alkitab.base.audio.model.ChapterTiming
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.BuildConfig
@@ -38,6 +39,9 @@ object BibleAudioRepository {
      */
     suspend fun buildChapterUrl(versionId: String, audioId: String, bookId: Int, chapter_1: Int): String? {
         val set = resolveSet(versionId, audioId) ?: return null
+        if (set.mp3UrlTemplate == BuiltInAudioCatalog.LOCATOR) {
+            return AudioSetsRepository.builtInCatalogProvider().chapterUrl(audioId, bookId, chapter_1)
+        }
         return expandTemplate(set.mp3UrlTemplate, bookId, chapter_1)
     }
 

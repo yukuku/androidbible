@@ -15,13 +15,15 @@ import yuku.alkitab.base.audio.model.AudioSet
  */
 class BuiltInAudioCatalog(context: Context) {
 
-    private val tracksByCoordinate: Map<Int, Track> = context.assets.open(MANIFEST_ASSET).use { input ->
-        val manifest = Json.decodeFromString<Manifest>(input.bufferedReader().readText())
-        require(manifest.schemaVersion == MANIFEST_SCHEMA)
-        require(manifest.chapterCount == manifest.tracks.size)
+    private val tracksByCoordinate: Map<Int, Track> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        context.assets.open(MANIFEST_ASSET).use { input ->
+            val manifest = Json.decodeFromString<Manifest>(input.bufferedReader().readText())
+            require(manifest.schemaVersion == MANIFEST_SCHEMA)
+            require(manifest.chapterCount == manifest.tracks.size)
 
-        manifest.tracks.associateBy { track -> coordinate(track.bookId, track.chapter) }.also { indexed ->
-            require(indexed.size == manifest.chapterCount) { "Duplicate audio chapter coordinates" }
+            manifest.tracks.associateBy { track -> coordinate(track.bookId, track.chapter) }.also { indexed ->
+                require(indexed.size == manifest.chapterCount) { "Duplicate audio chapter coordinates" }
+            }
         }
     }
 
