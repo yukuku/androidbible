@@ -12,6 +12,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.audio.RecordedAudioAvailability
 import yuku.alkitab.base.ac.NoteActivity
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.dialog.TypeBookmarkDialog
@@ -19,6 +20,8 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog
 import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
+import yuku.alkitab.base.speech.ListeningSource
+import yuku.alkitab.base.speech.ListeningSourceResolver
 import yuku.alkitab.base.util.AlkitabGptIntegration
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.ClipboardUtil
@@ -54,6 +57,8 @@ class VerseActionModeController(
     private val host: VerseActionModeHost,
     private val actions: VerseActionModeActions,
 ) : ActionMode.Callback {
+
+    private val listeningSourceResolver = ListeningSourceResolver()
 
     private val MENU_GROUP_EXTENSIONS = Menu.FIRST + 1
     private val MENU_EXTENSIONS_FIRST_ID = 0x1000
@@ -165,8 +170,7 @@ class VerseActionModeController(
         val menuRibkaReport = menu.findItem(R.id.menuRibkaReport)
         menuRibkaReport.isVisible = single && actions.checkRibkaEligibility() != RibkaEligibility.None
 
-        val menuPlayAudioFromVerse = menu.findItem(R.id.menuPlayAudioFromVerse)
-        menuPlayAudioFromVerse.isVisible = single && actions.isAudioAvailableForVerseAction()
+        menu.findItem(R.id.menuListen).isVisible = true
 
         // extensions
         extensions.clear()
@@ -307,8 +311,12 @@ class VerseActionModeController(
                 true
             }
 
-            R.id.menuPlayAudioFromVerse -> {
-                actions.playAudioFromVerse(selected.get(0))
+            R.id.menuListen -> {
+                when (listeningSourceResolver.resolve(actions.recordedAudioAvailability(), false)) {
+                    is ListeningSource.Recorded -> actions.playAudioFromVerse(selected.get(0))
+                    ListeningSource.GoogleTts -> actions.speakSelectedVerses(selected)
+                    is ListeningSource.Unavailable -> actions.offerTtsAfterRecordedFailure(selected)
+                }
                 mode.finish()
                 true
             }

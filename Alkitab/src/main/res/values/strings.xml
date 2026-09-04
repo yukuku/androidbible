@@ -558,5 +558,11 @@
 	<string name="audio_log_state_playing">playing</string>
 	<string name="audio_log_state_error">error</string>
 	<string name="audio_play_from_verse">Play audio from this verse</string>
+	<string name="menu_listen">Listen</string>
+	<string name="tts_recording_failed_title">Recorded narration stopped</string>
+	<string name="tts_recording_failed_message">The recorded narration could not continue. Read the selected verses with offline Google Text-to-Speech instead?</string>
+	<string name="tts_use_google">Use Google TTS</string>
+	<string name="tts_cancel">Cancel</string>
+	<string name="tts_no_readable_text">No readable verse text is available.</string>
 
 </resources>

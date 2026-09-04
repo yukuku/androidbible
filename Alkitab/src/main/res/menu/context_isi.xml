@@ -58,9 +58,9 @@
 		app:showAsAction="always" />
 
 	<item
-		android:id="@+id/menuPlayAudioFromVerse"
+		android:id="@+id/menuListen"
 		android:icon="@drawable/ic_audio"
-		android:title="@string/audio_play_from_verse"
+		android:title="@string/menu_listen"
 		app:showAsAction="never" />
 
 	<item

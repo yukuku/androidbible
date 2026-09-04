@@ -1,6 +1,8 @@
 package yuku.alkitab.base.actionmode
 
+import yuku.alkitab.base.audio.RecordedAudioAvailability
 import yuku.alkitab.base.model.MVersion
+import yuku.alkitab.util.IntArrayList
 
 /**
  * Write-side surface that [VerseActionModeController] invokes to trigger Activity
@@ -23,11 +25,17 @@ interface VerseActionModeActions {
     /** Returns whether the current version(s) are eligible for Ribka reporting. */
     fun checkRibkaEligibility(): RibkaEligibility
 
-    /** Whether the "play audio from this verse" item should be offered. */
-    fun isAudioAvailableForVerseAction(): Boolean
+    /** Current human-recording coverage/failure state for the displayed chapter. */
+    fun recordedAudioAvailability(): RecordedAudioAvailability
 
     /** Opens the audio bar and starts playback at the given 1-based verse. */
     fun playAudioFromVerse(verse_1: Int)
+
+    /** Reads the selected verses using the explicitly pinned Google TTS fallback. */
+    fun speakSelectedVerses(selectedVerses1: IntArrayList)
+
+    /** Offers, but never automatically starts, TTS after recorded narration failed. */
+    fun offerTtsAfterRecordedFailure(selectedVerses1: IntArrayList)
 
     /** Called from `onDestroyActionMode` so the Activity can clear its `actionMode` field. */
     fun onActionModeDestroyed()

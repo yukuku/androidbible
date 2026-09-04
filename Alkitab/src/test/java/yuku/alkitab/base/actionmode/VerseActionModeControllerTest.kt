@@ -28,6 +28,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import yuku.afw.storage.Preferences
+import yuku.alkitab.base.audio.RecordedAudioAvailability
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.util.AlkitabGptIntegration
 import yuku.alkitab.base.util.ExtensionManager
@@ -101,6 +102,7 @@ class VerseActionModeControllerTest {
         every { host.dataSplit1 } returns VersesDataModel.EMPTY
 
         every { actions.checkRibkaEligibility() } returns RibkaEligibility.None
+        every { actions.recordedAudioAvailability() } returns RecordedAudioAvailability.Unavailable
 
         // Static / object collaborators.
         mockkStatic(AppConfig::class)
@@ -393,6 +395,47 @@ class VerseActionModeControllerTest {
     }
 
     // ----- onDestroyActionMode -----
+
+    @Test
+    fun `listen action routes to recorded narration when available`() {
+        every { host.selectedVersesSplit0_1 } returns ints(3)
+        every { actions.recordedAudioAvailability() } returns RecordedAudioAvailability.Available("human")
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuListen))
+
+        verify { actions.playAudioFromVerse(3) }
+        verify(exactly = 0) { actions.speakSelectedVerses(any()) }
+    }
+
+    @Test
+    fun `listen action routes directly to Google TTS only when recording is absent`() {
+        every { host.selectedVersesSplit0_1 } returns ints(3, 4)
+        every { actions.recordedAudioAvailability() } returns RecordedAudioAvailability.Unavailable
+        val selected = host.selectedVersesSplit0_1
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuListen))
+
+        verify { actions.speakSelectedVerses(selected) }
+        verify(exactly = 0) { actions.playAudioFromVerse(any()) }
+    }
+
+    @Test
+    fun `failed recording asks for explicit TTS confirmation and does not auto speak`() {
+        every { host.selectedVersesSplit0_1 } returns ints(3)
+        every { actions.recordedAudioAvailability() } returns RecordedAudioAvailability.Failed("human")
+        val selected = host.selectedVersesSplit0_1
+        val menu = inflateMenu()
+        controller.onCreateActionMode(mode, menu)
+
+        controller.onActionItemClicked(mode, menu.findItem(R.id.menuListen))
+
+        verify { actions.offerTtsAfterRecordedFailure(selected) }
+        verify(exactly = 0) { actions.speakSelectedVerses(any()) }
+    }
 
     @Test
     fun `onDestroyActionMode unchecks all verses on split 0 when the uncheckVersesWhenActionModeDestroyed flag is true`() {

@@ -93,8 +93,12 @@ import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.audio.AudioBarController
 import yuku.alkitab.base.audio.AudioSetSelections
 import yuku.alkitab.base.audio.AudioSetsRepository
+import yuku.alkitab.base.audio.RecordedAudioAvailability
 import yuku.alkitab.base.audio.ui.AudioHighlightColor
 import yuku.alkitab.base.audio.ui.AudioSourceOption
+import yuku.alkitab.base.speech.BiblePassageFactory
+import yuku.alkitab.base.speech.BibleSpeechController
+import yuku.alkitab.base.speech.GoogleTextToSpeechEngine
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
 import yuku.alkitab.base.util.OtherAppIntegration
@@ -162,6 +166,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     // implementation below feeds it the chapter context it needs to label
     // prev/next-chapter buttons and to navigate when the user taps them.
     private val audioBinder: AudioBarController by lazy { AudioBarController(applicationContext) }
+    private var bibleSpeechController: BibleSpeechController? = null
+    private val biblePassageFactory = BiblePassageFactory()
     /** Cached overlay color, recomputed when the reading theme changes. */
     private var audioHighlightColorCached: Int = 0
 
@@ -183,8 +189,44 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     // --- VerseActionModeActions overrides ---
     override fun uncheckAllVersesSplit0() { lsSplit0.uncheckAllVerses(true) }
     override fun onActionModeDestroyed() { actionMode = null }
-    override fun isAudioAvailableForVerseAction(): Boolean = audioBinder.isPlayFromVerseAvailable
+    override fun recordedAudioAvailability(): RecordedAudioAvailability = audioBinder.recordedAudioAvailability
     override fun playAudioFromVerse(verse_1: Int) { audioBinder.showFromVerse(verse_1) }
+    override fun speakSelectedVerses(selectedVerses1: IntArrayList) {
+        val passages = passagesForSelectedVerses(selectedVerses1)
+        if (passages.isEmpty()) {
+            Toast.makeText(this, R.string.tts_no_readable_text, Toast.LENGTH_SHORT).show()
+            return
+        }
+        speechController().speak(passages)
+    }
+
+    override fun offerTtsAfterRecordedFailure(selectedVerses1: IntArrayList) {
+        // Build now because finishing action mode clears the mutable selection list.
+        val passages = passagesForSelectedVerses(selectedVerses1)
+        if (passages.isEmpty()) {
+            Toast.makeText(this, R.string.tts_no_readable_text, Toast.LENGTH_SHORT).show()
+            return
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.tts_recording_failed_title)
+            .setMessage(R.string.tts_recording_failed_message)
+            .setNegativeButton(R.string.tts_cancel, null)
+            .setPositiveButton(R.string.tts_use_google) { _, _ -> speechController().speak(passages) }
+            .show()
+    }
+
+    private fun passagesForSelectedVerses(selectedVerses1: IntArrayList) = biblePassageFactory.fromAris(
+        version = activeSplit0.version,
+        versionId = activeSplit0.versionId,
+        aris = (0 until selectedVerses1.size()).map { index ->
+            Ari.encode(activeSplit0.book.bookId, chapter_1, selectedVerses1.get(index))
+        },
+    )
+
+    private fun speechController(): BibleSpeechController = bibleSpeechController
+        ?: BibleSpeechController(GoogleTextToSpeechEngine(applicationContext)).also {
+            bibleSpeechController = it
+        }
 
     // --- ReaderGestureActions overrides (state is read via ReaderGestureHost below) ---
     override fun onFloaterAriSelected(ari: Int) = jumpToAri(ari)
@@ -1243,6 +1285,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // Release the activity-side bindings; the service itself stays alive
         // if audio is playing (M4 lock-screen behavior).
         audioBinder.detach()
+        bibleSpeechController?.close()
+        bibleSpeechController = null
         super.onDestroy()
     }
 

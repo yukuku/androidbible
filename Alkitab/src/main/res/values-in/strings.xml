@@ -447,6 +447,12 @@
     <string name="audio_bar_retry_download">Unduhan gagal. Coba unduh pasal lagi</string>
     <string name="audio_bar_log_sheet_empty">Belum ada peristiwa yang tercatat.</string>
     <string name="audio_play_from_verse">Putar audio dari ayat ini</string>
+    <string name="menu_listen">Dengarkan</string>
+    <string name="tts_recording_failed_title">Rekaman naratif terhenti</string>
+    <string name="tts_recording_failed_message">Rekaman naratif tidak dapat dilanjutkan. Bacakan ayat terpilih dengan Google Text-to-Speech offline?</string>
+    <string name="tts_use_google">Pakai Google TTS</string>
+    <string name="tts_cancel">Batal</string>
+    <string name="tts_no_readable_text">Tidak ada teks ayat yang dapat dibacakan.</string>
     <string name="audio_bar_speed_format">%1$s×</string>
 
     <!-- Audio load log: HTTP connection states -->
