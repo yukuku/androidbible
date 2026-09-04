@@ -1,0 +1,12 @@
+{
+  "count": 31098,
+  "dimensions": 384,
+  "format": "YUKUSEM1",
+  "indexSha256": "cd70fecc0be87dae1b3852d778d818502b4573964f76f0adc529eb2232e64b30",
+  "modelRevision": "835ad14087e140460703cf0fae09f97d469d65c2",
+  "modelSha256": "a6022dd8220ea6f6595562a1328ee216f4a94faa55362f2f4747c80f1e78772e",
+  "schema": 1,
+  "source": "World English Bible (public domain)",
+  "sourceSha256": "2d2dc7b443a4cf398dfe05d1001195887c74a80b388003358ccc8a6bfc1c5c07",
+  "tokenizerSha256": "4f2842d568e2724370aec203652a42ac783c7937f8347a1a2cc7506d71f1582f"
+}
