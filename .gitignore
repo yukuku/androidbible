@@ -16,6 +16,7 @@
 /.idea/androidTestResultsUserPreferences.xml
 /build
 local.properties
+/.worktrees/
 
 # according to https://intellij-support.jetbrains.com/entries/23393067
 /.idea/libraries/*.xml
