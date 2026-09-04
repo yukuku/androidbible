@@ -453,6 +453,11 @@
     <string name="tts_use_google">Pakai Google TTS</string>
     <string name="tts_cancel">Batal</string>
     <string name="tts_no_readable_text">Tidak ada teks ayat yang dapat dibacakan.</string>
+    <string name="search_result_accessibility">Hasil %1$d dari %2$d. %3$s. %4$s. Ketuk dua kali untuk membuka.</string>
+    <string name="listen_recorded_accessibility">Dengarkan dengan rekaman naratif</string>
+    <string name="listen_google_tts_accessibility">Bacakan dengan Google TTS</string>
+    <string name="listen_failed_accessibility">Rekaman gagal. Pilih Google TTS untuk melanjutkan</string>
+    <string name="search_in_progress_accessibility">Mencari…</string>
     <string name="audio_bar_speed_format">%1$s×</string>
 
     <!-- Audio load log: HTTP connection states -->

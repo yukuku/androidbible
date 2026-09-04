@@ -564,5 +564,10 @@
 	<string name="tts_use_google">Use Google TTS</string>
 	<string name="tts_cancel">Cancel</string>
 	<string name="tts_no_readable_text">No readable verse text is available.</string>
+	<string name="search_result_accessibility">Result %1$d of %2$d. %3$s. %4$s. Double tap to open.</string>
+	<string name="listen_recorded_accessibility">Listen with recorded narration</string>
+	<string name="listen_google_tts_accessibility">Read with Google TTS</string>
+	<string name="listen_failed_accessibility">Recording failed. Choose Google TTS to continue</string>
+	<string name="search_in_progress_accessibility">Searching…</string>
 
 </resources>

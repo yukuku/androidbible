@@ -38,6 +38,7 @@ import java.util.Locale
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.accessibility.ListeningAccessibilityText
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.storage.Prefkey
@@ -73,6 +74,7 @@ class SearchActivity : BaseActivity() {
     private lateinit var bSearch: ImageButton
     private lateinit var lsSearchResults: RecyclerView
     private lateinit var tSearchTips: TextView
+    private lateinit var tSearchStatus: TextView
     private lateinit var panelFilter: View
     private lateinit var cFilterOlds: CheckBox
     private lateinit var cFilterNews: CheckBox
@@ -85,6 +87,7 @@ class SearchActivity : BaseActivity() {
     private var openedBookId = 0
     private var filterUserAction = 0 // when it's not user action, set to nonzero
     private val adapter = SearchAdapter(IntArrayList(), emptyList())
+    private val accessibilityText by lazy { ListeningAccessibilityText.from(this) }
 
     private var searchInVersion: Version = App.services.versions.activeVersion()
     private var searchInVersionId: String = App.services.versions.activeVersionId()
@@ -226,6 +229,7 @@ class SearchActivity : BaseActivity() {
         lsSearchResults.adapter = adapter
         FastScrollerBuilder(lsSearchResults).build()
         tSearchTips = findViewById(R.id.tSearchTips)
+        tSearchStatus = findViewById(R.id.tSearchStatus)
         panelFilter = findViewById(R.id.panelFilter)
         cFilterOlds = findViewById(R.id.cFilterOlds)
         cFilterNews = findViewById(R.id.cFilterNews)
@@ -594,6 +598,8 @@ class SearchActivity : BaseActivity() {
             val (query, result) = searchResult
             progressbar.isVisible = false
             bSearch.isVisible = true
+            tSearchStatus.text = getString(R.string.size_hasil, result.size())
+            tSearchStatus.isVisible = true
             actionMode?.finish()
 
             val tokens = QueryTokenizer.tokenize(query.query_string).toList()
@@ -671,6 +677,8 @@ class SearchActivity : BaseActivity() {
 
         progressbar.isVisible = true
         bSearch.isVisible = false
+        tSearchStatus.setText(R.string.search_in_progress_accessibility)
+        tSearchStatus.isVisible = true
 
         searchHistoryAdapter.setData(addSearchHistoryEntry(query_string))
         searchView.findAutoCompleteTextView()?.dismissDropDown()
@@ -764,6 +772,14 @@ class SearchActivity : BaseActivity() {
             } else {
                 holder.lSnippet.setText(R.string.generic_verse_not_available_in_this_version)
             }
+
+            holder.itemView.contentDescription = accessibilityText.resultDescription(
+                position1 = bindPosition + 1,
+                total = itemCount,
+                reference = searchInVersion.reference(ari),
+                verseText = verseText ?: getString(R.string.generic_verse_not_available_in_this_version),
+            )
+            holder.itemView.isSelected = checked
 
             if (checked) {
                 holder.itemView.setBackgroundColor(checkedBgColor)
