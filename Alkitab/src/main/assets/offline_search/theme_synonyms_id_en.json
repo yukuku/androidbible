@@ -1,0 +1,11 @@
+{
+  "cemas": ["kecemasan", "khawatir", "kekhawatiran", "anxiety", "worry"],
+  "lemah": ["kelemahan", "kuat", "kekuatan", "weak", "strength"],
+  "kasih": ["mengasihi", "cinta", "love", "patient", "sabar"],
+  "hikmat": ["bijaksana", "kebijaksanaan", "wisdom"],
+  "berani": ["keberanian", "takut", "ketakutan", "courage", "fear"],
+  "ampun": ["mengampuni", "pengampunan", "forgive", "forgiveness"],
+  "cipta": ["penciptaan", "menciptakan", "creation", "create", "world", "dunia"],
+  "harap": ["harapan", "pengharapan", "hope"],
+  "duka": ["dukacita", "kesedihan", "grief", "sorrow"]
+}
