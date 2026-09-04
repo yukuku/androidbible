@@ -22,7 +22,7 @@ TB2 is explicitly excluded from this phase. No TB2 text, index, derived artifact
 - The feature is named **Pencarian tema offline**, not “AI answer,” so users understand that it ranks source verses rather than answering as an oracle.
 - Exact text search remains unchanged and remains the default. Theme search is a separate mode in the existing search screen.
 - Recorded audio is labeled **WEB — David Williams (public domain)** and is offered only while the active text is the `en-web` preset. It is never represented as TB, KJV, or another translation.
-- TTS reads the active version's actual text and is separate from the WEB recording. The UI calls it **Bacakan dengan suara perangkat**.
+- TTS reads the active version's actual text and is strictly subordinate to recorded human narration. The UI calls it **Bacakan dengan Google TTS** and offers it only when no recorded set covers the passage or recorded playback has failed.
 - Recorded audio can stream without downloading. A downloaded chapter must remain playable after Wi-Fi and mobile data are disabled.
 - The local-search model is optional. Exact search, Bible reading, recorded audio, and TTS remain usable if the model pack is absent or deleted.
 
@@ -54,7 +54,9 @@ The implementation is split into three independently testable subsystems and one
 Existing Bible Version
   ├── exact SearchEngine (unchanged)
   ├── ThemeSearchEngine ──> ranked ARIs ──> existing SearchAdapter
-  └── BibleSpeechController <── reader/search “Bacakan” actions
+  └── ListeningSourceResolver
+        ├── recorded narration (first choice)
+        └── BibleSpeechController (Google TTS fallback only)
 
 WEB preset
   └── BuiltInAudioCatalog ──> existing BibleAudioService/Media3
@@ -84,7 +86,7 @@ Because the source has no verse timing, the existing player disables verse highl
 
 ### Offline downloads
 
-`AudioDownloadStore` owns files under the app-private `files/audio/audiotreasure-web/` directory. The current chapter can be downloaded from the audio sheet. Downloads write to a temporary sibling, verify that the result is a non-empty MPEG audio response, then atomically rename it. Cancellation or failure deletes only the temporary file.
+`AudioDownloadStore` owns files under the app-private `files/audio/audiotreasure-web/` directory. The current chapter can be downloaded from the audio sheet. Downloads write to a temporary sibling, verify that the result is a non-empty MPEG audio response, then atomically rename it. Cancellation or failure deletes only the temporary file. A missing local file while offline produces a recorded-playback failure and therefore makes the explicit Google TTS fallback available.
 
 When a verified local file exists, the repository returns its `file:` URI; otherwise it returns the HTTPS URL. Users can remove the current chapter download. The UI reports the four durable states: not downloaded, downloading with byte progress, downloaded, and failed/retry. No broad media permission is requested because files remain app-private.
 
@@ -94,7 +96,9 @@ The first implementation supports current-chapter download and removal. Whole-Bi
 
 ### Speech controller
 
-`BibleSpeechController` wraps Android `TextToSpeech` behind a small `SpeechEngine` interface so queueing and state are unit-testable without synthesizing sound in tests. It accepts immutable `SpeechPassage` values containing a stable utterance ID, display reference, language tag, and plain text.
+`ListeningSourceResolver` is the single policy boundary for every reader and search “Dengarkan” action. It chooses recorded human narration whenever an audio set covers the passage. It chooses Google Text-to-Speech only when no recorded set covers the passage. If a recorded source exists but fails to load or is unreachable, the audio error surface offers an explicit Google TTS fallback; TTS never takes over silently.
+
+`BibleSpeechController` wraps the Google Android `TextToSpeech` engine (`com.google.android.tts`) behind a small `SpeechEngine` interface so queueing and state are unit-testable without synthesizing sound in tests. It accepts immutable `SpeechPassage` values containing a stable utterance ID, display reference, language tag, and plain text. Samsung TTS or another installed engine is not selected automatically; if Google Speech Services is absent or disabled, the app explains how to install or enable it.
 
 The controller:
 
@@ -104,9 +108,9 @@ The controller:
 - stops recorded Bible or hymn audio through the existing `AudioPlaybackCoordinator` before speaking;
 - supports play, pause/stop, next, and previous across a passage queue;
 - releases the engine during application shutdown/tests;
-- never claims offline capability merely because an engine exists: the UI explains that an offline voice must be installed in Android settings.
+- never claims offline capability merely because the Google engine exists: the UI explains that the matching Google offline voice must be installed in Android settings.
 
-Reader actions allow reading the current chapter from the first visible verse or reading selected verses. Search actions allow reading one result or the currently displayed ranked result list. TTS reads the active version text, not the WEB semantic-index text.
+Reader and search actions first pass through `ListeningSourceResolver`. A selected verse with timed recorded audio starts that recording at the verse; an untimed recording starts its chapter and explains that verse-level seeking is unavailable. Only the no-recording or explicit playback-failure path offers TTS for the current chapter, selected verses, one result, or the displayed ranked result list. TTS reads the active version text, not the WEB semantic-index text.
 
 ### TalkBack contract
 
@@ -115,7 +119,7 @@ All new interactive views have a concise localized label, role, state, and actio
 - search mode announces “Pencarian tepat” or “Pencarian tema offline”;
 - model-pack action announces absent/downloading/ready/error plus progress;
 - each theme result exposes one combined focus target: reference, verse text, relevance order, and “ketuk dua kali untuk membuka”; 
-- the speak action announces whether speech is stopped or playing and which reference is current;
+- the listen action announces whether it will use recorded narration or Google TTS fallback, its stopped/playing state, and the current reference;
 - the audio download action announces download state and does not rely on color/icon alone.
 
 Focus stays on the initiating control when a download or search state updates. Results announce their count once through an accessibility live region. Existing verse-row content descriptions remain intact.
@@ -174,7 +178,7 @@ The existing `SearchActivity` gains an accessible two-option mode selector. Exac
 - shows progress while downloading or locally preparing;
 - performs no HTTP request once the pack is ready;
 - shows ranked results in the existing list and preserves open/copy/select behavior;
-- offers “Bacakan hasil” through the shared speech controller.
+- offers “Dengarkan hasil”; the shared source resolver uses recorded narration where available and exposes Google TTS only for no-recording/failure cases.
 
 If the pack is missing, corrupt, incompatible, or cannot load, the app reports the specific recovery action and exact search remains available. There is no silent network fallback and no cloud inference fallback.
 
@@ -190,7 +194,7 @@ If the pack is missing, corrupt, incompatible, or cannot load, the app reports t
 
 ## Security and privacy
 
-- Theme queries, verse text, embeddings, and TTS passages never leave the device.
+- Theme queries, verse text, embeddings, and Google TTS passages never leave the device; Android network synthesis is not requested, and acceptance requires an installed offline voice.
 - Model/audio downloads use fixed HTTPS origins and reject redirects to non-HTTPS destinations.
 - Model artifacts are accepted only after SHA-256 and length validation.
 - Paths are fixed by catalog IDs and ARIs; user text never becomes a filesystem path or URL.
@@ -203,7 +207,7 @@ If the pack is missing, corrupt, incompatible, or cannot load, the app reports t
 
 - built-in audio visibility only for `en-web`, complete coordinate lookup, anomaly paths, and unknown-coordinate rejection;
 - local-file preference, atomic download success, checksum/content failure, cancellation cleanup, and removal;
-- TTS text cleaning, locale choice, queue navigation, unavailable language, state transitions, and audio mutual exclusion;
+- listening-source precedence, recorded-playback failure fallback, Google TTS text cleaning, locale choice, queue navigation, unavailable engine/language, state transitions, and audio mutual exclusion;
 - byte-level BPE golden token IDs and truncation/padding;
 - int8 cosine calculation, reciprocal-rank fusion, book filters, cache invalidation, corrupt/incompatible pack handling;
 - search-mode state and preservation of existing exact-search behavior;
@@ -224,8 +228,8 @@ Run both debug and release unit suites plus the debug APK build with JDK 21:
 1. Install the newly built `plainDebug` APK over the existing debug app without clearing user data.
 2. Open WEB, stream Genesis 1, verify Media3 notification, pause/resume, speed, and next chapter.
 3. Download one WEB chapter, disable Wi-Fi and mobile data, force-stop/reopen the app, and play that chapter fully from the local file.
-4. Read an Indonesian TB passage with device TTS; verify start/stop and selected-verse reading.
-5. Install/verify the local model pack, enable airplane-equivalent offline conditions, run all seven Indonesian benchmark themes, open results, and read results with TTS.
+4. Verify that a passage with working recorded narration does not offer or start TTS. Then use a passage without a recorded set (and separately simulate a recorded-load failure), invoke Google TTS, and verify start/stop plus selected-verse reading with the Indonesian offline voice.
+5. Install/verify the local model pack, enable airplane-equivalent offline conditions, run all seven Indonesian benchmark themes, open results, and exercise “Dengarkan hasil”: recorded narration first where available, Google TTS only on the allowed fallback path.
 6. Enable TalkBack, traverse every new control and one result flow without coordinate taps, confirm announcements and focus stability, then restore the original accessibility setting.
 7. Confirm exact search still finds known TB and WEB phrases and existing recorded-audio behavior for other configured presets is unchanged.
 
