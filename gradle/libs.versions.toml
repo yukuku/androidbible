@@ -52,6 +52,7 @@ robolectric = "4.13"
 okhttp = "5.1.0"
 coil = "2.7.0"
 kotlinxSerializationJson = "1.5.1"
+onnxRuntime = "1.24.3"
 
 # UI
 fancyShowcaseView = "1.4.0"
@@ -122,6 +123,7 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+onnxruntime-android = { group = "com.microsoft.onnxruntime", name = "onnxruntime-android", version.ref = "onnxRuntime" }
 
 # UI
 fancyShowcaseView = { group = "com.github.faruktoptas", name = "FancyShowCaseView", version.ref = "fancyShowcaseView" }

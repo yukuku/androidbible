@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "modelId": "ibm-granite/granite-embedding-97m-multilingual-r2",
+  "revision": "835ad14087e140460703cf0fae09f97d469d65c2",
+  "model": {
+    "fileName": "model_quint8_avx2.onnx",
+    "url": "https://huggingface.co/ibm-granite/granite-embedding-97m-multilingual-r2/resolve/835ad14087e140460703cf0fae09f97d469d65c2/onnx/model_quint8_avx2.onnx",
+    "length": 98247878,
+    "sha256": "a6022dd8220ea6f6595562a1328ee216f4a94faa55362f2f4747c80f1e78772e"
+  },
+  "tokenizer": {
+    "fileName": "tokenizer.json",
+    "url": "https://huggingface.co/ibm-granite/granite-embedding-97m-multilingual-r2/resolve/835ad14087e140460703cf0fae09f97d469d65c2/tokenizer.json",
+    "length": 25301672,
+    "sha256": "4f2842d568e2724370aec203652a42ac783c7937f8347a1a2cc7506d71f1582f"
+  }
+}

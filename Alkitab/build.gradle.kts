@@ -442,6 +442,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.coil)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.onnxruntime.android)
 
     // UI
     implementation(libs.fancyShowcaseView)

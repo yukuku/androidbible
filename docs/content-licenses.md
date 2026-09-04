@@ -17,6 +17,8 @@ KJV, WEB, and ASV may be used commercially under the qualifications below. TB ma
 | WEB | Yuku preset `en-web`; official eBible 66-book Protestant USFM archive retained | Public domain. “World English Bible” is a trademark | Commercial use is acceptable. If the actual text is changed, do not call the result “World English Bible.” |
 | ASV | Yuku preset `en-asv`; official eBible USFM archive retained | Public domain due to copyright expiration | Commercial use and modification are acceptable; retain truthful edition/source attribution. |
 | WEB audio | AudioTreasure WEB recording narrated by David Williams | Publisher states that the recording is public domain and released without restriction | Keep the title `WEB — David Williams (public domain)`, source URL, and this provenance record. Do not relabel it as another translation. |
+| Granite Embedding model | IBM `granite-embedding-97m-multilingual-r2`, pinned revision `835ad140…` | Apache-2.0 model license | Preserve the model license and attribution with any downloaded offline-search pack. |
+| ONNX Runtime Android | Microsoft ONNX Runtime 1.24.3 | MIT License | Preserve the MIT license notice in distributed binary notices. |
 
 ## AudioTreasure WEB audio manifest
 

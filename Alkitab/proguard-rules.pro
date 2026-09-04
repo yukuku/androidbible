@@ -125,3 +125,6 @@
 }
 
 # </serialization>
+
+# ONNX Runtime Java entry points are reached from native code.
+-keep class ai.onnxruntime.** { *; }
