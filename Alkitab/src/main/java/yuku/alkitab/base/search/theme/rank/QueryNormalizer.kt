@@ -27,7 +27,14 @@ class QueryNormalizer(
         .flatMap { token -> groups[token]?.take(maxPerToken) ?: listOf(token) }
         .distinct()
 
+    /** Bilingual, bounded retrieval text with function words removed. */
+    fun semanticQuery(text: String): String = expand(text)
+        .filterNot(STOP_WORDS::contains)
+        .joinToString(" ")
+
     companion object {
+        private val STOP_WORDS = setOf("dan", "yang", "saat", "untuk", "dalam", "and", "the", "when", "for", "in")
+
         fun from(context: Context): QueryNormalizer {
             val root = context.assets.open("offline_search/theme_synonyms_id_en.json").bufferedReader().use {
                 Json.parseToJsonElement(it.readText()).jsonObject

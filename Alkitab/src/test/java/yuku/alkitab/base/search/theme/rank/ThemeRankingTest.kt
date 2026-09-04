@@ -13,6 +13,12 @@ class ThemeRankingTest {
     }
 
     @Test
+    fun `semantic query adds bilingual terms and removes function words`() {
+        val normalizer = QueryNormalizer(mapOf("kasih" to listOf("love", "sabar", "patient")))
+        assertEquals("kasih love patient sabar", normalizer.semanticQuery("kasih yang sabar"))
+    }
+
+    @Test
     fun `BM25 ranks matching rare term before common-only document`() {
         val rare = Ari.encode(0, 1, 1)
         val common = Ari.encode(0, 1, 2)
