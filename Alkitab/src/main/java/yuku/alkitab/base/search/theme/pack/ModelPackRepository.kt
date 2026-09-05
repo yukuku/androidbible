@@ -9,20 +9,26 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 
 class ModelPackRepository(
     private val workManager: WorkManager,
     private val store: ModelPackStore,
     private val manifest: ModelPackManifest,
 ) {
+    private val refresh = MutableStateFlow(0L)
+
     constructor(context: Context) : this(
         WorkManager.getInstance(context.applicationContext),
         ModelPackStore(context.applicationContext),
         ModelPackManifest.load(context.applicationContext),
     )
 
-    val state: Flow<ModelPackState> = workManager.getWorkInfosForUniqueWorkFlow(workName(manifest)).map { infos ->
+    val state: Flow<ModelPackState> = combine(
+        workManager.getWorkInfosForUniqueWorkFlow(workName(manifest)),
+        refresh,
+    ) { infos, _ ->
         when (val latest = infos.lastOrNull()) {
             null -> store.inspect(manifest)
             else -> when (latest.state) {
@@ -43,14 +49,14 @@ class ModelPackRepository(
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .setBackoffCriteria(androidx.work.BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
             .build()
-        workManager.enqueueUniqueWork(workName(manifest), ExistingWorkPolicy.KEEP, request)
+        workManager.enqueueUniqueWork(workName(manifest), ExistingWorkPolicy.REPLACE, request)
     }
 
     fun readyPack(): ModelPackState.Ready? = store.inspect(manifest) as? ModelPackState.Ready
 
     fun remove(): Boolean {
         workManager.cancelUniqueWork(workName(manifest))
-        return store.remove(manifest)
+        return store.remove(manifest).also { refresh.value += 1 }
     }
 
     companion object {
