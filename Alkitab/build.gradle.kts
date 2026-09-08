@@ -8,6 +8,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.time.Instant
+import java.util.Properties
 import javax.inject.Inject
 
 plugins {
@@ -86,8 +87,54 @@ val gitCommitHash: String = try {
     "0000000"
 }
 
-// Version code: (2_000_000 + minutes since 2026-01-01 UTC) * 10
-val buildVersionCode: Int = run {
+// Counter for dev version names: commits since versionBase last changed, so it
+// restarts at 0 for each new release line instead of counting the whole repo.
+// The pickaxe finds that commit; -G matches the versionBase line specifically,
+// so a betaNumber bump does not reset the count.
+val devBuildNumber: String = try {
+    val versionBaseCommit = providers.exec {
+        commandLine(
+            "git", "log", "-1", "--format=format:%H", "-G", "^versionBase=",
+            "--", rootProject.file("version.properties").absolutePath,
+        )
+    }.standardOutput.asText.get().trim()
+    val range = if (versionBaseCommit.isEmpty()) "HEAD" else "$versionBaseCommit..HEAD"
+    providers.exec {
+        commandLine("git", "rev-list", "--count", range)
+    }.standardOutput.asText.get().trim().ifEmpty { "0" }
+} catch (_: Exception) {
+    "0"
+}
+
+val versionProperties = Properties().apply {
+    rootProject.file("version.properties").inputStream().use { load(it) }
+}
+
+fun versionProperty(key: String): String = versionProperties.getProperty(key)
+    ?: throw GradleException("'$key' is missing from version.properties")
+
+val versionBase: String = versionProperty("versionBase")
+
+// Which release channel this build is for: -PversionStage=beta, or the
+// VERSION_STAGE env var, defaulting to "dev". See version.properties.
+val versionStage: String = providers.gradleProperty("versionStage").orNull
+    ?: providers.environmentVariable("VERSION_STAGE").orNull
+    ?: "dev"
+
+val buildVersionName: String = when (versionStage) {
+    "release" -> versionBase
+    "beta" -> "$versionBase-beta.${versionProperty("betaNumber")}"
+    "dev" -> "$versionBase-dev.$devBuildNumber"
+    else -> throw GradleException("Unknown versionStage '$versionStage'; expected 'dev', 'beta' or 'release'.")
+}
+
+// Version code: (2_000_000 + minutes since 2026-01-01 UTC) * 10, so a later
+// build always outranks an earlier one whatever branch or stage produced it.
+// The factor of 10 reserves nine spare codes per minute for per-ABI splits.
+//
+// VERSION_CODE pins it instead. Releases set it so that rebuilding the same
+// commit produces the same artifact; without it the code moves every minute.
+val buildVersionCode: Int = providers.environmentVariable("VERSION_CODE").orNull?.toInt() ?: run {
     val epoch = Instant.parse("2026-01-01T00:00:00Z").epochSecond
     val minutesSinceEpoch = (Instant.now().epochSecond - epoch) / 60
     ((2_000_000 + minutesSinceEpoch) * 10).toInt()
@@ -124,7 +171,7 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = buildVersionCode
-        versionName = "5.0.0-b0"
+        versionName = buildVersionName
         buildConfigField("String", "SERVER_HOST", "\"$serverHost\"")
         buildConfigField("String", "RIBKA_FUNCTIONS_HOST", "\"$ribkaFunctionsHost\"")
         buildConfigField("String", "LAST_COMMIT_HASH", "\"$gitCommitHash\"")
@@ -169,6 +216,9 @@ android {
         }
         release {
             buildConfigField("boolean", "SKIP_FCM_REGISTRATION", "false")
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -362,6 +412,55 @@ androidComponents {
             }
         }
     }
+}
+
+// Release-flow helpers. The full flow is in docs/build-system.md; in short:
+// `./gradlew bumpBetaNumber`, commit, then run the "Release" workflow (or
+// `./gradlew -PversionStage=beta bundleProductionRelease` locally).
+tasks.register("bumpBetaNumber") {
+    group = "release"
+    description = "Increments betaNumber in version.properties."
+    // Read into locals here rather than inside doLast, so the action does not
+    // capture the project and stays configuration-cache safe.
+    val propertiesFile = rootProject.file("version.properties")
+    val base = versionBase
+    doLast {
+        val text = propertiesFile.readText()
+        val match = Regex("(?m)^betaNumber=(\\d+)[ \\t]*$").find(text)
+            ?: throw GradleException("No 'betaNumber=<number>' line found in $propertiesFile")
+        val current = match.groupValues[1].toInt()
+        val next = current + 1
+        // Rewrite just the one line so the explanatory header survives.
+        propertiesFile.writeText(text.replaceRange(match.range, "betaNumber=$next"))
+        logger.lifecycle("betaNumber $current -> $next; next beta build is $base-beta.$next")
+    }
+}
+
+tasks.register("printVersion") {
+    group = "release"
+    description = "Prints the versionName and versionCode this build would produce."
+    val versionName = buildVersionName
+    val versionCode = buildVersionCode
+    val stage = versionStage
+    doLast {
+        println("versionStage=$stage")
+        println("versionName=$versionName")
+        println("versionCode=$versionCode")
+    }
+}
+
+val productionFlavorSuffixes = proprietaryFlavors.keys.map { flavor -> flavor.replaceFirstChar { it.uppercaseChar() } }
+
+tasks.register("bundleProductionRelease") {
+    group = "release"
+    description = "Builds the release App Bundle for every production flavor."
+    dependsOn(productionFlavorSuffixes.map { "bundle${it}Release" })
+}
+
+tasks.register("assembleProductionRelease") {
+    group = "release"
+    description = "Builds the release APK for every production flavor."
+    dependsOn(productionFlavorSuffixes.map { "assemble${it}Release" })
 }
 
 kotlin {

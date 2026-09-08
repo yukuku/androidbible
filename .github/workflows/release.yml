@@ -1,0 +1,213 @@
+# Manually-triggered release build. Produces the signed App Bundles that get
+# uploaded to Google Play, plus the mapping files and native debug symbols that
+# have to be kept for as long as the release is live, and records all of them on
+# a GitHub Release.
+#
+# Everyday pushes to develop are handled by android.yml, which publishes
+# throwaway `-dev.<n>` pre-releases. This workflow is the deliberate one: it
+# builds `-beta.<n>` or final `<x.y.z>` artifacts, whose version names come from
+# version.properties and must be bumped by hand first.
+#
+# Before running with stage=beta:
+#   1. ./gradlew bumpBetaNumber
+#   2. commit version.properties and push
+#   3. run this workflow against that commit
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Release channel to build for'
+        type: choice
+        options:
+          - beta
+          - release
+        default: beta
+      dry_run:
+        description: 'Build and keep the artifacts, but do not create a GitHub Release'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      # For creating the GitHub Release and its tag.
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check out proprietary overlay
+        uses: actions/checkout@v5
+        with:
+          repository: yukuku/androidbible-proprietary
+          ref: master
+          ssh-key: ${{ secrets.PROPRIETARY_DEPLOY_KEY }}
+          path: proprietary
+          persist-credentials: false
+
+      - name: set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Ask Gradle for the version once and pin the result, so every flavor in
+      # this run shares one versionCode and a re-run of the build step cannot
+      # drift (the default versionCode advances every minute).
+      - name: Resolve version
+        id: version
+        env:
+          VERSION_STAGE: ${{ inputs.stage }}
+        run: |
+          set -euo pipefail
+          ./gradlew -q :Alkitab:printVersion > version-output.txt
+          cat version-output.txt
+          # Filter rather than redirect the whole thing: anything Gradle prints
+          # alongside the task output would otherwise land in GITHUB_OUTPUT.
+          grep -E '^(versionStage|versionName|versionCode)=' version-output.txt >> "$GITHUB_OUTPUT"
+
+      - name: Check the tag is free
+        env:
+          TAG: v${{ steps.version.outputs.versionName }}
+        run: |
+          set -euo pipefail
+          if git rev-parse --verify --quiet "refs/tags/$TAG" >/dev/null; then
+            echo "::error::Tag $TAG already exists. Run './gradlew bumpBetaNumber' and commit before releasing again."
+            exit 1
+          fi
+          echo "Releasing as $TAG"
+
+      - name: Decode signing keystore
+        env:
+          SIGN_KEYSTORE_BASE64: ${{ secrets.SIGN_KEYSTORE_BASE64 }}
+        run: |
+          printf '%s' "$SIGN_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+
+      - name: Build signed release (all production flavors)
+        env:
+          ALKITAB_PROPRIETARY_DIR: ${{ github.workspace }}/proprietary
+          SIGN_KEYSTORE: ${{ runner.temp }}/release.jks
+          SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
+          SIGN_PASSWORD: ${{ secrets.SIGN_PASSWORD }}
+          VERSION_STAGE: ${{ inputs.stage }}
+          VERSION_CODE: ${{ steps.version.outputs.versionCode }}
+          BUILD_DIST: ${{ inputs.stage }}
+        run: ./gradlew assembleProductionRelease bundleProductionRelease
+
+      # Guards against the version the workflow announced drifting from the one
+      # actually baked into the artifacts.
+      - name: Verify built version
+        env:
+          EXPECTED_NAME: ${{ steps.version.outputs.versionName }}
+          EXPECTED_CODE: ${{ steps.version.outputs.versionCode }}
+        run: |
+          set -euo pipefail
+          for meta in Alkitab/build/outputs/apk/*/release/output-metadata.json; do
+            name=$(jq -r '.elements[0].versionName' "$meta")
+            code=$(jq -r '.elements[0].versionCode' "$meta")
+            if [ "$name" != "$EXPECTED_NAME" ] || [ "$code" != "$EXPECTED_CODE" ]; then
+              echo "::error::$meta has $name ($code), expected $EXPECTED_NAME ($EXPECTED_CODE)"
+              exit 1
+            fi
+          done
+          echo "All flavors built $EXPECTED_NAME ($EXPECTED_CODE)"
+
+      # Retained far longer than android.yml's 14 days: a mapping file is only
+      # useful while the release it belongs to is still installed somewhere, and
+      # a beta can sit on the open-testing track for months.
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-${{ steps.version.outputs.versionName }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            Alkitab/build/outputs/apk/*/release/*.apk
+            Alkitab/build/outputs/bundle/*Release/*.aab
+            Alkitab/build/outputs/mapping/*Release/mapping.txt
+            Alkitab/build/outputs/native-debug-symbols/*Release/native-debug-symbols.zip
+
+      # The App Bundles are what gets uploaded to Play; the mapping files and
+      # native symbols are attached so a crash report from this build can still
+      # be read after the workflow artifacts expire.
+      - name: Stage release assets
+        if: ${{ !inputs.dry_run }}
+        id: stage
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.versionName }}
+        run: |
+          set -euo pipefail
+          stage=release-staging
+          mkdir -p "$stage"
+          short_hash=$(git log -1 --format=%h)
+          for flavor in yuku_alkitab yuku_quick_bible sabda_alkitab; do
+            case "$flavor" in
+              yuku_alkitab) label=Alkitab ;;
+              yuku_quick_bible) label=QuickBible ;;
+              sabda_alkitab) label=SabdaAlkitab ;;
+            esac
+            base="$label-$VERSION_NAME-$short_hash"
+            cp "Alkitab/build/outputs/bundle/${flavor}Release"/*.aab "$stage/$base.aab"
+            cp "Alkitab/build/outputs/apk/$flavor/release"/*.apk "$stage/$base.apk"
+            cp "Alkitab/build/outputs/mapping/${flavor}Release/mapping.txt" "$stage/$base-mapping.txt"
+            cp "Alkitab/build/outputs/native-debug-symbols/${flavor}Release/native-debug-symbols.zip" \
+               "$stage/$base-native-debug-symbols.zip"
+          done
+          ls -l "$stage"
+
+      # Commits since the previous release built by this workflow. Its tags are
+      # version names (v5.0.0-beta.2), so the glob skips android.yml's
+      # versionCode-based dev tags (v23600000).
+      - name: Write release notes
+        if: ${{ !inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          last_tag=$(git tag --list 'v*.*.*' --sort=-creatordate | head -n1)
+          {
+            echo "## Changes"
+            echo
+            if [ -n "$last_tag" ]; then
+              echo "Since \`$last_tag\`:"
+              echo
+              git log "${last_tag}..HEAD" --pretty=format:"- %s (%h)"
+            else
+              git log HEAD --max-count=50 --pretty=format:"- %s (%h)"
+            fi
+            echo
+          } > release-notes.md
+
+      - name: Create GitHub Release
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_NAME: ${{ steps.version.outputs.versionName }}
+          VERSION_CODE: ${{ steps.version.outputs.versionCode }}
+        run: |
+          set -euo pipefail
+          today=$(date -u +%Y-%m-%d)
+          args=(
+            "v$VERSION_NAME"
+            --target "$GITHUB_SHA"
+            --title "$VERSION_NAME ($VERSION_CODE) $today"
+            --notes-file release-notes.md
+          )
+          if [ "${{ inputs.stage }}" != "release" ]; then
+            args+=(--prerelease)
+          fi
+          gh release create "${args[@]}" release-staging/*
+
+      - name: Wipe keystore from runner
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.jks"
