@@ -34,6 +34,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Requirements**: JDK 21 (Zulu recommended), Android SDK with compile SDK 36, NDK 28.2.13676358.
 
+**Versioning**: `versionName` comes from `version.properties` (`versionBase` +
+`betaNumber`) combined with a stage: `dev` by default (`5.0.0-dev.<commits
+since versionBase last changed>`), `beta` via `-PversionStage=beta`
+(`5.0.0-beta.<n>`), `release` via `-PversionStage=release` (`5.0.0`). `versionCode` is derived from wall-clock
+time and is unrelated to the stage. Never hardcode a version in
+`Alkitab/build.gradle.kts`; see the "Versioning" section of
+`docs/build-system.md`.
+
 The `plain` flavor is the open-source development build and works out of the box with the placeholder `Alkitab/google-services.json` checked into the repo (Firebase features won't function at runtime, but the app builds and runs). Production flavors (`yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`) require:
 - `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/` — proprietary Bible text
 - `$ALKITAB_PROPRIETARY_DIR/google-services.json` — real Firebase config (one file with client entries for all production applicationIds)
@@ -265,7 +273,7 @@ Detailed documentation for each major feature module:
 
 - **IMPORTANT. Never write change-narrating comments.** Code comments must describe the code as it is *now*, not the history of how it got there. Do not reference past revisions, removed approaches, or the act of editing: no "previously", "used to", "formerly", "earlier iterations", "an earlier version", "we changed/renamed/moved this from…", "now uses…", "no longer…", and the like. Git history is the record of *change*; the code and its comments describe the *present*. When explaining why the current design was chosen over an alternative is genuinely useful, state it as present-tense rationale about the alternative ("the cluster is centered with Spacers because a weighted slot would clip the label"), not as a story about what the code used to do. This applies to all comments, KDoc/Javadoc, and commit-adjacent code. Keep the narrative of change out of the source. The same rule applies to milestone labels: do not tag comments with the sprint or task that produced the code ("(M3)", "Out of scope for M4"), because they date instantly and mean nothing to a later reader.
 - **IMPORTANT. Never use em dashes to join clauses in comments or docs.** The "—" character (U+2014) is hard to read in running prose. Write two plain sentences instead, or use a comma, colon, semicolon, or parentheses, whichever reads most naturally. This applies to code comments, KDoc/Javadoc, Markdown docs, commit messages, and PR descriptions. (Existing prose in older files may still contain them; leave it alone unless you are already editing that comment or were asked to sweep the file.)
-- **Do not over-comment.** Default to writing no comment. A comment earns its place only by explaining a non-obvious *why*: a hidden constraint, a subtle invariant, a threading or lifecycle rule, a workaround for a specific bug, or behavior that would surprise a reader. Never restate what a well-named symbol already says, never narrate the happy path line by line, and never write multi-paragraph rationale where one or two sentences do the job. If deleting a comment would not confuse a future reader, delete it.
+- **IMPORTANT. Do not add explaining comments except for non-obvious code.** Default to writing no comment. A comment earns its place only by explaining a non-obvious *why*: a hidden constraint, a subtle invariant, a threading or lifecycle rule, a workaround for a specific bug, or behavior that would surprise a reader. Never restate what a well-named symbol already says, never narrate the happy path line by line, and never write multi-paragraph rationale where one or two sentences do the job. If deleting a comment would not confuse a future reader, delete it.
 - Mixed Java/Kotlin codebase (Kotlin preferred for new code, many files still Java)
 - JVM toolchain 21 across all modules
 - No obfuscation in ProGuard (`-dontobfuscate`), only shrinking

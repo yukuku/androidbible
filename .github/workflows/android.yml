@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop", "release/**" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "develop", "release/**" ]
 
 permissions:
   contents: read
@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Full history: the build derives the dev version name's counter from
+      # `git rev-list --count HEAD`, which a shallow clone reports as 1.
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: set up JDK 21
         uses: actions/setup-java@v5
@@ -150,7 +154,8 @@ jobs:
       - uses: actions/checkout@v5
         with:
           # Need full history so `git log <last-release-tag>..HEAD` in the
-          # release step can walk back to the previous release.
+          # release step can walk back to the previous release, and so the
+          # build's dev version counter (`git rev-list --count HEAD`) is right.
           fetch-depth: 0
 
       - name: Check out proprietary overlay

@@ -9,6 +9,8 @@
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 	<!-- Keeping storage permissions for users who upgrade from an existing versions
 	and store their version files in the external storage -->
 	<uses-permission
