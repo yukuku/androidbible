@@ -22,10 +22,10 @@ plugins {
 }
 
 /**
- * Mirrors the contents of {@code text_raw/} from a proprietary overlay directory
- * into {@code <outputDir>/internal/}, so that the result can be wired into a
- * product flavor's assets via AGP's {@code addGeneratedSourceDirectory}. The
- * Sync semantics ensure that removed files in the source disappear from the
+ * Mirrors the Bible assets of {@code text_raw/} from a proprietary overlay
+ * directory into {@code <outputDir>/internal/}, so that the result can be wired
+ * into a product flavor's assets via AGP's {@code addGeneratedSourceDirectory}.
+ * The Sync semantics ensure that removed files in the source disappear from the
  * output, and the typed {@code DirectoryProperty} output lets every downstream
  * AGP task (mergeAssets, lint vital, etc.) automatically depend on this task.
  */
@@ -44,12 +44,41 @@ abstract class CopyProprietaryAssetsTask @Inject constructor(
     @get:OutputDirectory
     abstract val outputDir: DirectoryProperty
 
+    // Tracked so that editing the patterns invalidates the task. Without it a
+    // build directory filled by an earlier pattern set stays up to date, and the
+    // assets that are no longer wanted survive into the APK.
+    @get:Input
+    val includePatterns: List<String>
+        get() = INTERNAL_ASSET_PATTERNS
+
     @TaskAction
     fun copyAssets() {
         fs.sync {
             from(sourceDir)
             into(outputDir.dir("internal"))
+            include(INTERNAL_ASSET_PATTERNS)
         }
+    }
+
+    companion object {
+        /**
+         * The assets InternalReader opens, as filename patterns. The overlay
+         * carries other build artifacts alongside them (a reverse search index,
+         * for one) that nothing in the app reads, and packaging those would only
+         * add weight to the APK.
+         *
+         * Book text is matched as a whole file type rather than by a prefix
+         * because each book's file name comes from the resName recorded inside
+         * the index, which is not known until the index is read at runtime.
+         */
+        private val INTERNAL_ASSET_PATTERNS = listOf(
+            "*.txt",
+            "*_index_bt.bt",
+            "*_pericope_index_bt.bt",
+            "*_pericope_blocks_bt.bt",
+            "*_xrefs_bt.bt",
+            "*_footnotes_bt.bt",
+        )
     }
 }
 
