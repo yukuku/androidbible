@@ -56,6 +56,8 @@ GitHub Actions workflow (`.github/workflows/android.yml`):
 - `signed-release` job (pushes to `develop` and same-repo PRs): builds and signs all production flavors using the proprietary overlay repo, uploads per-flavor artifacts, and on `develop` pushes publishes a GitHub pre-release. On PRs it also uploads a `pr-preview-apks` artifact (APKs and metadata only — no AABs or mapping files)
 - `pr-apk-preview` job (same-repo PRs only): publishes those signed release APKs to a Cloudflare Worker with static assets and comments immutable `*.workers.dev` download links on the PR
 
+CI stops at the signed artifacts. Nothing in the workflow talks to the Play Console; store releases are pushed by hand, see [Google Play Publishing](play-publishing.md).
+
 ### PR APK previews
 
 Each same-repo PR gets its signed release APKs published to the `alkitab-pr` Cloudflare Worker, and a comment linking to a download page. Fork PRs skip it — they have neither the signing key nor the Cloudflare token.
@@ -102,6 +104,10 @@ What the Gradle build does:
 5. For non-plain release builds, `validate<Variant>FirebaseConfig` reads the post-copy `Alkitab/src/<flavor>/google-services.json` and aborts the build if the API key is missing or a placeholder.
 
 The `plain` flavor keeps its placeholder `ddd_*` Bible files in `Alkitab/src/plain/assets/internal/` and uses the placeholder `Alkitab/google-services.json`. It needs none of the proprietary env vars.
+
+## Play Publishing
+
+`tools/play/publish.py` uploads the resulting AABs to Google Play, promotes releases between tracks, and syncs the store listing. Store metadata lives under `Alkitab/src/<flavor>/play/` in the Gradle Play Publisher layout. See [Google Play Publishing](play-publishing.md).
 
 ## ProGuard
 
