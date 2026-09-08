@@ -9,10 +9,6 @@
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
-	<!-- Needed on API 33+ for the audio playback notification and for sync
-	     notifications. firebase-messaging also merges this in, but the app's own
-	     notifications do not depend on Firebase, so declare it here explicitly
-	     rather than inheriting it from a dependency. -->
 	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
 	<!-- Keeping storage permissions for users who upgrade from an existing versions

@@ -36,15 +36,20 @@ root plus a *stage*, so an artifact's name says which channel produced it:
 
 | Stage | Selected by | Example | Used for |
 |-------|-------------|---------|----------|
-| `dev` | the default | `5.0.0-dev.117` | every ordinary build, local or CI |
+| `dev` | the default | `5.0.0-dev.42` | every ordinary build, local or CI |
 | `beta` | `-PversionStage=beta` or `VERSION_STAGE=beta` | `5.0.0-beta.1` | the Play open-testing track |
 | `release` | `-PversionStage=release` or `VERSION_STAGE=release` | `5.0.0` | the Play production track |
 
 `version.properties` holds only `versionBase` (the marketing version) and
-`betaNumber`. The dev counter is not stored: it is `git rev-list --count HEAD`,
-so it advances once per commit on its own and is the same for anyone building
-that commit. CI therefore has to check out with `fetch-depth: 0`; a shallow
-clone reports a count of 1.
+`betaNumber`. The dev counter is not stored: it is the number of commits since
+`versionBase` last changed, so it advances once per commit on its own, is the
+same for anyone building that commit, and restarts near zero for each release
+line rather than counting the whole repo's history. A `betaNumber` bump does not
+reset it, so a dev version name is never reused within one `versionBase`.
+
+Finding that starting point needs real history, so CI checks out with
+`fetch-depth: 0`. On a shallow clone the lookup finds nothing and the count
+falls back to however many commits the clone happens to have.
 
 Beta numbers are deliberately manual, because a number that moved on its own
 could not identify the build a tester is reporting against:

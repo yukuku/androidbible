@@ -87,15 +87,21 @@ val gitCommitHash: String = try {
     "0000000"
 }
 
-// Number of commits reachable from HEAD, used as the counter in dev version
-// names. It advances by one per commit and is identical for everyone building
-// that commit. A shallow clone undercounts it, which is why CI checks out with
-// fetch-depth: 0.
-val commitCount: String = try {
-    val count = providers.exec {
-        commandLine("git", "rev-list", "--count", "HEAD")
+// Counter for dev version names: commits since versionBase last changed, so it
+// restarts at 0 for each new release line instead of counting the whole repo.
+// The pickaxe finds that commit; -G matches the versionBase line specifically,
+// so a betaNumber bump does not reset the count.
+val devBuildNumber: String = try {
+    val versionBaseCommit = providers.exec {
+        commandLine(
+            "git", "log", "-1", "--format=format:%H", "-G", "^versionBase=",
+            "--", rootProject.file("version.properties").absolutePath,
+        )
     }.standardOutput.asText.get().trim()
-    count.ifEmpty { "0" }
+    val range = if (versionBaseCommit.isEmpty()) "HEAD" else "$versionBaseCommit..HEAD"
+    providers.exec {
+        commandLine("git", "rev-list", "--count", range)
+    }.standardOutput.asText.get().trim().ifEmpty { "0" }
 } catch (_: Exception) {
     "0"
 }
@@ -118,7 +124,7 @@ val versionStage: String = providers.gradleProperty("versionStage").orNull
 val buildVersionName: String = when (versionStage) {
     "release" -> versionBase
     "beta" -> "$versionBase-beta.${versionProperty("betaNumber")}"
-    "dev" -> "$versionBase-dev.$commitCount"
+    "dev" -> "$versionBase-dev.$devBuildNumber"
     else -> throw GradleException("Unknown versionStage '$versionStage'; expected 'dev', 'beta' or 'release'.")
 }
 
@@ -210,10 +216,6 @@ android {
         }
         release {
             buildConfigField("boolean", "SKIP_FCM_REGISTRATION", "false")
-            // Snappy ships JNI code, so without this the Play Console can only
-            // show raw addresses for native crashes. SYMBOL_TABLE is enough to
-            // get function names and keeps the bundle small; FULL would also
-            // carry DWARF line tables.
             ndk {
                 debugSymbolLevel = "SYMBOL_TABLE"
             }
@@ -441,13 +443,8 @@ tasks.register("printVersion") {
     val versionCode = buildVersionCode
     val stage = versionStage
     doLast {
-        // println rather than logger.lifecycle so `gradlew -q printVersion`
-        // emits these three lines and nothing else; the release workflow
-        // parses them to pin VERSION_CODE for the build that follows.
         println("versionStage=$stage")
         println("versionName=$versionName")
-        // Time-derived unless VERSION_CODE is set, so a later build of the same
-        // commit reports a higher number than this one.
         println("versionCode=$versionCode")
     }
 }
