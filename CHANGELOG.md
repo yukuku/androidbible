@@ -5,6 +5,57 @@ are the release / tag date (or the commit date of the version-bump for
 untagged releases). Internal refactors, dependency bumps, CI tweaks, and
 pure translation-only updates are generally omitted.
 
+## 5.0.0-beta.1 — 2026-09-08
+
+First beta of the 5.0 line, and the largest release since 4.x began:
+narrated Bibles, a Compose-based UI taking shape, edge-to-edge across
+the app, and a portable format for song books.
+
+- **Audio Bible.** A Bible version can now carry narrated recordings,
+  streamed and driven from a compact audio bar in the reader. Playback
+  keeps going in the background with lock-screen and headset controls,
+  the verse being read is highlighted as it plays, speed is adjustable,
+  chapters advance on their own, and playback can start from the verse
+  you selected. A version may offer more than one recording, with a
+  picker to choose between them, and the reader and the player follow
+  each other as you navigate. Bible and song audio share one media
+  session, so they never fight over playback.
+- **Edge-to-edge everywhere.** All screens now draw behind the system
+  bars on Android 15 and later, with content kept clear of the cutouts
+  and the split-view handle kept out of the system gesture areas.
+  Fullscreen reading behaves correctly again.
+- **Portable song books.** Songs are stored as plain JSON instead of
+  Android-specific serialized objects, so the same song data is usable
+  outside the app; existing books are converted the first time each song
+  is read. The separate song list screen was replaced by a search sheet
+  over the song view, with matches highlighted as you type.
+- **Compose migration begins.** The version picker, display panel, color
+  picker, highlight sheet, and song search are now Jetpack Compose, all
+  themed with the app's own colors rather than the system's. A new
+  Experimental settings section adds opt-in Compose implementations of
+  the verse list, the Goto screen, the song renderer, and the sync
+  login screen; the existing screens remain the default.
+- **"Alkitab GPT" verse action** on devices that already have that app
+  installed.
+- Highlight colors are now contrast-aware, so highlighted text stays
+  readable in both light and dark themes.
+- Push registration is deferred until you sign in to sync, so a fresh
+  install no longer asks for notification permission it does not need.
+- Fixes: search re-runs when you change version on the search screen;
+  split-view scrolling stays in sync across section headings; updating a
+  song book works again; a Bible version download can replace an
+  already-installed file; and several audio playback and layout
+  crashes.
+- Under the hood: the build moved to the Kotlin DSL with version
+  catalogs on Gradle 9, AGP 9, and JVM 21, and the version name now
+  comes from a single file in the repository with `dev`, `beta`, and
+  `release` stages. Several third-party libraries were dropped for
+  platform or AndroidX equivalents (dialogs, list reordering, color
+  picker, downloads, local broadcasts), song storage moved to Room,
+  multidex was removed, and a substantial unit test suite was added
+  around sync, search, verse rendering, the database, and the YES2
+  format.
+
 ## 4.11.2 — 2025-09-12
 
 - Dropped the `READ_SYNC_SETTINGS`, `WRITE_SYNC_SETTINGS`,
