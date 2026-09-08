@@ -34,6 +34,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Requirements**: JDK 21 (Zulu recommended), Android SDK with compile SDK 36, NDK 28.2.13676358.
 
+**Versioning**: `versionName` comes from `version.properties` (`versionBase` +
+`betaNumber`) combined with a stage: `dev` by default (`5.0.0-dev.<commit
+count>`), `beta` via `-PversionStage=beta` (`5.0.0-beta.<n>`), `release` via
+`-PversionStage=release` (`5.0.0`). `versionCode` is derived from wall-clock
+time and is unrelated to the stage. Never hardcode a version in
+`Alkitab/build.gradle.kts`; see the "Versioning" section of
+`docs/build-system.md`.
+
 The `plain` flavor is the open-source development build and works out of the box with the placeholder `Alkitab/google-services.json` checked into the repo (Firebase features won't function at runtime, but the app builds and runs). Production flavors (`yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`) require:
 - `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/` — proprietary Bible text
 - `$ALKITAB_PROPRIETARY_DIR/google-services.json` — real Firebase config (one file with client entries for all production applicationIds)
