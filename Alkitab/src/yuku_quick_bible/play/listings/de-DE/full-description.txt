@@ -1,0 +1,38 @@
+Die Bibel-App. Einfach, übersichtlich, intuitiv bedienbar. Bibellesepläne, Lesezeichen, Notizen, Hervorhebungen, Lesefortschrittsmarkierungen und vieles mehr. Offline-Bibelmodule. Lesen Sie die Bibel ohne ständige Internetverbindung. Kostenlos, keine weiteren Kosten oder In-App-Käufe. Und das alles ohne Werbung!
+
+<b>Bibelversionen und Bibelübersetzungen.</b> Mehr als 30 verschiedene Bibelversionen in unterschiedlichen Sprachen sind verfügbar. Einmal heruntergeladen, können sie jederzeit offline gelesen werden. Erstellung eigener Bibelmodule durch das offene Dateiformat möglich (Infos dazu im Blog, Konverter nicht in der App enthalten).
+
+<b>Suchen.</b> Erweiterte Suchfunktionen erlauben das schnelle Finden von Wörtern und Ausdrücken im Bibeltext. 
+
+<b>Vergleichen.</b> Zwei Bibelübersetzungen in einer geteilten Ansicht nebeneinander oder übereinander lesen. Unterschiedliche Übersetzungen eines Verses auf dem Bildschirm anzeigen lassen.
+
+<b>Querverweise.</b> Themenverwandte Verse wie Zitate, Parallelstellen und ähnliche Texte aufrufen (in einigen Bibelübersetzungen verfügbar).
+
+<b>Notizen</b> Schreiben Sie persönliche Notizen zu jedem Vers, den Sie ausgewählen. Legen Sie Verweise auf den Bibeltext in Ihren Notizen an. Mit einem Tipp auf einen Querverweis gelangen Sie zur entsprechenden Bibelstelle.
+
+<b>Historie aufgerufener Bibelstellen.</b> Beinhaltet eine Liste der zuletzt aufgerufenen Verse. Tippen und halten Sie die Bibelstellen-Angabe gedrückt, um die Historie aufzurufen.
+
+<b>Lesezeichen, Stichwörter, Lesefortschrittsmarkierungen und Hervorhebungen.</b> Versehen Sie gelesene Verse mit verschiedenfarbigen Markierungen. Setzen Sie Ihre Bibellese an der Stelle fort, an der Sie zuletzt gelesen haeb, ohne die Stelle zu vergessen. Erstellen Sie Ihre eigene Themensammlung mit Stichwörtern und Lesezeichen.
+
+<b>Synchronisation.</b> Durch die Synchronisation Ihrer Lesezeichen, persönlichen Notizen, Hervorhebungen und Stichwörtern können Sie diese vor Verlust schützen. Durch die Synchronisation stehen auf allen Ihren Geräten dieselben Daten zur Verfügung und werden untereinander automatisch abgeglichen.
+
+<b>Kopieren und Teilen von Bibelversen</b> Sie können Bibelverse in die Zwischenablage kopieren oder zu allen Apps auf Ihrem Gerät teilen.
+
+<b>Tägliche Andachten.</b> Lesen Sie tägliche Andachten (in englischer Sprache) und vertiefen Sie Ihr Wissen über Gott. 
+
+<b>Leseplan.</b> Wählen Sie einen von vielen Leseplänen aus, und lesen Sie die Bibel in einem oder zwei Jahren oder in einigen Monaten komplett durch. Sie können auch eigene Lesepläne erstellen.
+
+<b>Liederbücher.</b> Liedtexte (in englischer und indonesischer Sprache) aus verschiedenen Liederbüchern oder Gesangbüchern können heruntergeladen werden. Tippen Sie auf "Abspielen", um die Musik zum Lied anzuhören, wenn Sie online sind.*
+
+<b>Anzeigeeinstellungen.</b> Das Aussehen des Bibeltextes kann nach Ihren Wünschen angepasst werden. Schriftart, Textgröße, Farbe, Hintergrund, Zeilenabstand und mehr. Ein Nachtmodus und Vollbildmodus stehen ebenfalls zur Verfügung.
+
+<b>Widget.</b> Stärken Sie sich jeden Tag durch die Anzeige von ausgewählte Bibelversen, indem Sie das Widget auf Ihren Home-Bildschirm platzieren.
+
+<b>Über Bible for Android</b>
+– Offizielle Website https://alkitab.app
+– Open-Source-Projekt https://github.com/yukuku/androidbible
+– Spende an die Entwickler https://alkitab.app/donate
+
+<b>Gott allein zur Ehre – Soli Deo Gloria!</b>
+
+* nur für bestimmte Liederbücher verfügbar
