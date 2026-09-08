@@ -172,6 +172,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = buildVersionCode
         versionName = buildVersionName
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SERVER_HOST", "\"$serverHost\"")
         buildConfigField("String", "RIBKA_FUNCTIONS_HOST", "\"$ribkaFunctionsHost\"")
         buildConfigField("String", "LAST_COMMIT_HASH", "\"$gitCommitHash\"")
@@ -264,6 +265,30 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+        }
+
+        // Devices for StoreScreenshotTest. The image source is plain "aosp":
+        // the smaller "aosp-atd" test images have no rendering stack, so every
+        // screenshot taken on one comes out solid black.
+        //
+        // Play rejects a screenshot whose long
+        // edge is more than twice its short edge, which rules out the 20:9
+        // profiles most modern phones use, and wants at least 1080px on the
+        // short edge. Nexus 5 (1080x1920) and Nexus 9 (1536x2048) are the
+        // stock profiles that satisfy both. See docs/screenshots.md.
+        managedDevices {
+            localDevices {
+                create("storePhone") {
+                    device = "Nexus 5"
+                    apiLevel = 35
+                    systemImageSource = "aosp"
+                }
+                create("storeTablet") {
+                    device = "Nexus 9"
+                    apiLevel = 35
+                    systemImageSource = "aosp"
+                }
+            }
         }
     }
 
@@ -374,6 +399,14 @@ androidComponents {
             val copyTaskName = "copyProprietaryGoogleServices${flavorName.replaceFirstChar { it.uppercaseChar() }}"
             val gmsTaskName = "process${variantName.replaceFirstChar { it.uppercaseChar() }}GoogleServices"
             tasks.matching { it.name == gmsTaskName }.configureEach {
+                dependsOn(copyTaskName)
+            }
+
+            // The copy writes into src/<flavor>/, so every task that reads that
+            // directory needs the ordering, not just the GMS plugin's. Resource
+            // generation reads it too; hanging the copy off preBuild covers all
+            // of them at once.
+            tasks.matching { it.name == "pre${variantName.replaceFirstChar { it.uppercaseChar() }}Build" }.configureEach {
                 dependsOn(copyTaskName)
             }
         }
@@ -530,6 +563,14 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     debugImplementation(libs.leakcanary.android)
+
+    // Store-screenshot capture (StoreScreenshotTest).
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.uiautomator)
 
     // Firebase
     implementation(platform(libs.firebase.bom))

@@ -208,6 +208,8 @@ git commit -am "Bump to 5.0.0-beta.2" && git push
 
 ## Play Publishing
 
+Store screenshots are generated on Gradle managed devices, see [Store Screenshots](screenshots.md).
+
 `tools/play/publish.py` uploads the resulting AABs to Google Play, promotes releases between tracks, and syncs the store listing. Store metadata lives under `Alkitab/src/<flavor>/play/` in the Gradle Play Publisher layout. See [Google Play Publishing](play-publishing.md).
 
 ## ProGuard

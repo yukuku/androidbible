@@ -89,6 +89,9 @@ Alkitab/src/<source set>/play/
     └── <track>.txt
 ```
 
+Screenshots under `graphics/` are generated rather than captured by hand, see
+[Store Screenshots](screenshots.md).
+
 Don't hand-write the initial listings. Run `pull` once per flavor and let
 the live store listing seed the directory:
 
@@ -140,11 +143,10 @@ tools/play/.venv/bin/python tools/play/publish.py \
   --aab /tmp/alkitab-release/bundle/yuku_alkitabRelease/*.aab
 ```
 
-`upload` also sends `mapping.txt` and, when present, the native debug
-symbols zip, both read from the Gradle output next to the bundle. Native
-symbols are only produced if `debugSymbolLevel` is set on the release build
-type, which it currently is not; add it to `Alkitab/build.gradle.kts` if
-you want Snappy's native frames symbolicated in Play's crash reports.
+`upload` also sends `mapping.txt` and the native debug symbols zip, both
+read from the Gradle output next to the bundle. The release build type sets
+`debugSymbolLevel`, so the symbols exist and Play can symbolicate crashes in
+the Snappy JNI code.
 
 ### Promote
 
