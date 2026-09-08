@@ -262,6 +262,7 @@ Detailed documentation for each major feature module:
 - [Architecture Deep Dive](docs/architecture.md) — Singleton patterns, data flow, module dependencies
 - [Build System](docs/build-system.md) — Flavors, signing, CI/CD, release process
 - [Google Play Publishing](docs/play-publishing.md) — Manual store uploads via `tools/play/publish.py`, GPP-shaped metadata layout
+- [Store Screenshots](docs/screenshots.md) — Generated Play screenshots via `StoreScreenshotTest` and `tools/screenshots/capture.py`
 - [Text Rendering](docs/text-rendering.md) — Verse formatting pipeline and codes
 - [Binary Formats](docs/binary-formats.md) — YES2, Bintex, RPB file format specs
 - [Storage & Database](docs/storage.md) — SQLite schema, preferences, file storage
