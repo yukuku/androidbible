@@ -119,6 +119,10 @@ A second workflow, `.github/workflows/release.yml`, is manual
 (`workflow_dispatch`) and builds the artifacts that actually go to Google Play.
 See "Release workflow" below.
 
+Both workflows stop at the signed artifacts. Nothing in CI talks to the Play
+Console; store releases are pushed by hand, see
+[Google Play Publishing](play-publishing.md).
+
 ### PR APK previews
 
 Each same-repo PR gets its signed release APKs published to the `alkitab-pr` Cloudflare Worker, and a comment linking to a download page. Fork PRs skip it — they have neither the signing key nor the Cloudflare token.
@@ -198,9 +202,13 @@ Releasing a beta, end to end:
 ./gradlew bumpBetaNumber
 git commit -am "Bump to 5.0.0-beta.2" && git push
 # then run the Release workflow against that commit with stage=beta,
-# download the AABs from the GitHub Release, and upload them to the
-# Play open-testing track.
+# download the AABs from the GitHub Release, and upload them with
+# tools/play/publish.py --flavor <flavor> upload --track beta.
 ```
+
+## Play Publishing
+
+`tools/play/publish.py` uploads the resulting AABs to Google Play, promotes releases between tracks, and syncs the store listing. Store metadata lives under `Alkitab/src/<flavor>/play/` in the Gradle Play Publisher layout. See [Google Play Publishing](play-publishing.md).
 
 ## ProGuard
 

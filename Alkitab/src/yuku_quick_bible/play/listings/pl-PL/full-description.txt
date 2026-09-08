@@ -1,0 +1,38 @@
+Bogata aplikacja Biblijna z rozmaitymi funkcjami tj.: plany czytań, zakładki, notatki, podkreślenia, postęp czytania i wiele innych. Czytaj Pismo Święte, gdy nie masz dostępu do internetu, bez kupowania i bez reklam!
+
+<b>Przekłady i tłumaczenia.</b> Mamy dostępne ponad 30 przekładów Biblii w różnych językach. Pobierz je raz, a będą dostępne do późniejszego czytania.
+
+<b>Szukanie.</b> Znajdź szybko słowa lub frazy z zaawansowaną i bogatą w funkcje wyszukiwarką. 
+
+<b>Porównywanie.</b> Czytaj dwa przekłady obok siebie w trybie podzielonego okna. Zobacz różnice w tłumaczeniach wersu na ekranie dla dalszego studium.
+
+<b>Odsyłacze.</b> Znajdź powiązane wersy jak cytaty, fragmenty paralelne oraz podobne teksty (tylko w wybranych przekładach Biblii).
+
+<b>Notatki.</b> Pisz własne notatki dla dowolnych wersów, które zaznaczysz. Odnoś się do innych wersów w swoich notatkach, a będziesz mógł na nie kliknąć, aby się do nich dostać.
+
+<b>Historia ostatnio wybieranych wersów.</b> Zawiera listę ostatnio otwieranych wersów. Naciśnij i przytrzymaj na przycisku odnośnika, aby się do niej dostać.
+
+<b>Zakładki, Etykiety, Szpilki i Podkreślenia.</b> Zaznaczaj wersy, które przeczytałeś kolorowymi markerami. Kontynuuj czytanie od ostatniego przeczytanego wersu, aby się nie zgubić. Stwórz swój własny system tematów używając etykiet i zakładek.
+
+<b>Synchronizuj.</b> Miej pewność, że twoje zakładki, osobiste notatki, podkreślenia oraz etykiety są bezpieczne dzięki aktywacji Synchronizacji. Dzięki Synchronizacji, jeżeli posiadasz kilka urządzeń, twoje dane będą dostępne i aktualne na wszystkich urządzeniach.
+
+<b>Kopiuj i Dziel Się Wersami.</b> Możesz kopiować wybrane wersy do schowka, lub możesz dzielić się nimi poprzez dowolną zainstalowaną aplikację na twoim telefonie.
+
+<b>Codzienne Rozważania.</b> Czytaj codzienne rozważania i pogłębiaj swoją znajomość Boga. 
+
+<b>Plany Czytania.</b> Wybierz jeden z wielu planów czytania i przeczytaj Biblię w rok lub dwa lata, albo w kilka miesięcy. Możesz nawet stworzyć swój własny plan.
+
+<b>Śpiewniki.</b> Słowa z różnych śpiewników lub zbiorów hymnów są dostępne do pobrania. Naciśnij "Play", aby rozpocząć odsłuchiwanie muzyki, kiedy jesteś online.*
+
+<b>Ustawienia Wyświetlania.</b> Wygląd tekstu Biblijnego, może zostać dostosowany do twoich upodobań. Czcionka, rozmiar tekstu, kolor, tło, odstępy między liniami i wiele innych. Również dostępne są tryb nocny i pełen ekran.
+
+<b>Widżet.</b> Odśwież się poprzez codziennie wybrany wers, dzięki umieszczeniu widżetu na ekranie domowym.
+
+<b>O Biblii dla Androida</b>
+– Oficjalna strona www https://alkitab.app
+– Otwarte źródła projektu https://github.com/yukuku/androidbible
+– Wsparcie autorów https://alkitab.app/donate
+
+<b>Chwała tylko Bogu – Soli Deo Gloria!</b>
+
+* dostępne tylko dla niektórych śpiewników

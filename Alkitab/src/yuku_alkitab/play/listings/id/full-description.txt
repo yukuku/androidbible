@@ -1,0 +1,61 @@
+<h2>Aplikasi Alkitab multifungsi, multiversi, gratis, dan tanpa iklan.</h2>
+
+<b>Berbagai terjemahan Alkitab.</b> Terdapat berbagai versi terjemahan Alkitab dalam bahasa Indonesia dan daerah/suku, bahasa asli Alkitab (Yunani/Ibrani), dan bahasa asing lainnya. Cukup diunduh/download satu kali, setelah itu dapat dibaca offline.
+
+<b>Pencarian.</b> Cari kata-kata dan frasa dengan cepat dan canggih. Temukan ayat-ayat dengan beragam pilihan pencarian.
+
+<b>Versi Pembanding.</b> Bandingkan versi-versi terjemahan Alkitab yang ditampilkan dengan tampilan ganda 'split screen'. Pelajari firman Tuhan dalam berbagai bahasa dengan mudah dalam satu layar.
+
+<b>Referensi Silang.</b> Temukan ayat-ayat terkait, yang saling terhubung dalam Alkitab (untuk beberapa versi terjemahan Alkitab).
+
+<b>Catatan.</b> Anda dapat membuat catatan pribadi pada ayat apa pun yang dipilih. Alamat ayat yang dituliskan dalam catatan, akan menjadi link/tautan yang dapat diklik untuk membuka ayat tersebut.
+
+<b>Riwayat/History.</b> Berisi daftar ayat yang pernah Anda buka sebelumnya. Ayat-ayat terakhir yang Anda baca telah ditandai dan dapat dibuka kembali dengan cepat.
+
+<b>Pembatas Buku, Label, dan Jejak.</b> Ada beberapa jenis 'bookmark' — Tandai ayat-ayat yang Anda baca; Anda juga bisa membuat sendiri sistem topik pribadi.
+
+<b>Sync.</b> Pastikan pembatas buku, catatan pribadi, sorotan, label, dan data-data lainnya milik Anda aman dengan mengaktifkan Sync. Dengan Sync, jika Anda mempunyai lebih dari satu perangkat, data Anda akan bisa diakses dari semua perangkat.
+
+<b>Gali Lebih Dalam.</b> Terintegrasi dengan aplikasi <a href="https://play.google.com/store/apps/details?id=org.sabda.tafsiran">Tafsiran</a>, <a href="https://play.google.com/store/apps/details?id=org.sabda.pedia">Panduan</a>, <a href="https://play.google.com/store/apps/details?id=org.sabda.kamus">Kamus</a>, dan <a href="https://play.google.com/store/apps/details?id=palki.maps">Peta Alkitab</a>, Anda dapat belajar Alkitab dengan lebih mendalam.
+
+<b>Copy/Salin Ayat dan Bagikan.</b> Anda dapat menyalin ayat, dan juga dapat mengirimkannya melalui berbagai cara (SMS, email, Bluetooth, Facebook, Twitter, dan media sosial lainnya).
+
+<b>Renungan Setiap Hari.</b> Baca renungan setiap hari dari berbagai sumber, dan memperdalam pengenalan akan firman Tuhan.
+
+<b>Jadwal Baca.</b> Pilih dari bermacam jadwal/metode/rencana, dan baca Alkitab setiap hari menurut pasal/perikop/ayat yang ditentukan. Anda juga bisa membuat sendiri.
+
+<b>Buku-Buku Kidung.</b> Lirik dari 15+ buku Nyanyian/Pujian. Beberapa dilengkapi dengan 'Play' untuk mendengarkan musik/lagu saat online.
+
+<b>Penampilan/Settings.</b> Tampilan Alkitab dapat diatur sesuai selera — layar, font, ukuran, dan warna. Juga tersedia mode gelap/malam dan layar penuh/fullscreen.
+
+<b>Widget.</b> Dapatkan penyegaran dari ayat-ayat pilihan setiap hari melalui widget di home screen Anda.
+
+<h2>Renungan yang tersedia</h2>
+Santapan Harian (Scripture Union Indonesia)
+Renungan Harian (Yayasan Gloria)
+Renungan Pagi (Charles Spurgeon, Terj. B. Indonesia)
+My Utmost for His Highest (Oswald Chambers, Terj. B. Indonesia)
+Morning & Evening (B. Inggris)
+
+
+<h2>Buku Nyanyian yang tersedia</h2>
+GB: Gita Bakti
+KJ: Kidung Jemaat
+KPPK: Kidung Puji-Pujian Kristen
+KPRI: Kidung Persekutuan Reformed Injili
+NKB: Nyanyikanlah Kidung Baru
+NKI: Nyanyian Kemenangan Iman
+NP: Nyanyian Pujian
+NR: Nafiri Rohani
+PKJ: Pelengkap Kidung Jemaat
+PPK: Puji-pujian Kristen
+
+Dan masih banyak lagi buku pujian lainnya!
+
+<h2>Kunjungi Situs Kami</h2> 
+
+Website Resmi https://alkitab.app
+Kidung Online https://alkitab.app/songs
+Renungan Pagi Online https://alkitab.app/renunganpagi
+
+<h2>Kemuliaan bagi Allah saja – Soli Deo Gloria!</h2>
