@@ -34,10 +34,28 @@ Each screenshot launches its activity directly through an intent. Tapping
 through the drawer would mean matching on-screen text, which changes in every
 language the capture runs in.
 
-`ScreenshotSeed` populates markers first, so the reader shows green and yellow
-highlights, a bookmark and a note on Psalm 23 rather than a fresh install's
-blank chapter. Seeding clears existing markers first, so repeated runs do not
-accumulate duplicates.
+## Seeded content
+
+`ScreenshotSeed` fills the app before anything is captured, because most of
+these screens are empty on a fresh install:
+
+| Screen | Seeded with |
+|--------|-------------|
+| Reader, highlights, notes | Markers on Psalm 23 and John 3:16 |
+| Devotions | Today's article, Renungan Pagi for Indonesian flavors and Morning & Evening otherwise |
+| Reading plan | `esv_mcheyne.rpb` from the test assets, with the first five days ticked |
+| Songs | Four public-domain hymns in a book named "Hymns" |
+
+The devotion has to carry *today's* date, because the activity opens on today
+and would start a download for any other day. Seeding is not additive: markers,
+reading plans and the song book are cleared first, so repeated runs on the same
+device do not accumulate duplicates.
+
+The audio bar is the one screen not driven by seeding. It needs audio sets
+fetched from the server, so that shot taps the reader's audio button, matching
+on its view id rather than its label so it works in every language, and waits
+for playback to start. With no network the button is absent, the tap is skipped
+and the frame falls back to the plain reader rather than failing the run.
 
 Languages come from one device, not one device per language: the app's language
 is its own `pref_language` setting, independent of the device locale, so the
@@ -77,6 +95,8 @@ in turn refuse AGP's default `-gpu auto-no-window`, which is why
 - The tablet captures include the emulator's launcher taskbar along the bottom
   edge. Cropping belongs with the framing and caption step, which is not built
   yet.
-- Devotions, song books, reading plans and the audio player need downloaded
-  content, so they are not captured. Seeding that content is the natural next
-  step for widening the set.
+- The reading plan fixture is an English-titled ESV plan, so the plan name reads
+  in English even in a localized capture. The daily readings inside it are book
+  names, which do come out in the capture language.
+- Split-screen version comparison is not captured. It needs a second version
+  installed, which the bundled internal version alone cannot provide.

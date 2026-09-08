@@ -64,13 +64,13 @@ DEVICES = {
 # whatever is not listed here is captured but not filed.
 SHOT_ORDER = [
     "reader",
-    "highlights",
-    "goto",
-    "search",
-    "notes",
-    "markers",
+    "audio",
     "versions",
-    "settings",
+    "search",
+    "highlights",
+    "devotion",
+    "reading-plan",
+    "songs",
 ]
 
 
