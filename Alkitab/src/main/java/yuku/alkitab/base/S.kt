@@ -94,18 +94,7 @@ object S {
     }
 
     private object CalculatedDimensionsHolder {
-        /**
-         * Snapshot-backed so Compose readers subscribe to it: a preference
-         * change (pinch-to-zoom, the text appearance panel) must repaint the
-         * already-composed verse rows, not only the ones composed afterwards.
-         * [CalculatedDimensions] has identity equality, so every
-         * [recalculate] publishes a distinct value and is also usable as a
-         * `remember` key.
-         *
-         * Reads and writes outside a snapshot go straight to the global one,
-         * so non-Compose callers on any thread behave as with a plain
-         * `@Volatile` field.
-         */
+        /** Snapshot state so Compose readers repaint when [recalculate] republishes. */
         val applied = mutableStateOf(calculateDimensionsFromPreferences())
     }
 
@@ -119,11 +108,7 @@ object S {
         CalculatedDimensionsHolder.applied.value = calculateDimensionsFromPreferences()
     }
 
-    /**
-     * Publishes [dimensions] as though [recalculate] had derived them, so
-     * rendering tests can pin deterministic metrics without reaching into the
-     * holder reflectively. Production code calls [recalculate].
-     */
+    /** Pins deterministic dimensions for rendering tests. Production code calls [recalculate]. */
     @VisibleForTesting
     fun overrideAppliedDimensions(dimensions: CalculatedDimensions) {
         CalculatedDimensionsHolder.applied.value = dimensions

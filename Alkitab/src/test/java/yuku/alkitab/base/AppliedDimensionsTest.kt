@@ -12,9 +12,8 @@ import org.robolectric.annotation.Config
 import yuku.afw.App as AfwApp
 
 /**
- * The verse list composes against [S.applied], so a preference change
- * (pinch-to-zoom, the text appearance panel) has to reach the rows that are
- * already on screen, not only the ones composed after it.
+ * The verse list composes against [S.applied], so a preference change has to
+ * reach the rows already on screen, not only the ones composed after it.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = AfwApp::class, sdk = [34])

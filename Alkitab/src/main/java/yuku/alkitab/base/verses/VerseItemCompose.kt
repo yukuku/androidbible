@@ -330,14 +330,10 @@ private class DictionaryLinkHit(val start: Int, val end: Int, val info: Dictiona
  * registered, so FontStyle.Italic / FontWeight.Bold resolve to the
  * correct glyphs (or synthesise cleanly). A raw FontFamily(Typeface)
  * wrapper only carries the regular variant and silently renders
- * italic upright.
- *
- * For the same reason a wrapped typeface also ignores `FontWeight.Bold`:
- * Compose applies no synthesis to a family built from a ready-made
- * [android.graphics.Typeface]. Custom fonts ship as a single `-Regular.ttf`
- * (see [yuku.alkitab.base.util.FontManager]), so [bold] resolves the style
- * through `Typeface.create` instead, which is what makes the platform draw
- * the faux-bold that `TextView.setTypeface(tf, BOLD)` produces.
+ * italic upright, and ignores `FontWeight.Bold`. Custom fonts ship as a single
+ * `-Regular.ttf`, so [bold] bakes the weight into the typeface instead, which
+ * is what makes the platform draw the faux-bold that
+ * `TextView.setTypeface(tf, BOLD)` produces.
  */
 internal fun composeFontFamilyFor(tf: android.graphics.Typeface?, bold: Boolean = false): FontFamily = when (tf) {
     null, android.graphics.Typeface.DEFAULT -> FontFamily.Default
@@ -935,11 +931,8 @@ private fun Modifier.dragHoverOverlay(dragHover: Boolean): Modifier {
  * picks the nearest link whose squared distance from the tap is within (24dp)².
  * Lets users hit small footnote/xref markers without pixel-precise aim.
  *
- * A tap that lands near no link runs [onMiss]. The pointer-input modifier sits
- * below the row's own tap handler and consumes every tap that reaches the text,
- * so without this the row would be unselectable wherever a verse happens to
- * carry a footnote or cross-reference. [yuku.alkitab.base.widget.VerseTextView]
- * gets the same effect by returning false from `onTouchEvent`.
+ * A tap near no link runs [onMiss]: this detector consumes every tap that
+ * reaches the text, so the row's own tap handler never sees one.
  */
 private fun Modifier.inlineLinkTapDetector(
     layoutResultProvider: () -> TextLayoutResult?,

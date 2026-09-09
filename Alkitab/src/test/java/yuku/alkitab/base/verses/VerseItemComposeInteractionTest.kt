@@ -40,9 +40,9 @@ class VerseItemComposeInteractionTest {
 
     private val ROW_WIDTH_PX = 360
 
-    private val LONG_BODY = "In the beginning God created the heavens and the earth, and the earth " +
-        "was without form and void, and darkness was upon the face of the deep, and the Spirit " +
-        "of God moved upon the face of the waters."
+    private val LONG_BODY = "A bowl of steaming noodles arrived at the table, topped with a soft " +
+        "boiled egg, spring onions and a spoonful of chili oil, and the broth smelled of ginger, " +
+        "garlic and slowly braised beef."
 
     @Before
     fun setUp() {
@@ -107,9 +107,8 @@ class VerseItemComposeInteractionTest {
     }
 
     private fun composeRow(text: String, recorder: TapRecorder): VerseItemComposeView {
-        // `setup()` runs the activity through onResume so its decor view is
-        // attached, which is what lets AbstractComposeView find a
-        // WindowRecomposer.
+        // `setup()` runs through onResume so the decor view is attached, which
+        // is what lets AbstractComposeView find a WindowRecomposer.
         val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
         activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
 
@@ -155,20 +154,19 @@ class VerseItemComposeInteractionTest {
     }
 
     @Test
-    // Own sdk so this test gets a fresh Robolectric sandbox: only the first
-    // activity of a sandbox gets a recomposition frame clock that ticks, and
-    // without one BasicText never reports a TextLayoutResult to hit-test
-    // against.
+    // Own sdk for a fresh Robolectric sandbox: only its first activity gets a
+    // ticking frame clock, and without one BasicText never reports a
+    // TextLayoutResult to hit-test against.
     @Config(sdk = [33])
     fun `a tap near the footnote marker opens it and a tap away from it selects the verse`() {
         val recorder = TapRecorder()
-        // The footnote marker sits at the very start of the verse, so the
-        // bottom of a multi-line row is well outside its 24dp easy-hit radius.
+        // The marker sits at the very start of the verse, so the bottom of a
+        // multi-line row is well outside its 24dp easy-hit radius.
         val view = composeRow("@@@<f1@>@/$LONG_BODY", recorder)
         assertTrue("row should wrap onto several lines", view.measuredHeight > 60)
 
-        // Hitting the marker first also proves the text layout is live, so the
-        // miss below is a real miss rather than an absent layout.
+        // Hitting the marker first also proves the layout is live, so the miss
+        // below is a real miss rather than an absent layout.
         tap(view, 3f, 6f)
         assertEquals(listOf(VerseInlineLinkSpan.Type.footnote to (Ari.encode(1, 2, 1) shl 8 or 1)), recorder.linkClicks)
         assertEquals(0, recorder.verseClicks)
@@ -197,8 +195,8 @@ class VerseItemComposeInteractionTest {
 
     @Test
     fun `a custom typeface asked for bold resolves to a bold face, so the platform can fake the weight`() {
-        // A font loaded from a file is none of the stock singletons, so it maps
-        // to a wrapped-typeface FontFamily, which Compose never synthesises for.
+        // Not one of the stock singletons, so it maps to a wrapped-typeface
+        // FontFamily, which Compose never synthesises for.
         val custom = Typeface.create("cursive", Typeface.NORMAL)
 
         assertTrue(resolveTypeface(custom, bold = true).isBold)

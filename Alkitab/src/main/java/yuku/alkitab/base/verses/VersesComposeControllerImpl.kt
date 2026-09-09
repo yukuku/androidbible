@@ -854,10 +854,8 @@ class VersesComposeControllerImpl(
         val verse_1 = index + 1
         val checked = position in checkedPositionsState
         val context = LocalContext.current
-        // Reading the dimensions here subscribes this row to preference
-        // changes, and keying the row state on them rebuilds it: a data-class
-        // `ui` copy carrying the same values would otherwise leave the row
-        // rendered at the previous font size.
+        // Read here to subscribe the row to preference changes, and keyed on
+        // below so the state is rebuilt at the new font size.
         val applied = App.services.uiDimensions.applied()
 
         val state = remember(data, ui, listeners, position, checked, applied) {
@@ -985,8 +983,6 @@ internal fun PericopeHeaderComposeItem(
         }
         val paddingBottomPx = applied.pericopeSpacingBottom
 
-        // The title is bold regardless of the bold preference, matching
-        // Appearances.applyPericopeTitleAppearance.
         val titleFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace, bold = true) }
         val parallelsFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace) }
         val titleSizeDp = applied.fontSize2dp * ui.textSizeMult
