@@ -179,6 +179,9 @@ val proprietaryFlavors = mapOf(
 )
 val proprietaryDir: String? = providers.environmentVariable("ALKITAB_PROPRIETARY_DIR").orNull
 
+val sabdaFlavorName = "sabda_alkitab"
+val sabdaSigningConfigName = "releaseSabda"
+
 // Server endpoints inlined here (and in AlkitabFeedback) — these are app-specific
 // constants previously held in root build.gradle's ext block.
 val serverHost = "https://api.alkitab.app"
@@ -192,6 +195,16 @@ android {
             keyPassword = System.getenv("SIGN_PASSWORD")
             storeFile = file(System.getenv("SIGN_KEYSTORE") ?: "/dev/null")
             storePassword = System.getenv("SIGN_PASSWORD")
+        }
+        // org.sabda.alkitab is a separate Play listing with its own upload key,
+        // so it cannot be signed with the keystore the yuku_* flavors use.
+        // Deliberately no fallback to SIGN_*: signing this flavor with the wrong
+        // key produces an artifact Play rejects only after upload.
+        create(sabdaSigningConfigName) {
+            keyAlias = System.getenv("SIGN_SABDA_ALIAS")
+            keyPassword = System.getenv("SIGN_SABDA_PASSWORD")
+            storeFile = file(System.getenv("SIGN_SABDA_KEYSTORE") ?: "/dev/null")
+            storePassword = System.getenv("SIGN_SABDA_PASSWORD")
         }
     }
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -363,6 +376,38 @@ androidComponents {
                 "copyProprietaryAssets${flavorName.replaceFirstChar { it.uppercaseChar() }}"
             )
             variant.sources.assets?.addGeneratedSourceDirectory(copyTask) { it.outputDir }
+        }
+    }
+}
+
+// Sign the sabda_alkitab release from its own keystore. The build type's
+// signingConfig covers every other release variant; overriding it per variant
+// (rather than on the product flavor) keeps sabda_alkitabDebug on the debug key.
+androidComponents {
+    onVariants(
+        selector().withFlavor("playStoreApplicationId" to sabdaFlavorName).withBuildType("release")
+    ) { variant ->
+        variant.signingConfig.setConfig(android.signingConfigs.getByName(sabdaSigningConfigName))
+
+        // Read into locals here rather than inside doLast, so the action does not
+        // capture the project and stays configuration-cache safe.
+        val missingVars = listOf("SIGN_SABDA_KEYSTORE", "SIGN_SABDA_ALIAS", "SIGN_SABDA_PASSWORD")
+            .filter { System.getenv(it).isNullOrEmpty() }
+        val variantName = variant.name
+        val flavorName = sabdaFlavorName
+        val validateTask = tasks.register("validate${variantName.replaceFirstChar { it.uppercaseChar() }}SigningConfig") {
+            doLast {
+                if (missingVars.isNotEmpty()) {
+                    throw GradleException(
+                        "Release build '$variantName' is missing its signing credentials: " +
+                            "${missingVars.joinToString(", ")} not set. The '$flavorName' flavor is signed " +
+                            "with its own upload key, not the one in SIGN_KEYSTORE."
+                    )
+                }
+            }
+        }
+        tasks.matching { it.name == "pre${variantName.replaceFirstChar { it.uppercaseChar() }}Build" }.configureEach {
+            dependsOn(validateTask)
         }
     }
 }

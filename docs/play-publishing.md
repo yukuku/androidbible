@@ -179,9 +179,10 @@ untouched on Play.
   `Alkitab/build.gradle.kts`; check the requirement in the Play Console
   before a release, because the upload fails validation rather than warning.
 - **Signing key.** The bundle must be signed with each app's Play *upload*
-  key. All three flavors are signed with the one keystore from
-  `SIGN_KEYSTORE`, so that key has to be the upload key registered for all
-  three apps.
+  key. `yuku_alkitab` and `yuku_quick_bible` share the keystore from
+  `SIGN_KEYSTORE`, so that key has to be the upload key registered for both;
+  `sabda_alkitab` uses its own from `SIGN_SABDA_KEYSTORE`. See "Signing keys"
+  in [Build System](build-system.md).
 - **versionCode.** Derived from wall-clock time in
   `Alkitab/build.gradle.kts`, so it always increases, and all three flavors
   share the value. That is fine: they are three separate Play apps.

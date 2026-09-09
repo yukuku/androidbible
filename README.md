@@ -85,7 +85,7 @@ Notes
 -----
 
 - The repository contains placeholder Bible data in `Alkitab/src/plain/assets/internal` and a placeholder `Alkitab/google-services.json`, so the open-source `plainDebug` build works out of the box once the Android SDK and NDK are installed (Firebase features won't actually function with the placeholder, but the build and the rest of the app do).
-- Release packaging is pure Gradle. Production flavors expect the signing env vars (`SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD`) and `ALKITAB_PROPRIETARY_DIR`, which must contain `overlay/<applicationId>/text_raw/` (Bible text) and `google-services.json` (real Firebase config covering every production applicationId). With those set, `./gradlew assembleYuku_alkitabRelease` (or any other production flavor) builds and signs the APK directly. Set `BUILD_DIST` to override the `dev` suffix in the output filename.
+- Release packaging is pure Gradle. Production flavors expect the signing env vars (`SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD`, plus `SIGN_SABDA_KEYSTORE`, `SIGN_SABDA_ALIAS`, `SIGN_SABDA_PASSWORD` for the `sabda_alkitab` flavor, which has its own upload key) and `ALKITAB_PROPRIETARY_DIR`, which must contain `overlay/<applicationId>/text_raw/` (Bible text) and `google-services.json` (real Firebase config covering every production applicationId). With those set, `./gradlew assembleYuku_alkitabRelease` (or any other production flavor) builds and signs the APK directly. Set `BUILD_DIST` to override the `dev` suffix in the output filename.
 - Product flavors currently include `plain`, `yuku_alkitab`, `yuku_quick_bible`, and `sabda_alkitab`.
 
 License
