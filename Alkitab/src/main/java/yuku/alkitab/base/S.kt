@@ -2,6 +2,8 @@ package yuku.alkitab.base
 
 import android.graphics.Color
 import android.graphics.Typeface
+import androidx.annotation.VisibleForTesting
+import androidx.compose.runtime.mutableStateOf
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.model.MVersion
@@ -92,18 +94,39 @@ object S {
     }
 
     private object CalculatedDimensionsHolder {
-        @Volatile
-        var applied: CalculatedDimensions = calculateDimensionsFromPreferences()
+        /**
+         * Snapshot-backed so Compose readers subscribe to it: a preference
+         * change (pinch-to-zoom, the text appearance panel) must repaint the
+         * already-composed verse rows, not only the ones composed afterwards.
+         * [CalculatedDimensions] has identity equality, so every
+         * [recalculate] publishes a distinct value and is also usable as a
+         * `remember` key.
+         *
+         * Reads and writes outside a snapshot go straight to the global one,
+         * so non-Compose callers on any thread behave as with a plain
+         * `@Volatile` field.
+         */
+        val applied = mutableStateOf(calculateDimensionsFromPreferences())
     }
 
     @JvmStatic
     fun applied(): CalculatedDimensions {
-        return CalculatedDimensionsHolder.applied
+        return CalculatedDimensionsHolder.applied.value
     }
 
     /** Re-derive [applied] from current preferences. Call after preference changes. */
     fun recalculate() {
-        CalculatedDimensionsHolder.applied = calculateDimensionsFromPreferences()
+        CalculatedDimensionsHolder.applied.value = calculateDimensionsFromPreferences()
+    }
+
+    /**
+     * Publishes [dimensions] as though [recalculate] had derived them, so
+     * rendering tests can pin deterministic metrics without reaching into the
+     * holder reflectively. Production code calls [recalculate].
+     */
+    @VisibleForTesting
+    fun overrideAppliedDimensions(dimensions: CalculatedDimensions) {
+        CalculatedDimensionsHolder.applied.value = dimensions
     }
 
     /**

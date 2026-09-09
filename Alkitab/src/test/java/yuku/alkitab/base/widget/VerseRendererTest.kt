@@ -42,12 +42,9 @@ import yuku.alkitab.debug.R
  * initialisation of its [S.CalculatedDimensions] from Preferences and Resources) has a
  * live Context to use.
  *
- * Why reflection instead of `mockkObject(S)`? `S.applied()` is `@JvmStatic`, and mockk's
- * object intercept does not cleanly redirect the Java-level static invocation that
- * [VerseRenderer] (a Java class) uses. The simplest and most reliable override is to reach
- * into S's private `CalculatedDimensionsHolder` via reflection and set our own
- * [S.CalculatedDimensions] — the same object that S.applied() would otherwise return. This
- * avoids fighting with static-method interception and keeps test setup trivial.
+ * Why [S.overrideAppliedDimensions] instead of `mockkObject(S)`? `S.applied()` is
+ * `@JvmStatic`, and mockk's object intercept does not cleanly redirect the Java-level
+ * static invocation that [VerseRenderer] (a Java class) uses.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
@@ -87,16 +84,7 @@ class VerseRendererTest {
             indentSpacingExtra = INDENT_EXTRA
         }
 
-        // Trigger the Holder's one-time init so its backing Java class is loaded and its
-        // INSTANCE field exists, then overwrite `applied` with our deterministic dims.
-        S.applied()
-        overrideAppliedDimensions(dims)
-    }
-
-    private fun overrideAppliedDimensions(d: S.CalculatedDimensions) {
-        val holderClass = Class.forName("${S::class.java.name}\$CalculatedDimensionsHolder")
-        val instance = holderClass.getDeclaredField("INSTANCE").apply { isAccessible = true }.get(null)
-        holderClass.getDeclaredField("applied").apply { isAccessible = true }.set(instance, d)
+        S.overrideAppliedDimensions(dims)
     }
 
     // region simpleRender: text that does not start with "@@"

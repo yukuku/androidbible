@@ -35,10 +35,7 @@ class VerseRendererComposeCheckedHighlightTest {
             backgroundColor = BACKGROUND
             indentParagraphRest = 5
         }
-        S.applied()
-        val holderClass = Class.forName("${S::class.java.name}\$CalculatedDimensionsHolder")
-        val instance = holderClass.getDeclaredField("INSTANCE").apply { isAccessible = true }.get(null)
-        holderClass.getDeclaredField("applied").apply { isAccessible = true }.set(instance, dims)
+        S.overrideAppliedDimensions(dims)
     }
 
     private fun partialYellow(text: String, start: Int, end: Int) = Highlights.Info().apply {

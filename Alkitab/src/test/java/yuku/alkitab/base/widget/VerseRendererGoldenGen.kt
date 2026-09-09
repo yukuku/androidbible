@@ -70,13 +70,7 @@ class VerseRendererGoldenGen {
             indentSpacingExtra = INDENT_EXTRA
         }
 
-        // Trigger holder init, then overwrite `applied` — same trick as
-        // VerseRendererTest. S.applied() is @JvmStatic so mockkObject doesn't
-        // cleanly intercept it; reflection is the most reliable override.
-        S.applied()
-        val holderClass = Class.forName("${S::class.java.name}\$CalculatedDimensionsHolder")
-        val instance = holderClass.getDeclaredField("INSTANCE").apply { isAccessible = true }.get(null)
-        holderClass.getDeclaredField("applied").apply { isAccessible = true }.set(instance, dims)
+        S.overrideAppliedDimensions(dims)
     }
 
     @Test
