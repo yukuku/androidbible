@@ -18,6 +18,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import yuku.alkitab.base.S
 import yuku.alkitab.base.util.Highlights
+import yuku.alkitab.base.util.TextColorUtil
+import yuku.alkitab.debug.R
 
 /**
  * Characterization tests for [VerseRenderer].
@@ -51,6 +53,7 @@ import yuku.alkitab.base.util.Highlights
 @Config(application = yuku.afw.App::class, sdk = [34])
 class VerseRendererTest {
 
+    private val FONT_COLOR = 0xff212121.toInt()
     private val FONT_RED = 0xff112233.toInt()
     private val VERSE_NUMBER_COLOR = 0xff445566.toInt()
     private val BACKGROUND = 0xfff0f0f0.toInt()
@@ -71,6 +74,7 @@ class VerseRendererTest {
         yuku.afw.App.initWithAppContext(ApplicationProvider.getApplicationContext())
 
         dims = S.CalculatedDimensions().apply {
+            fontColor = FONT_COLOR
             fontRedColor = FONT_RED
             verseNumberColor = VERSE_NUMBER_COLOR
             backgroundColor = BACKGROUND
@@ -546,6 +550,57 @@ class VerseRendererTest {
         // Entire body is highlighted because the partial-validity check failed.
         assertEquals(3, sb.getSpanStart(bgs[0]))
         assertEquals(sb.length, sb.getSpanEnd(bgs[0]))
+    }
+
+    @Test
+    fun `in a checked verse the highlighted run gets its own text color chosen against the band rather than the selection`() {
+        pinSelectedVerseBgColor(0xff0277bd.toInt())
+        val text = "Hello world"
+        val info = Highlights.Info().apply {
+            colorRgb = 0xffff00
+            partial = Highlights.Info.Partial().apply {
+                hashCode = Highlights.hashCode(text)
+                startOffset = 0
+                endOffset = 5
+            }
+        }
+        val sb = renderToSb(text = text, verseNumberText = "1", highlight = info, checked = true)
+        val fgs = sb.getSpans(0, sb.length, ForegroundColorSpan::class.java)
+
+        assertEquals(1, fgs.size)
+        assertEquals(3, sb.getSpanStart(fgs[0]))
+        assertEquals(8, sb.getSpanEnd(fgs[0]))
+        // A yellow band is opaque on the light page, so the reading color beats the white that
+        // the blue selection alone would force.
+        assertEquals(FONT_COLOR, fgs[0].foregroundColor)
+        assertEquals(
+            TextColorUtil.getForCheckedVerseHighlight(FONT_COLOR, 0xff0277bd.toInt(), BACKGROUND, Highlights.blendOver(0xffff00, BACKGROUND)),
+            fgs[0].foregroundColor,
+        )
+    }
+
+    @Test
+    fun `a checked verse without a highlight attaches no ForegroundColorSpan and leaves the text color to the host`() {
+        pinSelectedVerseBgColor(0xff0277bd.toInt())
+        val sb = renderToSb(text = "Hello", verseNumberText = "1", checked = true)
+
+        assertEquals(0, sb.getSpans(0, sb.length, ForegroundColorSpan::class.java).size)
+    }
+
+    @Test
+    fun `an unchecked highlighted verse attaches no ForegroundColorSpan so the reading color shows through the band`() {
+        val info = Highlights.Info().apply {
+            colorRgb = 0xffff00
+            partial = null
+        }
+        val sb = renderToSb(text = "Hello", verseNumberText = "1", highlight = info)
+
+        assertEquals(0, sb.getSpans(0, sb.length, ForegroundColorSpan::class.java).size)
+    }
+
+    private fun pinSelectedVerseBgColor(argb: Int) {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        yuku.afw.storage.Preferences.setInt(context.getString(R.string.pref_selectedVerseBgColor_key), argb)
     }
 
     // endregion

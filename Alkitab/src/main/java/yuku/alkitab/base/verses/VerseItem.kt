@@ -17,6 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.VerseTextView
@@ -191,7 +192,7 @@ class VerseItem(context: Context, attrs: AttributeSet) : RelativeLayout(context,
         if (checked) {
             val solid = checkedPaintSolid
             val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-            val color = ColorUtils.setAlphaComponent(colorRgb, 0xa0)
+            val color = ColorUtils.setAlphaComponent(colorRgb, TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA)
             solid.color = color
 
             canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), solid)

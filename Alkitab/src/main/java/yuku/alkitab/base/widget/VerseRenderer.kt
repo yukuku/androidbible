@@ -13,8 +13,11 @@ import android.text.style.StyleSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.Highlights
+import yuku.alkitab.base.util.TextColorUtil
+import yuku.alkitab.debug.R
 import yuku.alkitab.util.Ari
 
 object VerseRenderer {
@@ -113,7 +116,7 @@ object VerseRenderer {
 
         processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, checked, ari, inlineLinkSpanFactory)
 
-        applyHighlight(sb, highlightInfo, startPosAfterVerseNumber)
+        applyHighlight(sb, highlightInfo, startPosAfterVerseNumber, checked)
 
         bindToTextViews(lText, lVerseNumber, sb, isVerseNumberShown, startPosAfterVerseNumber, verseNumberText)
 
@@ -232,21 +235,33 @@ object VerseRenderer {
      * Attaches a [BackgroundColorSpan] for the highlight. A partial highlight whose hash still
      * matches the rendered body covers only its stored offsets; otherwise the whole verse body
      * (after the verse-number prefix) is highlighted.
+     *
+     * In a checked verse, the run under the band gets its own text color, picked against the
+     * band instead of the selection color used for the rest of the verse.
      */
-    private fun applyHighlight(sb: SpannableStringBuilder, highlightInfo: Highlights.Info?, startPosAfterVerseNumber: Int) {
+    private fun applyHighlight(sb: SpannableStringBuilder, highlightInfo: Highlights.Info?, startPosAfterVerseNumber: Int, checked: Boolean) {
         if (highlightInfo == null) return
 
-        val span = BackgroundColorSpan(Highlights.blendOver(highlightInfo.colorRgb, App.services.uiDimensions.applied().backgroundColor))
+        val applied = App.services.uiDimensions.applied()
+        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor)
+
+        val start: Int
+        val end: Int
         if (highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length))) {
-            val start = startPosAfterVerseNumber + highlightInfo.partial!!.startOffset
-            val end = startPosAfterVerseNumber + highlightInfo.partial!!.endOffset
-            if (end > start) {
-                sb.setSpan(span, start, end, 0)
-            } else {
-                sb.setSpan(span, end, start, 0)
-            }
+            val rawStart = startPosAfterVerseNumber + highlightInfo.partial!!.startOffset
+            val rawEnd = startPosAfterVerseNumber + highlightInfo.partial!!.endOffset
+            start = minOf(rawStart, rawEnd)
+            end = maxOf(rawStart, rawEnd)
         } else {
-            sb.setSpan(span, startPosAfterVerseNumber, sb.length, 0)
+            start = startPosAfterVerseNumber
+            end = sb.length
+        }
+
+        sb.setSpan(BackgroundColorSpan(band), start, end, 0)
+        if (checked) {
+            val selectedVerseBgColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
+            val textColor = TextColorUtil.getForCheckedVerseHighlight(applied.fontColor, selectedVerseBgColor, applied.backgroundColor, band)
+            sb.setSpan(ForegroundColorSpan(textColor), start, end, 0)
         }
     }
 
@@ -365,20 +380,7 @@ object VerseRenderer {
             sb.setSpan(createLeadingMarginSpan(App.services.uiDimensions.applied().indentParagraphRest), 0, sb.length, 0)
         }
 
-        if (highlightInfo != null) {
-            val span = BackgroundColorSpan(Highlights.blendOver(highlightInfo.colorRgb, App.services.uiDimensions.applied().backgroundColor))
-            if (highlightInfo.shouldRenderAsPartialForVerseText(text)) {
-                val start = startPosAfterVerseNumber + highlightInfo.partial!!.startOffset
-                val end = startPosAfterVerseNumber + highlightInfo.partial!!.endOffset
-                if (end > start) {
-                    sb.setSpan(span, start, end, 0)
-                } else {
-                    sb.setSpan(span, end, start, 0)
-                }
-            } else {
-                sb.setSpan(span, startPosAfterVerseNumber, sb.length, 0)
-            }
-        }
+        applyHighlight(sb, highlightInfo, startPosAfterVerseNumber, checked)
 
         lText?.text = sb
 

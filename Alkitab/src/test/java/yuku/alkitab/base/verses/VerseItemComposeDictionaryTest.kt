@@ -9,6 +9,7 @@ import android.database.MatrixCursor
 import android.graphics.Typeface
 import android.net.Uri
 import android.view.View
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.test.core.app.ApplicationProvider
@@ -155,10 +156,14 @@ class VerseItemComposeDictionaryTest {
             assertEquals(FakeDictionaryProvider.RECOGNIZED_WORD, fullText.substring(link.start, link.end))
         }
 
-        // Each linked word range is underlined, like the legacy ClickableSpan.
+        // Each linked word range is underlined, like the legacy ClickableSpan, and carries no
+        // color of its own so it keeps the color of the run it sits in.
         val underlined = state.render.text.spanStyles.filter { it.item.textDecoration == TextDecoration.Underline }
         assertEquals(2, underlined.size)
         assertEquals(links.map { it.start to it.end }.toSet(), underlined.map { it.start to it.end }.toSet())
+        for (style in underlined) {
+            assertEquals(Color.Unspecified, style.item.color)
+        }
 
         // Tapping a link reports the word and the analyzer's key.
         val first = links.minByOrNull { it.start }!!.item as LinkAnnotation.Clickable

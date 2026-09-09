@@ -75,6 +75,16 @@ Pericopes (section headers like "The Sermon on the Mount") are rendered as disti
 - Accessibility (TalkBack support with verse number and text)
 - Highlight color painting on the background canvas
 
+### Text color in a selected verse
+
+A checked verse paints the selection color over the page at `TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA`. The host then forces the text to black or white via `TextColorUtil.getForCheckedVerse`, based on the selection color alone.
+
+A highlight band is drawn on top of that overlay. So both renderers give a highlighted run its own color through `TextColorUtil.getForCheckedVerseHighlight`, which picks whichever of the reading color or the forced color has better contrast against what the band actually paints. Words of Jesus lose their red in a checked verse and follow the same per-run color.
+
+Dictionary links (`DictionaryLinkSpan`, and the Compose `addDictionaryLinks`) only underline. They never set their own color, so they follow the run they sit in.
+
+`VerseTextColorSnapshotTest` renders every theme, selection color, highlight color and selection state through both pipelines into `Alkitab/build/snapshots/verse-text-color/` for visual review.
+
 ## Text Sizing
 
 Font size is controlled by:

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.widget
 
+import android.text.TextPaint
 import android.text.style.ClickableSpan
 import android.view.View
 
@@ -11,5 +12,10 @@ class DictionaryLinkSpan(
 ) : ClickableSpan() {
     override fun onClick(widget: View) {
         onClickListener(data)
+    }
+
+    /** Underline only. The word keeps whatever color the surrounding text has. */
+    override fun updateDrawState(ds: TextPaint) {
+        ds.isUnderlineText = true
     }
 }
