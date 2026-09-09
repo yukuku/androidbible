@@ -62,6 +62,7 @@ import androidx.core.net.toUri
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.base.widget.DictionaryLinkInfo
@@ -271,7 +272,8 @@ internal fun verseItemContentDescription(context: Context, s: VerseItemComposeSt
 /**
  * Runs the rendered verse text through the dictionary app's analyzer content
  * provider and wraps every recognized word in an underlined, tappable
- * [LinkAnnotation] that opens the dictionary.
+ * [LinkAnnotation] that opens the dictionary. The word keeps whatever color
+ * the surrounding text has.
  *
  * Returns [render] unchanged when the provider is unavailable, reports
  * nothing, or the query fails.
@@ -279,7 +281,6 @@ internal fun verseItemContentDescription(context: Context, s: VerseItemComposeSt
 internal fun addDictionaryLinks(
     context: Context,
     render: VerseRendererCompose.Result,
-    linkColor: Int,
     dictionaryListener: (DictionaryLinkInfo) -> Unit,
 ): VerseRendererCompose.Result {
     // we have to exclude the verse numbers from analyze text
@@ -314,7 +315,7 @@ internal fun addDictionaryLinks(
     val decorated = buildAnnotatedString {
         append(render.text)
         for (hit in hits) {
-            addStyle(SpanStyle(color = Color(linkColor), textDecoration = TextDecoration.Underline), hit.start, hit.end)
+            addStyle(SpanStyle(textDecoration = TextDecoration.Underline), hit.start, hit.end)
             addLink(LinkAnnotation.Clickable("dictionary") { dictionaryListener(hit.info) }, hit.start, hit.end)
         }
     }
@@ -411,7 +412,7 @@ fun buildVerseItemComposeState(
     val render = if (ari in ui.dictionaryModeAris ||
         checked && Preferences.getBoolean(context.getString(R.string.pref_autoDictionaryAnalyze_key), context.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
     ) {
-        addDictionaryLinks(context, renderResult, applied.fontColor, listeners.dictionaryListener_)
+        addDictionaryLinks(context, renderResult, listeners.dictionaryListener_)
     } else {
         renderResult
     }
@@ -605,7 +606,7 @@ internal fun computeLineMetrics(
 @Composable
 private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, lineMetrics: LineMetrics, modifier: Modifier = Modifier) {
     val textColor = if (checked) {
-        Color(yuku.alkitab.base.util.TextColorUtil.getForCheckedVerse(
+        Color(TextColorUtil.getForCheckedVerse(
             Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
         ))
     } else {
@@ -849,7 +850,7 @@ private fun scaledAttributeBitmap(
 
 private fun Modifier.checkedOverlay(checked: Boolean): Modifier = if (!checked) this else this.drawBehind {
     val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-    val color = ColorUtils.setAlphaComponent(colorRgb, 0xa0)
+    val color = ColorUtils.setAlphaComponent(colorRgb, TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA)
     drawRect(color = Color(color))
 }
 
