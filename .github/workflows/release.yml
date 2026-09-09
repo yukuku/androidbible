@@ -89,11 +89,15 @@ jobs:
           fi
           echo "Releasing as $TAG"
 
-      - name: Decode signing keystore
+      # Two keystores: sabda_alkitab is a separate Play listing with its own
+      # upload key, the other two flavors share the first one.
+      - name: Decode signing keystores
         env:
           SIGN_KEYSTORE_BASE64: ${{ secrets.SIGN_KEYSTORE_BASE64 }}
+          SIGN_SABDA_KEYSTORE_BASE64: ${{ secrets.SIGN_SABDA_KEYSTORE_BASE64 }}
         run: |
           printf '%s' "$SIGN_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          printf '%s' "$SIGN_SABDA_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release-sabda.jks"
 
       - name: Build signed release (all production flavors)
         env:
@@ -101,6 +105,9 @@ jobs:
           SIGN_KEYSTORE: ${{ runner.temp }}/release.jks
           SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
           SIGN_PASSWORD: ${{ secrets.SIGN_PASSWORD }}
+          SIGN_SABDA_KEYSTORE: ${{ runner.temp }}/release-sabda.jks
+          SIGN_SABDA_ALIAS: ${{ secrets.SIGN_SABDA_ALIAS }}
+          SIGN_SABDA_PASSWORD: ${{ secrets.SIGN_SABDA_PASSWORD }}
           VERSION_STAGE: ${{ inputs.stage }}
           VERSION_CODE: ${{ steps.version.outputs.versionCode }}
           BUILD_DIST: ${{ inputs.stage }}
@@ -208,6 +215,6 @@ jobs:
           fi
           gh release create "${args[@]}" release-staging/*
 
-      - name: Wipe keystore from runner
+      - name: Wipe keystores from runner
         if: always()
-        run: rm -f "$RUNNER_TEMP/release.jks"
+        run: rm -f "$RUNNER_TEMP/release.jks" "$RUNNER_TEMP/release-sabda.jks"

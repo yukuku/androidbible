@@ -158,7 +158,8 @@ $ALKITAB_PROPRIETARY_DIR/
 
 Environment variables:
 - `ALKITAB_PROPRIETARY_DIR` — directory matching the layout above. Required for `yuku_alkitab`, `yuku_quick_bible`, `sabda_alkitab`. Not used by `plain`.
-- `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` — required to sign release builds (any flavor). The signing config in `Alkitab/build.gradle.kts` reads them at config time.
+- `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` — required to sign release builds of `plain`, `yuku_alkitab` and `yuku_quick_bible`.
+- `SIGN_SABDA_KEYSTORE`, `SIGN_SABDA_ALIAS`, `SIGN_SABDA_PASSWORD` — required to sign release builds of `sabda_alkitab`. See "Signing keys" below.
 - `BUILD_DIST` — distribution channel identifier embedded in the APK filename. Defaults to `dev` when unset.
 - `VERSION_STAGE` — `dev` (default), `beta`, or `release`; picks how `versionName` is assembled. `-PversionStage=` does the same and wins if both are given. See "Versioning" above.
 - `VERSION_CODE` — pins `versionCode` instead of deriving it from the clock, so a rebuild of the same commit produces the same number. The release workflow sets it once per run.
@@ -172,6 +173,46 @@ What the Gradle build does:
 6. `debugSymbolLevel = "SYMBOL_TABLE"` makes AGP emit `Alkitab/build/outputs/native-debug-symbols/<variant>/native-debug-symbols.zip` and embed the same symbols in the AAB, so the Play Console can symbolicate crashes in the Snappy JNI code.
 
 The `plain` flavor keeps its placeholder `ddd_*` Bible files in `Alkitab/src/plain/assets/internal/` and uses the placeholder `Alkitab/google-services.json`. It needs none of the proprietary env vars.
+
+### Signing keys
+
+Two keystores, because `org.sabda.alkitab` is a separate Play listing with its
+own upload key:
+
+| Signing config | Variants | Env vars |
+|----------------|----------|----------|
+| `release` | `plainRelease`, `yuku_alkitabRelease`, `yuku_quick_bibleRelease` | `SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD` |
+| `releaseSabda` | `sabda_alkitabRelease` | `SIGN_SABDA_KEYSTORE`, `SIGN_SABDA_ALIAS`, `SIGN_SABDA_PASSWORD` |
+
+The `release` config is attached to the `release` build type, so it covers every
+release variant by default. `androidComponents.onVariants` then overrides just
+`sabda_alkitabRelease` with `releaseSabda`. Overriding per variant rather than on
+the product flavor keeps `sabda_alkitabDebug` on the ordinary debug key.
+
+`SIGN_SABDA_*` deliberately has no fallback to `SIGN_*`: a bundle signed with the
+wrong upload key is only rejected once it reaches Play, so
+`validateSabda_alkitabReleaseSigningConfig` fails the build up front when the
+variables are missing.
+
+`./gradlew :Alkitab:signingReport` prints the resolved keystore and certificate
+fingerprint per variant, which is the quickest way to confirm a machine or a CI
+run has both keys wired up correctly.
+
+CI reads the keystores from repository secrets, base64-encoded because Actions
+secrets are text:
+
+| Secret | Contents |
+|--------|----------|
+| `SIGN_KEYSTORE_BASE64` | `base64 -w0 release.jks` |
+| `SIGN_ALIAS` / `SIGN_PASSWORD` | alias and password for that keystore |
+| `SIGN_SABDA_KEYSTORE_BASE64` | `base64 -w0 release-sabda.jks` |
+| `SIGN_SABDA_ALIAS` / `SIGN_SABDA_PASSWORD` | alias and password for the sabda keystore |
+
+Both `android.yml` and `release.yml` decode them into `$RUNNER_TEMP` before the
+build step and delete them afterwards in an `if: always()` step.
+
+Each keystore's store password and key password have to be the same value: the
+build feeds one variable to both `storePassword` and `keyPassword`.
 
 ### Release workflow
 
