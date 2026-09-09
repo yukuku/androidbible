@@ -115,14 +115,7 @@ class VerseItemSideBySideSnapshotTest {
             indentSpacing4 = INDENT_4
             indentSpacingExtra = INDENT_EXTRA
         }
-        S.applied()
-        overrideAppliedDimensions(dims)
-    }
-
-    private fun overrideAppliedDimensions(d: S.CalculatedDimensions) {
-        val holderClass = Class.forName("${S::class.java.name}\$CalculatedDimensionsHolder")
-        val instance = holderClass.getDeclaredField("INSTANCE").apply { isAccessible = true }.get(null)
-        holderClass.getDeclaredField("applied").apply { isAccessible = true }.set(instance, d)
+        S.overrideAppliedDimensions(dims)
     }
 
     @Test

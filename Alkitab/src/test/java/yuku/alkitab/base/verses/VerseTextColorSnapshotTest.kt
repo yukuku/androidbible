@@ -182,10 +182,7 @@ class VerseTextColorSnapshotTest {
             indentSpacing4 = 70
             indentSpacingExtra = 6
         }
-        S.applied()
-        val holderClass = Class.forName("${S::class.java.name}\$CalculatedDimensionsHolder")
-        val instance = holderClass.getDeclaredField("INSTANCE").apply { isAccessible = true }.get(null)
-        holderClass.getDeclaredField("applied").apply { isAccessible = true }.set(instance, dims)
+        S.overrideAppliedDimensions(dims)
 
         val ftr = VerseRenderer.FormattedTextResult()
         VerseRenderer.render(ari = Ari.encode(48, 4, 16), text = SAMPLE, ftr = ftr)

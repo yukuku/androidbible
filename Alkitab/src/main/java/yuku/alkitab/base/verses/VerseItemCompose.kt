@@ -330,14 +330,17 @@ private class DictionaryLinkHit(val start: Int, val end: Int, val info: Dictiona
  * registered, so FontStyle.Italic / FontWeight.Bold resolve to the
  * correct glyphs (or synthesise cleanly). A raw FontFamily(Typeface)
  * wrapper only carries the regular variant and silently renders
- * italic upright.
+ * italic upright, and ignores `FontWeight.Bold`. Custom fonts ship as a single
+ * `-Regular.ttf`, so [bold] bakes the weight into the typeface instead, which
+ * is what makes the platform draw the faux-bold that
+ * `TextView.setTypeface(tf, BOLD)` produces.
  */
-internal fun composeFontFamilyFor(tf: android.graphics.Typeface?): FontFamily = when (tf) {
+internal fun composeFontFamilyFor(tf: android.graphics.Typeface?, bold: Boolean = false): FontFamily = when (tf) {
     null, android.graphics.Typeface.DEFAULT -> FontFamily.Default
     android.graphics.Typeface.SERIF -> FontFamily.Serif
     android.graphics.Typeface.MONOSPACE -> FontFamily.Monospace
     android.graphics.Typeface.SANS_SERIF -> FontFamily.SansSerif
-    else -> FontFamily(ComposeTypeface(tf))
+    else -> FontFamily(ComposeTypeface(if (bold) android.graphics.Typeface.create(tf, android.graphics.Typeface.BOLD) else tf))
 }
 
 /** Whether the attribute column will draw at least one icon. */
@@ -620,7 +623,8 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
         state.typeface,
         state.fontBold,
     ) {
-        val fontFamily = composeFontFamilyFor(state.typeface)
+        val bold = state.fontBold == android.graphics.Typeface.BOLD
+        val fontFamily = composeFontFamilyFor(state.typeface, bold)
         TextStyle(
             color = textColor,
             fontSize = state.fontSizeDp.sp,
@@ -629,7 +633,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                 alignment = LineHeightStyle.Alignment.Proportional,
                 trim = LineHeightStyle.Trim.None,
             ),
-            fontWeight = if (state.fontBold == android.graphics.Typeface.BOLD) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
             platformStyle = PlatformTextStyle(includeFontPadding = false),
             fontFamily = fontFamily,
         )
@@ -647,6 +651,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     layoutResultProvider = { textLayoutResult },
                     inlineLinks = state.render.inlineLinks,
                     onClick = state.onInlineLinkClick,
+                    onMiss = state.onClick,
                 ),
             onTextLayout = { textLayoutResult = it },
         )
@@ -925,17 +930,25 @@ private fun Modifier.dragHoverOverlay(dragHover: Boolean): Modifier {
  * range, computes the link's bounding rect via the [TextLayoutResult], and
  * picks the nearest link whose squared distance from the tap is within (24dp)².
  * Lets users hit small footnote/xref markers without pixel-precise aim.
+ *
+ * A tap near no link runs [onMiss]: this detector consumes every tap that
+ * reaches the text, so the row's own tap handler never sees one.
  */
 private fun Modifier.inlineLinkTapDetector(
     layoutResultProvider: () -> TextLayoutResult?,
     inlineLinks: List<VerseRendererCompose.InlineLinkRange>,
     onClick: (VerseInlineLinkSpan.Type, Int) -> Unit,
+    onMiss: () -> Unit,
 ): Modifier {
     if (inlineLinks.isEmpty()) return this
-    return this.pointerInput(inlineLinks) {
+    return this.pointerInput(inlineLinks, onClick, onMiss) {
         val maxDistanceSquaredPx = (24.dp.toPx()).let { (it * it).toInt() }
         detectTapGestures(onTap = { offset ->
-            val layout = layoutResultProvider() ?: return@detectTapGestures
+            val layout = layoutResultProvider()
+            if (layout == null) {
+                onMiss()
+                return@detectTapGestures
+            }
             var best: VerseRendererCompose.InlineLinkRange? = null
             var bestDistSq = Int.MAX_VALUE
             for (link in inlineLinks) {
@@ -954,7 +967,7 @@ private fun Modifier.inlineLinkTapDetector(
                 }
                 if (bestDistSq == 0) break
             }
-            best?.let { onClick(it.type, it.arif) }
+            if (best != null) onClick(best.type, best.arif) else onMiss()
         })
     }
 }

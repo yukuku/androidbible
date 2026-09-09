@@ -854,8 +854,11 @@ class VersesComposeControllerImpl(
         val verse_1 = index + 1
         val checked = position in checkedPositionsState
         val context = LocalContext.current
+        // Read here to subscribe the row to preference changes, and keyed on
+        // below so the state is rebuilt at the new font size.
+        val applied = App.services.uiDimensions.applied()
 
-        val state = remember(data, ui, listeners, position, checked) {
+        val state = remember(data, ui, listeners, position, checked, applied) {
             buildVerseItemComposeState(
                 context = context,
                 data = data,
@@ -980,7 +983,8 @@ internal fun PericopeHeaderComposeItem(
         }
         val paddingBottomPx = applied.pericopeSpacingBottom
 
-        val fontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace) }
+        val titleFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace, bold = true) }
+        val parallelsFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace) }
         val titleSizeDp = applied.fontSize2dp * ui.textSizeMult
         val titleLineMetrics = remember(applied.fontFace, titleSizeDp, applied.lineSpacingMult, unscaledDensity.density) {
             computeLineMetrics(applied.fontFace, titleSizeDp, android.graphics.Typeface.BOLD, applied.lineSpacingMult, unscaledDensity.density)
@@ -1003,7 +1007,7 @@ internal fun PericopeHeaderComposeItem(
                     color = Color(applied.fontColor),
                     fontSize = titleSizeDp.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = fontFamily,
+                    fontFamily = titleFontFamily,
                     textAlign = TextAlign.Center,
                     lineHeight = titleLineMetrics.lineHeightSp.sp,
                     lineHeightStyle = LineHeightStyle(
@@ -1030,7 +1034,7 @@ internal fun PericopeHeaderComposeItem(
                     style = TextStyle(
                         color = Color(applied.fontColor),
                         fontSize = parallelsSizeDp.sp,
-                        fontFamily = fontFamily,
+                        fontFamily = parallelsFontFamily,
                         textAlign = TextAlign.Center,
                         lineHeight = parallelsLineMetrics.lineHeightSp.sp,
                         lineHeightStyle = LineHeightStyle(
