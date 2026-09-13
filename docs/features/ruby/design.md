@@ -90,6 +90,7 @@ Javanese (Wikisource `Jv/Alkitab`: Brückner 1822, Gericke 1840, Jansz 1888 are 
 
 - `reading` is the ruby text. It must not contain `@`. It may contain spaces (a gloss of several words).
 - `base` is ordinary verse text. It may contain other inline codes (`@6`/`@5`, `@9`/`@7`), but not another `@<..@>` element and not a paragraph or line-break code.
+- A one-letter kind may follow `r`: `rf` furigana, `rp` pinyin, `rs` Strong's number, `rg` gloss, `rm` morphology, `rt` transliteration, `rl` lemma. Every kind renders the same way; the kind selects the tap behaviour (not built yet) and lets a version mix kinds. A renderer that does not know a letter treats it as plain `r`. The Kougo and CUV presets carry `rf` and `rp`.
 - One reading per base run; nested or stacked rubies are not encoded. A second annotation layer (say Strong's on top of furigana) would need a second tag letter or a separator inside the reading, and is left open.
 - Granularity is the producer's choice: one kanji, one word, or one phrase. The furigana prototype annotates per kanji group as the source does; the pinyin prototype annotates per character, which keeps the widening local when a reading is wider than its base.
 

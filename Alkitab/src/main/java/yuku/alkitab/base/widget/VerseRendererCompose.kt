@@ -24,7 +24,8 @@ import yuku.alkitab.util.Ari
  * Walks the verse formatting grammar (`@@`, `@0`..`@4`, `@^`, `@5`/`@6`,
  * `@7`/`@9`, `@8`, `@<..@>`, `@/`) and produces an [AnnotatedString] plus the
  * offsets of every inline link (footnote `@<f..@>` / xref `@<x..@>`) and of
- * every ruby-annotated run (`@<r=ruby@>base@/`).
+ * every ruby-annotated run (`@<r=ruby@>base@/`, or `@<rf=..@>` furigana,
+ * `@<rp=..@>` pinyin and other one-letter kinds).
  *
  * Span translation:
  * - Leading margins become `ParagraphStyle(textIndent = TextIndent(first, rest))`.
@@ -57,12 +58,15 @@ object VerseRendererCompose {
      * A run of base text in [Result.text] that carries a ruby annotation
      * (furigana, pinyin, a Strong's number, an interlinear gloss). The base
      * run stays inline at [start]..[end], so highlight and dictionary offsets
-     * are unaffected; the host draws [ruby] above it.
+     * are unaffected; the host draws [ruby] above it. [kind] is the letter
+     * after `r` in the tag (`f` furigana, `p` pinyin, `s` Strong's, ...), or
+     * null for a plain `@<r=..@>` reading that is only displayed.
      */
     data class RubyRange(
         val start: Int,
         val end: Int,
         val ruby: String,
+        val kind: Char? = null,
     )
 
     data class Result(
@@ -306,8 +310,12 @@ object VerseRendererCompose {
         val spanStart = sb.length
         if (tag.length < 2) return
         when (tag[0]) {
-            'r' -> if (tag[1] == '=' && tag.length > 2 && tagContentStart in 0 until spanStart) {
-                rubies += RubyRange(tagContentStart, spanStart, tag.substring(2))
+            'r' -> {
+                val kind = if (tag[1] in 'a'..'z') tag[1] else null
+                val eq = if (kind == null) 1 else 2
+                if (tag.length > eq + 1 && tag[eq] == '=' && tagContentStart in 0 until spanStart) {
+                    rubies += RubyRange(tagContentStart, spanStart, tag.substring(eq + 1), kind)
+                }
             }
             'f' -> try {
                 val field = tag.substring(1).toInt()

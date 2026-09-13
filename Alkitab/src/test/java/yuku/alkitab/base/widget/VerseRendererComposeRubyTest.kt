@@ -40,6 +40,24 @@ class VerseRendererComposeRubyTest {
     }
 
     @Test
+    fun `a kind letter after r is reported on the range and does not change the text`() {
+        val result = render("@@@<rf=かみ@>神@/は@<rp=shén@>神@/@<rs=H430@>God@/")
+        assertEquals("1  神は神God", result.text.text)
+        assertEquals(
+            listOf(RubyRange(3, 4, "かみ", 'f'), RubyRange(5, 6, "shén", 'p'), RubyRange(6, 9, "H430", 's')),
+            result.rubies,
+        )
+    }
+
+    @Test
+    fun `a kind letter needs the equals sign right after it`() {
+        assertTrue(render("@@@<rfx=かみ@>神@/").rubies.isEmpty())
+        assertTrue(render("@<rf@>神@/").rubies.isEmpty())
+        assertEquals("1  神", render("@@@<rf=@>神@/").text.text)
+        assertTrue(render("@@@<rf=@>神@/").rubies.isEmpty())
+    }
+
+    @Test
     fun `ruby offsets follow the hidden verse number`() {
         val result = render("@@@<r=かみ@>神@/は", isVerseNumberShown = false)
         assertEquals("神は", result.text.text)

@@ -40,7 +40,7 @@ Special inline elements:
 |-------------------------|----------------------------------------------------------------|
 | `@<f1@>@/`              | Footnote link, field 1 (empty content)                          |
 | `@<x1@>@/`              | Cross-reference link, field 1 (empty content)                   |
-| `@<r=reading@>base@/`   | Ruby: `reading` is drawn above `base` (furigana, pinyin, Strong's, glosses) |
+| `@<r=reading@>base@/`   | Ruby: `reading` is drawn above `base`. A one-letter kind may follow `r` (`@<rf=…@>` furigana, `@<rp=…@>` pinyin, `@<rs=…@>` Strong's, …); it is reported on `RubyRange.kind` and does not change rendering |
 
 ## VerseRenderer
 
