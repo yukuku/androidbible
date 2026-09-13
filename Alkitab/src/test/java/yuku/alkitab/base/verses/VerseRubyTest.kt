@@ -52,6 +52,23 @@ class VerseRubyTest {
     }
 
     @Test
+    fun `a reading that fits is centred over its base`() {
+        assertEquals(15f, rubyLeftPx(10f, 30f, 10f, 8f, 8f))
+    }
+
+    @Test
+    fun `a wide reading slides onto the ruby-free side and keeps the gap on the other`() {
+        // base 10..30 (20 wide), reading 26 wide: needs 6 px more; left may overhang 8, right must keep a 2 px gap
+        assertEquals(2f, rubyLeftPx(10f, 30f, 26f, 8f, -2f))
+        assertEquals(12f, rubyLeftPx(10f, 30f, 26f, -2f, 8f))
+    }
+
+    @Test
+    fun `a reading wider than all its room is centred`() {
+        assertEquals(0f, rubyLeftPx(10f, 30f, 40f, -2f, -2f))
+    }
+
+    @Test
     fun `an empty segment yields no ruby`() {
         assertEquals("", rubySliceFor("abc", 0, 3, 2, 2))
         assertEquals("", rubySliceFor("abc", 5, 5, 5, 5))

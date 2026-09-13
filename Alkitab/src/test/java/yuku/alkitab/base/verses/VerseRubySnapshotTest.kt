@@ -81,6 +81,7 @@ class VerseRubySnapshotTest {
             Sample("furigana", "@@はじめに@<r=かみ@>神@/は@<r=てん@>天@/と@<r=ち@>地@/とを@<r=そうぞう@>創造@/された。"),
             Sample("pinyin, ruby wider than base", "@@@<r=Qǐ@>起@/@<r=chū@>初@/，@<r=shén@>神@/@<r=chuàng@>创@/@<r=zào@>造@/@<r=tiān@>天@/@<r=dì@>地@/。"),
             Sample("pinyin, long verse wrapping", JOHN_3_16_PINYIN),
+            Sample("pinyin, wide readings next to punctuation (John 6:34)", "@@@<rp=Tā@>他@/@<rp=men@>们@/@<rp=shuō@>说@/：“@<rp=Zhǔ@>主@/@<rp=a@>啊@/，@<rp=cháng@>常@/@<rp=jiāng@>将@/@<rp=zhè@>这@/@<rp=liáng@>粮@/@<rp=cì@>赐@/@<rp=gěi@>给@/@<rp=wǒ@>我@/@<rp=men@>们@/！”"),
             Sample("latin base, Strong's style ruby", STRONGS),
             Sample("multi-word gloss over one word", "@@@<r=in the beginning@>בְּרֵאשִׁית@/ @<r=created@>בָּרָא@/ @<r=God@>אֱלֹהִים@/"),
             Sample("wrapped base run", "@@aaaa bbbb cccc dddd eeee ffff gggg hhhh iiii jjjj kkkk llll mmmm nnnn @<r=one two three four five six seven@>wrapped-across-lines@/ and after."),

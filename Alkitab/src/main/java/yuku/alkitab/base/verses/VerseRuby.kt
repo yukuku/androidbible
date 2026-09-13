@@ -113,6 +113,20 @@ internal fun rubySideSlackPx(
 }
 
 /**
+ * Left edge of a reading of width [rubyWidthPx] over a base run spanning
+ * [leftPx] until [rightPx]. The reading is centred when it fits; when it is
+ * wider it slides towards the side that has room ([leftSlackPx] and
+ * [rightSlackPx] as returned by [rubySideSlackPx]), so an overhang lands on a
+ * ruby-free neighbour and never on the neighbouring reading.
+ */
+internal fun rubyLeftPx(leftPx: Float, rightPx: Float, rubyWidthPx: Float, leftSlackPx: Float, rightSlackPx: Float): Float {
+    val centred = (leftPx + rightPx - rubyWidthPx) / 2f
+    val minX = leftPx - leftSlackPx
+    val maxX = rightPx + rightSlackPx - rubyWidthPx
+    return if (maxX < minX) centred else centred.coerceIn(minX, maxX)
+}
+
+/**
  * The color the base character at [offset] is painted with: the innermost span
  * that specifies one, else [default]. Ruby follows the character under its
  * centre so a red-letter or a highlighted, selected run keeps its ruby
@@ -186,6 +200,9 @@ internal fun Modifier.rubyOverlay(
     val text = layout.layoutInput.text
     val textLen = text.length
     val maxWidthPx = size.width.toInt().coerceAtLeast(0)
+    val rubyFontPx = rubyStyle.fontSize.value * density
+    val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
+    val overhangPx = rubyFontPx * RUBY_OVERHANG_RATIO
     clipRect {
         for (r in rubies) {
             val start = r.start.coerceAtLeast(0)
@@ -219,7 +236,9 @@ internal fun Modifier.rubyOverlay(
                     constraints = Constraints(maxWidth = maxWidthPx),
                 )
                 val w = measured.size.width.toFloat()
-                val x = ((left + right - w) / 2f).coerceIn(0f, (size.width - w).coerceAtLeast(0f))
+                val leftSlack = rubySideSlackPx(text, rubies, start - 1, -1, overhangPx, sideGapPx)
+                val rightSlack = rubySideSlackPx(text, rubies, end, 1, overhangPx, sideGapPx)
+                val x = rubyLeftPx(left, right, w, leftSlack, rightSlack).coerceIn(0f, (size.width - w).coerceAtLeast(0f))
                 val glyphTop = layout.getLineBaseline(line) - baseAscentPx
                 val y = glyphTop - gapPx - measured.size.height
                 val color = rubyColorAt(text, (segStart + segEnd - 1) / 2, textColor)
