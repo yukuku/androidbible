@@ -64,11 +64,11 @@ A Compose port of verse rendering also exists (`VerseRendererCompose.kt`) alongs
 `@<r=reading@>base@/` keeps `base` inline in the `AnnotatedString` and records a `VerseRendererCompose.RubyRange` for it, so highlight offsets, dictionary links and TalkBack text are unaffected by the annotation. The verse composable then draws the reading above the base:
 
 - `computeLineMetrics` reserves a band above every line (`LineMetrics.rubyBandPx`) when the verse has ruby, and the text is laid out with `LineHeightStyle.Alignment.Bottom` so the whole surplus sits on top of the glyphs.
-- `widenRubyBases` adds letter spacing to a base run that is narrower than its reading (plus a side gap), so neighbouring readings never touch.
-- `Modifier.rubyOverlay` paints each reading centered over its base using the `TextLayoutResult`; a base run broken across lines gets a proportional slice of the reading on each line (`rubySliceFor`). The reading takes the color of the innermost colored span under the base (`rubyColorAt`), so red-letter and highlighted, selected runs stay readable.
+- `widenRubyBases` adds letter spacing to a base run that is narrower than its reading. A reading may overhang a neighbouring character without ruby by one ruby em (`RUBY_OVERHANG_RATIO`) and keeps a gap from a neighbouring reading (`RUBY_SIDE_GAP_RATIO`); `rubySideSlackPx` decides which applies.
+- `Modifier.rubyOverlay` paints each reading centered over its base using the `TextLayoutResult`; a base run broken across lines gets a proportional slice of the reading on each line (`rubySliceFor`). The reading takes the color of the innermost colored span under its centre character (`rubyColorAt`), so red-letter and highlighted, selected runs stay readable.
 - Reading size is `RUBY_FONT_SIZE_RATIO` (0.5) of the verse size.
 
-The View-based `VerseRenderer` ignores the `r` tag and shows only the base text, and `FormattedVerseText.removeSpecialCodes` strips the reading, so search, copy and share operate on the base text. `VerseRubySnapshotTest` renders sample verses to `Alkitab/build/snapshots/verse-ruby/ruby.png` for visual review. See `docs/features/ruby/design.md` for the data format, sources and open items.
+The View-based `VerseRenderer` ignores the `r` tag and shows only the base text, and `FormattedVerseText.removeSpecialCodes` strips the reading, so search, copy and share operate on the base text. `VerseRubySnapshotTest` renders sample sheets (basics, poetry, highlights, inline styles, typography variants) to `Alkitab/build/snapshots/verse-ruby/` for visual review. See `docs/features/ruby/design.md` for the data format, sources and open items.
 
 ## Plain Text Conversion
 

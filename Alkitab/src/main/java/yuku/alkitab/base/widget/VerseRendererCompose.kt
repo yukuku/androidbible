@@ -249,7 +249,10 @@ object VerseRendererCompose {
                     inSpecialTag = false
                     tagContentStart = sb.length
                 }
-                '/' -> processSpecialTag(sb, tag, tagContentStart, ari, inlineLinks, rubies)
+                '/' -> {
+                    processSpecialTag(sb, tag, tagContentStart, ari, inlineLinks, rubies)
+                    tagContentStart = -1
+                }
             }
 
             pos++

@@ -25,6 +25,14 @@ internal const val RUBY_GAP_RATIO = 0.1f
 internal const val RUBY_SIDE_GAP_RATIO = 0.2f
 
 /**
+ * How far a ruby may hang over a neighbouring character that carries no ruby,
+ * as a fraction of the ruby font size. One ruby em on each side is the
+ * conventional allowance for furigana over adjacent kana, so a three-kana
+ * reading over one kanji does not push the kanji away from its okurigana.
+ */
+internal const val RUBY_OVERHANG_RATIO = 1f
+
+/**
  * The part of [ruby] that belongs to the base characters `segStart until segEnd`
  * when the base run `start until end` is broken across lines. The reading is
  * split by character count, so a two-kanji word broken in the middle keeps
@@ -41,19 +49,41 @@ internal fun rubySliceFor(ruby: String, start: Int, end: Int, segStart: Int, seg
 
 /**
  * Extra letter spacing, in px per character, that widens a [baseLength]-character
- * base run measuring [baseWidthPx] so it spans at least [rubyWidthPx] plus
- * [sideGapPx] on each side. Zero when the ruby already fits over its base.
+ * base run measuring [baseWidthPx] so its ruby of [rubyWidthPx] fits. Each side
+ * contributes [leftSlackPx] / [rightSlackPx]: positive when the ruby may hang
+ * over a neighbour without ruby, negative when a gap must be kept from a
+ * neighbouring ruby. Zero when the ruby already fits.
  */
-internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLength: Int, sideGapPx: Float = 0f): Float {
-    val needed = rubyWidthPx + 2 * sideGapPx
+internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLength: Int, leftSlackPx: Float = 0f, rightSlackPx: Float = 0f): Float {
+    val needed = rubyWidthPx - leftSlackPx - rightSlackPx
     if (baseLength <= 0 || needed <= baseWidthPx) return 0f
     return (needed - baseWidthPx) / baseLength
 }
 
 /**
- * The color the base run at [offset] is painted with: the innermost span that
- * specifies one, else [default]. Ruby follows it so a red-letter or a
- * highlighted, selected run keeps its ruby readable.
+ * Room on one side of the ruby base `start until end`: [overhangPx] when the
+ * character next to it exists, is not a line break and carries no ruby of its
+ * own; `-sideGapPx` when that character belongs to another ruby; zero at the
+ * start or end of the text or at a line break.
+ */
+internal fun rubySideSlackPx(
+    text: CharSequence,
+    rubies: List<VerseRendererCompose.RubyRange>,
+    neighbourOffset: Int,
+    overhangPx: Float,
+    sideGapPx: Float,
+): Float {
+    if (neighbourOffset < 0 || neighbourOffset >= text.length) return 0f
+    if (text[neighbourOffset] == '\n') return 0f
+    val underRuby = rubies.any { neighbourOffset >= it.start && neighbourOffset < it.end }
+    return if (underRuby) -sideGapPx else overhangPx
+}
+
+/**
+ * The color the base character at [offset] is painted with: the innermost span
+ * that specifies one, else [default]. Ruby follows the character under its
+ * centre so a red-letter or a highlighted, selected run keeps its ruby
+ * readable.
  */
 internal fun rubyColorAt(text: AnnotatedString, offset: Int, default: Color): Color {
     var color = default
@@ -87,8 +117,12 @@ internal fun widenRubyBases(
             if (end <= start || r.ruby.isEmpty()) continue
             val baseWidth = textMeasurer.measure(text.subSequence(start, end), textStyle, softWrap = false, maxLines = 1).size.width.toFloat()
             val rubyWidth = textMeasurer.measure(AnnotatedString(r.ruby), rubyStyle, softWrap = false, maxLines = 1).size.width.toFloat()
-            val sideGapPx = rubyStyle.fontSize.value * density * RUBY_SIDE_GAP_RATIO
-            val spacingPx = rubyLetterSpacingPx(baseWidth, rubyWidth, end - start, sideGapPx)
+            val rubyFontPx = rubyStyle.fontSize.value * density
+            val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
+            val overhangPx = rubyFontPx * RUBY_OVERHANG_RATIO
+            val leftSlack = rubySideSlackPx(text, rubies, start - 1, overhangPx, sideGapPx)
+            val rightSlack = rubySideSlackPx(text, rubies, end, overhangPx, sideGapPx)
+            val spacingPx = rubyLetterSpacingPx(baseWidth, rubyWidth, end - start, leftSlack, rightSlack)
             if (spacingPx > 0f) {
                 addStyle(SpanStyle(letterSpacing = (spacingPx / density).sp), start, end)
             }
@@ -121,7 +155,6 @@ internal fun Modifier.rubyOverlay(
         val start = r.start.coerceAtLeast(0)
         val end = r.end.coerceAtMost(textLen)
         if (end <= start || r.ruby.isEmpty()) continue
-        val color = rubyColorAt(text, start, textColor)
         val firstLine = layout.getLineForOffset(start)
         val lastLine = layout.getLineForOffset(end - 1)
         for (line in firstLine..lastLine) {
@@ -139,6 +172,7 @@ internal fun Modifier.rubyOverlay(
             val x = ((left + right - w) / 2f).coerceIn(0f, (size.width - w).coerceAtLeast(0f))
             val glyphTop = layout.getLineBaseline(line) - baseAscentPx
             val y = glyphTop - gapPx - measured.size.height
+            val color = rubyColorAt(text, (segStart + segEnd - 1) / 2, textColor)
             drawText(measured, color = color, topLeft = Offset(x, y))
         }
     }

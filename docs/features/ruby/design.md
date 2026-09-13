@@ -116,9 +116,9 @@ See the "Ruby" section of `docs/text-rendering.md` for the code path. Design cho
 
 - The base text stays inline in the `AnnotatedString`; readings are an overlay drawn from the `TextLayoutResult`. Offsets used by partial highlights, dictionary links, inline-link tap detection and TalkBack are unchanged. The alternative, `InlineTextContent` placeholders, would replace every base run by one placeholder character and break all of those.
 - Vertical room comes from a taller `lineHeight` with `LineHeightStyle.Alignment.Bottom`, so every line of a ruby verse reserves the same band above the glyphs, including the first line. Verses without ruby keep proportional alignment.
-- Horizontal room comes from letter spacing on the base run when the reading is wider, plus a side gap so neighbouring readings never touch. For CJK bases this is the conventional look; for Latin bases it spreads the letters of the word, which is acceptable for a study display but a proper implementation would pad the run instead.
+- Horizontal room comes from letter spacing on the base run when the reading is wider. A reading may hang one ruby em over a neighbouring character that carries no ruby (so three kana over one kanji do not push the kanji away from its okurigana), and must keep a small gap from a neighbouring reading. For CJK bases the spacing is the conventional look; for Latin bases it spreads the letters of the word, which is acceptable for a study display but a proper implementation would pad the run instead.
 - A base run broken across lines gets a proportional slice of its reading on each line. A word joiner between base characters would prevent the break but change offsets, so it is not used.
-- Reading size is half the verse size, drawn in the color of the run beneath it.
+- Reading size is half the verse size, drawn in the color of the base character under the reading's centre, so a highlight or red-letter boundary inside a base run picks whichever side holds most of the reading.
 
 ## 5. Open items
 

@@ -7,6 +7,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import yuku.alkitab.base.widget.VerseRendererCompose.RubyRange
 
 class VerseRubyTest {
 
@@ -52,9 +53,27 @@ class VerseRubyTest {
     }
 
     @Test
-    fun `the side gap counts towards the width the base must reach`() {
-        assertEquals(0f, rubyLetterSpacingPx(40f, 30f, 2, sideGapPx = 5f))
-        assertEquals(4f, rubyLetterSpacingPx(40f, 38f, 2, sideGapPx = 5f))
+    fun `a gap to a neighbouring ruby counts towards the width the base must reach`() {
+        assertEquals(0f, rubyLetterSpacingPx(40f, 30f, 2, leftSlackPx = -5f, rightSlackPx = -5f))
+        assertEquals(4f, rubyLetterSpacingPx(40f, 38f, 2, leftSlackPx = -5f, rightSlackPx = -5f))
+    }
+
+    @Test
+    fun `overhang over ruby-free neighbours reduces the width the base must reach`() {
+        assertEquals(0f, rubyLetterSpacingPx(40f, 50f, 2, leftSlackPx = 8f, rightSlackPx = 8f))
+        assertEquals(1f, rubyLetterSpacingPx(40f, 50f, 2, leftSlackPx = 8f, rightSlackPx = 0f))
+    }
+
+    @Test
+    fun `side slack depends on what the neighbouring character carries`() {
+        val rubies = listOf(RubyRange(2, 3, "しゅ"), RubyRange(3, 4, "い"))
+        val text = "ab主言う\nx"
+        assertEquals(8f, rubySideSlackPx(text, rubies, 1, 8f, 2f))
+        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 8f, 2f))
+        assertEquals(8f, rubySideSlackPx(text, rubies, 4, 8f, 2f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, 5, 8f, 2f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, -1, 8f, 2f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, text.length, 8f, 2f))
     }
 
     @Test

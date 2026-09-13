@@ -70,6 +70,13 @@ class VerseRendererComposeRubyTest {
     }
 
     @Test
+    fun `a stray closing tag after a ruby produces no second range`() {
+        val result = render("@@@<r=しゅ@>主@/は@/言")
+        assertEquals("1  主は言", result.text.text)
+        assertEquals(listOf(RubyRange(3, 4, "しゅ")), result.rubies)
+    }
+
+    @Test
     fun `a verse without formatting has no ruby`() {
         assertTrue(render("主は言われる").rubies.isEmpty())
     }
