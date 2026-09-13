@@ -117,6 +117,22 @@ class VerseRubySnapshotTest {
             Sample("footnote and xref next to ruby", "@@In the @<r=H7225@>beginning@/@<f1@>@/ @<r=H430@>God@/@<x1@>@/ @<r=H1254@>created@/ the heaven and the earth.@<f2@>@/"),
             Sample("ruby adjacent to ruby without gap", "@@@<r=しゅ@>主@/@<r=しゅ@>主@/@<r=しゅ@>主@/ @<r=xiōng@>兄@/@<r=dì@>弟@/@<r=jiě@>姐@/@<r=mèi@>妹@/"),
         ),
+        "adversarial" to listOf(
+            Sample("reading wider than the row", "@@A @<r=${"very ".repeat(40)}long reading@>word@/ in a sentence that goes on."),
+            Sample("base wider than the row, short reading", "@@@<r=ok@>${"supercalifragilistic".repeat(4)}@/ end."),
+            Sample("long base with long reading, wrapped", "@@@<r=${"ruby ".repeat(30)}@>${"base ".repeat(12)}@/ end."),
+            Sample("emoji base and reading", "@@@<r=\uD83D\uDE00\uD83D\uDE00\uD83D\uDE00@>\uD83E\uDD16\uD83E\uDD16@/ and @<r=family@>\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67@/ ok"),
+            Sample("combining marks, RTL marks, ZWJ", "@@@<r=e\u0301e\u0301e\u0301@>e\u0301@/ @<r=\u05E9\u05C1\u05B8\u05DC\u05D5\u05B9\u05DD@>shalom@/ @<r=\u200F\u200E\u200D@>x@/"),
+            Sample("whitespace reading and base", "@@@<r=   @>abc@/ @<r=abc@>   @/ end"),
+            Sample("unterminated tags", "@@@<r=abc@>base without close @<r=@> @<r=x"),
+            Sample("stray closers and empty tags", "@@@/@/@<@>x@/@<r@>y@/@/ done"),
+            Sample("nested rubies", "@@@<r=outer@>a@<r=inner@>b@/c@/ done"),
+            Sample("base across @8 and paragraph codes", "@@@<r=reading@>first@8second@1third@/ tail"),
+            Sample("two hundred rubies", "@@" + buildString { repeat(200) { append("@<r=${it % 10}@>x@/") } }),
+            Sample("ruby at very start and very end", "@@@<r=start@>S@/ middle @<r=end@>E@/"),
+            Sample("ruby at very start in gutter mode", "@@@1@<r=start@>S@/ middle @<r=end@>E@/"),
+            Sample("reading with @-like text and tabs", "@@@<r=a\tb=c@>base@/ @<r=<r=x@>@>y@/"),
+        ),
     )
 
     private val variants = listOf(

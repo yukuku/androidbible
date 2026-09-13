@@ -6,6 +6,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import yuku.alkitab.base.widget.VerseRendererCompose.RubyRange
 
@@ -27,6 +28,16 @@ class VerseRubyTest {
     fun `an uneven split rounds to the nearest ruby character`() {
         assertEquals("しゅ", rubySliceFor("しゅう", 0, 2, 0, 1))
         assertEquals("う", rubySliceFor("しゅう", 0, 2, 1, 2))
+    }
+
+    @Test
+    fun `a slice never splits a surrogate pair`() {
+        val ruby = "\uD83D\uDE00\uD83D\uDE01\uD83D\uDE02"
+        val first = rubySliceFor(ruby, 0, 4, 0, 1)
+        val rest = rubySliceFor(ruby, 0, 4, 1, 4)
+        assertTrue(first.isEmpty() || Character.isLowSurrogate(first.last()))
+        assertTrue(rest.isEmpty() || Character.isHighSurrogate(rest.first()))
+        assertEquals(ruby, first + rest)
     }
 
     @Test

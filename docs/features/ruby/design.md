@@ -120,6 +120,16 @@ See the "Ruby" section of `docs/text-rendering.md` for the code path. Design cho
 - A base run broken across lines gets a proportional slice of its reading on each line. A word joiner between base characters would prevent the break but change offsets, so it is not used.
 - Reading size is half the verse size, drawn in the color of the base character under the reading's centre, so a highlight or red-letter boundary inside a base run picks whichever side holds most of the reading.
 
+### Malformed and oversized input
+
+`VerseRendererComposeRubyTest` and the "adversarial" sheet of `VerseRubySnapshotTest` cover these cases; none of them throws:
+
+- A reading wider than the row is ellipsised to the row width and clipped; letter spacing on its base is capped at `RUBY_MAX_LETTER_SPACING_EM` per character so garbage data cannot spread a word over several lines.
+- A base run broken across lines never splits a surrogate pair in its reading.
+- A base may span `@8` and paragraph codes; the reading is split per line.
+- A stray `@/`, an empty tag, a tag with an unknown letter, a nested ruby or an empty reading or base produce no ruby and leave the text as is. An inner tag replaces the outer one, so nested rubies annotate the inner base only. An unterminated `@<` at the end of the verse leaks its content as text, which matches the View renderer.
+- Emoji, ZWJ sequences, combining marks and bidi controls are kept verbatim in both reading and base.
+
 ## 5. Open items
 
 - Settings: a per-version toggle to hide ruby, a size ratio, and a choice between ruby and inline parentheses for accessibility.

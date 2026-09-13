@@ -4,6 +4,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -12,6 +13,8 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.sp
 import yuku.alkitab.base.widget.VerseRendererCompose
 
@@ -33,6 +36,13 @@ internal const val RUBY_SIDE_GAP_RATIO = 0.2f
 internal const val RUBY_OVERHANG_RATIO = 1f
 
 /**
+ * Cap on the letter spacing a reading may add to its base, in base font
+ * sizes per character. A reading far wider than that is data garbage and
+ * is ellipsised instead of spreading the base over several lines.
+ */
+internal const val RUBY_MAX_LETTER_SPACING_EM = 2f
+
+/**
  * The part of [ruby] that belongs to the base characters `segStart until segEnd`
  * when the base run `start until end` is broken across lines. The reading is
  * split by character count, so a two-kanji word broken in the middle keeps
@@ -42,10 +52,14 @@ internal fun rubySliceFor(ruby: String, start: Int, end: Int, segStart: Int, seg
     val baseLen = end - start
     if (baseLen <= 0 || segEnd <= segStart) return ""
     if (segStart <= start && segEnd >= end) return ruby
-    val from = ((ruby.length * (segStart - start) + baseLen / 2) / baseLen).coerceIn(0, ruby.length)
-    val to = ((ruby.length * (segEnd - start) + baseLen / 2) / baseLen).coerceIn(from, ruby.length)
+    val from = surrogateSafe(ruby, ((ruby.length * (segStart - start) + baseLen / 2) / baseLen).coerceIn(0, ruby.length))
+    val to = surrogateSafe(ruby, ((ruby.length * (segEnd - start) + baseLen / 2) / baseLen).coerceIn(from, ruby.length))
     return ruby.substring(from, to)
 }
+
+/** Moves [index] back by one when it would split a surrogate pair. */
+private fun surrogateSafe(s: String, index: Int): Int =
+    if (index in 1 until s.length && Character.isLowSurrogate(s[index]) && Character.isHighSurrogate(s[index - 1])) index - 1 else index
 
 /**
  * Extra letter spacing, in px per character, that widens a [baseLength]-character
@@ -122,7 +136,8 @@ internal fun widenRubyBases(
             val overhangPx = rubyFontPx * RUBY_OVERHANG_RATIO
             val leftSlack = rubySideSlackPx(text, rubies, start - 1, overhangPx, sideGapPx)
             val rightSlack = rubySideSlackPx(text, rubies, end, overhangPx, sideGapPx)
-            val spacingPx = rubyLetterSpacingPx(baseWidth, rubyWidth, end - start, leftSlack, rightSlack)
+            val maxSpacingPx = textStyle.fontSize.value * density * RUBY_MAX_LETTER_SPACING_EM
+            val spacingPx = rubyLetterSpacingPx(baseWidth, rubyWidth, end - start, leftSlack, rightSlack).coerceAtMost(maxSpacingPx)
             if (spacingPx > 0f) {
                 addStyle(SpanStyle(letterSpacing = (spacingPx / density).sp), start, end)
             }
@@ -151,29 +166,39 @@ internal fun Modifier.rubyOverlay(
     val layout = layoutResultProvider() ?: return@drawWithContent
     val text = layout.layoutInput.text
     val textLen = text.length
-    for (r in rubies) {
-        val start = r.start.coerceAtLeast(0)
-        val end = r.end.coerceAtMost(textLen)
-        if (end <= start || r.ruby.isEmpty()) continue
-        val firstLine = layout.getLineForOffset(start)
-        val lastLine = layout.getLineForOffset(end - 1)
-        for (line in firstLine..lastLine) {
-            val segStart = maxOf(start, layout.getLineStart(line))
-            val segEnd = minOf(end, layout.getLineEnd(line, visibleEnd = true))
-            if (segEnd <= segStart) continue
-            val slice = rubySliceFor(r.ruby, start, end, segStart, segEnd)
-            if (slice.isEmpty()) continue
-            val first = layout.getBoundingBox(segStart)
-            val last = layout.getBoundingBox(segEnd - 1)
-            val left = minOf(first.left, last.left)
-            val right = maxOf(first.right, last.right)
-            val measured = textMeasurer.measure(AnnotatedString(slice), rubyStyle, softWrap = false, maxLines = 1)
-            val w = measured.size.width.toFloat()
-            val x = ((left + right - w) / 2f).coerceIn(0f, (size.width - w).coerceAtLeast(0f))
-            val glyphTop = layout.getLineBaseline(line) - baseAscentPx
-            val y = glyphTop - gapPx - measured.size.height
-            val color = rubyColorAt(text, (segStart + segEnd - 1) / 2, textColor)
-            drawText(measured, color = color, topLeft = Offset(x, y))
+    val maxWidthPx = size.width.toInt().coerceAtLeast(0)
+    clipRect {
+        for (r in rubies) {
+            val start = r.start.coerceAtLeast(0)
+            val end = r.end.coerceAtMost(textLen)
+            if (end <= start || r.ruby.isEmpty()) continue
+            val firstLine = layout.getLineForOffset(start)
+            val lastLine = layout.getLineForOffset(end - 1)
+            for (line in firstLine..lastLine) {
+                val segStart = maxOf(start, layout.getLineStart(line))
+                val segEnd = minOf(end, layout.getLineEnd(line, visibleEnd = true))
+                if (segEnd <= segStart) continue
+                val slice = rubySliceFor(r.ruby, start, end, segStart, segEnd)
+                if (slice.isEmpty()) continue
+                val first = layout.getBoundingBox(segStart)
+                val last = layout.getBoundingBox(segEnd - 1)
+                val left = minOf(first.left, last.left)
+                val right = maxOf(first.right, last.right)
+                val measured = textMeasurer.measure(
+                    AnnotatedString(slice),
+                    rubyStyle,
+                    overflow = TextOverflow.Ellipsis,
+                    softWrap = false,
+                    maxLines = 1,
+                    constraints = Constraints(maxWidth = maxWidthPx),
+                )
+                val w = measured.size.width.toFloat()
+                val x = ((left + right - w) / 2f).coerceIn(0f, (size.width - w).coerceAtLeast(0f))
+                val glyphTop = layout.getLineBaseline(line) - baseAscentPx
+                val y = glyphTop - gapPx - measured.size.height
+                val color = rubyColorAt(text, (segStart + segEnd - 1) / 2, textColor)
+                drawText(measured, color = color, topLeft = Offset(x, y))
+            }
         }
     }
 }

@@ -251,6 +251,8 @@ object VerseRendererCompose {
                 }
                 '/' -> {
                     processSpecialTag(sb, tag, tagContentStart, ari, inlineLinks, rubies)
+                    // A tag is consumed by its closing code; a stray `@/` must not replay it.
+                    tag.setLength(0)
                     tagContentStart = -1
                 }
             }

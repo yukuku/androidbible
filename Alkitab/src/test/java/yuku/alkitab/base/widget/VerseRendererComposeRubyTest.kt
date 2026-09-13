@@ -77,6 +77,67 @@ class VerseRendererComposeRubyTest {
     }
 
     @Test
+    fun `malformed tags never throw and never produce a ruby`() {
+        val inputs = listOf(
+            "@@@<r=",
+            "@@@<r=abc",
+            "@@@<r=abc@>",
+            "@@@<r=abc@>base",
+            "@@@/",
+            "@@@/@/@/",
+            "@@@<@>x@/",
+            "@@@<r@>x@/",
+            "@@@<rr=abc@>x@/",
+            "@@@<r=a@b@>x@/",
+            "@@@<r=a@>@<r=b@>x@/@/",
+            "@@@<",
+            "@@@>",
+            "@@x@",
+            "@@@<r=a@>x",
+            "@@@<f1@>@/@/",
+        )
+        for (input in inputs) {
+            val result = render(input)
+            assertTrue("$input produced ${result.rubies}", result.rubies.all { it.start < it.end && it.end <= result.text.length && it.ruby.isNotEmpty() })
+        }
+        assertTrue(render("@@@<r=abc@>base").rubies.isEmpty())
+        assertTrue(render("@@@<r=a@>@<r=b@>x@/@/").rubies.size <= 1)
+    }
+
+    @Test
+    fun `a footnote inside a ruby base is not replayed by the outer closing tag`() {
+        val result = render("@@@<r=a@>x@<f1@>@/y@/")
+        assertEquals("1  x¹y", result.text.text)
+        assertEquals(1, result.inlineLinks.size)
+        assertTrue(result.rubies.isEmpty())
+    }
+
+    @Test
+    fun `unusual characters in the reading and base are kept verbatim`() {
+        val emoji = "\uD83D\uDE00"
+        val result = render("@@@<r=$emoji\u200D\u0301 a=b @>\uD83E\uDD16e\u0301\u05D0@/")
+        assertEquals("1  \uD83E\uDD16e\u0301\u05D0", result.text.text)
+        assertEquals(listOf(RubyRange(3, 8, "$emoji\u200D\u0301 a=b ")), result.rubies)
+    }
+
+    @Test
+    fun `a base run may span a line break and paragraph codes`() {
+        val result = render("@@@<r=abc@>x@8y@1z@/")
+        assertEquals("1  x\nyz", result.text.text)
+        assertEquals(listOf(RubyRange(3, 7, "abc")), result.rubies)
+    }
+
+    @Test
+    fun `very long readings and bases are handled`() {
+        val longRuby = "r".repeat(5000)
+        val longBase = "b".repeat(5000)
+        val result = render("@@@<r=$longRuby@>$longBase@/")
+        assertEquals(listOf(RubyRange(3, 3 + longBase.length, longRuby)), result.rubies)
+        val many = buildString { repeat(2000) { append("@<r=x@>y@/") } }
+        assertEquals(2000, render("@@$many").rubies.size)
+    }
+
+    @Test
     fun `a verse without formatting has no ruby`() {
         assertTrue(render("主は言われる").rubies.isEmpty())
     }
