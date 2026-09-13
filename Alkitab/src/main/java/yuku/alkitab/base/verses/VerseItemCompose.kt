@@ -50,6 +50,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.Typeface as ComposeTypeface
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Density
@@ -552,13 +553,22 @@ internal data class LineMetrics(
      * verse number is padded down by this much to stay level with it.
      */
     val gutterTopPaddingPx: Int,
+    /**
+     * Height reserved above every line for ruby text, including its gap.
+     * Zero when the verse has no ruby; then the extra line spacing is
+     * distributed proportionally instead of stacked on top.
+     */
+    val rubyBandPx: Float = 0f,
+    /** Distance from the baseline up to the top of the base glyphs. */
+    val baseAscentPx: Float = 0f,
 )
 
 @Composable
 private fun rememberLineMetrics(state: VerseItemComposeState): LineMetrics {
     val density = LocalDensity.current
-    return remember(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, density.density) {
-        computeLineMetrics(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, density.density)
+    val rubyFontSizeDp = if (state.render.rubies.isEmpty()) 0f else state.fontSizeDp * RUBY_FONT_SIZE_RATIO
+    return remember(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, density.density, rubyFontSizeDp) {
+        computeLineMetrics(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, density.density, rubyFontSizeDp)
     }
 }
 
@@ -567,6 +577,11 @@ private fun rememberLineMetrics(state: VerseItemComposeState): LineMetrics {
  * `lineHeight` + `LineHeightStyle(Proportional, Trim.None)` matches a TextView
  * using `setLineSpacing(0, lineSpacingMult)`. The caller composes under a
  * density with `fontScale == 1f`, so px ↔ sp conversion is `/densityFactor`.
+ *
+ * A positive [rubyFontSizeDp] reserves a band for ruby text above every line.
+ * Such text is laid out with `LineHeightStyle.Alignment.Bottom`, which stacks
+ * all extra line height (the ruby band and the line-spacing surplus) on top of
+ * the glyphs, so the gutter padding covers the whole surplus.
  */
 internal fun computeLineMetrics(
     typeface: android.graphics.Typeface?,
@@ -574,28 +589,38 @@ internal fun computeLineMetrics(
     fontBold: Int,
     lineSpacingMult: Float,
     densityFactor: Float,
+    rubyFontSizeDp: Float = 0f,
 ): LineMetrics {
+    val resolvedTypeface = if (fontBold == android.graphics.Typeface.BOLD) {
+        android.graphics.Typeface.create(typeface ?: android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+    } else {
+        typeface ?: android.graphics.Typeface.DEFAULT
+    }
     val paint = android.text.TextPaint().apply {
         isAntiAlias = true
         textSize = fontSizeDp * densityFactor
-        this.typeface = if (fontBold == android.graphics.Typeface.BOLD) {
-            android.graphics.Typeface.create(typeface ?: android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
-        } else {
-            typeface ?: android.graphics.Typeface.DEFAULT
-        }
+        this.typeface = resolvedTypeface
     }
     val fm = paint.fontMetrics
     val naturalLineHeightPx = fm.descent - fm.ascent + fm.leading
-    val targetLineHeightPx = naturalLineHeightPx * lineSpacingMult
+    val rubyBandPx = if (rubyFontSizeDp <= 0f) 0f else {
+        val rubyFm = android.text.TextPaint(paint).apply { textSize = rubyFontSizeDp * densityFactor }.fontMetrics
+        (rubyFm.descent - rubyFm.ascent) + rubyFontSizeDp * densityFactor * RUBY_GAP_RATIO
+    }
+    val targetLineHeightPx = naturalLineHeightPx * lineSpacingMult + rubyBandPx
     val rowExtraPaddingPx = (naturalLineHeightPx * (lineSpacingMult - 1f) + 0.5f).toInt()
     val glyphHeightPx = fm.descent - fm.ascent
-    val gutterTopPaddingPx = if (glyphHeightPx <= 0f) 0 else {
-        ((targetLineHeightPx - glyphHeightPx) * (-fm.ascent) / glyphHeightPx + 0.5f).toInt().coerceAtLeast(0)
+    val gutterTopPaddingPx = when {
+        glyphHeightPx <= 0f -> 0
+        rubyBandPx > 0f -> (targetLineHeightPx - glyphHeightPx + 0.5f).toInt().coerceAtLeast(0)
+        else -> ((targetLineHeightPx - glyphHeightPx) * (-fm.ascent) / glyphHeightPx + 0.5f).toInt().coerceAtLeast(0)
     }
     return LineMetrics(
         lineHeightSp = targetLineHeightPx / densityFactor,
         rowExtraPaddingPx = rowExtraPaddingPx,
         gutterTopPaddingPx = gutterTopPaddingPx,
+        rubyBandPx = rubyBandPx,
+        baseAscentPx = -fm.ascent,
     )
 }
 
@@ -630,7 +655,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
             fontSize = state.fontSizeDp.sp,
             lineHeight = lineMetrics.lineHeightSp.sp,
             lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Proportional,
+                alignment = if (lineMetrics.rubyBandPx > 0f) LineHeightStyle.Alignment.Bottom else LineHeightStyle.Alignment.Proportional,
                 trim = LineHeightStyle.Trim.None,
             ),
             fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
@@ -641,9 +666,23 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
 
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
+    val rubies = state.render.rubies
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val rubyStyle = remember(textStyle, state.fontSizeDp) {
+        textStyle.copy(
+            fontSize = (state.fontSizeDp * RUBY_FONT_SIZE_RATIO).sp,
+            lineHeight = TextUnit.Unspecified,
+            fontWeight = FontWeight.Normal,
+        )
+    }
+    val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density.density) {
+        widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density.density)
+    }
+
     Box(modifier = modifier) {
         BasicText(
-            text = state.render.text,
+            text = displayText,
             style = textStyle,
             modifier = Modifier
                 .fillMaxWidth()
@@ -652,6 +691,15 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     inlineLinks = state.render.inlineLinks,
                     onClick = state.onInlineLinkClick,
                     onMiss = state.onClick,
+                )
+                .rubyOverlay(
+                    rubies = rubies,
+                    layoutResultProvider = { textLayoutResult },
+                    textMeasurer = textMeasurer,
+                    rubyStyle = rubyStyle,
+                    textColor = textColor,
+                    baseAscentPx = lineMetrics.baseAscentPx,
+                    gapPx = state.fontSizeDp * RUBY_FONT_SIZE_RATIO * RUBY_GAP_RATIO * density.density,
                 ),
             onTextLayout = { textLayoutResult = it },
         )

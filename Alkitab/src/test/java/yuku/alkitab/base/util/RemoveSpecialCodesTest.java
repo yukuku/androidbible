@@ -38,6 +38,10 @@ public class RemoveSpecialCodesTest extends TestCase {
 		testRemoveSpecialCodes("@@abc@<should not crash", "abcshould not crash");
 		testRemoveSpecialCodes("@@abc@>should not crash", "abcshould not crash");
 		testRemoveSpecialCodes("@@abc@<should not@>crash@>", "abccrash");
+
+		// ruby keeps the base text and drops the reading
+		testRemoveSpecialCodes("@@@<r=しゅ@>主@/は@<r=い@>言@/われる", "主は言われる");
+		testRemoveSpecialCodes("@@@<r=qǐ@>起@/@<r=chū@>初@/，", "起初，");
 		testRemoveSpecialCodes("@@abc@<", "abc");
 		testRemoveSpecialCodes("@@@<abc@>", "");
 		testRemoveSpecialCodes("@@@>abc@<", "abc");
