@@ -193,11 +193,18 @@ internal fun Modifier.rubyOverlay(
             if (end <= start || r.ruby.isEmpty()) continue
             val firstLine = layout.getLineForOffset(start)
             val lastLine = layout.getLineForOffset(end - 1)
+            val splits = firstLine == lastLine || rubySplitsAcrossLines(text.subSequence(start, end))
+            val widestLine = if (splits) firstLine else (firstLine..lastLine).maxByOrNull { line ->
+                val segStart = maxOf(start, layout.getLineStart(line))
+                val segEnd = minOf(end, layout.getLineEnd(line, visibleEnd = true))
+                if (segEnd <= segStart) -1f else layout.getBoundingBox(segEnd - 1).right - layout.getBoundingBox(segStart).left
+            } ?: firstLine
             for (line in firstLine..lastLine) {
+                if (!splits && line != widestLine) continue
                 val segStart = maxOf(start, layout.getLineStart(line))
                 val segEnd = minOf(end, layout.getLineEnd(line, visibleEnd = true))
                 if (segEnd <= segStart) continue
-                val slice = rubySliceFor(r.ruby, start, end, segStart, segEnd)
+                val slice = if (splits) rubySliceFor(r.ruby, start, end, segStart, segEnd) else r.ruby
                 if (slice.isEmpty()) continue
                 val first = layout.getBoundingBox(segStart)
                 val last = layout.getBoundingBox(segEnd - 1)
