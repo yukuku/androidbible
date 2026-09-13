@@ -77,20 +77,27 @@ internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLen
 /**
  * Room on one side of the ruby base `start until end`: [overhangPx] when the
  * character next to it exists, is not a line break and carries no ruby of its
- * own; `-sideGapPx` when that character belongs to another ruby; zero at the
- * start or end of the text or at a line break.
+ * own; `-sideGapPx` when that character, or the first non-space character
+ * beyond it, belongs to another ruby; zero at the start or end of the text or
+ * at a line break. Looking past spaces keeps two long glosses over
+ * neighbouring words from meeting over the space between them.
  */
 internal fun rubySideSlackPx(
     text: CharSequence,
     rubies: List<VerseRendererCompose.RubyRange>,
     neighbourOffset: Int,
+    direction: Int,
     overhangPx: Float,
     sideGapPx: Float,
 ): Float {
     if (neighbourOffset < 0 || neighbourOffset >= text.length) return 0f
     if (text[neighbourOffset] == '\n') return 0f
-    val underRuby = rubies.any { neighbourOffset >= it.start && neighbourOffset < it.end }
-    return if (underRuby) -sideGapPx else overhangPx
+    fun underRuby(offset: Int) = rubies.any { offset >= it.start && offset < it.end }
+    if (underRuby(neighbourOffset)) return -sideGapPx
+    var i = neighbourOffset
+    while (i in text.indices && text[i] == ' ') i += direction
+    if (i in text.indices && text[i] != '\n' && underRuby(i)) return -sideGapPx
+    return overhangPx
 }
 
 /**
@@ -134,8 +141,8 @@ internal fun widenRubyBases(
             val rubyFontPx = rubyStyle.fontSize.value * density
             val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
             val overhangPx = rubyFontPx * RUBY_OVERHANG_RATIO
-            val leftSlack = rubySideSlackPx(text, rubies, start - 1, overhangPx, sideGapPx)
-            val rightSlack = rubySideSlackPx(text, rubies, end, overhangPx, sideGapPx)
+            val leftSlack = rubySideSlackPx(text, rubies, start - 1, -1, overhangPx, sideGapPx)
+            val rightSlack = rubySideSlackPx(text, rubies, end, 1, overhangPx, sideGapPx)
             val maxSpacingPx = textStyle.fontSize.value * density * RUBY_MAX_LETTER_SPACING_EM
             val spacingPx = rubyLetterSpacingPx(baseWidth, rubyWidth, end - start, leftSlack, rightSlack).coerceAtMost(maxSpacingPx)
             if (spacingPx > 0f) {

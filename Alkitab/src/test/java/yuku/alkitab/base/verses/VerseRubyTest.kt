@@ -79,12 +79,21 @@ class VerseRubyTest {
     fun `side slack depends on what the neighbouring character carries`() {
         val rubies = listOf(RubyRange(2, 3, "しゅ"), RubyRange(3, 4, "い"))
         val text = "ab主言う\nx"
-        assertEquals(8f, rubySideSlackPx(text, rubies, 1, 8f, 2f))
-        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 8f, 2f))
-        assertEquals(8f, rubySideSlackPx(text, rubies, 4, 8f, 2f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, 5, 8f, 2f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, -1, 8f, 2f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, text.length, 8f, 2f))
+        assertEquals(8f, rubySideSlackPx(text, rubies, 1, -1, 8f, 2f))
+        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f))
+        assertEquals(8f, rubySideSlackPx(text, rubies, 4, 1, 8f, 2f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, 5, 1, 8f, 2f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, -1, -1, 8f, 2f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, text.length, 1, 8f, 2f))
+    }
+
+    @Test
+    fun `a ruby beyond a space still counts as a neighbouring ruby`() {
+        val rubies = listOf(RubyRange(0, 3, "in the beginning"), RubyRange(4, 6, "created"))
+        val text = "aaa bb cc"
+        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f))
+        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, -1, 8f, 2f))
+        assertEquals(8f, rubySideSlackPx(text, rubies, 6, 1, 8f, 2f))
     }
 
     @Test
