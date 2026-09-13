@@ -57,6 +57,18 @@ internal fun rubySliceFor(ruby: String, start: Int, end: Int, segStart: Int, seg
     return ruby.substring(from, to)
 }
 
+/**
+ * Whether a reading over [base] may be split across lines when the base
+ * wraps. Kana or ideographs read one character at a time, so a furigana or
+ * pinyin reading follows its characters; a number, a word or a gloss over a
+ * Latin, Hebrew or Greek base stays whole over the widest segment.
+ */
+internal fun rubySplitsAcrossLines(base: CharSequence): Boolean = base.any { ch ->
+    val block = Character.UnicodeScript.of(ch.code)
+    block == Character.UnicodeScript.HAN || block == Character.UnicodeScript.HIRAGANA ||
+        block == Character.UnicodeScript.KATAKANA || block == Character.UnicodeScript.HANGUL
+}
+
 /** Moves [index] back by one when it would split a surrogate pair. */
 private fun surrogateSafe(s: String, index: Int): Int =
     if (index in 1 until s.length && Character.isLowSurrogate(s[index]) && Character.isHighSurrogate(s[index - 1])) index - 1 else index

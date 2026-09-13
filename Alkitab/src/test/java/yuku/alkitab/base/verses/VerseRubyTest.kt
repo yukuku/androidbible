@@ -41,6 +41,17 @@ class VerseRubyTest {
     }
 
     @Test
+    fun `only kana, ideographs and hangul let a reading split across lines`() {
+        assertTrue(rubySplitsAcrossLines("創造"))
+        assertTrue(rubySplitsAcrossLines("さいわい"))
+        assertTrue(rubySplitsAcrossLines("创造"))
+        assertTrue(rubySplitsAcrossLines("하나님"))
+        assertTrue(!rubySplitsAcrossLines("di hadapan Allah"))
+        assertTrue(!rubySplitsAcrossLines("בְּרֵאשִׁית"))
+        assertTrue(!rubySplitsAcrossLines("λόγος"))
+    }
+
+    @Test
     fun `an empty segment yields no ruby`() {
         assertEquals("", rubySliceFor("abc", 0, 3, 2, 2))
         assertEquals("", rubySliceFor("abc", 5, 5, 5, 5))
