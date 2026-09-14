@@ -306,6 +306,11 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            all {
+                // Robolectric renders the Compose verse row with native graphics,
+                // which needs more than Gradle's default test-worker heap.
+                it.maxHeapSize = "2g"
+            }
         }
     }
 
