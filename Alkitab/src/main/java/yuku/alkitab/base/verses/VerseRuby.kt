@@ -179,8 +179,8 @@ internal fun widenRubyBases(
 }
 
 /**
- * Paints every ruby centered above its base run, in the band that
- * [computeLineMetrics] reserves above each line. A base run broken across
+ * Paints every ruby over its base run, positioned by [rubyLeftPx], in the band
+ * that [computeLineMetrics] reserves above each line. A base run broken across
  * lines gets a proportional slice of its ruby on each line.
  *
  * [baseAscentPx] is the distance from the baseline up to the top of the base

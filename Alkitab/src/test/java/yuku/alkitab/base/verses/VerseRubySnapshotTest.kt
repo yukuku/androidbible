@@ -265,7 +265,6 @@ class VerseRubySnapshotTest {
         bitmap.recycle()
     }
 
-    /** Partial highlight offsets are relative to the rendered verse body, which is the base text without the verse number. */
     private fun buildData(samples: List<Sample>, variant: Variant): VersesDataModel {
         val attributes = VersesAttributes.createEmpty(samples.size)
         for ((index, sample) in samples.withIndex()) {
