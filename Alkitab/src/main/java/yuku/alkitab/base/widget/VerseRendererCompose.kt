@@ -66,7 +66,7 @@ object VerseRendererCompose {
         val start: Int,
         val end: Int,
         val ruby: String,
-        val kind: Char? = null,
+        val kind: Char?,
     )
 
     data class Result(
@@ -76,7 +76,7 @@ object VerseRendererCompose {
         /** Same semantics as [VerseRenderer.render] return: chars consumed before the verse text begins. 0 = gutter mode. */
         val startPosAfterVerseNumber: Int,
         val inlineLinks: List<InlineLinkRange>,
-        val rubies: List<RubyRange> = emptyList(),
+        val rubies: List<RubyRange>,
     )
 
     private val buf_char_: ThreadLocal<CharArray> = ThreadLocal.withInitial { CharArray(1024) }
@@ -431,6 +431,7 @@ object VerseRendererCompose {
             gutterVerseNumber = null,
             startPosAfterVerseNumber = startPosAfterVerseNumber,
             inlineLinks = emptyList(),
+            rubies = emptyList(),
         )
     }
 }

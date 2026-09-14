@@ -18,13 +18,29 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.sp
 import yuku.alkitab.base.widget.VerseRendererCompose
 
-/** Ruby text is drawn at this fraction of the base font size. */
+/**
+ * Ruby text is drawn at this fraction of the base font size.
+ *
+ * At the default 17dp verse text a reading is drawn at 8.5dp.
+ */
 internal const val RUBY_FONT_SIZE_RATIO = 0.5f
 
-/** Gap between the ruby's bottom and the base glyph's top, as a fraction of the ruby font size. */
+/**
+ * Gap between the ruby's bottom and the base glyph's top, as a fraction of the
+ * ruby font size.
+ *
+ * With an 8.5dp reading the gap is 0.85dp.
+ */
 internal const val RUBY_GAP_RATIO = 0.1f
 
-/** Clearance kept on each side of a ruby so neighbouring rubies never touch, as a fraction of the ruby font size. */
+/**
+ * Clearance kept on each side of a ruby so neighbouring rubies never touch, as
+ * a fraction of the ruby font size.
+ *
+ * With an 8.5dp reading, two readings over adjacent characters stay 1.7dp
+ * apart. This is what keeps `Qǐ` and `chū` legible over 起初 in a pinyin verse,
+ * where every character carries its own reading.
+ */
 internal const val RUBY_SIDE_GAP_RATIO = 0.2f
 
 /**
@@ -32,6 +48,9 @@ internal const val RUBY_SIDE_GAP_RATIO = 0.2f
  * as a fraction of the ruby font size. One ruby em on each side is the
  * conventional allowance for furigana over adjacent kana, so a three-kana
  * reading over one kanji does not push the kanji away from its okurigana.
+ *
+ * In 神は, the reading かみ over 神 may spill 8.5dp over は rather than force a
+ * gap between the two characters.
  */
 internal const val RUBY_OVERHANG_RATIO = 1f
 
@@ -39,6 +58,10 @@ internal const val RUBY_OVERHANG_RATIO = 1f
  * Cap on the letter spacing a reading may add to its base, in base font
  * sizes per character. A reading far wider than that is data garbage and
  * is ellipsised instead of spreading the base over several lines.
+ *
+ * At 17dp verse text no character is spread by more than 34dp, so a thousand
+ * character reading over one kanji widens that kanji to 51dp and is then cut
+ * with an ellipsis, rather than pushing the verse across many lines.
  */
 internal const val RUBY_MAX_LETTER_SPACING_EM = 2f
 
@@ -47,6 +70,10 @@ internal const val RUBY_MAX_LETTER_SPACING_EM = 2f
  * when the base run `start until end` is broken across lines. The reading is
  * split by character count, so a two-kanji word broken in the middle keeps
  * half of its reading on each line.
+ *
+ * For そうぞう over 創造 at offsets 5 until 7, a line break between the two
+ * kanji gives `rubySliceFor(そうぞう, 5, 7, 5, 6)` = そう on the first line and
+ * `rubySliceFor(そうぞう, 5, 7, 6, 7)` = ぞう on the second.
  */
 internal fun rubySliceFor(ruby: String, start: Int, end: Int, segStart: Int, segEnd: Int): String {
     val baseLen = end - start
@@ -62,6 +89,9 @@ internal fun rubySliceFor(ruby: String, start: Int, end: Int, segStart: Int, seg
  * wraps. Kana or ideographs read one character at a time, so a furigana or
  * pinyin reading follows its characters; a number, a word or a gloss over a
  * Latin, Hebrew or Greek base stays whole over the widest segment.
+ *
+ * True for 創造 and for 天地, so そうぞう may be cut in two. False for `God`, so
+ * a Strong's number such as `G2316` over it is never cut into `G23` and `16`.
  */
 internal fun rubySplitsAcrossLines(base: CharSequence): Boolean = base.any { ch ->
     val block = Character.UnicodeScript.of(ch.code)
@@ -79,8 +109,13 @@ private fun surrogateSafe(s: String, index: Int): Int =
  * contributes [leftSlackPx] / [rightSlackPx]: positive when the ruby may hang
  * over a neighbour without ruby, negative when a gap must be kept from a
  * neighbouring ruby. Zero when the ruby already fits.
+ *
+ * A 50px reading over a 40px two-character base needs 10px more, so each
+ * character is spread by 5px. Given 8px of overhang on the left the shortfall
+ * is only 2px, so each character is spread by 1px; given 8px on both sides the
+ * reading fits and nothing is spread.
  */
-internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLength: Int, leftSlackPx: Float = 0f, rightSlackPx: Float = 0f): Float {
+internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLength: Int, leftSlackPx: Float, rightSlackPx: Float): Float {
     val needed = rubyWidthPx - leftSlackPx - rightSlackPx
     if (baseLength <= 0 || needed <= baseWidthPx) return 0f
     return (needed - baseWidthPx) / baseLength
@@ -93,6 +128,11 @@ internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLen
  * beyond it, belongs to another ruby; zero at the start or end of the text or
  * at a line break. Looking past spaces keeps two long glosses over
  * neighbouring words from meeting over the space between them.
+ *
+ * For 神 in 神は, the neighbour は carries no reading, so かみ may overhang it.
+ * In 起初 every character carries a reading, so each side yields `-sideGapPx`
+ * instead. Between two glossed words separated by a space the space itself is
+ * skipped, and the glossed word beyond it still yields `-sideGapPx`.
  */
 internal fun rubySideSlackPx(
     text: CharSequence,
@@ -118,6 +158,11 @@ internal fun rubySideSlackPx(
  * wider it slides towards the side that has room ([leftSlackPx] and
  * [rightSlackPx] as returned by [rubySideSlackPx]), so an overhang lands on a
  * ruby-free neighbour and never on the neighbouring reading.
+ *
+ * Over a base spanning 10 until 30, a 16px reading is centred at 12. A 26px
+ * reading with 8px of room on the left and a 2px gap owed on the right is
+ * placed at 2 rather than centred at 7, so the whole 6px overhang falls on the
+ * ruby-free left neighbour and the right edge stops short of the next reading.
  */
 internal fun rubyLeftPx(leftPx: Float, rightPx: Float, rubyWidthPx: Float, leftSlackPx: Float, rightSlackPx: Float): Float {
     val centred = (leftPx + rightPx - rubyWidthPx) / 2f

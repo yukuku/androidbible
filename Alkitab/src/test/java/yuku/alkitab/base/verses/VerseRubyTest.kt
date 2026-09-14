@@ -76,19 +76,19 @@ class VerseRubyTest {
 
     @Test
     fun `letter spacing is zero when the ruby is narrower than its base`() {
-        assertEquals(0f, rubyLetterSpacingPx(40f, 30f, 2))
-        assertEquals(0f, rubyLetterSpacingPx(40f, 40f, 2))
+        assertEquals(0f, rubyLetterSpacingPx(40f, 30f, 2, 0f, 0f))
+        assertEquals(0f, rubyLetterSpacingPx(40f, 40f, 2, 0f, 0f))
     }
 
     @Test
     fun `letter spacing spreads the overflow evenly over the base characters`() {
-        assertEquals(5f, rubyLetterSpacingPx(40f, 50f, 2))
-        assertEquals(10f, rubyLetterSpacingPx(40f, 50f, 1))
+        assertEquals(5f, rubyLetterSpacingPx(40f, 50f, 2, 0f, 0f))
+        assertEquals(10f, rubyLetterSpacingPx(40f, 50f, 1, 0f, 0f))
     }
 
     @Test
     fun `letter spacing is zero for an empty base`() {
-        assertEquals(0f, rubyLetterSpacingPx(0f, 50f, 0))
+        assertEquals(0f, rubyLetterSpacingPx(0f, 50f, 0, 0f, 0f))
     }
 
     @Test
@@ -105,7 +105,7 @@ class VerseRubyTest {
 
     @Test
     fun `side slack depends on what the neighbouring character carries`() {
-        val rubies = listOf(RubyRange(2, 3, "しゅ"), RubyRange(3, 4, "い"))
+        val rubies = listOf(RubyRange(2, 3, "しゅ", null), RubyRange(3, 4, "い", null))
         val text = "ab主言う\nx"
         assertEquals(8f, rubySideSlackPx(text, rubies, 1, -1, 8f, 2f))
         assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f))
@@ -117,7 +117,7 @@ class VerseRubyTest {
 
     @Test
     fun `a ruby beyond a space still counts as a neighbouring ruby`() {
-        val rubies = listOf(RubyRange(0, 3, "in the beginning"), RubyRange(4, 6, "created"))
+        val rubies = listOf(RubyRange(0, 3, "in the beginning", null), RubyRange(4, 6, "created", null))
         val text = "aaa bb cc"
         assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f))
         assertEquals(-2f, rubySideSlackPx(text, rubies, 3, -1, 8f, 2f))

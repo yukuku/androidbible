@@ -558,9 +558,9 @@ internal data class LineMetrics(
      * Zero when the verse has no ruby; then the extra line spacing is
      * distributed proportionally instead of stacked on top.
      */
-    val rubyBandPx: Float = 0f,
+    val rubyBandPx: Float,
     /** Distance from the baseline up to the top of the base glyphs. */
-    val baseAscentPx: Float = 0f,
+    val baseAscentPx: Float,
 )
 
 @Composable
@@ -589,7 +589,7 @@ internal fun computeLineMetrics(
     fontBold: Int,
     lineSpacingMult: Float,
     densityFactor: Float,
-    rubyFontSizeDp: Float = 0f,
+    rubyFontSizeDp: Float,
 ): LineMetrics {
     val resolvedTypeface = if (fontBold == android.graphics.Typeface.BOLD) {
         android.graphics.Typeface.create(typeface ?: android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)

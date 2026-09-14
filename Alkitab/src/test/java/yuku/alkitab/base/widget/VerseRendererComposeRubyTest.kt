@@ -36,7 +36,7 @@ class VerseRendererComposeRubyTest {
     fun `ruby tags leave the base text inline and report their ranges`() {
         val result = render("@@@<r=しゅ@>主@/は@<r=い@>言@/われる")
         assertEquals("1  主は言われる", result.text.text)
-        assertEquals(listOf(RubyRange(3, 4, "しゅ"), RubyRange(5, 6, "い")), result.rubies)
+        assertEquals(listOf(RubyRange(3, 4, "しゅ", null), RubyRange(5, 6, "い", null)), result.rubies)
     }
 
     @Test
@@ -61,21 +61,21 @@ class VerseRendererComposeRubyTest {
     fun `ruby offsets follow the hidden verse number`() {
         val result = render("@@@<r=かみ@>神@/は", isVerseNumberShown = false)
         assertEquals("神は", result.text.text)
-        assertEquals(listOf(RubyRange(0, 1, "かみ")), result.rubies)
+        assertEquals(listOf(RubyRange(0, 1, "かみ", null)), result.rubies)
     }
 
     @Test
     fun `a multi-character base gets one range`() {
         val result = render("@@@<r=chuàngzào@>创造@/天地")
         assertEquals("1  创造天地", result.text.text)
-        assertEquals(listOf(RubyRange(3, 5, "chuàngzào")), result.rubies)
+        assertEquals(listOf(RubyRange(3, 5, "chuàngzào", null)), result.rubies)
     }
 
     @Test
     fun `ruby works alongside red letters and footnotes`() {
         val result = render("@@@6@<r=しゅ@>主@/@5@<f1@>@/")
         assertEquals("1  主¹", result.text.text)
-        assertEquals(listOf(RubyRange(3, 4, "しゅ")), result.rubies)
+        assertEquals(listOf(RubyRange(3, 4, "しゅ", null)), result.rubies)
         assertEquals(1, result.inlineLinks.size)
         assertEquals(4, result.inlineLinks[0].start)
     }
@@ -91,7 +91,7 @@ class VerseRendererComposeRubyTest {
     fun `a stray closing tag after a ruby produces no second range`() {
         val result = render("@@@<r=しゅ@>主@/は@/言")
         assertEquals("1  主は言", result.text.text)
-        assertEquals(listOf(RubyRange(3, 4, "しゅ")), result.rubies)
+        assertEquals(listOf(RubyRange(3, 4, "しゅ", null)), result.rubies)
     }
 
     @Test
@@ -135,14 +135,14 @@ class VerseRendererComposeRubyTest {
         val emoji = "\uD83D\uDE00"
         val result = render("@@@<r=$emoji\u200D\u0301 a=b @>\uD83E\uDD16e\u0301\u05D0@/")
         assertEquals("1  \uD83E\uDD16e\u0301\u05D0", result.text.text)
-        assertEquals(listOf(RubyRange(3, 8, "$emoji\u200D\u0301 a=b ")), result.rubies)
+        assertEquals(listOf(RubyRange(3, 8, "$emoji\u200D\u0301 a=b ", null)), result.rubies)
     }
 
     @Test
     fun `a base run may span a line break and paragraph codes`() {
         val result = render("@@@<r=abc@>x@8y@1z@/")
         assertEquals("1  x\nyz", result.text.text)
-        assertEquals(listOf(RubyRange(3, 7, "abc")), result.rubies)
+        assertEquals(listOf(RubyRange(3, 7, "abc", null)), result.rubies)
     }
 
     @Test
@@ -150,7 +150,7 @@ class VerseRendererComposeRubyTest {
         val longRuby = "r".repeat(5000)
         val longBase = "b".repeat(5000)
         val result = render("@@@<r=$longRuby@>$longBase@/")
-        assertEquals(listOf(RubyRange(3, 3 + longBase.length, longRuby)), result.rubies)
+        assertEquals(listOf(RubyRange(3, 3 + longBase.length, longRuby, null)), result.rubies)
         val many = buildString { repeat(2000) { append("@<r=x@>y@/") } }
         assertEquals(2000, render("@@$many").rubies.size)
     }

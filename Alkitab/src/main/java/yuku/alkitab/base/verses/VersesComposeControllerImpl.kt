@@ -987,7 +987,7 @@ internal fun PericopeHeaderComposeItem(
         val parallelsFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace) }
         val titleSizeDp = applied.fontSize2dp * ui.textSizeMult
         val titleLineMetrics = remember(applied.fontFace, titleSizeDp, applied.lineSpacingMult, unscaledDensity.density) {
-            computeLineMetrics(applied.fontFace, titleSizeDp, android.graphics.Typeface.BOLD, applied.lineSpacingMult, unscaledDensity.density)
+            computeLineMetrics(applied.fontFace, titleSizeDp, android.graphics.Typeface.BOLD, applied.lineSpacingMult, unscaledDensity.density, rubyFontSizeDp = 0f)
         }
 
         val titleText = remember(pericopeBlock.title) {
@@ -1023,7 +1023,7 @@ internal fun PericopeHeaderComposeItem(
             if (pericopeBlock.parallels.isNotEmpty()) {
                 val parallelsSizeDp = titleSizeDp * 0.8235294f
                 val parallelsLineMetrics = remember(applied.fontFace, parallelsSizeDp, applied.lineSpacingMult, unscaledDensity.density) {
-                    computeLineMetrics(applied.fontFace, parallelsSizeDp, android.graphics.Typeface.NORMAL, applied.lineSpacingMult, unscaledDensity.density)
+                    computeLineMetrics(applied.fontFace, parallelsSizeDp, android.graphics.Typeface.NORMAL, applied.lineSpacingMult, unscaledDensity.density, rubyFontSizeDp = 0f)
                 }
                 val parallelsText = remember(pericopeBlock, listeners) {
                     buildParallelsAnnotatedString(pericopeBlock.parallels, listeners.parallelListener_)

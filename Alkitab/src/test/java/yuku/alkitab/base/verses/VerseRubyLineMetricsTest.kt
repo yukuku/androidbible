@@ -23,14 +23,14 @@ class VerseRubyLineMetricsTest {
 
     @Test
     fun `a verse without ruby reserves no band`() {
-        val m = computeLineMetrics(null, 16f, android.graphics.Typeface.NORMAL, 1f, 2f)
+        val m = computeLineMetrics(null, 16f, android.graphics.Typeface.NORMAL, 1f, 2f, rubyFontSizeDp = 0f)
         assertEquals(0f, m.rubyBandPx)
         assertTrue(m.baseAscentPx > 0f)
     }
 
     @Test
     fun `ruby adds a band on top of the line and the gutter number moves down by the whole surplus`() {
-        val plain = computeLineMetrics(null, 16f, android.graphics.Typeface.NORMAL, 1f, 2f)
+        val plain = computeLineMetrics(null, 16f, android.graphics.Typeface.NORMAL, 1f, 2f, rubyFontSizeDp = 0f)
         val ruby = computeLineMetrics(null, 16f, android.graphics.Typeface.NORMAL, 1f, 2f, rubyFontSizeDp = 8f)
         assertTrue(ruby.rubyBandPx > 0f)
         assertEquals(plain.lineHeightSp + ruby.rubyBandPx / 2f, ruby.lineHeightSp, 0.01f)
