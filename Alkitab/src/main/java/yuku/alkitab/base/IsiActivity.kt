@@ -797,6 +797,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
      * The audio bar's view of `IsiActivity`. Reads the activity's current
      * book/chapter/version and translates chapter-nav taps back into the
      * existing `display(...)` flow.
+     *
+     * Version labels come from [Version.getInitials], not [Version.getShortName]:
+     * a short name is optional in the version metadata and is null for some
+     * downloaded versions, and the audio UI needs a label for every version it
+     * lists.
      */
     private val audioBarHost = object : AudioBarController.Host {
         override fun audioCurrentBook(): Book = activeSplit0.book
@@ -807,9 +812,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         )
 
         override fun audioAvailableSources(): List<AudioSourceOption> = buildList {
-            audioSourceOptionFor(activeSplit0.versionId, activeSplit0.version.shortName)?.let(::add)
+            audioSourceOptionFor(activeSplit0.versionId, activeSplit0.version.initials)?.let(::add)
             activeSplit1?.let { s1 ->
-                audioSourceOptionFor(s1.versionId, s1.version.shortName)?.let(::add)
+                audioSourceOptionFor(s1.versionId, s1.version.initials)?.let(::add)
             }
         }
 
@@ -825,8 +830,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         override fun audioVersionShortName(versionId: String): String? {
             val s1 = activeSplit1
             return when {
-                versionId == activeSplit0.versionId -> activeSplit0.version.shortName
-                s1 != null && versionId == s1.versionId -> s1.version.shortName
+                versionId == activeSplit0.versionId -> activeSplit0.version.initials
+                s1 != null && versionId == s1.versionId -> s1.version.initials
                 else -> null
             }
         }
