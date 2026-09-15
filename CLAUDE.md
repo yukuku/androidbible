@@ -262,6 +262,7 @@ Detailed documentation for each major feature module:
 - [Architecture Deep Dive](docs/architecture.md) — Singleton patterns, data flow, module dependencies
 - [Build System](docs/build-system.md) — Flavors, signing, CI/CD, release process
 - [Google Play Publishing](docs/play-publishing.md) — Manual store uploads via `tools/play/publish.py`, GPP-shaped metadata layout
+- [Store Screenshots](docs/screenshots.md) — Generated Play screenshots via `StoreScreenshotTest` and `tools/screenshots/capture.py`
 - [Text Rendering](docs/text-rendering.md) — Verse formatting pipeline and codes
 - [Binary Formats](docs/binary-formats.md) — YES2, Bintex, RPB file format specs
 - [Storage & Database](docs/storage.md) — SQLite schema, preferences, file storage
@@ -301,6 +302,7 @@ Detailed documentation for each major feature module:
 
 ## Documentation Conventions
 
+- **IMPORTANT. This is a public repository. Never write a local absolute path, home directory, or machine-specific layout into anything that leaves this machine** — commits, code comments, docs under `docs/`, commit messages, PR titles and descriptions, issue comments, or CI logs. A path like `~/<somewhere>/androidbible-proprietary` or `/Users/<name>/...` discloses the maintainer's private filesystem layout to everyone who reads the repo, and a PR description cannot be un-published once pushed. Write a placeholder instead: `/path/to/proprietary`, `<repo root>`, `$ALKITAB_PROPRIETARY_DIR`. This applies even when the real path was given to you in conversation, and even when the path is only an example in a command someone might copy. The same goes for anything else that is local rather than universal: absolute paths to keystores, service-account JSON files, device serials, and API tokens. (A few old files under `publication/prog/` and `tools/AlkitabConverterProcesses/` still hardcode such paths; leave them alone unless asked to clean them up.)
 - **Do not include SHAs, commit hashes, line numbers, line counts, or library version numbers** in long-lived docs (`docs/tech-debt.md`, `docs/tech-debt-remediation.md`, this `CLAUDE.md`, etc.). They rot on rebase/squash-merge, refactors, and dependency bumps, and are fragile to maintain. Refer to code by symbol name (class/method), and point at `gradle/libs.versions.toml` instead of naming dependency versions. When recording that a step is done, describe what shipped (file paths, test counts, scope) and use an absolute date — never a SHA. (Older entries in these docs may still reference SHAs; leave them alone unless explicitly asked to clean up.)
 
 ## Important Caveats
