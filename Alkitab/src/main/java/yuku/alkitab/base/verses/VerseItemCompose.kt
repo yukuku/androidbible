@@ -676,6 +676,9 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
             fontWeight = FontWeight.Normal,
         )
     }
+    val spaceWidthPx = remember(textStyle, textMeasurer) {
+        textMeasurer.measure(AnnotatedString(" "), textStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+    }
     val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density.density) {
         widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density.density)
     }
@@ -700,6 +703,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     textColor = textColor,
                     baseAscentPx = lineMetrics.baseAscentPx,
                     gapPx = state.fontSizeDp * RUBY_FONT_SIZE_RATIO * RUBY_GAP_RATIO * density.density,
+                    spaceWidthPx = spaceWidthPx,
                 ),
             onTextLayout = { textLayoutResult = it },
         )

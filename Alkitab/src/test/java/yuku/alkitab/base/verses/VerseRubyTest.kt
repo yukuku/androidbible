@@ -107,21 +107,34 @@ class VerseRubyTest {
     fun `side slack depends on what the neighbouring character carries`() {
         val rubies = listOf(RubyRange(2, 3, "しゅ", null), RubyRange(3, 4, "い", null))
         val text = "ab主言う\nx"
-        assertEquals(8f, rubySideSlackPx(text, rubies, 1, -1, 8f, 2f))
-        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f))
-        assertEquals(8f, rubySideSlackPx(text, rubies, 4, 1, 8f, 2f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, 5, 1, 8f, 2f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, -1, -1, 8f, 2f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, text.length, 1, 8f, 2f))
+        assertEquals(8f, rubySideSlackPx(text, rubies, 1, -1, 8f, 2f, 4f))
+        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f, 4f))
+        assertEquals(8f, rubySideSlackPx(text, rubies, 4, 1, 8f, 2f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, 5, 1, 8f, 2f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, -1, -1, 8f, 2f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, text.length, 1, 8f, 2f, 4f))
     }
 
     @Test
-    fun `a ruby beyond a space still counts as a neighbouring ruby`() {
+    fun `two annotated words split the space between them, each keeping a side gap`() {
         val rubies = listOf(RubyRange(0, 3, "in the beginning", null), RubyRange(4, 6, "created", null))
         val text = "aaa bb cc"
-        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f))
-        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, -1, 8f, 2f))
-        assertEquals(8f, rubySideSlackPx(text, rubies, 6, 1, 8f, 2f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, 3, -1, 8f, 2f, 4f))
+    }
+
+    @Test
+    fun `a wider space between two annotated words gives each of them more room`() {
+        val rubies = listOf(RubyRange(0, 3, "in the beginning", null), RubyRange(5, 7, "created", null))
+        val text = "aaa  bb cc"
+        assertEquals(6f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f, 8f))
+    }
+
+    @Test
+    fun `the space beside an unannotated neighbour is claimed whole, on top of the overhang`() {
+        val rubies = listOf(RubyRange(0, 3, "in the beginning", null), RubyRange(4, 6, "created", null))
+        val text = "aaa bb cc"
+        assertEquals(12f, rubySideSlackPx(text, rubies, 6, 1, 8f, 2f, 4f))
     }
 
     @Test
