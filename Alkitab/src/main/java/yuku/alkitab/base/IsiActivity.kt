@@ -156,13 +156,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     private val actionModeController by lazy { VerseActionModeController(this, this) }
 
-    // -- Audio bar (M3) -- thin glue from the activity to the Compose audio bar.
-    // The controller binds to BibleAudioService, projects PlaybackState into a
-    // UI-shaped flow, and renders the bar inside `R.id.audio_bar`. The host
-    // implementation below feeds it the chapter context it needs to label
-    // prev/next-chapter buttons and to navigate when the user taps them.
     private val audioBinder: AudioBarController by lazy { AudioBarController(applicationContext) }
-    /** Cached overlay color, recomputed when the reading theme changes. */
     private var audioHighlightColorCached: Int = 0
 
     // --- VerseActionModeHost overrides ---
@@ -714,16 +708,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
 
-        // Audio bar: attach the Compose host and wire up the menu refresh.
-        // Audio-set availability is resolved per version and asynchronously by
-        // resolveAudioSetsAsync, which onStart drives, so the toolbar icon
-        // appears once the answer for the visible version(s) lands.
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
         lifecycleScope.launch {
-            // 100 ms tick rate while playing — this collector only drives the
-            // verse highlight, never invalidateOptionsMenu(); menu refreshes
-            // all flow through `audioBarVisibilityChanged`.
             audioBinder.uiState.collect { state ->
                 val playing = state.playingVersionId
                 val split0Match = playing != null && playing == activeSplit0.versionId
@@ -793,11 +780,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         controller.setAudioHighlight(verse_1, audioHighlightColorCached)
     }
 
-    /**
-     * The audio bar's view of `IsiActivity`. Reads the activity's current
-     * book/chapter/version and translates chapter-nav taps back into the
-     * existing `display(...)` flow.
-     */
+    /** Version labels use [Version.getInitials] because a version's short name is optional and may be null. */
     private val audioBarHost = object : AudioBarController.Host {
         override fun audioCurrentBook(): Book = activeSplit0.book
         override fun audioCurrentChapter1(): Int = chapter_1
@@ -807,9 +790,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         )
 
         override fun audioAvailableSources(): List<AudioSourceOption> = buildList {
-            audioSourceOptionFor(activeSplit0.versionId, activeSplit0.version.shortName)?.let(::add)
+            audioSourceOptionFor(activeSplit0.versionId, activeSplit0.version.initials)?.let(::add)
             activeSplit1?.let { s1 ->
-                audioSourceOptionFor(s1.versionId, s1.version.shortName)?.let(::add)
+                audioSourceOptionFor(s1.versionId, s1.version.initials)?.let(::add)
             }
         }
 
@@ -825,16 +808,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         override fun audioVersionShortName(versionId: String): String? {
             val s1 = activeSplit1
             return when {
-                versionId == activeSplit0.versionId -> activeSplit0.version.shortName
-                s1 != null && versionId == s1.versionId -> s1.version.shortName
+                versionId == activeSplit0.versionId -> activeSplit0.version.initials
+                s1 != null && versionId == s1.versionId -> s1.version.initials
                 else -> null
             }
         }
 
         override fun audioDisplayChapter(book: Book, chapter_1: Int) {
-            // Switch book if needed - display() only retargets chapter
-            // within the current book, so update activeSplit0 first. display()
-            // refreshes the goto-button text itself.
+            // display() only retargets the chapter within the current book.
             if (book.bookId != activeSplit0.book.bookId) {
                 activeSplit0 = activeSplit0.copy(book = book)
             }
@@ -847,13 +828,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     /**
-     * The audio source option for [versionId], or null when the version has no
-     * audio for the current book: sets not yet resolved (cache miss — the
-     * async fetch fills it and re-prepares the menu), no sets at all, or the
-     * selected recording not covering the book being read. Book coverage is
-     * ragged upstream, so a version-level check alone would leave a toolbar
-     * button that only 404s; and the recording is not silently switched to one
-     * that covers the book — the entry point hides instead.
+     * Null when the sets are not cached yet, the version has none, or the selected recording does not
+     * cover the book being read. Coverage is ragged per book, so a version-level check alone would
+     * leave a toolbar button that only 404s.
      */
     private fun audioSourceOptionFor(versionId: String, shortName: String): AudioSourceOption? {
         val sets = AudioSetsRepository.cachedSetsFor(versionId)?.sets ?: return null
@@ -863,12 +840,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     /**
-     * Resolves audio-set availability for the visible version(s) off the main
-     * thread, then re-prepares the toolbar menu so the audio icon reflects the
-     * answer. `onPrepareOptionsMenu` itself only peeks the in-memory cache —
-     * an unresolved version keeps the icon hidden until this lands. A brief
-     * absence on a genuinely cold first open beats a blocking network call on
-     * the main thread, and an icon that is present but dead.
+     * Resolves audio-set availability off the main thread, then re-prepares the menu. Menu preparation
+     * only peeks the in-memory cache, so an unresolved version keeps the audio icon hidden until this lands.
      */
     private fun resolveAudioSetsAsync() {
         val versionIds = listOfNotNull(activeSplit0.versionId, activeSplit1?.versionId)
@@ -1224,24 +1197,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             needsRestart = false
             recreate()
         }
-        // Re-resolve the audio overlay color in case the user changed the
-        // reading theme via the textAppearancePanel while we were stopped.
+        // The reading theme may have changed while we were stopped.
         audioHighlightColorCached = 0
 
-        // Restore the audio bar + toolbar indicator if the service kept playing
-        // across recreation (rotation) or while we were backgrounded. Covers
-        // both a freshly recreated activity and a return on the same instance.
         audioBinder.reshowIfSessionActive()
 
-        // Also the recovery point for a version whose audio-set resolution
-        // failed: returning to the reader is when the connectivity that hid the
-        // icon is most likely to have come back.
+        // Returning to the reader is the recovery point for a resolution that failed while offline.
         resolveAudioSetsAsync()
     }
 
     override fun onDestroy() {
-        // Release the activity-side bindings; the service itself stays alive
-        // if audio is playing (M4 lock-screen behavior).
+        // Only the activity-side bindings: the service stays alive while audio plays.
         audioBinder.detach()
         super.onDestroy()
     }
@@ -1382,17 +1348,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         menu.clear()
         menuInflater.inflate(R.menu.activity_isi, menu)
 
-        // Audio bar: hide the icon when none of the visible versions have
-        // audio covering the current book, and swap to the active variant
-        // (small accent dot in the upper-end corner) while the bar is open so
-        // the user can tell at a glance that an audio session is engaged. Both
-        // drawables are 24dp — same toolbar slot, no reflow on the swap. The
-        // icon stays static while the player is preparing — the bar's
-        // play-button progress ring is the loading indicator, and a second
-        // spinner in the toolbar would just add churn to the chrome.
-        // Availability is a non-blocking cache peek; on a miss the icon stays
-        // hidden and the async resolution below re-prepares the menu once the
-        // per-version answer lands.
         resolveAudioSetsAsync()
         val menuAudio = menu.findItem(R.id.menuAudio)
         if (menuAudio != null) {
@@ -1470,9 +1425,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private fun setupSafeAreaInsets() {
         val safeAreaTypes = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
 
-        // A ComposeView consumes insets by default, which would stop the
-        // dispatch from ever reaching sibling views listed after it (the
-        // bottom-docked toolbar, the floater, the left drawer).
+        // A ComposeView consumes insets by default, which would stop the dispatch from ever
+        // reaching the sibling views listed after it (bottom toolbar, floater, left drawer).
         root.requireViewById<ComposeView>(R.id.audio_bar).consumeWindowInsets = false
 
         val tv = TypedValue()
