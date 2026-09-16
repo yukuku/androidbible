@@ -45,7 +45,6 @@ import yuku.alkitab.util.Ari
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class VerseRubySnapshotTest {
 
-    private val ROW_WIDTH_PX = 360
     private val LABEL_HEIGHT_PX = 22
     private val ROW_GAP_PX = 8
 
@@ -64,6 +63,7 @@ class VerseRubySnapshotTest {
 
     private class Variant(
         val name: String,
+        val widthPx: Int = 360,
         val fontSizeDp: Float = 17f,
         val bold: Boolean = false,
         val lineSpacingMult: Float = 1.15f,
@@ -79,6 +79,9 @@ class VerseRubySnapshotTest {
     /** Every word annotated, so each base run has an annotated neighbour on both sides. Short words carry a reading far wider than themselves. */
     private val EVERY_WORD_STRONGS = "@@@<rs=H4390@>penuhilah@/ @<rs=H4325@>air@/ @<rs=H322@>di@/ @<rs=H3220@>lautan@/, @<rs=H5921@>dan@/ @<rs=H5775@>burung-burung@/ @<rs=H7235@>berlipat@/ @<rs=H776@>ganda@/ @<rs=H5921@>di@/ @<rs=H776@>bumi@/."
 
+    /** A short base carries four Strong's numbers mid line, with annotated words running on to the right edge behind it. */
+    private val WIDE_READING_MID_LINE = "@@@<rs=H583@>Enos@/ @<rs=H2421@>hidup@/ @<rs=H2568 H6240 H8083 H3967@>815@/ @<rs=H8141@>tahun@/ @<rs=H310@>lagi@/, @<rs=H310@>setelah@/ @<rs=H1931@>ia@/ @<rs=H3205@>memperanakkan@/ @<rs=H7018@>Kenan@/."
+
     /** A base whose reading is far wider than it lands at the start of a wrapped line, where the space before it is collapsed by the line break. */
     private val WIDE_READING_WRAPS = "@@@<rs=H3605@>Jadi@/, @<rs=H3117@>seluruh@/ @<rs=H2416@>masa@/ @<rs=H121@>hidup@/ @<rs=H1961@>Adam@/ @<rs=H1961@>adalah@/ @<rs=H8672 H3967 H7970@>930@/ @<rs=H8141@>tahun@/, @<rs=H4191@>kemudian@/ @<rs=H4191@>dia@/ @<rs=H4191@>mati@/."
 
@@ -91,6 +94,7 @@ class VerseRubySnapshotTest {
             Sample("latin base, Strong's style ruby", STRONGS),
             Sample("every word annotated, short words", EVERY_WORD_STRONGS),
             Sample("wide reading on a base that starts a wrapped line", WIDE_READING_WRAPS),
+            Sample("wide reading mid line, annotated word after it", WIDE_READING_MID_LINE),
             Sample("multi-word gloss over one word", "@@@<r=in the beginning@>בְּרֵאשִׁית@/ @<r=created@>בָּרָא@/ @<r=God@>אֱלֹהִים@/"),
             Sample("wrapped base run", "@@aaaa bbbb cccc dddd eeee ffff gggg hhhh iiii jjjj kkkk llll mmmm nnnn @<r=one two three four five six seven@>wrapped-across-lines@/ and after."),
             Sample("no ruby, same font", "@@In the beginning God created the heaven and the earth."),
@@ -138,6 +142,7 @@ class VerseRubySnapshotTest {
             Sample("nested rubies", "@@@<r=outer@>a@<r=inner@>b@/c@/ done"),
             Sample("base across @8 and paragraph codes", "@@@<r=reading@>first@8second@1third@/ tail"),
             Sample("two hundred rubies", "@@" + buildString { repeat(200) { append("@<r=${it % 10}@>x@/") } }),
+            Sample("more readings than the line can hold", "@@@<rs=H583@>Enos@/ @<rs=H2421@>hidup@/ @<rs=H2568 H6240 H8083 H3967 H1111 H2222@>815@/ @<rs=H8141@>tahun@/ @<rs=H310@>lagi@/."),
             Sample("ruby at very start and very end", "@@@<r=start@>S@/ middle @<r=end@>E@/"),
             Sample("ruby at very start in gutter mode", "@@@1@<r=start@>S@/ middle @<r=end@>E@/"),
             Sample("reading with @-like text and tabs", "@@@<r=a\tb=c@>base@/ @<r=<r=x@>@>y@/"),
@@ -152,6 +157,7 @@ class VerseRubySnapshotTest {
         Variant("line spacing 1.6", lineSpacingMult = 1.6f),
         Variant("line spacing 1.0", lineSpacingMult = 1.0f),
         Variant("night theme", night = true),
+        Variant("device width 1008px, large 26dp", widthPx = 1008, fontSizeDp = 26f),
     )
 
     private val variantSamples = listOf(
@@ -161,6 +167,7 @@ class VerseRubySnapshotTest {
         Sample("no ruby", "@@In the beginning God created the heaven and the earth."),
         Sample("every word annotated, short words", EVERY_WORD_STRONGS),
         Sample("wide reading on a base that starts a wrapped line", WIDE_READING_WRAPS),
+        Sample("wide reading mid line, annotated word after it", WIDE_READING_MID_LINE),
     )
 
     private class FakeVerses(private val texts: List<String>) : SingleChapterVerses {
@@ -246,10 +253,10 @@ class VerseRubySnapshotTest {
         pipeline.frame.setBackgroundColor(dims.backgroundColor)
         val data = buildData(samples, variant)
         val ui = VersesUiModel.EMPTY.copy(isVerseNumberShown = variant.verseNumberShown)
-        val rendered = samples.mapIndexed { index, sample -> sample to renderCompose(pipeline, data, ui, index, sample.checked) }
+        val rendered = samples.mapIndexed { index, sample -> sample to renderCompose(pipeline, data, ui, index, sample.checked, variant.widthPx) }
 
         val height = LABEL_HEIGHT_PX + rendered.sumOf { (_, bitmap) -> LABEL_HEIGHT_PX + bitmap.height + ROW_GAP_PX }
-        val sheet = Bitmap.createBitmap(ROW_WIDTH_PX, height, Bitmap.Config.ARGB_8888)
+        val sheet = Bitmap.createBitmap(variant.widthPx, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(sheet)
         canvas.drawColor(dims.backgroundColor)
         val caption = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -299,7 +306,7 @@ class VerseRubySnapshotTest {
         )
     }
 
-    private fun renderCompose(pipeline: Pipeline, data: VersesDataModel, ui: VersesUiModel, index: Int, checked: Boolean): Bitmap {
+    private fun renderCompose(pipeline: Pipeline, data: VersesDataModel, ui: VersesUiModel, index: Int, checked: Boolean, widthPx: Int): Bitmap {
         val view = VerseItemComposeView(pipeline.activity)
         pipeline.frame.addView(view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         idleLoopers()
@@ -317,7 +324,7 @@ class VerseRubySnapshotTest {
         view.bind(state)
         view.checked = checked
         idleLoopers()
-        val bitmap = measureAndDraw(view, dims.backgroundColor)
+        val bitmap = measureAndDraw(view, dims.backgroundColor, widthPx)
         pipeline.frame.removeView(view)
         idleLoopers()
         return bitmap
@@ -335,10 +342,10 @@ class VerseRubySnapshotTest {
         return Pipeline(controller, frame)
     }
 
-    private fun measureAndDraw(view: View, background: Int): Bitmap {
+    private fun measureAndDraw(view: View, background: Int, widthPx: Int): Bitmap {
         repeat(2) {
             view.measure(
-                View.MeasureSpec.makeMeasureSpec(ROW_WIDTH_PX, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(widthPx, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
             )
             view.layout(0, 0, view.measuredWidth, view.measuredHeight.coerceAtLeast(1))

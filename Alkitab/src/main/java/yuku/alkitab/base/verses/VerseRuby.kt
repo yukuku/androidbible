@@ -67,6 +67,19 @@ internal const val RUBY_OVERHANG_RATIO = 1f
 internal const val RUBY_MAX_LETTER_SPACING_EM = 2f
 
 /**
+ * Cap on the padding a reading may add to one space character beside its base,
+ * in base font sizes. What a reading needs there depends on how much wider it
+ * is than its base, not on how many characters the base happens to have, so a
+ * three digit verse figure under four Strong's numbers may claim as much room
+ * as a long word under the same four.
+ *
+ * At 17dp verse text a space grows by at most 102dp, enough to seat six
+ * Strong's numbers over a three digit base. A reading wider than that stops
+ * widening the line and is placed by [rubyLineLayoutPx] instead.
+ */
+internal const val RUBY_MAX_SPACE_PAD_EM = 6f
+
+/**
  * The part of [ruby] that belongs to the base characters `segStart until segEnd`
  * when the base run `start until end` is broken across lines. The reading is
  * split by character count, so a two-kanji word broken in the middle keeps
@@ -159,18 +172,6 @@ internal fun rubySideSlackPx(
 }
 
 /**
- * Left edge of a reading of width [rubyWidthPx] over a base run spanning
- * [leftPx] until [rightPx]. The reading is centred when it fits; when it is
- * wider it slides towards the side that has room ([leftSlackPx] and
- * [rightSlackPx] as returned by [rubySideSlackPx]), so an overhang lands on a
- * ruby-free neighbour and never on the neighbouring reading.
- *
- * Over a base spanning 10 until 30, a 16px reading is centred at 12. A 26px
- * reading with 8px of room on the left and a 2px gap owed on the right is
- * placed at 2 rather than centred at 7, so the whole 6px overhang falls on the
- * ruby-free left neighbour and the right edge stops short of the next reading.
- */
-/**
  * Left edge a reading of [readingWidthPx] takes when centred over a base
  * spanning [baseLeftPx] until [baseRightPx]. A neighbouring reading is assumed
  * to sit here, so this is what bounds the room beside it.
@@ -181,13 +182,6 @@ internal fun rubySideSlackPx(
  */
 internal fun rubyCentredLeftPx(baseLeftPx: Float, baseRightPx: Float, readingWidthPx: Float): Float =
     (baseLeftPx + baseRightPx - readingWidthPx) / 2f
-
-internal fun rubyLeftPx(leftPx: Float, rightPx: Float, rubyWidthPx: Float, leftSlackPx: Float, rightSlackPx: Float): Float {
-    val centred = (leftPx + rightPx - rubyWidthPx) / 2f
-    val minX = leftPx - leftSlackPx
-    val maxX = rightPx + rightSlackPx - rubyWidthPx
-    return if (maxX < minX) centred else centred.coerceIn(minX, maxX)
-}
 
 /**
  * The color the base character at [offset] is painted with: the innermost span
@@ -247,7 +241,7 @@ internal fun widenRubyBases(
         val leftSlack = rubySideSlackPx(text, rubies, start - 1, -1, overhangPx, sideGapPx, spaceWidthPx)
         val rightSlack = rubySideSlackPx(text, rubies, end, 1, overhangPx, sideGapPx, spaceWidthPx)
         val maxSpacingPx = textStyle.fontSize.value * density * RUBY_MAX_LETTER_SPACING_EM
-        val maxPadPx = maxSpacingPx * (end - start) / 2f
+        val maxPadPx = textStyle.fontSize.value * density * RUBY_MAX_SPACE_PAD_EM
         val leftPad = (halfOverflowPx - leftSlack).coerceIn(0f, maxPadPx)
         val rightPad = (halfOverflowPx - rightSlack).coerceIn(0f, maxPadPx)
         if (leftPad <= 0f && rightPad <= 0f) continue
