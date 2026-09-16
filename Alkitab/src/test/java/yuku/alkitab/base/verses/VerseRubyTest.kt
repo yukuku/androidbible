@@ -199,6 +199,37 @@ class VerseRubyTest {
     }
 
     @Test
+    fun `a line with room lets every reading keep its whole width`() {
+        val widths = floatArrayOf(130f, 40f, 40f)
+        val xs = rubyLineLayoutPx(
+            desiredLeftPx = floatArrayOf(-45f, 20f, 300f),
+            widthPx = widths,
+            lineLeftPx = 0f,
+            lineRightPx = 720f,
+            sideGapPx = 2f,
+        )
+        val allowed = rubyAllowedWidthsPx(xs, 720f, 2f)
+        for (i in widths.indices) {
+            assertTrue("reading $i may only take ${allowed[i]} of the ${widths[i]} it needs", allowed[i] >= widths[i])
+        }
+    }
+
+    @Test
+    fun `a line with more readings than room hands back less than they need, never a negative`() {
+        val widths = floatArrayOf(200f, 200f, 200f)
+        val xs = rubyLineLayoutPx(
+            desiredLeftPx = floatArrayOf(0f, 10f, 20f),
+            widthPx = widths,
+            lineLeftPx = 0f,
+            lineRightPx = 360f,
+            sideGapPx = 2f,
+        )
+        val allowed = rubyAllowedWidthsPx(xs, 360f, 2f)
+        assertTrue("widths must never go negative: ${allowed.toList()}", allowed.all { it >= 0f })
+        assertTrue("a crowded line must shorten something: ${allowed.toList()}", allowed.indices.any { allowed[it] < widths[it] })
+    }
+
+    @Test
     fun `ruby color follows the innermost colored span at the base offset`() {
         val text = buildAnnotatedString {
             append("abcdef")

@@ -16,6 +16,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.sp
+import kotlin.math.ceil
 import yuku.alkitab.base.widget.VerseRendererCompose
 
 /**
@@ -365,16 +366,15 @@ internal fun Modifier.rubyOverlay(
                 lineRightPx = size.width,
                 sideGapPx = sideGapPx,
             )
+            val allowed = rubyAllowedWidthsPx(xs, size.width, sideGapPx)
             for ((i, p) in placements.withIndex()) {
-                val nextLeft = if (i == placements.lastIndex) size.width else xs[i + 1] - sideGapPx
-                val allowedPx = (nextLeft - xs[i]).coerceAtLeast(0f)
                 val measured = textMeasurer.measure(
                     AnnotatedString(p.slice),
                     rubyStyle,
                     overflow = TextOverflow.Ellipsis,
                     softWrap = false,
                     maxLines = 1,
-                    constraints = Constraints(maxWidth = minOf(maxWidthPx, allowedPx.toInt())),
+                    constraints = Constraints(maxWidth = minOf(maxWidthPx, ceil(allowed[i]).toInt())),
                 )
                 val y = glyphTop - gapPx - measured.size.height
                 drawText(measured, color = rubyColorAt(text, p.colorOffset, textColor), topLeft = Offset(xs[i], y))
@@ -382,6 +382,23 @@ internal fun Modifier.rubyOverlay(
         }
     }
 }
+
+/**
+ * How much width each reading on a line may take, given the positions
+ * [rubyLineLayoutPx] chose for it: everything up to where the next one starts,
+ * less [sideGapPx], and up to [lineRightPx] for the last.
+ *
+ * A reading that got the place it asked for is allowed its full width, so
+ * nothing is ellipsised merely because the line is busy. Only a line holding
+ * more than it can fit hands back a width smaller than the reading needs. The
+ * caller rounds up, because a width computed back out of a position must not
+ * fall a fraction short of the reading it was derived from and cut it.
+ */
+internal fun rubyAllowedWidthsPx(leftPx: FloatArray, lineRightPx: Float, sideGapPx: Float): FloatArray =
+    FloatArray(leftPx.size) { i ->
+        val nextLeft = if (i == leftPx.lastIndex) lineRightPx else leftPx[i + 1] - sideGapPx
+        (nextLeft - leftPx[i]).coerceAtLeast(0f)
+    }
 
 /**
  * Where each reading on one line is drawn, given where it would like to be

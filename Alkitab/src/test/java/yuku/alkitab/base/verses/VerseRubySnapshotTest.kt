@@ -159,6 +159,8 @@ class VerseRubySnapshotTest {
         Sample("poetry, red letters", "@@@1@6「@<r=こころ@>心@/の@<r=まず@>貧@/しい@<r=ひと@>人@/たちは、さいわいである、@1@<r=てんごく@>天国@/は@<r=かれ@>彼@/らのものである。@5"),
         Sample("pinyin, partial highlight, selected", "@@@<r=Qǐ@>起@/@<r=chū@>初@/，@<r=shén@>神@/@<r=chuàng@>创@/@<r=zào@>造@/@<r=tiān@>天@/@<r=dì@>地@/。", checked = true, highlight = true, partial = "创造天地"),
         Sample("no ruby", "@@In the beginning God created the heaven and the earth."),
+        Sample("every word annotated, short words", EVERY_WORD_STRONGS),
+        Sample("wide reading on a base that starts a wrapped line", WIDE_READING_WRAPS),
     )
 
     private class FakeVerses(private val texts: List<String>) : SingleChapterVerses {

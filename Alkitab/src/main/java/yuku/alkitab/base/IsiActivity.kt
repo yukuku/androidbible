@@ -753,8 +753,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
      * Builds the verses controller for one split pane. With the Verse
      * (Compose) experimental setting enabled, the pane's RecyclerView is
      * swapped in place for a [VersesComposeView], keeping the same view id,
-     * child index, and layout params so the split-view manager, the inset
-     * listeners, and the DEBUG layout assertions keep operating on the pane.
+     * child index, layout params and padding so the split-view manager, the
+     * inset listeners, and the DEBUG layout assertions keep operating on the
+     * pane, and so both pipelines inset the text from the screen edge alike.
      */
     private fun createVersesController(
         useComposeVerses: Boolean,
@@ -771,6 +772,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
             val composeView = VersesComposeView(this)
             composeView.id = viewId
+            // Side padding lives on the pane view, not on its layout params, so
+            // the text would otherwise run to the screen edge in Compose panes.
+            composeView.setPaddingRelative(
+                recyclerView.paddingStart,
+                recyclerView.paddingTop,
+                recyclerView.paddingEnd,
+                recyclerView.paddingBottom,
+            )
             parent.addView(composeView, childIndex, layoutParams)
 
             VersesComposeControllerImpl(composeView, name, VersesDataModel.EMPTY, VersesUiModel.EMPTY, listeners)
