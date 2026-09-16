@@ -56,6 +56,18 @@ internal const val RUBY_SIDE_GAP_RATIO = 0.2f
 internal const val RUBY_OVERHANG_RATIO = 1f
 
 /**
+ * Clearance a reading keeps from the reading beside it when it borrows room
+ * from that neighbour's column, as a fraction of the ruby font size.
+ *
+ * A reading that reaches over a neighbouring word needs more than the
+ * [RUBY_SIDE_GAP_RATIO] hairline to stay legible as a separate reading: with
+ * an 8.5dp reading, four Strong's numbers spilling over `memperanakkan` stop
+ * 8.5dp short of the number that word carries. Two readings that each stay
+ * within their own column borrow nothing and keep the hairline.
+ */
+internal const val RUBY_BORROW_GAP_RATIO = 1f
+
+/**
  * Cap on the letter spacing a reading may add to its base, in base font
  * sizes per character. A reading far wider than that is data garbage and
  * is ellipsised instead of spreading the base over several lines.
@@ -136,38 +148,57 @@ internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLen
 }
 
 /**
- * Room on one side of the ruby base `start until end`, in px. The whitespace
- * between two words is real room, so it counts: a run of spaces contributes
- * its own width, halved when the word beyond it carries a reading of its own
- * so that both readings can claim their half without meeting. A neighbour
- * carrying no reading contributes [overhangPx] on top, and a neighbour
- * character directly abutting the base and carrying a reading contributes
- * `-sideGapPx`. The start or end of the text and a line break contribute zero.
+ * Room on one side of the ruby base `start until end`, in px, counting the
+ * room a neighbouring reading leaves unused.
+ *
+ * Each annotated word is a column: its reading above, its base below. A column
+ * whose reading is narrower than its base has room to spare on both sides of
+ * that reading, and a column whose reading is wider has already spent room its
+ * base does not own. [spareHalfPx] holds that figure per entry of [rubies],
+ * half the base width less half the reading width, so it is positive for a
+ * column with room to lend and negative for one already borrowing. The
+ * whitespace between two words is real room and counts too, halved when the
+ * word beyond it carries a reading of its own so that both may claim a share.
+ * A neighbour carrying no reading contributes [overhangPx] on top. The start
+ * or end of the text and a line break contribute zero.
+ *
+ * What a reading borrows from a neighbouring column stops [borrowGapPx] short
+ * of that column's reading, so the two never read as one. A reading that finds
+ * less room than that keeps [sideGapPx] instead, which is all that separates
+ * two readings pressed against each other with nothing to lend either way.
  *
  * For 神 in 神は, the neighbour は carries no reading, so かみ may overhang it by
- * [overhangPx]. In 起初 the readings abut with no space between them, so each
- * side yields `-sideGapPx`. Between two annotated words separated by one space
- * each side yields half a space width minus [sideGapPx], which is what lets a
- * Strong's number sit over a word as short as `air` without the word itself
- * being pulled apart.
+ * [overhangPx]. In 起初 the readings abut and each is wider than its own
+ * character, so each side yields `-sideGapPx`. Over `815` in
+ * `memperanakkan 815 tahun`, where H3205 leaves 30px spare over its long base,
+ * the four Strong's numbers take half the space plus those 30px less
+ * [borrowGapPx], rather than pushing the words apart to make room they could
+ * have borrowed.
  */
 internal fun rubySideSlackPx(
     text: CharSequence,
     rubies: List<VerseRendererCompose.RubyRange>,
+    spareHalfPx: FloatArray,
     neighbourOffset: Int,
     direction: Int,
     overhangPx: Float,
     sideGapPx: Float,
+    borrowGapPx: Float,
     spaceWidthPx: Float,
 ): Float {
     if (neighbourOffset < 0 || neighbourOffset >= text.length) return 0f
     if (text[neighbourOffset] == '\n') return 0f
-    fun underRuby(offset: Int) = rubies.any { offset >= it.start && offset < it.end }
-    if (underRuby(neighbourOffset)) return -sideGapPx
+    fun rubyAt(offset: Int) = rubies.indexOfFirst { offset >= it.start && offset < it.end }
+    fun keepingClear(roomPx: Float) = roomPx - borrowGapPx.coerceAtMost(maxOf(sideGapPx, roomPx))
+    val abutting = rubyAt(neighbourOffset)
+    if (abutting >= 0) return keepingClear(spareHalfPx[abutting])
     var i = neighbourOffset
     while (i in text.indices && text[i] == ' ') i += direction
     val gapPx = (i - neighbourOffset) * direction * spaceWidthPx
-    if (i in text.indices && text[i] != '\n' && underRuby(i)) return gapPx / 2f - sideGapPx
+    if (i in text.indices && text[i] != '\n') {
+        val beyond = rubyAt(i)
+        if (beyond >= 0) return keepingClear(gapPx / 2f + spareHalfPx[beyond])
+    }
     return gapPx + overhangPx
 }
 
@@ -204,16 +235,21 @@ internal fun rubyColorAt(text: AnnotatedString, offset: Int, default: Color): Co
  * unchanged: the base text stays inline.
  *
  * A reading that overflows its base is first given the room already beside it,
- * as [rubySideSlackPx] reports it. Whatever is still missing is added to the
- * space characters flanking the base, half to each side, so the word keeps its
- * own shape and only the gaps around it grow. Padding both sides equally is
- * what lets the overlay centre the reading over the base and still clear the
- * neighbouring readings. Two words sharing one space both add to it.
+ * as [rubySideSlackPx] reports it: the whitespace around the word, and what a
+ * neighbouring column whose reading is narrower than its base leaves unused.
+ * Only what borrowing cannot cover is added to the space characters flanking
+ * the base, half to each side, so the word keeps its own shape and only the
+ * gaps around it grow. Padding both sides equally is what lets the overlay
+ * centre the reading over the base and still clear the neighbouring readings.
+ * Two words sharing one space both add to it.
  *
- * `penuhilah air di lautan` with a Strong's number over every word widens the
- * spaces around `air`, rather than spreading it into `a i r`. A base with no
- * space beside the side that needs room, such as a pinyin reading over a single
- * Han character in 起初, falls back to letter spacing inside the base.
+ * Over `815` in `memperanakkan 815 tahun`, the four Strong's numbers reach
+ * across the room H3205 leaves unused over its long base, and the words stay
+ * where they are. `penuhilah air di lautan` with a Strong's number over every
+ * word has nothing to borrow, so it widens the spaces around `air` instead,
+ * rather than spreading it into `a i r`. A base with no space beside the side
+ * that needs room, such as a pinyin reading over a single Han character in
+ * 起初, falls back to letter spacing inside the base.
  */
 internal fun widenRubyBases(
     text: AnnotatedString,
@@ -225,30 +261,41 @@ internal fun widenRubyBases(
 ): AnnotatedString {
     if (rubies.isEmpty()) return text
     val spaceWidthPx = textMeasurer.measure(AnnotatedString(" "), textStyle, softWrap = false, maxLines = 1).size.width.toFloat()
-    val padPxByOffset = mutableMapOf<Int, Float>()
-    val spreadPxByRange = mutableListOf<Triple<Int, Int, Float>>()
-    for (r in rubies) {
+    val rubyFontPx = rubyStyle.fontSize.value * density
+    val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
+    val borrowGapPx = rubyFontPx * RUBY_BORROW_GAP_RATIO
+    val overhangPx = rubyFontPx * RUBY_OVERHANG_RATIO
+    val maxSpacingPx = textStyle.fontSize.value * density * RUBY_MAX_LETTER_SPACING_EM
+    val maxPadPx = textStyle.fontSize.value * density * RUBY_MAX_SPACE_PAD_EM
+
+    val baseWidthPx = FloatArray(rubies.size)
+    val rubyWidthPx = FloatArray(rubies.size)
+    for ((i, r) in rubies.withIndex()) {
         val start = r.start.coerceAtLeast(0)
         val end = r.end.coerceAtMost(text.length)
         if (end <= start || r.ruby.isEmpty()) continue
-        val baseWidth = textMeasurer.measure(text.subSequence(start, end), textStyle, softWrap = false, maxLines = 1).size.width.toFloat()
-        val rubyWidth = textMeasurer.measure(AnnotatedString(r.ruby), rubyStyle, softWrap = false, maxLines = 1).size.width.toFloat()
-        val halfOverflowPx = (rubyWidth - baseWidth) / 2f
+        baseWidthPx[i] = textMeasurer.measure(text.subSequence(start, end), textStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+        rubyWidthPx[i] = textMeasurer.measure(AnnotatedString(r.ruby), rubyStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+    }
+    val spareHalfPx = FloatArray(rubies.size) { (baseWidthPx[it] - rubyWidthPx[it]) / 2f }
+
+    val padPxByOffset = mutableMapOf<Int, Float>()
+    val spreadPxByRange = mutableListOf<Triple<Int, Int, Float>>()
+    for ((i, r) in rubies.withIndex()) {
+        val start = r.start.coerceAtLeast(0)
+        val end = r.end.coerceAtMost(text.length)
+        if (end <= start || r.ruby.isEmpty()) continue
+        val halfOverflowPx = -spareHalfPx[i]
         if (halfOverflowPx <= 0f) continue
-        val rubyFontPx = rubyStyle.fontSize.value * density
-        val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
-        val overhangPx = rubyFontPx * RUBY_OVERHANG_RATIO
-        val leftSlack = rubySideSlackPx(text, rubies, start - 1, -1, overhangPx, sideGapPx, spaceWidthPx)
-        val rightSlack = rubySideSlackPx(text, rubies, end, 1, overhangPx, sideGapPx, spaceWidthPx)
-        val maxSpacingPx = textStyle.fontSize.value * density * RUBY_MAX_LETTER_SPACING_EM
-        val maxPadPx = textStyle.fontSize.value * density * RUBY_MAX_SPACE_PAD_EM
+        val leftSlack = rubySideSlackPx(text, rubies, spareHalfPx, start - 1, -1, overhangPx, sideGapPx, borrowGapPx, spaceWidthPx)
+        val rightSlack = rubySideSlackPx(text, rubies, spareHalfPx, end, 1, overhangPx, sideGapPx, borrowGapPx, spaceWidthPx)
         val leftPad = (halfOverflowPx - leftSlack).coerceIn(0f, maxPadPx)
         val rightPad = (halfOverflowPx - rightSlack).coerceIn(0f, maxPadPx)
         if (leftPad <= 0f && rightPad <= 0f) continue
         val leftSpace = if (start > 0 && text[start - 1] == ' ') start - 1 else -1
         val rightSpace = if (end < text.length && text[end] == ' ') end else -1
         if ((leftPad > 0f && leftSpace < 0) || (rightPad > 0f && rightSpace < 0)) {
-            val spreadPx = rubyLetterSpacingPx(baseWidth, rubyWidth, end - start, leftSlack, rightSlack).coerceAtMost(maxSpacingPx)
+            val spreadPx = rubyLetterSpacingPx(baseWidthPx[i], rubyWidthPx[i], end - start, leftSlack, rightSlack).coerceAtMost(maxSpacingPx)
             if (spreadPx > 0f) spreadPxByRange += Triple(start, end, spreadPx)
             continue
         }

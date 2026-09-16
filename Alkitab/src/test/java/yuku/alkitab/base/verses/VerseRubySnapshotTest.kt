@@ -82,6 +82,9 @@ class VerseRubySnapshotTest {
     /** A short base carries four Strong's numbers mid line, with annotated words running on to the right edge behind it. */
     private val WIDE_READING_MID_LINE = "@@@<rs=H583@>Enos@/ @<rs=H2421@>hidup@/ @<rs=H2568 H6240 H8083 H3967@>815@/ @<rs=H8141@>tahun@/ @<rs=H310@>lagi@/, @<rs=H310@>setelah@/ @<rs=H1931@>ia@/ @<rs=H3205@>memperanakkan@/ @<rs=H7018@>Kenan@/."
 
+    /** A short base under four Strong's numbers sits between two long words whose own readings leave room to lend. */
+    private val BORROWED_ROOM = "@@@<rs=H3205@>memperanakkan@/ @<rs=H2568 H6240 H8083 H3967@>815@/ @<rs=H1121@>perempuan-perempuan@/"
+
     /** A base whose reading is far wider than it lands at the start of a wrapped line, where the space before it is collapsed by the line break. */
     private val WIDE_READING_WRAPS = "@@@<rs=H3605@>Jadi@/, @<rs=H3117@>seluruh@/ @<rs=H2416@>masa@/ @<rs=H121@>hidup@/ @<rs=H1961@>Adam@/ @<rs=H1961@>adalah@/ @<rs=H8672 H3967 H7970@>930@/ @<rs=H8141@>tahun@/, @<rs=H4191@>kemudian@/ @<rs=H4191@>dia@/ @<rs=H4191@>mati@/."
 
@@ -95,6 +98,7 @@ class VerseRubySnapshotTest {
             Sample("every word annotated, short words", EVERY_WORD_STRONGS),
             Sample("wide reading on a base that starts a wrapped line", WIDE_READING_WRAPS),
             Sample("wide reading mid line, annotated word after it", WIDE_READING_MID_LINE),
+            Sample("wide reading between columns with room to lend", BORROWED_ROOM),
             Sample("multi-word gloss over one word", "@@@<r=in the beginning@>בְּרֵאשִׁית@/ @<r=created@>בָּרָא@/ @<r=God@>אֱלֹהִים@/"),
             Sample("wrapped base run", "@@aaaa bbbb cccc dddd eeee ffff gggg hhhh iiii jjjj kkkk llll mmmm nnnn @<r=one two three four five six seven@>wrapped-across-lines@/ and after."),
             Sample("no ruby, same font", "@@In the beginning God created the heaven and the earth."),
@@ -168,6 +172,7 @@ class VerseRubySnapshotTest {
         Sample("every word annotated, short words", EVERY_WORD_STRONGS),
         Sample("wide reading on a base that starts a wrapped line", WIDE_READING_WRAPS),
         Sample("wide reading mid line, annotated word after it", WIDE_READING_MID_LINE),
+        Sample("wide reading between columns with room to lend", BORROWED_ROOM),
     )
 
     private class FakeVerses(private val texts: List<String>) : SingleChapterVerses {

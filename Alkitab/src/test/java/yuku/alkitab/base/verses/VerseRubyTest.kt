@@ -90,35 +90,64 @@ class VerseRubyTest {
     @Test
     fun `side slack depends on what the neighbouring character carries`() {
         val rubies = listOf(RubyRange(2, 3, "しゅ", null), RubyRange(3, 4, "い", null))
+        val spare = floatArrayOf(0f, 0f)
         val text = "ab主言う\nx"
-        assertEquals(8f, rubySideSlackPx(text, rubies, 1, -1, 8f, 2f, 4f))
-        assertEquals(-2f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f, 4f))
-        assertEquals(8f, rubySideSlackPx(text, rubies, 4, 1, 8f, 2f, 4f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, 5, 1, 8f, 2f, 4f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, -1, -1, 8f, 2f, 4f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, text.length, 1, 8f, 2f, 4f))
+        assertEquals(8f, rubySideSlackPx(text, rubies, spare, 1, -1, 8f, 2f, 6f, 4f))
+        assertEquals(-2f, rubySideSlackPx(text, rubies, spare, 3, 1, 8f, 2f, 6f, 4f))
+        assertEquals(8f, rubySideSlackPx(text, rubies, spare, 4, 1, 8f, 2f, 6f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, spare, 5, 1, 8f, 2f, 6f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, spare, -1, -1, 8f, 2f, 6f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, spare, text.length, 1, 8f, 2f, 6f, 4f))
     }
 
     @Test
-    fun `two annotated words split the space between them, each keeping a side gap`() {
+    fun `two annotated words with nothing to lend split the space between them`() {
         val rubies = listOf(RubyRange(0, 3, "in the beginning", null), RubyRange(4, 6, "created", null))
+        val spare = floatArrayOf(0f, 0f)
         val text = "aaa bb cc"
-        assertEquals(0f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f, 4f))
-        assertEquals(0f, rubySideSlackPx(text, rubies, 3, -1, 8f, 2f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, spare, 3, 1, 8f, 2f, 6f, 4f))
+        assertEquals(0f, rubySideSlackPx(text, rubies, spare, 3, -1, 8f, 2f, 6f, 4f))
     }
 
     @Test
     fun `a wider space between two annotated words gives each of them more room`() {
         val rubies = listOf(RubyRange(0, 3, "in the beginning", null), RubyRange(5, 7, "created", null))
+        val spare = floatArrayOf(0f, 0f)
         val text = "aaa  bb cc"
-        assertEquals(6f, rubySideSlackPx(text, rubies, 3, 1, 8f, 2f, 8f))
+        assertEquals(2f, rubySideSlackPx(text, rubies, spare, 3, 1, 8f, 2f, 6f, 8f))
     }
 
     @Test
     fun `the space beside an unannotated neighbour is claimed whole, on top of the overhang`() {
         val rubies = listOf(RubyRange(0, 3, "in the beginning", null), RubyRange(4, 6, "created", null))
+        val spare = floatArrayOf(0f, 0f)
         val text = "aaa bb cc"
-        assertEquals(12f, rubySideSlackPx(text, rubies, 6, 1, 8f, 2f, 4f))
+        assertEquals(12f, rubySideSlackPx(text, rubies, spare, 6, 1, 8f, 2f, 6f, 4f))
+    }
+
+    @Test
+    fun `a neighbouring column whose reading is narrower than its base lends the room it does not use`() {
+        val rubies = listOf(RubyRange(0, 13, "H3205", null), RubyRange(14, 17, "H2568 H6240", null))
+        val text = "memperanakkan 815 tahun"
+        // H3205 leaves 30px unused on each side of memperanakkan; 815 claims that plus half the 4px space, less the 6px borrow gap
+        val spare = floatArrayOf(30f, -20f)
+        assertEquals(26f, rubySideSlackPx(text, rubies, spare, 13, -1, 8f, 2f, 6f, 4f))
+    }
+
+    @Test
+    fun `a neighbouring column whose reading already overflows its base lends nothing and takes room away`() {
+        val rubies = listOf(RubyRange(0, 3, "H2568 H6240", null), RubyRange(4, 7, "H2568 H6240", null))
+        val text = "815 815 end"
+        val spare = floatArrayOf(-20f, -20f)
+        assertEquals(-20f, rubySideSlackPx(text, rubies, spare, 3, 1, 8f, 2f, 6f, 4f))
+    }
+
+    @Test
+    fun `two readings pressed against each other keep the hairline gap, not the borrow gap`() {
+        val rubies = listOf(RubyRange(0, 1, "Qǐ", null), RubyRange(1, 2, "chū", null))
+        val text = "起初"
+        val spare = floatArrayOf(-4f, -6f)
+        assertEquals(-8f, rubySideSlackPx(text, rubies, spare, 1, 1, 8f, 2f, 6f, 4f))
     }
 
     @Test
