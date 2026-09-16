@@ -5,6 +5,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -135,6 +136,66 @@ class VerseRubyTest {
         val rubies = listOf(RubyRange(0, 3, "in the beginning", null), RubyRange(4, 6, "created", null))
         val text = "aaa bb cc"
         assertEquals(12f, rubySideSlackPx(text, rubies, 6, 1, 8f, 2f, 4f))
+    }
+
+    @Test
+    fun `a reading narrower than its base leaves room beside it for the next reading`() {
+        assertEquals(97.5f, rubyCentredLeftPx(90f, 145f, 40f))
+        assertEquals(137.5f, rubyCentredLeftPx(90f, 145f, 40f) + 40f)
+    }
+
+    @Test
+    fun `a reading wider than its base starts before the base does`() {
+        assertEquals(5f, rubyCentredLeftPx(10f, 30f, 30f))
+    }
+
+    @Test
+    fun `readings that do not collide keep the place they asked for`() {
+        val xs = rubyLineLayoutPx(
+            desiredLeftPx = floatArrayOf(10f, 100f, 200f),
+            widthPx = floatArrayOf(30f, 30f, 30f),
+            lineLeftPx = 0f,
+            lineRightPx = 360f,
+            sideGapPx = 2f,
+        )
+        assertArrayEquals(floatArrayOf(10f, 100f, 200f), xs, 0.01f)
+    }
+
+    @Test
+    fun `a reading in the way pushes the next one right instead of being shortened`() {
+        val xs = rubyLineLayoutPx(
+            desiredLeftPx = floatArrayOf(0f, 20f),
+            widthPx = floatArrayOf(130f, 40f),
+            lineLeftPx = 0f,
+            lineRightPx = 360f,
+            sideGapPx = 2f,
+        )
+        assertArrayEquals(floatArrayOf(0f, 132f), xs, 0.01f)
+    }
+
+    @Test
+    fun `the last reading is pulled back so it stays on the line`() {
+        val xs = rubyLineLayoutPx(
+            desiredLeftPx = floatArrayOf(300f),
+            widthPx = floatArrayOf(100f),
+            lineLeftPx = 0f,
+            lineRightPx = 360f,
+            sideGapPx = 2f,
+        )
+        assertArrayEquals(floatArrayOf(260f), xs, 0.01f)
+    }
+
+    @Test
+    fun `positions still rise left to right when the line holds more than it can fit`() {
+        val xs = rubyLineLayoutPx(
+            desiredLeftPx = floatArrayOf(0f, 10f, 20f),
+            widthPx = floatArrayOf(200f, 200f, 200f),
+            lineLeftPx = 0f,
+            lineRightPx = 360f,
+            sideGapPx = 2f,
+        )
+        for (i in 1 until xs.size) assertTrue("positions must not go backwards: ${xs.toList()}", xs[i] >= xs[i - 1])
+        assertTrue("every reading starts inside the line: ${xs.toList()}", xs.all { it >= 0f })
     }
 
     @Test

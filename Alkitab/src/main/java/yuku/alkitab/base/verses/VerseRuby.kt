@@ -169,6 +169,18 @@ internal fun rubySideSlackPx(
  * placed at 2 rather than centred at 7, so the whole 6px overhang falls on the
  * ruby-free left neighbour and the right edge stops short of the next reading.
  */
+/**
+ * Left edge a reading of [readingWidthPx] takes when centred over a base
+ * spanning [baseLeftPx] until [baseRightPx]. A neighbouring reading is assumed
+ * to sit here, so this is what bounds the room beside it.
+ *
+ * A 40px reading over a base spanning 90 until 145 starts at 97.5, which is
+ * inside the base: a reading narrower than its base leaves room on both sides
+ * that the reading next to it may use.
+ */
+internal fun rubyCentredLeftPx(baseLeftPx: Float, baseRightPx: Float, readingWidthPx: Float): Float =
+    (baseLeftPx + baseRightPx - readingWidthPx) / 2f
+
 internal fun rubyLeftPx(leftPx: Float, rightPx: Float, rubyWidthPx: Float, leftSlackPx: Float, rightSlackPx: Float): Float {
     val centred = (leftPx + rightPx - rubyWidthPx) / 2f
     val minX = leftPx - leftSlackPx
@@ -261,14 +273,25 @@ internal fun widenRubyBases(
 }
 
 /**
- * Paints every ruby over its base run, positioned by [rubyLeftPx], in the band
- * that [computeLineMetrics] reserves above each line. A base run broken across
- * lines gets a proportional slice of its ruby on each line.
+ * Paints every ruby over its base run, in the band that [computeLineMetrics]
+ * reserves above each line. A base run broken across lines gets a proportional
+ * slice of its ruby on each line.
+ *
+ * Each reading is confined to the slot its own line actually offers, measured
+ * from the laid-out geometry rather than from the text, because only the
+ * geometry knows where the lines broke and how wide the padded gaps ended up.
+ * A base that starts a wrapped line therefore has no room to its left, however
+ * much whitespace precedes it in the text. Readings are ordered by where they
+ * were laid out rather than by offset, so a right-to-left run is bounded by the
+ * neighbours a reader sees beside it. A slot ends where the neighbouring
+ * reading begins, not where its base does, so a reading narrower than its base
+ * lends the room it does not need, and a reading over a base with no annotated
+ * neighbour may spread over the plain text beside it. A reading too wide for
+ * its slot is ellipsised into it, which is what keeps two readings from ever
+ * overlapping.
  *
  * [baseAscentPx] is the distance from the baseline up to the top of the base
- * glyphs; the ruby's bottom sits [gapPx] above that. [spaceWidthPx] is the
- * unpadded advance of a space in the base style, which [rubySideSlackPx] needs
- * to value the whitespace beside a base run.
+ * glyphs; the ruby's bottom sits [gapPx] above that.
  */
 internal fun Modifier.rubyOverlay(
     rubies: List<VerseRendererCompose.RubyRange>,
@@ -278,7 +301,6 @@ internal fun Modifier.rubyOverlay(
     textColor: Color,
     baseAscentPx: Float,
     gapPx: Float,
-    spaceWidthPx: Float,
 ): Modifier = if (rubies.isEmpty()) this else drawWithContent {
     drawContent()
     val layout = layoutResultProvider() ?: return@drawWithContent
@@ -287,48 +309,113 @@ internal fun Modifier.rubyOverlay(
     val maxWidthPx = size.width.toInt().coerceAtLeast(0)
     val rubyFontPx = rubyStyle.fontSize.value * density
     val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
-    val overhangPx = rubyFontPx * RUBY_OVERHANG_RATIO
+
+    class Placement(
+        val slice: String,
+        val readingWidthPx: Float,
+        val baseLeftPx: Float,
+        val baseRightPx: Float,
+        val colorOffset: Int,
+    ) {
+        val centredLeftPx get() = rubyCentredLeftPx(baseLeftPx, baseRightPx, readingWidthPx)
+    }
+
+    val perLine = HashMap<Int, MutableList<Placement>>()
+    for (r in rubies) {
+        val start = r.start.coerceAtLeast(0)
+        val end = r.end.coerceAtMost(textLen)
+        if (end <= start || r.ruby.isEmpty()) continue
+        val firstLine = layout.getLineForOffset(start)
+        val lastLine = layout.getLineForOffset(end - 1)
+        val splits = firstLine == lastLine || rubySplitsAcrossLines(text.subSequence(start, end))
+        val widestLine = if (splits) firstLine else (firstLine..lastLine).maxByOrNull { line ->
+            val segStart = maxOf(start, layout.getLineStart(line))
+            val segEnd = minOf(end, layout.getLineEnd(line, visibleEnd = true))
+            if (segEnd <= segStart) -1f else layout.getBoundingBox(segEnd - 1).right - layout.getBoundingBox(segStart).left
+        } ?: firstLine
+        for (line in firstLine..lastLine) {
+            if (!splits && line != widestLine) continue
+            val segStart = maxOf(start, layout.getLineStart(line))
+            val segEnd = minOf(end, layout.getLineEnd(line, visibleEnd = true))
+            if (segEnd <= segStart) continue
+            val slice = if (splits) rubySliceFor(r.ruby, start, end, segStart, segEnd) else r.ruby
+            if (slice.isEmpty()) continue
+            val first = layout.getBoundingBox(segStart)
+            val last = layout.getBoundingBox(segEnd - 1)
+            val width = textMeasurer.measure(AnnotatedString(slice), rubyStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+            perLine.getOrPut(line) { mutableListOf() } += Placement(
+                slice = slice,
+                readingWidthPx = width,
+                baseLeftPx = minOf(first.left, last.left),
+                baseRightPx = maxOf(first.right, last.right),
+                colorOffset = (segStart + segEnd - 1) / 2,
+            )
+        }
+    }
+
     clipRect {
-        for (r in rubies) {
-            val start = r.start.coerceAtLeast(0)
-            val end = r.end.coerceAtMost(textLen)
-            if (end <= start || r.ruby.isEmpty()) continue
-            val firstLine = layout.getLineForOffset(start)
-            val lastLine = layout.getLineForOffset(end - 1)
-            val splits = firstLine == lastLine || rubySplitsAcrossLines(text.subSequence(start, end))
-            val widestLine = if (splits) firstLine else (firstLine..lastLine).maxByOrNull { line ->
-                val segStart = maxOf(start, layout.getLineStart(line))
-                val segEnd = minOf(end, layout.getLineEnd(line, visibleEnd = true))
-                if (segEnd <= segStart) -1f else layout.getBoundingBox(segEnd - 1).right - layout.getBoundingBox(segStart).left
-            } ?: firstLine
-            for (line in firstLine..lastLine) {
-                if (!splits && line != widestLine) continue
-                val segStart = maxOf(start, layout.getLineStart(line))
-                val segEnd = minOf(end, layout.getLineEnd(line, visibleEnd = true))
-                if (segEnd <= segStart) continue
-                val slice = if (splits) rubySliceFor(r.ruby, start, end, segStart, segEnd) else r.ruby
-                if (slice.isEmpty()) continue
-                val first = layout.getBoundingBox(segStart)
-                val last = layout.getBoundingBox(segEnd - 1)
-                val left = minOf(first.left, last.left)
-                val right = maxOf(first.right, last.right)
+        for ((line, unsorted) in perLine) {
+            val placements = unsorted.sortedBy { it.baseLeftPx }
+            val lineLeft = layout.getLineLeft(line)
+            val glyphTop = layout.getLineBaseline(line) - baseAscentPx
+            val xs = rubyLineLayoutPx(
+                desiredLeftPx = FloatArray(placements.size) { placements[it].centredLeftPx },
+                widthPx = FloatArray(placements.size) { placements[it].readingWidthPx },
+                lineLeftPx = lineLeft,
+                lineRightPx = size.width,
+                sideGapPx = sideGapPx,
+            )
+            for ((i, p) in placements.withIndex()) {
+                val nextLeft = if (i == placements.lastIndex) size.width else xs[i + 1] - sideGapPx
+                val allowedPx = (nextLeft - xs[i]).coerceAtLeast(0f)
                 val measured = textMeasurer.measure(
-                    AnnotatedString(slice),
+                    AnnotatedString(p.slice),
                     rubyStyle,
                     overflow = TextOverflow.Ellipsis,
                     softWrap = false,
                     maxLines = 1,
-                    constraints = Constraints(maxWidth = maxWidthPx),
+                    constraints = Constraints(maxWidth = minOf(maxWidthPx, allowedPx.toInt())),
                 )
-                val w = measured.size.width.toFloat()
-                val leftSlack = rubySideSlackPx(text, rubies, start - 1, -1, overhangPx, sideGapPx, spaceWidthPx)
-                val rightSlack = rubySideSlackPx(text, rubies, end, 1, overhangPx, sideGapPx, spaceWidthPx)
-                val x = rubyLeftPx(left, right, w, leftSlack, rightSlack).coerceIn(0f, (size.width - w).coerceAtLeast(0f))
-                val glyphTop = layout.getLineBaseline(line) - baseAscentPx
                 val y = glyphTop - gapPx - measured.size.height
-                val color = rubyColorAt(text, (segStart + segEnd - 1) / 2, textColor)
-                drawText(measured, color = color, topLeft = Offset(x, y))
+                drawText(measured, color = rubyColorAt(text, p.colorOffset, textColor), topLeft = Offset(xs[i], y))
             }
         }
     }
+}
+
+/**
+ * Where each reading on one line is drawn, given where it would like to be
+ * ([desiredLeftPx], centred over its own base) and how wide it is ([widthPx]),
+ * both ordered left to right.
+ *
+ * A reading keeps its place when nothing is in the way. One that would collide
+ * with the reading before it slides right, and the line is then pulled back
+ * from [lineRightPx] so the last one still fits. Sliding rather than shrinking
+ * is what lets a reading far wider than its base stay whole: on
+ * `930 tahun, kemudian`, the three Strong's numbers over `930` push the narrow
+ * one over `tahun` to the right, into the room its own base was not using.
+ *
+ * On a line with more readings than room, the positions returned still rise
+ * left to right, so the caller can give each one the width up to the next and
+ * ellipsise what does not fit, rather than letting two readings overlap.
+ */
+internal fun rubyLineLayoutPx(
+    desiredLeftPx: FloatArray,
+    widthPx: FloatArray,
+    lineLeftPx: Float,
+    lineRightPx: Float,
+    sideGapPx: Float,
+): FloatArray {
+    val xs = desiredLeftPx.copyOf()
+    var cursor = lineLeftPx
+    for (i in xs.indices) {
+        xs[i] = xs[i].coerceAtLeast(cursor)
+        cursor = xs[i] + widthPx[i] + sideGapPx
+    }
+    var limit = lineRightPx
+    for (i in xs.indices.reversed()) {
+        xs[i] = minOf(xs[i], limit - widthPx[i]).coerceAtLeast(lineLeftPx)
+        limit = xs[i] - sideGapPx
+    }
+    return xs
 }

@@ -126,6 +126,7 @@ See the "Ruby" section of `docs/text-rendering.md` for the code path. Design cho
 
 `VerseRendererComposeRubyTest` and the "adversarial" sheet of `VerseRubySnapshotTest` cover these cases; none of them throws:
 
+- Readings are positioned a line at a time from the laid-out geometry. Each wants to sit centred over its base; one that would collide with the reading before it slides right, and the line is pulled back from its right edge so the last one still fits. Sliding rather than shrinking is what keeps a reading whole when its base is short or starts a wrapped line, since a narrow neighbour lends the room its own base was not using. A line holding more than it can fit ellipsises what is left over, and positions still rise left to right there, so two readings never overlap.
 - A reading wider than the row is ellipsised to the row width and clipped. Both the letter spacing on a base and the padding beside it draw on the same budget of `RUBY_MAX_LETTER_SPACING_EM` per base character, so garbage data can neither spread a word over several lines nor push its neighbours off one.
 - A base run broken across lines never splits a surrogate pair in its reading.
 - A base may span `@8` and paragraph codes; the reading is split per line.

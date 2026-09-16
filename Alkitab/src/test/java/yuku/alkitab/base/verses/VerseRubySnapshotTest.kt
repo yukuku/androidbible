@@ -79,6 +79,9 @@ class VerseRubySnapshotTest {
     /** Every word annotated, so each base run has an annotated neighbour on both sides. Short words carry a reading far wider than themselves. */
     private val EVERY_WORD_STRONGS = "@@@<rs=H4390@>penuhilah@/ @<rs=H4325@>air@/ @<rs=H322@>di@/ @<rs=H3220@>lautan@/, @<rs=H5921@>dan@/ @<rs=H5775@>burung-burung@/ @<rs=H7235@>berlipat@/ @<rs=H776@>ganda@/ @<rs=H5921@>di@/ @<rs=H776@>bumi@/."
 
+    /** A base whose reading is far wider than it lands at the start of a wrapped line, where the space before it is collapsed by the line break. */
+    private val WIDE_READING_WRAPS = "@@@<rs=H3605@>Jadi@/, @<rs=H3117@>seluruh@/ @<rs=H2416@>masa@/ @<rs=H121@>hidup@/ @<rs=H1961@>Adam@/ @<rs=H1961@>adalah@/ @<rs=H8672 H3967 H7970@>930@/ @<rs=H8141@>tahun@/, @<rs=H4191@>kemudian@/ @<rs=H4191@>dia@/ @<rs=H4191@>mati@/."
+
     private val groups: Map<String, List<Sample>> = linkedMapOf(
         "basics" to listOf(
             Sample("furigana", "@@はじめに@<r=かみ@>神@/は@<r=てん@>天@/と@<r=ち@>地@/とを@<r=そうぞう@>創造@/された。"),
@@ -87,6 +90,7 @@ class VerseRubySnapshotTest {
             Sample("pinyin, wide readings next to punctuation (John 6:34)", "@@@<rp=Tā@>他@/@<rp=men@>们@/@<rp=shuō@>说@/：“@<rp=Zhǔ@>主@/@<rp=a@>啊@/，@<rp=cháng@>常@/@<rp=jiāng@>将@/@<rp=zhè@>这@/@<rp=liáng@>粮@/@<rp=cì@>赐@/@<rp=gěi@>给@/@<rp=wǒ@>我@/@<rp=men@>们@/！”"),
             Sample("latin base, Strong's style ruby", STRONGS),
             Sample("every word annotated, short words", EVERY_WORD_STRONGS),
+            Sample("wide reading on a base that starts a wrapped line", WIDE_READING_WRAPS),
             Sample("multi-word gloss over one word", "@@@<r=in the beginning@>בְּרֵאשִׁית@/ @<r=created@>בָּרָא@/ @<r=God@>אֱלֹהִים@/"),
             Sample("wrapped base run", "@@aaaa bbbb cccc dddd eeee ffff gggg hhhh iiii jjjj kkkk llll mmmm nnnn @<r=one two three four five six seven@>wrapped-across-lines@/ and after."),
             Sample("no ruby, same font", "@@In the beginning God created the heaven and the earth."),
