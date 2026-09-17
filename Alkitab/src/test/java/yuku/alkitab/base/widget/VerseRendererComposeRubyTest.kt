@@ -81,8 +81,14 @@ class VerseRendererComposeRubyTest {
     }
 
     @Test
-    fun `an empty base or an empty reading produces no ruby`() {
-        assertTrue(render("@@@<r=しゅ@>@/主").rubies.isEmpty())
+    fun `a base with no characters anchors its reading where it was written`() {
+        val result = render("@@@<r=しゅ@>@/主")
+        assertEquals("1  主", result.text.text)
+        assertEquals(listOf(RubyRange(3, 3, "しゅ", null)), result.rubies)
+    }
+
+    @Test
+    fun `an empty reading produces no ruby`() {
         assertTrue(render("@@@<r=@>主@/").rubies.isEmpty())
         assertEquals("1  主", render("@@@<r=@>主@/").text.text)
     }

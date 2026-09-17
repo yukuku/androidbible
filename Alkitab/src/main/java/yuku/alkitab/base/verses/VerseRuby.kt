@@ -395,6 +395,12 @@ internal fun widenRubyBases(
  * the layout reports, so a run whose measured width overshoots keeps the
  * bounds the layout gave it.
  *
+ * A base run with no characters is a reading for a word the translation does
+ * not have. It is centred on the point in the text where it was written, so
+ * whatever the data puts around it, such as a bracket pair, reads as its
+ * marker. Having no width of its own, it takes its room from the text beside
+ * it the way any reading wider than its base does.
+ *
  * [baseAscentPx] is the distance from the baseline up to the top of the base
  * glyphs; the ruby's bottom sits [gapPx] above that.
  */
@@ -443,7 +449,20 @@ internal fun Modifier.rubyOverlay(
     for (r in rubies) {
         val start = r.start.coerceAtLeast(0)
         val end = r.end.coerceAtMost(textLen)
-        if (end <= start || r.ruby.isEmpty()) continue
+        if (end < start || r.ruby.isEmpty()) continue
+        if (end == start) {
+            val anchorX = layout.getHorizontalPosition(start, usePrimaryDirection = true)
+            val width = textMeasurer.measure(AnnotatedString(r.ruby), rubyStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+            perLine.getOrPut(layout.getLineForOffset(start)) { mutableListOf() } += Placement(
+                slice = r.ruby,
+                readingWidthPx = width,
+                baseLeftPx = anchorX,
+                baseRightPx = anchorX,
+                reportedLeftPx = anchorX,
+                colorOffset = (start - 1).coerceIn(0, (textLen - 1).coerceAtLeast(0)),
+            )
+            continue
+        }
         val firstLine = layout.getLineForOffset(start)
         val lastLine = layout.getLineForOffset(end - 1)
         val splits = firstLine == lastLine || rubySplitsAcrossLines(text.subSequence(start, end))

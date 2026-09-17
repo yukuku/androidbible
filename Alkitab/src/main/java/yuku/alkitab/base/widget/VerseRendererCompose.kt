@@ -313,7 +313,7 @@ object VerseRendererCompose {
             'r' -> {
                 val kind = if (tag[1] in 'a'..'z') tag[1] else null
                 val eq = if (kind == null) 1 else 2
-                if (tag.length > eq + 1 && tag[eq] == '=' && tagContentStart in 0 until spanStart) {
+                if (tag.length > eq + 1 && tag[eq] == '=' && tagContentStart in 0..spanStart) {
                     rubies += RubyRange(tagContentStart, spanStart, tag.substring(eq + 1), kind)
                 }
             }

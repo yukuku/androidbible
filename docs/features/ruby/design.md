@@ -130,7 +130,8 @@ See the "Ruby" section of `docs/text-rendering.md` for the code path. Design cho
 - A reading wider than the row is ellipsised to the row width and clipped. Both the letter spacing on a base and the padding beside it draw on the same budget of `RUBY_MAX_LETTER_SPACING_EM` per base character, so garbage data can neither spread a word over several lines nor push its neighbours off one.
 - A base run broken across lines never splits a surrogate pair in its reading.
 - A base may span `@8` and paragraph codes; the reading is split per line.
-- A stray `@/`, an empty tag, a tag with an unknown letter, a nested ruby or an empty reading or base produce no ruby and leave the text as is. An inner tag replaces the outer one, so nested rubies annotate the inner base only. An unterminated `@<` at the end of the verse leaks its content as text, which matches the View renderer.
+- A base run with no characters, `@<r=reading@>@/`, is a reading for a word the translation does not have. It is drawn centred on the point in the text where it was written, so a bracket pair or any other marker the data puts around it reads as its anchor, and it takes its room from the text beside it the way any reading wider than its base does.
+- A stray `@/`, an empty tag, a tag with an unknown letter, a nested ruby or an empty reading produce no ruby and leave the text as is. An inner tag replaces the outer one, so nested rubies annotate the inner base only. An unterminated `@<` at the end of the verse leaks its content as text, which matches the View renderer.
 - Emoji, ZWJ sequences, combining marks and bidi controls are kept verbatim in both reading and base.
 
 ## 5. Open items
