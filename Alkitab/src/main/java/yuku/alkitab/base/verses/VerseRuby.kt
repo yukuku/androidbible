@@ -265,6 +265,13 @@ internal fun rubyColorAt(text: AnnotatedString, offset: Int, default: Color): Co
  * centre the reading over the base and still clear the neighbouring readings.
  * Two words sharing one space both add to it.
  *
+ * The space a left pad lands on is made non-breaking, because a line break
+ * there would collapse that space and leave the base against the margin with
+ * nowhere for its reading to go. `adalah 930` wraps as a pair rather than
+ * letting `930` start a line with three Strong's numbers it cannot fit beside
+ * it. Only the left side is joined: a break after the base costs it nothing,
+ * since the reading it was being kept clear of is then on the next line.
+ *
  * Over `815` in `memperanakkan 815 tahun`, the four Strong's numbers reach
  * across the room H3205 leaves unused over its long base, and the words stay
  * where they are. `penuhilah air di lautan` with a Strong's number over every
@@ -303,6 +310,7 @@ internal fun widenRubyBases(
     val spareHalfPx = FloatArray(rubies.size) { (baseWidthPx[it] - rubyWidthPx[it]) / 2f }
 
     val padPxByOffset = mutableMapOf<Int, Float>()
+    val joinedOffsets = mutableSetOf<Int>()
     val spreadPxByRange = mutableListOf<Triple<Int, Int, Float>>()
     for ((i, r) in rubies.withIndex()) {
         val start = r.start.coerceAtLeast(0)
@@ -322,12 +330,20 @@ internal fun widenRubyBases(
             if (spreadPx > 0f) spreadPxByRange += Triple(start, end, spreadPx)
             continue
         }
-        if (leftPad > 0f) padPxByOffset[leftSpace] = (padPxByOffset[leftSpace] ?: 0f) + leftPad
+        if (leftPad > 0f) {
+            padPxByOffset[leftSpace] = (padPxByOffset[leftSpace] ?: 0f) + leftPad
+            joinedOffsets += leftSpace
+        }
         if (rightPad > 0f) padPxByOffset[rightSpace] = (padPxByOffset[rightSpace] ?: 0f) + rightPad
     }
     if (padPxByOffset.isEmpty() && spreadPxByRange.isEmpty()) return text
+    val body = if (joinedOffsets.isEmpty()) text else AnnotatedString(
+        text.text.toCharArray().also { chars -> for (o in joinedOffsets) chars[o] = '\u00a0' }.concatToString(),
+        text.spanStyles,
+        text.paragraphStyles,
+    )
     return buildAnnotatedString {
-        append(text)
+        append(body)
         for ((start, end, spreadPx) in spreadPxByRange) {
             addStyle(SpanStyle(letterSpacing = with(density) { spreadPx.toSp() }), start, end)
         }

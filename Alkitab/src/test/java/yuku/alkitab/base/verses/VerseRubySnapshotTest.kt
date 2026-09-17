@@ -85,7 +85,7 @@ class VerseRubySnapshotTest {
     /** A short base under four Strong's numbers sits between two long words whose own readings leave room to lend. */
     private val BORROWED_ROOM = "@@@<rs=H3205@>memperanakkan@/ @<rs=H2568 H6240 H8083 H3967@>815@/ @<rs=H1121@>perempuan-perempuan@/"
 
-    /** A base whose reading is far wider than it lands at the start of a wrapped line, where the space before it is collapsed by the line break. */
+    /** A base whose reading is far wider than it sits late enough in the verse to wrap, where a break before it would cost the reading the room reserved beside it. */
     private val WIDE_READING_WRAPS = "@@@<rs=H3605@>Jadi@/, @<rs=H3117@>seluruh@/ @<rs=H2416@>masa@/ @<rs=H121@>hidup@/ @<rs=H1961@>Adam@/ @<rs=H1961@>adalah@/ @<rs=H8672 H3967 H7970@>930@/ @<rs=H8141@>tahun@/, @<rs=H4191@>kemudian@/ @<rs=H4191@>dia@/ @<rs=H4191@>mati@/."
 
     private val groups: Map<String, List<Sample>> = linkedMapOf(
