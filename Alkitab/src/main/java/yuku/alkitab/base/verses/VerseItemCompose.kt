@@ -567,16 +567,18 @@ internal data class LineMetrics(
 private fun rememberLineMetrics(state: VerseItemComposeState): LineMetrics {
     val density = LocalDensity.current
     val rubyFontSizeDp = if (state.render.rubies.isEmpty()) 0f else state.fontSizeDp * RUBY_FONT_SIZE_RATIO
-    return remember(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, density.density, rubyFontSizeDp) {
-        computeLineMetrics(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, density.density, rubyFontSizeDp)
+    val scaledDensity = density.density * density.fontScale
+    return remember(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, scaledDensity, rubyFontSizeDp) {
+        computeLineMetrics(state.typeface, state.fontSizeDp, state.fontBold, state.lineSpacingMult, scaledDensity, rubyFontSizeDp)
     }
 }
 
 /**
  * Derives Compose line metrics from Android font metrics so text laid out with
  * `lineHeight` + `LineHeightStyle(Proportional, Trim.None)` matches a TextView
- * using `setLineSpacing(0, lineSpacingMult)`. The caller composes under a
- * density with `fontScale == 1f`, so px ↔ sp conversion is `/densityFactor`.
+ * using `setLineSpacing(0, lineSpacingMult)`. [scaledDensity] is
+ * `density * fontScale`, which is what an sp resolves to, so a px figure
+ * returned as sp is `/scaledDensity`.
  *
  * A positive [rubyFontSizeDp] reserves a band for ruby text above every line.
  * Such text is laid out with `LineHeightStyle.Alignment.Bottom`, which stacks
@@ -588,7 +590,7 @@ internal fun computeLineMetrics(
     fontSizeDp: Float,
     fontBold: Int,
     lineSpacingMult: Float,
-    densityFactor: Float,
+    scaledDensity: Float,
     rubyFontSizeDp: Float,
 ): LineMetrics {
     val resolvedTypeface = if (fontBold == android.graphics.Typeface.BOLD) {
@@ -598,14 +600,14 @@ internal fun computeLineMetrics(
     }
     val paint = android.text.TextPaint().apply {
         isAntiAlias = true
-        textSize = fontSizeDp * densityFactor
+        textSize = fontSizeDp * scaledDensity
         this.typeface = resolvedTypeface
     }
     val fm = paint.fontMetrics
     val naturalLineHeightPx = fm.descent - fm.ascent + fm.leading
     val rubyBandPx = if (rubyFontSizeDp <= 0f) 0f else {
-        val rubyFm = android.text.TextPaint(paint).apply { textSize = rubyFontSizeDp * densityFactor }.fontMetrics
-        (rubyFm.descent - rubyFm.ascent) + rubyFontSizeDp * densityFactor * RUBY_GAP_RATIO
+        val rubyFm = android.text.TextPaint(paint).apply { textSize = rubyFontSizeDp * scaledDensity }.fontMetrics
+        (rubyFm.descent - rubyFm.ascent) + rubyFontSizeDp * scaledDensity * RUBY_GAP_RATIO
     }
     val targetLineHeightPx = naturalLineHeightPx * lineSpacingMult + rubyBandPx
     val rowExtraPaddingPx = (naturalLineHeightPx * (lineSpacingMult - 1f) + 0.5f).toInt()
@@ -616,7 +618,7 @@ internal fun computeLineMetrics(
         else -> ((targetLineHeightPx - glyphHeightPx) * (-fm.ascent) / glyphHeightPx + 0.5f).toInt().coerceAtLeast(0)
     }
     return LineMetrics(
-        lineHeightSp = targetLineHeightPx / densityFactor,
+        lineHeightSp = targetLineHeightPx / scaledDensity,
         rowExtraPaddingPx = rowExtraPaddingPx,
         gutterTopPaddingPx = gutterTopPaddingPx,
         rubyBandPx = rubyBandPx,
@@ -676,8 +678,8 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
             fontWeight = FontWeight.Normal,
         )
     }
-    val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density.density) {
-        widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density.density)
+    val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density) {
+        widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density)
     }
 
     Box(modifier = modifier) {
@@ -699,7 +701,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     rubyStyle = rubyStyle,
                     textColor = textColor,
                     baseAscentPx = lineMetrics.baseAscentPx,
-                    gapPx = state.fontSizeDp * RUBY_FONT_SIZE_RATIO * RUBY_GAP_RATIO * density.density,
+                    gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
                 ),
             onTextLayout = { textLayoutResult = it },
         )

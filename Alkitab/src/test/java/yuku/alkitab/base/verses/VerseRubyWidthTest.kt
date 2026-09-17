@@ -55,7 +55,7 @@ class VerseRubyWidthTest {
         for (fontSizeDp in listOf(10f, 12f, 14f, 17f, 20f, 22f, 24f, 26f, 28f, 30f, 34f)) {
             val textStyle = TextStyle(fontSize = fontSizeDp.sp, fontFamily = FontFamily.SansSerif)
             val rubyStyle = textStyle.copy(fontSize = (fontSizeDp * RUBY_FONT_SIZE_RATIO).sp)
-            val widened = widenRubyBases(render.text, render.rubies, textStyle, rubyStyle, textMeasurer, density.density)
+            val widened = widenRubyBases(render.text, render.rubies, textStyle, rubyStyle, textMeasurer, density)
             val layout = textMeasurer.measure(
                 widened,
                 textStyle,

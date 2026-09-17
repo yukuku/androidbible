@@ -15,7 +15,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.Density
 import kotlin.math.ceil
 import yuku.alkitab.base.widget.VerseRendererCompose
 
@@ -257,16 +257,17 @@ internal fun widenRubyBases(
     textStyle: TextStyle,
     rubyStyle: TextStyle,
     textMeasurer: TextMeasurer,
-    density: Float,
+    density: Density,
 ): AnnotatedString {
     if (rubies.isEmpty()) return text
     val spaceWidthPx = textMeasurer.measure(AnnotatedString(" "), textStyle, softWrap = false, maxLines = 1).size.width.toFloat()
-    val rubyFontPx = rubyStyle.fontSize.value * density
+    val rubyFontPx = with(density) { rubyStyle.fontSize.toPx() }
     val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
     val borrowGapPx = rubyFontPx * RUBY_BORROW_GAP_RATIO
     val overhangPx = rubyFontPx * RUBY_OVERHANG_RATIO
-    val maxSpacingPx = textStyle.fontSize.value * density * RUBY_MAX_LETTER_SPACING_EM
-    val maxPadPx = textStyle.fontSize.value * density * RUBY_MAX_SPACE_PAD_EM
+    val baseFontPx = with(density) { textStyle.fontSize.toPx() }
+    val maxSpacingPx = baseFontPx * RUBY_MAX_LETTER_SPACING_EM
+    val maxPadPx = baseFontPx * RUBY_MAX_SPACE_PAD_EM
 
     val baseWidthPx = FloatArray(rubies.size)
     val rubyWidthPx = FloatArray(rubies.size)
@@ -306,10 +307,10 @@ internal fun widenRubyBases(
     return buildAnnotatedString {
         append(text)
         for ((start, end, spreadPx) in spreadPxByRange) {
-            addStyle(SpanStyle(letterSpacing = (spreadPx / density).sp), start, end)
+            addStyle(SpanStyle(letterSpacing = with(density) { spreadPx.toSp() }), start, end)
         }
         for ((offset, padPx) in padPxByOffset) {
-            addStyle(SpanStyle(letterSpacing = (padPx / density).sp), offset, offset + 1)
+            addStyle(SpanStyle(letterSpacing = with(density) { padPx.toSp() }), offset, offset + 1)
         }
     }
 }
@@ -349,7 +350,7 @@ internal fun Modifier.rubyOverlay(
     val text = layout.layoutInput.text
     val textLen = text.length
     val maxWidthPx = size.width.toInt().coerceAtLeast(0)
-    val rubyFontPx = rubyStyle.fontSize.value * density
+    val rubyFontPx = rubyStyle.fontSize.toPx()
     val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
 
     class Placement(
