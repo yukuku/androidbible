@@ -63,6 +63,7 @@ import androidx.core.net.toUri
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.widget.AttributeView
@@ -702,6 +703,8 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     textColor = textColor,
                     baseAscentPx = lineMetrics.baseAscentPx,
                     gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
+                    debugAri = state.attribute.ari,
+                    debugLog = ExperimentalFlags.logRubyGeometry(),
                 ),
             onTextLayout = { textLayoutResult = it },
         )

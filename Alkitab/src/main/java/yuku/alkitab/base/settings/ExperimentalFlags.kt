@@ -15,4 +15,7 @@ object ExperimentalFlags {
 
     fun useComposeSyncLogin(): Boolean =
         Preferences.getBoolean(R.string.pref_useComposeSyncLogin_key, R.bool.pref_useComposeSyncLogin_default)
+
+    fun logRubyGeometry(): Boolean =
+        Preferences.getBoolean(R.string.pref_logRubyGeometry_key, R.bool.pref_logRubyGeometry_default)
 }

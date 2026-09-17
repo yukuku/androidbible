@@ -28,5 +28,11 @@
 			android:summary="@string/pref_useComposeSyncLogin_summary"
 			android:title="@string/pref_useComposeSyncLogin_title" />
 
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="@string/pref_logRubyGeometry_key"
+			android:summary="@string/pref_logRubyGeometry_summary"
+			android:title="@string/pref_logRubyGeometry_title" />
+
 	</PreferenceCategory>
 </PreferenceScreen>

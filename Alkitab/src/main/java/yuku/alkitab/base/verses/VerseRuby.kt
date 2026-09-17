@@ -14,10 +14,32 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.style.TextOverflow
+import android.util.Log
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.TextUnit
 import kotlin.math.ceil
 import yuku.alkitab.base.widget.VerseRendererCompose
+
+internal const val RUBY_GEOMETRY_TAG = "RubyGeom"
+
+/**
+ * One dump per verse per laid-out width, so a reader scrolling a chapter does
+ * not repeat the same block on every frame. The set is dropped once it grows,
+ * which costs a repeat dump and bounds what a long session retains.
+ */
+private val rubyGeometryLogged = HashSet<String>()
+
+private fun rubyGeometryLogWanted(ari: Int, widthPx: Float, textLen: Int): Boolean = synchronized(rubyGeometryLogged) {
+    if (rubyGeometryLogged.size > 512) rubyGeometryLogged.clear()
+    rubyGeometryLogged.add("$ari/${widthPx.toInt()}/$textLen")
+}
+
+private fun quoteForLog(text: String, start: Int, end: Int): String {
+    val from = (start - 6).coerceAtLeast(0)
+    val until = (end + 6).coerceAtMost(text.length)
+    return "\u2026${text.substring(from, start)}[${text.substring(start, end)}]${text.substring(end, until)}\u2026"
+}
 
 /**
  * Ruby text is drawn at this fraction of the base font size.
@@ -344,6 +366,8 @@ internal fun Modifier.rubyOverlay(
     textColor: Color,
     baseAscentPx: Float,
     gapPx: Float,
+    debugAri: Int,
+    debugLog: Boolean,
 ): Modifier = if (rubies.isEmpty()) this else drawWithContent {
     drawContent()
     val layout = layoutResultProvider() ?: return@drawWithContent
@@ -352,6 +376,16 @@ internal fun Modifier.rubyOverlay(
     val maxWidthPx = size.width.toInt().coerceAtLeast(0)
     val rubyFontPx = rubyStyle.fontSize.toPx()
     val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
+    val log = debugLog && rubyGeometryLogWanted(debugAri, size.width, textLen)
+    if (log) {
+        Log.d(RUBY_GEOMETRY_TAG, "ari=0x%06x width=%.1f rubyFontPx=%.2f sideGap=%.2f text=%s".format(debugAri, size.width, rubyFontPx, sideGapPx, text.text))
+        for (span in text.spanStyles) {
+            val spacing = span.item.letterSpacing
+            if (spacing != TextUnit.Unspecified) {
+                Log.d(RUBY_GEOMETRY_TAG, "  pad [%d,%d) %s = %.2f px on %s".format(span.start, span.end, spacing, spacing.toPx(), quoteForLog(text.text, span.start, span.end)))
+            }
+        }
+    }
 
     class Placement(
         val slice: String,
@@ -409,6 +443,17 @@ internal fun Modifier.rubyOverlay(
                 sideGapPx = sideGapPx,
             )
             val allowed = rubyAllowedWidthsPx(xs, size.width, sideGapPx)
+            if (log) {
+                Log.d(RUBY_GEOMETRY_TAG, "  line=%d left=%.1f baseline=%.1f".format(line, lineLeft, layout.getLineBaseline(line)))
+                for ((i, p) in placements.withIndex()) {
+                    Log.d(
+                        RUBY_GEOMETRY_TAG,
+                        "    read=%-28s w=%7.2f base=[%8.2f,%8.2f] centred=%8.2f x=%8.2f allowed=%7.2f".format(
+                            p.slice, p.readingWidthPx, p.baseLeftPx, p.baseRightPx, p.centredLeftPx, xs[i], allowed[i],
+                        ),
+                    )
+                }
+            }
             for ((i, p) in placements.withIndex()) {
                 val measured = textMeasurer.measure(
                     AnnotatedString(p.slice),
