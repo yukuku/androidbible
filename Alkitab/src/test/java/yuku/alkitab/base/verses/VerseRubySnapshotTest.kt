@@ -85,6 +85,9 @@ class VerseRubySnapshotTest {
     /** A short base under four Strong's numbers sits between two long words whose own readings leave room to lend. */
     private val BORROWED_ROOM = "@@@<rs=H3205@>memperanakkan@/ @<rs=H2568 H6240 H8083 H3967@>815@/ @<rs=H1121@>perempuan-perempuan@/"
 
+    /** A two-word base run straddles a line break, so its reading has to go somewhere. */
+    private val SPLIT_BASE_RUN = "@@@<rs=H3117@>Jadi, masa hidup@/ @<rs=H3382@>Yared@/ @<rs=H8147 H8346 H8141 H8672 H3967@>adalah 962@/ @<rs=H8141@>tahun@/, @<rs=H4191@>kemudian dia mati@/."
+
     /** A short base under three Strong's numbers falls where a line would end, so its reading would hang past the right margin. */
     private val WIDE_READING_AT_LINE_END = "@@@<rs=H3382@>Ketika Yared@/ @<rs=H2421@>hidup selama@/ @<rs=H8147 H8346 H3967@>162@/ @<rs=H8141@>tahun@/, @<rs=H2585@>Henokh@/ @<rs=H3205@>lahir@/ baginya."
 
@@ -101,6 +104,7 @@ class VerseRubySnapshotTest {
             Sample("every word annotated, short words", EVERY_WORD_STRONGS),
             Sample("wide reading on a base that starts a wrapped line", WIDE_READING_WRAPS),
             Sample("wide reading where a line would end", WIDE_READING_AT_LINE_END),
+            Sample("base run split by a line break", SPLIT_BASE_RUN),
             Sample("wide reading mid line, annotated word after it", WIDE_READING_MID_LINE),
             Sample("wide reading between columns with room to lend", BORROWED_ROOM),
             Sample("multi-word gloss over one word", "@@@<r=in the beginning@>בְּרֵאשִׁית@/ @<r=created@>בָּרָא@/ @<r=God@>אֱלֹהִים@/"),

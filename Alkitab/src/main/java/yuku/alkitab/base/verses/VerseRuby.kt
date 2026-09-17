@@ -90,6 +90,18 @@ internal const val RUBY_OVERHANG_RATIO = 1f
 internal const val RUBY_BORROW_GAP_RATIO = 1f
 
 /**
+ * How many words a base run may hold and still be kept on one line.
+ *
+ * One reading annotates its whole base run, so a line break inside the run
+ * leaves one part of it bare: the reading is drawn once, over whichever part
+ * is wider. Holding the run together avoids that, at the cost of a run too
+ * long for the line being broken mid-word instead. Three words covers the
+ * phrases that carry a single Strong's number, such as `adalah 962` or
+ * `kemudian dia mati`, while a longer run stays breakable.
+ */
+internal const val RUBY_MAX_JOINED_BASE_WORDS = 3
+
+/**
  * Cap on the letter spacing a reading may add to its base, in base font
  * sizes per character. A reading far wider than that is data garbage and
  * is ellipsised instead of spreading the base over several lines.
@@ -319,6 +331,8 @@ internal fun widenRubyBases(
         val start = r.start.coerceAtLeast(0)
         val end = r.end.coerceAtMost(text.length)
         if (end <= start || r.ruby.isEmpty()) continue
+        val runSpaces = (start until end).filter { text[it] == ' ' }
+        if (runSpaces.size < RUBY_MAX_JOINED_BASE_WORDS) joinedOffsets += runSpaces
         val halfOverflowPx = -spareHalfPx[i]
         if (halfOverflowPx <= 0f) continue
         val leftSlack = rubySideSlackPx(text, rubies, spareHalfPx, start - 1, -1, overhangPx, sideGapPx, borrowGapPx, spaceWidthPx)
