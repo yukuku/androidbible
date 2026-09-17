@@ -265,12 +265,15 @@ internal fun rubyColorAt(text: AnnotatedString, offset: Int, default: Color): Co
  * centre the reading over the base and still clear the neighbouring readings.
  * Two words sharing one space both add to it.
  *
- * The space a left pad lands on is made non-breaking, because a line break
- * there would collapse that space and leave the base against the margin with
- * nowhere for its reading to go. `adalah 930` wraps as a pair rather than
- * letting `930` start a line with three Strong's numbers it cannot fit beside
- * it. Only the left side is joined: a break after the base costs it nothing,
- * since the reading it was being kept clear of is then on the next line.
+ * The spaces flanking a base whose reading overflows it are made
+ * non-breaking. A reading wider than its base hangs over both sides, and a
+ * line break beside it takes away the room it hangs into: the padded space
+ * collapses, and a neighbour that was lending its unused width moves to
+ * another line. Either way the base ends up against a margin the reading
+ * cannot cross, and gets pinned there. `adalah 930 tahun` wraps as a unit
+ * rather than letting `930` sit at either end of a line with three Strong's
+ * numbers it has nowhere to put. A base whose reading fits inside it is left
+ * alone, which is what keeps a verse annotated on every word breakable.
  *
  * Over `815` in `memperanakkan 815 tahun`, the four Strong's numbers reach
  * across the room H3205 leaves unused over its long base, and the words stay
@@ -320,23 +323,22 @@ internal fun widenRubyBases(
         if (halfOverflowPx <= 0f) continue
         val leftSlack = rubySideSlackPx(text, rubies, spareHalfPx, start - 1, -1, overhangPx, sideGapPx, borrowGapPx, spaceWidthPx)
         val rightSlack = rubySideSlackPx(text, rubies, spareHalfPx, end, 1, overhangPx, sideGapPx, borrowGapPx, spaceWidthPx)
+        val leftSpace = if (start > 0 && text[start - 1] == ' ') start - 1 else -1
+        val rightSpace = if (end < text.length && text[end] == ' ') end else -1
+        if (leftSpace >= 0) joinedOffsets += leftSpace
+        if (rightSpace >= 0) joinedOffsets += rightSpace
         val leftPad = (halfOverflowPx - leftSlack).coerceIn(0f, maxPadPx)
         val rightPad = (halfOverflowPx - rightSlack).coerceIn(0f, maxPadPx)
         if (leftPad <= 0f && rightPad <= 0f) continue
-        val leftSpace = if (start > 0 && text[start - 1] == ' ') start - 1 else -1
-        val rightSpace = if (end < text.length && text[end] == ' ') end else -1
         if ((leftPad > 0f && leftSpace < 0) || (rightPad > 0f && rightSpace < 0)) {
             val spreadPx = rubyLetterSpacingPx(baseWidthPx[i], rubyWidthPx[i], end - start, leftSlack, rightSlack).coerceAtMost(maxSpacingPx)
             if (spreadPx > 0f) spreadPxByRange += Triple(start, end, spreadPx)
             continue
         }
-        if (leftPad > 0f) {
-            padPxByOffset[leftSpace] = (padPxByOffset[leftSpace] ?: 0f) + leftPad
-            joinedOffsets += leftSpace
-        }
+        if (leftPad > 0f) padPxByOffset[leftSpace] = (padPxByOffset[leftSpace] ?: 0f) + leftPad
         if (rightPad > 0f) padPxByOffset[rightSpace] = (padPxByOffset[rightSpace] ?: 0f) + rightPad
     }
-    if (padPxByOffset.isEmpty() && spreadPxByRange.isEmpty()) return text
+    if (padPxByOffset.isEmpty() && spreadPxByRange.isEmpty() && joinedOffsets.isEmpty()) return text
     val body = if (joinedOffsets.isEmpty()) text else AnnotatedString(
         text.text.toCharArray().also { chars -> for (o in joinedOffsets) chars[o] = '\u00a0' }.concatToString(),
         text.spanStyles,
