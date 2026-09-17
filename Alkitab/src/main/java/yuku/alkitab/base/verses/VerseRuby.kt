@@ -355,6 +355,14 @@ internal fun widenRubyBases(
  * its slot is ellipsised into it, which is what keeps two readings from ever
  * overlapping.
  *
+ * A base run is measured back from its right edge rather than read off its
+ * first character's box. Where the widening has put a letter spacing on the
+ * space before a word, the platform gives half of that spacing to the word's
+ * own box, which would otherwise start inside the gap and drag the reading
+ * off-centre by a quarter of the padding. The box is never widened past what
+ * the layout reports, so a run whose measured width overshoots keeps the
+ * bounds the layout gave it.
+ *
  * [baseAscentPx] is the distance from the baseline up to the top of the base
  * glyphs; the ruby's bottom sits [gapPx] above that.
  */
@@ -376,6 +384,7 @@ internal fun Modifier.rubyOverlay(
     val maxWidthPx = size.width.toInt().coerceAtLeast(0)
     val rubyFontPx = rubyStyle.fontSize.toPx()
     val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
+    val baseStyle = layout.layoutInput.style
     val log = debugLog && rubyGeometryLogWanted(debugAri, size.width, textLen)
     if (log) {
         Log.d(RUBY_GEOMETRY_TAG, "ari=0x%06x width=%.1f rubyFontPx=%.2f sideGap=%.2f text=%s".format(debugAri, size.width, rubyFontPx, sideGapPx, text.text))
@@ -392,6 +401,7 @@ internal fun Modifier.rubyOverlay(
         val readingWidthPx: Float,
         val baseLeftPx: Float,
         val baseRightPx: Float,
+        val reportedLeftPx: Float,
         val colorOffset: Int,
     ) {
         val centredLeftPx get() = rubyCentredLeftPx(baseLeftPx, baseRightPx, readingWidthPx)
@@ -420,11 +430,14 @@ internal fun Modifier.rubyOverlay(
             val first = layout.getBoundingBox(segStart)
             val last = layout.getBoundingBox(segEnd - 1)
             val width = textMeasurer.measure(AnnotatedString(slice), rubyStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+            val runWidth = textMeasurer.measure(text.subSequence(segStart, segEnd), baseStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+            val baseRight = maxOf(first.right, last.right)
             perLine.getOrPut(line) { mutableListOf() } += Placement(
                 slice = slice,
                 readingWidthPx = width,
-                baseLeftPx = minOf(first.left, last.left),
-                baseRightPx = maxOf(first.right, last.right),
+                baseLeftPx = maxOf(minOf(first.left, last.left), baseRight - runWidth),
+                baseRightPx = baseRight,
+                reportedLeftPx = minOf(first.left, last.left),
                 colorOffset = (segStart + segEnd - 1) / 2,
             )
         }
@@ -448,8 +461,8 @@ internal fun Modifier.rubyOverlay(
                 for ((i, p) in placements.withIndex()) {
                     Log.d(
                         RUBY_GEOMETRY_TAG,
-                        "    read=%-28s w=%7.2f base=[%8.2f,%8.2f] centred=%8.2f x=%8.2f allowed=%7.2f".format(
-                            p.slice, p.readingWidthPx, p.baseLeftPx, p.baseRightPx, p.centredLeftPx, xs[i], allowed[i],
+                        "    read=%-28s w=%7.2f base=[%8.2f,%8.2f] reportedLeft=%8.2f centred=%8.2f x=%8.2f allowed=%7.2f".format(
+                            p.slice, p.readingWidthPx, p.baseLeftPx, p.baseRightPx, p.reportedLeftPx, p.centredLeftPx, xs[i], allowed[i],
                         ),
                     )
                 }
