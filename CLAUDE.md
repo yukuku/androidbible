@@ -215,7 +215,7 @@ Verse text uses inline formatting codes (processed by `VerseRenderer` and `Forma
 - `@6`/`@5` — red letter (Jesus' words) start/end
 - `@9`/`@7` — italic start/end
 - `@8` — line break
-- `@<tag@>...@/` — special inline elements (cross-references, footnotes)
+- `@<tag@>...@/` — special inline elements (cross-references, footnotes, and `@<r=reading@>base@/` ruby, rendered by the Compose pipeline only; see `docs/features/ruby/design.md`)
 
 `FormattedVerseText.removeSpecialCodes()` strips these for plain-text operations (copy, search).
 

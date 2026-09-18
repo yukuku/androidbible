@@ -49,4 +49,7 @@
 
 	<string name="pref_useComposeSyncLogin_key" translatable="false">useComposeSyncLogin</string>
 	<bool name="pref_useComposeSyncLogin_default">false</bool>
+
+	<string name="pref_debugRubyGeometry_key" translatable="false">debugRubyGeometry</string>
+	<bool name="pref_debugRubyGeometry_default">false</bool>
 </resources>
