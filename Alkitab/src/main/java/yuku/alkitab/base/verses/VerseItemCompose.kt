@@ -39,6 +39,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.LocalContext
@@ -63,6 +64,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toUri
+import kotlinx.coroutines.withTimeoutOrNull
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
@@ -493,28 +495,44 @@ fun buildVerseItemComposeState(
     )
 }
 
+/** How long a finger must rest on a verse before its ruby geometry is copied. */
+private const val RUBY_GEOMETRY_HOLD_MS = 1000L
+
 /**
- * While the ruby geometry debug setting is on, touching a verse puts the dump
- * of what its readings were placed from on the clipboard. The down event is
- * observed and left unconsumed, so selecting and scrolling still see it.
+ * While the ruby geometry debug setting is on, resting a finger on a verse for
+ * [RUBY_GEOMETRY_HOLD_MS] puts the dump of what its readings were placed from
+ * on the clipboard. Events are watched on the initial pass and never consumed,
+ * so selecting, scrolling and long-pressing all still see them, and the hold is
+ * timed rather than waiting for a gesture no one else has claimed.
  */
 @Composable
-private fun rubyGeometryCopyOnTouch(ari: Int): Modifier {
+private fun rubyGeometryCopyOnHold(ari: Int): Modifier {
     if (!ExperimentalFlags.debugRubyGeometry()) return Modifier
     val context = LocalContext.current
     return Modifier.pointerInput(ari) {
         awaitPointerEventScope {
             while (true) {
-                awaitFirstDown(requireUnconsumed = false)
-                val dump = rubyGeometryDumpFor(ari)
-                if (dump == null) {
-                    Toast.makeText(context, "No ruby geometry recorded for this verse yet", Toast.LENGTH_SHORT).show()
-                } else {
-                    ClipboardUtil.copyToClipboard(dump)
-                    Toast.makeText(context, "Ruby geometry copied, " + dump.trim().lines().size + " lines", Toast.LENGTH_SHORT).show()
+                awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                val lifted = withTimeoutOrNull(RUBY_GEOMETRY_HOLD_MS) {
+                    var up = false
+                    while (!up) {
+                        up = awaitPointerEvent(PointerEventPass.Initial).changes.none { it.pressed }
+                    }
+                    true
                 }
+                if (lifted == null) copyRubyGeometry(context, ari)
             }
         }
+    }
+}
+
+private fun copyRubyGeometry(context: Context, ari: Int) {
+    val dump = rubyGeometryDumpFor(ari)
+    if (dump == null) {
+        Toast.makeText(context, "No ruby geometry recorded for this verse yet", Toast.LENGTH_SHORT).show()
+    } else {
+        ClipboardUtil.copyToClipboard(dump)
+        Toast.makeText(context, "Ruby geometry copied, " + dump.trim().lines().size + " lines", Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -554,7 +572,7 @@ internal fun VerseItemComposeContent(
                 .pointerInput(state.onClick) {
                     detectTapGestures(onTap = { state.onClick() })
                 }
-                .then(rubyGeometryCopyOnTouch(state.attribute.ari))
+                .then(rubyGeometryCopyOnHold(state.attribute.ari))
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 VerseTextRegion(
@@ -734,6 +752,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     baseAscentPx = lineMetrics.baseAscentPx,
                     gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
                     debugAri = state.attribute.ari,
+                    debugSource = state.render.sourceText,
                     debug = ExperimentalFlags.debugRubyGeometry(),
                 ),
             onTextLayout = { textLayoutResult = it },

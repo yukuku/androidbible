@@ -77,6 +77,8 @@ object VerseRendererCompose {
         val startPosAfterVerseNumber: Int,
         val inlineLinks: List<InlineLinkRange>,
         val rubies: List<RubyRange>,
+        /** The verse as it is stored, formatting codes and all, for the ruby geometry dump to quote. */
+        val sourceText: String,
     )
 
     private val buf_char_: ThreadLocal<CharArray> = ThreadLocal.withInitial { CharArray(1024) }
@@ -130,6 +132,7 @@ object VerseRendererCompose {
             startPosAfterVerseNumber = startPosAfterVerseNumber,
             inlineLinks = inlineLinks,
             rubies = rubies,
+            sourceText = text,
         )
     }
 
@@ -432,6 +435,7 @@ object VerseRendererCompose {
             startPosAfterVerseNumber = startPosAfterVerseNumber,
             inlineLinks = emptyList(),
             rubies = emptyList(),
+            sourceText = text,
         )
     }
 }

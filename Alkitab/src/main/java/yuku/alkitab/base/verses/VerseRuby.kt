@@ -513,6 +513,7 @@ internal fun Modifier.rubyOverlay(
     baseAscentPx: Float,
     gapPx: Float,
     debugAri: Int,
+    debugSource: String,
     debug: Boolean,
 ): Modifier = if (rubies.isEmpty() && !debug) this else drawWithContent {
     drawContent()
@@ -530,7 +531,9 @@ internal fun Modifier.rubyOverlay(
         dump?.appendLine(line)
     }
     if (log) {
-        emit("ari=0x%06x width=%.1f rubyFontPx=%.2f sideGap=%.2f text=%s".format(debugAri, size.width, rubyFontPx, sideGapPx, text.text))
+        emit("ari=0x%06x width=%.1f rubyFontPx=%.2f sideGap=%.2f".format(debugAri, size.width, rubyFontPx, sideGapPx))
+        emit("  source=%s".format(debugSource))
+        emit("  laid out=%s".format(text.text))
         for (span in text.spanStyles) {
             val spacing = span.item.letterSpacing
             if (spacing != TextUnit.Unspecified) {
