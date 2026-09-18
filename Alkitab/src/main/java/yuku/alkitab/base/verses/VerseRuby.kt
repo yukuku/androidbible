@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -188,6 +189,30 @@ internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLen
     return (needed - baseWidthPx) / baseLength
 }
 
+
+
+/**
+ * [source] with its characters replaced by [chars], which must be the same
+ * length so every offset still addresses what it did.
+ *
+ * Everything the text carries is copied over, not only its styles: the verse
+ * body holds a clickable link per word the dictionary recognises, and dropping
+ * those would leave the words underlined but dead.
+ */
+private fun rubyTextWithChars(source: AnnotatedString, chars: CharArray): AnnotatedString = buildAnnotatedString {
+    append(chars.concatToString())
+    for (range in source.spanStyles) addStyle(range.item, range.start, range.end)
+    for (range in source.paragraphStyles) addStyle(range.item, range.start, range.end)
+    for (range in source.getLinkAnnotations(0, source.length)) {
+        when (val link = range.item) {
+            is LinkAnnotation.Clickable -> addLink(link, range.start, range.end)
+            is LinkAnnotation.Url -> addLink(link, range.start, range.end)
+        }
+    }
+    for (range in source.getStringAnnotations(0, source.length)) {
+        addStringAnnotation(range.tag, range.item, range.start, range.end)
+    }
+}
 
 /**
  * Drops the joins in any run they would make too wide for the line.
@@ -415,11 +440,11 @@ internal fun widenRubyBases(
     }
     dropJoinsThatWouldNotFit(text, joinedOffsets, padPxByOffset, textStyle, textMeasurer, availableWidthPx - widestIndentPx(text, density))
     if (padPxByOffset.isEmpty() && spreadPxByRange.isEmpty() && joinedOffsets.isEmpty()) return text
-    val body = if (joinedOffsets.isEmpty()) text else AnnotatedString(
-        text.text.toCharArray().also { chars -> for (o in joinedOffsets) chars[o] = '\u00a0' }.concatToString(),
-        text.spanStyles,
-        text.paragraphStyles,
-    )
+    val body = if (joinedOffsets.isEmpty()) text else {
+        val chars = text.text.toCharArray()
+        for (o in joinedOffsets) chars[o] = '\u00a0'
+        rubyTextWithChars(text, chars)
+    }
     return buildAnnotatedString {
         append(body)
         for ((start, end, spreadPx) in spreadPxByRange) {

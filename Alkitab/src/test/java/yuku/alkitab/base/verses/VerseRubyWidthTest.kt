@@ -7,6 +7,11 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.sp
 import androidx.test.core.app.ApplicationProvider
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.TextUnit
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -49,6 +54,50 @@ class VerseRubyWidthTest {
         var until = cut
         while (until < text.length && !breakable(text[until])) until++
         return (from until until).any { text[it] == '\u00a0' }
+    }
+
+    @Test
+    fun `holding words together keeps the styles and links the verse text carries`() {
+        val density = Density(2f, 1f)
+        val textMeasurer = androidx.compose.ui.text.TextMeasurer(
+            defaultFontFamilyResolver = androidx.compose.ui.text.font.createFontFamilyResolver(
+                ApplicationProvider.getApplicationContext()
+            ),
+            defaultDensity = density,
+            defaultLayoutDirection = androidx.compose.ui.unit.LayoutDirection.Ltr,
+        )
+        val render = VerseRendererCompose.render(
+            isVerseNumberShown = true,
+            ari = Ari.encode(0, 5, 5),
+            text = verses[0],
+            verseNumberText = "5",
+        )
+        val tahun = render.text.text.indexOf("tahun")
+        val decorated = androidx.compose.ui.text.buildAnnotatedString {
+            append(render.text)
+            addStyle(SpanStyle(textDecoration = TextDecoration.Underline), tahun, tahun + 5)
+            addLink(LinkAnnotation.Clickable("dictionary") {}, tahun, tahun + 5)
+            addStringAnnotation("tag", "value", tahun, tahun + 5)
+        }
+        val textStyle = TextStyle(fontSize = 17f.sp, fontFamily = FontFamily.SansSerif)
+        val rubyStyle = textStyle.copy(fontSize = (17f * RUBY_FONT_SIZE_RATIO).sp)
+        val widened = widenRubyBases(decorated, render.rubies, textStyle, rubyStyle, textMeasurer, density, 720)
+
+        assertTrue("the fixture did not hold any word together", widened.text.contains('\u00a0'))
+        assertEquals(decorated.text.length, widened.text.length)
+        for (range in decorated.spanStyles) {
+            assertTrue(
+                "a style the verse carried was lost: $range",
+                widened.spanStyles.any { it.item == range.item && it.start == range.start && it.end == range.end },
+            )
+        }
+        assertEquals(1, widened.getLinkAnnotations(0, widened.length).size)
+        assertEquals(tahun, widened.getLinkAnnotations(0, widened.length)[0].start)
+        assertEquals(listOf("value"), widened.getStringAnnotations(0, widened.length).map { it.item })
+        assertTrue(
+            "the underline span was lost",
+            widened.spanStyles.any { it.item.textDecoration == TextDecoration.Underline && it.start == tahun },
+        )
     }
 
     @Before
