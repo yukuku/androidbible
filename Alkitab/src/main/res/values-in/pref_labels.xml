@@ -29,8 +29,8 @@
 
     <string name="pref_experimental">Fitur eksperimental</string>
     <string name="pref_experimental_warning">Mungkin belum stabil. Matikan jika bermasalah.</string>
-    <string name="pref_logRubyGeometry_title">Catat geometri ruby</string>
-    <string name="pref_logRubyGeometry_summary">Tulis hasil pengukuran di balik setiap bacaan ruby ke log sistem dengan tag RubyGeom. Hanya untuk mendiagnosis penempatan bacaan; biarkan mati.</string>
+    <string name="pref_debugRubyGeometry_title">Debug geometri ruby</string>
+    <string name="pref_debugRubyGeometry_summary">Beri kotak pada setiap baris, teks dasar, dan bacaan di layar, tulis hasil pengukurannya ke log sistem dengan tag RubyGeom, dan salin pengukuran sebuah ayat ke papan klip saat ayat itu disentuh. Hanya untuk mendiagnosis penempatan bacaan; biarkan mati.</string>
     <string name="pref_useComposeVerseItem_title">Tampilan ayat (Compose)</string>
     <string name="pref_useComposeVerseItem_summary">Tampilkan teks Alkitab dengan daftar ayat yang sepenuhnya berbasis Jetpack Compose, bukan tampilan lama. Berlaku setelah layar pembacaan dibuka kembali.</string>
     <string name="pref_useComposeGoto_title">Navigasi (Compose)</string>

@@ -223,6 +223,8 @@ class VerseRubySnapshotTest {
         }
         S.overrideAppliedDimensions(dims)
         yuku.afw.storage.Preferences.setInt(context.getString(R.string.pref_selectedVerseBgColor_key), 0xff0277bd.toInt())
+        // RUBY_DEBUG_BOXES=1 renders the sheets with the on-screen debug boxes
+        yuku.afw.storage.Preferences.setBoolean(context.getString(R.string.pref_debugRubyGeometry_key), System.getenv("RUBY_DEBUG_BOXES") != null)
     }
 
     @Test

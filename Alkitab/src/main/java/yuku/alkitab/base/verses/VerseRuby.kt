@@ -3,7 +3,10 @@ package yuku.alkitab.base.verses
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.text.AnnotatedString
@@ -30,6 +33,15 @@ internal const val RUBY_GEOMETRY_TAG = "RubyGeom"
  * which costs a repeat dump and bounds what a long session retains.
  */
 private val rubyGeometryLogged = HashSet<String>()
+
+/** The latest dump per verse, for [rubyGeometryDumpFor] to hand to the clipboard. */
+private val rubyGeometryDumps = object : LinkedHashMap<Int, String>(16, 0.75f, true) {
+    override fun removeEldestEntry(eldest: Map.Entry<Int, String>) = size > 64
+}
+
+internal fun rubyGeometryDumpFor(ari: Int): String? = synchronized(rubyGeometryDumps) { rubyGeometryDumps[ari] }
+
+private fun rememberRubyGeometryDump(ari: Int, dump: String) = synchronized(rubyGeometryDumps) { rubyGeometryDumps[ari] = dump }
 
 private fun rubyGeometryLogWanted(ari: Int, widthPx: Float, textLen: Int): Boolean = synchronized(rubyGeometryLogged) {
     if (rubyGeometryLogged.size > 512) rubyGeometryLogged.clear()
@@ -501,8 +513,8 @@ internal fun Modifier.rubyOverlay(
     baseAscentPx: Float,
     gapPx: Float,
     debugAri: Int,
-    debugLog: Boolean,
-): Modifier = if (rubies.isEmpty()) this else drawWithContent {
+    debug: Boolean,
+): Modifier = if (rubies.isEmpty() && !debug) this else drawWithContent {
     drawContent()
     val layout = layoutResultProvider() ?: return@drawWithContent
     val text = layout.layoutInput.text
@@ -511,13 +523,18 @@ internal fun Modifier.rubyOverlay(
     val rubyFontPx = rubyStyle.fontSize.toPx()
     val sideGapPx = rubyFontPx * RUBY_SIDE_GAP_RATIO
     val baseStyle = layout.layoutInput.style
-    val log = debugLog && rubyGeometryLogWanted(debugAri, size.width, textLen)
+    val log = debug && rubyGeometryLogWanted(debugAri, size.width, textLen)
+    val dump = if (log) StringBuilder() else null
+    fun emit(line: String) {
+        Log.d(RUBY_GEOMETRY_TAG, line)
+        dump?.appendLine(line)
+    }
     if (log) {
-        Log.d(RUBY_GEOMETRY_TAG, "ari=0x%06x width=%.1f rubyFontPx=%.2f sideGap=%.2f text=%s".format(debugAri, size.width, rubyFontPx, sideGapPx, text.text))
+        emit("ari=0x%06x width=%.1f rubyFontPx=%.2f sideGap=%.2f text=%s".format(debugAri, size.width, rubyFontPx, sideGapPx, text.text))
         for (span in text.spanStyles) {
             val spacing = span.item.letterSpacing
             if (spacing != TextUnit.Unspecified) {
-                Log.d(RUBY_GEOMETRY_TAG, "  pad [%d,%d) %s = %.2f px on %s".format(span.start, span.end, spacing, spacing.toPx(), quoteForLog(text.text, span.start, span.end)))
+                emit("  pad [%d,%d) %s = %.2f px on %s".format(span.start, span.end, spacing, spacing.toPx(), quoteForLog(text.text, span.start, span.end)))
             }
         }
     }
@@ -600,10 +617,9 @@ internal fun Modifier.rubyOverlay(
             )
             val allowed = rubyAllowedWidthsPx(xs, size.width, sideGapPx)
             if (log) {
-                Log.d(RUBY_GEOMETRY_TAG, "  line=%d left=%.1f baseline=%.1f".format(line, lineLeft, layout.getLineBaseline(line)))
+                emit("  line=%d left=%.1f baseline=%.1f".format(line, lineLeft, layout.getLineBaseline(line)))
                 for ((i, p) in placements.withIndex()) {
-                    Log.d(
-                        RUBY_GEOMETRY_TAG,
+                    emit(
                         "    read=%-28s w=%7.2f base=[%8.2f,%8.2f] reportedLeft=%8.2f centred=%8.2f x=%8.2f allowed=%7.2f".format(
                             p.slice, p.readingWidthPx, p.baseLeftPx, p.baseRightPx, p.reportedLeftPx, p.centredLeftPx, xs[i], allowed[i],
                         ),
@@ -621,9 +637,37 @@ internal fun Modifier.rubyOverlay(
                 )
                 val y = glyphTop - gapPx - measured.size.height
                 drawText(measured, color = rubyColorAt(text, p.colorOffset, textColor), topLeft = Offset(xs[i], y))
+                if (debug) {
+                    drawDebugBox(RUBY_DEBUG_READING, xs[i], y, measured.size.width.toFloat(), measured.size.height.toFloat())
+                    drawDebugBox(RUBY_DEBUG_BASE, p.baseLeftPx, glyphTop, p.baseRightPx - p.baseLeftPx, layout.getLineBottom(line) - glyphTop)
+                }
+            }
+        }
+        if (debug) {
+            for (line in 0 until layout.lineCount) {
+                drawDebugBox(
+                    RUBY_DEBUG_LINE,
+                    layout.getLineLeft(line),
+                    layout.getLineTop(line),
+                    layout.getLineRight(line) - layout.getLineLeft(line),
+                    layout.getLineBottom(line) - layout.getLineTop(line),
+                )
             }
         }
     }
+    if (dump != null) rememberRubyGeometryDump(debugAri, dump.toString())
+}
+
+private val RUBY_DEBUG_LINE = Color(0x5500aa00)
+private val RUBY_DEBUG_BASE = Color(0x991565c0)
+private val RUBY_DEBUG_READING = Color(0x99c62828)
+
+/** A hairline rectangle with a tick down its centre, so a box's middle can be read off against its base. */
+private fun DrawScope.drawDebugBox(color: Color, left: Float, top: Float, width: Float, height: Float) {
+    if (width <= 0f || height <= 0f) return
+    drawRect(color = color, topLeft = Offset(left, top), size = Size(width, height), style = Stroke(width = 1f))
+    val centre = left + width / 2f
+    drawLine(color, Offset(centre, top), Offset(centre, top + height), strokeWidth = 1f)
 }
 
 /**

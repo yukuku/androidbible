@@ -30,9 +30,9 @@
 
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:key="@string/pref_logRubyGeometry_key"
-			android:summary="@string/pref_logRubyGeometry_summary"
-			android:title="@string/pref_logRubyGeometry_title" />
+			android:key="@string/pref_debugRubyGeometry_key"
+			android:summary="@string/pref_debugRubyGeometry_summary"
+			android:title="@string/pref_debugRubyGeometry_title" />
 
 	</PreferenceCategory>
 </PreferenceScreen>

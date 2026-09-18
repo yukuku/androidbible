@@ -2,6 +2,7 @@ package yuku.alkitab.base.verses
 
 import android.annotation.SuppressLint
 import android.content.ClipDescription
+import android.widget.Toast
 import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
@@ -10,6 +11,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -65,6 +67,7 @@ import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.settings.ExperimentalFlags
+import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.widget.AttributeView
@@ -490,6 +493,31 @@ fun buildVerseItemComposeState(
     )
 }
 
+/**
+ * While the ruby geometry debug setting is on, touching a verse puts the dump
+ * of what its readings were placed from on the clipboard. The down event is
+ * observed and left unconsumed, so selecting and scrolling still see it.
+ */
+@Composable
+private fun rubyGeometryCopyOnTouch(ari: Int): Modifier {
+    if (!ExperimentalFlags.debugRubyGeometry()) return Modifier
+    val context = LocalContext.current
+    return Modifier.pointerInput(ari) {
+        awaitPointerEventScope {
+            while (true) {
+                awaitFirstDown(requireUnconsumed = false)
+                val dump = rubyGeometryDumpFor(ari)
+                if (dump == null) {
+                    Toast.makeText(context, "No ruby geometry recorded for this verse yet", Toast.LENGTH_SHORT).show()
+                } else {
+                    ClipboardUtil.copyToClipboard(dump)
+                    Toast.makeText(context, "Ruby geometry copied, " + dump.trim().lines().size + " lines", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+}
+
 @Composable
 internal fun VerseItemComposeContent(
     state: VerseItemComposeState,
@@ -526,6 +554,7 @@ internal fun VerseItemComposeContent(
                 .pointerInput(state.onClick) {
                     detectTapGestures(onTap = { state.onClick() })
                 }
+                .then(rubyGeometryCopyOnTouch(state.attribute.ari))
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 VerseTextRegion(
@@ -705,7 +734,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     baseAscentPx = lineMetrics.baseAscentPx,
                     gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
                     debugAri = state.attribute.ari,
-                    debugLog = ExperimentalFlags.logRubyGeometry(),
+                    debug = ExperimentalFlags.debugRubyGeometry(),
                 ),
             onTextLayout = { textLayoutResult = it },
         )
