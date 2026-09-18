@@ -35,6 +35,13 @@ private fun rubyGeometryLogWanted(ari: Int, widthPx: Float, textLen: Int): Boole
     rubyGeometryLogged.add("$ari/${widthPx.toInt()}/$textLen")
 }
 
+/**
+ * Whether the character at [offset] carries extra letter spacing, half of
+ * which the platform hands to the box of the character after it.
+ */
+private fun letterSpacedAt(text: AnnotatedString, offset: Int): Boolean =
+    offset >= 0 && text.spanStyles.any { it.item.letterSpacing != TextUnit.Unspecified && offset >= it.start && offset < it.end }
+
 private fun quoteForLog(text: String, start: Int, end: Int): String {
     val from = (start - 6).coerceAtLeast(0)
     val until = (end + 6).coerceAtMost(text.length)
@@ -181,6 +188,59 @@ internal fun rubyLetterSpacingPx(baseWidthPx: Float, rubyWidthPx: Float, baseLen
     return (needed - baseWidthPx) / baseLength
 }
 
+
+/**
+ * Drops the joins in any run they would make too wide for the line.
+ *
+ * Holding words together costs the layout its break opportunities, and the
+ * padding beside a base is wide enough that two of them plus their words can
+ * outgrow a narrow column. With nowhere left to break, the platform splits a
+ * word instead, which is worse than the reading the join was protecting. Such
+ * a run is handed back its breaks, and its readings are placed by
+ * [rubyLineLayoutPx] as they are wherever a base lands beside a margin.
+ */
+/**
+ * The deepest leading margin any line of [text] is given. A held-together run
+ * has to fit the narrowest line it could land on, not the widest.
+ */
+private fun widestIndentPx(text: AnnotatedString, density: Density): Int = with(density) {
+    text.paragraphStyles.maxOfOrNull { range ->
+        val indent = range.item.textIndent ?: return@maxOfOrNull 0f
+        val first = if (indent.firstLine == TextUnit.Unspecified) 0f else indent.firstLine.toPx()
+        val rest = if (indent.restLine == TextUnit.Unspecified) 0f else indent.restLine.toPx()
+        maxOf(first, rest)
+    }?.toInt() ?: 0
+}
+
+private fun dropJoinsThatWouldNotFit(
+    text: AnnotatedString,
+    joinedOffsets: MutableSet<Int>,
+    padPxByOffset: Map<Int, Float>,
+    textStyle: TextStyle,
+    textMeasurer: TextMeasurer,
+    availableWidthPx: Int,
+) {
+    if (availableWidthPx <= 0 || joinedOffsets.isEmpty()) return
+    var runStart = 0
+    var offset = 0
+    fun closeRun(runEnd: Int) {
+        val joins = (runStart until runEnd).filter { it in joinedOffsets }
+        if (joins.isEmpty()) return
+        val plain = textMeasurer.measure(text.subSequence(runStart, runEnd), textStyle, softWrap = false, maxLines = 1).size.width
+        val padded = plain + (runStart until runEnd).sumOf { (padPxByOffset[it] ?: 0f).toDouble() }
+        if (padded > availableWidthPx) joinedOffsets -= joins.toSet()
+    }
+    while (offset < text.length) {
+        val ch = text.text[offset]
+        if ((ch == ' ' && offset !in joinedOffsets) || ch == '\n') {
+            closeRun(offset)
+            runStart = offset + 1
+        }
+        offset++
+    }
+    closeRun(text.length)
+}
+
 /**
  * Room on one side of the ruby base `start until end`, in px, counting the
  * room a neighbouring reading leaves unused.
@@ -302,6 +362,7 @@ internal fun widenRubyBases(
     rubyStyle: TextStyle,
     textMeasurer: TextMeasurer,
     density: Density,
+    availableWidthPx: Int,
 ): AnnotatedString {
     if (rubies.isEmpty()) return text
     val spaceWidthPx = textMeasurer.measure(AnnotatedString(" "), textStyle, softWrap = false, maxLines = 1).size.width.toFloat()
@@ -352,6 +413,7 @@ internal fun widenRubyBases(
         if (leftPad > 0f) padPxByOffset[leftSpace] = (padPxByOffset[leftSpace] ?: 0f) + leftPad
         if (rightPad > 0f) padPxByOffset[rightSpace] = (padPxByOffset[rightSpace] ?: 0f) + rightPad
     }
+    dropJoinsThatWouldNotFit(text, joinedOffsets, padPxByOffset, textStyle, textMeasurer, availableWidthPx - widestIndentPx(text, density))
     if (padPxByOffset.isEmpty() && spreadPxByRange.isEmpty() && joinedOffsets.isEmpty()) return text
     val body = if (joinedOffsets.isEmpty()) text else AnnotatedString(
         text.text.toCharArray().also { chars -> for (o in joinedOffsets) chars[o] = '\u00a0' }.concatToString(),
@@ -387,13 +449,14 @@ internal fun widenRubyBases(
  * its slot is ellipsised into it, which is what keeps two readings from ever
  * overlapping.
  *
- * A base run is measured back from its right edge rather than read off its
- * first character's box. Where the widening has put a letter spacing on the
- * space before a word, the platform gives half of that spacing to the word's
- * own box, which would otherwise start inside the gap and drag the reading
+ * A base run preceded by a letter-spaced character is measured back from its
+ * right edge rather than read off its first character's box. The platform
+ * gives half of that spacing to the following character's box, so a word after
+ * a widened space would otherwise start inside the gap and drag its reading
  * off-centre by a quarter of the padding. The box is never widened past what
  * the layout reports, so a run whose measured width overshoots keeps the
- * bounds the layout gave it.
+ * bounds the layout gave it. A run with no spacing before it needs no second
+ * measurement and takes the bounds as reported.
  *
  * A base run with no characters is a reading for a word the translation does
  * not have. It is centred on the point in the text where it was written, so
@@ -481,14 +544,18 @@ internal fun Modifier.rubyOverlay(
             val first = layout.getBoundingBox(segStart)
             val last = layout.getBoundingBox(segEnd - 1)
             val width = textMeasurer.measure(AnnotatedString(slice), rubyStyle, softWrap = false, maxLines = 1).size.width.toFloat()
-            val runWidth = textMeasurer.measure(text.subSequence(segStart, segEnd), baseStyle, softWrap = false, maxLines = 1).size.width.toFloat()
             val baseRight = maxOf(first.right, last.right)
+            val reportedLeft = minOf(first.left, last.left)
+            val baseLeft = if (!letterSpacedAt(text, segStart - 1)) reportedLeft else {
+                val runWidth = textMeasurer.measure(text.subSequence(segStart, segEnd), baseStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+                maxOf(reportedLeft, baseRight - runWidth)
+            }
             perLine.getOrPut(line) { mutableListOf() } += Placement(
                 slice = slice,
                 readingWidthPx = width,
-                baseLeftPx = maxOf(minOf(first.left, last.left), baseRight - runWidth),
+                baseLeftPx = baseLeft,
                 baseRightPx = baseRight,
-                reportedLeftPx = minOf(first.left, last.left),
+                reportedLeftPx = reportedLeft,
                 colorOffset = (segStart + segEnd - 1) / 2,
             )
         }

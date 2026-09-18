@@ -11,6 +11,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -679,11 +680,11 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
             fontWeight = FontWeight.Normal,
         )
     }
-    val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density) {
-        widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density)
-    }
-
-    Box(modifier = modifier) {
+    BoxWithConstraints(modifier = modifier) {
+        val availableWidthPx = constraints.maxWidth
+        val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx) {
+            widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx)
+        }
         BasicText(
             text = displayText,
             style = textStyle,
