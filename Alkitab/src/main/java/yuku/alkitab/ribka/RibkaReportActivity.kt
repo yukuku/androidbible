@@ -22,12 +22,14 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.FormattedVerseText
+import yuku.alkitab.base.verses.VerseTextSlot
+import yuku.alkitab.base.verses.renderVerseText
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 
 class RibkaReportActivity : BaseActivity() {
-    private lateinit var tRibkaVerseText: TextView
+    private lateinit var ribkaVerseText: VerseTextSlot
     private lateinit var tRibkaReference: TextView
     private lateinit var oRibkaCategoryTypo: RadioButton
     private lateinit var oRibkaCategoryWord: RadioButton
@@ -54,7 +56,7 @@ class RibkaReportActivity : BaseActivity() {
         setupEdgeToEdgeDisplay(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        tRibkaVerseText = findViewById(R.id.tRibkaVerseText)
+        ribkaVerseText = VerseTextSlot.of(this, R.id.tRibkaVerseText)
         tRibkaReference = findViewById(R.id.tRibkaReference)
         oRibkaCategoryTypo = findViewById(R.id.oRibkaCategoryTypo)
         oRibkaCategoryWord = findViewById(R.id.oRibkaCategoryWord)
@@ -74,10 +76,12 @@ class RibkaReportActivity : BaseActivity() {
         versionDescription = intent.getStringExtra("versionDescription")
 
         tRibkaReference.text = reference
-        VerseRenderer.render(
-            lText = tRibkaVerseText,
-            ari = ari,
-            text = verseText,
+        // The reported verse arrives in the intent rather than from a version
+        // this screen can look settings up for, so it renders at the base size.
+        ribkaVerseText.setText(
+            textSizeMult = 1f,
+            legacy = { lText -> VerseRenderer.render(lText = lText, ari = ari, text = verseText) },
+            compose = { renderVerseText(ari, verseText) },
         )
 
         tRibkaSuggestion.setText(FormattedVerseText.removeSpecialCodes(verseText))

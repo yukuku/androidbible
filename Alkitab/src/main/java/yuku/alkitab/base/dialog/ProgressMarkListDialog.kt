@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.compose.ui.text.AnnotatedString
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import yuku.alkitab.base.App
@@ -16,6 +17,9 @@ import yuku.alkitab.base.util.Appearances.applyMarkerSnippetContentAndAppearance
 import yuku.alkitab.base.util.Appearances.applyMarkerTitleTextAppearance
 import yuku.alkitab.base.util.FormattedVerseText.removeSpecialCodes
 import yuku.alkitab.base.util.Sqlitil
+import yuku.alkitab.base.verses.VerseTextSlot
+import yuku.alkitab.base.verses.renderVerseText
+import yuku.alkitab.base.verses.withReferencePrefix
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.ProgressMark
@@ -40,7 +44,7 @@ class ProgressMarkListDialog : DialogFragment() {
     class ProgressMarkHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tCaption: TextView = itemView.findViewById(R.id.lCaption)
         val tDate: TextView = itemView.findViewById(R.id.lDate)
-        val tVerseText: TextView = itemView.findViewById(R.id.lSnippet)
+        val verseText: VerseTextSlot = VerseTextSlot.of(itemView, R.id.lSnippet)
         val imgIcon: ImageView = itemView.findViewById(R.id.imgIcon)
     }
 
@@ -84,9 +88,18 @@ class ProgressMarkListDialog : DialogFragment() {
                     holder.tDate.text = date
 
                     val reference = version.reference(ari)
-                    val loadedVerseText = removeSpecialCodes(version.loadVerseText(ari))
-                    val verseText = loadedVerseText ?: getString(R.string.generic_verse_not_available_in_this_version)
-                    applyMarkerSnippetContentAndAppearance(holder.tVerseText, reference, verseText, textSizeMult)
+                    val rawVerseText = version.loadVerseText(ari)
+                    val notAvailableText = getString(R.string.generic_verse_not_available_in_this_version)
+                    holder.verseText.setText(
+                        textSizeMult = textSizeMult,
+                        legacy = { lSnippet ->
+                            applyMarkerSnippetContentAndAppearance(lSnippet, reference, removeSpecialCodes(rawVerseText) ?: notAvailableText, textSizeMult)
+                        },
+                        compose = {
+                            val rendered = if (rawVerseText == null) AnnotatedString(notAvailableText) else renderVerseText(ari, rawVerseText)
+                            rendered.withReferencePrefix(reference)
+                        },
+                    )
                 }
                 holder.tDate.text = date
                 applyMarkerDateTextAppearance(holder.tDate, textSizeMult)

@@ -26,6 +26,7 @@ import androidx.annotation.Keep
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.ui.text.AnnotatedString
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
@@ -52,6 +53,9 @@ import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.SearchEngineQuery
 import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.util.TextColorUtil
+import yuku.alkitab.base.verses.VerseTextSlot
+import yuku.alkitab.base.verses.renderVerseText
+import yuku.alkitab.base.verses.withSearchHilite
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.Ari
@@ -713,7 +717,7 @@ class SearchActivity : BaseActivity() {
 
     class ResultHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val lReference: TextView = itemView.findViewById(R.id.lReference)
-        val lSnippet: TextView = itemView.findViewById(R.id.lSnippet)
+        val snippet: VerseTextSlot = VerseTextSlot.of(itemView, R.id.lSnippet)
     }
 
     inner class SearchAdapter(val searchResults: IntArrayList, tokens: List<String>) : RecyclerView.Adapter<ResultHolder>() {
@@ -753,17 +757,30 @@ class SearchActivity : BaseActivity() {
                 holder.lReference.setTextColor(checkedTextColor)
             }
 
-            Appearances.applyTextAppearance(holder.lSnippet, textSizeMult)
-            if (checked) {
-                holder.lSnippet.setTextColor(checkedTextColor)
-            }
+            val rawVerseText = searchInVersion.loadVerseText(ari)
+            val snippetHiliteColor = if (checked) checkedTextColor else hiliteColor
+            holder.snippet.setText(
+                textSizeMult = textSizeMult,
+                colorOverride = if (checked) checkedTextColor else 0,
+                legacy = { lSnippet ->
+                    Appearances.applyTextAppearance(lSnippet, textSizeMult)
+                    if (checked) lSnippet.setTextColor(checkedTextColor)
 
-            val verseText = FormattedVerseText.removeSpecialCodes(searchInVersion.loadVerseText(ari))
-            if (verseText != null) {
-                holder.lSnippet.text = SearchEngine.hilite(verseText, rt, if (checked) checkedTextColor else hiliteColor)
-            } else {
-                holder.lSnippet.setText(R.string.generic_verse_not_available_in_this_version)
-            }
+                    val verseText = FormattedVerseText.removeSpecialCodes(rawVerseText)
+                    if (verseText != null) {
+                        lSnippet.text = SearchEngine.hilite(verseText, rt, snippetHiliteColor)
+                    } else {
+                        lSnippet.setText(R.string.generic_verse_not_available_in_this_version)
+                    }
+                },
+                compose = {
+                    if (rawVerseText != null) {
+                        renderVerseText(ari, rawVerseText).withSearchHilite(rt, snippetHiliteColor)
+                    } else {
+                        AnnotatedString(getString(R.string.generic_verse_not_available_in_this_version))
+                    }
+                },
+            )
 
             if (checked) {
                 holder.itemView.setBackgroundColor(checkedBgColor)

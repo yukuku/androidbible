@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.ui.text.AnnotatedString
 import androidx.core.graphics.ColorUtils
 import androidx.core.util.size
 import androidx.lifecycle.lifecycleScope
@@ -48,6 +49,10 @@ import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.SearchEngine.ReadyTokens
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TextColorUtil
+import yuku.alkitab.base.verses.VerseTextSlot
+import yuku.alkitab.base.verses.renderVerseText
+import yuku.alkitab.base.verses.withReferencePrefix
+import yuku.alkitab.base.verses.withSearchHilite
 import yuku.alkitab.base.widget.VerseRenderer
 import yuku.alkitab.base.widget.VerseRenderer.FormattedTextResult
 import yuku.alkitab.debug.R
@@ -590,7 +595,7 @@ class MarkerListActivity : BaseActivity() {
         override fun bindView(view: View, position: Int, parent: ViewGroup) {
             val lDate = view.findViewById<TextView>(R.id.lDate)
             val lCaption = view.findViewById<TextView>(R.id.lCaption)
-            val lSnippet = view.findViewById<TextView>(R.id.lSnippet)
+            val snippet = VerseTextSlot.of(view, R.id.lSnippet)
             val panelLabels = view.findViewById<FlowLayout>(R.id.panelLabels)
             val marker = getItem(position)
 
@@ -612,25 +617,48 @@ class MarkerListActivity : BaseActivity() {
 
             val ari = marker.ari
             val rawVerseText = version.loadVerseText(ari)
-            val verseText: CharSequence = if (rawVerseText == null) {
-                getString(R.string.generic_verse_not_available_in_this_version)
-            } else {
-                val ftr = FormattedTextResult()
-                VerseRenderer.render(null, null, false, ari, rawVerseText, "", null, false, null, ftr)
-                ftr.result!!
+            val notAvailableText = getString(R.string.generic_verse_not_available_in_this_version)
+            val legacyVerseText: () -> CharSequence = {
+                if (rawVerseText == null) {
+                    notAvailableText
+                } else {
+                    val ftr = FormattedTextResult()
+                    VerseRenderer.render(null, null, false, ari, rawVerseText, "", null, false, null, ftr)
+                    ftr.result!!
+                }
             }
 
             val reference = version.referenceWithVerseCount(ari, marker.verseCount)
             val caption = marker.caption
             val hiliteColor = TextColorUtil.getSearchKeywordByBrightness(App.services.uiDimensions.applied().backgroundBrightness)
+            val hiliteTokens = if (currentlyUsedFilter != null) rt else null
+
+            val checked = lv.isItemChecked(position)
+            val checkedBgColor = if (!checked) 0 else {
+                val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
+                ColorUtils.setAlphaComponent(colorRgb, 0xa0)
+            }
+            val checkedTextColor = if (!checked) 0 else TextColorUtil.getForCheckedVerse(checkedBgColor)
 
             when (filter_kind) {
                 Marker.Kind.bookmark -> {
                     lCaption.text = if (currentlyUsedFilter != null) SearchEngine.hilite(caption, rt, hiliteColor) else caption
                     Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult)
 
-                    val snippet = if (currentlyUsedFilter != null) SearchEngine.hilite(verseText, rt, hiliteColor) else verseText
-                    Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet, textSizeMult)
+                    snippet.setText(
+                        textSizeMult = textSizeMult,
+                        colorOverride = checkedTextColor,
+                        legacy = { lSnippet ->
+                            val verseText = legacyVerseText()
+                            val hilited = if (hiliteTokens != null) SearchEngine.hilite(verseText, hiliteTokens, hiliteColor) else verseText
+                            Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, hilited, textSizeMult)
+                            if (checked) lSnippet.setTextColor(checkedTextColor)
+                        },
+                        compose = {
+                            val verseText = if (rawVerseText == null) AnnotatedString(notAvailableText) else renderVerseText(ari, rawVerseText)
+                            verseText.withSearchHilite(hiliteTokens, hiliteColor).withReferencePrefix(reference)
+                        },
+                    )
 
                     val labels = App.services.storage.db.listLabelsByMarker(marker)
                     if (labels.isNotEmpty()) {
@@ -648,38 +676,52 @@ class MarkerListActivity : BaseActivity() {
                     lCaption.text = reference
                     Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult)
 
-                    lSnippet.text = if (currentlyUsedFilter != null) SearchEngine.hilite(caption, rt, hiliteColor) else caption
-                    Appearances.applyTextAppearance(lSnippet, textSizeMult)
+                    snippet.setText(
+                        textSizeMult = textSizeMult,
+                        colorOverride = checkedTextColor,
+                        legacy = { lSnippet ->
+                            lSnippet.text = if (hiliteTokens != null) SearchEngine.hilite(caption, hiliteTokens, hiliteColor) else caption
+                            Appearances.applyTextAppearance(lSnippet, textSizeMult)
+                            if (checked) lSnippet.setTextColor(checkedTextColor)
+                        },
+                        compose = { AnnotatedString(caption).withSearchHilite(hiliteTokens, hiliteColor) },
+                    )
                 }
 
                 Marker.Kind.highlight -> {
                     lCaption.text = reference
                     Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult)
 
-                    val snippet = if (currentlyUsedFilter != null) SearchEngine.hilite(verseText, rt, hiliteColor) else SpannableStringBuilder(verseText)
                     val info = Highlights.decode(caption)
-                    if (info != null) {
-                        val span = BackgroundColorSpan(Highlights.blendOver(info.colorRgb, App.services.uiDimensions.applied().backgroundColor))
-                        if (info.shouldRenderAsPartialForVerseText(verseText)) {
-                            snippet.setSpan(span, info.partial!!.startOffset, info.partial!!.endOffset, 0)
-                        } else {
-                            snippet.setSpan(span, 0, snippet.length, 0)
-                        }
-                    }
-                    lSnippet.text = snippet
-                    Appearances.applyTextAppearance(lSnippet, textSizeMult)
+                    snippet.setText(
+                        textSizeMult = textSizeMult,
+                        colorOverride = checkedTextColor,
+                        legacy = { lSnippet ->
+                            val verseText = legacyVerseText()
+                            val hilited = if (hiliteTokens != null) SearchEngine.hilite(verseText, hiliteTokens, hiliteColor) else SpannableStringBuilder(verseText)
+                            if (info != null) {
+                                val span = BackgroundColorSpan(Highlights.blendOver(info.colorRgb, App.services.uiDimensions.applied().backgroundColor))
+                                if (info.shouldRenderAsPartialForVerseText(verseText)) {
+                                    hilited.setSpan(span, info.partial!!.startOffset, info.partial!!.endOffset, 0)
+                                } else {
+                                    hilited.setSpan(span, 0, hilited.length, 0)
+                                }
+                            }
+                            lSnippet.text = hilited
+                            Appearances.applyTextAppearance(lSnippet, textSizeMult)
+                            if (checked) lSnippet.setTextColor(checkedTextColor)
+                        },
+                        compose = {
+                            val verseText = if (rawVerseText == null) AnnotatedString(notAvailableText) else renderVerseText(ari, rawVerseText, info)
+                            verseText.withSearchHilite(hiliteTokens, hiliteColor)
+                        },
+                    )
                 }
             }
 
-            val checked = lv.isItemChecked(position)
-
             if (checked) {
-                val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-                val checkedBgColor = ColorUtils.setAlphaComponent(colorRgb, 0xa0)
-                val checkedTextColor = TextColorUtil.getForCheckedVerse(checkedBgColor)
                 view.setBackgroundColor(checkedBgColor)
                 lDate.setTextColor(checkedTextColor)
-                lSnippet.setTextColor(checkedTextColor)
                 lCaption.setTextColor(checkedTextColor)
             } else {
                 view.setBackgroundColor(0x0)
