@@ -136,9 +136,43 @@ See the "Ruby" section of `docs/text-rendering.md` for the code path. Design cho
 
 ## 5. Open items
 
-- Settings: a per-version toggle to hide ruby, a size ratio, and a choice between ruby and inline parentheses for accessibility.
-- View pipeline: `VerseRenderer` needs an equivalent (a `ReplacementSpan` or a custom `LineHeightSpan` plus overlay) or the reader must be Compose-only before ruby presets go to production.
-- Selection and copy: copy uses `removeSpecialCodes`, so the reading is dropped; an option to copy "base(reading)" would help language learners.
-- Search: readings are not indexed. Indexing them would let users search by pinyin or kana.
+These are engineering follow-ups rather than features. The feature roadmap is section 6.
+
+- View pipeline: `VerseRenderer` needs an equivalent (a `ReplacementSpan` or a custom `LineHeightSpan` plus overlay) or the reader must be Compose-only before ruby presets go to production. This gates everything in section 6.
 - Performance: `widenRubyBases` measures two strings per ruby range on every bind. A verse with 40 rubies costs 80 measurements; cache per (text, style) if this shows up in profiles.
+- Accessibility: a choice between ruby and inline parentheses, for readers who cannot make out text at half size.
 - Data quality: the theWord pinyin has typos and nonstandard tone placement (normalised by the aligner); roughly 4% of verses fall back to pypinyin. A Bible name dictionary for pypinyin would fix most heteronym errors.
+
+## 6. What to build next
+
+The point of all of this is to help someone read the Bible and understand it better. Ruby annotations are a way of putting more information in front of a reader without making the text harder to read. On their own they are only labels. The features below are what turn them into something a person can learn from, ordered by how much work each one is.
+
+### 6.1 Small things we can do next
+
+These use machinery the app already has.
+
+- **Make a reading tappable.** Every `RubyRange` already carries its kind letter (`rs`, `rf`, `rp` and the rest), and nothing in the app reads it yet. The tap handling written for footnotes and cross-references already knows how to turn a position on screen into a range in the text. Wiring a tap on a Strong's number to open that word's entry is the smallest change here with the largest effect, because it turns the numbers from decoration into the way a reader looks a word up.
+- **Show readings in the verse dialogs.** The cross-reference and verse popups still use the older View renderer, so a verse opened from a cross-reference loses its annotations. Someone following a cross-reference is usually studying, which is exactly when the annotations matter.
+- **Copy and share with the readings included.** Copying a verse strips the codes, so whatever the reader found is lost when they paste it into their notes. An option to copy `tahun (H8141)` would let people keep it.
+- **Let readings be searched.** Readings are not indexed today. Searching for a Strong's number or a pinyin syllable should find the verses that carry it. For someone learning, that is the natural way to ask where else a word appears.
+- **A per-version switch for readings.** Today a build either shows them or does not. A reader should be able to turn them off for ordinary reading and on for study, and choose which kind to show when a version carries more than one.
+
+### 6.2 Things we should have
+
+These need new data or new screens, but no new ideas.
+
+- **A dictionary that is always there.** Tapping a Strong's number should give a definition offline, without a second app installed. At the moment the definition comes from a separate app's content provider, so most readers will tap and get nothing. The definition is the thing the reader actually wants; the number is only a key.
+- **Word study: show every verse that uses this word.** From a Strong's number, list every other verse carrying it, with a count. Being able to follow one word across the whole Bible is what digging deeper means in practice, and the data needed to do it is already inside the verse text.
+- **An interlinear view for one verse at a time.** A panel that expands under a verse and stacks the original word, its transliteration, its Strong's number, a short gloss and its grammar. The format already describes all of these as kinds. What is missing is support for more than one annotation over the same word, and a layout that stacks them. An expandable panel on a single verse is more useful than a whole separate reading mode, because it keeps the reader in the text.
+- **The original text next to the translation.** Hebrew and Greek texts are available and already used in this repo's data work. Showing the original alongside the Indonesian, with its own readings, lets a reader see what the translators were working from rather than taking it on trust.
+- **Explain the grammar in plain words.** A morphology code such as `V-Qal-Perf-3ms` means nothing to most readers. Expanding it into ordinary Indonesian is what makes grammar information useful to someone who has not studied Hebrew.
+
+### 6.3 Bigger efforts
+
+- **Aligning a whole translation to the original, word by word.** The annotations in use now are prepared verse by verse. Doing it for a complete Indonesian translation is the hard part, and every feature above gets better the more of it exists. This deserves to be treated as its own project with its own review process, because an alignment error does not just look wrong, it teaches the reader something untrue.
+- **Word study that works across translations.** Someone comparing two translations should be able to follow a single original word through both. That needs alignment data for each translation and a way to map between them.
+- **Reading plans that teach vocabulary.** Once word study data exists, a plan can bring a reader back to the same important word on purpose, spaced out over days. This is the point where the app stops being a text viewer and starts teaching.
+
+### 6.4 One thing to be careful about
+
+Annotations carry authority they have not earned. A reader who sees a Strong's number over a word will believe the original word means what the dictionary says, in that verse, in that sense. Wrong or careless data is worse than no data, because it is confidently wrong and the reader has no way to check it. Any new annotation data needs a review step before it ships, and the app should make it clear which version an annotation came from.
