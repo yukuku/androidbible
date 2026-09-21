@@ -26,9 +26,9 @@ Measurements are taken at xxhdpi so 1 dp is exactly 3 px.
 ./gradlew :Alkitab:testPlainDebugUnitTest --tests "yuku.alkitab.base.widget.ReaderToolbarSpaceAuditTest"
 ```
 
-The run writes `blueprint.png`, `options.png`, `redraws.png`,
+The run writes `blueprint.png`, `options.png`, `redraws.png`, `version-control.png`,
 `toolbar-<width>dp.png`, `measurements.md`, `measurements.json`, `options.md`,
-`redraws.md` and `control-widths.md` under
+`redraws.md`, `control-widths.md` and `version-control.md` under
 `Alkitab/build/reports/toolbar-audit/`. Set `TOOLBAR_AUDIT_DIR` to write
 somewhere else.
 
@@ -220,7 +220,13 @@ boxes, keeping all seven controls, the full book name and 16 sp type?
 | search icon redrawn at 24 dp | 56 dp | +8 dp | 40 dp | 48 dp | 1/7 | 3/7 |
 | **all four together** | **120 dp** | **+72 dp** | **72 dp** | **48 dp** | 6/7 | **0/7** |
 | all four, condensed face | 120 dp | +72 dp | 72 dp | 48 dp | 7/7 | **0/7** |
+| all four, capped stadium version, 2 characters | 120 dp | +72 dp | 72 dp | 48 dp | 6/7 | **0/7** |
+| all four, capped stadium version, 6 characters | 112 dp | +64 dp | 64 dp | 48 dp | 5/7 | **0/7** |
 | version folded into the reference as a chip | 168 dp | +120 dp | 120 dp | 48 dp | 7/7 | **0/7** |
+
+The six-character worst case costs the reference 8 dp against the two-character
+case and still truncates nothing. See the next section for where the version
+control's width actually comes from.
 
 At 320 dp the same four changes take the reference from 40 dp to 80 dp and
 truncations from 5/7 to 2/7; with the version folded in, from 40 dp to 128 dp
@@ -275,6 +281,68 @@ it, so the menu's width is whatever the icons demand: 104 dp today, 96 dp once
 the search asset is 24 dp. Past that, a 48 dp item with a 24 dp icon is already
 at the minimum touch target, and there is nothing left to take.
 
+## The version changer, and what Material 3 offers
+
+![Each version-control candidate rendered at its six-character worst case](version-control.png)
+
+**Version initials are not capped at six characters.** `Version.getInitials`
+returns the version's `shortName` verbatim whenever the version data has one,
+and that string comes from the YES2 file. Only the fallback path, which
+uppercases a short `longName` or takes the initial of each word, is bounded.
+Six is the layout's assumption, not a guarantee: `bVersion` carries
+`tools:text="VERSNM"`.
+
+**At six characters the control as it ships wraps onto a second line.** The
+fixed 72 dp box is 1 dp narrower than the content needs, so "VERSNM" renders as
+"VERSN / M" (top row of the sheet above). This is the same class of defect as
+"Kejadi / an 1" next to it, in the control that is supposed to be the fixed one.
+
+Every candidate measured in the shipped layout, widths in dp:
+
+| control | 1ch | 2ch | 3ch | 4ch | 5ch | 6ch | drawn height | vs 72 dp | wraps |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| as shipped (fixed 72 dp) | 72 | 72 | 72 | 72 | 72 | 72 | 56 | 0 | **VERSNM** |
+| as shipped, sized to content | 24.7 | 33.7 | 42 | 51.7 | 55 | 73 | 56 | +1 | no |
+| M3 assist chip | 48 | 50 | 58.3 | 68 | 71.7 | 89 | 48 | +17 | no |
+| M3 outlined button (stadium) | 88 | 88 | 88 | 88 | 88 | 105 | 48 | +33 | no |
+| M3 tonal button (stadium) | 88 | 88 | 88 | 88 | 88 | 105 | 48 | +33 | no |
+| hand-drawn stadium, 12 dp padding | 48 | 48 | 50 | 59.7 | 63 | 81 | 56 | +9 | no |
+| hand-drawn stadium, 8 dp padding | 48 | 48 | 48 | 51.7 | 55 | 73 | 56 | +1 | no |
+| **hand-drawn stadium, capped at 56 dp** | **48** | **48** | **48** | **51.7** | **55** | **56** | **56** | **-16** | no |
+
+### The Material 3 components are the wrong shape for a toolbar
+
+The stadium-shaped M3 buttons are the worst option measured. `m3_btn_padding_left`
+and `m3_btn_padding_right` are 24 dp each, so an M3 outlined or tonal button is
+88 dp before it holds any text at all and 105 dp at six characters. Dropped into
+the bar it leaves the reference 15 dp, which renders as "K...". That padding is
+sized for a standalone button, not for a control competing for a 360 dp bar.
+
+The M3 assist chip is much closer: 32 dp tall, 8 dp corner radius, so a rounded
+rectangle rather than a stadium. It is **22 dp cheaper than today at two
+characters** (50 dp against 72 dp), which is the common case, but 17 dp dearer at
+six. Its minimum is 48 dp because `ensureMinTouchTargetSize` is on by default,
+which is the right behaviour and also its floor.
+
+### What actually wins
+
+A stadium drawn for this toolbar: 8 dp of side padding instead of the M3 button's
+24 dp, a `maxWidth` of 56 dp with an ellipsis, and a slot that still fills the
+bar's height so the touch target stays 56 dp tall while the outline draws 32 dp.
+That is 48 dp for a typical two or three character version, 24 dp cheaper than
+today, and it never exceeds 56 dp or wraps, so it is 16 dp cheaper than today
+even in the worst case. It gives the reference a predictable budget, which the
+current control does not.
+
+### Theming
+
+A Material 3 chip does build under the app's
+`Theme.MaterialComponents.NoActionBar.Bridge` theme, so there is no hard blocker.
+Its colours resolve against M3 theme attributes, though, so it needs either a
+`ContextThemeWrapper` on a Material 3 theme (which is what the measurements above
+use) or a theme migration before it looks right on the primary-coloured bar. The
+hand-drawn stadium has no theme dependency at all.
+
 ## Suggestions
 
 In the order they are worth doing.
@@ -295,11 +363,14 @@ of seven fitting on one line and zero truncations. Measure the full name first
 and only fall back when it would wrap or truncate, so wide screens keep the
 full name.
 
-**B. Size the version changer to its content.** `wrap_content` with
-`minWidth` at 48 dp and a `maxWidth` so a six-character initialism still fits.
-Frees 20 to 38 dp for the reference on a typical install, and fixes the 1 dp
-clip on the worst case. Low risk, no behaviour change. This is part of the
-redraw package in suggestion 0.
+**B. Make the version changer a capped stadium chip.** 8 dp of side padding, a
+48 dp floor, a `maxWidth` of 56 dp with an ellipsis, and a slot that fills the
+bar height so the touch target stays 56 dp. 48 dp for a typical version (24 dp
+cheaper than today) and never more than 56 dp (16 dp cheaper than today at six
+characters), where the control as it ships wraps onto a second line. Do not size
+it to content without a cap: at six characters that is 73 dp, which is wider
+than today. Part of the redraw package in suggestion 0. Prefer this over
+dropping in an M3 button, which is 88 dp empty.
 
 **C. Give the reference the touch area its box implies.** Suggestion 0 already
 takes it from 32 dp to 64 dp. If the box is not widened, drop the

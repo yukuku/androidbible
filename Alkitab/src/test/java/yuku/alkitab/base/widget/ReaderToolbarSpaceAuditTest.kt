@@ -5,24 +5,31 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Menu
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuView
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.test.core.app.ApplicationProvider
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -805,6 +812,9 @@ class ReaderToolbarSpaceAuditTest {
 
         /** `Version.getInitials` yields at most six characters, which is what the layout is sized for. */
         private val VERSION_INITIALS = listOf("TB", "KJV", "AYT", "NKJV", "VERSNM")
+
+        /** One to six characters. The layout is drawn for six (`tools:text="VERSNM"`). */
+        private val VERSION_LABELS = listOf("T", "TB", "AYT", "NKJV", "NIV84", "VERSNM")
     }
 
     @Test
@@ -1132,6 +1142,16 @@ class ReaderToolbarSpaceAuditTest {
         return naturalWidth to narrowest
     }
 
+    /** The version slot as a toolbar-tuned stadium: tight padding, capped, ellipsised. */
+    private fun cappedStadiumVersion(a: ToolbarAuditHostActivity, label: String) {
+        val v = stadiumVersionControl(a, sidePaddingDp = 8) as TextView
+        v.maxWidth = px(56)
+        v.maxLines = 1
+        v.ellipsize = android.text.TextUtils.TruncateAt.END
+        putInVersionSlot(a, v, fillHeight = true)
+        v.text = label
+    }
+
     private fun redrawMutations() = listOf(
         Mutation("as shipped") {},
         Mutation("chevrons drawn flush outward (margin 24dp)") { a -> chevronsFlush(a, 24) },
@@ -1141,6 +1161,14 @@ class ReaderToolbarSpaceAuditTest {
         Mutation("all four together") { a -> spaceSavingPackage(a) },
         Mutation("all four, reference in a condensed face") { a ->
             spaceSavingPackage(a); condensedReference(a)
+        },
+        Mutation("all four, version as a capped stadium showing 2 characters") { a ->
+            chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
+            cappedStadiumVersion(a, "TB")
+        },
+        Mutation("all four, version as a capped stadium showing 6 characters") { a ->
+            chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
+            cappedStadiumVersion(a, "VERSNM")
         },
         Mutation("version folded into the reference as a chip", refs = MERGED, sample = "Kejadian 1 · TB") { a ->
             spaceSavingPackage(a); foldVersionIntoReference(a)
@@ -1180,6 +1208,319 @@ class ReaderToolbarSpaceAuditTest {
             val neededSp = if (natural <= avail) baseSp else baseSp * avail / natural
             Triple(ref, neededSp, neededSp >= minSp)
         }
+    }
+
+    // --- Material 3 replacements for the version changer -------------------
+
+    private class VersionCandidate(
+        val name: String,
+        val note: String,
+        /** Returns the control now sitting in the version slot. */
+        val install: (ToolbarAuditHostActivity) -> View,
+    )
+
+    /** Swaps whatever sits in the version slot for [view], keeping its id and gravity. */
+    private fun putInVersionSlot(a: ToolbarAuditHostActivity, view: View, fillHeight: Boolean): View {
+        val toolbar = a.findViewById<Toolbar>(R.id.toolbar)
+        val old = a.findViewById<View>(R.id.bVersion)
+        val index = toolbar.indexOfChild(old)
+        val oldGravity = (old.layoutParams as Toolbar.LayoutParams).gravity
+        toolbar.removeViewAt(index)
+
+        view.id = R.id.bVersion
+        val lp = Toolbar.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            if (fillHeight) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT,
+        )
+        lp.gravity = if (fillHeight) oldGravity else oldGravity or Gravity.CENTER_VERTICAL
+        toolbar.addView(view, index, lp)
+        return view
+    }
+
+    private fun material3Context(a: ToolbarAuditHostActivity) =
+        ContextThemeWrapper(a, com.google.android.material.R.style.Theme_Material3_Dark)
+
+    /**
+     * A stadium drawn by hand, inset vertically inside a slot that still fills
+     * the bar, so the outline reads as a 32dp chip while the touch target keeps
+     * the toolbar's full height.
+     */
+    private fun stadiumVersionControl(a: ToolbarAuditHostActivity, sidePaddingDp: Int): View {
+        val stadium = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = px(16).toFloat()
+            setStroke(px(1), 0x99ffffff.toInt())
+        }
+        val verticalInset = px(12)
+        return TextView(a).apply {
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            gravity = Gravity.CENTER
+            includeFontPadding = false
+            background = InsetDrawable(stadium, 0, verticalInset, 0, verticalInset)
+            setPadding(px(sidePaddingDp), 0, px(sidePaddingDp), 0)
+            minWidth = px(48)
+        }
+    }
+
+    private fun versionCandidates() = listOf(
+        VersionCandidate("as shipped (fixed 72dp)", "TextView, FakeSpinner 9-patch") { a ->
+            a.findViewById(R.id.bVersion)
+        },
+        VersionCandidate("as shipped, sized to content", "same style, wrap_content") { a ->
+            val v = a.findViewById<View>(R.id.bVersion)
+            v.layoutParams = v.layoutParams.apply { width = ViewGroup.LayoutParams.WRAP_CONTENT }
+            v
+        },
+        VersionCandidate("M3 assist chip", "Widget.Material3.Chip.Assist, 32dp tall, 8dp corner") { a ->
+            putInVersionSlot(a, Chip(material3Context(a)), fillHeight = false)
+        },
+        VersionCandidate("M3 outlined button (stadium)", "Widget.Material3.Button.OutlinedButton") { a ->
+            putInVersionSlot(
+                a,
+                MaterialButton(material3Context(a), null, com.google.android.material.R.attr.materialButtonOutlinedStyle),
+                fillHeight = false,
+            )
+        },
+        VersionCandidate("M3 tonal button (stadium)", "Widget.Material3.Button.TonalButton") { a ->
+            putInVersionSlot(
+                a,
+                MaterialButton(material3Context(a), null, com.google.android.material.R.attr.materialButtonTonalStyle),
+                fillHeight = false,
+            )
+        },
+        VersionCandidate("hand-drawn stadium", "stadium outline, 12dp side padding, taps full bar height") { a ->
+            putInVersionSlot(a, stadiumVersionControl(a, sidePaddingDp = 12), fillHeight = true)
+        },
+        VersionCandidate("hand-drawn stadium, tight", "same, 8dp side padding") { a ->
+            putInVersionSlot(a, stadiumVersionControl(a, sidePaddingDp = 8), fillHeight = true)
+        },
+        VersionCandidate("hand-drawn stadium, tight, capped at 56dp", "the same with maxWidth and an ellipsis") { a ->
+            val v = stadiumVersionControl(a, sidePaddingDp = 8) as TextView
+            v.maxWidth = px(56)
+            v.maxLines = 1
+            v.ellipsize = android.text.TextUtils.TruncateAt.END
+            putInVersionSlot(a, v, fillHeight = true)
+        },
+    )
+
+    @Test
+    fun `measure Material 3 replacements for the version changer at up to six characters`() {
+        val outputDir = resolveOutputDir()
+        outputDir.mkdirs()
+
+        class Result(
+            val candidate: VersionCandidate,
+            val widths: List<Pair<String, Int>>,
+            val lineCounts: List<Int>,
+            val drawnHeight: Int,
+            val tapHeight: Int,
+            val worstCaseBitmap: Bitmap,
+            val worstCaseReferenceBox: Int,
+            val failure: String?,
+        )
+
+        val results = versionCandidates().map { candidate ->
+            RuntimeEnvironment.setQualifiers("sw360dp-w360dp-h640dp-port-xxhdpi")
+            val activity = buildHost()
+            val root = activity.findViewById<ViewGroup>(R.id.root)
+            val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
+            val bGoto = activity.findViewById<GotoButton>(R.id.bGoto)
+            bGoto.text = "Kejadian 1"
+
+            fun layOut() {
+                root.measure(
+                    View.MeasureSpec.makeMeasureSpec(px(360), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(px(640), View.MeasureSpec.EXACTLY),
+                )
+                root.layout(0, 0, px(360), px(640))
+            }
+
+            var failure: String? = null
+            val widths = mutableListOf<Pair<String, Int>>()
+            val lineCounts = mutableListOf<Int>()
+            var drawnHeight = 0
+            var tapHeight = 0
+            var referenceBox = 0
+            var bitmap: Bitmap? = null
+
+            try {
+                val control = candidate.install(activity) as TextView
+                for (label in VERSION_LABELS) {
+                    control.text = label
+                    layOut(); layOut()
+                    widths += label to control.width
+                    lineCounts += control.lineCount
+                }
+                control.text = VERSION_LABELS.last()
+                layOut(); layOut()
+                drawnHeight = control.height
+                tapHeight = control.height
+                referenceBox = bGoto.width - bGoto.paddingLeft - bGoto.paddingRight
+                bitmap = Bitmap.createBitmap(toolbar.width, toolbar.height, Bitmap.Config.ARGB_8888)
+                toolbar.draw(Canvas(bitmap))
+            } catch (t: Throwable) {
+                failure = "${t.javaClass.simpleName}: ${t.message?.take(160)}"
+            }
+
+            Result(
+                candidate,
+                widths,
+                lineCounts,
+                drawnHeight,
+                tapHeight,
+                bitmap ?: Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),
+                referenceBox,
+                failure,
+            )
+        }
+
+        // Does a Material 3 widget work under the app's own MaterialComponents
+        // Bridge theme, or does it need the theme migrated first?
+        val bridgeThemeFailure: String? = run {
+            RuntimeEnvironment.setQualifiers("sw360dp-w360dp-h640dp-port-xxhdpi")
+            val activity = buildHost()
+            try {
+                val chip = Chip(activity)
+                chip.text = "TB"
+                chip.measure(
+                    View.MeasureSpec.makeMeasureSpec(px(360), View.MeasureSpec.AT_MOST),
+                    View.MeasureSpec.makeMeasureSpec(px(56), View.MeasureSpec.AT_MOST),
+                )
+                null
+            } catch (t: Throwable) {
+                "${t.javaClass.simpleName}: ${t.message?.take(200)}"
+            }
+        }
+
+        val margin = 90f
+        val canvasWidth = 1980
+
+        fun render(c: Canvas): Float {
+            var y = 110f
+            c.drawText("THE VERSION CHANGER, AND WHAT MATERIAL 3 OFFERS", margin, y, paint(INK, textSize = 40f, face = monoBold))
+            c.drawText(
+                "360dp wide. Widths are what each control asks for at 1 to 6 characters; the render shows the six-character worst case.",
+                margin, y + 32f, paint(INK_DIM, textSize = 20f),
+            )
+            c.drawLine(margin, y + 58f, canvasWidth - margin, y + 58f, paint(GRID_MAJOR, stroke = 3f))
+            y += 110f
+
+            for (r in results) {
+                c.drawText(r.candidate.name, margin, y, paint(INK, textSize = 26f, face = monoBold))
+                c.drawText(r.candidate.note, margin + 700f, y, paint(INK_DIM, textSize = 19f))
+                y += 16f
+                if (r.failure != null) {
+                    c.drawText("could not be built: ${r.failure}", margin, y + 30f, paint(ALERT, textSize = 20f))
+                    y += 70f
+                } else {
+                    c.drawBitmap(r.worstCaseBitmap, margin, y, null)
+                    c.drawRect(
+                        margin - 1f, y - 1f,
+                        margin + r.worstCaseBitmap.width + 1f, y + r.worstCaseBitmap.height + 1f,
+                        paint(INK, stroke = 2f),
+                    )
+                    val widest = r.widths.maxOf { it.second }
+                    val shipped = px(72)
+                    c.drawText(
+                        "six characters wants ${dpStr(r.widths.last().second)}dp" +
+                            (if (widest > shipped) "  (${dpStr(widest - shipped)}dp more than today)" else "  (${dpStr(shipped - widest)}dp less than today)"),
+                        margin + 1100f, y + 30f,
+                        paint(if (widest <= shipped) OK else ALERT, textSize = 21f, face = monoBold),
+                    )
+                    c.drawText(
+                        r.widths.joinToString("   ") { "${it.first}=${dpStr(it.second)}" },
+                        margin + 1100f, y + 58f, paint(INK_DIM, textSize = 18f),
+                    )
+                    c.drawText(
+                        "drawn height ${dpStr(r.drawnHeight)}dp, reference text box ${dpStr(r.worstCaseReferenceBox)}dp",
+                        margin + 1100f, y + 84f, paint(INK_DIM, textSize = 18f),
+                    )
+                    val wraps = r.lineCounts.withIndex().filter { it.value > 1 }.map { VERSION_LABELS[it.index] }
+                    if (wraps.isNotEmpty()) {
+                        c.drawText(
+                            "wraps onto a second line: ${wraps.joinToString(", ")}",
+                            margin + 1100f, y + 110f, paint(ALERT, textSize = 18f, face = monoBold),
+                        )
+                    }
+                    y += r.worstCaseBitmap.height + 24f
+                }
+                c.drawLine(margin, y, canvasWidth - margin, y, dashed(GRID_MAJOR, 2f))
+                y += 40f
+            }
+
+            y += 10f
+            c.drawText("CAN A MATERIAL 3 WIDGET BE USED TODAY?", margin, y, paint(INK, textSize = 26f, face = monoBold))
+            y += 32f
+            c.drawText(
+                if (bridgeThemeFailure == null) {
+                    "  A Material 3 chip builds under the app's MaterialComponents Bridge theme."
+                } else {
+                    "  Under the app's own theme it fails: $bridgeThemeFailure"
+                },
+                margin, y, paint(if (bridgeThemeFailure == null) OK else ALERT, textSize = 20f),
+            )
+            y += 26f
+            c.drawText(
+                "  The measurements above use a ContextThemeWrapper on Theme.Material3.Dark.",
+                margin, y, paint(INK_DIM, textSize = 20f),
+            )
+            return y + 20f
+        }
+
+        val probe = Canvas(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+        val height = (render(probe) + 40f).toInt()
+        val sheet = Bitmap.createBitmap(canvasWidth, height, Bitmap.Config.ARGB_8888)
+        val c = Canvas(sheet)
+        drawGrid(c, canvasWidth, height)
+        render(c)
+        File(outputDir, "version-control.png").outputStream().use { sheet.compress(Bitmap.CompressFormat.PNG, 100, it) }
+
+        val md = buildString {
+            appendLine("# The version changer, and what Material 3 offers")
+            appendLine()
+            appendLine("Measured at 360 dp. `Version.getInitials` returns the version's `shortName` verbatim")
+            appendLine("when it has one, so there is no hard cap; the layout is drawn for six characters")
+            appendLine("(`tools:text=\"VERSNM\"`), which is what the last column tests.")
+            appendLine()
+            appendLine("| control | " + VERSION_LABELS.joinToString(" | ") { "${it.length}ch" } + " | drawn height | vs today's 72 dp | wraps |")
+            appendLine("| --- | " + VERSION_LABELS.joinToString(" | ") { "---:" } + " | ---: | ---: | --- |")
+            for (r in results) {
+                if (r.failure != null) {
+                    appendLine("| ${r.candidate.name} | " + VERSION_LABELS.joinToString(" | ") { "n/a" } + " | n/a | could not be built | |")
+                    continue
+                }
+                val widest = r.widths.maxOf { it.second }
+                val wraps = r.lineCounts.withIndex().filter { it.value > 1 }.map { VERSION_LABELS[it.index] }
+                appendLine(
+                    "| ${r.candidate.name} | " + r.widths.joinToString(" | ") { dpStr(it.second) } +
+                        " | ${dpStr(r.drawnHeight)} | ${if (widest > px(72)) "+" else ""}${dpStr(widest - px(72))} " +
+                        "| ${if (wraps.isEmpty()) "no" else wraps.joinToString(", ")} |"
+                )
+            }
+            appendLine()
+            appendLine("The reference text box in the last column of the sheet is what the reference gets")
+            appendLine("with each control in place, in the layout as it ships otherwise.")
+            appendLine()
+            appendLine("## Can a Material 3 widget be used today?")
+            appendLine()
+            appendLine(
+                if (bridgeThemeFailure == null) {
+                    "A Material 3 chip builds under the app's `Theme.MaterialComponents.NoActionBar.Bridge` theme."
+                } else {
+                    "Under the app's own theme a Material 3 chip fails to build: `$bridgeThemeFailure` " +
+                        "The measurements above wrap the context in `Theme.Material3.Dark`."
+                }
+            )
+        }
+        File(outputDir, "version-control.md").writeText(md)
+        println(md)
+
+        assertTrue(
+            "the six-character worst case must have been measured for the shipped control",
+            results.first().widths.size == VERSION_LABELS.size,
+        )
     }
 
     @Test
