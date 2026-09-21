@@ -32,6 +32,8 @@
 
     <string name="pref_experimental">Experimental features</string>
     <string name="pref_experimental_warning">May be unstable. Disable if you hit issues.</string>
+    <string name="pref_debugRubyGeometry_title">Debug ruby geometry</string>
+    <string name="pref_debugRubyGeometry_summary">Box every line, base and reading on screen, write the measurements behind them to the system log under the tag RubyGeom, and put a verse\u2019s measurements on the clipboard when you touch it. For diagnosing reading placement only; leave this off.</string>
     <string name="pref_useComposeVerseItem_title">Verse (Compose)</string>
     <string name="pref_useComposeVerseItem_summary">Show the Bible text with the new, fully Jetpack Compose-based verse list instead of the legacy views. Takes effect when the reader screen is reopened.</string>
     <string name="pref_useComposeGoto_title">Navigation (Compose)</string>

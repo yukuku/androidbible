@@ -23,7 +23,9 @@ import yuku.alkitab.util.Ari
 /**
  * Walks the verse formatting grammar (`@@`, `@0`..`@4`, `@^`, `@5`/`@6`,
  * `@7`/`@9`, `@8`, `@<..@>`, `@/`) and produces an [AnnotatedString] plus the
- * offsets of every inline link (footnote `@<f..@>` / xref `@<x..@>`).
+ * offsets of every inline link (footnote `@<f..@>` / xref `@<x..@>`) and of
+ * every ruby-annotated run (`@<r=ruby@>base@/`, or `@<rf=..@>` furigana,
+ * `@<rp=..@>` pinyin and other one-letter kinds).
  *
  * Span translation:
  * - Leading margins become `ParagraphStyle(textIndent = TextIndent(first, rest))`.
@@ -52,6 +54,21 @@ object VerseRendererCompose {
         val arif: Int,
     )
 
+    /**
+     * A run of base text in [Result.text] that carries a ruby annotation
+     * (furigana, pinyin, a Strong's number, an interlinear gloss). The base
+     * run stays inline at [start]..[end], so highlight and dictionary offsets
+     * are unaffected; the host draws [ruby] above it. [kind] is the letter
+     * after `r` in the tag (`f` furigana, `p` pinyin, `s` Strong's, ...), or
+     * null for a plain `@<r=..@>` reading that is only displayed.
+     */
+    data class RubyRange(
+        val start: Int,
+        val end: Int,
+        val ruby: String,
+        val kind: Char?,
+    )
+
     data class Result(
         val text: AnnotatedString,
         /** When non-null, the verse number is rendered separately (in a gutter) instead of inline. */
@@ -59,6 +76,9 @@ object VerseRendererCompose {
         /** Same semantics as [VerseRenderer.render] return: chars consumed before the verse text begins. 0 = gutter mode. */
         val startPosAfterVerseNumber: Int,
         val inlineLinks: List<InlineLinkRange>,
+        val rubies: List<RubyRange>,
+        /** The verse as it is stored, formatting codes and all, for the ruby geometry dump to quote. */
+        val sourceText: String,
     )
 
     private val buf_char_: ThreadLocal<CharArray> = ThreadLocal.withInitial { CharArray(1024) }
@@ -100,7 +120,8 @@ object VerseRendererCompose {
         val gutterVerseNumber = if (isVerseNumberShown && gutterMode) verseNumberText else null
 
         val inlineLinks = mutableListOf<InlineLinkRange>()
-        processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, checked, ari, inlineLinks)
+        val rubies = mutableListOf<RubyRange>()
+        processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, checked, ari, inlineLinks, rubies)
 
         val built = sb.toAnnotatedString()
         val withHighlight = applyHighlight(built, highlightInfo, startPosAfterVerseNumber, checked)
@@ -110,6 +131,8 @@ object VerseRendererCompose {
             gutterVerseNumber = gutterVerseNumber,
             startPosAfterVerseNumber = startPosAfterVerseNumber,
             inlineLinks = inlineLinks,
+            rubies = rubies,
+            sourceText = text,
         )
     }
 
@@ -155,12 +178,15 @@ object VerseRendererCompose {
         checked: Boolean,
         ari: Int,
         inlineLinks: MutableList<InlineLinkRange>,
+        rubies: MutableList<RubyRange>,
     ) {
         var paraType = -1
         var startPara = 0
         var startRed = -1
         var startItalic = -1
         var inSpecialTag = false
+        // Where the text enclosed by the most recent `@>` ... `@/` begins.
+        var tagContentStart = -1
         val tag = buf_tag_.get()!!
 
         var pos = 2
@@ -226,8 +252,16 @@ object VerseRendererCompose {
                 }
                 '8' -> sb.append("\n")
                 '<' -> inSpecialTag = true
-                '>' -> inSpecialTag = false
-                '/' -> processSpecialTag(sb, tag, ari, inlineLinks)
+                '>' -> {
+                    inSpecialTag = false
+                    tagContentStart = sb.length
+                }
+                '/' -> {
+                    processSpecialTag(sb, tag, tagContentStart, ari, inlineLinks, rubies)
+                    // A tag is consumed by its closing code; a stray `@/` must not replay it.
+                    tag.setLength(0)
+                    tagContentStart = -1
+                }
             }
 
             pos++
@@ -271,12 +305,21 @@ object VerseRendererCompose {
     private fun processSpecialTag(
         sb: AnnotatedString.Builder,
         tag: StringBuilder,
+        tagContentStart: Int,
         ari: Int,
         inlineLinks: MutableList<InlineLinkRange>,
+        rubies: MutableList<RubyRange>,
     ) {
         val spanStart = sb.length
         if (tag.length < 2) return
         when (tag[0]) {
+            'r' -> {
+                val kind = if (tag[1] in 'a'..'z') tag[1] else null
+                val eq = if (kind == null) 1 else 2
+                if (tag.length > eq + 1 && tag[eq] == '=' && tagContentStart in 0..spanStart) {
+                    rubies += RubyRange(tagContentStart, spanStart, tag.substring(eq + 1), kind)
+                }
+            }
             'f' -> try {
                 val field = tag.substring(1).toInt()
                 if (field < 1 || field > 255) throw NumberFormatException()
@@ -391,6 +434,8 @@ object VerseRendererCompose {
             gutterVerseNumber = null,
             startPosAfterVerseNumber = startPosAfterVerseNumber,
             inlineLinks = emptyList(),
+            rubies = emptyList(),
+            sourceText = text,
         )
     }
 }
