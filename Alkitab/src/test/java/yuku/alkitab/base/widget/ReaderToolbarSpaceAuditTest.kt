@@ -19,6 +19,8 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
@@ -215,7 +217,7 @@ class ReaderToolbarSpaceAuditTest {
         val bGoto = activity.findViewById<GotoButton>(R.id.bGoto)
         val bLeft = activity.findViewById<ImageButton>(R.id.bLeft)
         val bRight = activity.findViewById<ImageButton>(R.id.bRight)
-        val bVersion = activity.findViewById<TextView>(R.id.bVersion)
+        val bVersion = activity.findViewById<View>(R.id.bVersion)
 
         val slots = mutableListOf<Slot>()
 
@@ -1170,6 +1172,18 @@ class ReaderToolbarSpaceAuditTest {
             chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
             cappedStadiumVersion(a, "VERSNM")
         },
+        Mutation("all four + segmented version/speaker stadium, 2 characters") { a ->
+            chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
+            installSegmented(a, withAudio = true).text = "TB"
+        },
+        Mutation("all four + segmented version/speaker stadium, 6 characters") { a ->
+            chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
+            installSegmented(a, withAudio = true).text = "VERSNM"
+        },
+        Mutation("all four + segmented stadium, version with no audio") { a ->
+            chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
+            installSegmented(a, withAudio = false).text = "TB"
+        },
         Mutation("version folded into the reference as a chip", refs = MERGED, sample = "Kejadian 1 · TB") { a ->
             spaceSavingPackage(a); foldVersionIntoReference(a)
         },
@@ -1215,8 +1229,10 @@ class ReaderToolbarSpaceAuditTest {
     private class VersionCandidate(
         val name: String,
         val note: String,
-        /** Returns the control now sitting in the version slot. */
-        val install: (ToolbarAuditHostActivity) -> View,
+        /** What the same job costs in the bar today: 72dp, plus 48dp when it also swallows the audio icon. */
+        val baselineDp: Int,
+        /** Returns the text view whose label is being measured. */
+        val install: (ToolbarAuditHostActivity) -> TextView,
     )
 
     /** Swaps whatever sits in the version slot for [view], keeping its id and gravity. */
@@ -1264,45 +1280,123 @@ class ReaderToolbarSpaceAuditTest {
         }
     }
 
+    /**
+     * The version abbreviation and the audio control as one stadium, split by a
+     * hairline. Audio availability is resolved per version id by
+     * [yuku.alkitab.base.audio.AudioSetsRepository], so the speaker belongs to
+     * the version the label names.
+     *
+     * Returns the control and the label inside it.
+     */
+    private fun segmentedVersionAudio(
+        a: ToolbarAuditHostActivity,
+        withAudio: Boolean,
+        capDp: Int = 56,
+    ): Pair<View, TextView> {
+        val stadium = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = px(16).toFloat()
+            setStroke(px(1), 0x99ffffff.toInt())
+        }
+        val row = LinearLayout(a).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            background = InsetDrawable(stadium, 0, px(12), 0, px(12))
+        }
+        val label = TextView(a).apply {
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            gravity = Gravity.CENTER
+            includeFontPadding = false
+            setPadding(px(8), 0, px(8), 0)
+            minWidth = px(48)
+            maxWidth = px(capDp)
+            maxLines = 1
+            ellipsize = android.text.TextUtils.TruncateAt.END
+        }
+        row.addView(
+            label,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            ),
+        )
+        if (withAudio) {
+            val divider = View(a).apply { setBackgroundColor(0x66ffffff) }
+            row.addView(
+                divider,
+                LinearLayout.LayoutParams(px(1), px(20)).apply { gravity = Gravity.CENTER_VERTICAL },
+            )
+            val speaker = ImageView(a).apply {
+                setImageDrawable(ContextCompat.getDrawable(a, R.drawable.ic_audio))
+                scaleType = ImageView.ScaleType.CENTER
+            }
+            row.addView(
+                speaker,
+                LinearLayout.LayoutParams(px(48), ViewGroup.LayoutParams.MATCH_PARENT),
+            )
+        }
+        return row to label
+    }
+
+    /** Installs the segmented control and takes audio out of the action menu. */
+    private fun installSegmented(a: ToolbarAuditHostActivity, withAudio: Boolean): TextView {
+        val (row, label) = segmentedVersionAudio(a, withAudio)
+        hideMenuItem(a, R.id.menuAudio)
+        putInVersionSlot(a, row, fillHeight = true)
+        return label
+    }
+
     private fun versionCandidates() = listOf(
-        VersionCandidate("as shipped (fixed 72dp)", "TextView, FakeSpinner 9-patch") { a ->
+        VersionCandidate("as shipped (fixed 72dp)", "TextView, FakeSpinner 9-patch", 72) { a ->
             a.findViewById(R.id.bVersion)
         },
-        VersionCandidate("as shipped, sized to content", "same style, wrap_content") { a ->
-            val v = a.findViewById<View>(R.id.bVersion)
+        VersionCandidate("as shipped, sized to content", "same style, wrap_content", 72) { a ->
+            val v = a.findViewById<TextView>(R.id.bVersion)
             v.layoutParams = v.layoutParams.apply { width = ViewGroup.LayoutParams.WRAP_CONTENT }
             v
         },
-        VersionCandidate("M3 assist chip", "Widget.Material3.Chip.Assist, 32dp tall, 8dp corner") { a ->
-            putInVersionSlot(a, Chip(material3Context(a)), fillHeight = false)
+        VersionCandidate("M3 assist chip", "Widget.Material3.Chip.Assist, 32dp tall, 8dp corner", 72) { a ->
+            putInVersionSlot(a, Chip(material3Context(a)), fillHeight = false) as TextView
         },
-        VersionCandidate("M3 outlined button (stadium)", "Widget.Material3.Button.OutlinedButton") { a ->
+        VersionCandidate("M3 outlined button (stadium)", "Widget.Material3.Button.OutlinedButton", 72) { a ->
             putInVersionSlot(
                 a,
                 MaterialButton(material3Context(a), null, com.google.android.material.R.attr.materialButtonOutlinedStyle),
                 fillHeight = false,
-            )
+            ) as TextView
         },
-        VersionCandidate("M3 tonal button (stadium)", "Widget.Material3.Button.TonalButton") { a ->
+        VersionCandidate("M3 tonal button (stadium)", "Widget.Material3.Button.TonalButton", 72) { a ->
             putInVersionSlot(
                 a,
                 MaterialButton(material3Context(a), null, com.google.android.material.R.attr.materialButtonTonalStyle),
                 fillHeight = false,
-            )
+            ) as TextView
         },
-        VersionCandidate("hand-drawn stadium", "stadium outline, 12dp side padding, taps full bar height") { a ->
-            putInVersionSlot(a, stadiumVersionControl(a, sidePaddingDp = 12), fillHeight = true)
+        VersionCandidate("hand-drawn stadium", "stadium outline, 12dp side padding, taps full bar height", 72) { a ->
+            putInVersionSlot(a, stadiumVersionControl(a, sidePaddingDp = 12), fillHeight = true) as TextView
         },
-        VersionCandidate("hand-drawn stadium, tight", "same, 8dp side padding") { a ->
-            putInVersionSlot(a, stadiumVersionControl(a, sidePaddingDp = 8), fillHeight = true)
+        VersionCandidate("hand-drawn stadium, tight", "same, 8dp side padding", 72) { a ->
+            putInVersionSlot(a, stadiumVersionControl(a, sidePaddingDp = 8), fillHeight = true) as TextView
         },
-        VersionCandidate("hand-drawn stadium, tight, capped at 56dp", "the same with maxWidth and an ellipsis") { a ->
+        VersionCandidate("hand-drawn stadium, tight, capped at 56dp", "the same with maxWidth and an ellipsis", 72) { a ->
             val v = stadiumVersionControl(a, sidePaddingDp = 8) as TextView
             v.maxWidth = px(56)
             v.maxLines = 1
             v.ellipsize = android.text.TextUtils.TruncateAt.END
-            putInVersionSlot(a, v, fillHeight = true)
+            putInVersionSlot(a, v, fillHeight = true) as TextView
         },
+        VersionCandidate(
+            "segmented stadium: version + speaker",
+            "one stadium split by a hairline, audio out of the action menu",
+            120,
+        ) { a -> installSegmented(a, withAudio = true) },
+        VersionCandidate(
+            "segmented stadium, version without audio",
+            "the speaker segment collapses when the version has no recording",
+            72,
+        ) { a -> installSegmented(a, withAudio = false) },
     )
 
     @Test
@@ -1346,17 +1440,20 @@ class ReaderToolbarSpaceAuditTest {
             var bitmap: Bitmap? = null
 
             try {
-                val control = candidate.install(activity) as TextView
+                val control = candidate.install(activity)
+                // The control may be a container holding the label, so the slot
+                // view is what the audit measures, not the label inside it.
+                fun slot(): View = activity.findViewById(R.id.bVersion)
                 for (label in VERSION_LABELS) {
                     control.text = label
                     layOut(); layOut()
-                    widths += label to control.width
+                    widths += label to slot().width
                     lineCounts += control.lineCount
                 }
                 control.text = VERSION_LABELS.last()
                 layOut(); layOut()
-                drawnHeight = control.height
-                tapHeight = control.height
+                drawnHeight = slot().height
+                tapHeight = slot().height
                 referenceBox = bGoto.width - bGoto.paddingLeft - bGoto.paddingRight
                 bitmap = Bitmap.createBitmap(toolbar.width, toolbar.height, Bitmap.Config.ARGB_8888)
                 toolbar.draw(Canvas(bitmap))
@@ -1422,12 +1519,13 @@ class ReaderToolbarSpaceAuditTest {
                         paint(INK, stroke = 2f),
                     )
                     val widest = r.widths.maxOf { it.second }
-                    val shipped = px(72)
+                    val shipped = px(r.candidate.baselineDp)
                     c.drawText(
-                        "six characters wants ${dpStr(r.widths.last().second)}dp" +
-                            (if (widest > shipped) "  (${dpStr(widest - shipped)}dp more than today)" else "  (${dpStr(shipped - widest)}dp less than today)"),
+                        "6 chars ${dpStr(r.widths.last().second)}dp" +
+                            (if (widest > shipped) "   +${dpStr(widest - shipped)}dp" else "   -${dpStr(shipped - widest)}dp") +
+                            " vs the ${r.candidate.baselineDp}dp it replaces",
                         margin + 1100f, y + 30f,
-                        paint(if (widest <= shipped) OK else ALERT, textSize = 21f, face = monoBold),
+                        paint(if (widest <= shipped) OK else ALERT, textSize = 20f, face = monoBold),
                     )
                     c.drawText(
                         r.widths.joinToString("   ") { "${it.first}=${dpStr(it.second)}" },
@@ -1484,24 +1582,32 @@ class ReaderToolbarSpaceAuditTest {
             appendLine("when it has one, so there is no hard cap; the layout is drawn for six characters")
             appendLine("(`tools:text=\"VERSNM\"`), which is what the last column tests.")
             appendLine()
-            appendLine("| control | " + VERSION_LABELS.joinToString(" | ") { "${it.length}ch" } + " | drawn height | vs today's 72 dp | wraps |")
-            appendLine("| --- | " + VERSION_LABELS.joinToString(" | ") { "---:" } + " | ---: | ---: | --- |")
+            appendLine(
+                "| control | " + VERSION_LABELS.joinToString(" | ") { "${it.length}ch" } +
+                    " | height | replaces | vs that | reference box at 6ch | wraps |"
+            )
+            appendLine("| --- | " + VERSION_LABELS.joinToString(" | ") { "---:" } + " | ---: | ---: | ---: | ---: | --- |")
             for (r in results) {
                 if (r.failure != null) {
-                    appendLine("| ${r.candidate.name} | " + VERSION_LABELS.joinToString(" | ") { "n/a" } + " | n/a | could not be built | |")
+                    appendLine("| ${r.candidate.name} | " + VERSION_LABELS.joinToString(" | ") { "n/a" } + " | n/a | n/a | could not be built | n/a | |")
                     continue
                 }
                 val widest = r.widths.maxOf { it.second }
                 val wraps = r.lineCounts.withIndex().filter { it.value > 1 }.map { VERSION_LABELS[it.index] }
+                val baseline = px(r.candidate.baselineDp)
                 appendLine(
                     "| ${r.candidate.name} | " + r.widths.joinToString(" | ") { dpStr(it.second) } +
-                        " | ${dpStr(r.drawnHeight)} | ${if (widest > px(72)) "+" else ""}${dpStr(widest - px(72))} " +
+                        " | ${dpStr(r.drawnHeight)} | ${r.candidate.baselineDp} dp " +
+                        "| ${if (widest > baseline) "+" else ""}${dpStr(widest - baseline)} " +
+                        "| ${dpStr(r.worstCaseReferenceBox)} " +
                         "| ${if (wraps.isEmpty()) "no" else wraps.joinToString(", ")} |"
                 )
             }
             appendLine()
-            appendLine("The reference text box in the last column of the sheet is what the reference gets")
-            appendLine("with each control in place, in the layout as it ships otherwise.")
+            appendLine("`replaces` is what the same job costs in the bar today: 72 dp for the version")
+            appendLine("changer, or 120 dp when the control also swallows the 48 dp audio item out of the")
+            appendLine("action menu. `reference box` is what the reference is left with, in the layout as")
+            appendLine("it ships otherwise, so it is the bottom line.")
             appendLine()
             appendLine("## Can a Material 3 widget be used today?")
             appendLine()

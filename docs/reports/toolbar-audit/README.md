@@ -222,6 +222,9 @@ boxes, keeping all seven controls, the full book name and 16 sp type?
 | all four, condensed face | 120 dp | +72 dp | 72 dp | 48 dp | 7/7 | **0/7** |
 | all four, capped stadium version, 2 characters | 120 dp | +72 dp | 72 dp | 48 dp | 6/7 | **0/7** |
 | all four, capped stadium version, 6 characters | 112 dp | +64 dp | 64 dp | 48 dp | 5/7 | **0/7** |
+| all four + segmented version/speaker, 2 characters | 119 dp | +71 dp | 71 dp | 48 dp | 6/7 | **0/7** |
+| all four + segmented version/speaker, 6 characters | 111 dp | +63 dp | 63 dp | 48 dp | 4/7 | 1/7 |
+| all four + segmented stadium, version with no audio | 168 dp | +120 dp | 120 dp | 48 dp | 7/7 | **0/7** |
 | version folded into the reference as a chip | 168 dp | +120 dp | 120 dp | 48 dp | 7/7 | **0/7** |
 
 The six-character worst case costs the reference 8 dp against the two-character
@@ -299,16 +302,23 @@ fixed 72 dp box is 1 dp narrower than the content needs, so "VERSNM" renders as
 
 Every candidate measured in the shipped layout, widths in dp:
 
-| control | 1ch | 2ch | 3ch | 4ch | 5ch | 6ch | drawn height | vs 72 dp | wraps |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| as shipped (fixed 72 dp) | 72 | 72 | 72 | 72 | 72 | 72 | 56 | 0 | **VERSNM** |
-| as shipped, sized to content | 24.7 | 33.7 | 42 | 51.7 | 55 | 73 | 56 | +1 | no |
-| M3 assist chip | 48 | 50 | 58.3 | 68 | 71.7 | 89 | 48 | +17 | no |
-| M3 outlined button (stadium) | 88 | 88 | 88 | 88 | 88 | 105 | 48 | +33 | no |
-| M3 tonal button (stadium) | 88 | 88 | 88 | 88 | 88 | 105 | 48 | +33 | no |
-| hand-drawn stadium, 12 dp padding | 48 | 48 | 50 | 59.7 | 63 | 81 | 56 | +9 | no |
-| hand-drawn stadium, 8 dp padding | 48 | 48 | 48 | 51.7 | 55 | 73 | 56 | +1 | no |
-| **hand-drawn stadium, capped at 56 dp** | **48** | **48** | **48** | **51.7** | **55** | **56** | **56** | **-16** | no |
+| control | 1ch | 2ch | 3ch | 4ch | 5ch | 6ch | height | replaces | vs that | reference box | wraps |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| as shipped (fixed 72 dp) | 72 | 72 | 72 | 72 | 72 | 72 | 56 | 72 | 0 | 48 | **VERSNM** |
+| as shipped, sized to content | 24.7 | 33.7 | 42 | 51.7 | 55 | 73 | 56 | 72 | +1 | 47 | no |
+| M3 assist chip | 48 | 50 | 58.3 | 68 | 71.7 | 89 | 48 | 72 | +17 | 31 | no |
+| M3 outlined button (stadium) | 88 | 88 | 88 | 88 | 88 | 105 | 48 | 72 | +33 | 15 | no |
+| M3 tonal button (stadium) | 88 | 88 | 88 | 88 | 88 | 105 | 48 | 72 | +33 | 15 | no |
+| hand-drawn stadium, 12 dp padding | 48 | 48 | 50 | 59.7 | 63 | 81 | 56 | 72 | +9 | 39 | no |
+| hand-drawn stadium, 8 dp padding | 48 | 48 | 48 | 51.7 | 55 | 73 | 56 | 72 | +1 | 47 | no |
+| **hand-drawn stadium, capped at 56 dp** | **48** | **48** | **48** | **51.7** | **55** | **56** | **56** | **72** | **-16** | **64** | no |
+| segmented stadium: version + speaker | 97 | 97 | 97 | 100.7 | 104 | 105 | 56 | 120 | -15 | 63 | no |
+| segmented stadium, version with no audio | 48 | 48 | 48 | 51.7 | 55 | 56 | 56 | 72 | -16 | 112 | no |
+
+`replaces` is what the same job costs in the bar today: 72 dp for the version
+changer, or 120 dp when the control also swallows the 48 dp audio item out of the
+action menu. `reference box` is what the reference is left with at six
+characters, with the rest of the layout as it ships, so it is the bottom line.
 
 ### The Material 3 components are the wrong shape for a toolbar
 
@@ -324,7 +334,7 @@ characters** (50 dp against 72 dp), which is the common case, but 17 dp dearer a
 six. Its minimum is 48 dp because `ensureMinTouchTargetSize` is on by default,
 which is the right behaviour and also its floor.
 
-### What actually wins
+### What actually wins on space
 
 A stadium drawn for this toolbar: 8 dp of side padding instead of the M3 button's
 24 dp, a `maxWidth` of 56 dp with an ellipsis, and a slot that still fills the
@@ -333,6 +343,34 @@ That is 48 dp for a typical two or three character version, 24 dp cheaper than
 today, and it never exceeds 56 dp or wraps, so it is 16 dp cheaper than today
 even in the worst case. It gives the reference a predictable budget, which the
 current control does not.
+
+### The segmented version-and-audio stadium
+
+Pairing the two in one stadium split by a hairline is sound on the merits: audio
+availability is resolved per version id (`AudioSetsRepository` caches by
+`versionId`, `AudioBarController.isAvailable` is "does a visible version have a
+recording"), so the speaker really is a property of the version the label names.
+
+On space it is a wash, and the measurements say so plainly. The control is 97 dp
+at two characters and 105 dp at six, against the 120 dp the same two controls
+cost today, so it gives the reference 63 dp where a capped chip with audio left
+in the action menu gives 64 dp. The 1 dp is the divider. Two adjacent tap targets
+cannot go below 48 dp each, so 96 dp plus a hairline is the floor for a
+two-segment control, and that is most of the 120 dp back already.
+
+So it is worth doing for what it says, not for what it saves:
+
+- one object instead of two, with the speaker visibly owned by the version
+- the speaker gets a real 48 dp target inside the chip
+- when the version has no recording the segment collapses and the control falls
+  back to the plain 56 dp chip, which is the same graceful behaviour the action
+  menu already has (`menuAudio.isVisible = audioBinder.isAvailable`)
+
+Two caveats worth designing for. It moves audio out of the action menu, where a
+toolbar action is conventionally found. And in split view `audioAvailableSources`
+spans every visible version while `bVersion` names only the master, so the
+speaker can be lit by a recording belonging to the version the label does not
+show.
 
 ### Theming
 
@@ -371,6 +409,11 @@ characters), where the control as it ships wraps onto a second line. Do not size
 it to content without a cap: at six characters that is 73 dp, which is wider
 than today. Part of the redraw package in suggestion 0. Prefer this over
 dropping in an M3 button, which is 88 dp empty.
+
+Splitting that chip into version and speaker segments is a reasonable variation:
+it costs 1 dp against the chip, and it says something true, since audio
+availability is a property of the version. Choose it for the grouping, not for
+the space.
 
 **C. Give the reference the touch area its box implies.** Suggestion 0 already
 takes it from 32 dp to 64 dp. If the box is not widened, drop the
