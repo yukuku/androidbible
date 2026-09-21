@@ -105,47 +105,77 @@
   .sec-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
   .sec-head p { color: var(--ink-dim); max-width: 64ch; }
 
-  /* --- toolbar simulation --- */
-  .barbox { container-type: inline-size; width: 100%; }
-  .bar {
-    position: relative; width: 100%;
-    height: calc(var(--barh) * var(--dp));
-    background: var(--bar-bg); overflow: hidden;
-    border-radius: 3px;
-    --dp: calc(100cqw / var(--barw));
+  /* --- element colour encoding, shared by the drawings and the legend --- */
+  :root {
+    --c-ham: #2f6f8f;
+    --c-arrow: #9a6a12;
+    --c-ref: #b03060;
+    --c-ver: #6a4fb0;
+    --c-menu: #1c7a5b;
   }
-  .bar .el { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; }
-  .bar .el svg { width: calc(24 * var(--dp)); height: calc(24 * var(--dp)); display: block; }
-  .bar .el svg * { stroke: var(--bar-ink); }
-  .bar .el svg .fill { fill: var(--bar-ink); stroke: none; }
-  .bar .ref { flex-direction: column; overflow: hidden; }
-  .bar .ref span {
-    display: block; white-space: pre; color: var(--bar-ink);
-    font-family: var(--sans); font-weight: 600;
-    font-size: calc(16 * var(--dp)); line-height: 1.12;
-    transform-origin: center;
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-ham: #86c8e8; --c-arrow: #e2b45c; --c-ref: #ff9ab8; --c-ver: #b9a4ff; --c-menu: #6fd8ab;
+    }
   }
-  .bar .vlabel {
-    color: var(--bar-ink); font-family: var(--sans); font-weight: 700;
-    font-size: calc(14 * var(--dp)); white-space: pre; transform-origin: center;
+  :root[data-theme="dark"] {
+    --c-ham: #86c8e8; --c-arrow: #e2b45c; --c-ref: #ff9ab8; --c-ver: #b9a4ff; --c-menu: #6fd8ab;
   }
-  .bar .stadium {
-    position: absolute; top: calc(12 * var(--dp)); bottom: calc(12 * var(--dp)); left: 0; right: 0;
-    border: 1px solid rgba(255,255,255,.62); border-radius: 999px;
-  }
-  .bar .divider { position: absolute; top: calc(18 * var(--dp)); bottom: calc(18 * var(--dp)); width: 1px; background: rgba(255,255,255,.45); }
-  .bar .caret { width: calc(12 * var(--dp)); height: calc(12 * var(--dp)); }
-  .bar .spinner-line { position: absolute; left: calc(6 * var(--dp)); right: calc(6 * var(--dp)); bottom: calc(14 * var(--dp)); height: 1px; background: rgba(255,255,255,.35); }
-  .bar .gap-mark { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(45deg, rgba(255,255,255,.06) 0 4px, transparent 4px 8px); }
 
-  .ruler { position: relative; height: 26px; margin-top: 6px; container-type: inline-size; }
-  .ruler .seg {
-    position: absolute; top: 0; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: .68rem; color: var(--ink-dim);
-    border-left: 1px solid var(--rule); border-right: 1px solid var(--rule);
+  /* --- the dimensioned drawing --- */
+  .figscroll { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
+  svg.fig { width: 100%; height: auto; display: block; color: var(--ink-dim); }
+
+  svg.fig .barbg { fill: var(--bar-bg); }
+  svg.fig .grid .minor { stroke: rgba(255,255,255,.07); stroke-width: .5; }
+  svg.fig .grid .major { stroke: rgba(255,255,255,.16); stroke-width: .5; }
+  svg.fig .gapfill { fill: rgba(255,255,255,.09); }
+  svg.fig .bar-ink { color: var(--bar-ink); }
+  svg.fig .bar-ink-fill { fill: rgba(255,255,255,.72); }
+  svg.fig .spinrule { stroke: rgba(255,255,255,.4); stroke-width: .8; }
+  svg.fig .stadium { fill: none; stroke: rgba(255,255,255,.66); stroke-width: 1; }
+  svg.fig .segdiv { stroke: rgba(255,255,255,.5); stroke-width: 1; }
+  svg.fig .reftext { fill: var(--bar-ink); font-family: var(--sans); font-weight: 600; font-size: 16px; }
+  svg.fig .vtext { fill: var(--bar-ink); font-family: var(--sans); font-weight: 700; font-size: 14px; }
+
+  svg.fig .witness line { stroke: var(--rule); stroke-width: .5; stroke-dasharray: 2 2.5; }
+  svg.fig .dimline { stroke: currentColor; stroke-width: .9; }
+  svg.fig .dimfill { fill: currentColor; stroke: none; }
+  svg.fig .dimmask { fill: var(--surface); stroke: none; }
+  svg.fig .dimtext {
+    fill: currentColor; font-family: var(--mono); font-size: 7.4px; font-weight: 500;
+    font-variant-numeric: tabular-nums;
   }
-  .ruler .seg.hl { color: var(--accent); font-weight: 600; }
+  svg.fig .rowlabel {
+    fill: var(--ink-dim); font-family: var(--mono); font-size: 6.8px;
+    letter-spacing: .06em;
+  }
+  svg.fig .e-ham { color: var(--c-ham); }
+  svg.fig .e-arrow { color: var(--c-arrow); }
+  svg.fig .e-ref { color: var(--c-ref); }
+  svg.fig .e-ver { color: var(--c-ver); }
+  svg.fig .e-menu { color: var(--c-menu); }
+  svg.fig .e-neutral { color: var(--ink-dim); }
+  svg.fig .e-alert, svg.fig .flagged { color: var(--loss); }
+  svg.fig .e-total { color: var(--ink); }
+  svg.fig .e-ref.emph .dimline { stroke-width: 1.5; }
+  svg.fig .e-ref.emph .dimtext { font-weight: 600; font-size: 8px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 18px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .72rem; color: var(--ink-dim); }
+  .legend i { width: 14px; height: 3px; border-radius: 2px; display: block; }
+
+  .figrow { display: grid; grid-template-columns: 62px 1fr; gap: 12px; align-items: start; margin-top: 12px; }
+  .figtag {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-dim); text-align: right; padding-top: 14px; line-height: 1.5;
+  }
+  .figtag b { display: block; color: var(--ink); font-size: .84rem; letter-spacing: 0; text-transform: none; }
+  @media (max-width: 560px) {
+    .figrow { grid-template-columns: 1fr; }
+    .figtag { text-align: left; padding-top: 0; }
+    .figtag b { display: inline; margin-left: 8px; }
+  }
 
   /* --- effort cards --- */
   .efforts { display: flex; flex-direction: column; gap: 18px; }
@@ -155,12 +185,6 @@
   }
   .effort > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; margin-bottom: 4px; }
   .effort .why { color: var(--ink-dim); font-size: .94rem; max-width: 66ch; margin-bottom: 18px; }
-  .ba { display: grid; gap: 14px; }
-  .ba .side { display: grid; grid-template-columns: 58px 1fr; gap: 12px; align-items: center; }
-  .ba .tag {
-    font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--ink-dim); text-align: right;
-  }
   .delta {
     font-family: var(--mono); font-size: .8rem; font-weight: 600;
     padding: 3px 9px; border-radius: 999px; white-space: nowrap;
@@ -242,10 +266,20 @@
   <div class="sec-head">
     <h2>Each effort, before and after</h2>
     <p>
-      Every bar is drawn from the measured layout at 360&nbsp;dp, with the reference reading
-      &ldquo;Kejadian&nbsp;1&rdquo;. The figure on each card is the text box inside the reference
-      button, which is what decides whether a book name fits.
+      Every bar is drawn to scale from the measured layout at 360&nbsp;dp, with the reference
+      reading &ldquo;Kejadian&nbsp;1&rdquo;. <b>REF</b> dimensions the text box inside the reference
+      button, which decides whether a book name fits; it overhangs the chapter arrows on both
+      sides. <b>TAP</b> dimensions the area each control actually receives touches in, and those
+      tile the bar exactly.
     </p>
+  </div>
+  <div class="legend" aria-hidden="true">
+    <span><i style="background:var(--c-ham)"></i>drawer</span>
+    <span><i style="background:var(--c-arrow)"></i>chapter arrows</span>
+    <span><i style="background:var(--c-ref)"></i>verse reference</span>
+    <span><i style="background:var(--c-ver)"></i>version changer</span>
+    <span><i style="background:var(--c-menu)"></i>action menu</span>
+    <span><i style="background:var(--loss)"></i>under the 48&nbsp;dp touch minimum</span>
   </div>
   <div class="efforts" id="efforts"></div>
 </section>
@@ -261,8 +295,16 @@
 
   <div class="pg">
     <div class="stage">
-      <div class="barbox"><div class="bar" id="pgBar"></div></div>
-      <div class="ruler" id="pgRuler"></div>
+      <div class="legend" aria-hidden="true">
+    <span><i style="background:var(--c-ham)"></i>drawer</span>
+    <span><i style="background:var(--c-arrow)"></i>chapter arrows</span>
+    <span><i style="background:var(--c-ref)"></i>verse reference</span>
+    <span><i style="background:var(--c-ver)"></i>version changer</span>
+    <span><i style="background:var(--c-menu)"></i>action menu</span>
+    <span><i style="background:var(--loss)"></i>under the 48&nbsp;dp touch minimum</span>
+      </div>
+
+      <div class="figscroll" id="pgFig"></div>
       <div class="stats" id="pgStats"></div>
       <div class="tablewrap">
         <table class="fits">
@@ -378,7 +420,7 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
     return BUCKETS[BUCKETS.length - 1];
   }
 
-  // --- the layout model, verified against DATA.checkpoints at load -----------
+  // --- the layout model, checked against DATA.checkpoints at load -----------
 
   function layout(w, o) {
     var b = bucketFor(w);
@@ -394,9 +436,8 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
     var audioLeft = searchLeft - C.audioItemDp;
     var versionLeft = (audioInMenu ? audioLeft : searchLeft) - version;
     var clusterStart = pad + ham;
-    var clusterAvail = versionLeft - clusterStart;
-    var cluster = Math.min(clusterAvail, C.clusterCapDp);
-    var gap = Math.max(0, clusterAvail - cluster);
+    var cluster = Math.min(versionLeft - clusterStart, C.clusterCapDp);
+    var gap = Math.max(0, (versionLeft - clusterStart) - cluster);
 
     var margin = o.flush ? C.flushMarginDp : b.marginDp;
     var box = Math.max(0, cluster - 2 * margin);
@@ -413,6 +454,7 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
       audioInMenu: audioInMenu, audioLeft: audioLeft, searchLeft: searchLeft,
       segmented: segmented, clusterStart: clusterStart, cluster: cluster, gap: gap,
       boxLeft: clusterStart + margin, box: box, tap: tap,
+      tapLeft: clusterStart + b.arrowDp,
       minOtherTap: Math.min.apply(null, taps)
     };
   }
@@ -420,16 +462,15 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
   function near(a, b) { return Math.abs(a - b) < 0.55; }
 
   function verify() {
-    var bad = [];
+    var bad = 0;
     DATA.checkpoints.forEach(function (c) {
       var r = layout(c.widthDp, {
         flush: c.flush, compactNav: c.compactNav, narrowSearch: c.narrowSearch,
         versionMode: c.versionMode, audioAvailable: c.audioAvailable,
         labelLen: c.label.length
       });
-      if (!near(r.box, c.referenceBoxDp) || !near(r.tap, c.referenceTapDp) || !near(r.minOtherTap, c.minOtherTapDp)) {
-        bad.push(c);
-      }
+      if (!near(r.box, c.referenceBoxDp) || !near(r.tap, c.referenceTapDp) ||
+          !near(r.minOtherTap, c.minOtherTapDp)) bad++;
     });
     return bad;
   }
@@ -443,185 +484,231 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
     if (o.versionMode === "folded") return o.abbrev ? "mergedAbbreviated" : "merged";
     return o.abbrev ? "abbreviated" : "full";
   }
-
   function stringsFor(o) {
     var kind = kindFor(o), face = o.condensed ? "condensed" : "normal";
     return DATA.strings.filter(function (m) { return m.kind === kind && m.face === face; });
   }
-
   function verdict(m, box) {
     if (m.naturalDp <= box) return "fits";
     if (m.noTruncateDp <= box) return "wraps";
     return "truncated";
   }
 
-  // Canvas widths are only used to place a line break and to scale a label so
-  // its drawn run matches the width the app measured. The verdicts above come
-  // from the measurements.
   var ctx = document.createElement("canvas").getContext("2d");
-  function canvasWidth(text, weight, size) {
-    ctx.font = weight + " " + size + "px " + getComputedStyle(document.body).fontFamily;
-    return ctx.measureText(text).width;
-  }
-  function scaleFor(text, targetDp, weight) {
-    var w = canvasWidth(text, weight, 16);
-    return w > 0 ? targetDp / w : 1;
-  }
+  function cw(text) { ctx.font = "600 16px " + FAMILY; return ctx.measureText(text).width; }
+  var FAMILY = "system-ui, sans-serif";
 
-  /** The app's GotoButton.balanceWrap, used only to pick where a line breaks. */
+  /** GotoButton.balanceWrap, used only to choose where the label breaks. */
   function balanceWrap(text, availDp, scale) {
-    var measure = function (a, b) { return canvasWidth(text.slice(a, b), 600, 16) * scale; };
+    var m = function (a, b) { return cw(text.slice(a, b)) * scale; };
     var n = text.length;
-    if (n === 0 || measure(0, n) <= availDp) return [text];
-    var bestSplit = -1, bestMax = Infinity, foundFit = false;
+    if (n === 0 || m(0, n) <= availDp) return [text];
+    var best = -1, bestMax = Infinity, found = false;
     for (var i = 1; i < n; i++) {
-      var end1 = i; while (end1 > 0 && text.charAt(end1 - 1) === " ") end1--;
-      var start2 = i; while (start2 < n && text.charAt(start2) === " ") start2++;
-      if (end1 === 0 || start2 === n) continue;
-      var w1 = measure(0, end1), w2 = measure(start2, n);
-      var mx = Math.max(w1, w2), fits = w1 <= availDp && w2 <= availDp;
-      if (fits && !foundFit) { foundFit = true; bestMax = mx; bestSplit = i; }
-      else if (fits === foundFit && mx < bestMax) { bestMax = mx; bestSplit = i; }
+      var e1 = i; while (e1 > 0 && text.charAt(e1 - 1) === " ") e1--;
+      var s2 = i; while (s2 < n && text.charAt(s2) === " ") s2++;
+      if (e1 === 0 || s2 === n) continue;
+      var w1 = m(0, e1), w2 = m(s2, n), mx = Math.max(w1, w2);
+      var fits = w1 <= availDp && w2 <= availDp;
+      if (fits && !found) { found = true; bestMax = mx; best = i; }
+      else if (fits === found && mx < bestMax) { bestMax = mx; best = i; }
     }
-    if (bestSplit < 0) return [text];
-    var e1 = bestSplit; while (e1 > 0 && text.charAt(e1 - 1) === " ") e1--;
-    var s2 = bestSplit; while (s2 < n && text.charAt(s2) === " ") s2++;
-    return [text.slice(0, e1), text.slice(s2)];
+    if (best < 0) return [text];
+    var a1 = best; while (a1 > 0 && text.charAt(a1 - 1) === " ") a1--;
+    var b1 = best; while (b1 < n && text.charAt(b1) === " ") b1++;
+    return [text.slice(0, a1), text.slice(b1)];
   }
 
-  // --- icons ----------------------------------------------------------------
+  // --- SVG drawing ----------------------------------------------------------
 
-  var ICON = {
-    menu: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
-    left: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
-    right: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
-    audio: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="fill" d="M4 9.5h3.2L12 5.2v13.6L7.2 14.5H4z"/><path d="M16 9.2a4.2 4.2 0 010 5.6M18.6 6.8a7.6 7.6 0 010 10.4"/></svg>',
-    search: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="10.6" cy="10.6" r="6.1"/><path d="M15.2 15.2L20 20"/></svg>'
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function fmt(n) { return Math.abs(Math.round(n * 10) % 10) < 0.001 ? String(Math.round(n)) : n.toFixed(1); }
+
+  var ICONS = {
+    menu: '<path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>',
+    left: '<path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+    right: '<path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+    audio: '<path d="M4 9.5h3.2L12 5.2v13.6L7.2 14.5H4z" fill="currentColor"/>' +
+           '<path d="M16 9.2a4.2 4.2 0 010 5.6M18.6 6.8a7.6 7.6 0 010 10.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>',
+    search: '<circle cx="10.6" cy="10.6" r="6.1" stroke="currentColor" stroke-width="2" fill="none"/>' +
+            '<path d="M15.2 15.2L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>'
   };
 
-  function el(cls, style, html) {
-    var d = document.createElement("div");
-    d.className = cls;
-    if (style) d.setAttribute("style", style);
-    if (html) d.innerHTML = html;
-    return d;
+  function icon(name, cx, cy) {
+    return '<g transform="translate(' + (cx - 12) + ',' + (cy - 12) + ')" class="bar-ink">' + ICONS[name] + "</g>";
   }
-  function span(dp) { return "calc(" + dp + " * var(--dp))"; }
-  function box(left, width) { return "left:" + span(left) + ";width:" + span(width) + ";"; }
 
-  // --- rendering ------------------------------------------------------------
+  var GUTTER = 28; // dp of drawing left of the bar, for the row labels
+  var LABEL_SIZE = 7.2;
+  var CHAR_W = 4.35; // mono advance at LABEL_SIZE, for fit decisions only
 
-  function renderBar(node, w, o, refText) {
+  /** An architect's dimension line: end ticks, outward arrowheads, label in the break. */
+  function dim(x1, x2, y, label, cls, flag) {
+    var span = x2 - x1;
+    if (span <= 0.2) return "";
+    var g = '<g class="' + cls + (flag ? " flagged" : "") + '">';
+    g += '<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '" class="dimline"/>';
+    g += '<line x1="' + x1 + '" y1="' + (y - 3.2) + '" x2="' + x1 + '" y2="' + (y + 3.2) + '" class="dimline"/>';
+    g += '<line x1="' + x2 + '" y1="' + (y - 3.2) + '" x2="' + x2 + '" y2="' + (y + 3.2) + '" class="dimline"/>';
+    if (span > 13) {
+      g += '<path d="M' + x1 + ' ' + y + 'l4 -1.9v3.8z" class="dimfill"/>';
+      g += '<path d="M' + x2 + ' ' + y + 'l-4 -1.9v3.8z" class="dimfill"/>';
+    }
+    var textW = label.length * CHAR_W;
+    var cx = (x1 + x2) / 2;
+    if (textW + 7 <= span) {
+      g += '<rect x="' + (cx - textW / 2 - 2.4) + '" y="' + (y - 4.4) + '" width="' + (textW + 4.8) +
+           '" height="8.8" class="dimmask"/>';
+      g += '<text x="' + cx + '" y="' + (y + 2.6) + '" class="dimtext" text-anchor="middle">' + esc(label) + "</text>";
+    } else {
+      g += '<text x="' + cx + '" y="' + (y - 5.2) + '" class="dimtext" text-anchor="middle">' + esc(label) + "</text>";
+    }
+    return g + "</g>";
+  }
+
+  function witness(xs, yTop, yBottom) {
+    var s = '<g class="witness">';
+    xs.forEach(function (x) {
+      s += '<line x1="' + x + '" y1="' + yTop + '" x2="' + x + '" y2="' + yBottom + '"/>';
+    });
+    return s + "</g>";
+  }
+
+  function grid(w, h, pad) {
+    var s = '<g class="grid">';
+    for (var x = 0; x <= w; x += 8) {
+      s += '<line x1="' + x + '" y1="0" x2="' + x + '" y2="' + h + '" class="' + (x % 48 === 0 ? "major" : "minor") + '"/>';
+    }
+    return s + "</g>";
+  }
+
+  /**
+   * One toolbar drawn to scale with its dimension chains underneath.
+   * mode "compact" draws the box chain only; "full" adds touch areas,
+   * the nav cluster, any unclaimed width, and the whole bar.
+   */
+  function figure(w, o, refText, mode, emphasis) {
     var r = layout(w, o);
-    node.style.setProperty("--barw", r.w);
-    node.style.setProperty("--barh", r.barH);
-    node.innerHTML = "";
+    var full = mode === "full";
+    // The reference's text box overhangs the chapter arrows, so it gets a row of
+    // its own; the touch areas below it tile the bar exactly.
+    var yBox = r.barH + 17;
+    var yTap = r.barH + 38;
+    var yCluster = r.barH + 58;
+    var yTotal = r.barH + 76;
+    var H = full ? r.barH + 88 : r.barH + 50;
 
-    node.appendChild(el("el", box(r.pad, r.ham), ICON.menu));
+    var s = "";
 
+    // the bar
+    s += '<rect x="0" y="0" width="' + w + '" height="' + r.barH + '" class="barbg"/>';
+    s += '<g clip-path="none">' + grid(w, r.barH) + "</g>";
+
+    // drawer
+    s += icon("menu", r.pad + r.ham / 2, r.barH / 2);
+
+    // unclaimed width, hatched
     if (r.gap > 0.5) {
-      node.appendChild(el("gap-mark", box(r.clusterStart + r.cluster, r.gap), ""));
+      s += '<rect x="' + (r.clusterStart + r.cluster) + '" y="0" width="' + r.gap + '" height="' + r.barH + '" class="gapfill"/>';
     }
 
-    // Chapter arrows: the glyph sits centred, or pushed into the outer strip.
-    var glyphPad = o.flush ? r.arrow - C.flushMarginDp : 0;
-    var lArrow = el("el", box(r.clusterStart, r.arrow) + (glyphPad ? "padding-right:" + span(glyphPad) + ";" : ""), ICON.left);
-    var rArrow = el("el", box(r.clusterStart + r.cluster - r.arrow, r.arrow) + (glyphPad ? "padding-left:" + span(glyphPad) + ";" : ""), ICON.right);
-    node.appendChild(lArrow);
-    node.appendChild(rArrow);
+    // chapter chevrons: centred, or pushed into the outer strip
+    var lcx = o.flush ? r.clusterStart + C.flushMarginDp / 2 : r.clusterStart + r.arrow / 2;
+    var rcx = o.flush ? r.clusterStart + r.cluster - C.flushMarginDp / 2 : r.clusterStart + r.cluster - r.arrow / 2;
+    s += icon("left", lcx, r.barH / 2);
+    s += icon("right", rcx, r.barH / 2);
 
-    // The reference.
+    // the reference
     var kind = kindFor(o), face = o.condensed ? "condensed" : "normal";
     var m = METRICS[kind + "|" + face + "|" + refText];
-    var refEl = el("el ref", box(r.boxLeft, r.box), "");
     if (m) {
-      var sc = scaleFor(refText, m.naturalDp, 600);
+      var scale = m.naturalDp / cw(refText);
       var v = verdict(m, r.box);
-      var lines = v === "fits" ? [refText] : balanceWrap(refText, r.box, sc);
-      if (v === "truncated") {
+      var lines;
+      if (v === "fits") lines = [refText];
+      else if (v === "wraps") lines = balanceWrap(refText, r.box, scale);
+      else {
         var t = refText, guard = 0;
-        while (t.length > 1 && canvasWidth(t + "…", 600, 16) * sc > r.box && guard++ < 60) t = t.slice(0, -1);
+        while (t.length > 1 && cw(t + "…") * scale > r.box && guard++ < 60) t = t.slice(0, -1);
         lines = [t + "…"];
       }
-      lines.forEach(function (line) {
-        var s = document.createElement("span");
-        s.textContent = line;
-        s.style.transform = "scaleX(" + sc + ")";
-        if (o.condensed) s.style.fontStretch = "condensed";
-        refEl.appendChild(s);
+      var cx = r.boxLeft + r.box / 2;
+      var lh = 18;
+      var y0 = r.barH / 2 - (lines.length - 1) * lh / 2 + 5.6;
+      lines.forEach(function (line, i) {
+        var tl = Math.min(cw(line) * scale, r.box);
+        s += '<text x="' + cx + '" y="' + (y0 + i * lh) + '" class="reftext" text-anchor="middle"' +
+             ' textLength="' + tl + '" lengthAdjust="spacingAndGlyphs">' + esc(line) + "</text>";
       });
     }
-    node.appendChild(refEl);
 
-    // The version control.
+    // the version control
     if (o.versionMode !== "folded") {
       var label = o.labelLen === 6 ? "VERSNM" : "TB";
-      var vEl = el("el", box(r.versionLeft, r.version), "");
+      var vcx = r.versionLeft + r.version / 2;
       if (o.versionMode === "fixed") {
-        var inner = document.createElement("div");
-        inner.style.cssText = "display:flex;align-items:center;gap:" + span(4);
-        var ls = document.createElement("span");
-        ls.className = "vlabel";
-        ls.textContent = label;
-        inner.appendChild(ls);
-        var caret = document.createElement("div");
-        caret.className = "caret";
-        caret.innerHTML = '<svg viewBox="0 0 12 12" style="width:100%;height:100%"><path class="fill" d="M2 4.5h8L6 9z" opacity=".75"/></svg>';
-        inner.appendChild(caret);
-        vEl.appendChild(inner);
-        vEl.appendChild(el("spinner-line", "", ""));
+        s += '<text x="' + (vcx - 5) + '" y="' + (r.barH / 2 + 5) + '" class="vtext" text-anchor="middle">' + label + "</text>";
+        s += '<path d="M' + (vcx + 13) + ' ' + (r.barH / 2 - 2) + 'l8 0-4 5z" class="bar-ink-fill"/>';
+        s += '<line x1="' + (r.versionLeft + 6) + '" y1="' + (r.barH - 14) + '" x2="' + (r.versionLeft + r.version - 6) +
+             '" y2="' + (r.barH - 14) + '" class="spinrule"/>';
       } else {
-        vEl.appendChild(el("stadium", "", ""));
+        s += '<rect x="' + r.versionLeft + '" y="12" width="' + r.version + '" height="' + (r.barH - 24) +
+             '" rx="' + ((r.barH - 24) / 2) + '" class="stadium"/>';
         var labelW = r.segmented ? r.version - C.minTouchDp - 1 : r.version;
-        var lbl = document.createElement("span");
-        lbl.className = "vlabel";
-        lbl.style.position = "absolute";
-        lbl.style.left = span(0);
-        lbl.style.width = span(labelW);
-        lbl.style.textAlign = "center";
-        lbl.style.overflow = "hidden";
-        lbl.textContent = label;
-        vEl.appendChild(lbl);
+        s += '<text x="' + (r.versionLeft + labelW / 2) + '" y="' + (r.barH / 2 + 5) + '" class="vtext" text-anchor="middle">' + label + "</text>";
         if (r.segmented) {
-          vEl.appendChild(el("divider", "left:" + span(labelW) + ";", ""));
-          var sp = el("el", box(labelW + 1, C.minTouchDp), ICON.audio);
-          sp.style.position = "absolute";
-          vEl.appendChild(sp);
+          s += '<line x1="' + (r.versionLeft + labelW) + '" y1="18" x2="' + (r.versionLeft + labelW) +
+               '" y2="' + (r.barH - 18) + '" class="segdiv"/>';
+          s += icon("audio", r.versionLeft + labelW + 1 + C.minTouchDp / 2, r.barH / 2);
         }
       }
-      node.appendChild(vEl);
     }
 
-    if (r.audioInMenu) node.appendChild(el("el", box(r.audioLeft, C.audioItemDp), ICON.audio));
-    node.appendChild(el("el", box(r.searchLeft, r.search), ICON.search));
+    if (r.audioInMenu) s += icon("audio", r.audioLeft + C.audioItemDp / 2, r.barH / 2);
+    s += icon("search", r.searchLeft + r.search / 2, r.barH / 2);
 
-    return r;
+    // --- dimensions ---
+    var bounds = [r.pad, r.pad + r.ham, r.clusterStart + r.arrow, r.clusterStart + r.cluster - r.arrow,
+                  r.clusterStart + r.cluster, r.boxLeft, r.boxLeft + r.box, r.versionLeft,
+                  r.versionLeft + r.version, r.searchLeft, w - r.pad];
+    if (r.audioInMenu) bounds.push(r.audioLeft);
+    bounds = bounds.filter(function (v, i, a) { return v >= 0 && v <= w && a.indexOf(v) === i; });
+    s += witness(bounds, r.barH, (full ? yTotal : yTap) + 4);
+
+    // Row 1: the reference's text box, which overhangs the arrows on both sides.
+    s += dim(r.boxLeft, r.boxLeft + r.box, yBox, fmt(r.box) + " text box", "e-ref" + (emphasis ? " emph" : ""));
+    s += '<text x="-5" y="' + (yBox + 2.6) + '" class="rowlabel" text-anchor="end">REF</text>';
+
+    // Row 2: the touch areas, which tile the bar exactly.
+    s += dim(r.pad, r.pad + r.ham, yTap, fmt(r.ham), "e-ham", r.ham < C.minTouchDp);
+    s += dim(r.clusterStart, r.clusterStart + r.arrow, yTap, fmt(r.arrow), "e-arrow", r.arrow < C.minTouchDp);
+    s += dim(r.tapLeft, r.tapLeft + r.tap, yTap, fmt(r.tap), "e-ref", r.tap < C.minTouchDp);
+    s += dim(r.clusterStart + r.cluster - r.arrow, r.clusterStart + r.cluster, yTap, fmt(r.arrow), "e-arrow", r.arrow < C.minTouchDp);
+    if (o.versionMode !== "folded") s += dim(r.versionLeft, r.versionLeft + r.version, yTap, fmt(r.version), "e-ver", r.version < C.minTouchDp);
+    if (r.audioInMenu) s += dim(r.audioLeft, r.audioLeft + C.audioItemDp, yTap, fmt(C.audioItemDp), "e-menu");
+    s += dim(r.searchLeft, r.searchLeft + r.search, yTap, fmt(r.search), "e-menu");
+    s += '<text x="-5" y="' + (yTap + 2.6) + '" class="rowlabel" text-anchor="end">TAP</text>';
+
+    if (full) {
+      s += dim(r.clusterStart, r.clusterStart + r.cluster, yCluster, "nav cluster " + fmt(r.cluster), "e-neutral");
+      if (r.gap > 0.5) s += dim(r.clusterStart + r.cluster, r.versionLeft, yCluster, fmt(r.gap) + " unused", "e-alert");
+      s += dim(0, w, yTotal, w + " dp", "e-total");
+    }
+
+    var aria = "Toolbar at " + w + " dp. Reference text box " + fmt(r.box) +
+      " dp, reference touch area " + fmt(r.tap) + " dp, smallest other touch area " + fmt(r.minOtherTap) + " dp.";
+
+    return {
+      r: r,
+      // The viewBox reaches left of the bar so the row labels have somewhere to sit.
+      svg: '<svg viewBox="' + -GUTTER + " 0 " + (w + GUTTER) + " " + H + '" class="fig" style="min-width:' +
+           ((w + GUTTER) * 2) + 'px" role="img" aria-label="' + esc(aria) + '">' + s + "</svg>"
+    };
   }
 
-  function renderRuler(node, r, o) {
-    node.innerHTML = "";
-    var segs = [
-      { l: r.pad, w: r.ham, t: r.ham },
-      { l: r.clusterStart, w: r.arrow, t: r.arrow },
-      { l: r.clusterStart + r.arrow, w: r.tap, t: r.tap, hl: true },
-      { l: r.clusterStart + r.cluster - r.arrow, w: r.arrow, t: r.arrow }
-    ];
-    if (o.versionMode !== "folded") segs.push({ l: r.versionLeft, w: r.version, t: r.version });
-    if (r.audioInMenu) segs.push({ l: r.audioLeft, w: C.audioItemDp, t: C.audioItemDp });
-    segs.push({ l: r.searchLeft, w: r.search, t: r.search });
-
-    segs.forEach(function (s) {
-      if (s.w <= 0) return;
-      var d = el("seg" + (s.hl ? " hl" : ""), "left:" + (s.l / r.w * 100) + "%;width:" + (s.w / r.w * 100) + "%;", "");
-      d.textContent = s.w >= 26 ? fmt(s.t) : "";
-      d.title = fmt(s.t) + " dp";
-      node.appendChild(d);
-    });
-  }
-
-  function fmt(n) { return Math.round(n * 10) % 10 === 0 ? String(Math.round(n)) : n.toFixed(1); }
-
-  // --- the before/after section --------------------------------------------
+  // --- before/after section -------------------------------------------------
 
   var BASE = {
     flush: false, compactNav: false, narrowSearch: false,
@@ -637,7 +724,7 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
   var EFFORTS = [
     {
       title: "Chevrons drawn flush outward",
-      why: "The chapter arrows are 24 dp glyphs centred in 48 dp boxes, and the reference is kept out of the whole box. Draw each glyph in the outer 24 dp and start the reference where the glyph ends. The arrows keep their full rectangles, so nothing moves for touch.",
+      why: "The chapter arrows are 24 dp glyphs centred in 48 dp boxes, and the reference is kept out of the whole box. Draw each glyph in the outer 24 dp and start the reference where the glyph ends. The arrow rectangles do not move, so the TAP row below is identical before and after: only the REF row grows.",
       after: { flush: true }
     },
     {
@@ -663,7 +750,7 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
     },
     {
       title: "Version folded into the reference",
-      why: "Draw the initials inside the reference as a chip and hit-test them separately. The whole 72 dp version box returns to the cluster; the chip costs about 28 dp of it back, which the reference figures below already pay for.",
+      why: "Draw the initials inside the reference as a chip and hit-test them separately. The whole 72 dp version box returns to the cluster; the chip costs about 28 dp of it back, which the figures below already pay for.",
       after: { versionMode: "folded" }
     },
     {
@@ -673,44 +760,36 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
     }
   ];
 
+  function node(html) {
+    var t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+
   function buildEfforts() {
     var host = document.getElementById("efforts");
     EFFORTS.forEach(function (e) {
-      var beforeO = withOpts(e.before || {});
-      var afterO = withOpts(e.after);
-      var refText = "Kejadian 1";
-      var rb = layout(360, beforeO), ra = layout(360, afterO);
-      var d = ra.box - rb.box;
+      var bo = withOpts(e.before || {});
+      var ao = withOpts(e.after);
+      var fb = figure(360, bo, bo.versionMode === "folded" ? "Kejadian 1 · TB" : "Kejadian 1", "compact", false);
+      var fa = figure(360, ao, ao.versionMode === "folded" ? "Kejadian 1 · TB" : "Kejadian 1", "compact", true);
+      var d = fa.r.box - fb.r.box;
+      var cls = d > 0.5 ? "up" : d < -0.5 ? "down" : "flat";
 
-      var card = el("effort", "", "");
-      var head = document.createElement("header");
-      var h = document.createElement("h3");
-      h.textContent = e.title;
-      head.appendChild(h);
-      var chip = el("delta " + (d > 0.5 ? "up" : d < -0.5 ? "down" : "flat"), "", "");
-      chip.textContent = (d > 0.5 ? "+" : "") + fmt(d) + " dp of reference";
-      head.appendChild(chip);
-      card.appendChild(head);
+      var card = node('<article class="effort"></article>');
+      card.appendChild(node(
+        '<header><h3>' + esc(e.title) + '</h3>' +
+        '<span class="delta ' + cls + '">' + (d > 0.5 ? "+" : "") + fmt(d) + " dp of reference</span></header>"
+      ));
+      card.appendChild(node('<p class="why">' + esc(e.why) + "</p>"));
 
-      var why = el("why", "", "");
-      why.textContent = e.why;
-      card.appendChild(why);
-
-      var ba = el("ba", "", "");
-      [["before", beforeO, rb], ["after", afterO, ra]].forEach(function (pair) {
-        var side = el("side", "", "");
-        var tag = el("tag", "", "");
-        tag.innerHTML = pair[0] + "<br>" + fmt(pair[2].box) + " dp";
-        side.appendChild(tag);
-        var bb = el("barbox", "", "");
-        var bar = el("bar", "", "");
-        bb.appendChild(bar);
-        side.appendChild(bb);
-        ba.appendChild(side);
-        var text = pair[1].versionMode === "folded" ? "Kejadian 1 · TB" : refText;
-        renderBar(bar, 360, pair[1], text);
+      [["Before", fb], ["After", fa]].forEach(function (pair) {
+        card.appendChild(node(
+          '<div class="figrow"><div class="figtag">' + pair[0] +
+          '<b>' + fmt(pair[1].r.box) + " dp</b></div>" +
+          '<div class="figscroll">' + pair[1].svg + "</div></div>"
+        ));
       });
-      card.appendChild(ba);
       host.appendChild(card);
     });
   }
@@ -751,13 +830,9 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
     var o = readOpts();
     var w = parseInt(document.querySelector('input[name="w"]:checked').value, 10);
     var chosen = syncRefOptions(o);
-    var bar = document.getElementById("pgBar");
-    var r = renderBar(bar, w, o, chosen.text);
-    renderRuler(document.getElementById("pgRuler"), r, o);
-
-    var list = stringsFor(o);
-    var oneLine = list.filter(function (m) { return verdict(m, r.box) === "fits"; }).length;
-    var cut = list.filter(function (m) { return verdict(m, r.box) === "truncated"; }).length;
+    var f = figure(w, o, chosen.text, "full", true);
+    document.getElementById("pgFig").innerHTML = f.svg;
+    var r = f.r;
 
     var shipped = layout(w, {
       flush: false, compactNav: false, narrowSearch: false,
@@ -765,39 +840,49 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
     });
     var gained = r.box - shipped.box;
 
+    var list = stringsFor(o);
+    var oneLine = list.filter(function (m) { return verdict(m, r.box) === "fits"; }).length;
+    var cut = list.filter(function (m) { return verdict(m, r.box) === "truncated"; }).length;
+
     var stats = document.getElementById("pgStats");
     stats.innerHTML = "";
     [
       {
-        k: "reference text box",
-        v: fmt(r.box) + " dp",
+        k: "reference text box", v: fmt(r.box) + " dp",
         n: Math.abs(gained) < 0.5
           ? "unchanged from " + fmt(shipped.box) + " dp as shipped"
           : (gained > 0 ? "+" : "") + fmt(gained) + " dp on the " + fmt(shipped.box) + " dp it ships with",
         good: gained > 0.5
       },
-      { k: "reference touch area", v: fmt(r.tap) + " dp", n: r.tap < C.minTouchDp ? "under the 48 dp minimum" : "clears the 48 dp minimum", warn: r.tap < C.minTouchDp },
-      { k: "references on one line", v: oneLine + " of " + list.length, n: cut ? cut + " truncated" : "nothing truncated", good: cut === 0, warn: cut > 0 }
+      {
+        k: "reference touch area", v: fmt(r.tap) + " dp",
+        n: r.tap < C.minTouchDp ? "under the 48 dp minimum" : "clears the 48 dp minimum",
+        warn: r.tap < C.minTouchDp
+      },
+      {
+        k: "references on one line", v: oneLine + " of " + list.length,
+        n: cut ? cut + " truncated" : "nothing truncated",
+        good: cut === 0, warn: cut > 0
+      }
     ].forEach(function (s) {
-      var d = el("stat" + (s.warn ? " warnstate" : s.good ? " good" : ""), "", "");
-      var k = el("k", "", ""); k.textContent = s.k; d.appendChild(k);
-      var v = el("v", "", ""); v.textContent = s.v; d.appendChild(v);
-      var n = el("n", "", ""); n.textContent = s.n; d.appendChild(n);
-      stats.appendChild(d);
+      stats.appendChild(node(
+        '<div class="stat ' + (s.warn ? "warnstate" : s.good ? "good" : "") + '">' +
+        '<div class="k">' + esc(s.k) + "</div><div class=\"v\">" + esc(s.v) + "</div>" +
+        '<div class="n">' + esc(s.n) + "</div></div>"
+      ));
     });
 
     var body = document.getElementById("pgFits");
     body.innerHTML = "";
     list.forEach(function (m) {
       var v = verdict(m, r.box);
-      var tr = document.createElement("tr");
-      tr.innerHTML =
-        '<td class="ref"></td><td class="num"></td><td class="num"></td>' +
-        '<td><span class="pill ' + v + '">' + (v === "fits" ? "one line" : v === "wraps" ? "two lines" : "truncated") + "</span></td>";
-      tr.children[0].textContent = m.text;
-      tr.children[1].textContent = fmt(m.naturalDp);
-      tr.children[2].textContent = fmt(r.box);
-      body.appendChild(tr);
+      body.appendChild(node(
+        "<tr><td class=\"ref\">" + esc(m.text) + "</td>" +
+        '<td class="num">' + fmt(m.naturalDp) + "</td>" +
+        '<td class="num">' + fmt(r.box) + "</td>" +
+        '<td><span class="pill ' + v + '">' +
+        (v === "fits" ? "one line" : v === "wraps" ? "two lines" : "truncated") + "</span></td></tr>"
+      ));
     });
   }
 
@@ -808,21 +893,22 @@ var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":
   ["optFlush", "optNav", "optSearch", "optAudio", "optAbbrev", "optCondensed"].forEach(function (id) {
     document.getElementById(id).addEventListener("change", update);
   });
-  Array.prototype.forEach.call(document.querySelectorAll('input[name="vmode"], input[name="vlabel"], input[name="w"]'), function (n) {
-    n.addEventListener("change", update);
-  });
+  Array.prototype.forEach.call(
+    document.querySelectorAll('input[name="vmode"], input[name="vlabel"], input[name="w"]'),
+    function (n) { n.addEventListener("change", update); }
+  );
 
   // --- boot -----------------------------------------------------------------
 
   var bad = verify();
   var badge = document.getElementById("verifyBadge");
   var text = document.getElementById("verifyText");
-  if (bad.length === 0) {
-    text.innerHTML = "layout model agrees with all <strong>" + DATA.checkpoints.length +
-      "</strong> Robolectric measurements";
+  if (bad === 0) {
+    text.innerHTML = "every dimension on this page agrees with all <strong>" +
+      DATA.checkpoints.length + "</strong> Robolectric measurements";
   } else {
     badge.className = "verified bad";
-    text.innerHTML = "<strong>" + bad.length + " of " + DATA.checkpoints.length +
+    text.innerHTML = "<strong>" + bad + " of " + DATA.checkpoints.length +
       "</strong> measurements disagree with this page's model";
   }
 
