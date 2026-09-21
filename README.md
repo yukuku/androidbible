@@ -8,6 +8,7 @@ Get the apps on Google Play: [Alkitab](https://play.google.com/store/apps/detail
 - [Official Website](https://alkitab.app)
 - [Developer Page](https://alkitab.app/developer) — creating your own Bible versions, song books, reading plans, and integrations
 - [Changelog](CHANGELOG.md)
+- [Development Blog](https://blog.alkitab.app)
 - [Discussion Group](https://groups.google.com/group/bibleforandroid)
 
 Alkitab is the Indonesian word for the Bible.
@@ -49,14 +50,14 @@ This app natively uses *.yes* files for the Bible text. You can create a *.yes* 
 
 To add a version to the app, open it from the Versions screen. The app accepts *.yes* files directly, and converts PalmBible+ *.pdb* files to *.yes* with its built-in converter for your own use. Gzipped files (*.yes.gz*, *.pdb.gz*) are decompressed transparently.
 
-Command-line converters live in [`tools/`](tools), a separate IntelliJ project that is not part of the Gradle build:
+Ready-to-run converter jars, including a desktop PalmBible+ *.pdb* to *.yet* converter, are in [this Google Drive folder](https://drive.google.com/drive/folders/0B0mZXH9nEuQ0dGdxbUI5T1lyeUU?resourcekey=0-V_emMiw0Q1APka5ddsS2rA&usp=sharing). Download those if you just want to convert a file.
+
+The source for several of them lives in [`tools/`](tools), a separate IntelliJ project that is not part of the Gradle build:
 
 - `tools/YetToYes2` converts *.yet* files to *.yes* files
 - `tools/YetToInternal` converts *.yet* files to the built-in Bible format
 - `tools/RpaToRpb` converts reading plans to the *.rpb* binary format
 - `tools/AlkitabConverter` holds the source-format importers and sample reading plans
-
-Older prebuilt converter binaries, including a desktop PalmBible+ *.pdb* to *.yet* converter, are in [this Google Drive folder](https://drive.google.com/drive/folders/0B0mZXH9nEuQ0dGdxbUI5T1lyeUU?resourcekey=0-V_emMiw0Q1APka5ddsS2rA&usp=sharing).
 
 Customizing and Integrating
 ---------------------------
