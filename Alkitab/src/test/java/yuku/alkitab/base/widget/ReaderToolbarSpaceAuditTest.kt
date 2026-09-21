@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
+import android.graphics.drawable.RippleDrawable
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
@@ -1744,6 +1745,46 @@ class ReaderToolbarSpaceAuditTest {
         return Triple(bGoto.width - bGoto.paddingLeft - bGoto.paddingRight, ref.touchWidth, minOther)
     }
 
+    /**
+     * Whether each control actually shows touch feedback.
+     *
+     * `FakeSpinner` sets `android:background` to the spinner nine-patch, which
+     * replaces the selectable background a toolbar control would otherwise
+     * inherit, so this is a fact about the layout rather than a guess.
+     */
+    private fun measureRipples(): Map<String, Boolean> {
+        RuntimeEnvironment.setQualifiers("sw360dp-w360dp-h640dp-port-xxhdpi")
+        val activity = buildHost()
+        val root = activity.findViewById<ViewGroup>(R.id.root)
+        activity.findViewById<GotoButton>(R.id.bGoto).text = "Kejadian 1"
+        activity.findViewById<TextView>(R.id.bVersion).text = "TB"
+        repeat(2) {
+            root.measure(
+                View.MeasureSpec.makeMeasureSpec(px(360), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(px(640), View.MeasureSpec.EXACTLY),
+            )
+            root.layout(0, 0, px(360), px(640))
+        }
+        val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
+
+        fun ripples(v: View?): Boolean {
+            if (v == null) return false
+            return v.background is RippleDrawable || v.foreground is RippleDrawable
+        }
+
+        val menuView = toolbar.children.filterIsInstance<ActionMenuView>().first()
+        val items = menuView.children.filter { it.visibility != View.GONE }.toList()
+        return mapOf(
+            "hamburger" to ripples(toolbar.children.filterIsInstance<ImageButton>().firstOrNull()),
+            "prev" to ripples(activity.findViewById(R.id.bLeft)),
+            "reference" to ripples(activity.findViewById(R.id.bGoto)),
+            "next" to ripples(activity.findViewById(R.id.bRight)),
+            "version" to ripples(activity.findViewById(R.id.bVersion)),
+            "audio" to ripples(items.getOrNull(0)),
+            "search" to ripples(items.getOrNull(1)),
+        )
+    }
+
     @Test
     fun `write the measurements the interactive playground runs on`() {
         val outputDir = resolveOutputDir()
@@ -1844,6 +1885,7 @@ class ReaderToolbarSpaceAuditTest {
         }
 
         val versionWidths = measureVersionSlotWidths()
+        val ripples = measureRipples()
 
         val json = buildString {
             appendLine("{")
@@ -1868,6 +1910,12 @@ class ReaderToolbarSpaceAuditTest {
                 append(widths.entries.joinToString(", ") { "\"${it.key}\": ${dpStr(it.value)}" })
                 append("}")
                 appendLine(if (i == versionWidths.size - 1) "" else ",")
+            }
+            appendLine("  },")
+            appendLine("  \"ripples\": {")
+            ripples.entries.forEachIndexed { i, (key, has) ->
+                append("    \"$key\": $has")
+                appendLine(if (i == ripples.size - 1) "" else ",")
             }
             appendLine("  },")
             appendLine("  \"strings\": [")

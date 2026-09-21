@@ -15,7 +15,10 @@ back to the reference.
 below, then lets you switch them on and off together and redraws the bar from the
 same measured layout, with each bar dimensioned the way the blueprints here are.
 Its model is checked at load against 512 layouts measured by the test, so what it
-draws is what the toolbar does. The page is written in Indonesian.
+draws is what the toolbar does. Pressing a control there ripples inside its real
+touch rectangle and names its size, which is also where the version changer's
+missing ripple shows up. The page is written in Indonesian, where a verse
+reference is an "alamat", matching this codebase's own string keys.
 
 ## How this was measured
 
@@ -174,7 +177,15 @@ why the magnifier is visibly larger than the speaker in the renders above. Any
 action item with a 24 dp icon is 48 dp; the search item is the only one in the
 app that is not.
 
-**8. Above 480 dp the bar stops using the space it has.** `NavFrameLayout`
+**8. The version changer is the only control in the bar with no touch
+feedback.** `FakeSpinner` sets `android:background` to the spinner nine-patch,
+which replaces the selectable background every other toolbar control inherits.
+Measured by resolving each control's background and foreground: the drawer, both
+chapter arrows, the reference and both action menu items carry a
+`RippleDrawable`; the version changer carries none. Whatever shape it ends up
+with, it should get one back.
+
+**9. Above 480 dp the bar stops using the space it has.** `NavFrameLayout`
 caps itself at 250 dp of screen density. At 600 dp that leaves 118 dp of bar
 that no element claims: a 102 dp hole between the next-chapter arrow and the
 version changer, plus 8 dp of toolbar padding at each end in the sw600dp
