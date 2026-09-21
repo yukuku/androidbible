@@ -810,6 +810,9 @@ class ReaderToolbarSpaceAuditTest {
         /** The same references with the version folded in as an inline chip. */
         private val MERGED = REFERENCES.map { "$it \u00b7 TB" }
 
+        /** Abbreviated references with the version folded in as a chip. */
+        private val MERGED_ABBREVIATED = ABBREVIATED.map { "$it \u00b7 TB" }
+
         private val WIDTHS = listOf(320, 360, 384, 411, 480, 600)
 
         /** `Version.getInitials` yields at most six characters, which is what the layout is sized for. */
@@ -1627,6 +1630,267 @@ class ReaderToolbarSpaceAuditTest {
             "the six-character worst case must have been measured for the shipped control",
             results.first().widths.size == VERSION_LABELS.size,
         )
+    }
+
+    // --- Data for the interactive playground -------------------------------
+
+    /** How a reference behaves in a text box of a given width, measured on the real button. */
+    private fun truncationFloor(bGoto: GotoButton, text: String): Int {
+        fun truncatedAt(boxPx: Int): Boolean {
+            bGoto.text = text
+            bGoto.measure(
+                View.MeasureSpec.makeMeasureSpec(boxPx, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(px(56), View.MeasureSpec.EXACTLY),
+            )
+            bGoto.layout(0, 0, boxPx, px(56))
+            val layout = bGoto.layout ?: return true
+            return (0 until layout.lineCount).any { layout.getEllipsisCount(it) > 0 }
+        }
+
+        var lo = px(8)
+        var hi = px(280)
+        if (!truncatedAt(lo)) return lo
+        while (lo + 1 < hi) {
+            val mid = (lo + hi) / 2
+            if (truncatedAt(mid)) lo = mid else hi = mid
+        }
+        return hi
+    }
+
+    /**
+     * The toolbar laid out for one combination of the playground's switches.
+     * Returns the reference's text box, its touch area, and the smallest touch
+     * area among the other controls.
+     */
+    private fun layoutForCombination(
+        widthDp: Int,
+        flush: Boolean,
+        compactNav: Boolean,
+        narrowSearch: Boolean,
+        versionMode: String,
+        audioAvailable: Boolean,
+        label: String,
+    ): Triple<Int, Int, Int> {
+        RuntimeEnvironment.setQualifiers("sw${widthDp}dp-w${widthDp}dp-h640dp-port-xxhdpi")
+        val activity = buildHost()
+        val root = activity.findViewById<ViewGroup>(R.id.root)
+        val bGoto = activity.findViewById<GotoButton>(R.id.bGoto)
+        bGoto.text = "Kejadian 1"
+        activity.findViewById<TextView>(R.id.bVersion).text = label
+
+        if (flush) chevronsFlush(activity, 24)
+        if (compactNav) compactNavButton(activity, 48)
+        if (narrowSearch) resizeSearchIcon(activity, 24)
+        when (versionMode) {
+            "capped" -> cappedStadiumVersion(activity, label)
+            "segmented" -> installSegmented(activity, withAudio = audioAvailable).text = label
+            "folded" -> foldVersionIntoReference(activity)
+        }
+        // Outside the segmented control the speaker lives in the action menu,
+        // where it is already hidden for a version with no recording.
+        if (!audioAvailable && versionMode != "segmented") hideMenuItem(activity, R.id.menuAudio)
+
+        repeat(2) {
+            root.measure(
+                View.MeasureSpec.makeMeasureSpec(px(widthDp), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(px(640), View.MeasureSpec.EXACTLY),
+            )
+            root.layout(0, 0, px(widthDp), px(640))
+        }
+
+        val untouchable = activity.resources.getDimensionPixelSize(R.dimen.nav_prevnext_width) -
+            activity.resources.getDimensionPixelSize(R.dimen.nav_goto_side_margin)
+        val slots = collectSlots(activity, untouchable)
+        val ref = slots.first { it.key == "reference" }
+        val minOther = slots.filter { it.key != "reference" }.minOf { it.touchWidth }
+        return Triple(bGoto.width - bGoto.paddingLeft - bGoto.paddingRight, ref.touchWidth, minOther)
+    }
+
+    @Test
+    fun `write the measurements the interactive playground runs on`() {
+        val outputDir = resolveOutputDir()
+        outputDir.mkdirs()
+
+        // Text metrics, taken from the real button in both faces.
+        RuntimeEnvironment.setQualifiers("sw360dp-w360dp-h640dp-port-xxhdpi")
+        val metricsActivity = buildHost()
+        val metricsGoto = metricsActivity.findViewById<GotoButton>(R.id.bGoto)
+        val normalFace = metricsGoto.typeface
+
+        class Metric(val text: String, val kind: String, val face: String, val naturalPx: Float, val floorPx: Int)
+
+        val metrics = mutableListOf<Metric>()
+        for ((face, typeface) in listOf(
+            "normal" to normalFace,
+            "condensed" to Typeface.create("sans-serif-condensed", Typeface.NORMAL),
+        )) {
+            metricsGoto.typeface = typeface
+            for ((kind, list) in listOf(
+                "full" to REFERENCES,
+                "abbreviated" to ABBREVIATED,
+                "merged" to MERGED,
+                "mergedAbbreviated" to MERGED_ABBREVIATED,
+            )) {
+                for (text in list) {
+                    metricsGoto.text = text
+                    val natural = metricsGoto.paint.measureText(text)
+                    metrics += Metric(text, kind, face, natural, truncationFloor(metricsGoto, text))
+                }
+            }
+        }
+
+        // Every combination the playground can produce, laid out for real.
+        class Checkpoint(
+            val widthDp: Int,
+            val flush: Boolean,
+            val compactNav: Boolean,
+            val narrowSearch: Boolean,
+            val versionMode: String,
+            val audioAvailable: Boolean,
+            val label: String,
+            val referenceBoxPx: Int,
+            val referenceTapPx: Int,
+            val minOtherTapPx: Int,
+        )
+
+        val checkpoints = mutableListOf<Checkpoint>()
+        for (widthDp in listOf(320, 360, 411, 600)) {
+            for (flush in listOf(false, true)) {
+                for (compactNav in listOf(false, true)) {
+                    for (narrowSearch in listOf(false, true)) {
+                        for (versionMode in listOf("fixed", "capped", "segmented", "folded")) {
+                            for (audioAvailable in listOf(true, false)) {
+                                val labels = when (versionMode) {
+                                    "capped", "segmented" -> listOf("TB", "VERSNM")
+                                    else -> listOf("TB")
+                                }
+                                for (label in labels) {
+                                    val (box, tap, minOther) = layoutForCombination(
+                                        widthDp, flush, compactNav, narrowSearch, versionMode, audioAvailable, label,
+                                    )
+                                    checkpoints += Checkpoint(
+                                        widthDp, flush, compactNav, narrowSearch, versionMode, audioAvailable, label,
+                                        box, tap, minOther,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Bucket constants, read back from the resources rather than restated.
+        class Bucket(val swDp: Int, val arrowPx: Int, val marginPx: Int, val barHeightPx: Int, val barPaddingPx: Int)
+
+        val buckets = listOf(320, 360, 600).map { swDp ->
+            RuntimeEnvironment.setQualifiers("sw${swDp}dp-w${swDp}dp-h640dp-port-xxhdpi")
+            val a = buildHost()
+            val root = a.findViewById<ViewGroup>(R.id.root)
+            a.findViewById<GotoButton>(R.id.bGoto).text = "Kejadian 1"
+            repeat(2) {
+                root.measure(
+                    View.MeasureSpec.makeMeasureSpec(px(swDp), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(px(640), View.MeasureSpec.EXACTLY),
+                )
+                root.layout(0, 0, px(swDp), px(640))
+            }
+            val toolbar = a.findViewById<Toolbar>(R.id.toolbar)
+            Bucket(
+                swDp,
+                a.resources.getDimensionPixelSize(R.dimen.nav_prevnext_width),
+                a.resources.getDimensionPixelSize(R.dimen.nav_goto_side_margin),
+                toolbar.height,
+                toolbar.paddingLeft,
+            )
+        }
+
+        val versionWidths = measureVersionSlotWidths()
+
+        val json = buildString {
+            appendLine("{")
+            appendLine("  \"note\": \"Every number here was measured by ReaderToolbarSpaceAuditTest at xxhdpi; 1dp = 3px.\",")
+            appendLine("  \"constants\": {")
+            appendLine("    \"hamburgerDp\": 56, \"hamburgerCompactDp\": 48,")
+            appendLine("    \"audioItemDp\": 48, \"searchItemDp\": 56, \"searchItemNarrowDp\": 48,")
+            appendLine("    \"versionFixedDp\": 72, \"clusterCapDp\": 250, \"flushMarginDp\": 24,")
+            appendLine("    \"minTouchDp\": 48")
+            appendLine("  },")
+            appendLine("  \"buckets\": [")
+            buckets.forEachIndexed { i, b ->
+                append("    {\"swDp\": ${b.swDp}, \"arrowDp\": ${dpStr(b.arrowPx)}, \"marginDp\": ${dpStr(b.marginPx)}, ")
+                append("\"barHeightDp\": ${dpStr(b.barHeightPx)}, \"barPaddingDp\": ${dpStr(b.barPaddingPx)}}")
+                appendLine(if (i == buckets.lastIndex) "" else ",")
+            }
+            appendLine("  ],")
+            appendLine("  \"versionWidths\": {")
+            versionWidths.entries.forEachIndexed { i, (mode, widths) ->
+                append("    \"$mode\": {")
+                append(widths.entries.joinToString(", ") { "\"${it.key}\": ${dpStr(it.value)}" })
+                append("}")
+                appendLine(if (i == versionWidths.size - 1) "" else ",")
+            }
+            appendLine("  },")
+            appendLine("  \"strings\": [")
+            metrics.forEachIndexed { i, m ->
+                append("    {\"text\": \"${jsonEscape(m.text)}\", \"kind\": \"${m.kind}\", \"face\": \"${m.face}\", ")
+                append("\"naturalDp\": ${dpStr(m.naturalPx)}, \"noTruncateDp\": ${dpStr(m.floorPx)}}")
+                appendLine(if (i == metrics.lastIndex) "" else ",")
+            }
+            appendLine("  ],")
+            appendLine("  \"checkpoints\": [")
+            checkpoints.forEachIndexed { i, c ->
+                append("    {\"widthDp\": ${c.widthDp}, \"flush\": ${c.flush}, \"compactNav\": ${c.compactNav}, ")
+                append("\"narrowSearch\": ${c.narrowSearch}, \"versionMode\": \"${c.versionMode}\", ")
+                append("\"audioAvailable\": ${c.audioAvailable}, \"label\": \"${c.label}\", ")
+                append("\"referenceBoxDp\": ${dpStr(c.referenceBoxPx)}, \"referenceTapDp\": ${dpStr(c.referenceTapPx)}, ")
+                append("\"minOtherTapDp\": ${dpStr(c.minOtherTapPx)}}")
+                appendLine(if (i == checkpoints.lastIndex) "" else ",")
+            }
+            appendLine("  ]")
+            appendLine("}")
+        }
+        File(outputDir, "playground.json").writeText(json)
+        println("playground data: ${metrics.size} string metrics, ${checkpoints.size} checkpoints")
+
+        assertTrue("the playground needs checkpoints to verify itself against", checkpoints.size > 100)
+    }
+
+    /** Version-slot width per mode, keyed by label length. */
+    private fun measureVersionSlotWidths(): Map<String, Map<Int, Int>> {
+        val modes = listOf("fixed", "capped", "segmented", "segmentedNoAudio", "folded")
+        return modes.associateWith { mode ->
+            RuntimeEnvironment.setQualifiers("sw360dp-w360dp-h640dp-port-xxhdpi")
+            val activity = buildHost()
+            val root = activity.findViewById<ViewGroup>(R.id.root)
+            activity.findViewById<GotoButton>(R.id.bGoto).text = "Kejadian 1"
+            val label: TextView = when (mode) {
+                "capped" -> {
+                    cappedStadiumVersion(activity, "TB")
+                    activity.findViewById(R.id.bVersion)
+                }
+
+                "segmented" -> installSegmented(activity, withAudio = true)
+                "segmentedNoAudio" -> installSegmented(activity, withAudio = false)
+                "folded" -> {
+                    foldVersionIntoReference(activity)
+                    activity.findViewById(R.id.bGoto)
+                }
+
+                else -> activity.findViewById(R.id.bVersion)
+            }
+            VERSION_LABELS.associate { text ->
+                label.text = text
+                repeat(2) {
+                    root.measure(
+                        View.MeasureSpec.makeMeasureSpec(px(360), View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(px(640), View.MeasureSpec.EXACTLY),
+                    )
+                    root.layout(0, 0, px(360), px(640))
+                }
+                text.length to if (mode == "folded") 0 else activity.findViewById<View>(R.id.bVersion).width
+            }
+        }
     }
 
     @Test

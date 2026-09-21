@@ -9,6 +9,13 @@ back to the reference.
 
 ![Dimensioned blueprint of the reader toolbar at 320, 360, 384, 411, 480 and 600 dp](blueprint.png)
 
+## Interactive version
+
+[`playground.html`](playground.html) lines up a before and after for every change
+below, then lets you switch them on and off together and redraws the bar from the
+same measured layout. Its model is checked at load against 384 layouts measured by
+the test, so what it draws is what the toolbar does.
+
 ## How this was measured
 
 Nothing here is read off the layout XML. `ReaderToolbarSpaceAuditTest`
@@ -28,7 +35,7 @@ Measurements are taken at xxhdpi so 1 dp is exactly 3 px.
 
 The run writes `blueprint.png`, `options.png`, `redraws.png`, `version-control.png`,
 `toolbar-<width>dp.png`, `measurements.md`, `measurements.json`, `options.md`,
-`redraws.md`, `control-widths.md` and `version-control.md` under
+`redraws.md`, `control-widths.md`, `version-control.md` and `playground.json` under
 `Alkitab/build/reports/toolbar-audit/`. Set `TOOLBAR_AUDIT_DIR` to write
 somewhere else.
 
