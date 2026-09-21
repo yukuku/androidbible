@@ -265,12 +265,28 @@ class ReaderToolbarSpaceAuditTest {
         }
 
         if (bVersion.visibility != View.GONE) {
-            val versionRect = boundsIn(toolbar, bVersion)
-            slots += Slot(
-                "version", "VER", "Version changer",
-                versionRect, versionRect, SLOT_COLORS.getValue("version"),
-                "fixed 72dp in the layout",
-            )
+            // A segmented control holds two targets; the hairline between them is not one.
+            val segments = (bVersion as? ViewGroup)?.children
+                ?.filter { it.visibility != View.GONE && it.width > px(2) }
+                ?.toList()
+                .orEmpty()
+            if (segments.size > 1) {
+                segments.forEachIndexed { index, child ->
+                    val rect = boundsIn(toolbar, child)
+                    slots += if (index == 0) {
+                        Slot("version", "VER", "Version changer", rect, rect, SLOT_COLORS.getValue("version"), "segment")
+                    } else {
+                        Slot("audio", "AUD", "Audio", rect, rect, SLOT_COLORS.getValue("audio"), "segment")
+                    }
+                }
+            } else {
+                val versionRect = boundsIn(toolbar, bVersion)
+                slots += Slot(
+                    "version", "VER", "Version changer",
+                    versionRect, versionRect, SLOT_COLORS.getValue("version"),
+                    "fixed 72dp in the layout",
+                )
+            }
         }
 
         val menuView = toolbar.children.filterIsInstance<ActionMenuView>().firstOrNull()
@@ -1179,6 +1195,14 @@ class ReaderToolbarSpaceAuditTest {
             chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
             installSegmented(a, withAudio = true).text = "TB"
         },
+        Mutation("all four + segmented with a 32dp speaker segment, 2 characters") { a ->
+            chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
+            installSegmented(a, withAudio = true, speakerDp = 32).text = "TB"
+        },
+        Mutation("all four + segmented with a 32dp speaker segment, 6 characters") { a ->
+            chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
+            installSegmented(a, withAudio = true, speakerDp = 32).text = "VERSNM"
+        },
         Mutation("all four + segmented version/speaker stadium, 6 characters") { a ->
             chevronsFlush(a, 24); compactNavButton(a, 48); resizeSearchIcon(a, 24)
             installSegmented(a, withAudio = true).text = "VERSNM"
@@ -1294,6 +1318,7 @@ class ReaderToolbarSpaceAuditTest {
     private fun segmentedVersionAudio(
         a: ToolbarAuditHostActivity,
         withAudio: Boolean,
+        speakerDp: Int,
         capDp: Int = 56,
     ): Pair<View, TextView> {
         val stadium = GradientDrawable().apply {
@@ -1337,15 +1362,21 @@ class ReaderToolbarSpaceAuditTest {
             }
             row.addView(
                 speaker,
-                LinearLayout.LayoutParams(px(48), ViewGroup.LayoutParams.MATCH_PARENT),
+                LinearLayout.LayoutParams(px(speakerDp), ViewGroup.LayoutParams.MATCH_PARENT),
             )
         }
         return row to label
     }
 
-    /** Installs the segmented control and takes audio out of the action menu. */
-    private fun installSegmented(a: ToolbarAuditHostActivity, withAudio: Boolean): TextView {
-        val (row, label) = segmentedVersionAudio(a, withAudio)
+    /**
+     * Installs the segmented control and takes audio out of the action menu.
+     *
+     * [speakerDp] below 48 is a deliberate compromise: the speaker is a
+     * secondary, non-destructive control sitting inside a stadium the user is
+     * already aiming at, and the bar has no other way to pay for it.
+     */
+    private fun installSegmented(a: ToolbarAuditHostActivity, withAudio: Boolean, speakerDp: Int = 48): TextView {
+        val (row, label) = segmentedVersionAudio(a, withAudio, speakerDp)
         hideMenuItem(a, R.id.menuAudio)
         putInVersionSlot(a, row, fillHeight = true)
         return label
@@ -1395,6 +1426,11 @@ class ReaderToolbarSpaceAuditTest {
             "one stadium split by a hairline, audio out of the action menu",
             120,
         ) { a -> installSegmented(a, withAudio = true) },
+        VersionCandidate(
+            "segmented stadium, 32dp speaker segment",
+            "the speaker gives up the 48dp minimum so the bar can pay for it",
+            120,
+        ) { a -> installSegmented(a, withAudio = true, speakerDp = 32) },
         VersionCandidate(
             "segmented stadium, version without audio",
             "the speaker segment collapses when the version has no recording",
@@ -1684,11 +1720,13 @@ class ReaderToolbarSpaceAuditTest {
         when (versionMode) {
             "capped" -> cappedStadiumVersion(activity, label)
             "segmented" -> installSegmented(activity, withAudio = audioAvailable).text = label
+            "segmentedCompact" ->
+                installSegmented(activity, withAudio = audioAvailable, speakerDp = 32).text = label
             "folded" -> foldVersionIntoReference(activity)
         }
         // Outside the segmented control the speaker lives in the action menu,
         // where it is already hidden for a version with no recording.
-        if (!audioAvailable && versionMode != "segmented") hideMenuItem(activity, R.id.menuAudio)
+        if (!audioAvailable && !versionMode.startsWith("segmented")) hideMenuItem(activity, R.id.menuAudio)
 
         repeat(2) {
             root.measure(
@@ -1758,10 +1796,10 @@ class ReaderToolbarSpaceAuditTest {
             for (flush in listOf(false, true)) {
                 for (compactNav in listOf(false, true)) {
                     for (narrowSearch in listOf(false, true)) {
-                        for (versionMode in listOf("fixed", "capped", "segmented", "folded")) {
+                        for (versionMode in listOf("fixed", "capped", "segmented", "segmentedCompact", "folded")) {
                             for (audioAvailable in listOf(true, false)) {
                                 val labels = when (versionMode) {
-                                    "capped", "segmented" -> listOf("TB", "VERSNM")
+                                    "capped", "segmented", "segmentedCompact" -> listOf("TB", "VERSNM")
                                     else -> listOf("TB")
                                 }
                                 for (label in labels) {
@@ -1814,6 +1852,7 @@ class ReaderToolbarSpaceAuditTest {
             appendLine("    \"hamburgerDp\": 56, \"hamburgerCompactDp\": 48,")
             appendLine("    \"audioItemDp\": 48, \"searchItemDp\": 56, \"searchItemNarrowDp\": 48,")
             appendLine("    \"versionFixedDp\": 72, \"clusterCapDp\": 250, \"flushMarginDp\": 24,")
+            appendLine("    \"segmentDividerDp\": 1, \"segmentSpeakerDp\": 48, \"segmentSpeakerCompactDp\": 32,")
             appendLine("    \"minTouchDp\": 48")
             appendLine("  },")
             appendLine("  \"buckets\": [")
@@ -1858,7 +1897,7 @@ class ReaderToolbarSpaceAuditTest {
 
     /** Version-slot width per mode, keyed by label length. */
     private fun measureVersionSlotWidths(): Map<String, Map<Int, Int>> {
-        val modes = listOf("fixed", "capped", "segmented", "segmentedNoAudio", "folded")
+        val modes = listOf("fixed", "capped", "segmented", "segmentedCompact", "segmentedNoAudio", "folded")
         return modes.associateWith { mode ->
             RuntimeEnvironment.setQualifiers("sw360dp-w360dp-h640dp-port-xxhdpi")
             val activity = buildHost()
@@ -1871,6 +1910,7 @@ class ReaderToolbarSpaceAuditTest {
                 }
 
                 "segmented" -> installSegmented(activity, withAudio = true)
+                "segmentedCompact" -> installSegmented(activity, withAudio = true, speakerDp = 32)
                 "segmentedNoAudio" -> installSegmented(activity, withAudio = false)
                 "folded" -> {
                     foldVersionIntoReference(activity)

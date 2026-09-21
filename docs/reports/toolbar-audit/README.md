@@ -13,8 +13,9 @@ back to the reference.
 
 [`playground.html`](playground.html) lines up a before and after for every change
 below, then lets you switch them on and off together and redraws the bar from the
-same measured layout. Its model is checked at load against 384 layouts measured by
-the test, so what it draws is what the toolbar does.
+same measured layout, with each bar dimensioned the way the blueprints here are.
+Its model is checked at load against 512 layouts measured by the test, so what it
+draws is what the toolbar does. The page is written in Indonesian.
 
 ## How this was measured
 
@@ -231,6 +232,8 @@ boxes, keeping all seven controls, the full book name and 16 sp type?
 | all four, capped stadium version, 6 characters | 112 dp | +64 dp | 64 dp | 48 dp | 5/7 | **0/7** |
 | all four + segmented version/speaker, 2 characters | 119 dp | +71 dp | 71 dp | 48 dp | 6/7 | **0/7** |
 | all four + segmented version/speaker, 6 characters | 111 dp | +63 dp | 63 dp | 48 dp | 4/7 | 1/7 |
+| **all four + segmented, 32 dp speaker, 2 characters** | **135 dp** | **+87 dp** | **87 dp** | **32 dp** | **7/7** | **0/7** |
+| all four + segmented, 32 dp speaker, 6 characters | 127 dp | +79 dp | 79 dp | 32 dp | 6/7 | **0/7** |
 | all four + segmented stadium, version with no audio | 168 dp | +120 dp | 120 dp | 48 dp | 7/7 | **0/7** |
 | version folded into the reference as a chip | 168 dp | +120 dp | 120 dp | 48 dp | 7/7 | **0/7** |
 
@@ -320,6 +323,7 @@ Every candidate measured in the shipped layout, widths in dp:
 | hand-drawn stadium, 8 dp padding | 48 | 48 | 48 | 51.7 | 55 | 73 | 56 | 72 | +1 | 47 | no |
 | **hand-drawn stadium, capped at 56 dp** | **48** | **48** | **48** | **51.7** | **55** | **56** | **56** | **72** | **-16** | **64** | no |
 | segmented stadium: version + speaker | 97 | 97 | 97 | 100.7 | 104 | 105 | 56 | 120 | -15 | 63 | no |
+| **segmented stadium, 32 dp speaker** | **81** | **81** | **81** | **84.7** | **88** | **89** | **56** | **120** | **-31** | **79** | no |
 | segmented stadium, version with no audio | 48 | 48 | 48 | 51.7 | 55 | 56 | 56 | 72 | -16 | 112 | no |
 
 `replaces` is what the same job costs in the bar today: 72 dp for the version
@@ -358,14 +362,25 @@ availability is resolved per version id (`AudioSetsRepository` caches by
 `versionId`, `AudioBarController.isAvailable` is "does a visible version have a
 recording"), so the speaker really is a property of the version the label names.
 
-On space it is a wash, and the measurements say so plainly. The control is 97 dp
-at two characters and 105 dp at six, against the 120 dp the same two controls
-cost today, so it gives the reference 63 dp where a capped chip with audio left
-in the action menu gives 64 dp. The 1 dp is the divider. Two adjacent tap targets
-cannot go below 48 dp each, so 96 dp plus a hairline is the floor for a
-two-segment control, and that is most of the 120 dp back already.
+With both segments at the 48 dp minimum it is a wash on space, and the
+measurements say so plainly. The control is 97 dp at two characters and 105 dp at
+six, against the 120 dp the same two controls cost today, so it gives the
+reference 63 dp where a capped chip with audio left in the action menu gives
+64 dp. The 1 dp is the divider. Two adjacent tap targets cannot both stay at
+48 dp under 96 dp plus a hairline, and that is most of the 120 dp back already.
 
-So it is worth doing for what it says, not for what it saves:
+**Narrowing the speaker segment to 32 dp is what makes it win.** That is a
+deliberate compromise and the only one in this report: the speaker is a
+secondary, non-destructive control, and it sits inside a stadium the user is
+already aiming at. Giving up 16 dp there takes the control to 81 dp at two
+characters and 89 dp at six, and hands the reference 79 dp where the capped chip
+gives 64 dp. In the full redraw package it is worth **135 dp** of text box at two
+characters and 127 dp at six, against 120 dp and 112 dp for the capped chip, with
+nothing truncated either way and every sample reference on one line at two
+characters. The 32 dp shows up in the TAP row of the drawings, which is where a
+reviewer should be asked to accept it.
+
+Either way it is also worth doing for what it says:
 
 - one object instead of two, with the speaker visibly owned by the version
 - the speaker gets a real 48 dp target inside the chip
@@ -392,7 +407,13 @@ hand-drawn stadium has no theme dependency at all.
 
 In the order they are worth doing.
 
-**0. Do the four redraws first.** Chevrons flush outward, a 48 dp drawer
+**0. Do the four redraws first, and take the segmented version control with a
+32 dp speaker if the compromise is acceptable.** The four redraws alone are
+listed below; adding the segmented control takes the reference to 135 dp at
+360 dp and puts every sample reference on one line, at the price of a 32 dp
+touch target for the speaker.
+
+**0a. The four redraws.** Chevrons flush outward, a 48 dp drawer
 button, a content-sized version changer and a 24 dp search icon take the
 reference from 48 dp to 120 dp at 360 dp, remove every truncation, and raise the
 reference's own touch area from 32 dp to 72 dp, without removing a control,
@@ -417,10 +438,12 @@ it to content without a cap: at six characters that is 73 dp, which is wider
 than today. Part of the redraw package in suggestion 0. Prefer this over
 dropping in an M3 button, which is 88 dp empty.
 
-Splitting that chip into version and speaker segments is a reasonable variation:
-it costs 1 dp against the chip, and it says something true, since audio
-availability is a property of the version. Choose it for the grouping, not for
-the space.
+Splitting that chip into version and speaker segments says something true, since
+audio availability is a property of the version, and with a 32 dp speaker segment
+it is also the widest the reference can get without removing anything: 135 dp in
+the full package against 120 dp for the capped chip. At the 48 dp minimum for
+both segments it is a wash instead, so the 32 dp is the decision to take
+deliberately rather than by default.
 
 **C. Give the reference the touch area its box implies.** Suggestion 0 already
 takes it from 32 dp to 64 dp. If the box is not widened, drop the
