@@ -282,7 +282,7 @@ class ReaderToolbarComposeTest {
     /**
      * The chapter number sits at the end of the reference, so anything cut off
      * takes it with it. A bar too small for "2 Tesalonika 1" falls back to
-     * "2Tes 1", and gives up once even that cannot be shown whole.
+     * "2Tes 1" and stays there, because there is no shorter form to try.
      */
     private fun longReference(abbreviated: String) = stateFor().copy(
         reference = "2 Tesalonika 1",
@@ -308,8 +308,8 @@ class ReaderToolbarComposeTest {
     }
 
     @Test
-    fun `a bar too small for the abbreviation too keeps the full reference`() {
-        assertTrue("nothing is gained by abbreviating here", !abbreviationUsedAt(3f))
+    fun `a bar too small for the abbreviation too stays on the abbreviation`() {
+        assertTrue(abbreviationUsedAt(3f))
     }
 
     /**

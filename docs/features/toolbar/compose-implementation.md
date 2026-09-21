@@ -121,10 +121,10 @@ bar can leave "2 Tesalonika 1" showing as "2 Tesal...", which is the one part
 of the reference the reader cannot guess.
 
 `ReferenceLabel` measures the reference against the box it will actually be
-drawn in. If it does not fit whole, it measures `Book.abbreviation` in the
-same box and uses that instead, giving "2Tes 1". If even the abbreviation
-would be cut, it keeps the full reference, since abbreviating buys nothing
-there.
+drawn in. If it does not fit whole, it switches to `Book.abbreviation`,
+giving "2Tes 1", and stays there whatever happens next: the abbreviation is
+the one shorter form there is, so if it is cut too there is nothing further
+to try.
 
 The fallback only applies when the version supplies an abbreviation that
 differs from the book's short name. The view toolbar does not do this.

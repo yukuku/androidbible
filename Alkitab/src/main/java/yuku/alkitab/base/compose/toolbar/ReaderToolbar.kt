@@ -374,14 +374,13 @@ private fun ReferenceLabel(
                 constraints = box,
             ).hasVisualOverflow
 
+            // The chapter number is at the end, so anything cut takes it with
+            // it. The abbreviation is the one shorter form there is, and if
+            // that is still cut there is nothing further to try.
             val full = wrap(reference)
             when {
-                fitsWhole(full) -> full
-                // The chapter number is at the end, so anything cut takes it
-                // with it. The abbreviation is only worth using when it buys
-                // the number back.
-                referenceAbbreviated.isEmpty() -> full
-                else -> wrap(referenceAbbreviated).takeIf(::fitsWhole) ?: full
+                fitsWhole(full) || referenceAbbreviated.isEmpty() -> full
+                else -> wrap(referenceAbbreviated)
             }
         }
 
