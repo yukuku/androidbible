@@ -26,8 +26,9 @@ Measurements are taken at xxhdpi so 1 dp is exactly 3 px.
 ./gradlew :Alkitab:testPlainDebugUnitTest --tests "yuku.alkitab.base.widget.ReaderToolbarSpaceAuditTest"
 ```
 
-The run writes `blueprint.png`, `options.png`, `toolbar-<width>dp.png`,
-`measurements.md`, `measurements.json` and `options.md` under
+The run writes `blueprint.png`, `options.png`, `redraws.png`,
+`toolbar-<width>dp.png`, `measurements.md`, `measurements.json`, `options.md`,
+`redraws.md` and `control-widths.md` under
 `Alkitab/build/reports/toolbar-audit/`. Set `TOOLBAR_AUDIT_DIR` to write
 somewhere else.
 
@@ -87,9 +88,9 @@ Bar 360 x 56. prev/next 48, goto side margin 40, nav cluster 128.
 | 600 | 250 | 170 | 154 | 118 |
 
 Everything other than the reference is a constant across widths: 56 for the
-drawer, 48 + 48 for the arrows, 72 for the version changer, 104 for the action
-menu. The reference is the only element that absorbs the difference, in both
-directions.
+drawer, 48 + 48 for the arrows, 72 for the version changer, 48 + 56 for the
+action menu. The reference is the only element that absorbs the difference, in
+both directions.
 
 ### How much reference text fits
 
@@ -146,11 +147,24 @@ minimum. The fixed chrome simply does not fit in 320 dp.
 version needs, and is still 1 dp short of the six-character worst case that
 `Version.getInitials` can produce.
 
-**7. The action menu takes 104 dp for two 48 dp icons.** `Toolbar` measures the
-`ActionMenuView` before the custom children, and `ActionMenuView` rounds its
-cell size up to absorb the space left over after the navigation button. The
-extra 8 dp therefore comes out of the reference's budget rather than out of the
-bar's slack.
+**7. The drawer and search buttons are 56 dp for two unrelated reasons, and
+neither of them is a design decision.** Every other control in the bar is
+48 dp.
+
+The drawer button takes its width from
+`Base.Widget.AppCompat.Toolbar.Button.Navigation`, which sets `android:minWidth`
+to a literal `56dp`. It is not `?actionBarSize`: on an sw600dp screen the bar is
+64 dp tall and the button is still 56 dp. It wraps a 24 dp icon, so 32 dp of it
+is padding.
+
+The search button is 56 dp because of its icon asset.
+`Widget.AppCompat.ActionButton` gives an item `minWidth` 48 dp and 12 dp of
+padding per side, so an action item is `max(48dp, icon + 24dp)`. The audio icon
+is a 24 dp vector and lands on 48 dp. `ic_menu_search` is a 32 dp PNG, a
+leftover from the pre-Material menu icon set, so it lands on 56 dp. That is also
+why the magnifier is visibly larger than the speaker in the renders above. Any
+action item with a 24 dp icon is 48 dp; the search item is the only one in the
+app that is not.
 
 **8. Above 480 dp the bar stops using the space it has.** `NavFrameLayout`
 caps itself at 250 dp of screen density. At 600 dp that leaves 118 dp of bar
@@ -203,12 +217,13 @@ boxes, keeping all seven controls, the full book name and 16 sp type?
 | chevrons drawn flush outward | 80 dp | +32 dp | 32 dp | 48 dp | 3/7 | 2/7 |
 | drawer button 48 dp instead of 56 dp | 56 dp | +8 dp | 40 dp | 48 dp | 1/7 | 3/7 |
 | version changer sized to its content | 72 dp | +24 dp | 56 dp | 48 dp | 2/7 | 2/7 |
-| **all three together** | **112 dp** | **+64 dp** | **64 dp** | **48 dp** | 5/7 | **0/7** |
-| all three, condensed face | 112 dp | +64 dp | 64 dp | 48 dp | 6/7 | **0/7** |
-| version folded into the reference as a chip | 160 dp | +112 dp | 112 dp | 48 dp | 6/7 | **0/7** |
+| search icon redrawn at 24 dp | 56 dp | +8 dp | 40 dp | 48 dp | 1/7 | 3/7 |
+| **all four together** | **120 dp** | **+72 dp** | **72 dp** | **48 dp** | 6/7 | **0/7** |
+| all four, condensed face | 120 dp | +72 dp | 72 dp | 48 dp | 7/7 | **0/7** |
+| version folded into the reference as a chip | 168 dp | +120 dp | 120 dp | 48 dp | 7/7 | **0/7** |
 
-At 320 dp the same three changes take the reference from 40 dp to 72 dp and
-truncations from 5/7 to 2/7; with the version folded in, from 40 dp to 120 dp
+At 320 dp the same four changes take the reference from 40 dp to 80 dp and
+truncations from 5/7 to 2/7; with the version folded in, from 40 dp to 128 dp
 and nothing truncates.
 
 ### The techniques
@@ -221,9 +236,16 @@ instead of 40 dp. The arrows keep their full 48 dp rectangles, so nothing
 changes for touch at all, and the glyphs and the text still do not overlap.
 This is the 8 dp overlap the layout already uses, taken to its limit.
 
-**Drawer button 48 dp instead of 56 dp (+8 dp).** The navigation button is
-sized by `?actionBarSize`, not by its 24 dp icon. A 48 dp button with
-`contentInsetStartWithNavigation` lowered to match is still a compliant target.
+**Drawer button 48 dp instead of 56 dp (+8 dp).** Its width comes from a
+literal `minWidth` of 56 dp in AppCompat's navigation-button style, not from its
+24 dp icon and not from the bar height. A 48 dp button, with
+`contentInsetStartWithNavigation` lowered to match, is still a compliant target
+and matches every other control in the bar.
+
+**Search icon redrawn at 24 dp (+8 dp).** `ic_menu_search` is a 32 dp PNG from
+the pre-Material icon set, and an action item is `max(48dp, icon + 24dp)`, so it
+alone is 56 dp. A 24 dp asset makes it 48 dp like the rest, and makes the
+magnifier match the speaker optically.
 
 **Version changer sized to its content (+24 dp).** `wrap_content` with a 48 dp
 floor and a ceiling for the six-character worst case, instead of a flat 72 dp.
@@ -247,22 +269,23 @@ which is why auto-sizing on its own is not a fix.
 
 ### What is not recoverable this way
 
-The action menu's 104 dp for two 48 dp icons is its floor. Forcing
-`ActionMenuView` narrower demotes an item rather than tightening its cells: the
-narrowest exact width that still leaves both items at 48 dp is 104 dp. Those
-8 dp only come back by replacing the action menu with a custom container for
-the trailing icons, which is a lot of machinery for 8 dp.
+The action menu cannot be squeezed from the outside. Forcing `ActionMenuView`
+narrower than the width its items ask for demotes an item rather than tightening
+it, so the menu's width is whatever the icons demand: 104 dp today, 96 dp once
+the search asset is 24 dp. Past that, a 48 dp item with a 24 dp icon is already
+at the minimum touch target, and there is nothing left to take.
 
 ## Suggestions
 
 In the order they are worth doing.
 
-**0. Do the three redraws first.** Chevrons flush outward, a 48 dp drawer
-button and a content-sized version changer take the reference from 48 dp to
-112 dp at 360 dp, remove every truncation, and raise the reference's own touch
-area from 32 dp to 64 dp, without removing a control, shortening a name or
-shrinking the type. Nothing else on this list has that ratio of gain to
-behaviour change, and it makes the rest optional rather than necessary.
+**0. Do the four redraws first.** Chevrons flush outward, a 48 dp drawer
+button, a content-sized version changer and a 24 dp search icon take the
+reference from 48 dp to 120 dp at 360 dp, remove every truncation, and raise the
+reference's own touch area from 32 dp to 72 dp, without removing a control,
+shortening a name or shrinking the type. They also make every control in the bar
+48 dp, which it is not today. Nothing else on this list has that ratio of gain
+to behaviour change, and it makes the rest optional rather than necessary.
 
 **A. Fall back to `Book.abbreviation` when the full name does not fit.** Every
 `Book` already carries an `abbreviation` (`BookNameSorter` and the goto dialer
@@ -307,9 +330,10 @@ restrict split candidates to space positions and, when no space split fits,
 keep one line and ellipsize (or auto-size the text down) instead of cutting a
 word in half.
 
-**H. Leave the action menu alone.** Its 104 dp is a floor, not slack: forcing
-`ActionMenuView` narrower demotes an item. The 8 dp only comes back with a
-custom trailing-icon container, which is not worth it on its own.
+**H. Ship `ic_menu_search` at 24 dp.** It is the only action icon in the app
+that is not 24 dp, and it is what makes the search button 56 dp rather than
+48 dp. Part of the redraw package in suggestion 0, and worth doing on its own
+for the optical mismatch alone.
 
 Suggestion 0 is the one to do first, and on its own it removes every truncation
 at 360 dp with nothing taken away from the user. A is the cheapest complement

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuView
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.test.core.app.ApplicationProvider
 import java.io.File
@@ -213,11 +215,12 @@ class ReaderToolbarSpaceAuditTest {
         val navButton = toolbar.children.filterIsInstance<ImageButton>().firstOrNull()
         assertNotNull("the up/drawer button must be present in the toolbar", navButton)
         navButton!!
+        val navIconDp = dpStr(toolbar.navigationIcon?.intrinsicWidth ?: 0)
         slots += Slot(
             "hamburger", "HAM", "Drawer (hamburger)",
             boundsIn(toolbar, navButton), boundsIn(toolbar, navButton),
             SLOT_COLORS.getValue("hamburger"),
-            "Toolbar navigation button, 24dp icon",
+            "${navIconDp}dp icon in AppCompat's 56dp minWidth",
         )
 
         val leftRect = boundsIn(toolbar, bLeft).takeIf { bLeft.visibility != View.GONE }
@@ -278,13 +281,17 @@ class ReaderToolbarSpaceAuditTest {
                 title,
                 rect, rect,
                 SLOT_COLORS[key] ?: SLOT_COLORS.getValue("menu"),
-                "action menu item",
+                "${dpStr(iconWidthOf(child))}dp icon + 12dp padding per side",
             )
         }
 
         slots.sortBy { it.drawn.left }
         return slots
     }
+
+    /** Intrinsic width of the icon an action menu item draws. */
+    private fun iconWidthOf(child: View): Int =
+        (child as? MenuView.ItemView)?.itemData?.icon?.intrinsicWidth ?: 0
 
     private fun measurePanel(widthDp: Int, reference: String, versionInitials: String): Panel {
         RuntimeEnvironment.setQualifiers("sw${widthDp}dp-w${widthDp}dp-h640dp-port-xxhdpi")
@@ -1055,6 +1062,23 @@ class ReaderToolbarSpaceAuditTest {
         a.findViewById<TextView>(R.id.bVersion).visibility = View.GONE
     }
 
+    /**
+     * Redraws the search icon at [dpSize] so the action item stops being wider
+     * than its 48dp slot. The asset that ships is 32dp, which is where the
+     * item's extra 8dp comes from.
+     */
+    private fun resizeSearchIcon(a: ToolbarAuditHostActivity, dpSize: Int) {
+        val item = a.findViewById<Toolbar>(R.id.toolbar).menu.findItem(R.id.menuSearch) ?: return
+        val src = ContextCompat.getDrawable(a, R.drawable.ic_menu_search) ?: return
+        val full = Bitmap.createBitmap(src.intrinsicWidth, src.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        src.setBounds(0, 0, src.intrinsicWidth, src.intrinsicHeight)
+        src.draw(Canvas(full))
+        val scaled = Bitmap.createScaledBitmap(full, px(dpSize), px(dpSize), true).apply {
+            density = a.resources.displayMetrics.densityDpi
+        }
+        item.icon = BitmapDrawable(a.resources, scaled)
+    }
+
     private fun condensedReference(a: ToolbarAuditHostActivity) {
         a.findViewById<GotoButton>(R.id.bGoto).typeface =
             Typeface.create("sans-serif-condensed", Typeface.NORMAL)
@@ -1064,6 +1088,7 @@ class ReaderToolbarSpaceAuditTest {
         chevronsFlush(a, 24)
         compactNavButton(a, 48)
         shrinkVersion(a, 48)
+        resizeSearchIcon(a, 24)
     }
 
     /**
@@ -1112,8 +1137,9 @@ class ReaderToolbarSpaceAuditTest {
         Mutation("chevrons drawn flush outward (margin 24dp)") { a -> chevronsFlush(a, 24) },
         Mutation("drawer button 48dp instead of 56dp") { a -> compactNavButton(a, 48) },
         Mutation("version changer sized to its content") { a -> shrinkVersion(a, 48) },
-        Mutation("all three together") { a -> spaceSavingPackage(a) },
-        Mutation("all three, reference in a condensed face") { a ->
+        Mutation("search icon redrawn at 24dp like the rest") { a -> resizeSearchIcon(a, 24) },
+        Mutation("all four together") { a -> spaceSavingPackage(a) },
+        Mutation("all four, reference in a condensed face") { a ->
             spaceSavingPackage(a); condensedReference(a)
         },
         Mutation("version folded into the reference as a chip", refs = MERGED, sample = "Kejadian 1 · TB") { a ->
@@ -1157,6 +1183,78 @@ class ReaderToolbarSpaceAuditTest {
     }
 
     @Test
+    fun `explain why the drawer and search buttons are wider than the rest`() {
+        val outputDir = resolveOutputDir()
+        outputDir.mkdirs()
+
+        RuntimeEnvironment.setQualifiers("sw360dp-w360dp-h640dp-port-xxhdpi")
+        val activity = buildHost()
+        val root = activity.findViewById<ViewGroup>(R.id.root)
+        val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
+        activity.findViewById<GotoButton>(R.id.bGoto).text = "Kejadian 1"
+        repeat(2) {
+            root.measure(
+                View.MeasureSpec.makeMeasureSpec(px(360), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(px(640), View.MeasureSpec.EXACTLY),
+            )
+            root.layout(0, 0, px(360), px(640))
+        }
+
+        val navButton = toolbar.children.filterIsInstance<ImageButton>().first()
+        val menuView = toolbar.children.filterIsInstance<ActionMenuView>().first()
+        val items = menuView.children.filter { it.visibility != View.GONE }.toList()
+
+        val md = buildString {
+            appendLine("# Why the drawer and search buttons are wider than the rest")
+            appendLine()
+            appendLine("Measured at 360 dp, xxhdpi.")
+            appendLine()
+            appendLine("## The drawer button")
+            appendLine()
+            appendLine(
+                "It is ${dpStr(navButton.width)} dp wide around a ${dpStr(toolbar.navigationIcon?.intrinsicWidth ?: 0)} dp icon, " +
+                    "because `Base.Widget.AppCompat.Toolbar.Button.Navigation` sets `android:minWidth` to a literal 56dp. " +
+                    "That is not `?actionBarSize`: on an sw600dp screen the bar is ${dpStr(px(64))} dp tall and the button is " +
+                    "still 56 dp. Nothing about the icon or the bar height asks for it."
+            )
+            appendLine()
+            appendLine("## The action menu items")
+            appendLine()
+            appendLine(
+                "`Widget.AppCompat.ActionButton` sets `minWidth` to 48dp and 12dp of padding on each side, so an item is " +
+                    "`max(48dp, icon + 24dp)`. An item is only wider than 48 dp when its icon asset is wider than 24 dp."
+            )
+            appendLine()
+            appendLine("| item | icon | padding | width | 48dp + what |")
+            appendLine("| --- | ---: | ---: | ---: | --- |")
+            for (item in items) {
+                val icon = iconWidthOf(item)
+                val pad = item.paddingLeft + item.paddingRight
+                val why = if (item.width > px(48)) "icon is ${dpStr(icon)}dp, over the 24dp the slot is built for" else "icon fits the 48dp minimum"
+                appendLine(
+                    "| ${(item as? MenuView.ItemView)?.itemData?.title} | ${dpStr(icon)} dp | ${dpStr(pad)} dp " +
+                        "| ${dpStr(item.width)} dp | $why |"
+                )
+            }
+        }
+        File(outputDir, "control-widths.md").writeText(md)
+        println(md)
+
+        assertEquals(
+            "the drawer button is sized by AppCompat's minWidth, not by its icon",
+            px(56),
+            navButton.width,
+        )
+        for (item in items) {
+            assertEquals(
+                "an action item is max(48dp, icon + horizontal padding)",
+                max(px(48), iconWidthOf(item) + item.paddingLeft + item.paddingRight),
+                item.width,
+            )
+        }
+    }
+
+    @Test
     fun `measure the redraws and resizes that keep every control in the bar`() {
         val outputDir = resolveOutputDir()
         outputDir.mkdirs()
@@ -1165,7 +1263,7 @@ class ReaderToolbarSpaceAuditTest {
         val baseline = variants.first().referenceBoxPx
         val narrow = measureRedraws(320, listOf(
             Mutation("as shipped (320dp)") {},
-            Mutation("all three together") { a -> spaceSavingPackage(a) },
+            Mutation("all four together") { a -> spaceSavingPackage(a) },
             Mutation("version folded into the reference as a chip", refs = MERGED, sample = "Kejadian 1 · TB") { a ->
                 spaceSavingPackage(a); foldVersionIntoReference(a)
             },
@@ -1302,10 +1400,12 @@ class ReaderToolbarSpaceAuditTest {
             appendLine("## The action menu's floor")
             appendLine()
             appendLine(
-                "The action menu takes ${dpStr(naturalMenuPx)} dp when left alone. Forcing it narrower " +
-                    "demotes an item rather than tightening the cells: the narrowest exact width that still " +
-                    "leaves every item at ${MIN_TOUCH_DP.toInt()} dp is ${dpStr(narrowestMenuPx)} dp. Those spare " +
-                    "dp are not recoverable by resizing `ActionMenuView`."
+                "The action menu takes ${dpStr(naturalMenuPx)} dp for its two items, and forcing " +
+                    "`ActionMenuView` narrower demotes an item rather than tightening it: the narrowest exact " +
+                    "width that still leaves every item at ${MIN_TOUCH_DP.toInt()} dp is ${dpStr(narrowestMenuPx)} dp. " +
+                    "That floor is set by the icons, not by the menu. `Widget.AppCompat.ActionButton` makes an item " +
+                    "`max(48dp, icon + 24dp)`, and the search asset is 32dp where the audio asset is 24dp. Redrawing " +
+                    "the search icon at 24dp moves the floor to 96 dp; see control-widths.md."
             )
             appendLine()
             appendLine("## Type size needed to keep a reference on one line")
@@ -1326,7 +1426,7 @@ class ReaderToolbarSpaceAuditTest {
         File(outputDir, "redraws.md").writeText(md)
         println(md)
 
-        val packaged = variants.first { it.name == "all three together" }
+        val packaged = variants.first { it.name == "all four together" }
         assertTrue(
             "redrawing alone must widen the reference",
             packaged.referenceBoxPx > baseline,
