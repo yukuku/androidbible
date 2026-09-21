@@ -23,6 +23,7 @@ import androidx.core.view.children
 import androidx.test.core.app.ApplicationProvider
 import java.io.File
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -190,6 +191,101 @@ class ReaderToolbarSpaceAuditTest {
         }
     }
 
+    /**
+     * The toolbar's elements as laid out, with the area each one actually
+     * receives touches in.
+     *
+     * The reference button is the one place where the two differ. It is laid
+     * out underneath the chapter arrows, which the frame dispatches to first,
+     * and it additionally refuses the outermost
+     * `nav_prevnext_width - nav_goto_side_margin` on each side itself, so its
+     * touch area is whatever survives both.
+     */
+    private fun collectSlots(activity: Activity, untouchable: Int): List<Slot> {
+        val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
+        val bGoto = activity.findViewById<GotoButton>(R.id.bGoto)
+        val bLeft = activity.findViewById<ImageButton>(R.id.bLeft)
+        val bRight = activity.findViewById<ImageButton>(R.id.bRight)
+        val bVersion = activity.findViewById<TextView>(R.id.bVersion)
+
+        val slots = mutableListOf<Slot>()
+
+        val navButton = toolbar.children.filterIsInstance<ImageButton>().firstOrNull()
+        assertNotNull("the up/drawer button must be present in the toolbar", navButton)
+        navButton!!
+        slots += Slot(
+            "hamburger", "HAM", "Drawer (hamburger)",
+            boundsIn(toolbar, navButton), boundsIn(toolbar, navButton),
+            SLOT_COLORS.getValue("hamburger"),
+            "Toolbar navigation button, 24dp icon",
+        )
+
+        val leftRect = boundsIn(toolbar, bLeft).takeIf { bLeft.visibility != View.GONE }
+        if (leftRect != null) {
+            slots += Slot(
+                "prev", "PREV", "Previous chapter",
+                leftRect, leftRect, SLOT_COLORS.getValue("prev"),
+                "@dimen/nav_prevnext_width",
+            )
+        }
+
+        val rightRect = boundsIn(toolbar, bRight).takeIf { bRight.visibility != View.GONE }
+
+        val gotoRect = boundsIn(toolbar, bGoto)
+        val gotoTouch = Rect(
+            max(gotoRect.left + untouchable, leftRect?.right ?: gotoRect.left),
+            gotoRect.top,
+            min(gotoRect.right - untouchable, rightRect?.left ?: gotoRect.right),
+            gotoRect.bottom,
+        )
+        slots += Slot(
+            "reference", "REF", "Verse reference (GotoButton)",
+            gotoRect, gotoTouch, SLOT_COLORS.getValue("reference"),
+            "drawn over the arrows, which take the touches",
+        )
+
+        if (rightRect != null) {
+            slots += Slot(
+                "next", "NEXT", "Next chapter",
+                rightRect, rightRect, SLOT_COLORS.getValue("next"),
+                "@dimen/nav_prevnext_width",
+            )
+        }
+
+        if (bVersion.visibility != View.GONE) {
+            val versionRect = boundsIn(toolbar, bVersion)
+            slots += Slot(
+                "version", "VER", "Version changer",
+                versionRect, versionRect, SLOT_COLORS.getValue("version"),
+                "fixed 72dp in the layout",
+            )
+        }
+
+        val menuView = toolbar.children.filterIsInstance<ActionMenuView>().firstOrNull()
+        assertNotNull("the options menu must be present in the toolbar", menuView)
+        for (child in menuView!!.children) {
+            if (child.visibility == View.GONE) continue
+            val (key, title) = labelOfMenuChild(child)
+            val rect = boundsIn(toolbar, child)
+            slots += Slot(
+                key,
+                when (key) {
+                    "audio" -> "AUD"
+                    "search" -> "SRCH"
+                    "overflow" -> "OVF"
+                    else -> key.uppercase().take(4)
+                },
+                title,
+                rect, rect,
+                SLOT_COLORS[key] ?: SLOT_COLORS.getValue("menu"),
+                "action menu item",
+            )
+        }
+
+        slots.sortBy { it.drawn.left }
+        return slots
+    }
+
     private fun measurePanel(widthDp: Int, reference: String, versionInitials: String): Panel {
         RuntimeEnvironment.setQualifiers("sw${widthDp}dp-w${widthDp}dp-h640dp-port-xxhdpi")
 
@@ -235,69 +331,7 @@ class ReaderToolbarSpaceAuditTest {
         // buttons underneath it, so its touch area is narrower than its box.
         val untouchable = prevNextPx - gotoMarginPx
 
-        val slots = mutableListOf<Slot>()
-
-        val navButton = toolbar.children.filterIsInstance<ImageButton>().firstOrNull()
-        assertNotNull("the up/drawer button must be present in the toolbar", navButton)
-        navButton!!
-        slots += Slot(
-            "hamburger", "HAM", "Drawer (hamburger)",
-            boundsIn(toolbar, navButton), boundsIn(toolbar, navButton),
-            SLOT_COLORS.getValue("hamburger"),
-            "Toolbar navigation button, 24dp icon",
-        )
-
-        val leftRect = boundsIn(toolbar, bLeft)
-        slots += Slot(
-            "prev", "PREV", "Previous chapter",
-            leftRect, leftRect, SLOT_COLORS.getValue("prev"),
-            "@dimen/nav_prevnext_width",
-        )
-
-        val gotoRect = boundsIn(toolbar, bGoto)
-        val gotoTouch = Rect(gotoRect.left + untouchable, gotoRect.top, gotoRect.right - untouchable, gotoRect.bottom)
-        slots += Slot(
-            "reference", "REF", "Verse reference (GotoButton)",
-            gotoRect, gotoTouch, SLOT_COLORS.getValue("reference"),
-            "touch area inset ${dpStr(untouchable)}dp per side",
-        )
-
-        val rightRect = boundsIn(toolbar, bRight)
-        slots += Slot(
-            "next", "NEXT", "Next chapter",
-            rightRect, rightRect, SLOT_COLORS.getValue("next"),
-            "@dimen/nav_prevnext_width",
-        )
-
-        val versionRect = boundsIn(toolbar, bVersion)
-        slots += Slot(
-            "version", "VER", "Version changer",
-            versionRect, versionRect, SLOT_COLORS.getValue("version"),
-            "fixed 72dp in the layout",
-        )
-
-        val menuView = toolbar.children.filterIsInstance<ActionMenuView>().firstOrNull()
-        assertNotNull("the options menu must be present in the toolbar", menuView)
-        for (child in menuView!!.children) {
-            if (child.visibility == View.GONE) continue
-            val (key, title) = labelOfMenuChild(child)
-            val rect = boundsIn(toolbar, child)
-            slots += Slot(
-                key,
-                when (key) {
-                    "audio" -> "AUD"
-                    "search" -> "SRCH"
-                    "overflow" -> "OVF"
-                    else -> key.uppercase().take(4)
-                },
-                title,
-                rect, rect,
-                SLOT_COLORS[key] ?: SLOT_COLORS.getValue("menu"),
-                "action menu item",
-            )
-        }
-
-        slots.sortBy { it.drawn.left }
+        val slots = collectSlots(activity, untouchable)
 
         val gotoTextAvail = bGoto.width - bGoto.paddingLeft - bGoto.paddingRight
 
@@ -757,6 +791,9 @@ class ReaderToolbarSpaceAuditTest {
             "1Th 5",
         )
 
+        /** The same references with the version folded in as an inline chip. */
+        private val MERGED = REFERENCES.map { "$it \u00b7 TB" }
+
         private val WIDTHS = listOf(320, 360, 384, 411, 480, 600)
 
         /** `Version.getInitials` yields at most six characters, which is what the layout is sized for. */
@@ -835,6 +872,7 @@ class ReaderToolbarSpaceAuditTest {
         val oneLiners: List<String>,
         val truncated: List<String>,
         val sample: String,
+        val slots: List<Slot>,
     )
 
     private class Mutation(
@@ -919,6 +957,11 @@ class ReaderToolbarSpaceAuditTest {
                 oneLiners,
                 truncated,
                 mutation.sample,
+                collectSlots(
+                    activity,
+                    activity.resources.getDimensionPixelSize(R.dimen.nav_prevnext_width) -
+                        activity.resources.getDimensionPixelSize(R.dimen.nav_goto_side_margin),
+                ),
             )
         }
     }
@@ -974,6 +1017,324 @@ class ReaderToolbarSpaceAuditTest {
 
     private fun hideMenuItem(a: ToolbarAuditHostActivity, itemId: Int) {
         a.findViewById<Toolbar>(R.id.toolbar).menu.findItem(itemId)?.isVisible = false
+    }
+
+    // --- Redraws and resizes that keep every control -----------------------
+
+    /**
+     * Pushes the chapter chevrons into the outer strip of their own boxes and
+     * lets the reference span what is left. The arrows keep their full
+     * rectangles, so nothing moves for touch: only the glyph and the text box
+     * change.
+     */
+    private fun chevronsFlush(a: ToolbarAuditHostActivity, marginDp: Int) {
+        val arrowPx = a.findViewById<View>(R.id.bLeft).layoutParams.width
+        val glyphStripPx = arrowPx - px(marginDp)
+
+        val goto = a.findViewById<GotoButton>(R.id.bGoto)
+        goto.layoutParams = (goto.layoutParams as ViewGroup.MarginLayoutParams).apply {
+            marginStart = px(marginDp)
+            marginEnd = px(marginDp)
+        }
+        a.findViewById<ImageButton>(R.id.bLeft).setPadding(0, 0, glyphStripPx, 0)
+        a.findViewById<ImageButton>(R.id.bRight).setPadding(glyphStripPx, 0, 0, 0)
+    }
+
+    /** A 48dp drawer button in place of the action bar's 56dp one. */
+    private fun compactNavButton(a: ToolbarAuditHostActivity, dpWidth: Int) {
+        val toolbar = a.findViewById<Toolbar>(R.id.toolbar)
+        val nav = toolbar.children.filterIsInstance<ImageButton>().first()
+        nav.minimumWidth = px(dpWidth)
+        nav.layoutParams = nav.layoutParams.apply { width = px(dpWidth) }
+        toolbar.contentInsetStartWithNavigation = px(dpWidth)
+        toolbar.setContentInsetsRelative(px(dpWidth), toolbar.contentInsetEnd)
+    }
+
+    /** Folds the version changer into the reference as an inline chip. */
+    private fun foldVersionIntoReference(a: ToolbarAuditHostActivity) {
+        a.findViewById<TextView>(R.id.bVersion).visibility = View.GONE
+    }
+
+    private fun condensedReference(a: ToolbarAuditHostActivity) {
+        a.findViewById<GotoButton>(R.id.bGoto).typeface =
+            Typeface.create("sans-serif-condensed", Typeface.NORMAL)
+    }
+
+    private fun spaceSavingPackage(a: ToolbarAuditHostActivity) {
+        chevronsFlush(a, 24)
+        compactNavButton(a, 48)
+        shrinkVersion(a, 48)
+    }
+
+    /**
+     * The narrowest exact width the action menu can be given while every item
+     * still measures at least [MIN_TOUCH_DP], reported with the width the menu
+     * takes when left alone.
+     */
+    private fun probeMenuWidths(widthDp: Int): Pair<Int, Int> {
+        fun menuAt(forcedDp: Int?): Pair<Int, Int> {
+            RuntimeEnvironment.setQualifiers("sw${widthDp}dp-w${widthDp}dp-h640dp-port-xxhdpi")
+            val activity = buildHost()
+            val root = activity.findViewById<ViewGroup>(R.id.root)
+            val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
+            activity.findViewById<GotoButton>(R.id.bGoto).text = "Kejadian 1"
+            if (forcedDp != null) {
+                val menuView = toolbar.children.filterIsInstance<ActionMenuView>().first()
+                menuView.layoutParams = menuView.layoutParams.apply { width = px(forcedDp) }
+            }
+            repeat(2) {
+                root.measure(
+                    View.MeasureSpec.makeMeasureSpec(px(widthDp), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(px(640), View.MeasureSpec.EXACTLY),
+                )
+                root.layout(0, 0, px(widthDp), px(640))
+            }
+            val menuView = toolbar.children.filterIsInstance<ActionMenuView>().first()
+            val items = menuView.children.filter { it.visibility != View.GONE }.toList()
+            val smallest = items.minOfOrNull { it.width } ?: 0
+            return menuView.width to smallest
+        }
+
+        val (naturalWidth, _) = menuAt(null)
+        var narrowest = naturalWidth
+        for (candidate in 88..naturalWidth / px(1) step 4) {
+            val (_, smallest) = menuAt(candidate)
+            if (dp(smallest) >= MIN_TOUCH_DP) {
+                narrowest = px(candidate)
+                break
+            }
+        }
+        return naturalWidth to narrowest
+    }
+
+    private fun redrawMutations() = listOf(
+        Mutation("as shipped") {},
+        Mutation("chevrons drawn flush outward (margin 24dp)") { a -> chevronsFlush(a, 24) },
+        Mutation("drawer button 48dp instead of 56dp") { a -> compactNavButton(a, 48) },
+        Mutation("version changer sized to its content") { a -> shrinkVersion(a, 48) },
+        Mutation("all three together") { a -> spaceSavingPackage(a) },
+        Mutation("all three, reference in a condensed face") { a ->
+            spaceSavingPackage(a); condensedReference(a)
+        },
+        Mutation("version folded into the reference as a chip", refs = MERGED, sample = "Kejadian 1 · TB") { a ->
+            spaceSavingPackage(a); foldVersionIntoReference(a)
+        },
+    )
+
+    private fun measureRedraws(widthDp: Int, mutations: List<Mutation>): List<Variant> =
+        measureVariants(widthDp, mutations)
+
+    /**
+     * The smallest type size at which each reference still fits on one line in
+     * the given box, floored at [minSp] so the answer stays legible.
+     */
+    private fun typeSizeToFitOneLine(widthDp: Int, mutate: (ToolbarAuditHostActivity) -> Unit): List<Triple<String, Float, Boolean>> {
+        RuntimeEnvironment.setQualifiers("sw${widthDp}dp-w${widthDp}dp-h640dp-port-xxhdpi")
+        val activity = buildHost()
+        val root = activity.findViewById<ViewGroup>(R.id.root)
+        val bGoto = activity.findViewById<GotoButton>(R.id.bGoto)
+        activity.findViewById<TextView>(R.id.bVersion).text = "TB"
+        mutate(activity)
+
+        fun layOut() {
+            root.measure(
+                View.MeasureSpec.makeMeasureSpec(px(widthDp), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(px(640), View.MeasureSpec.EXACTLY),
+            )
+            root.layout(0, 0, px(widthDp), px(640))
+        }
+
+        val minSp = 11f
+        val baseSp = 16f
+        return REFERENCES.map { ref ->
+            bGoto.text = ref
+            layOut(); layOut()
+            val avail = (bGoto.width - bGoto.paddingLeft - bGoto.paddingRight).toFloat()
+            val natural = bGoto.paint.measureText(ref)
+            val neededSp = if (natural <= avail) baseSp else baseSp * avail / natural
+            Triple(ref, neededSp, neededSp >= minSp)
+        }
+    }
+
+    @Test
+    fun `measure the redraws and resizes that keep every control in the bar`() {
+        val outputDir = resolveOutputDir()
+        outputDir.mkdirs()
+
+        val variants = measureRedraws(360, redrawMutations())
+        val baseline = variants.first().referenceBoxPx
+        val narrow = measureRedraws(320, listOf(
+            Mutation("as shipped (320dp)") {},
+            Mutation("all three together") { a -> spaceSavingPackage(a) },
+            Mutation("version folded into the reference as a chip", refs = MERGED, sample = "Kejadian 1 · TB") { a ->
+                spaceSavingPackage(a); foldVersionIntoReference(a)
+            },
+        ))
+        val narrowBaseline = narrow.first().referenceBoxPx
+
+        val (naturalMenuPx, narrowestMenuPx) = probeMenuWidths(360)
+        println("action menu: natural ${dpStr(naturalMenuPx)}dp, narrowest keeping 48dp items ${dpStr(narrowestMenuPx)}dp")
+
+        val shippedTypeSizes = typeSizeToFitOneLine(360) {}
+        val packagedTypeSizes = typeSizeToFitOneLine(360) { a -> spaceSavingPackage(a) }
+
+        val margin = 90f
+        val canvasWidth = 1980
+
+        fun drawRow(c: Canvas, v: Variant, base: Int, yIn: Float): Float {
+            var y = yIn
+            val gain = v.referenceBoxPx - base
+            val gainText = when {
+                gain > 0 -> "+${dpStr(gain)}dp"
+                gain < 0 -> "${dpStr(gain)}dp"
+                else -> "baseline"
+            }
+            c.drawText(v.name, margin, y, paint(INK, textSize = 26f, face = monoBold))
+            c.drawText(
+                "text box ${dpStr(v.referenceBoxPx)}dp   ($gainText)",
+                margin + 1100f, y, paint(if (gain > 0) OK else INK_DIM, textSize = 24f, face = monoBold),
+            )
+            y += 16f
+            c.drawBitmap(v.toolbar, margin, y, null)
+            c.drawRect(
+                margin - 1f, y - 1f, margin + v.toolbar.width + 1f, y + v.toolbar.height + 1f,
+                paint(INK, stroke = 2f),
+            )
+            val refSlot = v.slots.first { it.key == "reference" }
+            val others = v.slots.filter { it.key != "reference" }
+            val smallest = others.minByOrNull { it.touchWidth }
+            c.drawText(
+                "${v.oneLiners.size}/${v.refs.size} fit on one line" +
+                    (if (v.truncated.isEmpty()) ", nothing truncated" else ", truncated ${v.truncated.size}/${v.refs.size}"),
+                margin + 1100f, y + 30f,
+                paint(if (v.truncated.isEmpty()) OK else ALERT, textSize = 20f),
+            )
+            c.drawText(
+                "reference tap ${dpStr(refSlot.touchWidth)}dp",
+                margin + 1100f, y + 56f, paint(INK_DIM, textSize = 20f),
+            )
+            c.drawText(
+                "smallest other control ${dpStr(smallest?.touchWidth ?: 0)}dp (${smallest?.short})",
+                margin + 1100f, y + 82f,
+                paint(if (dp(smallest?.touchWidth ?: 0) >= MIN_TOUCH_DP) OK else ALERT, textSize = 20f),
+            )
+            y += v.toolbar.height + 24f
+            c.drawLine(margin, y, canvasWidth - margin, y, dashed(GRID_MAJOR, 2f))
+            return y + 40f
+        }
+
+        fun render(c: Canvas): Float {
+            var y = 110f
+            c.drawText("REDRAWING AND RESIZING, WITH EVERY CONTROL KEPT", margin, y, paint(INK, textSize = 40f, face = monoBold))
+            c.drawText(
+                "360dp wide. No control is removed and no text is shortened; only the drawn boxes move.",
+                margin, y + 32f, paint(INK_DIM, textSize = 20f),
+            )
+            c.drawLine(margin, y + 58f, canvasWidth - margin, y + 58f, paint(GRID_MAJOR, stroke = 3f))
+            y += 110f
+
+            for (v in variants) y = drawRow(c, v, baseline, y)
+
+            y += 16f
+            c.drawText("THE SAME AT 320 dp", margin, y, paint(INK, textSize = 30f, face = monoBold))
+            y += 40f
+            for (v in narrow) y = drawRow(c, v, narrowBaseline, y)
+
+            y += 16f
+            c.drawText(
+                "TYPE SIZE NEEDED TO KEEP A REFERENCE ON ONE LINE (16sp today, 11sp floor)",
+                margin, y, paint(INK, textSize = 26f, face = monoBold),
+            )
+            y += 32f
+            for (i in REFERENCES.indices) {
+                val (ref, shippedSp, shippedOk) = shippedTypeSizes[i]
+                val (_, packedSp, packedOk) = packagedTypeSizes[i]
+                c.drawText(
+                    "  \"$ref\"".padEnd(26) +
+                        "as shipped ${String.format("%4.1f", shippedSp)}sp ${if (shippedOk) " " else "(too small)"}".padEnd(30) +
+                        "redrawn ${String.format("%4.1f", packedSp)}sp ${if (packedOk) "" else "(too small)"}",
+                    margin, y, paint(if (packedOk) OK else ALERT, textSize = 20f),
+                )
+                y += 26f
+            }
+            return y
+        }
+
+        val probe = Canvas(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+        val height = (render(probe) + 40f).toInt()
+        val sheet = Bitmap.createBitmap(canvasWidth, height, Bitmap.Config.ARGB_8888)
+        val c = Canvas(sheet)
+        drawGrid(c, canvasWidth, height)
+        render(c)
+
+        File(outputDir, "redraws.png").outputStream().use { sheet.compress(Bitmap.CompressFormat.PNG, 100, it) }
+
+        val md = buildString {
+            appendLine("# Redraws and resizes that keep every control")
+            appendLine()
+            appendLine("360 dp wide. No control is removed and no text is shortened.")
+            appendLine()
+            appendLine("| change | reference text box | vs shipped | reference tap | smallest other tap | fit on one line | truncated |")
+            appendLine("| --- | ---: | ---: | ---: | ---: | ---: | ---: |")
+            for (v in variants) {
+                val gain = v.referenceBoxPx - baseline
+                val refSlot = v.slots.first { it.key == "reference" }
+                val smallest = v.slots.filter { it.key != "reference" }.minByOrNull { it.touchWidth }
+                appendLine(
+                    "| ${v.name} | ${dpStr(v.referenceBoxPx)} dp | ${if (gain > 0) "+" else ""}${dpStr(gain)} dp " +
+                        "| ${dpStr(refSlot.touchWidth)} dp | ${dpStr(smallest?.touchWidth ?: 0)} dp (${smallest?.short}) " +
+                        "| ${v.oneLiners.size}/${v.refs.size} | ${v.truncated.size}/${v.refs.size} |"
+                )
+            }
+            appendLine()
+            appendLine("## The same at 320 dp")
+            appendLine()
+            appendLine("| change | reference text box | vs shipped | fit on one line | truncated |")
+            appendLine("| --- | ---: | ---: | ---: | ---: |")
+            for (v in narrow) {
+                val gain = v.referenceBoxPx - narrowBaseline
+                appendLine(
+                    "| ${v.name} | ${dpStr(v.referenceBoxPx)} dp | ${if (gain > 0) "+" else ""}${dpStr(gain)} dp " +
+                        "| ${v.oneLiners.size}/${v.refs.size} | ${v.truncated.size}/${v.refs.size} |"
+                )
+            }
+            appendLine()
+            appendLine("## The action menu's floor")
+            appendLine()
+            appendLine(
+                "The action menu takes ${dpStr(naturalMenuPx)} dp when left alone. Forcing it narrower " +
+                    "demotes an item rather than tightening the cells: the narrowest exact width that still " +
+                    "leaves every item at ${MIN_TOUCH_DP.toInt()} dp is ${dpStr(narrowestMenuPx)} dp. Those spare " +
+                    "dp are not recoverable by resizing `ActionMenuView`."
+            )
+            appendLine()
+            appendLine("## Type size needed to keep a reference on one line")
+            appendLine()
+            appendLine("16 sp today. Anything under 11 sp is treated as too small to ship.")
+            appendLine()
+            appendLine("| reference | as shipped | after the redraws |")
+            appendLine("| --- | ---: | ---: |")
+            for (i in REFERENCES.indices) {
+                val (ref, shippedSp, shippedOk) = shippedTypeSizes[i]
+                val (_, packedSp, packedOk) = packagedTypeSizes[i]
+                appendLine(
+                    "| $ref | ${String.format("%.1f", shippedSp)} sp${if (shippedOk) "" else " (too small)"} " +
+                        "| ${String.format("%.1f", packedSp)} sp${if (packedOk) "" else " (too small)"} |"
+                )
+            }
+        }
+        File(outputDir, "redraws.md").writeText(md)
+        println(md)
+
+        val packaged = variants.first { it.name == "all three together" }
+        assertTrue(
+            "redrawing alone must widen the reference",
+            packaged.referenceBoxPx > baseline,
+        )
+        assertTrue(
+            "no control may drop below the minimum touch target",
+            packaged.slots.filter { it.key != "reference" }.all { dp(it.touchWidth) >= MIN_TOUCH_DP },
+        )
     }
 
     @Test

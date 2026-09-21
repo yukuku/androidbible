@@ -189,9 +189,80 @@ And at 320 dp, where the arrows are 32 dp:
 | arrows raised to 48 dp (margins 40 dp) | 8 dp | **-32 dp** | 0/7 | **7/7** |
 | 48 dp arrows + 48 dp version + search out | 88 dp | +48 dp | **7/7** | **0/7** |
 
+## Custom drawing and resizing, with every control kept
+
+Everything above either removes a control or shortens the text. This section
+asks a different question: how much is recoverable by moving only the drawn
+boxes, keeping all seven controls, the full book name and 16 sp type?
+
+![Each redraw rendered and measured at 360 dp and 320 dp](redraws.png)
+
+| change | reference text box | vs shipped | reference tap | smallest other tap | fit on one line | truncated |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| as shipped | 48 dp | baseline | 32 dp | 48 dp | 0/7 | 4/7 |
+| chevrons drawn flush outward | 80 dp | +32 dp | 32 dp | 48 dp | 3/7 | 2/7 |
+| drawer button 48 dp instead of 56 dp | 56 dp | +8 dp | 40 dp | 48 dp | 1/7 | 3/7 |
+| version changer sized to its content | 72 dp | +24 dp | 56 dp | 48 dp | 2/7 | 2/7 |
+| **all three together** | **112 dp** | **+64 dp** | **64 dp** | **48 dp** | 5/7 | **0/7** |
+| all three, condensed face | 112 dp | +64 dp | 64 dp | 48 dp | 6/7 | **0/7** |
+| version folded into the reference as a chip | 160 dp | +112 dp | 112 dp | 48 dp | 6/7 | **0/7** |
+
+At 320 dp the same three changes take the reference from 40 dp to 72 dp and
+truncations from 5/7 to 2/7; with the version folded in, from 40 dp to 120 dp
+and nothing truncates.
+
+### The techniques
+
+**Chevrons drawn flush outward (+32 dp).** The arrows are 24 dp glyphs
+centred in 48 dp boxes, so 24 dp of each box is empty padding that the
+reference is nevertheless kept out of. Draw each glyph in the outer 24 dp of
+its own box and start the reference's box where the glyph ends: margin 24 dp
+instead of 40 dp. The arrows keep their full 48 dp rectangles, so nothing
+changes for touch at all, and the glyphs and the text still do not overlap.
+This is the 8 dp overlap the layout already uses, taken to its limit.
+
+**Drawer button 48 dp instead of 56 dp (+8 dp).** The navigation button is
+sized by `?actionBarSize`, not by its 24 dp icon. A 48 dp button with
+`contentInsetStartWithNavigation` lowered to match is still a compliant target.
+
+**Version changer sized to its content (+24 dp).** `wrap_content` with a 48 dp
+floor and a ceiling for the six-character worst case, instead of a flat 72 dp.
+
+**Version folded into the reference as a chip (+112 dp total).** Draw the
+initials inside the reference's own box, as `Kejadian 1 · TB`, and hit-test the
+chip separately. This returns the whole 72 dp version box to the cluster; the
+chip then costs about 28 dp back out of it. Measured with the chip included in
+the string, so the figures above already pay for it. A vertical variant (the
+initials on a second line under the reference) would free the same 72 dp, but
+it splits the 56 dp bar height into two sub-48 dp tap strips, so the inline
+chip is the safer of the two.
+
+**A condensed face for the reference costs nothing and buys one more
+reference.** After the other changes it takes one-line fits from 5/7 to 6/7.
+
+**Type size barely has to move.** After the redraws, six of seven sample
+references still fit at the full 16 sp; only "1 Thessalonians 5" needs to come
+down, to 13.7 sp. As shipped, six of seven would need to drop below 11 sp,
+which is why auto-sizing on its own is not a fix.
+
+### What is not recoverable this way
+
+The action menu's 104 dp for two 48 dp icons is its floor. Forcing
+`ActionMenuView` narrower demotes an item rather than tightening its cells: the
+narrowest exact width that still leaves both items at 48 dp is 104 dp. Those
+8 dp only come back by replacing the action menu with a custom container for
+the trailing icons, which is a lot of machinery for 8 dp.
+
 ## Suggestions
 
 In the order they are worth doing.
+
+**0. Do the three redraws first.** Chevrons flush outward, a 48 dp drawer
+button and a content-sized version changer take the reference from 48 dp to
+112 dp at 360 dp, remove every truncation, and raise the reference's own touch
+area from 32 dp to 64 dp, without removing a control, shortening a name or
+shrinking the type. Nothing else on this list has that ratio of gain to
+behaviour change, and it makes the rest optional rather than necessary.
 
 **A. Fall back to `Book.abbreviation` when the full name does not fit.** Every
 `Book` already carries an `abbreviation` (`BookNameSorter` and the goto dialer
@@ -204,12 +275,14 @@ full name.
 **B. Size the version changer to its content.** `wrap_content` with
 `minWidth` at 48 dp and a `maxWidth` so a six-character initialism still fits.
 Frees 20 to 38 dp for the reference on a typical install, and fixes the 1 dp
-clip on the worst case. Low risk, no behaviour change.
+clip on the worst case. Low risk, no behaviour change. This is part of the
+redraw package in suggestion 0.
 
-**C. Give the reference the touch area its box implies.** Either drop the
-`untouchableSideWidth` inset in `GotoButton.onTouchEvent` and let the arrows
-keep only their own 48 dp, or widen the button. Today the one element that
-looks like a large target is the only one below 48 dp.
+**C. Give the reference the touch area its box implies.** Suggestion 0 already
+takes it from 32 dp to 64 dp. If the box is not widened, drop the
+`untouchableSideWidth` inset in `GotoButton.onTouchEvent` instead and let the
+arrows keep only their own 48 dp. Today the one element that looks like a large
+target is the only one below 48 dp.
 
 **D. Stop shrinking the arrows below sw360dp, but only together with B and E.**
 Keeping 48 dp / 40 dp everywhere is what makes every touch target compliant,
@@ -234,9 +307,11 @@ restrict split candidates to space positions and, when no space split fits,
 keep one line and ellipsize (or auto-size the text down) instead of cutting a
 word in half.
 
-**H. Reclaim the action menu's 8 dp** by giving the `ActionMenuView` an exact
-width, if F and E do not already make it moot.
+**H. Leave the action menu alone.** Its 104 dp is a floor, not slack: forcing
+`ActionMenuView` narrower demotes an item. The 8 dp only comes back with a
+custom trailing-icon container, which is not worth it on its own.
 
-A and B together are a small, low-risk change that removes every truncation at
-360 dp and at 320 dp. E is what makes the reference read comfortably rather
-than merely fit, and it is the prerequisite for D.
+Suggestion 0 is the one to do first, and on its own it removes every truncation
+at 360 dp with nothing taken away from the user. A is the cheapest complement
+and is what closes the remaining gap at 320 dp. Everything from E down is a
+product decision rather than a layout one.
