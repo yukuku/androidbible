@@ -7,6 +7,9 @@ object ExperimentalFlags {
     fun useComposeVerseItem(): Boolean =
         Preferences.getBoolean(R.string.pref_useComposeVerseItem_key, R.bool.pref_useComposeVerseItem_default)
 
+    fun useComposeToolbar(): Boolean =
+        Preferences.getBoolean(R.string.pref_useComposeToolbar_key, R.bool.pref_useComposeToolbar_default)
+
     fun useComposeGoto(): Boolean =
         Preferences.getBoolean(R.string.pref_useComposeGoto_key, R.bool.pref_useComposeGoto_default)
 

@@ -326,7 +326,7 @@ class SplitViewManager(
 
         configureSplitSizes()
 
-        host.bVersion.visibility = View.GONE
+        host.setVersionChangerVisible(false)
         host.actionMode?.invalidate()
         host.leftDrawer.handle.setSplitVersion(true)
     }
@@ -409,7 +409,7 @@ class SplitViewManager(
 
         run { host.lsSplit0.setViewLayoutSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT) }
 
-        host.bVersion.visibility = View.VISIBLE
+        host.setVersionChangerVisible(true)
         host.actionMode?.invalidate()
         host.leftDrawer.handle.setSplitVersion(false)
     }

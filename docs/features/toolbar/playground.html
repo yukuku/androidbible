@@ -1,0 +1,1101 @@
+<title>Bengkel Toolbar Reader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  :root {
+    --paper: #edf2f6;
+    --surface: #ffffff;
+    --surface-2: #f6f9fb;
+    --ink: #0c2334;
+    --ink-dim: #5c7789;
+    --rule: #cfdce6;
+    --rule-soft: #e2ebf1;
+    --accent: #0a6e9e;
+    --accent-soft: #daeaf3;
+    --gain: #12704f;
+    --gain-soft: #dcefe6;
+    --loss: #a32c22;
+    --loss-soft: #f7e2df;
+    --warn: #8a5a08;
+    --warn-soft: #f8ecd6;
+    --bar-bg: #455a64;
+    --bar-ink: #ffffff;
+    --shadow: 0 1px 2px rgba(12,35,52,.07), 0 6px 18px -10px rgba(12,35,52,.22);
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
+    --display: "Archivo", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #08161f;
+      --surface: #0e2231;
+      --surface-2: #122a3b;
+      --ink: #e3eef5;
+      --ink-dim: #8aa8bc;
+      --rule: #1c3a4d;
+      --rule-soft: #16303f;
+      --accent: #56bde8;
+      --accent-soft: #10344a;
+      --gain: #4fce9b;
+      --gain-soft: #0e3629;
+      --loss: #ff8b80;
+      --loss-soft: #3d1c19;
+      --warn: #e2ab4f;
+      --warn-soft: #382a11;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #08161f;
+    --surface: #0e2231;
+    --surface-2: #122a3b;
+    --ink: #e3eef5;
+    --ink-dim: #8aa8bc;
+    --rule: #1c3a4d;
+    --rule-soft: #16303f;
+    --accent: #56bde8;
+    --accent-soft: #10344a;
+    --gain: #4fce9b;
+    --gain-soft: #0e3629;
+    --loss: #ff8b80;
+    --loss-soft: #3d1c19;
+    --warn: #e2ab4f;
+    --warn-soft: #382a11;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding-inline: 20px; padding-block: 0 72px; }
+
+  h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+  h1 { font-size: clamp(1.9rem, 5vw, 2.7rem); font-weight: 700; line-height: 1.1; }
+  h2 { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 600; }
+  h3 { font-size: 1.02rem; font-weight: 600; }
+  p { margin: 0; }
+  a { color: var(--accent); }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: .7rem; font-weight: 500;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim);
+  }
+
+  header.page { padding-block: 44px 28px; border-bottom: 1px solid var(--rule); }
+  header.page .lede { margin-top: 14px; max-width: 62ch; color: var(--ink-dim); font-size: 1.05rem; }
+  .verified {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;
+    padding: 7px 13px; border-radius: 999px; border: 1px solid var(--rule);
+    background: var(--surface); font-family: var(--mono); font-size: .76rem; color: var(--ink-dim);
+    box-shadow: var(--shadow);
+  }
+  .verified .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gain); flex: none; }
+  .verified.bad .dot { background: var(--loss); }
+  .verified strong { color: var(--ink); font-weight: 600; }
+
+  section { padding-block: 44px 0; }
+  .sec-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .sec-head p { color: var(--ink-dim); max-width: 64ch; }
+
+  /* --- element colour encoding, shared by the drawings and the legend --- */
+  :root {
+    --c-ham: #2f6f8f;
+    --c-arrow: #9a6a12;
+    --c-ref: #b03060;
+    --c-ver: #6a4fb0;
+    --c-menu: #1c7a5b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-ham: #86c8e8; --c-arrow: #e2b45c; --c-ref: #ff9ab8; --c-ver: #b9a4ff; --c-menu: #6fd8ab;
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-ham: #86c8e8; --c-arrow: #e2b45c; --c-ref: #ff9ab8; --c-ver: #b9a4ff; --c-menu: #6fd8ab;
+  }
+
+  /* --- the dimensioned drawing --- */
+  .figscroll { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
+  svg.fig { width: 100%; height: auto; display: block; color: var(--ink-dim); }
+
+  svg.fig .barbg { fill: var(--bar-bg); }
+  svg.fig .grid .minor { stroke: rgba(255,255,255,.07); stroke-width: .5; }
+  svg.fig .grid .major { stroke: rgba(255,255,255,.16); stroke-width: .5; }
+  svg.fig .gapfill { fill: rgba(255,255,255,.09); }
+  svg.fig .bar-ink { color: var(--bar-ink); }
+  svg.fig .bar-ink-fill { fill: rgba(255,255,255,.72); }
+  svg.fig .stadium { fill: none; stroke: rgba(255,255,255,.66); stroke-width: 1; }
+  svg.fig .segdiv { stroke: rgba(255,255,255,.5); stroke-width: 1; }
+  svg.fig .reftext { fill: var(--bar-ink); font-family: var(--sans); font-weight: 600; font-size: 16px; }
+  svg.fig .vtext { fill: var(--bar-ink); font-family: var(--sans); font-weight: 700; font-size: 14px; }
+
+  svg.fig .witness line { stroke: var(--rule); stroke-width: .5; stroke-dasharray: 2 2.5; }
+  svg.fig .dimline { stroke: currentColor; stroke-width: .9; }
+  svg.fig .dimfill { fill: currentColor; stroke: none; }
+  svg.fig .dimmask { fill: var(--surface); stroke: none; }
+  svg.fig .dimtext {
+    fill: currentColor; font-family: var(--mono); font-size: 7.4px; font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  svg.fig .rowlabel {
+    fill: var(--ink-dim); font-family: var(--mono); font-size: 6.8px;
+    letter-spacing: .06em;
+  }
+  svg.fig .e-ham { color: var(--c-ham); }
+  svg.fig .e-arrow { color: var(--c-arrow); }
+  svg.fig .e-ref { color: var(--c-ref); }
+  svg.fig .e-ver { color: var(--c-ver); }
+  svg.fig .e-menu { color: var(--c-menu); }
+  svg.fig .e-neutral { color: var(--ink-dim); }
+  svg.fig .e-alert, svg.fig .flagged { color: var(--loss); }
+  svg.fig .e-total { color: var(--ink); }
+  svg.fig .e-ref.emph .dimline { stroke-width: 1.5; }
+  svg.fig .e-ref.emph .dimtext { font-weight: 600; font-size: 8px; }
+
+  svg.fig .hit { fill: transparent; cursor: pointer; }
+  svg.fig .press-outline { fill: none; stroke: #fff; stroke-width: 1.2; opacity: .85; pointer-events: none; }
+  svg.fig .press-label {
+    fill: #fff; font-family: var(--mono); font-size: 7px; font-weight: 600;
+    text-anchor: middle; pointer-events: none;
+  }
+  svg.fig .press-plate { fill: rgba(0,0,0,.42); pointer-events: none; }
+  svg.fig .ripple { fill: #fff; pointer-events: none; animation: rip 620ms cubic-bezier(.2,.6,.3,1) forwards; }
+  svg.fig .noripple { fill: var(--loss); pointer-events: none; animation: flash 620ms ease-out forwards; }
+  @keyframes rip { from { transform: scale(.02); opacity: .34; } to { transform: scale(1); opacity: 0; } }
+  @keyframes flash { 0% { opacity: 0; } 25% { opacity: .55; } 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    svg.fig .ripple, svg.fig .noripple { animation: none; opacity: .28; }
+  }
+  .hint {
+    margin-top: 10px; font-size: .84rem; color: var(--ink-dim);
+    display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline;
+  }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 18px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .72rem; color: var(--ink-dim); }
+  .legend i { width: 14px; height: 3px; border-radius: 2px; display: block; }
+
+  .figrow { display: grid; grid-template-columns: 62px 1fr; gap: 12px; align-items: start; margin-top: 12px; }
+  .figtag {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-dim); text-align: right; padding-top: 14px; line-height: 1.5;
+  }
+  .figtag b { display: block; color: var(--ink); font-size: .84rem; letter-spacing: 0; text-transform: none; }
+  @media (max-width: 560px) {
+    .figrow { grid-template-columns: 1fr; }
+    .figtag { text-align: left; padding-top: 0; }
+    .figtag b { display: inline; margin-left: 8px; }
+  }
+
+  /* --- effort cards --- */
+  .efforts { display: flex; flex-direction: column; gap: 18px; }
+  .effort {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 20px; box-shadow: var(--shadow);
+  }
+  .effort > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; margin-bottom: 4px; }
+  .effort .why { color: var(--ink-dim); font-size: .94rem; max-width: 66ch; margin-bottom: 18px; }
+  .delta {
+    font-family: var(--mono); font-size: .8rem; font-weight: 600;
+    padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .delta.up { background: var(--gain-soft); color: var(--gain); }
+  .delta.flat { background: var(--accent-soft); color: var(--accent); }
+  .delta.down { background: var(--loss-soft); color: var(--loss); }
+
+  /* --- playground --- */
+  .pg { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+  .pg .stage { padding: 22px 20px 20px; border-bottom: 1px solid var(--rule-soft); }
+  .pg .controls { padding: 20px; display: grid; gap: 22px; grid-template-columns: 1fr 1fr; background: var(--surface-2); }
+  @media (max-width: 720px) { .pg .controls { grid-template-columns: 1fr; } }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  legend { padding: 0; margin-bottom: 4px; }
+  .switch { display: flex; align-items: flex-start; gap: 11px; cursor: pointer; }
+  .switch input { margin: 0; width: 18px; height: 18px; accent-color: var(--accent); flex: none; margin-top: 2px; }
+  .switch .txt { display: flex; flex-direction: column; }
+  .switch .txt b { font-weight: 600; font-size: .94rem; }
+  .switch .txt small { color: var(--ink-dim); font-size: .8rem; line-height: 1.35; }
+  .switch input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .radiorow { display: flex; flex-wrap: wrap; gap: 8px; }
+  .radiorow label {
+    border: 1px solid var(--rule); border-radius: 999px; padding: 5px 12px;
+    font-family: var(--mono); font-size: .78rem; cursor: pointer; background: var(--surface);
+  }
+  .radiorow label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .radiorow input { position: absolute; opacity: 0; pointer-events: none; }
+  .radiorow label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  select {
+    font-family: var(--sans); font-size: .9rem; padding: 6px 9px; border-radius: 7px;
+    border: 1px solid var(--rule); background: var(--surface); color: var(--ink); width: 100%;
+  }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+  @media (max-width: 560px) { .stats { grid-template-columns: 1fr; } }
+  .stat { border: 1px solid var(--rule); border-radius: 9px; padding: 12px 14px; background: var(--surface); }
+  .stat .k { font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim); }
+  .stat .v { font-family: var(--mono); font-size: 1.5rem; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .stat .n { font-size: .78rem; color: var(--ink-dim); }
+  .stat.warnstate { border-color: var(--warn); }
+  .stat.warnstate .v { color: var(--warn); }
+  .stat.good .v { color: var(--gain); }
+
+  table.fits { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: .88rem; }
+  table.fits th, table.fits td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule-soft); }
+  table.fits th { font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim); font-weight: 500; }
+  table.fits td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+  table.fits td.ref { font-weight: 600; }
+  .pill { font-family: var(--mono); font-size: .72rem; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .pill.fits { background: var(--gain-soft); color: var(--gain); }
+  .pill.wraps { background: var(--warn-soft); color: var(--warn); }
+  .pill.truncated { background: var(--loss-soft); color: var(--loss); }
+  .tablewrap { overflow-x: auto; }
+
+  footer.page { margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--rule); color: var(--ink-dim); font-size: .87rem; }
+  footer.page code, .mono { font-family: var(--mono); font-size: .92em; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+
+<header class="page">
+  <div class="eyebrow">Alkitab / Quick Bible &middot; toolbar reader</div>
+  <h1>Bengkel Toolbar Reader</h1>
+  <p class="lede">
+    Di layar 360&nbsp;dp, alamat ayat cuma kebagian 48&nbsp;dp dari toolbar selebar
+    360&nbsp;dp, dan tidak satu pun contoh alamat yang muat dalam satu baris. Semua angka
+    di halaman ini diukur dengan me-layout toolbar produksi di Robolectric. Bandingkan tiap
+    upaya penghematan ruang satu per satu, lalu nyalakan bersamaan dan lihat alamatnya
+    melebar.
+  </p>
+  <div class="verified" id="verifyBadge">
+    <span class="dot"></span>
+    <span id="verifyText">memeriksa model&hellip;</span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <h2>Tiap upaya, sebelum dan sesudah</h2>
+    <p>
+      Tiap bar digambar sesuai skala dari hasil pengukuran di 360&nbsp;dp, dengan alamat
+      bertuliskan &ldquo;Kejadian&nbsp;1&rdquo;. <b>REF</b> mendimensikan text box di dalam
+      tombol alamat, yang menentukan muat atau tidaknya nama kitab; kotak ini menjorok
+      menimpa chapter arrow di kedua sisi. <b>TAP</b> mendimensikan area yang benar-benar
+      menerima sentuhan, dan area-area itu menutup bar persis tanpa sisa.
+    </p>
+  </div>
+  <div class="legend" aria-hidden="true">
+    <span><i style="background:var(--c-ham)"></i>drawer</span>
+    <span><i style="background:var(--c-arrow)"></i>chapter arrow</span>
+    <span><i style="background:var(--c-ref)"></i>alamat ayat</span>
+    <span><i style="background:var(--c-ver)"></i>penukar versi</span>
+    <span><i style="background:var(--c-menu)"></i>action menu</span>
+    <span><i style="background:var(--loss)"></i>di bawah touch minimum 48&nbsp;dp</span>
+  </div>
+  <div class="efforts" id="efforts"></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>Playground</h2>
+    <p>
+      Nyalakan dan matikan tiap perubahan bersamaan. Bar digambar ulang dari layout model yang
+      sama, dan ringkasan di bawahnya melaporkan sisa ruang untuk alamat.
+    </p>
+  </div>
+
+  <div class="pg">
+    <div class="stage">
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:var(--c-ham)"></i>drawer</span>
+        <span><i style="background:var(--c-arrow)"></i>chapter arrow</span>
+        <span><i style="background:var(--c-ref)"></i>alamat ayat</span>
+        <span><i style="background:var(--c-ver)"></i>penukar versi</span>
+        <span><i style="background:var(--c-menu)"></i>action menu</span>
+        <span><i style="background:var(--loss)"></i>di bawah touch minimum 48&nbsp;dp</span>
+      </div>
+      <div class="figscroll" id="pgFig"></div>
+      <p class="hint" id="pgHint"></p>
+      <div class="stats" id="pgStats"></div>
+      <div class="tablewrap">
+        <table class="fits">
+          <thead>
+            <tr><th>Alamat</th><th style="text-align:right">Butuh</th><th style="text-align:right">Tersedia</th><th>Hasil</th></tr>
+          </thead>
+          <tbody id="pgFits"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="controls">
+      <fieldset>
+        <legend class="eyebrow">Redraw &mdash; tanpa menghapus kontrol</legend>
+        <label class="switch">
+          <input type="checkbox" id="optFlush">
+          <span class="txt"><b>Chevron rapat ke tepi luar</b>
+          <small>Chapter arrow adalah glyph 24&nbsp;dp di tengah kotak 48&nbsp;dp. Dorong tiap glyph ke paruh luar, lalu mulai alamat tepat di tempat glyph berakhir. Touch target tidak bergeser sama sekali.</small></span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="optNav">
+          <span class="txt"><b>Tombol drawer 48&nbsp;dp</b>
+          <small>AppCompat meng-hardcode minimum 56&nbsp;dp di sekeliling icon 24&nbsp;dp.</small></span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="optSearch">
+          <span class="txt"><b>Icon search 24&nbsp;dp</b>
+          <small><span class="mono">ic_menu_search</span> adalah asset 32&nbsp;dp, jadi item-nya 56&nbsp;dp sementara semua yang lain 48&nbsp;dp.</small></span>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend class="eyebrow">Penukar versi</legend>
+        <div class="radiorow" id="optVersion">
+          <label><input type="radio" name="vmode" value="fixed" checked> fixed 72&nbsp;dp</label>
+          <label><input type="radio" name="vmode" value="capped"> chip ber-cap</label>
+          <label><input type="radio" name="vmode" value="segmented"> segmented, speaker 48&nbsp;dp</label>
+          <label><input type="radio" name="vmode" value="segmentedCompact"> segmented, speaker 32&nbsp;dp</label>
+          <label><input type="radio" name="vmode" value="folded"> dilipat ke alamat</label>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="optAudio" checked>
+          <span class="txt"><b>Versi ini punya audio</b>
+          <small>Ketersediaan audio ditentukan per versi, jadi speaker hanya muncul untuk versi yang punya rekaman.</small></span>
+        </label>
+        <div>
+          <span class="eyebrow">Label versi</span>
+          <div class="radiorow" id="optLabel" style="margin-top:6px">
+            <label><input type="radio" name="vlabel" value="2" checked> TB</label>
+            <label><input type="radio" name="vlabel" value="6"> VERSNM</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="eyebrow">Teks alamat</legend>
+        <label class="switch">
+          <input type="checkbox" id="optAbbrev">
+          <span class="txt"><b>Pakai <span class="mono">Book.abbreviation</span></b>
+          <small>&ldquo;Kej&nbsp;1&rdquo; alih-alih &ldquo;Kejadian&nbsp;1&rdquo;. Tiap versi sudah membawa abbreviation-nya sendiri.</small></span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="optCondensed">
+          <span class="txt"><b>Font condensed</b>
+          <small>Tidak memakan lebar layout, dan menambah kira-kira satu alamat lagi yang muat satu baris.</small></span>
+        </label>
+        <div>
+          <span class="eyebrow">Ditampilkan di bar</span>
+          <select id="optRef" style="margin-top:6px"></select>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="eyebrow">Layar</legend>
+        <div class="radiorow" id="optWidth">
+          <label><input type="radio" name="w" value="320"> 320&nbsp;dp</label>
+          <label><input type="radio" name="w" value="360" checked> 360&nbsp;dp</label>
+          <label><input type="radio" name="w" value="411"> 411&nbsp;dp</label>
+          <label><input type="radio" name="w" value="600"> 600&nbsp;dp</label>
+        </div>
+        <p style="color:var(--ink-dim);font-size:.82rem;margin-top:4px">
+          Di bawah 360&nbsp;dp, resource bucket mengecilkan chapter arrow jadi 32&nbsp;dp, dan
+          itulah sebabnya tiga kontrol jatuh di bawah touch minimum 48&nbsp;dp di sana.
+        </p>
+      </fieldset>
+    </div>
+  </div>
+</section>
+
+<footer class="page">
+  <p>
+    Diukur oleh <code>ReaderToolbarSpaceAuditTest</code> di xxhdpi, di mana 1&nbsp;dp persis
+    3&nbsp;px: layout produksi <code>activity_isi_content.xml</code> di-inflate ke
+    <code>AppCompatActivity</code> sungguhan dengan konfigurasi action bar yang sama seperti
+    <code>IsiActivity</code>. Bar di halaman ini adalah simulasi yang digerakkan pengukuran
+    tersebut, dengan tiap label diskalakan agar lebarnya sama persis dengan yang diukur di app.
+    Putusan muat, dua baris, atau terpotong di tabel berasal dari pengukuran itu, bukan dari
+    font halaman ini.
+  </p>
+</footer>
+
+</div>
+
+<script>
+var DATA = {"constants":{"hamburgerDp":56,"hamburgerCompactDp":48,"audioItemDp":48,"searchItemDp":56,"searchItemNarrowDp":48,"versionFixedDp":72,"clusterCapDp":250,"flushMarginDp":24,"segmentDividerDp":1,"segmentSpeakerDp":48,"segmentSpeakerCompactDp":32,"minTouchDp":48},"buckets":[{"swDp":320,"arrowDp":32,"marginDp":24,"barHeightDp":56,"barPaddingDp":0},{"swDp":360,"arrowDp":48,"marginDp":40,"barHeightDp":56,"barPaddingDp":0},{"swDp":600,"arrowDp":48,"marginDp":40,"barHeightDp":64,"barPaddingDp":8}],"versionWidths":{"fixed":{"1":72,"2":72,"3":72,"4":72,"5":72,"6":72},"capped":{"1":48,"2":48,"3":48,"4":51.7,"5":55,"6":56},"segmented":{"1":97,"2":97,"3":97,"4":100.7,"5":104,"6":105},"segmentedCompact":{"1":81,"2":81,"3":81,"4":84.7,"5":88,"6":89},"segmentedNoAudio":{"1":48,"2":48,"3":48,"4":51.7,"5":55,"6":56},"folded":{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0}},"ripples":{"hamburger":true,"prev":true,"reference":true,"next":true,"version":false,"audio":true,"search":true},"strings":[{"text":"John 3","kind":"full","face":"normal","naturalDp":49,"noTruncateDp":27},{"text":"Genesis 1","kind":"full","face":"normal","naturalDp":71,"noTruncateDp":37.3},{"text":"Kejadian 1","kind":"full","face":"normal","naturalDp":75,"noTruncateDp":40.3},{"text":"Revelation 22","kind":"full","face":"normal","naturalDp":97.3,"noTruncateDp":49.3},{"text":"Kidung Agung 8","kind":"full","face":"normal","naturalDp":113.7,"noTruncateDp":59.7},{"text":"2 Chronicles 21","kind":"full","face":"normal","naturalDp":111.3,"noTruncateDp":56},{"text":"1 Thessalonians 5","kind":"full","face":"normal","naturalDp":130.7,"noTruncateDp":65.7},{"text":"Joh 3","kind":"abbreviated","face":"normal","naturalDp":40,"noTruncateDp":22},{"text":"Gen 1","kind":"abbreviated","face":"normal","naturalDp":41.7,"noTruncateDp":22},{"text":"Kej 1","kind":"abbreviated","face":"normal","naturalDp":35.7,"noTruncateDp":18.7},{"text":"Rev 22","kind":"abbreviated","face":"normal","naturalDp":48.7,"noTruncateDp":26.7},{"text":"Kid 8","kind":"abbreviated","face":"normal","naturalDp":36,"noTruncateDp":22},{"text":"2Ch 21","kind":"abbreviated","face":"normal","naturalDp":50.3,"noTruncateDp":28.3},{"text":"1Th 5","kind":"abbreviated","face":"normal","naturalDp":40.7,"noTruncateDp":22},{"text":"John 3 \u00b7 TB","kind":"merged","face":"normal","naturalDp":81.3,"noTruncateDp":41.3},{"text":"Genesis 1 \u00b7 TB","kind":"merged","face":"normal","naturalDp":103.3,"noTruncateDp":53.7},{"text":"Kejadian 1 \u00b7 TB","kind":"merged","face":"normal","naturalDp":107.3,"noTruncateDp":54.3},{"text":"Revelation 22 \u00b7 TB","kind":"merged","face":"normal","naturalDp":129.7,"noTruncateDp":66.3},{"text":"Kidung Agung 8 \u00b7 TB","kind":"merged","face":"normal","naturalDp":146,"noTruncateDp":73.7},{"text":"2 Chronicles 21 \u00b7 TB","kind":"merged","face":"normal","naturalDp":143.7,"noTruncateDp":72.3},{"text":"1 Thessalonians 5 \u00b7 TB","kind":"merged","face":"normal","naturalDp":163,"noTruncateDp":84.3},{"text":"Joh 3 \u00b7 TB","kind":"mergedAbbreviated","face":"normal","naturalDp":72.3,"noTruncateDp":40},{"text":"Gen 1 \u00b7 TB","kind":"mergedAbbreviated","face":"normal","naturalDp":74,"noTruncateDp":41.3},{"text":"Kej 1 \u00b7 TB","kind":"mergedAbbreviated","face":"normal","naturalDp":68,"noTruncateDp":35.7},{"text":"Rev 22 \u00b7 TB","kind":"mergedAbbreviated","face":"normal","naturalDp":81,"noTruncateDp":41.3},{"text":"Kid 8 \u00b7 TB","kind":"mergedAbbreviated","face":"normal","naturalDp":68.3,"noTruncateDp":36},{"text":"2Ch 21 \u00b7 TB","kind":"mergedAbbreviated","face":"normal","naturalDp":82.7,"noTruncateDp":41.3},{"text":"1Th 5 \u00b7 TB","kind":"mergedAbbreviated","face":"normal","naturalDp":73,"noTruncateDp":40.7},{"text":"John 3","kind":"full","face":"condensed","naturalDp":42.7,"noTruncateDp":23.3},{"text":"Genesis 1","kind":"full","face":"condensed","naturalDp":62.3,"noTruncateDp":32.3},{"text":"Kejadian 1","kind":"full","face":"condensed","naturalDp":66.3,"noTruncateDp":35.7},{"text":"Revelation 22","kind":"full","face":"condensed","naturalDp":85.7,"noTruncateDp":43.7},{"text":"Kidung Agung 8","kind":"full","face":"condensed","naturalDp":99.7,"noTruncateDp":52.3},{"text":"2 Chronicles 21","kind":"full","face":"condensed","naturalDp":98.3,"noTruncateDp":49.3},{"text":"1 Thessalonians 5","kind":"full","face":"condensed","naturalDp":115,"noTruncateDp":57.7},{"text":"Joh 3","kind":"abbreviated","face":"condensed","naturalDp":35,"noTruncateDp":19.3},{"text":"Gen 1","kind":"abbreviated","face":"condensed","naturalDp":36.3,"noTruncateDp":19.3},{"text":"Kej 1","kind":"abbreviated","face":"condensed","naturalDp":31.7,"noTruncateDp":16.3},{"text":"Rev 22","kind":"abbreviated","face":"condensed","naturalDp":42.7,"noTruncateDp":23},{"text":"Kid 8","kind":"abbreviated","face":"condensed","naturalDp":32,"noTruncateDp":19.7},{"text":"2Ch 21","kind":"abbreviated","face":"condensed","naturalDp":44.3,"noTruncateDp":24.7},{"text":"1Th 5","kind":"abbreviated","face":"condensed","naturalDp":35.7,"noTruncateDp":19.3},{"text":"John 3 \u00b7 TB","kind":"merged","face":"condensed","naturalDp":71,"noTruncateDp":36.3},{"text":"Genesis 1 \u00b7 TB","kind":"merged","face":"condensed","naturalDp":90.7,"noTruncateDp":47.3},{"text":"Kejadian 1 \u00b7 TB","kind":"merged","face":"condensed","naturalDp":94.7,"noTruncateDp":47.7},{"text":"Revelation 22 \u00b7 TB","kind":"merged","face":"condensed","naturalDp":114,"noTruncateDp":58.3},{"text":"Kidung Agung 8 \u00b7 TB","kind":"merged","face":"condensed","naturalDp":128,"noTruncateDp":64.7},{"text":"2 Chronicles 21 \u00b7 TB","kind":"merged","face":"condensed","naturalDp":126.7,"noTruncateDp":63.7},{"text":"1 Thessalonians 5 \u00b7 TB","kind":"merged","face":"condensed","naturalDp":143.3,"noTruncateDp":74},{"text":"Joh 3 \u00b7 TB","kind":"mergedAbbreviated","face":"condensed","naturalDp":63.3,"noTruncateDp":35},{"text":"Gen 1 \u00b7 TB","kind":"mergedAbbreviated","face":"condensed","naturalDp":64.7,"noTruncateDp":36.3},{"text":"Kej 1 \u00b7 TB","kind":"mergedAbbreviated","face":"condensed","naturalDp":60,"noTruncateDp":31.7},{"text":"Rev 22 \u00b7 TB","kind":"mergedAbbreviated","face":"condensed","naturalDp":71,"noTruncateDp":36.3},{"text":"Kid 8 \u00b7 TB","kind":"mergedAbbreviated","face":"condensed","naturalDp":60.3,"noTruncateDp":32},{"text":"2Ch 21 \u00b7 TB","kind":"mergedAbbreviated","face":"condensed","naturalDp":72.7,"noTruncateDp":36.3},{"text":"1Th 5 \u00b7 TB","kind":"mergedAbbreviated","face":"condensed","naturalDp":64,"noTruncateDp":35.7}],"checkpoints":[{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":40,"referenceTapDp":24,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":88,"referenceTapDp":72,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":64,"referenceTapDp":48,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":56,"referenceTapDp":40,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":63,"referenceTapDp":47,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":55,"referenceTapDp":39,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":160,"referenceTapDp":144,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":48,"referenceTapDp":32,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":96,"referenceTapDp":80,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":64,"referenceTapDp":48,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":63,"referenceTapDp":47,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":168,"referenceTapDp":152,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":48,"referenceTapDp":32,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":96,"referenceTapDp":80,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":64,"referenceTapDp":48,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":63,"referenceTapDp":47,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":168,"referenceTapDp":152,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":56,"referenceTapDp":40,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":80,"referenceTapDp":64,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":95,"referenceTapDp":79,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":32},{"widthDp":320,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":176,"referenceTapDp":160,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":40,"referenceTapDp":24,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":88,"referenceTapDp":72,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":64,"referenceTapDp":48,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":56,"referenceTapDp":40,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":63,"referenceTapDp":47,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":55,"referenceTapDp":39,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":160,"referenceTapDp":144,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":48,"referenceTapDp":32,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":96,"referenceTapDp":80,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":64,"referenceTapDp":48,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":63,"referenceTapDp":47,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":168,"referenceTapDp":152,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":48,"referenceTapDp":32,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":96,"referenceTapDp":80,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":64,"referenceTapDp":48,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":63,"referenceTapDp":47,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":168,"referenceTapDp":152,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":56,"referenceTapDp":40,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":80,"referenceTapDp":64,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":95,"referenceTapDp":79,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":32},{"widthDp":320,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":176,"referenceTapDp":160,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":48,"referenceTapDp":32,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":96,"referenceTapDp":80,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":64,"referenceTapDp":48,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":63,"referenceTapDp":47,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":168,"referenceTapDp":152,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":56,"referenceTapDp":40,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":80,"referenceTapDp":64,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":95,"referenceTapDp":79,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":56,"referenceTapDp":40,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":104,"referenceTapDp":88,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":80,"referenceTapDp":64,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":72,"referenceTapDp":56,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":71,"referenceTapDp":55,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":95,"referenceTapDp":79,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":120,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":64,"referenceTapDp":48,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":112,"referenceTapDp":96,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":88,"referenceTapDp":72,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":80,"referenceTapDp":64,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":136,"referenceTapDp":120,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":87,"referenceTapDp":71,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":79,"referenceTapDp":63,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":136,"referenceTapDp":120,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":103,"referenceTapDp":87,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":95,"referenceTapDp":79,"minOtherTapDp":32},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":136,"referenceTapDp":120,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":128,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":136,"referenceTapDp":120,"minOtherTapDp":48},{"widthDp":360,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":80,"referenceTapDp":32,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":128,"referenceTapDp":80,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":104,"referenceTapDp":56,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":96,"referenceTapDp":48,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":144,"referenceTapDp":96,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":103,"referenceTapDp":55,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":95,"referenceTapDp":47,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":144,"referenceTapDp":96,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":119,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":111,"referenceTapDp":63,"minOtherTapDp":32},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":144,"referenceTapDp":96,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":200,"referenceTapDp":152,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":88,"referenceTapDp":40,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":136,"referenceTapDp":88,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":112,"referenceTapDp":64,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":104,"referenceTapDp":56,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":111,"referenceTapDp":63,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":103,"referenceTapDp":55,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":127,"referenceTapDp":79,"minOtherTapDp":32},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":119,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":88,"referenceTapDp":40,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":136,"referenceTapDp":88,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":112,"referenceTapDp":64,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":104,"referenceTapDp":56,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":111,"referenceTapDp":63,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":103,"referenceTapDp":55,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":127,"referenceTapDp":79,"minOtherTapDp":32},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":119,"referenceTapDp":71,"minOtherTapDp":32},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":152,"referenceTapDp":104,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":96,"referenceTapDp":48,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":144,"referenceTapDp":96,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":120,"referenceTapDp":72,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":112,"referenceTapDp":64,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":168,"referenceTapDp":120,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":119,"referenceTapDp":71,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":111,"referenceTapDp":63,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":168,"referenceTapDp":120,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":135,"referenceTapDp":87,"minOtherTapDp":32},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":127,"referenceTapDp":79,"minOtherTapDp":32},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":168,"referenceTapDp":120,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":160,"referenceTapDp":112,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":168,"referenceTapDp":120,"minOtherTapDp":48},{"widthDp":360,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":99,"referenceTapDp":83,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":147,"referenceTapDp":131,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":123,"referenceTapDp":107,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":115,"referenceTapDp":99,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":163,"referenceTapDp":147,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":122,"referenceTapDp":106,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":114,"referenceTapDp":98,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":163,"referenceTapDp":147,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":138,"referenceTapDp":122,"minOtherTapDp":32},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":130,"referenceTapDp":114,"minOtherTapDp":32},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":163,"referenceTapDp":147,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":107,"referenceTapDp":91,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":155,"referenceTapDp":139,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":131,"referenceTapDp":115,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":123,"referenceTapDp":107,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":130,"referenceTapDp":114,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":122,"referenceTapDp":106,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":146,"referenceTapDp":130,"minOtherTapDp":32},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":138,"referenceTapDp":122,"minOtherTapDp":32},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":107,"referenceTapDp":91,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":155,"referenceTapDp":139,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":131,"referenceTapDp":115,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":123,"referenceTapDp":107,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":130,"referenceTapDp":114,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":122,"referenceTapDp":106,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":146,"referenceTapDp":130,"minOtherTapDp":32},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":138,"referenceTapDp":122,"minOtherTapDp":32},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":115,"referenceTapDp":99,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":163,"referenceTapDp":147,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":139,"referenceTapDp":123,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":131,"referenceTapDp":115,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":138,"referenceTapDp":122,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":130,"referenceTapDp":114,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":154,"referenceTapDp":138,"minOtherTapDp":32},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":146,"referenceTapDp":130,"minOtherTapDp":32},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":131,"referenceTapDp":83,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":179,"referenceTapDp":131,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":155,"referenceTapDp":107,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":147,"referenceTapDp":99,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":195,"referenceTapDp":147,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":154,"referenceTapDp":106,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":146,"referenceTapDp":98,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":195,"referenceTapDp":147,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":122,"minOtherTapDp":32},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":162,"referenceTapDp":114,"minOtherTapDp":32},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":195,"referenceTapDp":147,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":139,"referenceTapDp":91,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":187,"referenceTapDp":139,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":163,"referenceTapDp":115,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":155,"referenceTapDp":107,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":162,"referenceTapDp":114,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":154,"referenceTapDp":106,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":178,"referenceTapDp":130,"minOtherTapDp":32},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":122,"minOtherTapDp":32},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":139,"referenceTapDp":91,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":187,"referenceTapDp":139,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":163,"referenceTapDp":115,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":155,"referenceTapDp":107,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":162,"referenceTapDp":114,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":154,"referenceTapDp":106,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":178,"referenceTapDp":130,"minOtherTapDp":32},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":122,"minOtherTapDp":32},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":147,"referenceTapDp":99,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":195,"referenceTapDp":147,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":171,"referenceTapDp":123,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":163,"referenceTapDp":115,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":122,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":162,"referenceTapDp":114,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":186,"referenceTapDp":138,"minOtherTapDp":32},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":178,"referenceTapDp":130,"minOtherTapDp":32},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":411,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":false,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":170,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":false,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":false,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"fixed","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"capped","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmented","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":true,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":32},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"segmentedCompact","audioAvailable":false,"label":"VERSNM","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":true,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48},{"widthDp":600,"flush":true,"compactNav":true,"narrowSearch":true,"versionMode":"folded","audioAvailable":false,"label":"TB","referenceBoxDp":202,"referenceTapDp":154,"minOtherTapDp":48}]};
+(function () {
+  "use strict";
+
+  var C = DATA.constants;
+  var BUCKETS = DATA.buckets.slice().sort(function (a, b) { return b.swDp - a.swDp; });
+  var V = DATA.versionWidths;
+
+  function bucketFor(w) {
+    for (var i = 0; i < BUCKETS.length; i++) if (w >= BUCKETS[i].swDp) return BUCKETS[i];
+    return BUCKETS[BUCKETS.length - 1];
+  }
+
+  // --- the layout model, checked against DATA.checkpoints at load -----------
+
+  function layout(w, o) {
+    var b = bucketFor(w);
+    var pad = b.barPaddingDp;
+    var ham = o.compactNav ? C.hamburgerCompactDp : C.hamburgerDp;
+    var search = o.narrowSearch ? C.searchItemNarrowDp : C.searchItemDp;
+    var segmented = o.versionMode.indexOf("segmented") === 0;
+    var speaker = o.versionMode === "segmentedCompact" ? C.segmentSpeakerCompactDp : C.segmentSpeakerDp;
+    var audioInMenu = o.audioAvailable && !segmented;
+    var vkey = segmented ? (o.audioAvailable ? o.versionMode : "segmentedNoAudio") : o.versionMode;
+    var version = V[vkey][String(o.labelLen)];
+    var showsSegments = segmented && o.audioAvailable;
+    var segLabel = showsSegments ? version - C.segmentDividerDp - speaker : version;
+
+    var searchLeft = w - pad - search;
+    var audioLeft = searchLeft - C.audioItemDp;
+    var versionLeft = (audioInMenu ? audioLeft : searchLeft) - version;
+    var clusterStart = pad + ham;
+    var cluster = Math.min(versionLeft - clusterStart, C.clusterCapDp);
+    var gap = Math.max(0, (versionLeft - clusterStart) - cluster);
+
+    var margin = o.flush ? C.flushMarginDp : b.marginDp;
+    var box = Math.max(0, cluster - 2 * margin);
+    var tap = Math.max(0, cluster - 2 * b.arrowDp);
+
+    var taps = [ham, b.arrowDp, search];
+    if (audioInMenu) taps.push(C.audioItemDp);
+    if (o.versionMode !== "folded") {
+      if (showsSegments) taps.push(segLabel, speaker);
+      else taps.push(version);
+    }
+
+    return {
+      w: w, pad: pad, barH: b.barHeightDp, arrow: b.arrowDp, margin: margin,
+      ham: ham, search: search, version: version, versionLeft: versionLeft,
+      audioInMenu: audioInMenu, audioLeft: audioLeft, searchLeft: searchLeft,
+      segmented: segmented, showsSegments: showsSegments, speaker: speaker, segLabel: segLabel,
+      clusterStart: clusterStart, cluster: cluster, gap: gap,
+      boxLeft: clusterStart + margin, box: box, tap: tap,
+      tapLeft: clusterStart + b.arrowDp,
+      minOtherTap: Math.min.apply(null, taps)
+    };
+  }
+
+  function near(a, b) { return Math.abs(a - b) < 0.55; }
+
+  function verify() {
+    var bad = 0;
+    DATA.checkpoints.forEach(function (c) {
+      var r = layout(c.widthDp, {
+        flush: c.flush, compactNav: c.compactNav, narrowSearch: c.narrowSearch,
+        versionMode: c.versionMode, audioAvailable: c.audioAvailable,
+        labelLen: c.label.length
+      });
+      if (!near(r.box, c.referenceBoxDp) || !near(r.tap, c.referenceTapDp) ||
+          !near(r.minOtherTap, c.minOtherTapDp)) bad++;
+    });
+    return bad;
+  }
+
+  // --- text metrics ---------------------------------------------------------
+
+  var METRICS = {};
+  DATA.strings.forEach(function (m) { METRICS[m.kind + "|" + m.face + "|" + m.text] = m; });
+
+  function kindFor(o) {
+    if (o.versionMode === "folded") return o.abbrev ? "mergedAbbreviated" : "merged";
+    return o.abbrev ? "abbreviated" : "full";
+  }
+  function stringsFor(o) {
+    var kind = kindFor(o), face = o.condensed ? "condensed" : "normal";
+    return DATA.strings.filter(function (m) { return m.kind === kind && m.face === face; });
+  }
+  function verdict(m, box) {
+    if (m.naturalDp <= box) return "fits";
+    if (m.noTruncateDp <= box) return "wraps";
+    return "truncated";
+  }
+
+  var ctx = document.createElement("canvas").getContext("2d");
+  function cw(text) { ctx.font = "600 16px " + FAMILY; return ctx.measureText(text).width; }
+  var FAMILY = "system-ui, sans-serif";
+
+  /** GotoButton.balanceWrap, used only to choose where the label breaks. */
+  function balanceWrap(text, availDp, scale) {
+    var m = function (a, b) { return cw(text.slice(a, b)) * scale; };
+    var n = text.length;
+    if (n === 0 || m(0, n) <= availDp) return [text];
+    var best = -1, bestMax = Infinity, found = false;
+    for (var i = 1; i < n; i++) {
+      var e1 = i; while (e1 > 0 && text.charAt(e1 - 1) === " ") e1--;
+      var s2 = i; while (s2 < n && text.charAt(s2) === " ") s2++;
+      if (e1 === 0 || s2 === n) continue;
+      var w1 = m(0, e1), w2 = m(s2, n), mx = Math.max(w1, w2);
+      var fits = w1 <= availDp && w2 <= availDp;
+      if (fits && !found) { found = true; bestMax = mx; best = i; }
+      else if (fits === found && mx < bestMax) { bestMax = mx; best = i; }
+    }
+    if (best < 0) return [text];
+    var a1 = best; while (a1 > 0 && text.charAt(a1 - 1) === " ") a1--;
+    var b1 = best; while (b1 < n && text.charAt(b1) === " ") b1++;
+    return [text.slice(0, a1), text.slice(b1)];
+  }
+
+  // --- SVG drawing ----------------------------------------------------------
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function fmt(n) { return Math.abs(Math.round(n * 10) % 10) < 0.001 ? String(Math.round(n)) : n.toFixed(1); }
+
+  var ICONS = {
+    menu: '<path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>',
+    left: '<path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+    right: '<path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+    audio: '<path d="M4 9.5h3.2L12 5.2v13.6L7.2 14.5H4z" fill="currentColor"/>' +
+           '<path d="M16 9.2a4.2 4.2 0 010 5.6M18.6 6.8a7.6 7.6 0 010 10.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>',
+    search: '<circle cx="10.6" cy="10.6" r="6.1" stroke="currentColor" stroke-width="2" fill="none"/>' +
+            '<path d="M15.2 15.2L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>'
+  };
+
+  function icon(name, cx, cy) {
+    return '<g transform="translate(' + (cx - 12) + ',' + (cy - 12) + ')" class="bar-ink">' + ICONS[name] + "</g>";
+  }
+
+  var GUTTER = 28; // dp of drawing left of the bar, for the row labels
+  var UID = 0;
+
+  /** Every rectangle that receives a touch, left to right. */
+  function touchTargets(r, o) {
+    var t = [];
+    t.push({ key: "hamburger", label: "drawer", x: r.pad, w: r.ham });
+    t.push({ key: "prev", label: "chapter arrow", x: r.clusterStart, w: r.arrow });
+    t.push({ key: "reference", label: "alamat", x: r.tapLeft, w: r.tap });
+    t.push({ key: "next", label: "chapter arrow", x: r.clusterStart + r.cluster - r.arrow, w: r.arrow });
+    if (o.versionMode !== "folded") {
+      t.push({ key: "version", label: "penukar versi", x: r.versionLeft, w: r.segLabel });
+      if (r.showsSegments) {
+        t.push({
+          key: "audio", label: "speaker",
+          x: r.versionLeft + r.segLabel + C.segmentDividerDp, w: r.speaker
+        });
+      }
+    }
+    if (r.audioInMenu) t.push({ key: "audio", label: "audio", x: r.audioLeft, w: C.audioItemDp });
+    t.push({ key: "search", label: "search", x: r.searchLeft, w: r.search });
+    t.forEach(function (x) { x.h = r.barH; });
+    return t;
+  }
+
+  /**
+   * Whether the control shows touch feedback. Measured for the layout as it
+   * ships; the proposed version controls are drawn with one because a chip
+   * would carry a selectable background rather than the spinner nine-patch.
+   */
+  function hasRipple(target, o) {
+    if (target.key === "version") return o.versionMode !== "fixed";
+    return DATA.ripples[target.key] !== false;
+  }
+
+  var LABEL_SIZE = 7.2;  var LABEL_SIZE = 7.2;
+  var CHAR_W = 4.35; // mono advance at LABEL_SIZE, for fit decisions only
+
+  /** An architect's dimension line: end ticks, outward arrowheads, label in the break. */
+  function dim(x1, x2, y, label, cls, flag) {
+    var span = x2 - x1;
+    if (span <= 0.2) return "";
+    var g = '<g class="' + cls + (flag ? " flagged" : "") + '">';
+    g += '<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '" class="dimline"/>';
+    g += '<line x1="' + x1 + '" y1="' + (y - 3.2) + '" x2="' + x1 + '" y2="' + (y + 3.2) + '" class="dimline"/>';
+    g += '<line x1="' + x2 + '" y1="' + (y - 3.2) + '" x2="' + x2 + '" y2="' + (y + 3.2) + '" class="dimline"/>';
+    if (span > 13) {
+      g += '<path d="M' + x1 + ' ' + y + 'l4 -1.9v3.8z" class="dimfill"/>';
+      g += '<path d="M' + x2 + ' ' + y + 'l-4 -1.9v3.8z" class="dimfill"/>';
+    }
+    var textW = label.length * CHAR_W;
+    var cx = (x1 + x2) / 2;
+    if (textW + 7 <= span) {
+      g += '<rect x="' + (cx - textW / 2 - 2.4) + '" y="' + (y - 4.4) + '" width="' + (textW + 4.8) +
+           '" height="8.8" class="dimmask"/>';
+      g += '<text x="' + cx + '" y="' + (y + 2.6) + '" class="dimtext" text-anchor="middle">' + esc(label) + "</text>";
+    } else {
+      g += '<text x="' + cx + '" y="' + (y - 5.2) + '" class="dimtext" text-anchor="middle">' + esc(label) + "</text>";
+    }
+    return g + "</g>";
+  }
+
+  function witness(xs, yTop, yBottom) {
+    var s = '<g class="witness">';
+    xs.forEach(function (x) {
+      s += '<line x1="' + x + '" y1="' + yTop + '" x2="' + x + '" y2="' + yBottom + '"/>';
+    });
+    return s + "</g>";
+  }
+
+  function grid(w, h, pad) {
+    var s = '<g class="grid">';
+    for (var x = 0; x <= w; x += 8) {
+      s += '<line x1="' + x + '" y1="0" x2="' + x + '" y2="' + h + '" class="' + (x % 48 === 0 ? "major" : "minor") + '"/>';
+    }
+    return s + "</g>";
+  }
+
+  /**
+   * One toolbar drawn to scale with its dimension chains underneath.
+   * mode "compact" draws the box chain only; "full" adds touch areas,
+   * the nav cluster, any unclaimed width, and the whole bar.
+   */
+  function figure(w, o, refText, mode, emphasis) {
+    var r = layout(w, o);
+    var full = mode === "full";
+    // The reference's text box overhangs the chapter arrows, so it gets a row of
+    // its own; the touch areas below it tile the bar exactly.
+    var yBox = r.barH + 17;
+    var yTap = r.barH + 38;
+    var yCluster = r.barH + 58;
+    var yTotal = r.barH + 76;
+    var H = full ? r.barH + 88 : r.barH + 50;
+
+    var s = "";
+
+    // the bar
+    s += '<rect x="0" y="0" width="' + w + '" height="' + r.barH + '" class="barbg"/>';
+    s += '<g clip-path="none">' + grid(w, r.barH) + "</g>";
+
+    // drawer
+    s += icon("menu", r.pad + r.ham / 2, r.barH / 2);
+
+    // unclaimed width, hatched
+    if (r.gap > 0.5) {
+      s += '<rect x="' + (r.clusterStart + r.cluster) + '" y="0" width="' + r.gap + '" height="' + r.barH + '" class="gapfill"/>';
+    }
+
+    // chapter chevrons: centred, or pushed into the outer strip
+    var lcx = o.flush ? r.clusterStart + C.flushMarginDp / 2 : r.clusterStart + r.arrow / 2;
+    var rcx = o.flush ? r.clusterStart + r.cluster - C.flushMarginDp / 2 : r.clusterStart + r.cluster - r.arrow / 2;
+    s += icon("left", lcx, r.barH / 2);
+    s += icon("right", rcx, r.barH / 2);
+
+    // the reference
+    var kind = kindFor(o), face = o.condensed ? "condensed" : "normal";
+    var m = METRICS[kind + "|" + face + "|" + refText];
+    if (m) {
+      var scale = m.naturalDp / cw(refText);
+      var v = verdict(m, r.box);
+      var lines;
+      if (v === "fits") lines = [refText];
+      else if (v === "wraps") lines = balanceWrap(refText, r.box, scale);
+      else {
+        var t = refText, guard = 0;
+        while (t.length > 1 && cw(t + "…") * scale > r.box && guard++ < 60) t = t.slice(0, -1);
+        lines = [t + "…"];
+      }
+      var cx = r.boxLeft + r.box / 2;
+      var lh = 18;
+      var y0 = r.barH / 2 - (lines.length - 1) * lh / 2 + 5.6;
+      lines.forEach(function (line, i) {
+        var tl = Math.min(cw(line) * scale, r.box);
+        s += '<text x="' + cx + '" y="' + (y0 + i * lh) + '" class="reftext" text-anchor="middle"' +
+             ' textLength="' + tl + '" lengthAdjust="spacingAndGlyphs">' + esc(line) + "</text>";
+      });
+    }
+
+    // the version control
+    if (o.versionMode !== "folded") {
+      var label = o.labelLen === 6 ? "VERSNM" : "TB";
+      var vcx = r.versionLeft + r.version / 2;
+      if (o.versionMode === "fixed") {
+        s += '<text x="' + (vcx - 5) + '" y="' + (r.barH / 2 + 5) + '" class="vtext" text-anchor="middle">' + label + "</text>";
+        s += '<path d="M' + (vcx + 12) + ' ' + (r.barH / 2 - 2.5) + 'l10 0-5 6z" class="bar-ink-fill"/>';
+      } else {
+        s += '<rect x="' + r.versionLeft + '" y="12" width="' + r.version + '" height="' + (r.barH - 24) +
+             '" rx="' + ((r.barH - 24) / 2) + '" class="stadium"/>';
+        var labelW = r.segLabel;
+        s += '<text x="' + (r.versionLeft + labelW / 2) + '" y="' + (r.barH / 2 + 5) + '" class="vtext" text-anchor="middle">' + label + "</text>";
+        if (r.showsSegments) {
+          s += '<line x1="' + (r.versionLeft + labelW) + '" y1="18" x2="' + (r.versionLeft + labelW) +
+               '" y2="' + (r.barH - 18) + '" class="segdiv"/>';
+          s += icon("audio", r.versionLeft + labelW + C.segmentDividerDp + r.speaker / 2, r.barH / 2);
+        }
+      }
+    }
+
+    if (r.audioInMenu) s += icon("audio", r.audioLeft + C.audioItemDp / 2, r.barH / 2);
+    s += icon("search", r.searchLeft + r.search / 2, r.barH / 2);
+
+    // Touch targets, for the press layer. Only the playground is interactive.
+    var targets = touchTargets(r, o);
+    if (full) {
+      var defs = "<defs>";
+      var hits = '<g class="hits">';
+      targets.forEach(function (t, i) {
+        var id = "clip" + (++UID);
+        t.clipId = id;
+        defs += '<clipPath id="' + id + '"><rect x="' + t.x + '" y="0" width="' + t.w +
+                '" height="' + r.barH + '"/></clipPath>';
+        hits += '<rect class="hit" x="' + t.x + '" y="0" width="' + t.w + '" height="' + r.barH +
+                '" data-i="' + i + '"/>';
+      });
+      s += defs + "</defs>" + hits + "</g>" + '<g class="presslayer"></g>';
+    }
+
+    // --- dimensions ---
+    var bounds = [r.pad, r.pad + r.ham, r.clusterStart + r.arrow, r.clusterStart + r.cluster - r.arrow,
+                  r.clusterStart + r.cluster, r.boxLeft, r.boxLeft + r.box, r.versionLeft,
+                  r.versionLeft + r.version, r.searchLeft, w - r.pad];
+    if (r.audioInMenu) bounds.push(r.audioLeft);
+    if (r.showsSegments) bounds.push(r.versionLeft + r.segLabel);
+    bounds = bounds.filter(function (v, i, a) { return v >= 0 && v <= w && a.indexOf(v) === i; });
+    s += witness(bounds, r.barH, (full ? yTotal : yTap) + 4);
+
+    // Row 1: the reference's text box, which overhangs the arrows on both sides.
+    s += dim(r.boxLeft, r.boxLeft + r.box, yBox, fmt(r.box) + " text box", "e-ref" + (emphasis ? " emph" : ""));
+    s += '<text x="-5" y="' + (yBox + 2.6) + '" class="rowlabel" text-anchor="end">REF</text>';
+
+    // Row 2: the touch areas, which tile the bar exactly.
+    s += dim(r.pad, r.pad + r.ham, yTap, fmt(r.ham), "e-ham", r.ham < C.minTouchDp);
+    s += dim(r.clusterStart, r.clusterStart + r.arrow, yTap, fmt(r.arrow), "e-arrow", r.arrow < C.minTouchDp);
+    s += dim(r.tapLeft, r.tapLeft + r.tap, yTap, fmt(r.tap), "e-ref", r.tap < C.minTouchDp);
+    s += dim(r.clusterStart + r.cluster - r.arrow, r.clusterStart + r.cluster, yTap, fmt(r.arrow), "e-arrow", r.arrow < C.minTouchDp);
+    if (o.versionMode !== "folded") {
+      if (r.showsSegments) {
+        s += dim(r.versionLeft, r.versionLeft + r.segLabel, yTap, fmt(r.segLabel), "e-ver", r.segLabel < C.minTouchDp);
+        s += dim(r.versionLeft + r.segLabel + C.segmentDividerDp, r.versionLeft + r.version, yTap,
+                 fmt(r.speaker), "e-menu", r.speaker < C.minTouchDp);
+      } else {
+        s += dim(r.versionLeft, r.versionLeft + r.version, yTap, fmt(r.version), "e-ver", r.version < C.minTouchDp);
+      }
+    }
+    if (r.audioInMenu) s += dim(r.audioLeft, r.audioLeft + C.audioItemDp, yTap, fmt(C.audioItemDp), "e-menu");
+    s += dim(r.searchLeft, r.searchLeft + r.search, yTap, fmt(r.search), "e-menu");
+    s += '<text x="-5" y="' + (yTap + 2.6) + '" class="rowlabel" text-anchor="end">TAP</text>';
+
+    if (full) {
+      s += dim(r.clusterStart, r.clusterStart + r.cluster, yCluster, "nav cluster " + fmt(r.cluster), "e-neutral");
+      if (r.gap > 0.5) s += dim(r.clusterStart + r.cluster, r.versionLeft, yCluster, fmt(r.gap) + " tak terpakai", "e-alert");
+      s += dim(0, w, yTotal, w + " dp", "e-total");
+    }
+
+    var aria = "Toolbar di " + w + " dp. Text box alamat " + fmt(r.box) +
+      " dp, area sentuh alamat " + fmt(r.tap) + " dp, area sentuh terkecil lainnya " +
+      fmt(r.minOtherTap) + " dp.";
+
+    return {
+      r: r,
+      targets: targets,
+      // The viewBox reaches left of the bar so the row labels have somewhere to sit.
+      svg: '<svg viewBox="' + -GUTTER + " 0 " + (w + GUTTER) + " " + H + '" class="fig" style="min-width:' +
+           ((w + GUTTER) * 2) + 'px" role="img" aria-label="' + esc(aria) + '">' + s + "</svg>"
+    };
+  }
+
+  // --- before/after section -------------------------------------------------
+
+  var BASE = {
+    flush: false, compactNav: false, narrowSearch: false,
+    versionMode: "fixed", audioAvailable: true, labelLen: 2,
+    abbrev: false, condensed: false
+  };
+  function withOpts(over) {
+    var o = {}; for (var k in BASE) o[k] = BASE[k];
+    for (var j in over) o[j] = over[j];
+    return o;
+  }
+
+  var EFFORTS = [
+    {
+      title: "Chevron rapat ke tepi luar",
+      why: "Chapter arrow adalah glyph 24\u00a0dp yang ditaruh di tengah kotak 48\u00a0dp, dan alamat dijauhkan dari seluruh kotak itu. Gambar tiap glyph di 24\u00a0dp terluar, lalu mulai alamat tepat di tempat glyph berakhir. Rectangle arrow tidak bergeser, jadi baris TAP di bawah identik sebelum dan sesudah: hanya baris REF yang melebar.",
+      after: { flush: true }
+    },
+    {
+      title: "Tombol drawer 48\u00a0dp",
+      why: "Lebarnya berasal dari minWidth 56\u00a0dp yang di-hardcode di style navigation button AppCompat, bukan dari icon 24\u00a0dp-nya dan bukan dari tinggi bar. Di 48\u00a0dp ia tetap memenuhi touch minimum dan seragam dengan kontrol lain.",
+      after: { compactNav: true }
+    },
+    {
+      title: "Icon search 24\u00a0dp",
+      why: "Lebar sebuah action item adalah max(48\u00a0dp, icon\u00a0+\u00a024\u00a0dp). Icon audio berupa vector 24\u00a0dp sehingga jatuh pas di 48\u00a0dp; asset search berupa PNG 32\u00a0dp warisan icon set pra-Material, jadi hanya dia yang 56\u00a0dp.",
+      after: { narrowSearch: true }
+    },
+    {
+      title: "Penukar versi jadi chip ber-cap",
+      why: "Kotaknya tetap 72\u00a0dp apa pun isinya, dan kurang 1\u00a0dp untuk abbreviation enam karakter sehingga teksnya turun ke baris kedua. Stadium dengan padding samping 8\u00a0dp, lantai 48\u00a0dp, dan cap 56\u00a0dp lebih hemat baik di kasus umum maupun kasus terburuk.",
+      after: { versionMode: "capped" }
+    },
+    {
+      title: "Versi dan speaker jadi satu segmented",
+      why: "Ketersediaan audio ditentukan per versi, jadi speaker memang milik versi yang namanya tertulis di label. Dengan speaker 48\u00a0dp, secara ruang ini impas melawan chip ber-cap: dua touch target bersebelahan tidak bisa masing-masing di bawah 48\u00a0dp, jadi 96\u00a0dp plus satu hairline adalah lantainya.",
+      before: { versionMode: "capped" },
+      after: { versionMode: "segmented" }
+    },
+    {
+      title: "Segmen speaker dipersempit ke 32\u00a0dp",
+      why: "Kompromi yang disengaja, dan satu-satunya di halaman ini. Speaker adalah kontrol sekunder yang tidak merusak apa pun, dan ia duduk di dalam stadium yang memang sedang dibidik pengguna. Melepas 16\u00a0dp di situ mengembalikan ruang itu ke alamat, dan itulah yang akhirnya membuat segmented mengungguli chip ber-cap.",
+      before: { versionMode: "segmented" },
+      after: { versionMode: "segmentedCompact" }
+    },
+    {
+      title: "Versi dilipat ke dalam alamat",
+      why: "Gambar initials di dalam alamat sebagai chip, lalu hit-test terpisah. Seluruh kotak versi 72\u00a0dp kembali ke cluster; chip-nya memakan kira-kira 28\u00a0dp dari situ, dan angka di bawah sudah memperhitungkannya.",
+      after: { versionMode: "folded" }
+    },
+    {
+      title: "Empat redraw sekaligus",
+      why: "Chevron rapat, drawer 48\u00a0dp, icon search 24\u00a0dp, dan chip ber-cap untuk penukar versi. Tidak ada kontrol yang dihapus, tidak ada teks yang dipendekkan, dan semua kontrol di bar berakhir di 48\u00a0dp \u2014 yang hari ini belum terjadi.",
+      after: { flush: true, compactNav: true, narrowSearch: true, versionMode: "capped" }
+    },
+    {
+      title: "Paket lengkap: empat redraw + segmented speaker 32\u00a0dp",
+      why: "Semuanya digabung: keempat redraw dengan penukar versi segmented dan segmen speaker 32\u00a0dp. Inilah ruang terluas yang bisa didapat alamat tanpa menghapus satu kontrol pun, tanpa memendekkan nama kitab, dan tanpa mengecilkan ukuran huruf. Harganya satu: segmen speaker 32\u00a0dp.",
+      after: { flush: true, compactNav: true, narrowSearch: true, versionMode: "segmentedCompact" }
+    }
+  ];
+
+  function node(html) {
+    var t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+
+  function buildEfforts() {
+    var host = document.getElementById("efforts");
+    EFFORTS.forEach(function (e) {
+      var bo = withOpts(e.before || {});
+      var ao = withOpts(e.after);
+      var fb = figure(360, bo, bo.versionMode === "folded" ? "Kejadian 1 · TB" : "Kejadian 1", "compact", false);
+      var fa = figure(360, ao, ao.versionMode === "folded" ? "Kejadian 1 · TB" : "Kejadian 1", "compact", true);
+      var d = fa.r.box - fb.r.box;
+      var cls = d > 0.5 ? "up" : d < -0.5 ? "down" : "flat";
+
+      var card = node('<article class="effort"></article>');
+      card.appendChild(node(
+        '<header><h3>' + esc(e.title) + '</h3>' +
+        '<span class="delta ' + cls + '">' + (d > 0.5 ? "+" : "") + fmt(d) + " dp untuk alamat</span></header>"
+      ));
+      card.appendChild(node('<p class="why">' + esc(e.why) + "</p>"));
+
+      [["Sebelum", fb], ["Sesudah", fa]].forEach(function (pair) {
+        card.appendChild(node(
+          '<div class="figrow"><div class="figtag">' + pair[0] +
+          '<b>' + fmt(pair[1].r.box) + " dp</b></div>" +
+          '<div class="figscroll">' + pair[1].svg + "</div></div>"
+        ));
+      });
+      host.appendChild(card);
+    });
+  }
+
+  // --- playground -----------------------------------------------------------
+
+  /**
+   * Makes the playground bar feel like the bar: pressing a control ripples
+   * inside its touch rectangle, and the rectangle is outlined with its size so
+   * you can see exactly what your finger is hitting.
+   */
+  function wirePress(svg, targets, o) {
+    var layer = svg.querySelector(".presslayer");
+    if (!layer) return;
+
+    function toUser(evt) {
+      var pt = svg.createSVGPoint();
+      pt.x = evt.clientX;
+      pt.y = evt.clientY;
+      var m = svg.getScreenCTM();
+      return m ? pt.matrixTransform(m.inverse()) : null;
+    }
+
+    function outline(t) {
+      layer.innerHTML = "";
+      var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.innerHTML =
+        '<rect class="press-outline" x="' + t.x + '" y="0.6" width="' + t.w + '" height="' + (t.h - 1.2) + '" rx="1.5"/>';
+      layer.appendChild(g);
+      var label = t.label + "  " + fmt(t.w) + " \u00d7 " + fmt(t.h) + " dp";
+      var plate = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      var tw = label.length * 4.3 + 8;
+      var cx = Math.min(Math.max(t.x + t.w / 2, tw / 2), t.x + t.w + 40);
+      plate.setAttribute("class", "press-plate");
+      plate.setAttribute("x", String(cx - tw / 2));
+      plate.setAttribute("y", "1.5");
+      plate.setAttribute("width", String(tw));
+      plate.setAttribute("height", "11");
+      plate.setAttribute("rx", "2");
+      layer.appendChild(plate);
+      var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("class", "press-label");
+      text.setAttribute("x", String(cx));
+      text.setAttribute("y", "9.6");
+      text.textContent = label;
+      layer.appendChild(text);
+    }
+
+    function press(t, p) {
+      var reach = Math.max(
+        Math.hypot(p.x - t.x, p.y),
+        Math.hypot(p.x - (t.x + t.w), p.y),
+        Math.hypot(p.x - t.x, t.h - p.y),
+        Math.hypot(p.x - (t.x + t.w), t.h - p.y)
+      );
+      var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("clip-path", "url(#" + t.clipId + ")");
+      var inner = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      inner.setAttribute("transform", "translate(" + p.x + "," + p.y + ")");
+      var mark = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      mark.setAttribute("class", hasRipple(t, o) ? "ripple" : "noripple");
+      mark.setAttribute("r", String(Math.max(reach, 1)));
+      mark.style.transformOrigin = "0 0";
+      inner.appendChild(mark);
+      g.appendChild(inner);
+      layer.appendChild(g);
+      mark.addEventListener("animationend", function () { g.remove(); });
+    }
+
+    Array.prototype.forEach.call(svg.querySelectorAll(".hit"), function (rect) {
+      var t = targets[parseInt(rect.dataset.i, 10)];
+      rect.addEventListener("pointerenter", function () { outline(t); });
+      rect.addEventListener("pointerdown", function (evt) {
+        outline(t);
+        var p = toUser(evt);
+        if (p) press(t, p);
+      });
+    });
+    svg.addEventListener("pointerleave", function () { layer.innerHTML = ""; });
+  }
+
+  function readOpts() {
+    return {
+      flush: document.getElementById("optFlush").checked,
+      compactNav: document.getElementById("optNav").checked,
+      narrowSearch: document.getElementById("optSearch").checked,
+      versionMode: document.querySelector('input[name="vmode"]:checked').value,
+      audioAvailable: document.getElementById("optAudio").checked,
+      labelLen: parseInt(document.querySelector('input[name="vlabel"]:checked').value, 10),
+      abbrev: document.getElementById("optAbbrev").checked,
+      condensed: document.getElementById("optCondensed").checked
+    };
+  }
+
+  function syncRefOptions(o) {
+    var sel = document.getElementById("optRef");
+    var keep = sel.dataset.index ? parseInt(sel.dataset.index, 10) : 2;
+    var list = stringsFor(o);
+    sel.innerHTML = "";
+    list.forEach(function (m, i) {
+      var opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = m.text;
+      sel.appendChild(opt);
+    });
+    if (keep >= list.length) keep = 0;
+    sel.value = String(keep);
+    sel.dataset.index = String(keep);
+    return list[keep];
+  }
+
+  function update() {
+    var o = readOpts();
+    var w = parseInt(document.querySelector('input[name="w"]:checked').value, 10);
+    var chosen = syncRefOptions(o);
+    var f = figure(w, o, chosen.text, "full", true);
+    var host = document.getElementById("pgFig");
+    host.innerHTML = f.svg;
+    wirePress(host.querySelector("svg"), f.targets, o);
+    var r = f.r;
+
+    var noFeedback = f.targets.filter(function (t) { return !hasRipple(t, o); });
+    document.getElementById("pgHint").innerHTML =
+      "<span>Tekan atau arahkan kursor ke bar untuk melihat area sentuh tiap kontrol.</span>" +
+      (noFeedback.length
+        ? '<span style="color:var(--loss)">Penukar versi tidak menampilkan ripple sama sekali: ' +
+          "<span class=\"mono\">FakeSpinner</span> menimpa selectable background dengan nine-patch spinner.</span>"
+        : "");
+
+    var shipped = layout(w, {
+      flush: false, compactNav: false, narrowSearch: false,
+      versionMode: "fixed", audioAvailable: true, labelLen: 2
+    });
+    var gained = r.box - shipped.box;
+
+    var list = stringsFor(o);
+    var oneLine = list.filter(function (m) { return verdict(m, r.box) === "fits"; }).length;
+    var cut = list.filter(function (m) { return verdict(m, r.box) === "truncated"; }).length;
+
+    var stats = document.getElementById("pgStats");
+    stats.innerHTML = "";
+    [
+      {
+        k: "text box alamat", v: fmt(r.box) + " dp",
+        n: Math.abs(gained) < 0.5
+          ? "sama dengan " + fmt(shipped.box) + " dp versi rilis"
+          : (gained > 0 ? "+" : "") + fmt(gained) + " dp dari " + fmt(shipped.box) + " dp versi rilis",
+        good: gained > 0.5
+      },
+      {
+        k: "area sentuh alamat", v: fmt(r.tap) + " dp",
+        n: r.tap < C.minTouchDp ? "di bawah minimum 48 dp" : "memenuhi minimum 48 dp",
+        warn: r.tap < C.minTouchDp
+      },
+      {
+        k: "alamat muat satu baris", v: oneLine + " dari " + list.length,
+        n: cut ? cut + " terpotong" : "tidak ada yang terpotong",
+        good: cut === 0, warn: cut > 0
+      }
+    ].forEach(function (s) {
+      stats.appendChild(node(
+        '<div class="stat ' + (s.warn ? "warnstate" : s.good ? "good" : "") + '">' +
+        '<div class="k">' + esc(s.k) + "</div><div class=\"v\">" + esc(s.v) + "</div>" +
+        '<div class="n">' + esc(s.n) + "</div></div>"
+      ));
+    });
+
+    var body = document.getElementById("pgFits");
+    body.innerHTML = "";
+    list.forEach(function (m) {
+      var v = verdict(m, r.box);
+      body.appendChild(node(
+        "<tr><td class=\"ref\">" + esc(m.text) + "</td>" +
+        '<td class="num">' + fmt(m.naturalDp) + "</td>" +
+        '<td class="num">' + fmt(r.box) + "</td>" +
+        '<td><span class="pill ' + v + '">' +
+        (v === "fits" ? "satu baris" : v === "wraps" ? "dua baris" : "terpotong") + "</span></td></tr>"
+      ));
+    });
+  }
+
+  document.getElementById("optRef").addEventListener("change", function (e) {
+    e.target.dataset.index = e.target.value;
+    update();
+  });
+  ["optFlush", "optNav", "optSearch", "optAudio", "optAbbrev", "optCondensed"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", update);
+  });
+  Array.prototype.forEach.call(
+    document.querySelectorAll('input[name="vmode"], input[name="vlabel"], input[name="w"]'),
+    function (n) { n.addEventListener("change", update); }
+  );
+
+  // --- boot -----------------------------------------------------------------
+
+  var bad = verify();
+  var badge = document.getElementById("verifyBadge");
+  var text = document.getElementById("verifyText");
+  if (bad === 0) {
+    text.innerHTML = "semua dimensi di halaman ini cocok dengan <strong>" +
+      DATA.checkpoints.length + "</strong> pengukuran Robolectric";
+  } else {
+    badge.className = "verified bad";
+    text.innerHTML = "<strong>" + bad + " dari " + DATA.checkpoints.length +
+      "</strong> pengukuran tidak cocok dengan model halaman ini";
+  }
+
+  buildEfforts();
+  update();
+})();
+</script>
+
