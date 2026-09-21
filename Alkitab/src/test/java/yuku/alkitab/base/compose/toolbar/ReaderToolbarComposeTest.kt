@@ -129,6 +129,20 @@ class ReaderToolbarComposeTest {
 
     private val shippingWidths = listOf(320, 360, 384, 411, 480, 600)
 
+    /** Leftmost column inside [box] that the bar painted something on. */
+    private fun firstInkColumn(bitmap: Bitmap, box: Rect): Int {
+        val background = bitmap.getPixel(box.left, box.top)
+        for (x in box.left until box.right) {
+            for (y in box.top until box.bottom) {
+                if (bitmap.getPixel(x, y) != background) return x
+            }
+        }
+        throw AssertionError("no chevron drawn in $box")
+    }
+
+    /** Transparent margin the chevron path leaves inside its own 24dp glyph box. */
+    private val chevronInkInsetDp = 8f / 24f * ReaderToolbarDimens.iconSize.value
+
     private fun stateFor(initials: String = "TB", audio: Boolean = true, audioOn: Boolean = false) =
         ReaderToolbarState(
             reference = "Kejadian 1",
@@ -141,6 +155,9 @@ class ReaderToolbarComposeTest {
     /** 2 characters: a 48dp version half, a 1dp hairline, a 32dp speaker. */
     private val shortSegmentDp =
         ReaderToolbarDimens.chipMinWidth.value + 1f + ReaderToolbarDimens.speakerWidth.value
+
+    /** Either half on its own keeps the stadium and takes the 48dp minimum. */
+    private val loneSegmentDp = ReaderToolbarDimens.chipMinWidth.value
 
     private fun clusterWidthDp(widthDp: Int, segmentDp: Float) = minOf(
         widthDp - ReaderToolbarDimens.drawerWidth.value - ReaderToolbarDimens.searchWidth.value - segmentDp,
@@ -190,11 +207,22 @@ class ReaderToolbarComposeTest {
     }
 
     @Test
-    fun `hiding the version changer hands its width to the reference, up to the cluster cap`() {
+    fun `hiding the version changer leaves the speaker a capsule of its own`() {
         for (widthDp in listOf(320, 360, 411)) {
             val withVersion = layOut(widthDp, stateFor())
             val withoutVersion = layOut(widthDp, stateFor().copy(versionVisible = false))
             val gainedDp = dp(withoutVersion.referenceTouch.width() - withVersion.referenceTouch.width())
+            val expected = clusterWidthDp(widthDp, loneSegmentDp) - clusterWidthDp(widthDp, shortSegmentDp)
+            assertEquals("width handed back at ${widthDp}dp", expected, gainedDp, 0.7f)
+        }
+    }
+
+    @Test
+    fun `hiding both the version changer and the speaker leaves nothing behind`() {
+        for (widthDp in listOf(320, 360, 411)) {
+            val withBoth = layOut(widthDp, stateFor())
+            val withNeither = layOut(widthDp, stateFor(audio = false).copy(versionVisible = false))
+            val gainedDp = dp(withNeither.referenceTouch.width() - withBoth.referenceTouch.width())
             val expected = clusterWidthDp(widthDp, 0f) - clusterWidthDp(widthDp, shortSegmentDp)
             assertEquals("width handed back at ${widthDp}dp", expected, gainedDp, 0.7f)
         }
@@ -206,6 +234,26 @@ class ReaderToolbarComposeTest {
         val withoutAudio = layOut(320, stateFor(audio = false))
         val gainedDp = dp(withoutAudio.referenceTouch.width() - withAudio.referenceTouch.width())
         assertEquals(1f + ReaderToolbarDimens.speakerWidth.value, gainedDp, 0.7f)
+    }
+
+    @Test
+    fun `the chapter chevrons sit flush outward only below 411dp`() {
+        for (widthDp in shippingWidths) {
+            val laid = layOut(widthDp, stateFor())
+            val arrowPx = px(laid.arrowDp)
+            val box = Rect(
+                laid.referenceTouch.left - arrowPx,
+                laid.referenceTouch.top,
+                laid.referenceTouch.left,
+                laid.referenceTouch.bottom,
+            )
+            val inkStart = dp(firstInkColumn(laid.bitmap, box) - box.left)
+            val glyphMargin = (laid.arrowDp - ReaderToolbarDimens.iconSize.value) / 2f
+            val expected = if (widthDp < ReaderToolbarDimens.flushBelowWidth.value) 0f else glyphMargin
+            // The chevron's own artwork is inset inside its 24dp glyph box, so
+            // only the difference between the two placements is asserted.
+            assertEquals("chevron inset at ${widthDp}dp", expected, inkStart - chevronInkInsetDp, 0.4f)
+        }
     }
 
     @Test
@@ -231,8 +279,14 @@ class ReaderToolbarComposeTest {
     fun `render the compose toolbar at every shipping width`() {
         val laids = shippingWidths.map { layOut(it, stateFor()) } +
             layOut(360, stateFor("VERSNM")) +
-            layOut(360, stateFor(audioOn = true))
-        val labels = shippingWidths.map { "${it}dp" } + "360dp, 6-char version" + "360dp, audio bar open"
+            layOut(360, stateFor(audioOn = true)) +
+            layOut(360, stateFor().copy(versionVisible = false)) +
+            layOut(360, stateFor(audio = false))
+        val labels = shippingWidths.map { "${it}dp" } +
+            "360dp, 6-char version" +
+            "360dp, audio bar open" +
+            "360dp, split view open (no version changer)" +
+            "360dp, version with no audio"
 
         val gutter = px(8)
         val labelHeight = px(14)

@@ -42,7 +42,6 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,7 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import yuku.alkitab.base.widget.GotoButton
@@ -64,9 +62,6 @@ object ReaderToolbarDimens {
     val drawerWidth = 48.dp
     val searchWidth = 48.dp
     val iconSize = 24.dp
-
-    /** The chapter chevron artwork's own size. Drawing it smaller thins the glyph. */
-    val chevronSize = 32.dp
 
     /** Matches the max width [yuku.alkitab.base.widget.NavFrameLayout] applies. */
     val clusterMaxWidth = 250.dp
@@ -141,10 +136,7 @@ fun ReaderToolbar(
     // The host frame already paints the bar colour, including the night-mode
     // override the action bar applies, so nothing is drawn here.
     BoxWithConstraints(modifier.fillMaxSize()) {
-        // In the narrow bucket the arrow box is no wider than the chevron
-        // artwork, so there is nothing to shift, and the reference margin
-        // there is already the flush one.
-        val flush = arrowWidth >= 48.dp && maxWidth < ReaderToolbarDimens.flushBelowWidth
+        val flush = maxWidth < ReaderToolbarDimens.flushBelowWidth
         val margin = if (flush) ReaderToolbarDimens.flushMargin else bucketMargin
 
         Layout(
@@ -163,19 +155,12 @@ fun ReaderToolbar(
                     contentColor = contentColor,
                     actions = actions,
                 )
-                if (state.versionVisible) {
-                    VersionSegment(
-                        initials = state.versionInitials,
-                        audioAvailable = state.audioAvailable,
-                        audioBarVisible = state.audioBarVisible,
-                        contentColor = contentColor,
-                        onVersionClick = actions::onVersionClick,
-                        onAudioClick = actions::onAudioClick,
-                    )
-                } else {
-                    // Keeps the slot count fixed for the measure pass below.
-                    Box(Modifier)
-                }
+                VersionAudioControl(
+                    state = state,
+                    contentColor = contentColor,
+                    onVersionClick = actions::onVersionClick,
+                    onAudioClick = actions::onAudioClick,
+                )
                 BarIconButton(
                     painter = R.drawable.ic_search_24,
                     contentDescription = stringResource(R.string.search),
@@ -224,7 +209,6 @@ private fun BarIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.Center,
-    iconSize: Dp = ReaderToolbarDimens.iconSize,
 ) {
     Box(
         modifier
@@ -239,7 +223,7 @@ private fun BarIconButton(
         Icon(
             painter = painterResource(painter),
             contentDescription = contentDescription,
-            modifier = Modifier.size(iconSize),
+            modifier = Modifier.size(ReaderToolbarDimens.iconSize),
             tint = contentColor,
         )
     }
@@ -255,10 +239,6 @@ private fun NavCluster(
     actions: ReaderToolbarActions,
     modifier: Modifier = Modifier,
 ) {
-    // The chevron artwork ships as two mirrored bitmaps behind an autoMirrored
-    // wrapper the Compose painter loader cannot read, so the swap is done here.
-    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-
     Box(modifier.fillMaxSize()) {
         ReferenceTarget(
             arrowWidth = arrowWidth,
@@ -272,22 +252,20 @@ private fun NavCluster(
             modifier = Modifier.align(Alignment.Center),
         )
         BarIconButton(
-            painter = if (rtl) R.drawable.ic_nav_right_light else R.drawable.ic_nav_left_light,
+            painter = R.drawable.ic_chevron_start_24,
             contentDescription = stringResource(R.string.desc_previous_chapter),
             contentColor = contentColor,
             onClick = actions::onPreviousChapter,
             modifier = Modifier.align(Alignment.CenterStart).width(arrowWidth),
             contentAlignment = if (flush) Alignment.CenterStart else Alignment.Center,
-            iconSize = ReaderToolbarDimens.chevronSize,
         )
         BarIconButton(
-            painter = if (rtl) R.drawable.ic_nav_left_light else R.drawable.ic_nav_right_light,
+            painter = R.drawable.ic_chevron_end_24,
             contentDescription = stringResource(R.string.desc_next_chapter),
             contentColor = contentColor,
             onClick = actions::onNextChapter,
             modifier = Modifier.align(Alignment.CenterEnd).width(arrowWidth),
             contentAlignment = if (flush) Alignment.CenterEnd else Alignment.Center,
-            iconSize = ReaderToolbarDimens.chevronSize,
         )
     }
 }
@@ -387,18 +365,32 @@ private fun ReferenceLabel(
     }
 }
 
+/**
+ * One stadium holding the version changer and the audio button, because audio
+ * availability follows from which version is being read.
+ *
+ * Either half can be absent: the split view hides the version changer, and a
+ * version without a recording has no audio button. Whichever half is left
+ * keeps the stadium to itself, and the speaker takes the full 48dp minimum
+ * once it no longer sits inside a target the reader is already aiming at.
+ */
 @Composable
-private fun VersionSegment(
-    initials: String,
-    audioAvailable: Boolean,
-    audioBarVisible: Boolean,
+private fun VersionAudioControl(
+    state: ReaderToolbarState,
     contentColor: Color,
     onVersionClick: () -> Unit,
     onAudioClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val showVersion = state.versionVisible
+    val showAudio = state.audioAvailable
+    if (!showVersion && !showAudio) {
+        Box(modifier)
+        return
+    }
+
     val outline = contentColor.copy(alpha = 0.6f)
-    val label = versionLabelFor(initials)
+    val label = versionLabelFor(state.versionInitials)
     val labelStyle = TextStyle(
         color = contentColor,
         fontSize = ReaderToolbarDimens.versionTextSize,
@@ -408,11 +400,8 @@ private fun VersionSegment(
     val labelWidth = with(LocalDensity.current) {
         measurer.measure(label, labelStyle).size.width.toDp()
     }
-    val versionWidth = maxOf(
-        ReaderToolbarDimens.chipMinWidth,
-        labelWidth + ReaderToolbarDimens.chipSidePadding * 2,
-    )
     val chipHeight = ReaderToolbarDimens.chipHeight
+    val split = showVersion && showAudio
 
     Row(
         modifier
@@ -429,27 +418,39 @@ private fun VersionSegment(
             },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SegmentHalf(
-            width = versionWidth,
-            shape = if (audioAvailable) {
-                RoundedCornerShape(topStartPercent = 50, bottomStartPercent = 50)
-            } else {
-                RoundedCornerShape(percent = 50)
-            },
-            contentColor = contentColor,
-            onClick = onVersionClick,
-        ) {
-            Text(text = label, style = labelStyle, maxLines = 1)
+        if (showVersion) {
+            SegmentHalf(
+                width = maxOf(
+                    ReaderToolbarDimens.chipMinWidth,
+                    labelWidth + ReaderToolbarDimens.chipSidePadding * 2,
+                ),
+                shape = if (split) {
+                    RoundedCornerShape(topStartPercent = 50, bottomStartPercent = 50)
+                } else {
+                    RoundedCornerShape(percent = 50)
+                },
+                contentColor = contentColor,
+                onClick = onVersionClick,
+            ) {
+                Text(text = label, style = labelStyle, maxLines = 1)
+            }
         }
 
-        if (audioAvailable) {
-            Box(Modifier.width(1.dp).height(20.dp).background(outline))
+        if (split) {
+            Box(Modifier.width(1.dp).height(chipHeight).background(outline))
+        }
+
+        if (showAudio) {
             SegmentHalf(
-                width = ReaderToolbarDimens.speakerWidth,
-                shape = RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50),
+                width = if (split) ReaderToolbarDimens.speakerWidth else ReaderToolbarDimens.chipMinWidth,
+                shape = if (split) {
+                    RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)
+                } else {
+                    RoundedCornerShape(percent = 50)
+                },
                 contentColor = contentColor,
                 onClick = onAudioClick,
-                background = if (audioBarVisible) contentColor.copy(alpha = 0.24f) else Color.Transparent,
+                background = if (state.audioBarVisible) contentColor.copy(alpha = 0.24f) else Color.Transparent,
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_audio),

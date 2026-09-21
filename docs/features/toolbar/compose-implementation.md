@@ -8,7 +8,7 @@ feature of the view toolbar and applies the space savings measured in
 Turn it on under Settings, Experimental, "Reader toolbar (Compose)", then
 reopen the reading screen.
 
-![The Compose reader toolbar rendered at 320, 360, 384, 411, 480 and 600 dp, plus a six-character version name and the audio bar open](compose-toolbar.png)
+![The Compose reader toolbar rendered at 320, 360, 384, 411, 480 and 600 dp, plus a six-character version name, the audio bar open, the split view open, and a version with no audio](compose-toolbar.png)
 
 ## Where the code is
 
@@ -72,24 +72,33 @@ The view toolbar's search item is 56 dp because `ic_menu_search.png` is a
 32 dp asset and an action item is sized `max(48dp, icon width + 24dp)`. The
 Compose bar uses a 24 dp vector (`ic_search_24.xml`), so 48 dp is enough.
 
+### Material chevrons
+
+The chapter arrows are `ic_chevron_start_24` and `ic_chevron_end_24`, Material
+chevrons drawn as 24 dp vectors with `autoMirrored` on, so right-to-left
+layouts flip them without a second pair of assets.
+
 ### Chevrons flush outward below 411 dp
 
 Below 411 dp the chapter arrows draw against the outer edge of their own box
 and the reference's side margin drops to 24 dp, which hands the reference the
 space the centred arrows were padding. At 411 dp and above the arrows stay
-centred, because the bar already has room.
-
-The narrow resource bucket (under sw360dp) keeps 32 dp arrows, which leaves
-too little room to hold a 24 dp glyph flush, so it keeps them centred too.
-`ReaderToolbar` decides this from the measured bar width and the
-`nav_prevnext_width` dimension, not from a hard-coded breakpoint list.
+centred, because the bar already has room. `ReaderToolbar` decides this from
+the measured bar width, not from a hard-coded breakpoint list.
 
 ### Version changer and speaker as one segmented stadium
 
 The version changer and the audio button share a single stadium outline split
-by a hairline. The version half is `max(48dp, text width + 16dp)`; an
-abbreviation longer than 6 characters is cut to 5 plus an ellipsis, so a long
-name cannot push the reference around. The speaker half is 32 dp.
+by a hairline that runs the full height of the stadium. The version half is
+`max(48dp, text width + 16dp)`; an abbreviation longer than 6 characters is
+cut to 5 plus an ellipsis, so a long name cannot push the reference around.
+The speaker half is 32 dp.
+
+Either half can be absent. The split view hides the version changer, and a
+version with no recording has no audio button. Whichever half is left keeps
+the stadium to itself, and the speaker grows to the full 48 dp once it is no
+longer sitting inside a target the reader is already aiming at. With both
+gone the control takes no width at all.
 
 32 dp is below the 48 dp minimum touch target, and that is deliberate. The
 speaker is a secondary, non-destructive control sitting inside a stadium the
@@ -133,12 +142,6 @@ false over the outer `nav_prevnext_width - nav_goto_side_margin` on each side
 so the arrows keep a full target under the overlapping reference. In Compose
 the arrows are separate siblings drawn after the reference target, so they
 take their own touches and no such carve-out is needed.
-
-**Chevron artwork.** `ic_nav_start_light` and `ic_nav_end_light` are
-`<bitmap>` wrappers that turn `autoMirrored` on, which the Compose painter
-loader cannot read. `NavCluster` loads the two underlying bitmaps and swaps
-them by layout direction instead, and draws them at their natural 32 dp so
-the chevrons look exactly as they do today.
 
 ## Measuring it
 
