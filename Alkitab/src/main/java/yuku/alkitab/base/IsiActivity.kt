@@ -30,6 +30,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SwitchCompat
@@ -72,6 +75,10 @@ import yuku.alkitab.base.actionmode.RibkaEligibility
 import yuku.alkitab.base.actionmode.VerseActionModeActions
 import yuku.alkitab.base.actionmode.VerseActionModeController
 import yuku.alkitab.base.actionmode.VerseActionModeHost
+import yuku.alkitab.base.compose.BibleAppTheme
+import yuku.alkitab.base.compose.toolbar.ReaderToolbar
+import yuku.alkitab.base.compose.toolbar.ReaderToolbarActions
+import yuku.alkitab.base.compose.toolbar.ReaderToolbarState
 import yuku.alkitab.base.dialog.ProgressMarkListDialog
 import yuku.alkitab.base.dialog.ProgressMarkRenameDialog
 import yuku.alkitab.base.dialog.TypeBookmarkDialog
@@ -223,6 +230,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private lateinit var overlayContainer: FrameLayout
     override lateinit var root: ViewGroup
     lateinit var toolbar: Toolbar
+    private lateinit var toolbarHost: ViewGroup
+    private lateinit var composeToolbar: ComposeView
+    private lateinit var composeReferenceAnchor: View
     private lateinit var nontoolbar: View
     override lateinit var lsSplit0: VersesController
     override lateinit var lsSplit1: VersesController
@@ -231,8 +241,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private lateinit var bGoto: GotoButton
     private lateinit var bLeft: ImageButton
     private lateinit var bRight: ImageButton
-    override lateinit var bVersion: TextView
+    private lateinit var bVersion: TextView
     override lateinit var floater: Floater
+    private val useComposeToolbar by lazy { ExperimentalFlags.useComposeToolbar() }
+    private var toolbarState by mutableStateOf(ReaderToolbarState())
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
     private var fullscreenReferenceToast: Toast? = null
 
@@ -491,10 +503,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         leftDrawer = findViewById(R.id.left_drawer)
         leftDrawer.configure(this, drawerLayout)
 
+        toolbarHost = findViewById(R.id.toolbarHost)
         toolbar = findViewById(R.id.toolbar)
+        composeToolbar = findViewById(R.id.composeToolbar)
+        composeReferenceAnchor = findViewById(R.id.composeReferenceAnchor)
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
+            setDisplayHomeAsUpEnabled(!useComposeToolbar)
             setDisplayShowTitleEnabled(false)
             setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
@@ -517,7 +532,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
             if (root.childCount != 3 ||
-                root.getChildAt(0).id != R.id.toolbar ||
+                root.getChildAt(0).id != R.id.toolbarHost ||
                 root.getChildAt(1).id != R.id.nontoolbar ||
                 root.getChildAt(2).id != R.id.audio_bar
             ) {
@@ -541,6 +556,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         bVersion.setOnClickListener { openVersionsDialog() }
 
         floater.setListener(gestureHandler)
+
+        installComposeToolbar()
 
         // listeners
         val useComposeVerses = ExperimentalFlags.useComposeVerseItem()
@@ -823,7 +840,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         override fun audioBarVisibilityChanged(visible: Boolean) {
-            invalidateOptionsMenu()
+            refreshAudioControls()
         }
     }
 
@@ -849,7 +866,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         if (versionIds.isEmpty()) return
         lifecycleScope.launch {
             versionIds.forEach { AudioSetsRepository.setsFor(it) }
-            invalidateOptionsMenu()
+            refreshAudioControls()
             audioBinder.refreshSetChoices()
         }
     }
@@ -857,7 +874,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override fun onVisibleVersionsChanged() {
         resolveAudioSetsAsync()
         audioBinder.onActiveVersionChanged()
-        invalidateOptionsMenu()
+        refreshAudioControls()
     }
 
     private fun callAttentionForVerseToBothSplits(verse_1: Int) {
@@ -973,6 +990,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     private fun displayActiveVersion() {
         bVersion.text = activeSplit0.version.initials
+        toolbarState = toolbarState.copy(versionInitials = activeSplit0.version.initials)
         splitHandleButton.setLabel1("\u25b2 ${activeSplit0.version.initials}")
     }
 
@@ -1238,7 +1256,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && history.size > 0) {
 
             FancyShowCaseView.Builder(this)
-                .focusOn(bGoto)
+                .focusOn(if (useComposeToolbar) composeReferenceAnchor else bGoto)
                 .title(getString(R.string.goto_button_history_tip))
                 .enableAutoTextPosition()
                 .dismissListener(object : DismissListener {
@@ -1344,11 +1362,91 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
     }
 
+    private fun installComposeToolbar() {
+        if (!useComposeToolbar) return
+
+        // The AppCompat toolbar stays, emptied out. It is what the action bar
+        // tints for night mode and what hosts the verse action mode, and the
+        // Compose bar draws over it with no background of its own.
+        bVersion.visibility = View.GONE
+        (bGoto.parent as View).visibility = View.GONE
+
+        composeToolbar.visibility = View.VISIBLE
+        composeToolbar.setContent {
+            BibleAppTheme {
+                ReaderToolbar(toolbarState, toolbarActions)
+            }
+        }
+    }
+
+    private val toolbarActions = object : ReaderToolbarActions {
+        override fun onDrawerClick() = leftDrawer.toggleDrawer()
+        override fun onPreviousChapter() = bLeft_click()
+        override fun onNextChapter() = bRight_click()
+        override fun onReferenceClick() = bGoto_click()
+        override fun onReferenceLongClick() = bGoto_longClick()
+        override fun onVersionClick() = openVersionsDialog()
+        override fun onAudioClick() = audioBinder.toggle()
+        override fun onSearchClick() = menuSearch_click()
+
+        override fun onReferenceDragStart(screenX: Float, screenY: Float) = gestureHandler.onFloaterDragStart(screenX, screenY)
+        override fun onReferenceDragMove(screenX: Float, screenY: Float) = gestureHandler.onFloaterDragMove(screenX, screenY)
+        override fun onReferenceDragComplete(screenX: Float, screenY: Float) = gestureHandler.onFloaterDragComplete(screenX, screenY)
+
+        override fun onReferenceBoundsChanged(x: Int, y: Int, width: Int, height: Int) {
+            moveReferenceAnchor(x, y, width, height)
+        }
+    }
+
+    /**
+     * Keeps an invisible View on top of the Compose reference button.
+     * FancyShowCaseView can only focus on a View, and letting it read the
+     * anchor's own location keeps its status-bar and fullscreen adjustments.
+     */
+    private fun moveReferenceAnchor(x: Int, y: Int, width: Int, height: Int) {
+        val host = IntArray(2)
+        toolbarHost.getLocationInWindow(host)
+        val left = x - host[0]
+        val top = y - host[1]
+
+        val lp = composeReferenceAnchor.layoutParams as FrameLayout.LayoutParams
+        if (lp.width == width && lp.height == height && lp.leftMargin == left && lp.topMargin == top) return
+
+        lp.width = width
+        lp.height = height
+        lp.leftMargin = left
+        lp.topMargin = top
+        composeReferenceAnchor.layoutParams = lp
+    }
+
+    override fun setVersionChangerVisible(visible: Boolean) {
+        toolbarState = toolbarState.copy(versionVisible = visible)
+        if (!useComposeToolbar) {
+            bVersion.visibility = if (visible) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun syncToolbarAudioState() {
+        toolbarState = toolbarState.copy(
+            audioAvailable = audioBinder.isAvailable,
+            audioBarVisible = audioBinder.isBarVisible,
+        )
+    }
+
+    /** The audio button lives in both toolbars, so both are refreshed together. */
+    private fun refreshAudioControls() {
+        syncToolbarAudioState()
+        invalidateOptionsMenu()
+    }
+
     private fun buildMenu(menu: Menu) {
         menu.clear()
-        menuInflater.inflate(R.menu.activity_isi, menu)
 
         resolveAudioSetsAsync()
+        syncToolbarAudioState()
+        if (useComposeToolbar) return
+
+        menuInflater.inflate(R.menu.activity_isi, menu)
         val menuAudio = menu.findItem(R.id.menuAudio)
         if (menuAudio != null) {
             menuAudio.isVisible = audioBinder.isAvailable
@@ -1399,6 +1497,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         fullScreen = yes
 
         val controller = WindowCompat.getInsetsController(window, window.decorView)
+        toolbarHost.visibility = if (yes) View.GONE else View.VISIBLE
         if (yes) {
             supportActionBar?.hide()
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -1435,7 +1534,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         // The toolbar keeps its primary-color background across the bar it is
         // docked against by growing by the inset instead of just shifting.
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(toolbarHost) { v, windowInsets ->
             val insets = windowInsets.getInsets(safeAreaTypes)
             if (isBottomToolbarOnText()) {
                 v.setPadding(insets.left, 0, insets.right, insets.bottom)
@@ -1535,23 +1634,23 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // root contains 3 children: toolbar, nontoolbar, and the audio bar.
+        // root contains 3 children: the toolbar host, nontoolbar, and the audio bar.
         // The audio bar always sits directly below the content (above the
         // bottom-anchored verse-nav toolbar when that mode is enabled), so
         // the order varies with the toolbar-location preference.
 
         if (!fullScreen) {
             val audioBar = root.requireViewById<View>(R.id.audio_bar)
-            root.removeView(toolbar)
+            root.removeView(toolbarHost)
             root.removeView(nontoolbar)
             root.removeView(audioBar)
 
             if (isBottomToolbarOnText()) {
                 root.addView(nontoolbar)
                 root.addView(audioBar)
-                root.addView(toolbar)
+                root.addView(toolbarHost)
             } else {
-                root.addView(toolbar)
+                root.addView(toolbarHost)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
             }
@@ -1715,6 +1814,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // set goto button text
         val reference = activeSplit0.book.reference(available_chapter_1)
         bGoto.text = reference
+        toolbarState = toolbarState.copy(reference = reference)
 
         if (fullScreen) {
             fullscreenReferenceToast?.cancel()

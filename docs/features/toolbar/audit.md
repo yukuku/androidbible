@@ -9,6 +9,12 @@ back to the reference.
 
 ![Dimensioned blueprint of the reader toolbar at 320, 360, 384, 411, 480 and 600 dp](blueprint.png)
 
+## The Compose toolbar
+
+[`compose-implementation.md`](compose-implementation.md) describes the
+Jetpack Compose toolbar that applies the changes below, behind the
+`useComposeToolbar` experimental flag.
+
 ## Interactive version
 
 [`playground.html`](playground.html) lines up a before and after for every change

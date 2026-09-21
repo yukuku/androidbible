@@ -12,65 +12,88 @@
 		android:orientation="vertical"
 		tools:ignore="UselessParent">
 
-		<androidx.appcompat.widget.Toolbar
-			android:id="@+id/toolbar"
+		<FrameLayout
+			android:id="@+id/toolbarHost"
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
+			android:background="?attr/colorPrimary"
 			android:elevation="4dp"
-			android:outlineProvider="bounds"
-			android:background="?attr/colorPrimary">
+			android:outlineProvider="bounds">
 
-			<TextView
-				android:id="@+id/bVersion"
-				style="@style/FakeSpinner"
-				android:layout_width="72dp"
-				android:layout_height="match_parent"
-				android:layout_gravity="end"
-				android:gravity="center"
-				android:textStyle="bold"
-				tools:text="VERSNM" />
-
-			<yuku.alkitab.base.widget.NavFrameLayout
+			<androidx.appcompat.widget.Toolbar
+				android:id="@+id/toolbar"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
 
-				<yuku.alkitab.base.widget.GotoButton
-					android:id="@+id/bGoto"
-					style="?actionButtonStyle"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:layout_marginStart="@dimen/nav_goto_side_margin"
-					android:layout_marginEnd="@dimen/nav_goto_side_margin"
-					android:fontFamily="sans-serif-medium"
-					android:includeFontPadding="false"
-					android:paddingStart="0dp"
-					android:paddingEnd="0dp"
-					android:textSize="16sp"
-					tools:text="Long Name Of Book 123" />
-
-				<ImageButton
-					android:id="@+id/bLeft"
-					style="?actionButtonStyle"
-					android:layout_width="@dimen/nav_prevnext_width"
-					android:layout_height="match_parent"
-					android:layout_gravity="start"
-					android:contentDescription="@string/desc_previous_chapter"
-					android:scaleType="center"
-					android:src="@drawable/ic_nav_start_light" />
-
-				<ImageButton
-					android:id="@+id/bRight"
-					style="?actionButtonStyle"
-					android:layout_width="@dimen/nav_prevnext_width"
+				<TextView
+					android:id="@+id/bVersion"
+					style="@style/FakeSpinner"
+					android:layout_width="72dp"
 					android:layout_height="match_parent"
 					android:layout_gravity="end"
-					android:contentDescription="@string/desc_next_chapter"
-					android:padding="16dp"
-					android:scaleType="center"
-					android:src="@drawable/ic_nav_end_light" />
-			</yuku.alkitab.base.widget.NavFrameLayout>
+					android:gravity="center"
+					android:textStyle="bold"
+					tools:text="VERSNM" />
 
-		</androidx.appcompat.widget.Toolbar>
+				<yuku.alkitab.base.widget.NavFrameLayout
+					android:layout_width="match_parent"
+					android:layout_height="match_parent">
+
+					<yuku.alkitab.base.widget.GotoButton
+						android:id="@+id/bGoto"
+						style="?actionButtonStyle"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_marginStart="@dimen/nav_goto_side_margin"
+						android:layout_marginEnd="@dimen/nav_goto_side_margin"
+						android:fontFamily="sans-serif-medium"
+						android:includeFontPadding="false"
+						android:paddingStart="0dp"
+						android:paddingEnd="0dp"
+						android:textSize="16sp"
+						tools:text="Long Name Of Book 123" />
+
+					<ImageButton
+						android:id="@+id/bLeft"
+						style="?actionButtonStyle"
+						android:layout_width="@dimen/nav_prevnext_width"
+						android:layout_height="match_parent"
+						android:layout_gravity="start"
+						android:contentDescription="@string/desc_previous_chapter"
+						android:scaleType="center"
+						android:src="@drawable/ic_nav_start_light" />
+
+					<ImageButton
+						android:id="@+id/bRight"
+						style="?actionButtonStyle"
+						android:layout_width="@dimen/nav_prevnext_width"
+						android:layout_height="match_parent"
+						android:layout_gravity="end"
+						android:contentDescription="@string/desc_next_chapter"
+						android:padding="16dp"
+						android:scaleType="center"
+						android:src="@drawable/ic_nav_end_light" />
+				</yuku.alkitab.base.widget.NavFrameLayout>
+
+			</androidx.appcompat.widget.Toolbar>
+
+			<androidx.compose.ui.platform.ComposeView
+				android:id="@+id/composeToolbar"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:visibility="gone" />
+
+			<!--
+				Tracks the bounds of the Compose reference button so the
+				history showcase tip has a plain View to focus on.
+			-->
+			<View
+				android:id="@+id/composeReferenceAnchor"
+				android:layout_width="0dp"
+				android:layout_height="0dp"
+				android:visibility="invisible" />
+
+		</FrameLayout>
 
 		<FrameLayout
 			android:id="@+id/nontoolbar"

@@ -1,0 +1,265 @@
+package yuku.alkitab.base.compose.toolbar
+
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
+import android.os.Bundle
+import android.os.Looper
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ComposeView
+import androidx.test.core.app.ApplicationProvider
+import java.io.File
+import kotlin.math.roundToInt
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import yuku.afw.App as AfwApp
+import yuku.alkitab.base.compose.BibleAppTheme
+import yuku.alkitab.debug.R
+
+class ComposeToolbarHostActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_Alkitab)
+        super.onCreate(savedInstanceState)
+    }
+}
+
+/**
+ * Lays out [ReaderToolbar] the same way the audit measures the view toolbar:
+ * a real layout pass at every width the app ships on, at xxhdpi so 1 dp is
+ * exactly 3 px.
+ *
+ * The bar reports the reference button's window bounds through
+ * [ReaderToolbarActions.onReferenceBoundsChanged], which is enough to derive
+ * every slot width without reaching into the composition.
+ */
+@RunWith(RobolectricTestRunner::class)
+@Config(application = AfwApp::class, sdk = [34], qualifiers = "sw360dp-w360dp-h640dp-port-xxhdpi")
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+class ReaderToolbarComposeTest {
+
+    private val density = 3f
+    private val barHeightDp = 56
+
+    private fun px(dp: Number) = (dp.toFloat() * density).roundToInt()
+    private fun dp(px: Number) = px.toFloat() / density
+
+    @Before
+    fun setUp() {
+        AfwApp.initWithAppContext(ApplicationProvider.getApplicationContext())
+    }
+
+    private class Laid(
+        val widthDp: Int,
+        val arrowDp: Float,
+        val referenceTouch: Rect,
+        val bitmap: Bitmap,
+    ) {
+        /** The cluster is the reference target grown back by one arrow on each side. */
+        fun clusterWidthPx(arrowPx: Int) = referenceTouch.width() + arrowPx * 2
+    }
+
+    private fun layOut(widthDp: Int, state: ReaderToolbarState): Laid {
+        RuntimeEnvironment.setQualifiers("sw${widthDp}dp-w${widthDp}dp-h640dp-port-xxhdpi")
+        val activity = Robolectric.buildActivity(ComposeToolbarHostActivity::class.java).setup().get()
+
+        var reference = Rect()
+        val actions = object : ReaderToolbarActions {
+            override fun onDrawerClick() = Unit
+            override fun onPreviousChapter() = Unit
+            override fun onNextChapter() = Unit
+            override fun onReferenceClick() = Unit
+            override fun onReferenceLongClick() = Unit
+            override fun onVersionClick() = Unit
+            override fun onAudioClick() = Unit
+            override fun onSearchClick() = Unit
+            override fun onReferenceDragStart(screenX: Float, screenY: Float) = Unit
+            override fun onReferenceDragMove(screenX: Float, screenY: Float) = Unit
+            override fun onReferenceDragComplete(screenX: Float, screenY: Float) = Unit
+            override fun onReferenceBoundsChanged(x: Int, y: Int, width: Int, height: Int) {
+                reference = Rect(x, y, x + width, y + height)
+            }
+        }
+
+        val view = ComposeView(activity).apply {
+            setContent { BibleAppTheme { ReaderToolbar(state, actions) } }
+        }
+        val host = FrameLayout(activity).apply {
+            setBackgroundColor(activity.getColor(R.color.primary))
+            addView(view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        }
+        activity.setContentView(host, ViewGroup.LayoutParams(px(widthDp), px(barHeightDp)))
+
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(px(widthDp), View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(px(barHeightDp), View.MeasureSpec.EXACTLY)
+        repeat(2) {
+            host.measure(widthSpec, heightSpec)
+            host.layout(0, 0, host.measuredWidth, host.measuredHeight)
+            Shadows.shadowOf(Looper.getMainLooper()).idle()
+        }
+
+        val bitmap = Bitmap.createBitmap(host.measuredWidth, host.measuredHeight, Bitmap.Config.ARGB_8888)
+        host.draw(Canvas(bitmap))
+
+        val hostLocation = IntArray(2)
+        host.getLocationInWindow(hostLocation)
+        reference.offset(-hostLocation[0], -hostLocation[1])
+
+        return Laid(
+            widthDp = widthDp,
+            arrowDp = dp(activity.resources.getDimensionPixelSize(R.dimen.nav_prevnext_width)),
+            referenceTouch = reference,
+            bitmap = bitmap,
+        )
+    }
+
+    private val shippingWidths = listOf(320, 360, 384, 411, 480, 600)
+
+    private fun stateFor(initials: String = "TB", audio: Boolean = true, audioOn: Boolean = false) =
+        ReaderToolbarState(
+            reference = "Kejadian 1",
+            versionInitials = initials,
+            versionVisible = true,
+            audioAvailable = audio,
+            audioBarVisible = audioOn,
+        )
+
+    /** 2 characters: a 48dp version half, a 1dp hairline, a 32dp speaker. */
+    private val shortSegmentDp =
+        ReaderToolbarDimens.chipMinWidth.value + 1f + ReaderToolbarDimens.speakerWidth.value
+
+    private fun clusterWidthDp(widthDp: Int, segmentDp: Float) = minOf(
+        widthDp - ReaderToolbarDimens.drawerWidth.value - ReaderToolbarDimens.searchWidth.value - segmentDp,
+        ReaderToolbarDimens.clusterMaxWidth.value,
+    )
+
+    @Test
+    fun `the drawer button gives up the 56dp the navigation style forces on the view toolbar`() {
+        for (widthDp in shippingWidths) {
+            val laid = layOut(widthDp, stateFor())
+            assertEquals(
+                "reference starts after the drawer plus one arrow at ${widthDp}dp",
+                ReaderToolbarDimens.drawerWidth.value + laid.arrowDp,
+                dp(laid.referenceTouch.left),
+                0.4f,
+            )
+        }
+    }
+
+    @Test
+    fun `the reference touch area is the full bar height at every width`() {
+        for (widthDp in shippingWidths) {
+            val laid = layOut(widthDp, stateFor())
+            assertEquals("bar height at ${widthDp}dp", barHeightDp.toFloat(), dp(laid.referenceTouch.height()), 0.4f)
+        }
+    }
+
+    @Test
+    fun `the navigation cluster takes everything the other three controls leave, up to 250dp`() {
+        for (widthDp in shippingWidths) {
+            val laid = layOut(widthDp, stateFor())
+            val clusterDp = dp(laid.clusterWidthPx(px(laid.arrowDp)))
+            assertEquals("cluster width at ${widthDp}dp", clusterWidthDp(widthDp, shortSegmentDp), clusterDp, 0.7f)
+        }
+    }
+
+    @Test
+    fun `a six character version name never widens the reference`() {
+        for (widthDp in listOf(320, 360, 384, 411)) {
+            val short = layOut(widthDp, stateFor("TB"))
+            val long = layOut(widthDp, stateFor("VERSNM"))
+            assertTrue(
+                "a 6-character name should not widen the reference at ${widthDp}dp",
+                long.referenceTouch.width() <= short.referenceTouch.width(),
+            )
+        }
+    }
+
+    @Test
+    fun `hiding the version changer hands its width to the reference, up to the cluster cap`() {
+        for (widthDp in listOf(320, 360, 411)) {
+            val withVersion = layOut(widthDp, stateFor())
+            val withoutVersion = layOut(widthDp, stateFor().copy(versionVisible = false))
+            val gainedDp = dp(withoutVersion.referenceTouch.width() - withVersion.referenceTouch.width())
+            val expected = clusterWidthDp(widthDp, 0f) - clusterWidthDp(widthDp, shortSegmentDp)
+            assertEquals("width handed back at ${widthDp}dp", expected, gainedDp, 0.7f)
+        }
+    }
+
+    @Test
+    fun `a version without audio drops the speaker segment`() {
+        val withAudio = layOut(320, stateFor(audio = true))
+        val withoutAudio = layOut(320, stateFor(audio = false))
+        val gainedDp = dp(withoutAudio.referenceTouch.width() - withAudio.referenceTouch.width())
+        assertEquals(1f + ReaderToolbarDimens.speakerWidth.value, gainedDp, 0.7f)
+    }
+
+    @Test
+    fun `a version name longer than six characters is cut to five plus an ellipsis`() {
+        assertEquals("TB", versionLabelFor("TB"))
+        assertEquals("VERSNM", versionLabelFor("VERSNM"))
+        assertEquals("VERSI…", versionLabelFor("VERSION"))
+    }
+
+    @Test
+    fun `the speaker segment marks the audio bar being open without moving anything`() {
+        val off = layOut(360, stateFor(audioOn = false))
+        val on = layOut(360, stateFor(audioOn = true))
+        assertEquals(off.referenceTouch, on.referenceTouch)
+        assertTrue("the speaker segment should look different when the bar is open", !off.bitmap.sameAs(on.bitmap))
+    }
+
+    /**
+     * Not a pass/fail guard: writes the bar at every shipping width so the
+     * Compose result can be put next to the audit's own renders.
+     */
+    @Test
+    fun `render the compose toolbar at every shipping width`() {
+        val laids = shippingWidths.map { layOut(it, stateFor()) } +
+            layOut(360, stateFor("VERSNM")) +
+            layOut(360, stateFor(audioOn = true))
+        val labels = shippingWidths.map { "${it}dp" } + "360dp, 6-char version" + "360dp, audio bar open"
+
+        val gutter = px(8)
+        val labelHeight = px(14)
+        val sheetWidth = laids.maxOf { it.bitmap.width } + gutter * 2
+        val sheetHeight = gutter + laids.sumOf { it.bitmap.height + labelHeight + gutter }
+
+        val sheet = Bitmap.createBitmap(sheetWidth, sheetHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(sheet)
+        canvas.drawColor(Color.parseColor("#0B2A46"))
+        val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.parseColor("#8FB6D6")
+            textSize = px(9).toFloat()
+            typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+        }
+
+        var y = gutter
+        laids.forEachIndexed { index, laid ->
+            canvas.drawText(labels[index], gutter.toFloat(), (y + px(9)).toFloat(), text)
+            y += labelHeight
+            canvas.drawBitmap(laid.bitmap, gutter.toFloat(), y.toFloat(), null)
+            y += laid.bitmap.height + gutter
+        }
+
+        val outputDir = File(System.getenv("TOOLBAR_AUDIT_DIR") ?: "build/reports/toolbar-audit")
+        outputDir.mkdirs()
+        val file = File(outputDir, "compose-toolbar.png")
+        file.outputStream().use { sheet.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        println("compose toolbar render written to ${file.absolutePath}")
+    }
+}

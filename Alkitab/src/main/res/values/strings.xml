@@ -220,6 +220,7 @@
     <string name="desc_delete">Delete</string>
     <string name="desc_change_selected_books">Change selected books</string>
     <string name="desc_download">Download</string>
+    <string name="desc_open_drawer">Open navigation panel</string>
     <string name="desc_previous_chapter">Previous chapter</string>
     <string name="desc_next_chapter">Next chapter</string>
     <string name="desc_drag_to_reorder_versions">Drag to reorder versions</string>

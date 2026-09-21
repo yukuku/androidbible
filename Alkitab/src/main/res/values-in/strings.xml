@@ -211,6 +211,7 @@
     <string name="desc_delete">Hapus</string>
     <string name="desc_change_selected_books">Ganti buku yang dipilih</string>
     <string name="desc_download">Unduh</string>
+    <string name="desc_open_drawer">Buka panel navigasi</string>
     <string name="desc_previous_chapter">Pasal sebelum</string>
     <string name="desc_next_chapter">Pasal berikut</string>
     <string name="desc_drag_to_reorder_versions">Geser untuk mengurutkan versi</string>

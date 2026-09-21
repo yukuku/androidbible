@@ -35,6 +35,8 @@
     <string name="pref_useComposeVerseItem_summary">Tampilkan teks Alkitab dengan daftar ayat yang sepenuhnya berbasis Jetpack Compose, bukan tampilan lama. Berlaku setelah layar pembacaan dibuka kembali.</string>
     <string name="pref_useComposeGoto_title">Navigasi (Compose)</string>
     <string name="pref_useComposeGoto_summary">Tampilkan layar Navigasi versi Jetpack Compose yang baru, bukan implementasi lama dengan tab.</string>
+    <string name="pref_useComposeToolbar_title">Toolbar baca (Compose)</string>
+    <string name="pref_useComposeToolbar_summary">Gambar toolbar layar pembacaan dengan Jetpack Compose, bukan tampilan lama. Berlaku setelah layar pembacaan dibuka kembali.</string>
     <string name="pref_useComposeSong_title">Lirik lagu (Compose)</string>
     <string name="pref_useComposeSong_summary">Tampilkan lirik lagu secara native dengan Jetpack Compose, bukan WebView lama (HTML/CSS). Buka sebuah lagu untuk melihat perubahannya.</string>
 </resources>

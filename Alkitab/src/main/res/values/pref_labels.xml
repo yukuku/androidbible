@@ -38,6 +38,8 @@
     <string name="pref_useComposeVerseItem_summary">Show the Bible text with the new, fully Jetpack Compose-based verse list instead of the legacy views. Takes effect when the reader screen is reopened.</string>
     <string name="pref_useComposeGoto_title">Navigation (Compose)</string>
     <string name="pref_useComposeGoto_summary">Show the new Jetpack Compose Navigation screen instead of the legacy tab-based implementation.</string>
+    <string name="pref_useComposeToolbar_title">Reader toolbar (Compose)</string>
+    <string name="pref_useComposeToolbar_summary">Draw the reading screen toolbar with Jetpack Compose instead of the old view. Takes effect after the reading screen is reopened.</string>
     <string name="pref_useComposeSong_title">Song lyrics (Compose)</string>
     <string name="pref_useComposeSong_summary">Render song lyrics natively with Jetpack Compose instead of the legacy WebView (HTML/CSS). Open a song to see the change.</string>
     <string name="pref_useComposeSyncLogin_title">Sync login (Compose)</string>

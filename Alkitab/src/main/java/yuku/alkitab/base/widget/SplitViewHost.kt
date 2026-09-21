@@ -1,6 +1,5 @@
 package yuku.alkitab.base.widget
 
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import yuku.alkitab.base.verses.VersesController
@@ -27,8 +26,8 @@ interface SplitViewHost {
     val lsSplit0: VersesController
     val lsSplit1: VersesController
 
-    /** Toolbar version-name label — hidden while the split pane is open. */
-    val bVersion: TextView
+    /** Hides the toolbar version changer while the split pane is open. */
+    fun setVersionChangerVisible(visible: Boolean)
 
     /** Left drawer; the manager flips `handle.setSplitVersion(...)` on open/close. */
     val leftDrawer: LeftDrawer.Text
