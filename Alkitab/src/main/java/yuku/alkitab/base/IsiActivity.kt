@@ -87,6 +87,7 @@ import yuku.alkitab.base.dialog.XrefDialog
 import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
+import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.settings.SettingsActivity
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AlkitabGptIntegration
