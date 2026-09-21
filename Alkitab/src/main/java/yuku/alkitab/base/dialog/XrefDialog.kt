@@ -21,10 +21,10 @@ import yuku.alkitab.base.dialog.base.BaseDialog
 import yuku.alkitab.base.util.Appearances.applyTextAppearance
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesController
-import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.base.verses.VersesListeners
 import yuku.alkitab.base.verses.VersesUiModel
+import yuku.alkitab.base.verses.createVersesController
 import yuku.alkitab.base.widget.FormattedTextRenderer
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRenderer
@@ -91,7 +91,7 @@ class XrefDialog : BaseDialog() {
             tXrefText = findViewById(R.id.tXrefText)
             setBackgroundColor(App.services.uiDimensions.applied().backgroundColor)
 
-            versesController = VersesControllerImpl(
+            versesController = createVersesController(
                 findViewById(R.id.lsView),
                 "xref",
                 VersesDataModel.EMPTY,

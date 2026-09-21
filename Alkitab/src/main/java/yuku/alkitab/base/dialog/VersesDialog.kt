@@ -15,10 +15,10 @@ import yuku.alkitab.base.dialog.base.BaseDialog
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.util.Appearances.applyTextAppearance
 import yuku.alkitab.base.verses.VersesController
-import yuku.alkitab.base.verses.VersesControllerImpl
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.base.verses.VersesListeners
 import yuku.alkitab.base.verses.VersesUiModel
+import yuku.alkitab.base.verses.createVersesController
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
@@ -77,7 +77,7 @@ class VersesDialog : BaseDialog() {
         res.setBackgroundColor(App.services.uiDimensions.applied().backgroundColor)
         val tReference = res.findViewById<TextView>(R.id.tReference)
 
-        val versesController = VersesControllerImpl(
+        val versesController = createVersesController(
             res.findViewById(R.id.lsView),
             "verses",
             VersesDataModel.EMPTY,
