@@ -1812,9 +1812,16 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         splitViewManager.displaySplitFollowingMaster(available_verse_1)
 
         // set goto button text
-        val reference = activeSplit0.book.reference(available_chapter_1)
+        val book = activeSplit0.book
+        val reference = book.reference(available_chapter_1)
         bGoto.text = reference
-        toolbarState = toolbarState.copy(reference = reference)
+        toolbarState = toolbarState.copy(
+            reference = reference,
+            referenceAbbreviated = book.abbreviation
+                ?.takeIf { it.isNotBlank() && it != book.shortName }
+                ?.let { Book.reference(it, available_chapter_1) }
+                .orEmpty(),
+        )
 
         if (fullScreen) {
             fullscreenReferenceToast?.cancel()

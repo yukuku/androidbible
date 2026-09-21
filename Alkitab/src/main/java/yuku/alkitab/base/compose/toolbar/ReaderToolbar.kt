@@ -87,6 +87,8 @@ object ReaderToolbarDimens {
 
 data class ReaderToolbarState(
     val reference: String = "",
+    /** The same reference with the book abbreviated, used when the bar is too small for the full one. */
+    val referenceAbbreviated: String = "",
     val versionInitials: String = "",
     val versionVisible: Boolean = true,
     val audioAvailable: Boolean = false,
@@ -149,6 +151,7 @@ fun ReaderToolbar(
                 )
                 NavCluster(
                     reference = state.reference,
+                    referenceAbbreviated = state.referenceAbbreviated,
                     arrowWidth = arrowWidth,
                     margin = margin,
                     flush = flush,
@@ -232,6 +235,7 @@ private fun BarIconButton(
 @Composable
 private fun NavCluster(
     reference: String,
+    referenceAbbreviated: String,
     arrowWidth: Dp,
     margin: Dp,
     flush: Boolean,
@@ -247,6 +251,7 @@ private fun NavCluster(
         )
         ReferenceLabel(
             reference = reference,
+            referenceAbbreviated = referenceAbbreviated,
             margin = margin,
             contentColor = contentColor,
             modifier = Modifier.align(Alignment.Center),
@@ -333,6 +338,7 @@ private fun ReferenceTarget(
 @Composable
 private fun ReferenceLabel(
     reference: String,
+    referenceAbbreviated: String,
     margin: Dp,
     contentColor: Color,
     modifier: Modifier = Modifier,
@@ -347,23 +353,49 @@ private fun ReferenceLabel(
     val measurer = rememberTextMeasurer()
 
     BoxWithConstraints(modifier.fillMaxWidth().padding(horizontal = margin)) {
-        val available = with(LocalDensity.current) { maxWidth.toPx() }
-        // Reuses the view implementation so both toolbars break a long
-        // reference at the same place.
-        val display = remember(reference, available, style) {
-            GotoButton.balanceWrap(reference, available) { text, start, end ->
-                measurer.measure(text.subSequence(start, end).toString(), style).size.width.toFloat()
+        val density = LocalDensity.current
+        val available = with(density) { maxWidth.toPx() }
+        val box = with(density) {
+            Constraints(maxWidth = maxWidth.roundToPx(), maxHeight = maxHeight.roundToPx())
+        }
+
+        val display = remember(reference, referenceAbbreviated, available, box, style) {
+            // Reuses the view implementation so both toolbars break a long
+            // reference at the same place.
+            fun wrap(text: String) = GotoButton.balanceWrap(text, available) { s, start, end ->
+                measurer.measure(s.subSequence(start, end).toString(), style).size.width.toFloat()
+            }
+
+            fun fitsWhole(text: String) = !measurer.measure(
+                text = text,
+                style = style,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = REFERENCE_MAX_LINES,
+                constraints = box,
+            ).hasVisualOverflow
+
+            val full = wrap(reference)
+            when {
+                fitsWhole(full) -> full
+                // The chapter number is at the end, so anything cut takes it
+                // with it. The abbreviation is only worth using when it buys
+                // the number back.
+                referenceAbbreviated.isEmpty() -> full
+                else -> wrap(referenceAbbreviated).takeIf(::fitsWhole) ?: full
             }
         }
+
         Text(
             text = display,
             style = style,
-            maxLines = 2,
+            maxLines = REFERENCE_MAX_LINES,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.fillMaxWidth(),
         )
     }
 }
+
+private const val REFERENCE_MAX_LINES = 2
 
 /**
  * One stadium holding the version changer and the audio button, because audio

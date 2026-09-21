@@ -12,7 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.test.core.app.ApplicationProvider
 import java.io.File
 import kotlin.math.roundToInt
@@ -73,7 +76,7 @@ class ReaderToolbarComposeTest {
         fun clusterWidthPx(arrowPx: Int) = referenceTouch.width() + arrowPx * 2
     }
 
-    private fun layOut(widthDp: Int, state: ReaderToolbarState): Laid {
+    private fun layOut(widthDp: Int, state: ReaderToolbarState, fontScale: Float = 1f): Laid {
         RuntimeEnvironment.setQualifiers("sw${widthDp}dp-w${widthDp}dp-h640dp-port-xxhdpi")
         val activity = Robolectric.buildActivity(ComposeToolbarHostActivity::class.java).setup().get()
 
@@ -96,7 +99,11 @@ class ReaderToolbarComposeTest {
         }
 
         val view = ComposeView(activity).apply {
-            setContent { BibleAppTheme { ReaderToolbar(state, actions) } }
+            setContent {
+                CompositionLocalProvider(LocalDensity provides Density(density, fontScale)) {
+                    BibleAppTheme { ReaderToolbar(state, actions) }
+                }
+            }
         }
         val host = FrameLayout(activity).apply {
             setBackgroundColor(activity.getColor(R.color.primary))
@@ -271,6 +278,40 @@ class ReaderToolbarComposeTest {
         assertTrue("the speaker segment should look different when the bar is open", !off.bitmap.sameAs(on.bitmap))
     }
 
+
+    /**
+     * The chapter number sits at the end of the reference, so anything cut off
+     * takes it with it. A bar too small for "2 Tesalonika 1" falls back to
+     * "2Tes 1", and gives up once even that cannot be shown whole.
+     */
+    private fun longReference(abbreviated: String) = stateFor().copy(
+        reference = "2 Tesalonika 1",
+        referenceAbbreviated = abbreviated,
+    )
+
+    private fun abbreviationUsedAt(fontScale: Float): Boolean {
+        val without = layOut(360, longReference(""), fontScale)
+        val with = layOut(360, longReference("2Tes 1"), fontScale)
+        return !without.bitmap.sameAs(with.bitmap)
+    }
+
+    @Test
+    fun `a reference that fits whole is left alone`() {
+        assertTrue("the abbreviation should not be used at ordinary font sizes", !abbreviationUsedAt(1f))
+        assertTrue(!abbreviationUsedAt(1.3f))
+    }
+
+    @Test
+    fun `a reference whose chapter number is cut off falls back to the book abbreviation`() {
+        assertTrue(abbreviationUsedAt(1.6f))
+        assertTrue(abbreviationUsedAt(2.5f))
+    }
+
+    @Test
+    fun `a bar too small for the abbreviation too keeps the full reference`() {
+        assertTrue("nothing is gained by abbreviating here", !abbreviationUsedAt(3f))
+    }
+
     /**
      * Not a pass/fail guard: writes the bar at every shipping width so the
      * Compose result can be put next to the audit's own renders.
@@ -281,12 +322,16 @@ class ReaderToolbarComposeTest {
             layOut(360, stateFor("VERSNM")) +
             layOut(360, stateFor(audioOn = true)) +
             layOut(360, stateFor().copy(versionVisible = false)) +
-            layOut(360, stateFor(audio = false))
+            layOut(360, stateFor(audio = false)) +
+            layOut(360, longReference("2Tes 1"), fontScale = 1f) +
+            layOut(360, longReference("2Tes 1"), fontScale = 2f)
         val labels = shippingWidths.map { "${it}dp" } +
             "360dp, 6-char version" +
             "360dp, audio bar open" +
             "360dp, split view open (no version changer)" +
-            "360dp, version with no audio"
+            "360dp, version with no audio" +
+            "360dp, long reference" +
+            "360dp, long reference at a 2x font scale (abbreviated)"
 
         val gutter = px(8)
         val labelHeight = px(14)

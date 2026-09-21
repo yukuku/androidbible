@@ -8,7 +8,7 @@ feature of the view toolbar and applies the space savings measured in
 Turn it on under Settings, Experimental, "Reader toolbar (Compose)", then
 reopen the reading screen.
 
-![The Compose reader toolbar rendered at 320, 360, 384, 411, 480 and 600 dp, plus a six-character version name, the audio bar open, the split view open, and a version with no audio](compose-toolbar.png)
+![The Compose reader toolbar rendered at 320, 360, 384, 411, 480 and 600 dp, plus a six-character version name, the audio bar open, the split view open, a version with no audio, and a long reference falling back to the book abbreviation](compose-toolbar.png)
 
 ## Where the code is
 
@@ -43,7 +43,7 @@ is drawing.
 the version changer is showing, and the two audio flags. It is updated in four
 places:
 
-- `display()` sets `reference` next to `bGoto.text`.
+- `display()` sets `reference` and `referenceAbbreviated` next to `bGoto.text`.
 - `displayActiveVersion()` sets `versionInitials` next to `bVersion.text`.
 - `setVersionChangerVisible()` sets `versionVisible`, called by `SplitViewManager`.
 - `buildMenu()` sets `audioAvailable` and `audioBarVisible`, which keeps the
@@ -112,6 +112,22 @@ full-height clickable box and attaches `indication` to the inner clipped box.
 This also fixes a gap in the view toolbar, where the version changer is the
 only control with no ripple at all, because `FakeSpinner` replaces the
 selectable background with a nine-patch.
+
+### The book abbreviation when the chapter number would be cut off
+
+The chapter number sits at the end of the reference, so whatever the bar cuts
+off takes the number with it. A large font size, a long book name or a narrow
+bar can leave "2 Tesalonika 1" showing as "2 Tesal...", which is the one part
+of the reference the reader cannot guess.
+
+`ReferenceLabel` measures the reference against the box it will actually be
+drawn in. If it does not fit whole, it measures `Book.abbreviation` in the
+same box and uses that instead, giving "2Tes 1". If even the abbreviation
+would be cut, it keeps the full reference, since abbreviating buys nothing
+there.
+
+The fallback only applies when the version supplies an abbreviation that
+differs from the book's short name. The view toolbar does not do this.
 
 ### Audio on/off shown by the segment
 
