@@ -50,14 +50,7 @@ This app natively uses *.yes* files for the Bible text. You can create a *.yes* 
 
 To add a version to the app, open it from the Versions screen. The app accepts *.yes* files directly, and converts PalmBible+ *.pdb* files to *.yes* with its built-in converter for your own use. Gzipped files (*.yes.gz*, *.pdb.gz*) are decompressed transparently.
 
-Ready-to-run converter jars, including a desktop PalmBible+ *.pdb* to *.yet* converter, are in [this Google Drive folder](https://drive.google.com/drive/folders/0B0mZXH9nEuQ0dGdxbUI5T1lyeUU?resourcekey=0-V_emMiw0Q1APka5ddsS2rA&usp=sharing). Download those if you just want to convert a file.
-
-The source for several of them lives in [`tools/`](tools), a separate IntelliJ project that is not part of the Gradle build:
-
-- `tools/YetToYes2` converts *.yet* files to *.yes* files
-- `tools/YetToInternal` converts *.yet* files to the built-in Bible format
-- `tools/RpaToRpb` converts reading plans to the *.rpb* binary format
-- `tools/AlkitabConverter` holds the source-format importers and sample reading plans
+For converting in bulk or from another Bible format, see [docs/tools.md](docs/tools.md), which covers the desktop converters in `tools/` and where to get the prebuilt jars.
 
 Customizing and Integrating
 ---------------------------
@@ -81,6 +74,7 @@ Start with [CLAUDE.md](CLAUDE.md) (architecture overview, module structure, ARI 
 - [Architecture Deep Dive](docs/architecture.md) — singleton patterns, data flow, module dependencies
 - [Build System](docs/build-system.md) — flavors, signing, CI/CD, release process
 - [Google Play Publishing](docs/play-publishing.md) — store uploads via `tools/play/publish.py`
+- [Tools](docs/tools.md) — the desktop converters in `tools/` for Bible versions and reading plans
 - [Storage & Database](docs/storage.md) — SQLite schema, preferences, file storage
 - [Backend Communication](docs/backend-communication.md) — API endpoints, download flows
 - [Text Rendering](docs/text-rendering.md) — verse formatting pipeline and codes
