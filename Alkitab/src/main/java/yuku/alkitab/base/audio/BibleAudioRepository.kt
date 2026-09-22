@@ -12,14 +12,11 @@ import yuku.alkitab.debug.BuildConfig
  * Audio data layer: turns a `(versionId, audioId, bookId, chapter_1)` address
  * into a chapter MP3 URL and its verse timing.
  *
- * Both methods resolve the recording via [AudioSetsRepository] and expand the
- * URL templates the backend serves for it. The templates exist precisely so
- * the client never hard-codes upstream URLs: adding a recording, or moving
- * the CDN, is a backend-side change.
+ * URLs come from templates the backend serves, so adding a recording or moving
+ * the CDN stays a backend-side change.
  *
- * Book and chapter are 1-based in every audio URL, matching the backend and
- * its upstream. The app's `Ari` bookId is 0-based, so the `book_1 = bookId + 1`
- * conversion happens in [expandTemplate], once and nowhere else.
+ * Book and chapter are 1-based in every audio URL, while the app's `Ari` bookId
+ * is 0-based, so the conversion happens in [expandTemplate] and nowhere else.
  */
 object BibleAudioRepository {
 
@@ -30,11 +27,9 @@ object BibleAudioRepository {
     internal var http: AudioHttp = OkHttpAudioHttp
 
     /**
-     * Resolves the absolute chapter MP3 URL for
-     * `(versionId, audioId, bookId, chapter_1)`, or null when [versionId] has
-     * no recording with [audioId], or the recording's template does not resolve
-     * to a URL. On the missing-recording path the caller should never have
-     * asked: toolbar-icon visibility is gated on the resolved set list.
+     * Returns null when [versionId] has no recording with [audioId]. Callers
+     * should not hit that case, because toolbar-icon visibility is gated on the
+     * resolved set list.
      */
     suspend fun buildChapterUrl(versionId: String, audioId: String, bookId: Int, chapter_1: Int): String? {
         val set = resolveSet(versionId, audioId) ?: return null
@@ -42,19 +37,10 @@ object BibleAudioRepository {
     }
 
     /**
-     * Fetches the verse timing for `(versionId, audioId, bookId, chapter_1)`.
-     * Returns the parsed [ChapterTiming] on success (with a possibly-empty
-     * `verses` list when the chapter has audio but no upstream timing), or
-     * null on:
-     *  - no recording with [audioId] for [versionId],
-     *  - a recording without timing (`timingUrlTemplate` is null, so the
-     *    request is skipped entirely),
-     *  - a `timingUrlTemplate` that does not resolve to a URL,
-     *  - any non-2xx response or I/O error,
-     *  - JSON parse failure.
-     *
-     * The 50 MB OkHttp disk cache takes care of per-URL caching (TTLs are set
-     * server-side via `Cache-Control`).
+     * Returns null when there is no timing to fetch, including for a recording
+     * that has none. A returned [ChapterTiming] may still carry an empty
+     * `verses` list, for a chapter with audio but no upstream timing. Per-URL
+     * caching is handled by the OkHttp disk cache, with TTLs set server-side.
      */
     suspend fun fetchTiming(versionId: String, audioId: String, bookId: Int, chapter_1: Int): ChapterTiming? {
         val set = resolveSet(versionId, audioId) ?: return null
@@ -85,10 +71,9 @@ object BibleAudioRepository {
     private val serverBase by lazy { BuildConfig.SERVER_HOST.toHttpUrl() }
 
     /**
-     * Substitutes the placeholders in [template] and resolves the result
-     * against [serverBase] the way a browser resolves an href: a path-absolute
-     * template lands on the backend host, an absolute URL is taken as it
-     * stands. Null when the expansion is not a resolvable URL reference.
+     * Resolves against [serverBase] the way a browser resolves an href, so a
+     * path-absolute template lands on the backend host and an absolute URL is
+     * taken as it stands.
      */
     private fun expandTemplate(template: String, bookId: Int, chapter_1: Int): String? {
         val book_1 = bookId + 1

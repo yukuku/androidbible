@@ -61,28 +61,20 @@ private fun quoteForLog(text: String, start: Int, end: Int): String {
     return "\u2026${text.substring(from, start)}[${text.substring(start, end)}]${text.substring(end, until)}\u2026"
 }
 
-/**
- * Ruby text is drawn at this fraction of the base font size.
- *
- * At the default 17dp verse text a reading is drawn at 8.5dp.
- */
+/** At the default 17dp verse text, a reading is drawn at 8.5dp. */
 internal const val RUBY_FONT_SIZE_RATIO = 0.5f
 
 /**
  * Gap between the ruby's bottom and the base glyph's top, as a fraction of the
- * ruby font size.
- *
- * With an 8.5dp reading the gap is 0.85dp.
+ * ruby font size. With an 8.5dp reading that is 0.85dp.
  */
 internal const val RUBY_GAP_RATIO = 0.1f
 
 /**
- * Clearance kept on each side of a ruby so neighbouring rubies never touch, as
- * a fraction of the ruby font size.
- *
- * With an 8.5dp reading, two readings over adjacent characters stay 1.7dp
- * apart. This is what keeps `Qǐ` and `chū` legible over 起初 in a pinyin verse,
- * where every character carries its own reading.
+ * Clearance on each side of a ruby, as a fraction of the ruby font size, so
+ * neighbouring rubies never touch. With an 8.5dp reading two adjacent readings
+ * stay 1.7dp apart, which is what keeps `Qǐ` and `chū` legible over 起初 in a
+ * pinyin verse where every character carries its own reading.
  */
 internal const val RUBY_SIDE_GAP_RATIO = 0.2f
 

@@ -31,20 +31,13 @@ import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
 
 /**
- * Glue layer between the View-based [yuku.alkitab.base.IsiActivity] and the
- * Compose [AudioBar] surface, plus the Service-side [BibleAudioService].
+ * Glue layer between the View-based [yuku.alkitab.base.IsiActivity], the Compose
+ * [AudioBar] surface and the Service-side [BibleAudioService].
  *
- * Responsibilities:
- *  - Bind to the local [BibleAudioService] using [BibleAudioService.ACTION_LOCAL_BIND]
- *    and collect its [BibleAudioService.playbackState] into a UI-shaped flow.
- *  - Project [PlaybackState] plus chapter-navigation context into [AudioBarUiState],
- *    keeping the recomposition surface flat.
- *  - Translate Compose [AudioBarCommand]s into service calls and activity navigation.
- *
- * Lifecycle: the activity calls [attach] in `onCreate` (after `setContentView`)
- * and [detach] in `onDestroy`. Binding to the service is idempotent and happens
- * only when the user actually starts audio, so an IsiActivity instance never
- * spins up a service for users who don't tap the audio icon.
+ * The activity calls [attach] in `onCreate` (after `setContentView`) and
+ * [detach] in `onDestroy`. Binding to the service is idempotent and happens only
+ * once the user starts audio, so an IsiActivity never spins a service up for
+ * someone who does not tap the audio icon.
  */
 class AudioBarController(
     private val context: Context,
@@ -56,13 +49,10 @@ class AudioBarController(
     interface Host {
         fun audioCurrentBook(): Book
 
-        /** Currently displayed chapter (1-based). */
+        /** The chapter the reader is showing, 1-based. */
         fun audioCurrentChapter1(): Int
 
-        /**
-         * The list of version ids currently visible in `IsiActivity` (primary,
-         * plus the split-view secondary if open). Drives toolbar-icon visibility.
-         */
+        /** Primary, plus the split-view secondary when open. Drives toolbar-icon visibility. */
         fun audioVisibleVersionIds(): List<String>
 
         /** Visible versions that have audio coverage, ordered split0 then split1. */

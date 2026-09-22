@@ -30,48 +30,24 @@ import yuku.alkitab.songs.newdoc.SongDocumentJson;
 import yuku.kpri.model.Song;
 
 /**
- * Facade over the Room-backed {@link SongRoomDao} that preserves the
- * legacy {@code SongInfo} / {@code SongBookInfo} public surface. Existing
- * call sites in {@code SongSearchSheet}, {@code SongViewActivity}, and
- * {@code SongBookUtil} don't need to change.
+ * Facade over the Room-backed {@link SongRoomDao} carrying the
+ * {@code SongInfo} / {@code SongBookInfo} surface its call sites expect.
  *
- * <p>Two tables, one facade: both belong to the Songs subsystem and are
- * commonly written together during song-book installation
- * ({@code SongBookUtil.handleDownloadResult} calls
- * {@link #insertSongBookInfo(SongBookUtil.SongBookInfo)} then
- * {@link #storeSongs(String, List)}).
+ * <p>The {@link SongDbHelper} passed to the constructor is unused:
+ * {@link SongRoomDatabase} owns the SQLite file, and the one-time copy out of
+ * the legacy file runs in {@code SongDbDataMigration}.
  *
- * <p>Cross-file note: this DAO is constructed with {@link SongDbHelper}
- * only so its constructor signature stays unchanged. The helper is no
- * longer used internally; {@link SongRoomDatabase} supplies the underlying
- * SQLite file. The one-time data copy runs in
- * {@code yuku.alkitab.base.storage.room.SongDbDataMigration}.
- *
- * <p>{@code VACUUM} preservation: {@link #deleteSongBook(String)} retains
- * the legacy facade's post-delete {@code VACUUM} to reclaim disk space
- * after dropping a song book's worth of rows. Room cannot run
- * {@code VACUUM} inside a transaction, so the facade issues it via the
- * underlying {@code SupportSQLiteDatabase} after the DAO transaction has
- * committed.
- *
- * <p>{@link #writeDocument} always writes UTF-8 JSON at
- * {@link SongDocumentJson#DATA_FORMAT_VERSION}; {@link #readDocument}
- * dispatches JSON-vs-legacy-Parcelable by the row's {@code dataFormatVersion}
- * and lazily rewrites legacy rows as JSON the first time they're read (at
- * most once per row). The BLOB column itself (opaque {@code byte[]}) hasn't
- * changed — only what's inside it has.
+ * <p>{@link #writeDocument} always writes UTF-8 JSON, while
+ * {@link #readDocument} dispatches on the row's {@code dataFormatVersion} and
+ * rewrites a legacy Parcelable row as JSON the first time it is read.
  */
 public class SongDb {
     @SuppressWarnings("unused") // kept for ABI parity with the pre-Room constructor
     private final SongDbHelper helper;
 
-    // `volatile` + double-checked locking so concurrent callers either
-    // see the fully-published `SongRoomDao` reference or do one extra
-    // resolution under the lock. The underlying `SongRoomDatabase.get`
-    // is itself thread-safe and returns the same singleton, so a benign
-    // double init is functionally harmless — but without `volatile` the
-    // JMM could publish a partially-initialised reference, and explicit
-    // DCL keeps the contract obvious at the call site.
+    // Double-checked locking: `SongRoomDatabase.get` is itself thread-safe and
+    // returns the same singleton, so a double init is harmless, but without
+    // `volatile` the JMM could publish a partially-initialised reference.
     private volatile SongRoomDao cachedRoomDao;
 
     public SongDb(SongDbHelper helper) {
@@ -92,17 +68,13 @@ public class SongDb {
         return result;
     }
 
-    /**
-     * @see SongDocumentJson#DATA_FORMAT_VERSION
-     */
     private static byte[] writeDocument(SongDocument doc) {
         return SongDocumentJson.encode(doc).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
-     * Fallback if the pure-JVM {@link LegacyParcelDecoder} throws (an unrecognised wire shape):
-     * fall back to the platform {@code Parcel.unmarshall()} path, which still works as long as the
-     * OS hasn't changed since the row was written.
+     * Fallback for a wire shape {@link LegacyParcelDecoder} does not recognise.
+     * Works as long as the OS has not changed since the row was written.
      */
     private static Song unmarshallLegacySongViaPlatformParcel(byte[] buf, int dataFormatVersion) {
         Parcel p = Parcel.obtain();
@@ -114,11 +86,8 @@ public class SongDb {
     }
 
     /**
-     * Single song-read helper: dispatches JSON vs. legacy Parcelable by {@code dataFormatVersion}.
-     * Legacy rows are decoded via {@link LegacyParcelDecoder} (falling back to the platform
-     * {@link Parcel} if that throws), converted to a {@link SongDocument} via
-     * {@link LegacySongConverter}, and the JSON is written back to the row so the conversion
-     * happens at most once per row.
+     * Dispatches JSON vs. legacy Parcelable by {@code dataFormatVersion}. A
+     * converted legacy row is written back as JSON, so it converts at most once.
      */
     private SongDocument readDocument(long id, String bookName, String code, byte[] data, int dataFormatVersion) {
         if (dataFormatVersion == SongDocumentJson.DATA_FORMAT_VERSION) {
@@ -134,21 +103,17 @@ public class SongDb {
         }
 
         final SongDocument doc = LegacySongConverter.convert(legacySong);
-        // Write-back is idempotent (a row already at dataFormatVersion 5 is just re-written the same
-        // way) and this helper runs on the caller's thread — including the main thread for single-song
-        // reads (SongViewActivity.onStart) and, in a tight loop, the deep-filter scan. Fire the UPDATE
-        // on a background thread so a book full of legacy songs can't stall the UI or a search.
+        // This helper runs on the caller's thread, including the main thread and, in a tight
+        // loop, the deep-filter scan. Fire the UPDATE on a background thread so a book full of
+        // legacy songs cannot stall the UI or a search.
         final byte[] jsonBytes = writeDocument(doc);
         Background.run(() -> roomDao().writeBackJsonSongData(id, jsonBytes));
         return doc;
     }
 
     /**
-     * Store to db songs in a book. Before the songs are stored, all songs of the specified book
-     * (at any {@code dataFormatVersion}) are deleted, so updating a mixed-version book leaves no
-     * stale rows behind. The payload is always written as JSON, so every row is stamped at
-     * {@link SongDocumentJson#DATA_FORMAT_VERSION} regardless of the version originally requested
-     * from the server.
+     * Deletes every song of the book first, at any {@code dataFormatVersion}, so
+     * updating a mixed-version book leaves no stale rows behind.
      */
     public void storeSongs(String bookName, List<SongDocument> docs) {
         final int updateTime = Sqlitil.nowDateTime();
@@ -203,12 +168,7 @@ public class SongDb {
     }
 
     public List<SongInfo> listSongInfosByBookName(@Nullable String bookName) {
-        // Metadata-only listing: deliberately avoid SELECT * so we don't
-        // pull the multi-kB `data` BLOB into the heap for every row. The
-        // legacy facade used the same column-list trick (cf. the pre-Room
-        // `listSongInfosByBookName` query projection).
-        // Null bookName means "All song books" (the song list's book
-        // selector), same contract as the legacy facade's querySongs.
+        // Null bookName means "All song books", the song list's book selector.
         final List<SongInfoMetaRow> rows = (bookName == null)
             ? roomDao().listAllSongInfoMetas()
             : roomDao().listSongInfoMetasByBookName(bookName);
@@ -221,14 +181,8 @@ public class SongDb {
 
     public List<SongInfo> listSongInfosByBookNameAndDeepFilter(String bookName, String filter_string) {
         final CompiledFilter cf = SongFilter.compileFilter(filter_string);
-        // Stream rows via a Cursor instead of materialising every row
-        // (with its `data` BLOB) into a Room-returned List. For
-        // `bookName == null` that List would hold the entire song
-        // catalogue in memory; on a device with several large song books
-        // installed that's an OOM risk. The Cursor walks one row at a
-        // time, deserialises + tests + drops, bounding memory by the
-        // CursorWindow + one song. Matches the legacy facade's streaming
-        // behaviour.
+        // Streams through a Cursor, because a Room-returned List would hold the
+        // whole catalogue in memory when bookName is null. See SongRoomDao.
         final List<SongInfo> res = new ArrayList<>();
         try (Cursor c = (bookName == null)
             ? roomDao().queryAllDeepFilterRows()
@@ -267,17 +221,11 @@ public class SongDb {
         return res;
     }
 
-    /**
-     * Delete song book together with its songs.
-     *
-     * @return number of songs deleted
-     */
+    /** @return number of songs deleted */
     public int deleteSongBook(final String songBookName) {
         final int count = roomDao().deleteSongBookAndSongs(songBookName);
-        // Reclaim the disk space the deleted rows used. The legacy facade
-        // ran `VACUUM` after committing its transaction; preserve that
-        // behaviour by issuing it against the underlying SupportSQLite
-        // database outside any Room transaction.
+        // Reclaims the space a song book's worth of rows used. Room cannot
+        // VACUUM inside a transaction, so this runs after the DAO's commits.
         SongRoomDatabase.get(App.context).getOpenHelper().getWritableDatabase().execSQL("vacuum");
         return count;
     }

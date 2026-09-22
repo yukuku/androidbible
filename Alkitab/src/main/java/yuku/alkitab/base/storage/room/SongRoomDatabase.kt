@@ -15,10 +15,9 @@ import androidx.room.RoomDatabase
  * subsystem and the Bible-reading subsystem (see `docs/modules/songs.md`):
  * the two domains share no rows, no foreign keys, and no transactions.
  *
- * The `data` BLOB's own format is versioned by the `dataFormatVersion`
- * column, not by this database's version, so a payload change converts
- * rows lazily on read instead of bumping the schema and adding a
- * `Migration`.
+ * The `dataFormatVersion` column versions the `data` BLOB's own format,
+ * separately from this database's schema version. A payload change therefore
+ * converts rows lazily on read, and needs no `Migration`.
  */
 @Database(
     entities = [

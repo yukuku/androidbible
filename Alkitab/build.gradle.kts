@@ -182,8 +182,8 @@ val proprietaryDir: String? = providers.environmentVariable("ALKITAB_PROPRIETARY
 val sabdaFlavorName = "sabda_alkitab"
 val sabdaSigningConfigName = "releaseSabda"
 
-// Server endpoints, inlined here and in AlkitabFeedback because they are
-// app-specific constants rather than build-wide ones.
+// Server endpoints. These are specific to this app, so they live here and in
+// AlkitabFeedback, not in a build-wide block.
 val serverHost = "https://api.alkitab.app"
 val ribkaFunctionsHost = "https://us-central1-pulau-ribka.cloudfunctions.net/"
 val ribkaFunctionsHostDebug = "http://10.0.3.2:5001/pulau-ribka/us-central1/"
