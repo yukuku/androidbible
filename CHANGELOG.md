@@ -4,10 +4,6 @@ A user-facing history of Bible for Android (Alkitab / Quick Bible).
 Internal refactors, dependency bumps, CI tweaks, and pure
 translation-only updates are generally omitted.
 
-Across the 4.0 to 4.8 range, dates come from the hand-written release
-notes. Elsewhere they are the release / tag date, or the commit date of
-the version-bump for untagged releases.
-
 The 4.0 through 4.4 beta releases are interleaved among the stable
 releases in release order rather than grouped by version, so the 4.4
 betas run alongside the 4.3 patch releases that were shipping at the
