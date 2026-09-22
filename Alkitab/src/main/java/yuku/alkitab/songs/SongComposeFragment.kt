@@ -14,9 +14,9 @@ import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.SongDocumentJson
 
 /**
- * Native Jetpack Compose song viewer — the experimental replacement for the
- * WebView-based [SongFragment], gated behind
- * [yuku.alkitab.base.settings.ExperimentalFlags.useComposeSong]. Renders the
+ * Native Jetpack Compose song viewer, the default renderer in place of the
+ * WebView-based [SongFragment], which [yuku.alkitab.base.settings.ExperimentalFlags.useComposeSong]
+ * falls back to. Renders the
  * same [SongDocument] via [SongDocumentComposable] with the exact feature set
  * of the HTML/CSS path (see that composable's doc), routing scripture,
  * YouTube, and patch-text clicks back to the host activity.

@@ -7,8 +7,8 @@ import yuku.alkitab.base.settings.ExperimentalFlags
  * Builds the verses controller for one verse list, whether it is a reader
  * split pane or a dialog.
  *
- * With the Verse (Compose) experimental setting enabled, [recyclerView] is
- * swapped in place for a [VersesComposeView], keeping the same view id, child
+ * Unless the Verse (legacy views) experimental setting is on, [recyclerView]
+ * is swapped in place for a [VersesComposeView], keeping the same view id, child
  * index, and layout params so the split-view manager, the inset listeners, and
  * the DEBUG layout assertions keep operating on the pane.
  */

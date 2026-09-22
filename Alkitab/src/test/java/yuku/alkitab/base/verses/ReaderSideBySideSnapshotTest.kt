@@ -82,6 +82,14 @@ class ReaderSideBySideSnapshotTest {
             0xfffff59d.toInt(),
         )
 
+        // VersesControllerImpl takes its verse-row view type from the same
+        // setting the reader does, so the legacy half of the report is only
+        // legacy with the opt-out turned on.
+        yuku.afw.storage.Preferences.setBoolean(
+            prefContext.getString(R.string.pref_useLegacyVerseItem_key),
+            true,
+        )
+
         Robolectric.buildContentProvider(FakeDictionaryProvider::class.java).create(
             ProviderInfo().apply { authority = "org.sabda.kamus.provider" }
         )

@@ -15,8 +15,8 @@ class ExperimentalFragment : PreferenceFragmentCompat() {
 
         // The reader builds its verse content view once at creation, so this
         // flag only takes effect after the activity is restarted.
-        val prefUseComposeVerseItem = findPreference<CheckBoxPreference>(getString(R.string.pref_useComposeVerseItem_key))
-        prefUseComposeVerseItem?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+        val prefUseLegacyVerseItem = findPreference<CheckBoxPreference>(getString(R.string.pref_useLegacyVerseItem_key))
+        prefUseLegacyVerseItem?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
             // do this after this method returns true
             Handler(Looper.getMainLooper()).post { AppEvents.emitNeedsRestart() }
             true

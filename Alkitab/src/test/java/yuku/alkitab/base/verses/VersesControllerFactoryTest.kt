@@ -36,7 +36,7 @@ class VersesControllerFactoryTest {
     }
 
     private fun setComposeVerseItem(enabled: Boolean) {
-        Preferences.setBoolean(context.getString(R.string.pref_useComposeVerseItem_key), enabled)
+        Preferences.setBoolean(context.getString(R.string.pref_useLegacyVerseItem_key), !enabled)
     }
 
     private fun parentWithPane(): LinearLayout {

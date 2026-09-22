@@ -12,8 +12,8 @@ back to the reference.
 ## The Compose toolbar
 
 [`compose-implementation.md`](compose-implementation.md) describes the
-Jetpack Compose toolbar that applies the changes below, behind the
-`useComposeToolbar` experimental flag.
+Jetpack Compose toolbar that applies the changes below, which the
+`useComposeToolbar` flag selects by default.
 
 ## Interactive version
 

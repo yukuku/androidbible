@@ -31,12 +31,12 @@
     <string name="pref_experimental_warning">Mungkin belum stabil. Matikan jika bermasalah.</string>
     <string name="pref_debugRubyGeometry_title">Debug geometri ruby</string>
     <string name="pref_debugRubyGeometry_summary">Beri kotak pada setiap baris, teks dasar, dan bacaan di layar, tulis hasil pengukurannya ke log sistem dengan tag RubyGeom, dan salin pengukuran sebuah ayat ke papan klip saat ayat itu disentuh. Hanya untuk mendiagnosis penempatan bacaan; biarkan mati.</string>
-    <string name="pref_useComposeVerseItem_title">Tampilan ayat (Compose)</string>
-    <string name="pref_useComposeVerseItem_summary">Tampilkan teks Alkitab dengan daftar ayat yang sepenuhnya berbasis Jetpack Compose, bukan tampilan lama. Berlaku setelah layar pembacaan dibuka kembali.</string>
-    <string name="pref_useComposeGoto_title">Navigasi (Compose)</string>
-    <string name="pref_useComposeGoto_summary">Tampilkan layar Navigasi versi Jetpack Compose yang baru, bukan implementasi lama dengan tab.</string>
-    <string name="pref_useComposeToolbar_title">Toolbar baca (Compose)</string>
-    <string name="pref_useComposeToolbar_summary">Gambar toolbar layar pembacaan dengan Jetpack Compose, bukan tampilan lama. Berlaku setelah layar pembacaan dibuka kembali.</string>
-    <string name="pref_useComposeSong_title">Lirik lagu (Compose)</string>
-    <string name="pref_useComposeSong_summary">Tampilkan lirik lagu secara native dengan Jetpack Compose, bukan WebView lama (HTML/CSS). Buka sebuah lagu untuk melihat perubahannya.</string>
+    <string name="pref_useLegacyVerseItem_title">Tampilan ayat (lama)</string>
+    <string name="pref_useLegacyVerseItem_summary">Tampilkan teks Alkitab dengan daftar ayat berbasis tampilan lama, bukan yang sepenuhnya berbasis Jetpack Compose. Berlaku setelah layar pembacaan dibuka kembali.</string>
+    <string name="pref_useLegacyGoto_title">Navigasi (lama)</string>
+    <string name="pref_useLegacyGoto_summary">Tampilkan layar Navigasi lama dengan tab, bukan versi Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Toolbar baca (lama)</string>
+    <string name="pref_useLegacyToolbar_summary">Gambar toolbar layar pembacaan dengan tampilan lama, bukan dengan Jetpack Compose. Berlaku setelah layar pembacaan dibuka kembali.</string>
+    <string name="pref_useLegacySong_title">Lirik lagu (lama)</string>
+    <string name="pref_useLegacySong_summary">Tampilkan lirik lagu dengan WebView lama (HTML/CSS), bukan secara native dengan Jetpack Compose. Buka sebuah lagu untuk melihat perubahannya.</string>
 </resources>

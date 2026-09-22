@@ -1,12 +1,12 @@
 # Reader toolbar in Compose
 
-The reading screen's toolbar has a second implementation written in Jetpack
-Compose, behind the `useComposeToolbar` experimental flag. It matches every
-feature of the view toolbar and applies the space savings measured in
+The reading screen's toolbar is drawn with Jetpack Compose by default
+(`useComposeToolbar`, backed by the `useLegacyToolbar` opt-out). It matches
+every feature of the view toolbar and applies the space savings measured in
 [`audit.md`](audit.md).
 
-Turn it on under Settings, Experimental, "Reader toolbar (Compose)", then
-reopen the reading screen.
+To go back to the view toolbar, tick Settings, Experimental, "Reader toolbar
+(legacy views)", then reopen the reading screen.
 
 ![The Compose reader toolbar rendered at 320, 360, 384, 411, 480 and 600 dp, plus a six-character version name, the audio bar open, the split view open, a version with no audio, and a long reference falling back to the book abbreviation](compose-toolbar.png)
 
