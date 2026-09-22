@@ -36,7 +36,6 @@ public class TextDb {
 	}
 
 	public static class VerseState {
-		// was: "public int menjorok;" but no longer used
 		public String text;
 	}
 	public String append(int bookId, int chapter_1, int verse_1, String s, int currentIndent) {
@@ -80,13 +79,6 @@ public class TextDb {
 			}
 
 			writtenParaMarker = true;
-
-			// was: "update menjoroknya ayatstate" but no longer used
-//			for (int i = 0; i < as.isi.length(); i++) {
-//				if (as.isi.charAt(i) == '@' && as.isi.charAt(i+1) >= '0' && as.isi.charAt(i+1) <= '4') {
-//					as.menjorok = as.isi.charAt(i+1) - '0';
-//				}
-//			}
 		}
 
 		if (!isNew && separatorWhenExisting != null) {

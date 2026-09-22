@@ -6,21 +6,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 /**
- * Room database for the Songs subsystem — the `song_info` and
- * `song_book_info` tables migrated from the legacy `SongDb` SQLite file
- * (managed by `SongDbHelper`) as part of REM-32.
+ * Room database for the Songs subsystem, holding the `song_info` and
+ * `song_book_info` tables. The legacy `SongDb` SQLite file (managed by
+ * `SongDbHelper`) still carries the same tables as a rollback safety net.
  *
  * Lives in a separate SQLite file (`AlkitabSongRoomDb`) from the legacy
- * `SongDb` file. The split matches the existing module isolation between
- * the Songs subsystem and the Bible-reading subsystem (see
- * `docs/modules/songs.md`) — the two domains share no rows, no foreign
- * keys, and no transactions.
+ * `SongDb` file. The split matches the module isolation between the Songs
+ * subsystem and the Bible-reading subsystem (see `docs/modules/songs.md`):
+ * the two domains share no rows, no foreign keys, and no transactions.
  *
- * Version policy: this database starts at `version = 1`. A future change
- * that alters the row format of the `data` BLOB (REM-21, Parcelable →
- * JSON) will bump the version and add a `Migration`. The current revision
- * only swaps the storage engine; the BLOB payload is round-tripped
- * byte-for-byte.
+ * The `dataFormatVersion` column versions the `data` BLOB's own format,
+ * separately from this database's schema version. A payload change therefore
+ * converts rows lazily on read, and needs no `Migration`.
  */
 @Database(
     entities = [
@@ -51,8 +48,7 @@ abstract class SongRoomDatabase : RoomDatabase() {
                 // Reads on the main thread are allowed for now because every
                 // current [yuku.alkitab.base.storage.SongDb] call site is
                 // synchronous (the song list / song view / song-book picker
-                // all read on the UI thread). Coroutine-based callers can be
-                // introduced later — see REM-15 in tech-debt-remediation.md.
+                // all read on the UI thread).
                 .allowMainThreadQueries()
                 .build()
 

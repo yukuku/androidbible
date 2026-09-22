@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
 /**
  * Room entity for one row of the `song_book_info` table. Lives in
  * [SongRoomDatabase] (file `AlkitabSongRoomDb`), distinct from the legacy
- * `SongBookInfo` table in the `SongDb` SQLite file which is still created
- * by `SongDbHelper` but no longer written to by production code. The
- * one-time data copy on first launch is wired up in [SongDbDataMigration].
+ * `SongBookInfo` table in the `SongDb` SQLite file, which `SongDbHelper`
+ * still creates but which production code does not write to. The one-time
+ * data copy on first launch is wired up in [SongDbDataMigration].
  *
  * Column nullability — every column except `_id` is kept nullable to match
  * the legacy schema. The facade effectively requires `name` to be present

@@ -117,13 +117,13 @@ object S {
     /**
      * Snapshot of the currently active Bible version. Held behind a single
      * [Volatile] reference so readers always see a consistent (mVersion, version,
-     * versionId) triple — previously the three fields could be observed mid-update.
+     * versionId) triple rather than one caught mid-update.
      */
     private data class ActiveVersionState(
         val mVersion: MVersion,
         // [MVersion.getVersion] is @Nullable. Stored as-is so a caller that passes an
         // MVersion with no data file fails on the subsequent [activeVersion] read
-        // (matching pre-refactor behaviour) rather than on the set.
+        // rather than on the set.
         val version: Version?,
         val versionId: String,
     )
@@ -238,10 +238,9 @@ object S {
     val songDb: SongDb by lazy {
         val helper = SongDbHelper()
         val roomDb = yuku.alkitab.base.storage.room.SongRoomDatabase.get(App.context)
-        // One-time copy of the legacy `SongInfo` / `SongBookInfo` tables
-        // from the `SongDb` SQLite file into Room (REM-32). Idempotent —
-        // a no-op after the first launch with this code, and safe to retry
-        // if it fails partway.
+        // One-time copy of the legacy `SongInfo` / `SongBookInfo` tables from
+        // the `SongDb` SQLite file into Room. Idempotent: a no-op once it has
+        // run, and safe to retry if it fails partway.
         yuku.alkitab.base.storage.room.SongDbDataMigration.copyFromLegacyDbIfNeeded(roomDb, helper)
         SongDb(helper)
     }

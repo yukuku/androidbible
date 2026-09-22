@@ -68,9 +68,7 @@ interface VersesController {
 
     // # field ctor
 
-    /**
-     * Name of this [VersesController] for debugging.
-     */
+    /** Name of this [VersesController] for debugging. */
     val name: String
 
     var versesDataModel: VersesDataModel
@@ -80,10 +78,7 @@ interface VersesController {
     fun uncheckAllVerses(callSelectedVersesListener: Boolean)
     fun checkVerses(verses_1: IntArrayList, callSelectedVersesListener: Boolean)
 
-    /**
-     * Returns a list of checked verse_1 in ascending order.
-     * Old name: getSelectedVerses_1
-     */
+    /** Returns a list of checked verse_1 in ascending order. */
     fun getCheckedVerses_1(): IntArrayList
 
     fun scrollToTop()
@@ -112,10 +107,7 @@ interface VersesController {
      */
     fun scrollToPericope(verse_1: Int, prop: Float)
 
-    /**
-     * Returns 0 if the scroll position can't be determined (e.g. the view has 0 height).
-     * Old name: getVerseBasedOnScroll
-     */
+    /** Returns 0 if the scroll position can't be determined (e.g. the view has 0 height). */
     fun getVerse_1BasedOnScroll(): Int
 
     fun pageDown(): PressResult
@@ -135,9 +127,6 @@ interface VersesController {
     fun setViewVerticalInsets(topInset: Int, bottomInset: Int)
     fun setViewScrollbarThumb(thumb: Drawable)
 
-    /**
-     * Set the layout params of the view that is represented by this controller.
-     */
     fun setViewLayoutSize(width: Int, height: Int)
 
     fun callAttentionForVerse(verse_1: Int)
@@ -149,13 +138,12 @@ interface VersesController {
      * number, clearing any previous highlight. Pass `0` to clear all
      * highlights without setting a new one.
      *
-     * The [color] argb is the pre-resolved overlay color (typically computed
-     * by `AudioHighlightColor.pickHighlightColor`) — it's the controller's
-     * job to recompute when the reading theme changes.
+     * [color] is pre-resolved by the caller, which also recomputes it when the
+     * reading theme changes.
      *
-     * Implementations also smooth-scroll the highlighted verse into the upper
-     * third of the viewport so the row remains visible during long passages
-     * without snapping the page each time the verse changes.
+     * Implementations smooth-scroll the highlighted verse into the upper third
+     * of the viewport, so a long passage keeps the row visible without snapping
+     * the page on every verse.
      */
     fun setAudioHighlight(verse_1: Int, color: Int)
 }

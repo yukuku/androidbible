@@ -19,12 +19,10 @@ import org.robolectric.annotation.Config
 /**
  * Schema-level migration test scaffold for [SongRoomDatabase].
  *
- * **Why this exists, even though there's currently only one schema version:**
- * the first time someone bumps `@Database(version = ...)` on
- * [SongRoomDatabase] (e.g. for REM-21 swapping the `data` BLOB payload
- * from Parcelable to JSON), the "did the migration work?" question is hard
- * to answer by inspection. This test file is the template that future PR
- * pre-fills with a real assertion.
+ * **Why this exists, even though there's only one schema version:** the
+ * first time someone bumps `@Database(version = ...)` on [SongRoomDatabase],
+ * the "did the migration work?" question is hard to answer by inspection.
+ * This test file is the template that PR pre-fills with a real assertion.
  *
  * **Pattern for adding a future migration (e.g. version 1 -> 2):**
  * 1. Update [SongRoomDatabase] to `@Database(version = 2, ...)`.

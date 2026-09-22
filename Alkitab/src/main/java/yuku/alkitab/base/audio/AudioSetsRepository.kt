@@ -21,30 +21,17 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.BuildConfig
 
 /**
- * Resolves which audio recordings ([AudioSet]s) exist for one Bible version,
- * one version at a time, via the backend's `GET /audio/sets/<preset>`.
+ * Resolves which audio recordings ([AudioSet]s) exist for one Bible version, via
+ * the backend's `GET /audio/sets/<preset>`. Every public method is safe to call
+ * from any thread.
  *
- * - **Version → preset name.** Every [MVersion] subtype carries a
- *   `preset_name` (exposed uniformly through [MVersion.getPresetName]),
- *   including the internal version, whose value comes from the per-flavor
- *   `BuildConfig.INTERNAL_VERSION_PRESET_NAME`. A version without a preset
- *   name (a `file/…` version, or an internal version whose flavor declares
- *   none) short-circuits to an empty set list without a network request.
- * - **In-memory cache** keyed by versionId, holding negative results too, so a
- *   version with no audio does not re-query on every chapter turn. "No
- *   recordings" from the server is a resolved answer, kept for the life of the
- *   process.
- * - **Failures expire** after [FAILURE_RETRY_AFTER_NANOS]. They resolve to an
- *   empty set list too, per the backend contract's error-handling table, so the
- *   entry point stays hidden rather than showing a dead button. Keeping that
- *   for the life of the process would let one flaky moment at startup hide
- *   audio with nothing on screen to retry from.
- * - **Disk cache** is the 50 MB OkHttp cache on `Connections.okHttp`, honoring
- *   the backend's `Cache-Control`. There is no app-managed file, no bundled
- *   asset, and no hand-rolled ETag bookkeeping.
- * - Concurrent [setsFor] calls for the same version share a single request.
- *
- * Thread safety: every public method is safe to call from any thread.
+ * A version with no preset name short-circuits to an empty set list without a
+ * request. Answers are cached in memory for the life of the process, negative
+ * ones included, so a version with no audio does not re-query on every chapter
+ * turn. A failure also resolves to an empty list, so the entry point is hidden
+ * instead of showing a button that does nothing. That answer expires after
+ * [FAILURE_RETRY_AFTER_NANOS], so a single failure at startup does not hide
+ * audio for the rest of the process.
  */
 object AudioSetsRepository {
 
@@ -95,12 +82,7 @@ object AudioSetsRepository {
      */
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    /**
-     * Returns the audio sets for [versionId], from the in-memory cache when
-     * resolved before, otherwise fetching from the backend. Never throws: any
-     * failure resolves to an empty set list, cached only until the cooldown
-     * described on this class expires.
-     */
+    /** Does not throw; a failure resolves to an empty set list. */
     suspend fun setsFor(versionId: String): AudioSets {
         liveEntry(versionId)?.let { return it.sets }
         val deferred = mutex.withLock {
@@ -179,11 +161,9 @@ object AudioSetsRepository {
     private fun emptySets(preset: String) = AudioSets(schema = 0, preset = preset, sets = emptyList())
 
     /**
-     * Reads a version's preset name uniformly through [MVersion.getPresetName],
-     * whatever the subtype. [VersionManager.getVersionFromVersionId] returns
-     * null for the internal version by contract, so that id is mapped to the
-     * internal [MVersion] first; the preset read itself has no per-subtype
-     * branching.
+     * [VersionManager.getVersionFromVersionId] returns null for the internal
+     * version by contract, so that id is mapped to the internal [MVersion]
+     * first. The preset read itself has no per-subtype branching.
      */
     internal fun presetNameFor(versionId: String, versions: VersionManager): String? {
         val mv: MVersion? = if (versionId == MVersionInternal.getVersionInternalId()) {
@@ -195,10 +175,7 @@ object AudioSetsRepository {
         return if (presetName.isNullOrEmpty()) null else presetName
     }
 
-    /**
-     * Clears all cached and in-flight state and restores the default seams.
-     * Only for tests, which run with no concurrent [setsFor] callers.
-     */
+    /** Test-only. Assumes there are no concurrent [setsFor] callers. */
     internal fun resetForTest() {
         cache.clear()
         inFlight.clear()

@@ -182,8 +182,8 @@ val proprietaryDir: String? = providers.environmentVariable("ALKITAB_PROPRIETARY
 val sabdaFlavorName = "sabda_alkitab"
 val sabdaSigningConfigName = "releaseSabda"
 
-// Server endpoints inlined here (and in AlkitabFeedback) — these are app-specific
-// constants previously held in root build.gradle's ext block.
+// Server endpoints. These are specific to this app, so they live here and in
+// AlkitabFeedback, not in a build-wide block.
 val serverHost = "https://api.alkitab.app"
 val ribkaFunctionsHost = "https://us-central1-pulau-ribka.cloudfunctions.net/"
 val ribkaFunctionsHostDebug = "http://10.0.3.2:5001/pulau-ribka/us-central1/"
@@ -233,8 +233,8 @@ android {
         localeFilters += listOf("af", "bg", "ceb", "cs", "da", "de", "el", "es", "fr", "hu", "in", "it", "ja", "ko", "lv", "ms", "my", "nl", "pl", "pt-rBR", "pt", "ro", "ru", "th", "tl", "tr", "uk", "vi", "zh-rCN", "zh-rTW")
     }
 
-    // Room schema export — JSON snapshots of each @Database version land here.
-    // Checked into git so reviewers can see schema diffs. See REM-32 design doc.
+    // Room schema export: JSON snapshots of each @Database version land here,
+    // checked into git so reviewers can see schema diffs.
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
         arg("room.incremental", "true")

@@ -24,8 +24,7 @@ public class App extends yuku.afw.App {
     /**
      * App-level service container. Wraps the interfaces implemented by {@link S} so
      * new code can depend on narrow interfaces (and tests can swap fakes in) without
-     * reaching into the {@link S} service locator directly. Existing {@code S.foo}
-     * call sites are being migrated incrementally — see REM-24.
+     * reaching into the {@link S} service locator directly.
      *
      * <p>Initialized eagerly at class-load so call sites can read it before
      * {@link #staticInit()} has run. The adapter properties on {@link S} are

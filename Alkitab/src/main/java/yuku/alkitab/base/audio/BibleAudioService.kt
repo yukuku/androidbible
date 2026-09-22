@@ -39,31 +39,18 @@ import yuku.alkitab.base.widget.ConfigurationWrapper
 import yuku.alkitab.debug.R
 
 /**
- * Foreground [MediaSessionService] that owns a [BibleAudioPlayer] and exposes
- * playback state to the Compose UI via a local binder plus [StateFlow].
+ * Foreground [MediaSessionService] owning a [BibleAudioPlayer]. The system binds
+ * it through the media3 stub, while the audio bar binds with [ACTION_LOCAL_BIND]
+ * for a [LocalBinder] and drives playback directly. Audio focus, becoming-noisy
+ * and media-button handling come with `MediaSession` and the ExoPlayer audio
+ * attributes.
  *
- * Two binding paths share the same service instance:
- *  - **MediaSession (system)**: `super.onBind(intent)` returns the standard
- *    media3 stub so the OS can drive playback through MediaController, lock
- *    screen, Bluetooth, Android Auto, etc.
- *  - **Local (in-app)**: clients bind with [ACTION_LOCAL_BIND] to receive a
- *    [LocalBinder], then read [playbackState] and call [loadChapter] / [play] /
- *    [pause] / [seekTo] / [setSpeed] / [stop] directly. Used by the audio bar.
- *
- * Foreground transitions are handled entirely by media3. The activity calls
- * `Context.startService(...)` rather than `startForegroundService` from
- * [yuku.alkitab.base.audio.AudioBarController.ensureBound], which keeps the
- * service alive across activity teardown without arming the 5-second
- * `startForeground` deadline. media3's `MediaNotificationManager` then promotes
- * us to foreground itself the moment the player enters a user-engaged state
- * (BUFFERING/READY), calling `ContextCompat.startForegroundService(...)` and
- * `Service.startForeground` back-to-back inside the same main-thread frame with
- * the real MediaStyle notification. The `mediaPlayback` foreground-service-type
- * exemption covers the background-start restriction on Android 12+.
- *
- * Audio focus, becoming-noisy, and lock-screen / Bluetooth media-button
- * handling all come for free with `MediaSession` plus the audio attributes set
- * on the [BibleAudioPlayer]'s ExoPlayer.
+ * media3 handles the foreground transitions. [AudioBarController] starts the
+ * service with `startService`, not `startForegroundService`, which keeps it alive
+ * across activity teardown without arming the 5-second `startForeground`
+ * deadline; media3 then promotes it once the player becomes user-engaged, under
+ * the `mediaPlayback` exemption from the Android 12+ background-start
+ * restriction.
  */
 @OptIn(UnstableApi::class)
 class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session {
@@ -73,10 +60,9 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         const val ACTION_LOCAL_BIND = "yuku.alkitab.audio.ACTION_LOCAL_BIND"
 
         /**
-         * Notification channel id; must match the channel created at app startup
-         * (`App.staticInit()`). Channel attributes are immutable after creation,
-         * so we have to create it first to get IMPORTANCE_LOW and no sound;
-         * otherwise media3 auto-creates it with its own defaults.
+         * Must match the channel `App.staticInit()` creates. Channel attributes
+         * are immutable once created, so creating it there is what gets
+         * IMPORTANCE_LOW and no sound instead of media3's defaults.
          */
         const val NOTIFICATION_CHANNEL_ID = "audio_bible"
 
@@ -131,7 +117,6 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     /** Parameters for [loadChapter]. The display fields drive the lock-screen metadata. */
     data class AudioRequest(
         val versionId: String,
-        /** Recording identifier of the audio set to play. */
         val audioId: String,
         val bookId: Int,
         val chapter_1: Int,
@@ -155,10 +140,9 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
      * as soon as `onDestroy` releases its strong references, even while the
      * system still has the binder pinned.
      *
-     * `service` returns null once the service has been destroyed. Clients (see
-     * `AudioBarController.serviceConnection`) cache the strong reference at
-     * `onServiceConnected` and clear it on unbind, so `binder.service` is only
-     * ever consulted inside a still-bound lifetime.
+     * `service` is null once the service is destroyed. Clients cache the strong
+     * reference at `onServiceConnected`, so it is only consulted inside a
+     * still-bound lifetime.
      */
     class LocalBinder internal constructor(service: BibleAudioService) : Binder() {
         private val ref = java.lang.ref.WeakReference(service)
@@ -194,16 +178,13 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     private var playerReadyForSeek = false
     private var timingLoaded = false
 
-    /** Lazily-decoded app-icon bytes used as the lock-screen / notification artwork. */
     private val appIconArtworkBytes: ByteArray? by lazy { decodeAppIconArtwork() }
 
     private val _playbackState = MutableStateFlow(PlaybackState.IDLE)
     val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
-    /** Persisted playback speed, loaded once at service start and updated on every [setSpeed] call. */
     private var persistedSpeed: Float = DEFAULT_PLAYBACK_SPEED
 
-    /** Backing cache for [localizedContext], keyed by the configuration serial it was built at. */
     private var localizedContext: Context? = null
     private var localizedContextSerial = -1
 

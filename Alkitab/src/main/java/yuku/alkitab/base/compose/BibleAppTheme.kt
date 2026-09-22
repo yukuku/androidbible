@@ -8,18 +8,9 @@ import androidx.compose.ui.graphics.Color
 import yuku.alkitab.base.util.BookColorUtil
 
 /**
- * The app's brand colors, mirroring the XML theme resources so the Compose
- * surfaces read as part of the same app as the View-based screens:
- *
- *  - [Accent] = `@color/accent` (Light Blue A200), the interactive color of
- *    every View control via `colorAccent`: tab indicators, checkboxes,
- *    links, dialog buttons.
- *  - [ChromeBlueGray] / [ChromeBlueGrayDark] = `@color/primary` /
- *    `@color/primary_dark` (Blue Gray 700/900) — the toolbar and status bar,
- *    the most visible identity color of the View screens.
- *  - [Escape] = `@color/escape` (Teal 300), used sparingly on the View side
- *    for occasional "something interesting" texts.
- *  - [WindowGray] = `@color/window` (Gray 800), the window background.
+ * Mirrors `@color/accent`, `@color/primary`, `@color/primary_dark`,
+ * `@color/escape` and `@color/window`, so the Compose surfaces read as part of
+ * the same app as the View screens. Update both together.
  */
 private object BrandColors {
     val Accent = Color(0xFF40C4FF)
@@ -30,31 +21,14 @@ private object BrandColors {
 }
 
 /**
- * Static dark color scheme built from [BrandColors]. Deliberately NOT the
- * Material dynamic scheme: dynamic colors come from the device wallpaper, so
- * the same screen would be purple on one phone and green on another while the
- * XML screens around it stay blue-gray/light-blue — the palette must be the
- * app's own on every device.
+ * This is a static scheme, not the Material dynamic one. Dynamic colors come
+ * from the device wallpaper, so the same screen would be purple on one phone
+ * and green on another while the XML screens around it stay blue-gray.
  *
- * Role mapping, weighted the way the View screens actually use the colors:
- *  - `primary` carries the light-blue accent, taking the role `colorAccent`
- *    plays for View widgets (buttons, tab indicators, checkboxes, links).
- *  - The `secondary` family carries the blue-gray chrome:
- *    `secondaryContainer` is exactly the XML toolbar color, so the M3
- *    components that lean on it (tonal buttons, selected chips and segmented
- *    buttons) and the Compose top bars pick up the same blue-gray the View
- *    toolbars wear, and `onSecondary` is exactly the XML status bar color.
- *  - The `tertiary` family carries the teal escape color — deliberately the
- *    least-used slot, because escape is rare on the View side too.
- *  - The neutral surface ladder is anchored on the pure-gray XML window
- *    background: `surface` equals `@color/window`, containers step up from it
- *    only slightly so elevated Compose surfaces stay in the same gray family
- *    as the View screens they sit against.
- *  - `surfaceTint` is transparent so tonal elevation never washes surfaces
- *    with blue; container roles alone express elevation, keeping grays pure
- *    like the XML side.
- *
- * Error roles keep the Material defaults from [darkColorScheme].
+ * `primary` carries the accent because that is the role `colorAccent` plays for
+ * View widgets, and the `secondary` family carries the toolbar blue-gray so the
+ * M3 components leaning on `secondaryContainer` wear it too. `surfaceTint` is
+ * transparent so tonal elevation never washes the grays with blue.
  */
 val BibleAppDarkColorScheme: ColorScheme = darkColorScheme(
     primary = BrandColors.Accent,
@@ -96,14 +70,9 @@ val BibleAppDarkColorScheme: ColorScheme = darkColorScheme(
 )
 
 /**
- * Theme for the app's Compose surfaces, applying [BibleAppDarkColorScheme].
- *
- * The scheme is dark whatever the system theme is, because the XML screens
- * these surfaces sit among are dark unconditionally: the base theme descends
- * from a dark MaterialComponents theme and the app never sets a night mode.
- * A surface that followed the system would be the only light thing in an
- * otherwise dark app. Once the remaining XML screens are ported, the whole app
- * can follow the system together.
+ * The scheme is always dark, whatever the system theme is, because the XML
+ * screens around these surfaces are always dark. The base theme descends from a
+ * dark MaterialComponents theme and the app never sets a night mode.
  */
 @Composable
 fun BibleAppTheme(content: @Composable () -> Unit) {

@@ -406,7 +406,7 @@ class VersesControllerImpl(
         // negate padding offset, unless this is the first item
         val paddingNegator = if (newPos == 0) 0 else -rv.paddingTop
 
-        // TODO(VersesView revamp): It previously scrolled smoothly
+        // TODO(VersesView revamp): this jumps rather than scrolling smoothly.
         layoutManager.scrollToPositionWithOffset(newPos, paddingNegator)
 
         return VersesController.PressResult.Consumed(versesDataModel.getVerse_1FromPosition(newPos))
@@ -448,7 +448,7 @@ class VersesControllerImpl(
         // negate padding offset, unless this is the first item
         val paddingNegator = if (newPos == 0) 0 else -rv.paddingTop
 
-        // TODO(VersesView revamp): It previously scrolled smoothly
+        // TODO(VersesView revamp): this jumps rather than scrolling smoothly.
         layoutManager.scrollToPositionWithOffset(newPos, paddingNegator)
 
         return VersesController.PressResult.Consumed(versesDataModel.getVerse_1FromPosition(newPos))

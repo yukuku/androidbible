@@ -23,8 +23,8 @@ import yuku.alkitab.debug.R
 
 /**
  * Tests for the verse text the screens outside the reader show: the Compose
- * renderer they call, the decorations they layer on it, and the slot that puts
- * a [VerseTextComposeView] where their TextView used to be.
+ * renderer they call, the decorations they layer on it, and the slot that
+ * swaps their snippet TextView for a [VerseTextComposeView].
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])

@@ -12,7 +12,7 @@ enum class Prefkey {
      * When this is true, the user has understood that the middle button can be used
      * to open history. So let us remove the hint.
      */
-    history_button_understood,  // Moved from prefkey.xml, since we're not using it via PreferenceActivity any more.
+    history_button_understood,
 
     /** Bold  */
     boldHuruf,
@@ -65,29 +65,19 @@ enum class Prefkey {
      */
     sync_server_prefix,
 
-    /**
-     * Sync simple token, used to access user specific data.
-     */
+    /** Sync simple token, used to access user specific data. */
     sync_simpleToken,
 
-    /**
-     * The unix time the access token is obtained
-     */
+    /** The unix time the access token is obtained. */
     sync_token_obtained_time,
 
-    /**
-     * The last known FCM registration id.
-     * Note: In the previous versions of this app, it was named "gcm_registration_id".
-     * It is intentionally changed so that FCM is differentiated from GCM.
-     */
+    /** The last known FCM registration id. */
     fcm_registration_id,
 
     /**
      * The app versionCode when the FCM registration id is obtained.
      * If the current app versionCode is not equal to this, try to get FCM registration id
      * again, since the existing registration id is not guaranteed to work with the new app version.
-     * Note: In the previous versions of this app, it was named "gcm_last_app_version_code".
-     * It is intentionally changed so that FCM is differentiated from GCM.
      */
     fcm_last_app_version_code,
 
@@ -107,17 +97,11 @@ enum class Prefkey {
     /** Stores information about last syncs  */
     sync_last_infos,
 
-    /**
-     * Last version, book, chapter, and verse.
-     * These were moved from instant_preferences. Now I don't think we need 2 separate preference files.
-     */
+    /** Last version, book, chapter, and verse. */
     lastBookId, lastChapter, lastVerse, lastVersionId, lastSplitVersionId, lastSplitOrientation,  // string "horizontal" or "vertical"
     lastSplitProp,  // float proportion of the top or left split window
 
-    /**
-     * The whole history (with many entries)
-     * This was moved from instant_preferences.
-     */
+    /** The whole history (with many entries) */
     history,
 
     /** Current reading vars  */
@@ -126,9 +110,7 @@ enum class Prefkey {
     /** Option to ask for verse number in goto screen  */
     gotoAskForVerse,
 
-    /**
-     * Audio bible: playback speed (float, 0.5–2.0). Default 1.0.
-     */
+    /** Audio bible: playback speed (float, 0.5-2.0). Default 1.0. */
     audioPlaybackSpeed,
 
     /**
@@ -140,14 +122,10 @@ enum class Prefkey {
     audioSelectedSets,
 
     /**
-     * One-shot completion flag for the REM-32 `SongInfo` / `SongBookInfo`
-     * copy from the legacy `SongDb` SQLite file (managed by
-     * `SongDbHelper`) into Room's `AlkitabSongRoomDb`. Set to true exactly
-     * once after the migration has either successfully copied all legacy rows
-     * or determined there is nothing to copy. Used in place of a count-based
-     * "are the Room tables empty?" check: the user can delete song books from
-     * the songs screen (`SongDb.deleteSongBook`), so a count-based gate would
-     * resurrect deleted song books on the next launch.
+     * One-shot completion flag for the legacy `SongDb` to Room copy. Gating on
+     * a count of the Room tables would not work: the user can delete song books
+     * from the songs screen, and empty tables would then look like a copy that
+     * never ran, resurrecting the deleted books on the next launch.
      */
     song_db_data_migration_v1_done,
 }
