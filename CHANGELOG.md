@@ -1,13 +1,18 @@
 # Changelog
 
-A user-facing history of Bible for Android (Alkitab / Quick Bible). Dates
-are the release / tag date (or the commit date of the version-bump for
-untagged releases). Internal refactors, dependency bumps, CI tweaks, and
-pure translation-only updates are generally omitted.
+A user-facing history of Bible for Android (Alkitab / Quick Bible).
+Internal refactors, dependency bumps, CI tweaks, and pure
+translation-only updates are generally omitted.
 
-The 4.0 through 4.4 beta releases are listed under their parent stable
-release rather than in date order, so the file stays in version order
-throughout. Entries marked "(blog)" or "(docs)" had an accompanying post
+Dates are the release date. Across the 4.0 to 4.8 range they come from
+the hand-written release notes, which record when a build actually
+reached the Play Store; elsewhere they are the release / tag date, or
+the commit date of the version-bump for untagged releases.
+
+The 4.0 through 4.4 beta releases are interleaved among the stable
+releases in release order rather than grouped by version, so the 4.4
+betas run alongside the 4.3 patch releases that were shipping at the
+same time. Entries marked "(blog)" or "(docs)" had an accompanying post
 on the development blog at https://blog.alkitab.app.
 
 ## 5.0.0-beta.1 — 2026-09-08
@@ -156,9 +161,9 @@ the first wave of a Jetpack Compose migration.
 ## 4.8.1 — 2021-04-05
 
 - Bundles the fixes needed after 4.8.0 rolled out its bigger
-  feature set: verses-dialog clicks on annotated verses, language
-  option not being applied correctly again, scrollbar color on
-  Android 10+, and several font-manager rough edges.
+  feature set: language option not being applied correctly again,
+  scrollbar color on Android 10+, and several font-manager rough
+  edges.
 - Added Hungarian language.
 - AYT audio disclaimer shown where relevant.
 
@@ -202,7 +207,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed a bug on Android 8 and earlier where the text display became
   messy after changing the Bible text size.
 
-## 4.6.4 — 2020-02-14
+## 4.6.4 — 2020-02-18
 
 - Startup no longer forces a sync; push notifications handle that.
 - Fixed a text-view resizing bug on Android 4.4. Verse height did not
@@ -230,7 +235,7 @@ the first wave of a Jetpack Compose migration.
   crashed on Android 5.1; MIDI playback error −38 at the end of a song;
   language switching on Android 5.1.
 
-## 4.6.1 — 2020-01-06
+## 4.6.1 — 2020-01-07
 
 - **Full AndroidX migration** and library modernisation.
 - **ExoPlayer replaces MediaPlayer** for non-MIDI song audio — MP3s
@@ -239,6 +244,7 @@ the first wave of a Jetpack Compose migration.
   check/highlight animations. Verses are shown faster.
 - **Adaptive launcher icon**, which is the new app icon on Android 8+.
 - Book selection screen is shown more clearly.
+- Bible translations and songs can be downloaded on Android 4.x.
 - Bigger split handle, better selected-drawer-item highlighting, more
   contrast in the Goto dialer / grid.
 - Fixes for: wrong cross-reference verse numbers, inability to dial
@@ -277,7 +283,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed verse text on songs.
 - Removed mdpi assets.
 
-## 4.5.4 — 2018-11-05
+## 4.5.4 — 2018-11-07
 
 - **Ribka** support: report typos or suggest corrections in the AYT
   Bible text directly from the verse menu.
@@ -334,9 +340,8 @@ the first wave of a Jetpack Compose migration.
 
 ## 4.4.1 — 2017-07-25
 
-- Action-bar buttons are decided by screen-width at launch, so rotating
-  no longer flips them in and out of the overflow menu. This fixes the
-  shortcut to other apps appearing when the app is opened in landscape.
+- Fixed the shortcut to other apps appearing when the app is opened in
+  landscape.
 
 ## 4.4.0 — 2017-03-21
 
@@ -348,8 +353,7 @@ the first wave of a Jetpack Compose migration.
   formatting tags.
 - "Text appearance" panel renamed to **Display**.
 - Better Goto Direct autocomplete.
-- Optional "bigger UI" scale (1.5× / 1.7× / 2.0×) for users with low
-  vision.
+- Removed the option to change UI text size, which was not ready.
 - Version-download errors show as snackbars instead of toasts.
 - Migrates stored YES files and custom fonts out of public external
   storage (no more storage permission for fonts); the Android 6.0+
@@ -396,6 +400,33 @@ the first wave of a Jetpack Compose migration.
 - Fixed per-version relative font size causing a crash when the app is
   opened from another app.
 - Show a progress bar when opening download pages, e.g. reading plans.
+
+## 4.3.8 — 2016-08-19
+
+- Added Bulgarian and Danish UI languages, plus Korean app and
+  feedback-module translations.
+
+## 4.3.7 — 2016-04-08
+
+- New devotions: **refheart** (Reforming Heart, Indonesian) and **ROC**
+  (My Utmost For His Highest).
+- Added Thai UI language.
+- A reversed-offset partial highlight no longer crashes.
+
+## 4.3.6 — 2016-02-29
+
+- Sync skips past a disabled sync set and continues with the rest.
+
+## 4.3.5 — 2016-02-26
+
+- Fixed truncated verse lines on Android 6.0 Marshmallow (line-height
+  workaround).
+- Version-list spinner displays correctly on Android 6.0.1.
+- Fixed a bug where there were gaps when text is made very small.
+- Fixed a line-spacing bug in Android 6.0 when there is paragraph
+  spacing.
+- Fixed restoring markers from an old backup sometimes forgetting to
+  assign labels to certain bookmarks.
 
 ## 4.4 Beta 5 — 2016-01-28
 
@@ -461,38 +492,12 @@ the first wave of a Jetpack Compose migration.
 - Top and bottom paddings no longer crop text on the note editor.
 - Select and copy verses from the search results page.
 
-## 4.3.8 — 2016-08-19
-
-- Added Bulgarian and Danish UI languages, plus Korean app and
-  feedback-module translations.
-
-## 4.3.7 — 2016-04-08
-
-- New devotions: **refheart** (Reforming Heart, Indonesian) and **ROC**
-  (My Utmost For His Highest).
-- Added Thai UI language.
-- A reversed-offset partial highlight no longer crashes.
-
-## 4.3.6 — 2016-02-29
-
-- Sync skips past a disabled sync set and continues with the rest.
-
-## 4.3.5 — 2016-02-26
-
-- Fixed truncated verse lines on Android 6.0 Marshmallow (line-height
-  workaround).
-- Version-list spinner displays correctly on Android 6.0.1.
-- Fixed a bug where there were gaps when text is made very small.
-- Fixed a line-spacing bug in Android 6.0 when there is paragraph
-  spacing.
-
-## 4.3.4 — 2015-11-30
+## 4.3.4 — 2015-11-27
 
 - "Import old markers" now also recognizes the `org.sabda` variant's
   export format.
 - Verse selection and copying available in **search results**, with a
   select-all button.
-- Label-assignments are no longer lost on some imports.
 - Fixed a crash when upgrading from app version 1.9.0 or older.
 - Fixed a crash when the user opens and closes the versions dialog
   while the current Bible version has been deleted.
@@ -510,7 +515,7 @@ the first wave of a Jetpack Compose migration.
 - Less memory needed when syncing a large amount of data.
 - Updated translations and internal versions.
 
-## 4.3.1 — 2015-10-20
+## 4.3.1 — 2015-10-23
 
 - Feature Guide Video (YouTube link).
 - Marker-list sorting moved to a submenu, instead of a separate dialog
@@ -521,7 +526,7 @@ the first wave of a Jetpack Compose migration.
   the marker list.
 - Suppressed a spurious dictionary-provider error.
 
-## 4.3.0 — 2015-10-02
+## 4.3.0 — 2015-09-30
 
 - **Extensions**: third-party apps can add attribute icons and popups
   to verses. The list auto-refreshes as extensions are installed or
@@ -682,7 +687,7 @@ the first wave of a Jetpack Compose migration.
   responding to almost all presses.
 - Companion release to 4.1.0 (see below).
 
-## 4.1.0 — 2015-05-08
+## 4.1.0 — 2015-05-22
 
 - Indonesian **Alkitab** gets integration with SABDA's **Kamus
   Alkitab** (dictionary), **Tafsiran Alkitab** (commentary), and
@@ -734,12 +739,12 @@ the first wave of a Jetpack Compose migration.
 - Create and add custom reading plans (blog).
 - Updated to Play Services 7.3.0 and Support Library 22.1.1.
 
-## 4.0.1 — 2015-04-11
+## 4.0.1 — 2015-04-10
 
 - Fixed a widget crash on Android < 5.0.
 - Fixed a crash on Android < 4.1 from a mistyped API call.
 
-## 4.0.0 — 2015-04-10
+## 4.0.0 — 2015-04-09
 
 (finally!)
 
