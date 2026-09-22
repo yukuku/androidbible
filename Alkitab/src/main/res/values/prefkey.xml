@@ -38,19 +38,19 @@
 	<string name="pref_data_transfer_export_key" translatable="false">data_transfer_export</string>
 	<string name="pref_data_transfer_import_key" translatable="false">data_transfer_import</string>
 
-	<string name="pref_useComposeVerseItem_key" translatable="false">useComposeVerseItem</string>
-	<bool name="pref_useComposeVerseItem_default">false</bool>
+	<string name="pref_useLegacyVerseItem_key" translatable="false">useLegacyVerseItem</string>
+	<bool name="pref_useLegacyVerseItem_default">false</bool>
 
-	<string name="pref_useComposeGoto_key" translatable="false">useComposeGoto</string>
-	<bool name="pref_useComposeGoto_default">false</bool>
-	<string name="pref_useComposeToolbar_key" translatable="false">useComposeToolbar</string>
-	<bool name="pref_useComposeToolbar_default">false</bool>
+	<string name="pref_useLegacyGoto_key" translatable="false">useLegacyGoto</string>
+	<bool name="pref_useLegacyGoto_default">false</bool>
+	<string name="pref_useLegacyToolbar_key" translatable="false">useLegacyToolbar</string>
+	<bool name="pref_useLegacyToolbar_default">false</bool>
 
-	<string name="pref_useComposeSong_key" translatable="false">useComposeSong</string>
-	<bool name="pref_useComposeSong_default">false</bool>
+	<string name="pref_useLegacySong_key" translatable="false">useLegacySong</string>
+	<bool name="pref_useLegacySong_default">false</bool>
 
-	<string name="pref_useComposeSyncLogin_key" translatable="false">useComposeSyncLogin</string>
-	<bool name="pref_useComposeSyncLogin_default">false</bool>
+	<string name="pref_useLegacySyncLogin_key" translatable="false">useLegacySyncLogin</string>
+	<bool name="pref_useLegacySyncLogin_default">false</bool>
 
 	<string name="pref_debugRubyGeometry_key" translatable="false">debugRubyGeometry</string>
 	<bool name="pref_debugRubyGeometry_default">false</bool>

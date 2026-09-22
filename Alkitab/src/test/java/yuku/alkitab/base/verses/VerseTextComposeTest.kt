@@ -40,7 +40,7 @@ class VerseTextComposeTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         yuku.afw.App.initWithAppContext(context)
-        Preferences.setBoolean(context.getString(R.string.pref_useComposeVerseItem_key), false)
+        setComposeVerseItem(false)
 
         S.overrideAppliedDimensions(
             S.CalculatedDimensions().apply {
@@ -55,7 +55,7 @@ class VerseTextComposeTest {
     }
 
     private fun setComposeVerseItem(enabled: Boolean) {
-        Preferences.setBoolean(context.getString(R.string.pref_useComposeVerseItem_key), enabled)
+        Preferences.setBoolean(context.getString(R.string.pref_useLegacyVerseItem_key), !enabled)
     }
 
     private fun rowWithSnippet(snippetMaxLines: Int = Int.MAX_VALUE): LinearLayout {

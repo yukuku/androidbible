@@ -130,7 +130,7 @@ class VersesComposeView @JvmOverloads constructor(
     /**
      * This pane shares its view id with the RecyclerView implementation, so a
      * hierarchy state saved by that implementation can be restored into this
-     * view when the Verse (Compose) setting changes mid-lifecycle. Such state
+     * view when the verse-list setting changes mid-lifecycle. Such state
      * is dropped rather than force-cast; the reader restores its reading
      * position itself, from the ari in the activity instance state.
      */
@@ -141,8 +141,9 @@ class VersesComposeView @JvmOverloads constructor(
 
 /**
  * [VersesController] implementation backed by a Compose [LazyColumn] instead
- * of a RecyclerView. Selected when the Verse (Compose) experimental setting is
- * enabled; the RecyclerView-based [VersesControllerImpl] remains the default.
+ * of a RecyclerView. Selected by default; the RecyclerView-based
+ * [VersesControllerImpl] is the opt-out behind the Verse (legacy views)
+ * experimental setting.
  *
  * The full controller contract is honored so `IsiActivity`, the split-view
  * manager, gestures, and audio playback drive both implementations

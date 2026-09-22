@@ -5,19 +5,19 @@ import yuku.alkitab.debug.R
 
 object ExperimentalFlags {
     fun useComposeVerseItem(): Boolean =
-        Preferences.getBoolean(R.string.pref_useComposeVerseItem_key, R.bool.pref_useComposeVerseItem_default)
+        !Preferences.getBoolean(R.string.pref_useLegacyVerseItem_key, R.bool.pref_useLegacyVerseItem_default)
 
     fun useComposeToolbar(): Boolean =
-        Preferences.getBoolean(R.string.pref_useComposeToolbar_key, R.bool.pref_useComposeToolbar_default)
+        !Preferences.getBoolean(R.string.pref_useLegacyToolbar_key, R.bool.pref_useLegacyToolbar_default)
 
     fun useComposeGoto(): Boolean =
-        Preferences.getBoolean(R.string.pref_useComposeGoto_key, R.bool.pref_useComposeGoto_default)
+        !Preferences.getBoolean(R.string.pref_useLegacyGoto_key, R.bool.pref_useLegacyGoto_default)
 
     fun useComposeSong(): Boolean =
-        Preferences.getBoolean(R.string.pref_useComposeSong_key, R.bool.pref_useComposeSong_default)
+        !Preferences.getBoolean(R.string.pref_useLegacySong_key, R.bool.pref_useLegacySong_default)
 
     fun useComposeSyncLogin(): Boolean =
-        Preferences.getBoolean(R.string.pref_useComposeSyncLogin_key, R.bool.pref_useComposeSyncLogin_default)
+        !Preferences.getBoolean(R.string.pref_useLegacySyncLogin_key, R.bool.pref_useLegacySyncLogin_default)
 
     fun debugRubyGeometry(): Boolean =
         Preferences.getBoolean(R.string.pref_debugRubyGeometry_key, R.bool.pref_debugRubyGeometry_default)

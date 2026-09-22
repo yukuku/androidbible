@@ -1,6 +1,6 @@
 # REM-45: Migrate the IsiActivity Shell to Compose (Staged)
 
-**Status:** Planned — gated on the Verse (Compose) experimental verse list being promoted to default (see stage 0/1 below).
+**Status:** Planned — the Compose verse list is now the default, with the legacy RecyclerView pipeline kept as an experimental opt-out; the remaining gate is retiring that pipeline (see stage 0/1 below).
 **Addresses:** General modernization; completes the reader's Compose migration beyond the verse content view
 **Module:** UI (reader)
 **BRICE:** B=2 R=1 I=1 C=2 E=5 → **2.2**
@@ -8,8 +8,8 @@
 
 ## Background
 
-The verse content view already has a fully Compose-based implementation behind the
-"Verse (Compose)" experimental setting (2026-08): `VersesComposeControllerImpl` +
+The verse content view already has a fully Compose-based implementation, and it
+is the default; the legacy RecyclerView pipeline is an experimental opt-out: `VersesComposeControllerImpl` +
 `VersesComposeView` implement the whole `VersesController` contract over a
 `LazyColumn`, swapped in place of the two `EmptyableRecyclerView` panes. The rest
 of the reader — the split container and handle, gestures, toolbar/action mode,
@@ -22,12 +22,11 @@ migration strategy, and the existing seams are exactly what makes the remaining
 migration cheap. The reason to stage the rest carefully is structural:
 
 - **Dual verse pipelines force the container to stay a ViewGroup.** While the
-  RecyclerView verse list is the default and the Compose list is an experiment,
+  RecyclerView verse list is still reachable as an opt-out,
   `TwofingerLinearLayout` must be able to host either pane type. Making the
-  container Compose first would push the *default* RecyclerView path into
-  `AndroidView` wrappers — destabilizing production to serve an experiment.
-  The container can only be composified after the Compose verse list becomes
-  the default and the RecyclerView verse pipeline is retired.
+  container Compose would push that path into `AndroidView` wrappers. The
+  container can only be composified once the RecyclerView verse pipeline is
+  retired outright.
 - **The split trio is tightly coupled.** `SplitViewManager`,
   `LabeledSplitHandleButton`, and `TwofingerLinearLayout` share view-level pixel
   math (explicit `LayoutParams` sizing during handle drags, orientation
@@ -42,9 +41,10 @@ migration cheap. The reason to stage the rest carefully is structural:
 ## Staged plan
 
 1. **Stage 0 — bake the Compose verse list (prerequisite, not this task).**
-   Gather feedback on the experimental setting; verify split-scroll sync feel,
-   fling behavior, TalkBack, drag-and-drop across devices. Exit criterion for
-   moving on: the Compose verse list is promoted to the default.
+   The Compose verse list is the default, so this stage is about the feedback
+   that arrives on it: split-scroll sync feel, fling behavior, TalkBack,
+   drag-and-drop across devices. Exit criterion for moving on: no reason left
+   to keep the legacy opt-out around.
 2. **Stage 1 — retire the RecyclerView verse pipeline in the reader.** Remove
    the `IsiActivity` flag branch and the RecyclerView-based reader panes
    (`VersesDialog`/`XrefDialog` keep `VersesControllerImpl` until ported

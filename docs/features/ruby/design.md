@@ -1,6 +1,6 @@
 # Ruby text for Bible verses
 
-Ruby is small annotation text set above a run of base text: furigana over kanji, pinyin over hanzi, a Strong's number over an English word. This document collects what the feature can be used for, where open data comes from, how the annotation is encoded in the `.yet` source format and in verse text, and how the Compose verse row renders it. Status: prototype, rendered by the Compose pipeline only (the "Verse (Compose)" experimental setting).
+Ruby is small annotation text set above a run of base text: furigana over kanji, pinyin over hanzi, a Strong's number over an English word. This document collects what the feature can be used for, where open data comes from, how the annotation is encoded in the `.yet` source format and in verse text, and how the Compose verse row renders it. Status: prototype, rendered by the Compose verse pipeline only, so it is invisible under the "Verse (legacy views)" experimental setting.
 
 ## 1. Uses for the same rendering
 

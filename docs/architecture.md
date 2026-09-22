@@ -40,7 +40,7 @@ HTTP file downloads (Bible versions) run inside `VersionDownloadWorker` (`Corout
 
 ## Activity Architecture
 
-The app uses traditional Activity/Fragment architecture for the reader, with some surfaces on Jetpack Compose (REM-20, REM-22): the color picker, the Bible-audio bar, and a Compose port of the Goto screen that is currently gated behind an experimental flag (`ExperimentalFlags.useComposeGoto()`) with the legacy View-based screens as the default:
+The app uses traditional Activity/Fragment architecture for the reader, with some surfaces on Jetpack Compose (REM-20, REM-22): the color picker, the Bible-audio bar, and the Goto screen, which is Compose by default (`ExperimentalFlags.useComposeGoto()`) with the legacy View-based screens kept behind the "Navigation (legacy views)" experimental setting:
 
 - **IsiActivity** — main reader (still the largest class in the app). After REM-06/07/08 it still owns:
   - Bible text display via `VersesControllerImpl` (RecyclerView)

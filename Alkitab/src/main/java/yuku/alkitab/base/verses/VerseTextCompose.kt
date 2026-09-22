@@ -150,8 +150,8 @@ internal fun VerseTextComposeContent(state: VerseTextComposeState, modifier: Mod
 /**
  * Puts a [VerseTextComposeView] where [textView] sits, carrying over its id,
  * child index and layout params so the row's layout rules and the caller's
- * `findViewById` keep working. Returns null when the Verse (Compose)
- * experimental setting is off, leaving the TextView in place.
+ * `findViewById` keep working. Returns null when the Verse (legacy views)
+ * experimental setting is on, leaving the TextView in place.
  */
 private fun replaceWithVerseTextCompose(textView: TextView): VerseTextComposeView? {
     if (!ExperimentalFlags.useComposeVerseItem()) return null
@@ -169,8 +169,8 @@ private fun replaceWithVerseTextCompose(textView: TextView): VerseTextComposeVie
 }
 
 /**
- * The verse-text slot of one row, which is a [VerseTextComposeView] when the
- * Verse (Compose) experimental setting is on and the row's own TextView
+ * The verse-text slot of one row, which is a [VerseTextComposeView] unless the
+ * Verse (legacy views) experimental setting is on, and the row's own TextView
  * otherwise. Rows go through a slot so filling it costs them one call either
  * way.
  */

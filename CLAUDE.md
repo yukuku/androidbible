@@ -169,13 +169,14 @@ S.activeVersion() → MVersion → Version (abstract)
   → VerseItem (custom RelativeLayout with highlight/selection drawing)
 ```
 
-With the "Verse (Compose)" experimental setting enabled, every verse list is
-built through `createVersesController`, which swaps the list's RecyclerView for
-a `VersesComposeView` driven by `VersesComposeControllerImpl` (a LazyColumn-based
-implementation of the same `VersesController` interface): `VerseRendererCompose`
-renders verse text to an `AnnotatedString`, rows reuse `VerseItemComposeContent`,
-and pericope headers are composed natively. `IsiActivity`'s two panes,
-`VersesDialog` and `XrefDialog` all go through it.
+Every verse list is built through `createVersesController`, which swaps the
+list's RecyclerView for a `VersesComposeView` driven by
+`VersesComposeControllerImpl` (a LazyColumn-based implementation of the same
+`VersesController` interface): `VerseRendererCompose` renders verse text to an
+`AnnotatedString`, rows reuse `VerseItemComposeContent`, and pericope headers
+are composed natively. `IsiActivity`'s two panes, `VersesDialog` and
+`XrefDialog` all go through it. The RecyclerView pipeline above is kept as an
+opt-out, reachable through the "Verse (legacy views)" experimental setting.
 
 Screens that show verse text outside a verse list (search results, the marker
 list, the progress-mark list, the report screen) hold a `VerseTextSlot`
