@@ -6,29 +6,14 @@ translation-only updates are generally omitted.
 
 ## 5.0.0-beta.2 — 2026-09-09
 
-A quick follow-up to the first beta, fixing what it shipped with.
-
-- **Highlighted text stays readable when you select a verse.** A
-  selected verse forces its text light or dark to contrast with the
-  selection color, but a highlight band is painted over that selection,
-  so a highlighted run needs its own decision. Each run now takes
-  whichever color contrasts better with what is actually painted behind
-  it, so a partial highlight only affects its own range, and Words of
-  Jesus follow the same rule. Dictionary-linked words used to keep the
-  link color whatever run they sat in, clashing with a selected or
-  highlighted verse; they now only underline and take their color from
-  the text around them. Both the standard verse list and the
-  experimental Compose one are covered.
-- Fixes for the experimental **"Verse (Compose)"** verse list: a verse
-  carrying a footnote or cross-reference could not be selected, because
-  a tap that hit no link was swallowed instead of selecting the verse;
-  pinch-to-zoom left the verses already on screen at the old size until
-  you scrolled; and pericope headings lost their bold when a custom
-  font was in use.
-- Production builds are a few hundred kilobytes smaller. The internal
-  Bible assets are packaged from a list of what the reader actually
-  opens, instead of copying everything alongside it, so build artifacts
-  with no reader are left out.
+- Highlighted text stays readable when a verse is selected, and
+  dictionary links no longer clash with the color of the verse they sit
+  in.
+- Fixes for the experimental "Verse (Compose)" verse list: verses with
+  a footnote or cross-reference could not be selected, pinch-to-zoom
+  left the verses already on screen at the old size, and pericope
+  headings lost their bold with a custom font.
+- Production builds are a few hundred kilobytes smaller.
 
 ## 5.0.0-beta.1 — 2026-09-08
 
