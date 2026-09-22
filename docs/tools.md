@@ -7,26 +7,26 @@ ships with the open-source build. It also holds the release and CI helpers.
 **`tools/` is not part of the Gradle build.** It is a separate IntelliJ
 project with its own `.idea/` directory, module `.iml` files, and jar
 artifacts. Opening the repository root in Android Studio will not build it;
-open `tools/` itself. Nothing in the app module depends on it, and it is not
-compiled by CI.
+open `tools/` itself. It is not listed in `settings.gradle.kts` and CI never
+builds it.
 
-If you only want to convert a file and do not care about the source, use the
-prebuilt jars instead. See [Prebuilt jars](#prebuilt-jars) below.
+If you only want to convert a file, the prebuilt jars are easier than
+building this project. See [Prebuilt jars](#prebuilt-jars) below.
 
 ## Bible version converters
 
 The pipeline is `source format` → `.yet` → `.yes` (or the internal format).
-`.yet` is a plain-text intermediate: human-readable, hand-editable, and the
-format described on the [developer page](https://alkitab.app/developer).
-`.yes` is the binary format the app reads at runtime. See
-[binary-formats.md](binary-formats.md) for both specifications.
+`.yet` is a plain-text intermediate, meant to be readable and editable by
+hand, and is the format described on the
+[developer page](https://alkitab.app/developer). `.yes` is the binary format
+the app reads at runtime. See [binary-formats.md](binary-formats.md) for both
+specifications.
 
 | Module | Main class | Purpose |
 |---|---|---|
 | `YetToYes2` | `yuku.alkitabconverter.yet.YetToYes2` | `.yet` to `.yes`, the format users install |
 | `YetToInternal` | `yuku.alkitabconverter.yet.YetToInternal` | `.yet` to the built-in version format that ships inside the APK |
 | `AlkitabConverterProcesses` | one class per version | Source-format importers, described below |
-| `AlkitabConverter` | library | Shared code for the above: `TextDb`, `Rec`, `XrefDb`, `FootnoteDb`, USFM and verse-reference parsing |
 
 Both converters take their arguments with JCommander and accept `--help`.
 
@@ -42,10 +42,10 @@ must still be consecutive and each book must start at chapter 1 verse 1.
 
 ### Source-format importers
 
-`AlkitabConverterProcesses` holds one package per Bible version that has been
-imported, each converting some upstream format into `.yet`. They are
-one-off scripts kept for reference rather than a general-purpose tool, so
-expect to adapt one rather than run it unchanged.
+`AlkitabConverterProcesses` holds one package per imported Bible version,
+each converting some upstream format into `.yet`. They read as one-off
+scripts rather than a general-purpose tool, so expect to adapt one instead of
+running it unchanged.
 
 Two are generic batch converters: `unboundbatch` (Unbound Bible archives) and
 `thewordbatch` (theWord modules). The rest are per-version, and their package
@@ -59,8 +59,9 @@ Terjemahan Baru from USFM), `en_web` (World English Bible), `ja_kougo`
 `tools/in-ddd/in-ddd.yet` is the source for the `ddd_*` files in
 `Alkitab/src/plain/assets/internal/`, the dummy Bible text the open-source
 `plain` flavor ships so it builds and runs without the proprietary overlay.
-Its verses are generated filler, not scripture. Regenerate the assets by
-running `YetToInternal` over it.
+It is not real Bible text: the verses are placeholder strings that also
+exercise the verse formatting codes, so the reader has something to render.
+Regenerate the assets by running `YetToInternal` over it.
 
 ## Reading plan converters
 
@@ -69,26 +70,33 @@ running `YetToInternal` over it.
 | `RpaToRpb` | Converts an `.rpa` reading plan source into the binary `.rpb` the app reads |
 | `RpbTester` | Dumps an `.rpb` file so you can check what a conversion produced |
 
-`.rpa` is the plain-text authoring format; anyone with one can publish a plan.
-`tools/AlkitabConverter/file/` holds the sources for the bundled plans
-(`bibleplan_*.txt`, `blueletter_*`, `esv_*`) as worked examples. The `.rpb`
-format is specified in [binary-formats.md](binary-formats.md), and the app
-side is covered in [modules/reading-plans.md](modules/reading-plans.md).
+`.rpa` is the plain-text authoring format. `tools/AlkitabConverter/file/`
+holds the sources for the bundled plans (`bibleplan_*.txt`, `blueletter_*`,
+`esv_*`) as worked examples. The `.rpb` format is specified in
+[binary-formats.md](binary-formats.md), and the app side is covered in
+[modules/reading-plans.md](modules/reading-plans.md).
 
 ## Supporting modules
 
-- `common-jvm` holds shared JVM-side code.
-- `fakeandroid` provides stub implementations of the few Android classes the
-  converters touch (`android.util.Log`, `android.os.Parcel`,
-  `android.os.Parcelable`, the support annotations), so code shared with the
-  app compiles against a plain JDK.
-- `prog` holds third-party helper programs collected over the years, kept for
-  reference.
+- `AlkitabConverter` holds the shared converter code: `TextDb`, `Rec`,
+  `XrefDb`, `FootnoteDb`, USFM handling, and verse-reference parsing. It has
+  no `.iml` of its own; its sources are compiled as part of `common-jvm`.
+- `common-jvm` is the module that pulls those sources together with the app's
+  own library modules, adding `AlkitabIo`, `AlkitabModel`, `AlkitabYes2`,
+  `BintexReader`, `BintexWriter`, and `Snappy` as source folders. The
+  converters therefore write `.yes` files using the same code the app reads
+  them with.
+- `fakeandroid` supplies stubs for the Android classes those library modules
+  reference (`android.util.Log`, `android.os.Parcel`,
+  `android.os.Parcelable`, and the support annotations), which is what lets
+  them compile against a plain JDK.
+- `prog` holds two third-party helpers kept for reference: `wordsend`, a
+  Windows USFM conversion tool bundled with the SIL fonts, and
+  `bdb_to_res_raw.php`.
 
 ## Release and CI helpers
 
-These are unrelated to the converters and live here only because `tools/` is
-where scripts go.
+These share the directory but are unrelated to the converters.
 
 - `tools/play/publish.py` uploads builds to Google Play. See
   [play-publishing.md](play-publishing.md).

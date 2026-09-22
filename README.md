@@ -6,7 +6,7 @@ Bible for Android
 Get the apps on Google Play: [Alkitab](https://play.google.com/store/apps/details?id=yuku.alkitab) (Indonesian version) or [Quick Bible](https://play.google.com/store/apps/details?id=yuku.alkitab.kjv) (non-Indonesian version).
 
 - [Official Website](https://alkitab.app)
-- [Developer Page](https://alkitab.app/developer) — creating your own Bible versions, song books, reading plans, and integrations
+- [Developer Page](https://alkitab.app/developer) for creating your own Bible versions, song books, reading plans, and integrations
 - [Changelog](CHANGELOG.md)
 - [Development Blog](https://blog.alkitab.app)
 - [Discussion Group](https://groups.google.com/group/bibleforandroid)
@@ -18,7 +18,7 @@ Building
 
 Requirements: JDK 21 (Zulu recommended) and the Android SDK, including the NDK, because the `Snappy` module contains native C++. The compile SDK, minimum SDK, and NDK versions are pinned in `gradle/libs.versions.toml`.
 
-The main app module is `:Alkitab`. For local development, the supported open-source build is the `plain` flavor, which works out of the box with no extra setup: placeholder Bible data ships in `Alkitab/src/plain/assets/internal`, and a placeholder `Alkitab/google-services.json` is checked in (Firebase features will not actually function with it, but the build and the rest of the app do).
+The main app module is `:Alkitab`. For local development, the supported open-source build is the `plain` flavor, which works out of the box: placeholder Bible data ships in `Alkitab/src/plain/assets/internal`, and a placeholder `Alkitab/google-services.json` is checked in (Firebase features will not actually function with it, but the build and the rest of the app do).
 
 Build a debug APK:
 

@@ -4,16 +4,16 @@ A user-facing history of Bible for Android (Alkitab / Quick Bible).
 Internal refactors, dependency bumps, CI tweaks, and pure
 translation-only updates are generally omitted.
 
-Dates are the release date. Across the 4.0 to 4.8 range they come from
-the hand-written release notes, which record when a build actually
-reached the Play Store; elsewhere they are the release / tag date, or
-the commit date of the version-bump for untagged releases.
+Across the 4.0 to 4.8 range, dates come from the hand-written release
+notes. Elsewhere they are the release / tag date, or the commit date of
+the version-bump for untagged releases.
 
 The 4.0 through 4.4 beta releases are interleaved among the stable
 releases in release order rather than grouped by version, so the 4.4
 betas run alongside the 4.3 patch releases that were shipping at the
-same time. Entries marked "(blog)" or "(docs)" had an accompanying post
-on the development blog at https://blog.alkitab.app.
+same time. Entries marked "(blog)" had an accompanying post on the
+development blog at https://blog.alkitab.app; "(docs)" marks one that
+had accompanying documentation.
 
 ## 5.0.0-beta.1 — 2026-09-08
 
@@ -371,8 +371,8 @@ the first wave of a Jetpack Compose migration.
 ## 4.4 Beta 8 — 2016-09-08
 
 - Added a new feature to use super big text size for UI elements.
-- Fixed search results being checked unintentionally when opening
-  search results.
+- Fixed search results being checked unintentionally when the search
+  results screen is opened.
 - Long book names do not cause the chapter number to hide on the verse
   reference button.
 - Moved the "bible" folder for versions and fonts to private storage.
@@ -393,8 +393,8 @@ the first wave of a Jetpack Compose migration.
 
 - Fixed detecting a verse reference containing a space between numbers
   without punctuation.
-- Fixed verse-reference detection not recognising "da" but recognising
-  "Da".
+- Fixed verse-reference detection recognizing "Da" but not lowercase
+  "da".
 - Long-press the Play button to play songs on a loop.
 - A disabled sync set no longer makes other sync sets disabled.
 - Fixed per-version relative font size causing a crash when the app is
