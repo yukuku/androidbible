@@ -210,6 +210,15 @@ public class JumperTest extends TestCase {
 		testParse("Kejadian 11:13e-22", true, 0, 11, 13, true);
 		testParse("Kejadian 11:13e-22e", true, 0, 11, 13, true);
 
+		// verse lists: only the first reference is used
+		testParse("Yohanes 13:13, 16", true, 42, 13, 13, true);
+		testParse("Yohanes 13:13,16", true, 42, 13, 13, true);
+		testParse("Kejadian 1:1, 3, 5", true, 0, 1, 1, true);
+		testParse("Kejadian 1:1-2, 5", true, 0, 1, 1, true);
+		testParse("Kejadian 1, 2", true, 0, 1, 0, true);
+		testParse("Yohanes 3:16; Roma 5:8", true, 42, 3, 16, true);
+		testParse(", 16", false, 0, 0, 0, false);
+
 		// OSIS without and with ranges
 		testParse("Gen.1", true, 0, 1, 0, false);
 		testParse("John.2", true, 42, 2, 0, false);

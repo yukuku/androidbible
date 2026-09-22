@@ -18,7 +18,8 @@ class Jumper {
     private var p_verse: Int = 0
 
     /**
-     * The reference string is a verse range, with dash as delimiter
+     * The reference string covers more than a single verse: a range with dash as delimiter,
+     * or a list of verses continuing after a comma or a semicolon.
      */
     private var p_hasRange: Boolean = false
 
@@ -56,6 +57,20 @@ class Jumper {
         }
 
         if (BuildConfig.DEBUG) logger.d("jumper stage 0: $reference")
+
+        //# STAGE 3: A comma or a semicolon starts an additional reference, as in "Yohanes 13:13, 16".
+        // Only the first one is parsed, and the reference counts as covering more than a single verse.
+        val additionalAt = reference.indexOfFirst { it == ',' || it == ';' }
+        if (additionalAt >= 0) {
+            reference = reference.substring(0, additionalAt).trim()
+            p_hasRange = true
+
+            if (reference.isEmpty()) {
+                return false
+            }
+
+            if (BuildConfig.DEBUG) logger.d("jumper stage 3: $reference")
+        }
 
         //# STAGE 4: replace en-dash and em-dash to normal dash
         if (reference.contains('–') || reference.contains('—')) {
@@ -413,7 +428,8 @@ class Jumper {
         get() = p_verse
 
     /**
-     * The reference string is a verse range, with dash as delimiter
+     * The reference string covers more than a single verse: a range with dash as delimiter,
+     * or a list of verses continuing after a comma or a semicolon.
      */
     val hasRange: Boolean
         get() = p_hasRange
