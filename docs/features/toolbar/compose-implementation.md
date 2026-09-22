@@ -86,6 +86,24 @@ space the centred arrows were padding. At 411 dp and above the arrows stay
 centred, because the bar already has room. `ReaderToolbar` decides this from
 the measured bar width, not from a hard-coded breakpoint list.
 
+### 8 dp of clearance in front of the stadium where the chevron is flush
+
+Below 411 dp the next chapter chevron is drawn against the outer edge of its
+own box, which puts it hard against the version/audio stadium. The stadium is
+reserved 8 dp of clearance there, taking the chevron's ink from 7 dp off the
+stadium outline to 15 dp. The stadium stays right-anchored against the search
+button, so the 8 dp comes out of the navigation cluster's width rather than
+moving the control.
+
+At 411 dp and above the chevron is centred in its own box and already stands
+half a box clear of the stadium, so nothing is added.
+
+![The bar at 320, 360, 384, 411, 480 and 600 dp, each with the version changer and speaker, the version changer alone, the speaker alone, and neither](compose-toolbar-stadium-clearance.png)
+
+Every flush width is affected, whether the stadium is showing both halves or
+either one alone. With neither half showing there is no stadium to keep clear
+of, so the reference keeps the full width.
+
 ### Version changer and speaker as one segmented stadium
 
 The version changer and the audio button share a single stadium outline split
@@ -163,7 +181,11 @@ take their own touches and no such carve-out is needed.
 
 `ReaderToolbarComposeTest` lays the Compose bar out at every shipping width,
 at xxhdpi so 1 dp is 3 px, and checks the slot widths through the reference
-bounds the bar reports. It also writes `compose-toolbar.png`, the image above.
+bounds the bar reports. Where a check needs the drawn result rather than a
+slot width, such as where the stadium's outline starts, it reads the leftmost
+painted column out of the rendered bitmap. It also writes
+`compose-toolbar.png` and `compose-toolbar-stadium-clearance.png`, the two
+images above.
 
 ```bash
 ./gradlew :Alkitab:testPlainDebugUnitTest --tests "yuku.alkitab.base.compose.toolbar.ReaderToolbarComposeTest"

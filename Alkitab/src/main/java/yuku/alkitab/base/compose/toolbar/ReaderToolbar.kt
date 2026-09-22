@@ -78,6 +78,14 @@ object ReaderToolbarDimens {
     val chipSidePadding = 8.dp
     val speakerWidth = 32.dp
 
+    /**
+     * Clearance kept in front of the version/audio stadium where the next
+     * chapter chevron is drawn flush against the outer edge of its box and
+     * would otherwise end hard against the stadium. A centred chevron already
+     * stands half its own box clear of it.
+     */
+    val versionGap = 8.dp
+
     val referenceTextSize = 16.sp
     val versionTextSize = 14.sp
 
@@ -188,7 +196,12 @@ fun ReaderToolbar(
                     maxHeight = height,
                 )
             )
-            val clusterWidth = (constraints.maxWidth - drawerPx - searchPx - version.width)
+            val gapPx = if (flush && version.width > 0) {
+                ReaderToolbarDimens.versionGap.roundToPx()
+            } else {
+                0
+            }
+            val clusterWidth = (constraints.maxWidth - drawerPx - searchPx - version.width - gapPx)
                 .coerceIn(0, ReaderToolbarDimens.clusterMaxWidth.roundToPx())
             val cluster = clusterSlot.measure(fixed(clusterWidth, height))
 
