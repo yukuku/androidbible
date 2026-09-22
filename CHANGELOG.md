@@ -4,13 +4,6 @@ A user-facing history of Bible for Android (Alkitab / Quick Bible).
 Internal refactors, dependency bumps, CI tweaks, and pure
 translation-only updates are generally omitted.
 
-The 4.0 through 4.4 beta releases are interleaved among the stable
-releases in release order rather than grouped by version, so the 4.4
-betas run alongside the 4.3 patch releases that were shipping at the
-same time. Entries marked "(blog)" had an accompanying post on the
-development blog at https://blog.alkitab.app; "(docs)" marks one that
-had accompanying documentation.
-
 ## 5.0.0-beta.1 — 2026-09-08
 
 First beta of the 5.0 line, and the largest release in years: narrated

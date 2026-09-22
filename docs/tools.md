@@ -54,6 +54,12 @@ Terjemahan Baru from USFM), `en_web` (World English Bible), `ja_kougo`
 (Japanese Kougo), `ro_cornilescu` (Romanian Cornilescu), and `zh_ckjv`
 (Chinese KJV).
 
+The USFM importers (`in_tb_usfm`, `in_tsi_usfm`, `in_ayt`, `ury_orya`) first
+convert USFM to USFX through `Usfm2Usfx`, which runs
+`prog/wordsend/usfm2usfx.exe` under `mono`. So `mono` has to be installed,
+and because that path is resolved against the working directory, these
+importers need to run with `tools/` as the working directory.
+
 ### The placeholder Bible
 
 `tools/in-ddd/in-ddd.yet` is the source for the `ddd_*` files in
@@ -90,9 +96,9 @@ holds the sources for the bundled plans (`bibleplan_*.txt`, `blueletter_*`,
   reference (`android.util.Log`, `android.os.Parcel`,
   `android.os.Parcelable`, and the support annotations), which is what lets
   them compile against a plain JDK.
-- `prog` holds two third-party helpers kept for reference: `wordsend`, a
-  Windows USFM conversion tool bundled with the SIL fonts, and
-  `bdb_to_res_raw.php`.
+- `prog` holds two third-party helpers. `wordsend` is a USFM toolset,
+  bundled with the SIL fonts, whose `usfm2usfx.exe` the USFM importers
+  invoke. `bdb_to_res_raw.php` is a standalone script.
 
 ## Release and CI helpers
 
