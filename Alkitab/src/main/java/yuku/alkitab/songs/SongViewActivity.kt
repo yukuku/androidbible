@@ -541,9 +541,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val currentSongCode = currentSong.code
 
         // Always re-download and store at the current format. The stored payload is always JSON at
-        // this version, and the book may be mixed-version after REM-21's lazy per-row conversion, so
-        // requesting whatever version happened to be on a row would leave stale rows behind and could
-        // stamp a JSON payload with a legacy version (REM-35). Guard mirrors the alkitab:// path.
+        // this version, and lazy per-row conversion can leave a book mixed-version, so requesting
+        // whatever version happened to be on a row would leave stale rows behind and could stamp a
+        // JSON payload with a legacy version. Guard mirrors the alkitab:// path.
         val dataFormatVersion = SongDocumentJson.DATA_FORMAT_VERSION
         if (!SongBookUtil.isSupportedDataFormatVersion(dataFormatVersion)) {
             MaterialAlertDialogBuilder(this)

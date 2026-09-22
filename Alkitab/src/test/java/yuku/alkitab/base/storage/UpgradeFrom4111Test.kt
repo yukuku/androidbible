@@ -52,7 +52,7 @@ import yuku.kpri.model.VerseKind
  * branch, leaving upgraders with a column the code expects and the database
  * lacks.
  *
- * The Songs half covers the storage seam for REM-32 and REM-21 together: a
+ * The Songs half covers both storage seams at once: a
  * 4.11.1 install stored songs as `dataFormatVersion` 3 Parcelable blobs in
  * the legacy `SongDb` file, and the current build has to copy those rows into
  * Room and then decode them as JSON-or-legacy on read. The blob is written
@@ -352,7 +352,7 @@ class UpgradeFrom4111Test {
 
     // endregion
 
-    // region Songs (REM-32 storage swap + REM-21 payload swap)
+    // region Songs (legacy SQLite to Room, Parcelable payload to JSON)
 
     @Test
     fun `a song stored by 4 11 1 as a v3 Parcelable blob copies into Room and decodes on read`() {

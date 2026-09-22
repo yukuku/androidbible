@@ -24,9 +24,9 @@ import yuku.kpri.model.VerseKind
 
 /**
  * Drives a shared corpus of representative legacy [Song] fixtures through
- * both the pre-migration client algorithms (kept here only as reference
- * implementations for comparison — production no longer has them) and the
- * new [SongDocument] path, and asserts equivalence.
+ * both the client algorithms this test keeps as reference implementations
+ * (production has only the [SongDocument] path) and the [SongDocument] path
+ * itself, and asserts equivalence.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])

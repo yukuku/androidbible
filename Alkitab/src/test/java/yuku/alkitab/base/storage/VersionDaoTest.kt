@@ -193,7 +193,7 @@ class VersionDaoTest {
     }
 
     /**
-     * Documents a pre-existing behavior (not introduced by the DAO extraction):
+     * Documents a quirk of the production code:
      * [VersionDao.insertOrUpdateWithActive] dedupes only by `filename`, so two
      * rows can legitimately share the same `preset_name`. In that case,
      * [VersionDao.setActive] matches by `preset_name` first and flips both rows.

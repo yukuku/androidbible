@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
 /**
  * Room entity for one row of the `song_info` table. Lives in
  * [SongRoomDatabase] (file `AlkitabSongRoomDb`), distinct from the legacy
- * `SongInfo` table in the `SongDb` SQLite file which is still created by
- * `SongDbHelper` but no longer written to by production code. The one-time
- * data copy on first launch is wired up in [SongDbDataMigration].
+ * `SongInfo` table in the `SongDb` SQLite file, which `SongDbHelper` still
+ * creates but which production code does not write to. The one-time data
+ * copy on first launch is wired up in [SongDbDataMigration].
  *
  * Column nullability — `bookName` / `code` / `title` / `title_original` /
  * `data` are kept nullable because the legacy schema permitted NULL for
@@ -22,10 +22,12 @@ import androidx.room.PrimaryKey
  * missing a non-null Room column (`bookName`, `code`) with `?: continue`
  * rather than coalescing — defence in depth.
  *
- * The binary [data] column holds the Parcelable-marshalled
- * [yuku.kpri.model.Song] snapshot. REM-32 round-trips these bytes
- * unchanged; a future REM-21 may switch the payload to JSON, but that's
- * not in scope here.
+ * The binary [data] column holds a UTF-8 JSON-encoded
+ * [yuku.alkitab.songs.newdoc.SongDocument] at
+ * [yuku.alkitab.songs.newdoc.SongDocumentJson.DATA_FORMAT_VERSION]. A row at
+ * an older `dataFormatVersion` holds a Parcelable-marshalled
+ * [yuku.kpri.model.Song] instead, which `SongDb.readDocument` decodes and
+ * converts on first read.
  *
  * Indexes mirror `SongDbHelper.setupTableSongInfo`:
  *  - `(bookName, code)` for keyed lookups by song

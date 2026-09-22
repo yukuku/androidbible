@@ -42,8 +42,7 @@ private const val EXTRA_verseUrl = "verseUrl"
 
 /**
  * Action-mode callback for verse selection (copy, share, bookmark, highlight,
- * compare, dictionary, extensions, etc.). Extracted from `IsiActivity` — see
- * REM-07 in docs/tech-debt-remediation.md.
+ * compare, dictionary, extensions, etc.).
  *
  * The controller is deliberately kept free of direct Activity references: it
  * reads state through [host] and invokes operations through [actions]. Framework

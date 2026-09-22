@@ -148,7 +148,7 @@ public class SongDb {
      * (at any {@code dataFormatVersion}) are deleted, so updating a mixed-version book leaves no
      * stale rows behind. The payload is always written as JSON, so every row is stamped at
      * {@link SongDocumentJson#DATA_FORMAT_VERSION} regardless of the version originally requested
-     * from the server (REM-35).
+     * from the server.
      */
     public void storeSongs(String bookName, List<SongDocument> docs) {
         final int updateTime = Sqlitil.nowDateTime();

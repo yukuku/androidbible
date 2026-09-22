@@ -114,10 +114,7 @@ enum class Prefkey {
     lastBookId, lastChapter, lastVerse, lastVersionId, lastSplitVersionId, lastSplitOrientation,  // string "horizontal" or "vertical"
     lastSplitProp,  // float proportion of the top or left split window
 
-    /**
-     * The whole history (with many entries)
-     * This was moved from instant_preferences.
-     */
+    /** The whole history (with many entries) */
     history,
 
     /** Current reading vars  */
@@ -140,7 +137,7 @@ enum class Prefkey {
     audioSelectedSets,
 
     /**
-     * One-shot completion flag for the REM-32 `SongInfo` / `SongBookInfo`
+     * One-shot completion flag for the `SongInfo` / `SongBookInfo`
      * copy from the legacy `SongDb` SQLite file (managed by
      * `SongDbHelper`) into Room's `AlkitabSongRoomDb`. Set to true exactly
      * once after the migration has either successfully copied all legacy rows

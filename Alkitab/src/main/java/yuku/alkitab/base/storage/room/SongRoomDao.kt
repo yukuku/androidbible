@@ -28,9 +28,9 @@ import androidx.room.Transaction
  * list. Each inserted row uses the supplied pre-computed `ordering` index
  * so the legacy "ordering of the songs for display" semantics are exactly
  * preserved. A song-book download replaces the whole book, so the delete is
- * keyed by `bookName` alone — never by `(bookName, dataFormatVersion)`,
- * which would leak rows of a different version and duplicate songs after a
- * mixed-version book (REM-35).
+ * keyed by `bookName` alone, never by `(bookName, dataFormatVersion)`,
+ * which would leak rows of a different version and duplicate the songs of a
+ * mixed-version book.
  */
 @Dao
 abstract class SongRoomDao {
@@ -159,14 +159,14 @@ abstract class SongRoomDao {
      * indexes.
      *
      * Deleting by `bookName` alone (rather than `(bookName, dataFormatVersion)`)
-     * is what makes updating a mixed-version book safe — after REM-21's lazy
-     * per-row conversion a book can hold rows at several `dataFormatVersion`s,
-     * and a version-scoped delete would leave the non-matching rows behind,
-     * duplicating songs (REM-35).
+     * is what makes updating a mixed-version book safe: lazy per-row conversion
+     * leaves a book holding rows at several `dataFormatVersion`s, and a
+     * version-scoped delete would leave the non-matching rows behind,
+     * duplicating songs.
      *
      * Wrapped in `@Transaction` so the delete and the inserts observe a
-     * consistent snapshot and roll back together on failure — exact match
-     * for the legacy `SQLiteDatabase.beginTransactionNonExclusive` pattern.
+     * consistent snapshot and roll back together on failure, matching the
+     * legacy `SQLiteDatabase.beginTransactionNonExclusive` pattern.
      */
     @Transaction
     open fun replaceSongsForBookName(

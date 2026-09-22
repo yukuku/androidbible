@@ -152,7 +152,7 @@ class SongDbTest {
     @Test
     fun `updating a mixed-dataFormatVersion book replaces the whole book with version-5 JSON rows and no duplicates`() {
         val roomDao = SongRoomDatabase.get(RuntimeEnvironment.getApplication()).songRoomDao()
-        // Reproduce a pre-REM-21 book left mixed-version by lazy per-row conversion: an unviewed
+        // Reproduce a book left mixed-version by lazy per-row conversion: an unviewed
         // legacy Parcelable row (dataFormatVersion 3) alongside a viewed JSON row (version 5), both
         // in the same book. A version-scoped delete would only wipe one of them.
         roomDao.insertSongInfo(

@@ -13,9 +13,9 @@ import yuku.alkitab.base.storage.SongDb
 import yuku.alkitab.model.Version
 
 /**
- * Sanity tests for the service interfaces extracted from [S] as part of REM-24.
+ * Sanity tests for the narrow service interfaces onto [S].
  *
- * These exist to prove the new contracts are decoupled from the [S] service locator —
+ * These exist to prove the contracts are decoupled from the [S] service locator:
  * a test can construct fake implementations and wire them through [AppServices]
  * without needing an Android `Context`, the real `InternalDb`, or any of the
  * preference machinery.

@@ -173,7 +173,7 @@ class SongRoomDaoTest {
 
     @Test
     fun `replaceSongsForBookName removes every existing row for the book regardless of dataFormatVersion and inserts the new list`() {
-        // A mixed-version book (REM-35): rows at several dataFormatVersions for the same book.
+        // A mixed-version book: rows at several dataFormatVersions for the same book.
         dao.insertSongInfo(songInfo(code = "old1", dataFormatVersion = 3, ordering = 1))
         dao.insertSongInfo(songInfo(code = "old2", dataFormatVersion = 5, ordering = 2))
         // An unrelated book must survive untouched.
