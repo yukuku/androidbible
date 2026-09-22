@@ -4,9 +4,6 @@ import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.Prefkey
 
 /**
- * Reader gesture handling extracted from `IsiActivity` — see REM-06 in
- * docs/tech-debt-remediation.md.
- *
  * Bundles the three listener interfaces that the reader screen wires up to
  * its layout: [TwofingerLinearLayout.Listener] (split-root pinch + swipe),
  * [GotoButton.FloaterDragListener] (drag from the goto button to drop a

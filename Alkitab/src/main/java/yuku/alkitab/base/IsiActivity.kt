@@ -331,8 +331,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
     /**
-     * The secondary version. Read-only here; ownership lives on [splitViewManager]
-     * (see REM-08). Set to null when the secondary version is not opened.
+     * The secondary version. Read-only here; ownership lives on
+     * [splitViewManager]. Null when the secondary version is not opened.
      */
     val activeSplit1: ActiveSplit1? get() = splitViewManager.activeSplit1
 

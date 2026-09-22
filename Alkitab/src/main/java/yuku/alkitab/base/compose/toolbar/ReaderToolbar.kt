@@ -79,10 +79,9 @@ object ReaderToolbarDimens {
     val speakerWidth = 32.dp
 
     /**
-     * Clearance kept in front of the version/audio stadium where the next
-     * chapter chevron is drawn flush against the outer edge of its box and
-     * would otherwise end hard against the stadium. A centred chevron already
-     * stands half its own box clear of it.
+     * Clearance in front of the version/audio stadium, kept where the next
+     * chapter chevron is drawn flush against the outer edge of its box. A
+     * centred chevron already stands half its own box clear.
      */
     val versionGap = 8.dp
 
@@ -187,8 +186,6 @@ fun ReaderToolbar(
 
             val drawer = drawerSlot.measure(fixed(drawerPx, height))
             val search = searchSlot.measure(fixed(searchPx, height))
-            // The version segment sizes itself to its label, then the cluster
-            // takes whatever is left.
             val version = versionSlot.measure(
                 Constraints(
                     maxWidth = (constraints.maxWidth - drawerPx - searchPx).coerceAtLeast(0),
@@ -373,8 +370,7 @@ private fun ReferenceLabel(
         }
 
         val display = remember(reference, referenceAbbreviated, available, box, style) {
-            // Reuses the view implementation so both toolbars break a long
-            // reference at the same place.
+            // Both toolbars must break a long reference at the same word.
             fun wrap(text: String) = GotoButton.balanceWrap(text, available) { s, start, end ->
                 measurer.measure(s.subSequence(start, end).toString(), style).size.width.toFloat()
             }
@@ -415,8 +411,9 @@ private const val REFERENCE_MAX_LINES = 2
  *
  * Either half can be absent: the split view hides the version changer, and a
  * version without a recording has no audio button. Whichever half is left
- * keeps the stadium to itself, and the speaker takes the full 48dp minimum
- * once it no longer sits inside a target the reader is already aiming at.
+ * keeps the stadium to itself, and a lone speaker takes the full 48dp
+ * minimum, being a target of its own rather than one inside the version
+ * changer's.
  */
 @Composable
 private fun VersionAudioControl(
