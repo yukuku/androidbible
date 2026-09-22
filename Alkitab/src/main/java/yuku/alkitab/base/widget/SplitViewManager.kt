@@ -60,8 +60,7 @@ data class ActiveSplit1(
 )
 
 /**
- * Split-view (a.k.a. "compare versions side-by-side") manager extracted from
- * `IsiActivity` — see REM-08 in docs/tech-debt-remediation.md.
+ * Split-view (a.k.a. "compare versions side-by-side") manager.
  *
  * Owns the secondary version state ([activeSplit1]) and drives the split-pane
  * UI: open/close transitions, the split handle drag and label buttons, master
