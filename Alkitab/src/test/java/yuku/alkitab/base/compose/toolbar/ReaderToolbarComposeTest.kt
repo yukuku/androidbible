@@ -166,10 +166,31 @@ class ReaderToolbarComposeTest {
     /** Either half on its own keeps the stadium and takes the 48dp minimum. */
     private val loneSegmentDp = ReaderToolbarDimens.chipMinWidth.value
 
+    /** Reserved in front of the stadium for as long as the next chevron is flush. */
+    private fun versionGapDp(widthDp: Int, segmentDp: Float) =
+        if (segmentDp > 0f && widthDp < ReaderToolbarDimens.flushBelowWidth.value) {
+            ReaderToolbarDimens.versionGap.value
+        } else {
+            0f
+        }
+
     private fun clusterWidthDp(widthDp: Int, segmentDp: Float) = minOf(
-        widthDp - ReaderToolbarDimens.drawerWidth.value - ReaderToolbarDimens.searchWidth.value - segmentDp,
+        widthDp - ReaderToolbarDimens.drawerWidth.value - ReaderToolbarDimens.searchWidth.value -
+            segmentDp - versionGapDp(widthDp, segmentDp),
         ReaderToolbarDimens.clusterMaxWidth.value,
     )
+
+    /** Leftmost column the stadium outline is painted on, in dp from the bar's left edge. */
+    private fun stadiumLeftDp(laid: Laid): Float {
+        val clusterRight = laid.referenceTouch.right + px(laid.arrowDp)
+        val box = Rect(
+            clusterRight,
+            laid.referenceTouch.top,
+            laid.bitmap.width - px(ReaderToolbarDimens.searchWidth.value),
+            laid.referenceTouch.bottom,
+        )
+        return dp(firstInkColumn(laid.bitmap, box))
+    }
 
     @Test
     fun `the drawer button gives up the 56dp the navigation style forces on the view toolbar`() {
@@ -264,6 +285,57 @@ class ReaderToolbarComposeTest {
     }
 
     @Test
+    fun `the stadium stays against the search button and takes its clearance out of the cluster`() {
+        for (widthDp in shippingWidths) {
+            val laid = layOut(widthDp, stateFor())
+            val clusterRightDp = dp(laid.referenceTouch.right) + laid.arrowDp
+            // Right-anchored next to search, so where the cluster stops short
+            // of it the slack shows up in front of the stadium.
+            val expectedLeftDp = widthDp - ReaderToolbarDimens.searchWidth.value - shortSegmentDp
+            assertEquals("stadium left edge at ${widthDp}dp", expectedLeftDp, stadiumLeftDp(laid), 0.7f)
+            assertTrue(
+                "the stadium should keep its clearance at ${widthDp}dp",
+                expectedLeftDp - clusterRightDp >= versionGapDp(widthDp, shortSegmentDp) - 0.7f,
+            )
+        }
+    }
+
+    @Test
+    fun `a flush next chevron is held 8dp off the stadium`() {
+        for (widthDp in listOf(320, 360, 384)) {
+            val laid = layOut(widthDp, stateFor())
+            val clusterRightDp = dp(laid.referenceTouch.right) + laid.arrowDp
+            assertEquals(
+                "clearance at ${widthDp}dp",
+                ReaderToolbarDimens.versionGap.value,
+                stadiumLeftDp(laid) - clusterRightDp,
+                0.7f,
+            )
+        }
+    }
+
+    @Test
+    fun `a centred next chevron stands clear on its own and is given nothing extra`() {
+        val laid = layOut(411, stateFor())
+        val clusterRightDp = dp(laid.referenceTouch.right) + laid.arrowDp
+        assertEquals(0f, stadiumLeftDp(laid) - clusterRightDp, 0.7f)
+    }
+
+    @Test
+    fun `an absent stadium reserves no clearance`() {
+        for (widthDp in listOf(320, 360, 384)) {
+            val bare = stateFor(audio = false).copy(versionVisible = false)
+            val laid = layOut(widthDp, bare)
+            assertEquals(
+                "cluster width at ${widthDp}dp",
+                clusterWidthDp(widthDp, 0f),
+                dp(laid.clusterWidthPx(px(laid.arrowDp))),
+                0.7f,
+            )
+        }
+    }
+
+    @Test
     fun `a version name longer than six characters is cut to five plus an ellipsis`() {
         assertEquals("TB", versionLabelFor("TB"))
         assertEquals("VERSNM", versionLabelFor("VERSNM"))
@@ -333,6 +405,39 @@ class ReaderToolbarComposeTest {
             "360dp, long reference" +
             "360dp, long reference at a 2x font scale (abbreviated)"
 
+        writeSheet("compose-toolbar.png", laids, labels)
+    }
+
+    /**
+     * Not a pass/fail guard: every combination the clearance in front of the
+     * stadium depends on, which is the chevron placement crossed with which
+     * halves of the stadium are present.
+     */
+    @Test
+    fun `render every case the stadium clearance depends on`() {
+        val stadiumCases = listOf(
+            "version + audio" to stateFor(),
+            "version only" to stateFor(audio = false),
+            "audio only" to stateFor().copy(versionVisible = false),
+            "neither" to stateFor(audio = false).copy(versionVisible = false),
+        )
+        val widths = shippingWidths
+
+        val laids = mutableListOf<Laid>()
+        val labels = mutableListOf<String>()
+        for (widthDp in widths) {
+            val flush = widthDp < ReaderToolbarDimens.flushBelowWidth.value
+            val placement = if (flush) "next chevron flush right" else "next chevron centred"
+            for ((name, state) in stadiumCases) {
+                laids += layOut(widthDp, state)
+                labels += "${widthDp}dp, $placement, $name"
+            }
+        }
+
+        writeSheet("compose-toolbar-stadium-clearance.png", laids, labels)
+    }
+
+    private fun writeSheet(name: String, laids: List<Laid>, labels: List<String>) {
         val gutter = px(8)
         val labelHeight = px(14)
         val sheetWidth = laids.maxOf { it.bitmap.width } + gutter * 2
@@ -357,7 +462,7 @@ class ReaderToolbarComposeTest {
 
         val outputDir = File(System.getenv("TOOLBAR_AUDIT_DIR") ?: "build/reports/toolbar-audit")
         outputDir.mkdirs()
-        val file = File(outputDir, "compose-toolbar.png")
+        val file = File(outputDir, name)
         file.outputStream().use { sheet.compress(Bitmap.CompressFormat.PNG, 100, it) }
         println("compose toolbar render written to ${file.absolutePath}")
     }
