@@ -4,6 +4,15 @@ A user-facing history of Bible for Android (Alkitab / Quick Bible).
 Internal refactors, dependency bumps, CI tweaks, and pure
 translation-only updates are generally omitted.
 
+## 5.0.0-beta.3 — 2026-09-23
+
+* Compose screens are now the default (toolbar, verses, navigation, song, sync login),
+  but can be turned off from the settings.
+* New toolbar, more space for the verse reference, with capsule for version switcher and speaker icon.
+* Unfinished support for ruby (e.g. Strong's numbers, interlinear, furigana, pinyin etc).
+  Currently only displays and only supports a single line of ruby text.
+* Fix jumping to a verse in devotion where the verse reference has commas delimiting multiple verse numbers.
+
 ## 5.0.0-beta.2 — 2026-09-09
 
 - Highlighted text stays readable when a verse is selected, and
@@ -934,7 +943,7 @@ Progress:
 - Long-press and drag a progress icon from the left drawer to stick it
   to a verse.
 
-Translations/Versions:
+  Translations/Versions:
 
 - Background download of new versions.
 - Version list can be updated without an app update.
