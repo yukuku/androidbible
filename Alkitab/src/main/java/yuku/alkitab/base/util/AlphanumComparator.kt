@@ -60,10 +60,16 @@ class AlphanumComparator : Comparator<String> {
 
             // If both chunks contain numeric characters, sort them numerically
             val result = if (isDigit(thisChunk[0]) && isDigit(thatChunk[0])) {
+                val thisDigits = thisChunk.trimStart('0')
+                val thatDigits = thatChunk.trimStart('0')
                 // Simple chunk comparison by length.
-                val lengthDifference = thisChunk.length - thatChunk.length
+                val lengthDifference = thisDigits.length - thatDigits.length
                 // If equal, the first different number counts
-                if (lengthDifference != 0) lengthDifference else thisChunk.compareTo(thatChunk)
+                when {
+                    lengthDifference != 0 -> lengthDifference
+                    thisDigits != thatDigits -> thisDigits.compareTo(thatDigits)
+                    else -> thatChunk.length - thisChunk.length
+                }
             } else {
                 thisChunk.compareTo(thatChunk)
             }

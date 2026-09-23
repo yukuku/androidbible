@@ -21,9 +21,29 @@ class AlphanumComparatorTest {
     }
 
     @Test
-    fun `numeric runs of different lengths return the length difference so leading zeros sort after`() {
-        assertEquals(1, comparator.compare("01", "1"))
+    fun `numeric runs of different magnitudes return the difference in significant digit counts`() {
         assertEquals(-2, comparator.compare("5", "100"))
+        assertEquals(2, comparator.compare("100", "5"))
+    }
+
+    @Test
+    fun `leading zeros do not change the numeric value`() {
+        assertTrue(comparator.compare("002", "10") < 0)
+        assertTrue(comparator.compare("010", "9") > 0)
+        assertTrue(comparator.compare("007", "8") < 0)
+    }
+
+    @Test
+    fun `equal numbers with more leading zeros sort first`() {
+        assertTrue(comparator.compare("01", "1") < 0)
+        assertTrue(comparator.compare("1", "01") > 0)
+        assertTrue(comparator.compare("001", "01") < 0)
+        assertTrue(comparator.compare("00", "0") < 0)
+    }
+
+    @Test
+    fun `equal numbers with the same leading zeros compare equal`() {
+        assertEquals(0, comparator.compare("007", "007"))
     }
 
     @Test
@@ -54,5 +74,12 @@ class AlphanumComparatorTest {
         val codes = mutableListOf("10", "a10", "9", "1b", "100", "2", "1a", "a2", "1")
         codes.sortWith(comparator)
         assertEquals(listOf("1", "1a", "1b", "2", "9", "10", "100", "a2", "a10"), codes)
+    }
+
+    @Test
+    fun `sorting song codes with leading zeros puts them in natural order`() {
+        val codes = mutableListOf("1", "01", "10", "001", "2", "010", "0", "00", "a01", "a1")
+        codes.sortWith(comparator)
+        assertEquals(listOf("00", "0", "001", "01", "1", "2", "010", "10", "a01", "a1"), codes)
     }
 }
