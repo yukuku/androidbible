@@ -39,6 +39,10 @@
 	margin: 0.5em 0;
 }
 
+.youtube a {
+	color: inherit;
+}
+
 .song {
 	/* width: 640px; */
 }
@@ -96,7 +100,7 @@
 }
 
 .scriptureReferences a {
-	color: #33b5e5;
+	color: inherit;
 }
 
 .tune {

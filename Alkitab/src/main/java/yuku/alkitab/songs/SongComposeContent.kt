@@ -106,10 +106,10 @@ class SongComposeStyle(
     }
 }
 
-// Link styles mirror song.css: scripture references are #33b5e5; the "a"
-// default (patch-text/youtube) is #03a9f4. Both keep the browser's link underline.
-private val SCRIPTURE_LINK_STYLE = SpanStyle(color = Color(0xFF33B5E5), textDecoration = TextDecoration.Underline)
-private val DEFAULT_LINK_STYLE = SpanStyle(color = Color(0xFF03A9F4), textDecoration = TextDecoration.Underline)
+// Link styles mirror song.css: scripture references and the YouTube link keep
+// the surrounding text color, the patch-text link is #03a9f4. All are underlined.
+private val CONTENT_LINK_STYLE = SpanStyle(textDecoration = TextDecoration.Underline)
+private val PATCH_TEXT_LINK_STYLE = SpanStyle(color = Color(0xFF03A9F4), textDecoration = TextDecoration.Underline)
 
 private val ALLOWED_ALIGNS = setOf("start", "center", "end")
 
@@ -326,7 +326,7 @@ private fun ScriptureView(osis: String, style: SongComposeStyle, onScriptureClic
             withLink(
                 LinkAnnotation.Clickable(
                     tag = part.osisId,
-                    styles = TextLinkStyles(SCRIPTURE_LINK_STYLE),
+                    styles = TextLinkStyles(CONTENT_LINK_STYLE),
                 ) { onScriptureClick(part.osisId) },
             ) {
                 append(part.readable)
@@ -350,7 +350,7 @@ private fun YoutubeView(block: YoutubeBlock, style: SongComposeStyle, onYoutubeC
         withLink(
             LinkAnnotation.Clickable(
                 tag = block.videoId,
-                styles = TextLinkStyles(DEFAULT_LINK_STYLE),
+                styles = TextLinkStyles(CONTENT_LINK_STYLE),
             ) { onYoutubeClick(block.videoId) },
         ) {
             append("YouTube")
@@ -524,7 +524,7 @@ private fun FooterView(
             withLink(
                 LinkAnnotation.Clickable(
                     tag = "patchtext",
-                    styles = TextLinkStyles(DEFAULT_LINK_STYLE),
+                    styles = TextLinkStyles(PATCH_TEXT_LINK_STYLE),
                 ) { onPatchTextClick() },
             ) {
                 append(patchTextLinkLabel)
