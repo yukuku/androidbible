@@ -31,7 +31,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Unit tests
-        run: ./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest
+        run: ./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest :tools:converter-core:test :tools:cli:test :tools:importers:classes
 
       - name: Build with Gradle
         run: ./gradlew assemblePlainDebug bundlePlainDebug

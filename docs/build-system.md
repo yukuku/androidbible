@@ -111,7 +111,7 @@ Two consequences worth knowing:
 GitHub Actions workflow (`.github/workflows/android.yml`):
 - Triggers on push/PR to `develop` and `release/**` branches
 - Ubuntu latest, JDK 21 (Zulu)
-- `plain-debug` job: runs `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, `assemblePlainDebug`, `bundlePlainDebug`
+- `plain-debug` job: runs `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, the `tools/` converter tests (`:tools:converter-core:test`, `:tools:cli:test`) and a compile of `:tools:importers`, then `assemblePlainDebug`, `bundlePlainDebug`
 - `signed-release` job (pushes to `develop` and same-repo PRs): builds and signs all production flavors using the proprietary overlay repo, uploads per-flavor artifacts, and on `develop` pushes publishes a GitHub pre-release. On PRs it also uploads a `pr-preview-apks` artifact (APKs and metadata only — no AABs or mapping files)
 - `pr-apk-preview` job (same-repo PRs only): publishes those signed release APKs to a Cloudflare Worker with static assets and comments immutable `*.workers.dev` download links on the PR
 
