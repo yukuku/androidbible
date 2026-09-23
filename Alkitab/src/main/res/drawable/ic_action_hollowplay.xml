@@ -2,14 +2,9 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
 	android:width="32dp"
 	android:height="32dp"
-	android:autoMirrored="true"
 	android:viewportWidth="32"
 	android:viewportHeight="32">
-	<group
-		android:translateX="4"
-		android:translateY="3.5">
-		<path
-			android:fillColor="#ffffff"
-			android:pathData="M15.41 7.41 14 6l-6 6 6 6 1.41 -1.41L10.83 12z" />
-	</group>
+	<path
+		android:fillColor="#ffffff"
+		android:pathData="M10.79 6.68L10.79 8.8L20.88 18.9L25.45 15.99ZM18.51 20.41L24.52 26.42L25.6 25.34L6.72 6.46L5.64 7.54L10.79 12.69L10.79 25.31Z" />
 </vector>

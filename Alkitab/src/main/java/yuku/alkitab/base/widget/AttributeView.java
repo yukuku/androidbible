@@ -2,18 +2,21 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.drawable.DrawableKt;
+import java.util.Objects;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.verses.VersesController;
-import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 
@@ -25,14 +28,8 @@ public class AttributeView extends View {
 	public static final int PROGRESS_MARK_BIT_MASK = (1 << PROGRESS_MARK_BITS_START) * ((1 << PROGRESS_MARK_TOTAL_COUNT) - 1);
 	private static final float COUNT_TEXT_SIZE_DP = 12.f;
 
-	static Bitmap originalBookmarkBitmap = null;
-	static Bitmap scaledBookmarkBitmap = null;
-	static Bitmap originalNoteBitmap = null;
-	static Bitmap scaledNoteBitmap = null;
-	static Bitmap[] originalProgressMarkBitmaps = new Bitmap[PROGRESS_MARK_TOTAL_COUNT];
-	static Bitmap[] scaledProgressMarkBitmaps = new Bitmap[PROGRESS_MARK_TOTAL_COUNT];
-	static Bitmap originalHasMapsBitmap = null;
-	static Bitmap scaledHasMapsBitmap = null;
+	static final SparseArray<Bitmap> scaledIconBitmaps = new SparseArray<>();
+	static float scaledIconBitmapsScale = Float.NaN;
 	static Paint bookmarkCountPaint;
     static Paint noteCountPaint;
 
@@ -118,65 +115,45 @@ public class AttributeView extends View {
 		return bookmark_count > 0 || note_count > 0 || (progress_mark_bits & PROGRESS_MARK_BIT_MASK) != 0 || has_maps;
 	}
 
-	static Bitmap scale(Bitmap original, float scale) {
-		if (BuildConfig.DEBUG) {
-			AppLog.d(TAG, "@@scale Scale needed. Called with scale=" + scale);
+	/**
+	 * Rasterizes the vector icon at its intrinsic size times {@code scale}, instead of scaling a
+	 * pre-rendered bitmap, so the icon stays sharp at every verse text size.
+	 */
+	public static Bitmap renderScaledIcon(final Context context, @DrawableRes final int resId, final float scale) {
+		final Drawable drawable = Objects.requireNonNull(AppCompatResources.getDrawable(context, resId));
+		final int width = Math.max(1, Math.round(drawable.getIntrinsicWidth() * scale));
+		final int height = Math.max(1, Math.round(drawable.getIntrinsicHeight() * scale));
+		return DrawableKt.toBitmap(drawable, width, height, null);
+	}
+
+	Bitmap getScaledIconBitmap(@DrawableRes final int resId) {
+		if (scaledIconBitmapsScale != scale) {
+			scaledIconBitmaps.clear();
+			scaledIconBitmapsScale = scale;
 		}
 
-		if (scale == 1.f) {
-			return Bitmap.createBitmap(original);
+		Bitmap res = scaledIconBitmaps.get(resId);
+		if (res == null) {
+			res = renderScaledIcon(getContext(), resId, scale);
+			scaledIconBitmaps.put(resId, res);
 		}
-
-		final boolean filter = !(scale == 2.f || scale == 3.f || scale == 4.f);
-		return Bitmap.createScaledBitmap(original, Math.round(original.getWidth() * scale), Math.round(original.getHeight() * scale), filter);
+		return res;
 	}
 
 	Bitmap getScaledBookmarkBitmap() {
-		if (originalBookmarkBitmap == null) {
-			originalBookmarkBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_attr_bookmark);
-		}
-
-		if (scaledBookmarkBitmap == null || scaledBookmarkBitmap.getWidth() != Math.round(originalBookmarkBitmap.getWidth() * scale)) {
-			scaledBookmarkBitmap = scale(originalBookmarkBitmap, scale);
-		}
-
-		return scaledBookmarkBitmap;
+		return getScaledIconBitmap(R.drawable.ic_attr_bookmark);
 	}
 
 	Bitmap getScaledNoteBitmap() {
-		if (originalNoteBitmap == null) {
-			originalNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_attr_note);
-		}
-
-		if (scaledNoteBitmap == null || scaledNoteBitmap.getWidth() != Math.round(originalNoteBitmap.getWidth() * scale)) {
-			scaledNoteBitmap = scale(originalNoteBitmap, scale);
-		}
-
-		return scaledNoteBitmap;
+		return getScaledIconBitmap(R.drawable.ic_attr_note);
 	}
 
 	Bitmap getScaledProgressMarkBitmapByPresetId(int preset_id) {
-		if (originalProgressMarkBitmaps[preset_id] == null) {
-			originalProgressMarkBitmaps[preset_id] = BitmapFactory.decodeResource(getResources(), getProgressMarkIconResource(preset_id));
-		}
-
-		if (scaledProgressMarkBitmaps[preset_id] == null || scaledProgressMarkBitmaps[preset_id].getWidth() != Math.round(originalProgressMarkBitmaps[preset_id].getWidth() * scale)) {
-			scaledProgressMarkBitmaps[preset_id] = scale(originalProgressMarkBitmaps[preset_id], scale);
-		}
-
-		return scaledProgressMarkBitmaps[preset_id];
+		return getScaledIconBitmap(getProgressMarkIconResource(preset_id));
 	}
 
 	Bitmap getScaledHasMapsBitmap() {
-		if (originalHasMapsBitmap == null) {
-			originalHasMapsBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_attr_has_maps);
-		}
-
-		if (scaledHasMapsBitmap == null || scaledHasMapsBitmap.getWidth() != Math.round(originalHasMapsBitmap.getWidth() * scale)) {
-			scaledHasMapsBitmap = scale(originalHasMapsBitmap, scale);
-		}
-
-		return scaledHasMapsBitmap;
+		return getScaledIconBitmap(R.drawable.ic_attr_has_maps);
 	}
 
 	@Override

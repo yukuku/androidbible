@@ -875,7 +875,7 @@ private fun buildAttributeItems(attribute: AttributeState, context: android.cont
 
     if (attribute.bookmarkCount > 0) {
         list += AttributeItem(
-            bitmap = scaledAttributeBitmap(context, R.drawable.ic_attr_bookmark, attribute.scale),
+            bitmap = AttributeView.renderScaledIcon(context, R.drawable.ic_attr_bookmark, attribute.scale),
             count = attribute.bookmarkCount,
             countWithShadow = false,
             countYRatio = 3f / 4f,
@@ -888,7 +888,7 @@ private fun buildAttributeItems(attribute: AttributeState, context: android.cont
     }
     if (attribute.noteCount > 0) {
         list += AttributeItem(
-            bitmap = scaledAttributeBitmap(context, R.drawable.ic_attr_note, attribute.scale),
+            bitmap = AttributeView.renderScaledIcon(context, R.drawable.ic_attr_note, attribute.scale),
             count = attribute.noteCount,
             countWithShadow = true,
             countYRatio = 7f / 10f,
@@ -903,7 +903,7 @@ private fun buildAttributeItems(attribute: AttributeState, context: android.cont
         for (presetId in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
             if (attribute.progressMarkBits and (1 shl (AttributeView.PROGRESS_MARK_BITS_START + presetId)) != 0) {
                 list += AttributeItem(
-                    bitmap = scaledAttributeBitmap(
+                    bitmap = AttributeView.renderScaledIcon(
                         context,
                         AttributeView.getProgressMarkIconResource(presetId),
                         attribute.scale,
@@ -922,7 +922,7 @@ private fun buildAttributeItems(attribute: AttributeState, context: android.cont
     }
     if (attribute.hasMaps) {
         list += AttributeItem(
-            bitmap = scaledAttributeBitmap(context, R.drawable.ic_attr_has_maps, attribute.scale),
+            bitmap = AttributeView.renderScaledIcon(context, R.drawable.ic_attr_has_maps, attribute.scale),
             count = 0,
             countWithShadow = false,
             countYRatio = 0f,
@@ -935,22 +935,6 @@ private fun buildAttributeItems(attribute: AttributeState, context: android.cont
     }
 
     return list
-}
-
-private fun scaledAttributeBitmap(
-    context: android.content.Context,
-    @androidx.annotation.DrawableRes resId: Int,
-    scale: Float,
-): android.graphics.Bitmap {
-    val original = android.graphics.BitmapFactory.decodeResource(context.resources, resId)
-    if (scale == 1f) return android.graphics.Bitmap.createBitmap(original)
-    val filter = !(scale == 2f || scale == 3f || scale == 4f)
-    return android.graphics.Bitmap.createScaledBitmap(
-        original,
-        Math.round(original.width * scale),
-        Math.round(original.height * scale),
-        filter,
-    )
 }
 
 // ---- Overlays / decorations ----

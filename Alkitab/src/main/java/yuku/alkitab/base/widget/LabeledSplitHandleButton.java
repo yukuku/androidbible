@@ -1,15 +1,16 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
+import java.util.Objects;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.storage.Prefkey;
@@ -39,8 +40,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
     int accentColor;
     Paint accentColorPaint = new Paint();
 
-    Bitmap splitVerticalBitmap;
-    Bitmap splitHorizontalBitmap;
+    Drawable splitVerticalDrawable;
+    Drawable splitHorizontalDrawable;
 
     public enum Button {
         start,
@@ -260,27 +261,31 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
         }
 
         {
-            final Bitmap splitBitmap = orientation == Orientation.vertical ? getSplitHorizontalBitmap() : getSplitVerticalBitmap();
+            final Drawable splitDrawable = orientation == Orientation.vertical ? getSplitHorizontalDrawable() : getSplitVerticalDrawable();
+            final int w = splitDrawable.getIntrinsicWidth();
+            final int h = splitDrawable.getIntrinsicHeight();
             final float cl = length * 0.5f;
             final float ct = thickness * 0.5f;
+            final int left = Math.round(orientation == Orientation.vertical ? cl - w * 0.5f : ct - w * 0.5f);
+            final int top = Math.round(orientation == Orientation.vertical ? ct - h * 0.5f : cl - h * 0.5f);
 
-            if (orientation == Orientation.vertical) canvas.drawBitmap(splitBitmap, cl - splitBitmap.getWidth() * 0.5f, ct - splitBitmap.getHeight() * 0.5f, null);
-            else canvas.drawBitmap(splitBitmap, ct - splitBitmap.getWidth() * 0.5f, cl - splitBitmap.getHeight() * 0.5f, null);
+            splitDrawable.setBounds(left, top, left + w, top + h);
+            splitDrawable.draw(canvas);
         }
     }
 
-    private Bitmap getSplitVerticalBitmap() {
-        if (splitVerticalBitmap == null) {
-            splitVerticalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_split_vertical);
+    private Drawable getSplitVerticalDrawable() {
+        if (splitVerticalDrawable == null) {
+            splitVerticalDrawable = Objects.requireNonNull(AppCompatResources.getDrawable(getContext(), R.drawable.ic_split_vertical));
         }
-        return splitVerticalBitmap;
+        return splitVerticalDrawable;
     }
 
-    private Bitmap getSplitHorizontalBitmap() {
-        if (splitHorizontalBitmap == null) {
-            splitHorizontalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_split_horizontal);
+    private Drawable getSplitHorizontalDrawable() {
+        if (splitHorizontalDrawable == null) {
+            splitHorizontalDrawable = Objects.requireNonNull(AppCompatResources.getDrawable(getContext(), R.drawable.ic_split_horizontal));
         }
-        return splitHorizontalBitmap;
+        return splitHorizontalDrawable;
     }
 
     void initializePrimaryColor() {
