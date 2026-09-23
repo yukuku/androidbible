@@ -1,20 +1,26 @@
 package yuku.alkitab.base.verses
 
 import android.content.Context
+import android.os.Looper
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.S
@@ -172,6 +178,26 @@ class VerseTextComposeTest {
         )
 
         assertEquals(4, checkNotNull(row.findViewById<VerseTextComposeView>(R.id.lSnippet).state).maxLines)
+    }
+
+    @Test
+    fun `an attached Compose slot leaves its row free of focusables so a ListView still delivers item clicks`() {
+        setComposeVerseItem(true)
+        val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
+        activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
+        val row = rowWithSnippet()
+
+        VerseTextSlot.of(row, R.id.lSnippet).setText(
+            textSizeMult = 1f,
+            legacy = { throw AssertionError("the TextView branch must not run") },
+            compose = { AnnotatedString("tap me") },
+        )
+        activity.setContentView(row, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        val composeView = row.findViewById<VerseTextComposeView>(R.id.lSnippet)
+        assertEquals(1, composeView.childCount)
+        assertFalse(row.hasExplicitFocusable())
     }
 
     @Test
