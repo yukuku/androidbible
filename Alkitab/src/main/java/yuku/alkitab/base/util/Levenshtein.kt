@@ -24,7 +24,7 @@ object Levenshtein {
         for (j in 1..n) { // j is the index to t
             for (i in 1..m) { // i is the index to s
                 d[i][j] = if (s[i - 1] == t[j - 1]) {
-                    d[i - 1][j - 1] + j + j // the longer the offset difference between the same character, the less relevant it is
+                    d[i - 1][j - 1] + j + j // a match costs more the further into t it lies
                 } else {
                     minOf(
                         d[i - 1][j] + DELETION, // deletion
