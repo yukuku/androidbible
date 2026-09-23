@@ -1,5 +1,6 @@
 package yuku.alkitab.songs
 
+import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +21,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
@@ -41,6 +44,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -97,6 +101,17 @@ class SongComposeStyle(
     val bodyColor = Color(fontColor)
     val verseNumberColorC = Color(verseNumberColor)
 
+    /**
+     * The body font's natural line height in em (ascent + descent + line gap), the CSS
+     * `line-height: normal` that song.html measures before applying [lineSpacingMult].
+     */
+    val normalLineHeightEm: Float = Paint().run {
+        typeface = this@SongComposeStyle.typeface ?: Typeface.DEFAULT
+        textSize = 100f
+        val fm = fontMetrics
+        (fm.descent - fm.ascent + fm.leading) / 100f
+    }
+
     val bodyFontFamily: FontFamily = when (val tf = typeface) {
         null, Typeface.DEFAULT -> FontFamily.Default
         Typeface.SERIF -> FontFamily.Serif
@@ -106,10 +121,8 @@ class SongComposeStyle(
     }
 }
 
-// Link styles mirror song.css: scripture references and the YouTube link keep
-// the surrounding text color, the patch-text link is #03a9f4. All are underlined.
-private val CONTENT_LINK_STYLE = SpanStyle(textDecoration = TextDecoration.Underline)
-private val PATCH_TEXT_LINK_STYLE = SpanStyle(color = Color(0xFF03A9F4), textDecoration = TextDecoration.Underline)
+// Links keep the surrounding text color and are marked by the underline alone (song.css `a`).
+private val LINK_STYLE = SpanStyle(textDecoration = TextDecoration.Underline)
 
 private val ALLOWED_ALIGNS = setOf("start", "center", "end")
 
@@ -221,7 +234,7 @@ private fun BlockView(
 }
 
 @Composable
-private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = false, rowAlign: TextAlign? = null) {
+private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = false) {
     val role = block.role
     val sansSerif = role in SANS_SERIF_ROLES
     val sizeMult = block.size?.takeIf { it.isFinite() } ?: roleSizeMult(role)
@@ -233,11 +246,10 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = 
     val align = block.align?.takeIf { it in ALLOWED_ALIGNS }
     val textAlign = when {
         role == "title" || role == "title_original" -> TextAlign.Center
+        // A row item is shrink-to-fit, so its own align moves the item (see RowBlockView), not its text.
+        inRow -> TextAlign.Start
         // .tune { float: right; } → right-aligned on its own line
         role == "tune" -> TextAlign.End
-        // In a row the item fills its proportional column; rowAlign positions
-        // the text within that column (start for the left column, end for the right).
-        inRow -> rowAlign
         align == "center" -> TextAlign.Center
         align == "end" -> TextAlign.End
         else -> null
@@ -258,8 +270,14 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = 
     BasicText(text = content, style = textStyle, modifier = Modifier.fillMaxWidth().padding(bottom = bottomMargin))
 }
 
-private enum class CellAlign { Start, Center, End }
-
+/**
+ * Lays out row items like song.css `.row` (`display: flex; justify-content:
+ * space-between; align-items: baseline`): each item takes its content width,
+ * leftover space goes between the items, and a PBlock `align` of end/center
+ * turns into auto margins that take that space instead. When the items do not
+ * fit, they shrink in proportion to their content width but not below their
+ * longest word, so a short item like "YouTube" never breaks mid-word.
+ */
 @Composable
 private fun RowBlockView(
     block: RowBlock,
@@ -268,51 +286,90 @@ private fun RowBlockView(
     onYoutubeClick: (String) -> Unit,
 ) {
     val items = block.items
-    // Each column gets a share of the row width proportional to its text length,
-    // so a longer column gets more room and every column wraps within its share.
-    // Columns share a first baseline, like `.row { align-items: baseline; }`.
-    Row(modifier = Modifier.fillMaxWidth()) {
-        items.forEachIndexed { index, item ->
-            val weight = rowItemTextLength(item).coerceAtLeast(1).toFloat()
-            // First column hugs the start, last column hugs the end, middle columns
-            // center. A single item honors its own align (e.g. a solo composer set to end).
-            val cellAlign = when {
-                items.size == 1 -> when ((item as? PBlock)?.align) {
-                    "end" -> CellAlign.End
-                    "center" -> CellAlign.Center
-                    else -> CellAlign.Start
+    Layout(
+        modifier = Modifier.fillMaxWidth(),
+        content = {
+            // One Box per item keeps measurables in step with items even when an item renders nothing.
+            for (item in items) {
+                Box {
+                    when (item) {
+                        is PBlock -> PBlockView(block = item, style = style, inRow = true)
+                        is ScriptureBlock -> ScriptureView(item.osis, style, onScriptureClick)
+                        is YoutubeBlock -> YoutubeView(item, style, onYoutubeClick)
+                        is GapBlock -> Spacer(Modifier.width((item.size ?: 1f).em.toDp(style)))
+                        else -> {}
+                    }
                 }
-                index == 0 -> CellAlign.Start
-                index == items.lastIndex -> CellAlign.End
-                else -> CellAlign.Center
             }
-            Box(
-                modifier = Modifier.weight(weight).alignByBaseline(),
-                contentAlignment = when (cellAlign) {
-                    CellAlign.Start -> Alignment.TopStart
-                    CellAlign.Center -> Alignment.TopCenter
-                    CellAlign.End -> Alignment.TopEnd
-                },
-            ) {
-                when (item) {
-                    is PBlock -> PBlockView(
-                        block = item,
-                        style = style,
-                        inRow = true,
-                        rowAlign = when (cellAlign) {
-                            CellAlign.Start -> TextAlign.Start
-                            CellAlign.Center -> TextAlign.Center
-                            CellAlign.End -> TextAlign.End
-                        }
-                    )
-                    is ScriptureBlock -> ScriptureView(item.osis, style, onScriptureClick)
-                    is YoutubeBlock -> YoutubeView(item, style, onYoutubeClick)
-                    is GapBlock -> Spacer(Modifier.width((item.size ?: 1f).em.toDp(style)))
-                    else -> {}
-                }
+        },
+    ) { measurables, constraints ->
+        val available = constraints.maxWidth
+        val maxWidths = measurables.map { it.maxIntrinsicWidth(Constraints.Infinity) }
+        val minWidths = measurables.mapIndexed { i, m -> m.minIntrinsicWidth(Constraints.Infinity).coerceAtMost(maxWidths[i]) }
+        val widths = shrinkRowItems(maxWidths, minWidths, available)
+
+        val placeables = measurables.mapIndexed { i, m -> m.measure(Constraints(maxWidth = widths[i])) }
+        val baselines = placeables.map { p -> p[FirstBaseline].takeIf { it != AlignmentLine.Unspecified } ?: 0 }
+        val aboveBaseline = baselines.maxOrNull() ?: 0
+        val height = placeables.indices.maxOfOrNull { i -> aboveBaseline - baselines[i] + placeables[i].height } ?: 0
+
+        val autoMargins = items.map { item ->
+            when ((item as? PBlock)?.align) {
+                "end" -> 1 to 0
+                "center" -> 1 to 1
+                else -> 0 to 0
+            }
+        }
+        val autoMarginCount = autoMargins.sumOf { it.first + it.second }
+        val free = (available - widths.sum()).coerceAtLeast(0)
+        val autoMargin = if (autoMarginCount > 0) free / autoMarginCount else 0
+        val between = if (autoMarginCount == 0 && items.size > 1) free / (items.size - 1) else 0
+
+        layout(available, height) {
+            var x = 0
+            placeables.forEachIndexed { i, p ->
+                x += autoMargins[i].first * autoMargin
+                p.placeRelative(x, aboveBaseline - baselines[i])
+                x += widths[i] + autoMargins[i].second * autoMargin + between
             }
         }
     }
+}
+
+/**
+ * CSS flex shrinking for `flex: 0 1 auto` items: when [maxWidths] overflow [available],
+ * each item gives up space in proportion to its width, stopping at its [minWidths].
+ * If even the minimum widths overflow, they are scaled down to fit.
+ */
+private fun shrinkRowItems(maxWidths: List<Int>, minWidths: List<Int>, available: Int): List<Int> {
+    val widths = maxWidths.map { it.toFloat() }.toMutableList()
+    if (widths.sum() <= available) return maxWidths
+    if (minWidths.sum() >= available) {
+        val total = minWidths.sum().coerceAtLeast(1)
+        return minWidths.map { it * available / total }
+    }
+    val frozen = BooleanArray(widths.size)
+    while (true) {
+        val overflow = widths.sum() - available
+        if (overflow <= 0.5f) break
+        val unfrozenTotal = widths.indices.filter { !frozen[it] }.sumOf { widths[it].toDouble() }.toFloat()
+        if (unfrozenTotal <= 0f) break
+        var clamped = false
+        for (i in widths.indices) {
+            if (frozen[i]) continue
+            val target = widths[i] - overflow * widths[i] / unfrozenTotal
+            if (target < minWidths[i]) {
+                widths[i] = minWidths[i].toFloat()
+                frozen[i] = true
+                clamped = true
+            }
+        }
+        if (!clamped) {
+            for (i in widths.indices) if (!frozen[i]) widths[i] -= overflow * widths[i] / unfrozenTotal
+            break
+        }
+    }
+    return widths.map { it.toInt() }
 }
 
 @Composable
@@ -326,7 +383,7 @@ private fun ScriptureView(osis: String, style: SongComposeStyle, onScriptureClic
             withLink(
                 LinkAnnotation.Clickable(
                     tag = part.osisId,
-                    styles = TextLinkStyles(CONTENT_LINK_STYLE),
+                    styles = TextLinkStyles(LINK_STYLE),
                 ) { onScriptureClick(part.osisId) },
             ) {
                 append(part.readable)
@@ -350,7 +407,7 @@ private fun YoutubeView(block: YoutubeBlock, style: SongComposeStyle, onYoutubeC
         withLink(
             LinkAnnotation.Clickable(
                 tag = block.videoId,
-                styles = TextLinkStyles(CONTENT_LINK_STYLE),
+                styles = TextLinkStyles(LINK_STYLE),
             ) { onYoutubeClick(block.videoId) },
         ) {
             append("YouTube")
@@ -519,12 +576,12 @@ private fun FooterView(
     }
     Spacer(Modifier.height(8.dp))
     if (!patchTextLinkLabel.isNullOrEmpty()) {
-        // .patchtext { font-size: 75%; color: #03a9f4; }
+        // .patchtext { font-size: 75%; }
         val annotated = buildAnnotatedString {
             withLink(
                 LinkAnnotation.Clickable(
                     tag = "patchtext",
-                    styles = TextLinkStyles(PATCH_TEXT_LINK_STYLE),
+                    styles = TextLinkStyles(LINK_STYLE),
                 ) { onPatchTextClick() },
             ) {
                 append(patchTextLinkLabel)
@@ -567,14 +624,6 @@ private val SANS_SERIF_ROLES = setOf(
 
 private val YOUTUBE_ID_REGEX = Regex("^[A-Za-z0-9_-]{11}$")
 
-/** Approximate visible text length of a row item, used to weight its column. */
-private fun rowItemTextLength(item: Block): Int = when (item) {
-    is PBlock -> item.content.plainText().length
-    is ScriptureBlock -> item.osis.length
-    is YoutubeBlock -> "YouTube".length
-    else -> 1
-}
-
 /** Per-role font-size multiplier from song.css (relative to the body size). */
 private fun roleSizeMult(role: String?): Float = when (role) {
     "title" -> 1.25f
@@ -593,7 +642,7 @@ private fun roleTextStyle(style: SongComposeStyle, sizeMult: Float, sansSerif: B
 private fun lyricLineStyle(style: SongComposeStyle, sizeMult: Float): TextStyle = TextStyle(
     color = style.bodyColor,
     fontSize = (style.baseSizeSp * sizeMult).sp,
-    lineHeight = (style.baseSizeSp * sizeMult * 1.2f * style.lineSpacingMult).sp,
+    lineHeight = (style.baseSizeSp * sizeMult * style.normalLineHeightEm * style.lineSpacingMult).sp,
     // CSS splits the extra line height evenly above and below the glyphs
     lineHeightStyle = LineHeightStyle(
         alignment = LineHeightStyle.Alignment.Center,

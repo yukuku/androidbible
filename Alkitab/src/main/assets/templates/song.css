@@ -39,10 +39,6 @@
 	margin: 0.5em 0;
 }
 
-.youtube a {
-	color: inherit;
-}
-
 .song {
 	/* width: 640px; */
 }
@@ -99,10 +95,6 @@
 	font-family: sans-serif;
 }
 
-.scriptureReferences a {
-	color: inherit;
-}
-
 .tune {
 	font-family: sans-serif;
 	text-transform: uppercase;
@@ -136,10 +128,9 @@
 
 .patchtext {
     font-size: 75%;
-    color: #03a9f4;
 }
 
 a {
-    color: #03a9f4;
+    color: inherit;
 }
 
