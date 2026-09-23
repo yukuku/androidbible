@@ -93,7 +93,7 @@ object BookNameSorter {
                 base = book.shortName.substring(startsWith.length).trim { it <= ' ' }
                 number = numberedBookCategory
             } else if (book.shortName.startsWith(startsWithNumber)) {
-                base = book.shortName.substring(startsWithNumber.length).trim { it <= ' ' }
+                base = book.shortName.substring(startsWithNumber.length).trimStart('.').trim { it <= ' ' }
                 number = numberedBookCategory
             }
         }

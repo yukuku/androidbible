@@ -66,6 +66,41 @@ class BookNameSorterTest {
     }
 
     @Test
+    fun `sortAlphabetically groups books numbered as in 1 dot Mose under their base name`() {
+        val books = arrayOf(
+            book(0, "1. Mose"),
+            book(1, "2. Mose"),
+            book(2, "3. Mose"),
+            book(3, "4. Mose"),
+            book(4, "5. Mose"),
+            book(5, "Josua"),
+            book(6, "Richter"),
+            book(8, "1. Samuel"),
+            book(9, "2. Samuel"),
+            book(22, "Jesaja"),
+            book(39, "Matth\u00e4us"),
+        )
+
+        val sorted = BookNameSorter.sortAlphabetically(books)
+
+        assertEquals(listOf(22, 5, 39, 0, 1, 2, 3, 4, 6, 8, 9), sorted.map { it.bookId })
+    }
+
+    @Test
+    fun `sortAlphabetically ignores a dot right after the number even without a following space`() {
+        val books = arrayOf(book(1, "2.Mose"), book(5, "Josua"), book(0, "1.Mose"), book(6, "Richter"))
+
+        val sorted = BookNameSorter.sortAlphabetically(books)
+
+        assertEquals(listOf(5, 0, 1, 6), sorted.map { it.bookId })
+    }
+
+    @Test
+    fun `getBookAbbr drops the dot after the number`() {
+        assertEquals("1Mo", BookNameSorter.getBookAbbr(book(0, "1. Mose")))
+    }
+
+    @Test
     fun `sortAlphabetically does not modify its input`() {
         val books = arrayOf(book(1, "Exodus"), book(0, "Genesis"), book(2, "Anything"))
         val copy = books.copyOf()
