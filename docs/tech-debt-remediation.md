@@ -49,6 +49,12 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-41: Defensive Data Guards](tech-debt-remediation/REM-41-defensive-guards.md) — **3.4** (2026-07 audit)
 - [REM-40: Version Download Robustness](tech-debt-remediation/REM-40-download-robustness.md) — **3.4** (2026-07 audit)
 
+### From the REM-16 Kotlin conversion (2026-09)
+
+- [REM-46: Stop Debouncer From Leaking a Thread per Instance](tech-debt-remediation/REM-46-debouncer-thread-leak.md) **3.6** (one idle thread leaked per debouncer per Search or Marker List visit)
+- [REM-47: Close the Header File in YesReaderFactory on Read Failure](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md) **3.6** (file descriptor leak when the header read throws)
+- [REM-48: Harden OldVerseTextDecoder.Ascii](tech-debt-remediation/REM-48-old-ascii-decoder.md) **3.0** (4,000-byte verse limit, inconsistent non-ASCII decoding, input mutation)
+
 ## Phase 3: Modernization (BRICE 2.5–3.0)
 
 - [REM-15: Introduce Kotlin Coroutines](tech-debt-remediation/REM-15-coroutines.md) — **3.2**
@@ -85,6 +91,8 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-35](tech-debt-remediation/REM-35-songbook-update-dfv.md)           | Fix song book update dataFormatVersion (2026-07 audit)               | **3.8** | 1     |
 | [REM-36](tech-debt-remediation/REM-36-yes2-ascii-decoder.md)            | Fix YES2 ASCII search decoder (2026-07 audit)                        | **3.8** | 1     |
 | [REM-37](tech-debt-remediation/REM-37-bible-audio-state.md)             | Bible audio MediaSession state + split wiring (2026-07 audit)        | **3.8** | 2     |
+| [REM-46](tech-debt-remediation/REM-46-debouncer-thread-leak.md)         | Stop Debouncer thread leak (2026-09 Kotlin conversion)               | **3.6** | 2     |
+| [REM-47](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md)    | Close YesReaderFactory header file (2026-09 Kotlin conversion)       | **3.6** | 2     |
 | [REM-06](tech-debt-remediation/REM-06-isiactivity-gestures.md)          | ~~Extract IsiActivity gestures~~ ✅                                   | **3.4** | 2     |
 | [REM-07](tech-debt-remediation/REM-07-isiactivity-action-mode.md)       | ~~Extract IsiActivity action mode~~ ✅                                | **3.4** | 2     |
 | [REM-09](tech-debt-remediation/REM-09-isiactivity-viewmodel.md)         | Introduce ViewModel                                                  | **3.4** | 2     |
@@ -104,6 +112,7 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-16](tech-debt-remediation/REM-16-java-to-kotlin.md)                | Java→Kotlin conversion (9/11 done)                                   | **3.0** | 3     |
 | [REM-17](tech-debt-remediation/REM-17-kotlin-dsl-build.md)              | ~~Kotlin DSL build migration~~ ✅                                     | **3.0** | 3     |
 | [REM-20](tech-debt-remediation/REM-20-ambilwarna-replacement.md)        | ~~Replace AmbilWarna~~ ✅                                             | **3.0** | 3     |
+| [REM-48](tech-debt-remediation/REM-48-old-ascii-decoder.md)             | Harden OldVerseTextDecoder.Ascii (2026-09 Kotlin conversion)         | **3.0** | 2     |
 | [REM-19](tech-debt-remediation/REM-19-prdownloader-replacement.md)      | ~~Replace PRDownloader~~ ✅                                           | **2.8** | 3     |
 | [REM-21](tech-debt-remediation/REM-21-song-json-storage.md)             | ~~Song storage migration~~ ✅ (app-side)                              | **2.8** | 4     |
 | [REM-22](tech-debt-remediation/REM-22-jetpack-compose.md)               | Jetpack Compose adoption (kicked off)                                | **2.6** | 4     |
@@ -127,3 +136,7 @@ This document is an index over the prioritized remediation plan for each tech de
 **Sprint 7 (1 week) — user-data safety first:** REM-36 (1-line search fix), REM-35 (song book update), REM-33 (import safety), plus the REM-41 widget one-liner
 **Sprint 8 (1 week):** REM-34 (sync delivery/races), rest of REM-41 (defensive guards)
 **Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding), REM-40 (download robustness)
+
+### 2026-09 Kotlin conversion follow-up (suggested)
+
+**Sprint 10 (a few days):** REM-47 (one-line `use {}` fix), REM-46 (Debouncer thread leak), REM-48 (YES1 ASCII decoder)
