@@ -143,7 +143,7 @@ private fun BooksGrid(books: Array<Book>, onBookClick: (Book) -> Unit) {
         items(books.size) { idx ->
             val book = books[idx]
             GridCell(
-                text = BookNameSorter.getBookAbbr(book).toString(),
+                text = BookNameSorter.getBookAbbr(book),
                 color = bookForegroundColor(book.bookId),
                 onClick = { onBookClick(book) },
             )
