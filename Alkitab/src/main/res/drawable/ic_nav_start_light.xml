@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+	android:width="32dp"
+	android:height="32dp"
 	android:autoMirrored="true"
-	android:src="@drawable/ic_nav_left_light" />
+	android:viewportWidth="32"
+	android:viewportHeight="32">
+	<group
+		android:translateX="4"
+		android:translateY="3.5">
+		<path
+			android:fillColor="#ffffff"
+			android:pathData="M15.41 7.41 14 6l-6 6 6 6 1.41 -1.41L10.83 12z" />
+	</group>
+</vector>

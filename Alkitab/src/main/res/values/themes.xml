@@ -33,6 +33,14 @@
 		<item name="titleMarginStart">0dp</item>
 	</style>
 
+	<!-- The app theme is dark-based, so its colorControlNormal is 70% white. Toolbars sit on the
+		dark primary colour and need their navigation, overflow and SearchView icons fully white.
+		The framework attribute covers android.widget.SearchView. -->
+	<style name="ThemeOverlay.Alkitab.Toolbar" parent="">
+		<item name="colorControlNormal">@android:color/white</item>
+		<item name="android:colorControlNormal">@android:color/white</item>
+	</style>
+
 	<style name="Theme.Alkitab.Transparent">
 		<item name="android:windowTranslucentNavigation">true</item>
 		<item name="android:windowTranslucentStatus">true</item>
