@@ -13,7 +13,7 @@ import yuku.alkitab.base.fr.base.BaseFragment
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.SongDocumentJson
 
-/** Compose song viewer. [SongFragment] is the WebView fallback behind [yuku.alkitab.base.settings.ExperimentalFlags.useComposeSong]. */
+/** Compose song viewer, the default. The "Song lyrics (legacy views)" experimental setting ([yuku.alkitab.base.settings.ExperimentalFlags.useComposeSong]) switches to the WebView-based [SongFragment]. */
 class SongComposeFragment : BaseFragment(), SongTextZoomable {
     private val args by lazy { requireArguments() }
     private val doc: SongDocument by lazy { SongDocumentJson.decode(args.getString(ARG_songJson)!!) }
