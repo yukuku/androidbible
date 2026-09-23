@@ -163,7 +163,7 @@ Read by `XrefsSection.Reader` and `FootnotesSection.Reader`. Lookup uses unsigne
 
 ### Creation Tool
 
-`tools/YetToInternal/` contains `YetToInternal.java` → `InternalCommon.createInternalFiles()`, which converts from YET (Yet Another Translation) source format to the internal file set.
+The `yet2internal` command of the converter CLI (`YetToInternal` in `tools/cli/`) calls `InternalCommon.createInternalFiles()`, which converts from YET (Yet Another Translation) source format to the internal file set. See [tools.md](tools.md).
 
 ---
 
