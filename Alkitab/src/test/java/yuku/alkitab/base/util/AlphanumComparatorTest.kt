@@ -5,7 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AlphanumComparatorTest {
-    private val comparator: Comparator<String> = AlphanumComparator()
+    private val comparator: Comparator<String> = AlphanumComparator
 
     @Test
     fun `numeric runs compare by numeric value rather than by characters`() {
