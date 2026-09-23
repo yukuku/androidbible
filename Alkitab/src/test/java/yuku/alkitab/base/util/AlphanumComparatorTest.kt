@@ -5,7 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AlphanumComparatorTest {
-    private val comparator: Comparator<String> = AlphanumComparator
+    private val comparator: Comparator<String> = AlphanumComparator()
 
     @Test
     fun `numeric runs compare by numeric value rather than by characters`() {
@@ -46,8 +46,7 @@ class AlphanumComparatorTest {
 
     @Test
     fun `only ASCII digits start a numeric run`() {
-        // U+0663 is ARABIC-INDIC DIGIT THREE, which is compared as text against the ASCII "5"
-        assertEquals(0x0663 - '5'.code, comparator.compare("٣٣", "5"))
+        assertEquals(0x0663 - '5'.code, comparator.compare("\u0663\u0663", "5"))
     }
 
     @Test

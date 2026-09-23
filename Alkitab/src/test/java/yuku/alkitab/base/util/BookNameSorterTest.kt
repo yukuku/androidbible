@@ -86,8 +86,7 @@ class BookNameSorterTest {
 
     @Test
     fun `sortAlphabetically trims only ASCII control characters and spaces after the number prefix`() {
-        // A no-break space survives the trim, and U+00A0 sorts after "Roma"
-        val books = arrayOf(book(45, "1 Korintus"), book(44, "Roma"))
+        val books = arrayOf(book(45, "1\u00A0Korintus"), book(44, "Roma"))
 
         val sorted = BookNameSorter.sortAlphabetically(books)
 

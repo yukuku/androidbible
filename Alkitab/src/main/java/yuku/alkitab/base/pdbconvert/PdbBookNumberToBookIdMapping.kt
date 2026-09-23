@@ -1,11 +1,7 @@
 package yuku.alkitab.base.pdbconvert
 
 object PdbBookNumberToBookIdMapping {
-    /**
-     * The index of each PalmBible+ book number is its book id.
-     *
-     * Ref: http://sourceforge.net/projects/palmbibleplus/files/zDocumentation/1.0/
-     */
+    // ref: http://sourceforge.net/projects/palmbibleplus/files/zDocumentation/1.0/
     private val pdbBookNumbers = intArrayOf(
         10,
         20,
@@ -72,52 +68,63 @@ object PdbBookNumberToBookIdMapping {
         700,
         710,
         720,
-        730, // book id 65
+        730, // nomer kitab Ari: 65
+        ///////////
 
-        145, // 1 esdras, book id 66
+        145, // 1 esdras // nomer kitab Ari: 66
         146, // 2 esdras
         170, // tobit #katolik
         180, // judit #katolik
-        200, // 1 makabe #katolik, book id 70
-        210, // 2 makabe #katolik
+        200, // 1 makabe  #katolik // nomer kitab Ari: 70
+        210, // 2 makabe  #katolik
         215, // 3 makabe
         216, // 4 makabe
         231, // Psalms (from Heb.) Ps (H) Vulg.: Jerome's translation from the Hebrew
-        235, // Odes, book id 75
-        270, // wisdom of solomon #katolik
+        235, // Odes // nomer kitab Ari: 75
+        270, // wisdom of solomon  #katolik
         280, // sirach / Ecclesiasticus #katolik
         285, // Psalms of Solomon
         315, // Letter of Jeremiah
-        320, // baruk #katolik, book id 80
+        320, // baruk  #katolik // nomer kitab Ari: 80
         335, // susanna
         345, // Prayer of Azariah and the Song of the Three Jews
         346, // Bel and the Dragon
         790, // Prayer of Manasseh
-        980, // Additions to Esther, book id 85
+        980, // Additions to Esther // nomer kitab Ari: 85
         991, // maxmur 151
-        1802, // Epistle to the Laodicaeans, book id 87
+        1802, // Epistle to the Laodicaeans // nomer kitab Ari: 87
     )
 
-    /**
-     * Book numbers outside the reference numbering, as found in e.g. kjvf_eng.pdb.
-     *
-     * Ref: email from jacobwarner@gmail.com
-     * Ref: http://www.koders.com/java/fid02C34FE21E1277132EE987F8478E08A5AB9E0828.aspx?s=WhenTag
-     */
-    private val altBookNumberToBookId = mapOf(
-        740 to 66, // 1 Esdras
-        750 to 67, // 2 Esdras
-        760 to 79, // Letter of Jeremiah
-        770 to 82, // Prayer of Azariah
-        780 to 83, // Bel and the Dragon
+    // ref: email from jacobwarner@gmail.com
+    // file: kjvf_eng.pdb
+    // ref: http://www.koders.com/java/fid02C34FE21E1277132EE987F8478E08A5AB9E0828.aspx?s=WhenTag
+    //
+    // book numbers not recognized:
+    // 1 Esdras 740 -> nomer kitab Ari: 66
+    // 2 Esdras 750 -> nomer kitab Ari: 67
+    // Letter of Jeremiah 760 -> nomer kitab Ari: 79
+    // Prayer of Azariah 770 -> nomer kitab Ari: 82
+    // Bel and the Dragon 780 -> nomer kitab Ari: 83
+
+    /** Edit below too */
+    private val altBookNumberFrom = intArrayOf(
+        740, 750, 760, 770, 780,
     )
 
-    /**
-     * Returns the book id for [pdbBookNumber], or -1 if it is not a known book number.
-     */
+    /** Edit above too */
+    private val altBookNumberTo = intArrayOf(
+        66, 67, 79, 82, 83,
+    )
+
     @JvmStatic
-    fun pdbBookNumberToBookId(pdbBookNumber: Int): Int =
-        pdbBookNumbers.indexOf(pdbBookNumber).takeIf { it >= 0 }
-            ?: altBookNumberToBookId[pdbBookNumber]
-            ?: -1
+    fun pdbBookNumberToBookId(pdbBookNumber: Int): Int {
+        val index = pdbBookNumbers.indexOf(pdbBookNumber)
+        if (index >= 0) return index
+
+        // try alternate book numbers
+        val altIndex = altBookNumberFrom.indexOf(pdbBookNumber)
+        if (altIndex >= 0) return altBookNumberTo[altIndex]
+
+        return -1
+    }
 }

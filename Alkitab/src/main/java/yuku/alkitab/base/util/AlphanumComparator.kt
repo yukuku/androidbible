@@ -25,42 +25,45 @@ package yuku.alkitab.base.util
  */
 
 /**
- * Kotlin port of the version with enhancements made by Daniel Migowski,
- * Andre Bogus, and David Koelle.
- *
- * Usage: `list.sortWith(AlphanumComparator)`
+ * This is an updated version with enhancements made by Daniel Migowski,
+ * Andre Bogus, and David Koelle
+ * <p/>
+ * To use this class:
+ * Use the static "sort" method from the java.util.Collections class:
+ * Collections.sort(your list, new AlphanumComparator());
  */
-object AlphanumComparator : Comparator<String> {
-    // Deliberately ASCII only: Char.isDigit() would also accept other scripts' digits.
-    private fun Char.isAsciiDigit() = this in '0'..'9'
+class AlphanumComparator : Comparator<String> {
+    private fun isDigit(ch: Char) = ch in '0'..'9'
 
     /**
-     * Returns the maximal run of all-digit or all-non-digit characters of [s] starting at [start].
+     * Length of string is passed in for improved efficiency (only need to calculate it once) *
      */
-    private fun chunkAt(s: String, start: Int): String {
-        val digits = s[start].isAsciiDigit()
-        var end = start + 1
-        while (end < s.length && s[end].isAsciiDigit() == digits) end++
-        return s.substring(start, end)
+    private fun getChunk(s: String, slength: Int, marker: Int): String {
+        val digits = isDigit(s[marker])
+        var end = marker + 1
+        while (end < slength && isDigit(s[end]) == digits) end++
+        return s.substring(marker, end)
     }
 
     override fun compare(s1: String, s2: String): Int {
         var thisMarker = 0
         var thatMarker = 0
+        val s1Length = s1.length
+        val s2Length = s2.length
 
-        while (thisMarker < s1.length && thatMarker < s2.length) {
-            val thisChunk = chunkAt(s1, thisMarker)
+        while (thisMarker < s1Length && thatMarker < s2Length) {
+            val thisChunk = getChunk(s1, s1Length, thisMarker)
             thisMarker += thisChunk.length
 
-            val thatChunk = chunkAt(s2, thatMarker)
+            val thatChunk = getChunk(s2, s2Length, thatMarker)
             thatMarker += thatChunk.length
 
-            val bothNumeric = thisChunk[0].isAsciiDigit() && thatChunk[0].isAsciiDigit()
-
-            // A longer run of digits is a larger number. Runs of equal length compare numerically
-            // by their first differing digit, which is exactly what String.compareTo returns.
-            val result = if (bothNumeric && thisChunk.length != thatChunk.length) {
-                thisChunk.length - thatChunk.length
+            // If both chunks contain numeric characters, sort them numerically
+            val result = if (isDigit(thisChunk[0]) && isDigit(thatChunk[0])) {
+                // Simple chunk comparison by length.
+                val lengthDifference = thisChunk.length - thatChunk.length
+                // If equal, the first different number counts
+                if (lengthDifference != 0) lengthDifference else thisChunk.compareTo(thatChunk)
             } else {
                 thisChunk.compareTo(thatChunk)
             }
@@ -68,6 +71,6 @@ object AlphanumComparator : Comparator<String> {
             if (result != 0) return result
         }
 
-        return s1.length - s2.length
+        return s1Length - s2Length
     }
 }

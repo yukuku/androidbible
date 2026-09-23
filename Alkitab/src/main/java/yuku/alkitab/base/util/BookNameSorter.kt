@@ -3,19 +3,25 @@ package yuku.alkitab.base.util
 import yuku.alkitab.model.Book
 
 object BookNameSorter {
-    /**
-     * For these book ids, the leading "I", "II", "III", "IV" or "V" is replaced with a digit to save space,
-     * and to keep the abbreviation understandable when truncated.
-     */
-    private val numberedBookCategories: Map<Int, Int> = mapOf(
-        1 to listOf(0 /* Moses */, 8, 10, 12, 45, 51, 53, 59, 61, 66, 70),
-        2 to listOf(1 /* Moses */, 9, 11, 13, 46, 52, 54, 60, 62, 67, 71),
-        3 to listOf(2 /* Moses */, 63 /* John */, 72 /* Maccabees */),
-        4 to listOf(3 /* Moses */, 73 /* Maccabees */),
-        5 to listOf(4 /* Moses */),
-    ).flatMap { (category, bookIds) -> bookIds.map { it to category } }.toMap()
+    private val numberedBookStartsWiths = listOf("I ", "II ", "III ", "IV ", "V ")
 
-    private val romanNumeralPrefixes = listOf("I ", "II ", "III ", "IV ", "V ")
+    private val numberedBookMap: IntArray = run {
+        // for these book numbers, replace "I", "II", "III", "IV", "V" with numbers
+        // to save space, to make them still understandable when truncated
+        val numberedBooks1 = intArrayOf(0 /*moses*/, 8, 10, 12, 45, 51, 53, 59, 61, 66, 70)
+        val numberedBooks2 = intArrayOf(1 /*moses*/, 9, 11, 13, 46, 52, 54, 60, 62, 67, 71)
+        val numberedBooks3 = intArrayOf(2 /*moses*/, 63 /*john*/, 72 /*makabe*/)
+        val numberedBooks4 = intArrayOf(3 /*moses*/, 73 /*makabe*/)
+        val numberedBooks5 = intArrayOf(4 /*moses*/)
+
+        IntArray(74).apply { // as large as the max number above + 1
+            for (bookId in numberedBooks1) this[bookId] = 1
+            for (bookId in numberedBooks2) this[bookId] = 2
+            for (bookId in numberedBooks3) this[bookId] = 3
+            for (bookId in numberedBooks4) this[bookId] = 4
+            for (bookId in numberedBooks5) this[bookId] = 5
+        }
+    }
 
     private val hardcodedAbbrs = mapOf(
         "Filemon" to "Flm",
@@ -51,12 +57,7 @@ object BookNameSorter {
         "2 Corinthians" to "2Cor",
     )
 
-    /**
-     * 1 to 5 for books that are the first to fifth of a numbered series (e.g. "2 Samuel"), 0 otherwise.
-     */
-    private fun numberedBookCategory(bookId: Int) = numberedBookCategories[bookId] ?: 0
-
-    private fun romanNumeralPrefix(category: Int) = romanNumeralPrefixes[category - 1]
+    private fun numberedBookCategory(bookId: Int) = if (bookId >= numberedBookMap.size) 0 else numberedBookMap[bookId]
 
     @JvmStatic
     fun getBookAbbr(book: Book): String {
@@ -65,38 +66,44 @@ object BookNameSorter {
 
         var name: String = book.shortName
 
-        val category = numberedBookCategory(book.bookId)
-        if (category > 0) {
-            val prefix = romanNumeralPrefix(category)
-            if (name.startsWith(prefix)) {
-                name = category.toString() + name.substring(prefix.length)
+        val numberedBookCategory = numberedBookCategory(book.bookId)
+        if (numberedBookCategory > 0) {
+            val startsWith = numberedBookStartsWiths[numberedBookCategory - 1]
+            if (name.startsWith(startsWith)) {
+                name = numberedBookCategory.toString() + name.substring(startsWith.length)
             }
         }
 
+        // remove spaces and '.'
         return name.replace(" ", "").replace(".", "").take(3)
     }
 
     private class Collation(val book: Book, val base: String, val number: Int)
 
     private fun collationOf(book: Book): Collation {
-        val shortName: String = book.shortName
+        var base: String = book.shortName // default
+        var number = 0 // default
 
-        val category = numberedBookCategory(book.bookId)
-        if (category > 0) {
-            val prefix = listOf(romanNumeralPrefix(category), category.toString()).firstOrNull { shortName.startsWith(it) }
-            if (prefix != null) {
-                // Same as java.lang.String.trim(); Kotlin's trim() would also strip Unicode spaces such as U+00A0.
-                val base = shortName.substring(prefix.length).trim { it <= ' ' }
-                return Collation(book, base, category)
+        val numberedBookCategory = numberedBookCategory(book.bookId)
+        if (numberedBookCategory > 0) {
+            val startsWith = numberedBookStartsWiths[numberedBookCategory - 1]
+            val startsWithNumber = numberedBookCategory.toString()
+
+            if (book.shortName.startsWith(startsWith)) {
+                base = book.shortName.substring(startsWith.length).trim { it <= ' ' }
+                number = numberedBookCategory
+            } else if (book.shortName.startsWith(startsWithNumber)) {
+                base = book.shortName.substring(startsWithNumber.length).trim { it <= ' ' }
+                number = numberedBookCategory
             }
         }
 
-        return Collation(book, shortName, 0)
+        return Collation(book, base, number)
     }
 
     /**
-     * Returns a new array of [books] sorted by name, with numbered books (e.g. "1 Samuel" and "II Samuel")
-     * grouped under their base name. [books] itself is not modified.
+     * @param books This array will NOT be modified.
+     * @return a new array of books already sorted.
      */
     @JvmStatic
     fun sortAlphabetically(books: Array<Book>): Array<Book> =

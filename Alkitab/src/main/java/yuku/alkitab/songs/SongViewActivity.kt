@@ -206,7 +206,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 codes.add(songInfo.code)
             }
             // sort codes based on numeric
-            codes.sortWith(AlphanumComparator)
+            codes.sortWith(AlphanumComparator())
             codes
         }
 
