@@ -31,6 +31,10 @@
     <string name="pref_experimental_warning">Mungkin belum stabil. Matikan jika bermasalah.</string>
     <string name="pref_debugRubyGeometry_title">Debug geometri ruby</string>
     <string name="pref_debugRubyGeometry_summary">Beri kotak pada setiap baris, teks dasar, dan bacaan di layar, tulis hasil pengukurannya ke log sistem dengan tag RubyGeom, dan salin pengukuran sebuah ayat ke papan klip saat ayat itu disentuh. Hanya untuk mendiagnosis penempatan bacaan; biarkan mati.</string>
+    <string name="pref_smartSearch_title">Pencarian pintar (bahasa Indonesia)</string>
+    <string name="pref_smartSearch_summary">Cari seluruh keluarga kata, bukan huruf: “kasih” ikut menemukan “mengasihi”, dan “berkat” tidak lagi menemukan “berkata”. Memakai daftar kata bawaan versi Alkitab itu, atau kaidah imbuhan saja kalau tidak ada.</string>
+    <string name="pref_smartSearchDiagnostics_title">Diagnostik pencarian pintar</string>
+    <string name="pref_smartSearchDiagnostics_summary">Jelaskan setiap pencarian di layar pencarian: bentuk apa saja yang ikut dicari untuk tiap kata dan mengapa, apa bedanya dengan pencocokan huruf biasa, serta berapa lama prosesnya. Pencarian lama juga dijalankan sebagai pembanding.</string>
     <string name="pref_useLegacyVerseItem_title">Tampilan ayat (kuno)</string>
     <string name="pref_useLegacyVerseItem_summary">Tampilkan teks Alkitab dengan daftar ayat berbasis tampilan kuno, bukan yang sepenuhnya berbasis Jetpack Compose. Berlaku setelah layar pembacaan dibuka kembali.</string>
     <string name="pref_useLegacyGoto_title">Navigasi (kuno)</string>

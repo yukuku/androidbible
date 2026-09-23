@@ -6,6 +6,7 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class Version {
 	/**
@@ -82,6 +83,16 @@ public abstract class Version {
 	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
 	 */
 	public abstract FootnoteEntry getFootnoteEntry(final int arif);
+
+	/**
+	 * The word families smart search widens a query to, each root mapped to the forms of it that
+	 * occur in this version. Reads the whole table, so call it off the main thread.
+	 *
+	 * @return null if this version carries none
+	 */
+	@Nullable public Map<String, List<String>> loadLexicon() {
+		return null;
+	}
 
 	private static class UnavailableBookNames {
 		static String[] names = {

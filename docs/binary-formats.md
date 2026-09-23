@@ -32,6 +32,7 @@ The primary Bible text file format. Each `.yes` file contains one complete Bible
 | `xrefs`       | Cross-reference entries                                                                                   |
 | `footnotes`   | Footnote entries                                                                                          |
 | `pericopies`  | Section headers (pericopes) with ARI positions                                                            |
+| `lexicon`     | Word families for smart search (optional). Same format as the internal lexicon file, see below            |
 
 ### Text Encoding
 
@@ -68,6 +69,7 @@ The `prefix` determines all filenames. Version ID is always `"internal"` (from `
 | `{prefix}_pericope_blocks_bt.bt`        | Bintex     | Pericope titles and parallel passage references              |
 | `{prefix}_footnotes_bt.bt`              | Bintex     | Footnote entries indexed by ARIF                             |
 | `{prefix}_xrefs_bt.bt`                  | Bintex     | Cross-reference entries indexed by ARIF                      |
+| `{prefix}_lexicon_bt.bt`                | Bintex     | Word families for smart search (optional)                    |
 
 ### Reader: `InternalReader.java`
 
@@ -149,6 +151,43 @@ valueString[entry_count]    contents   // entry text
 - Bits 7-0: field index within that verse (1-based), allowing multiple entries per verse
 
 Read by `XrefsSection.Reader` and `FootnotesSection.Reader`. Lookup uses unsigned binary search on the sorted ARIF array.
+
+### Lexicon File and Section
+
+`{prefix}_lexicon_bt.bt` and the YES2 `lexicon` section share one format. It lists, for each root,
+the forms of it that occur in the version, so a search for any form can find them all:
+
+```
+uint8   data_format_version   // must be 1
+uint8   prefix_rule_count
+valueString[prefix_rule_count * 2]   prefix_rules   // from, to, from, to, ...
+int     family_count
+valueString[family_count]            families
+```
+
+Each family is the root followed by its forms, separated by spaces. Inside a form, `~` stands for
+the root and `<` for the root with its start rewritten by the first-matching (longest `from`)
+prefix rule:
+
+```
+prefix rules: k -> ng, t -> n, s -> ny, p -> m
+kasih ~ me<i di~i ke~        =  kasih, mengasihi, dikasihi, kekasih
+sembah me< pe<an             =  menyembah, penyembahan
+```
+
+A form holding neither marker is stored literally. Read by `LexiconSection.readFrom()`, decoded
+by `LexiconCodec`; both are in `AlkitabYes2`. `InternalReader.loadLexicon()` reads the file,
+`Yes2Reader.loadLexicon()` the section.
+
+In a `.yet` file the lexicon is written as it is stored, one line per rule and per family:
+
+```
+lexicon_prefix<TAB>k<TAB>ng
+lexicon<TAB>kasih ~ me<i di~i ke~
+```
+
+`YetToYes2` and `YetToInternal` decode every family while reading, so a family naming a prefix rule
+that does not apply to its root is rejected before any output is written.
 
 ### Differences from YES2
 

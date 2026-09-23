@@ -88,17 +88,25 @@
 		android:layout_weight="1"
 		android:orientation="vertical">
 
+		<androidx.compose.ui.platform.ComposeView
+			android:id="@+id/smartSearchPanel"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:visibility="gone" />
+
 		<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/lsSearchResults"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
 			android:visibility="gone"
 			app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 		<TextView
 			android:id="@+id/tSearchTips"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
 			android:gravity="center"
 			android:paddingStart="16dp"
 			android:paddingEnd="16dp"

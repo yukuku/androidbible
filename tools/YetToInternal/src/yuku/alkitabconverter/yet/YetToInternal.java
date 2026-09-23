@@ -115,7 +115,7 @@ public class YetToInternal {
 			final File outDir = new File(internaldir);
 			final XrefDb xrefDb = result.xrefEntries == null ? null : new XrefDb(result.xrefEntries);
 			final FootnoteDb footnoteDb = result.footnoteEntries == null ? null : new FootnoteDb(result.footnoteEntries);
-			InternalCommon.createInternalFiles(outDir, prefix, result.getBookNamesAsList(), result.recs, result.pericopeData, xrefDb, footnoteDb);
+			InternalCommon.createInternalFiles(outDir, prefix, result.getBookNamesAsList(), result.recs, result.pericopeData, xrefDb, footnoteDb, result.getLexiconPrefixTable(), result.lexiconFamilies);
 		}
 
 		return 0;

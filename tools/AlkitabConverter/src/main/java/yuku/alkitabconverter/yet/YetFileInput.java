@@ -3,6 +3,8 @@ package yuku.alkitabconverter.yet;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
+import yuku.alkitab.yes2.lexicon.LexiconCodec;
+import yuku.alkitab.yes2.lexicon.LexiconPrefixTable;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
@@ -29,6 +31,14 @@ public class YetFileInput {
 		public Map<Integer, String> bookAbbreviations; // key is book_1
 		public LinkedHashMap<Integer /* arif */, XrefEntry> xrefEntries;
 		public LinkedHashMap<Integer /* arif */, FootnoteEntry> footnoteEntries;
+		/** Null when the file has no lexicon lines. */
+		public List<LexiconPrefixTable.Rule> lexiconPrefixRules;
+		/** Word families as {@link LexiconCodec} encodes them. Null when the file has no lexicon lines. */
+		public List<String> lexiconFamilies;
+
+		public LexiconPrefixTable getLexiconPrefixTable() {
+			return lexiconPrefixRules == null ? LexiconPrefixTable.EMPTY : new LexiconPrefixTable(lexiconPrefixRules);
+		}
 
 		void addInfo(String k, String v) {
 			if (infos == null) infos = new LinkedHashMap<>();
@@ -231,6 +241,12 @@ public class YetFileInput {
 
 					res.addFootnoteEntry((Ari.encode(book_1 - 1, chapter_1, verse_1) << 8) | field_1, fe);
 
+				} else if ("lexicon_prefix".equals(command)) {
+					if (res.lexiconPrefixRules == null) res.lexiconPrefixRules = new ArrayList<>();
+					res.lexiconPrefixRules.add(new LexiconPrefixTable.Rule(splits[1], splits[2]));
+				} else if ("lexicon".equals(command)) {
+					if (res.lexiconFamilies == null) res.lexiconFamilies = new ArrayList<>();
+					res.lexiconFamilies.add(splits[1]);
 				} else if (command.trim().startsWith("#") || command.trim().length() == 0) {
 					// comment or blank line
 				} else {
@@ -293,6 +309,14 @@ public class YetFileInput {
 				}
 				throw new RuntimeException("there are footnotes and/or xrefs not resolved");
 			}
+		}
+
+		if (res.lexiconFamilies != null) { // every family must decode with the prefix rules given
+			final LexiconPrefixTable table = res.getLexiconPrefixTable();
+			for (final String family : res.lexiconFamilies) {
+				LexiconCodec.decodeFamily(family, table);
+			}
+			System.err.println("lexicon: " + res.lexiconFamilies.size() + " word families, " + (res.lexiconPrefixRules == null ? 0 : res.lexiconPrefixRules.size()) + " prefix rules");
 		}
 
 		for (Entry<Integer, Integer> e: nversePerBook.entrySet()) {

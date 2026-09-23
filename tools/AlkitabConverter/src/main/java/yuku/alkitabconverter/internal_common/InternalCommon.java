@@ -1,6 +1,8 @@
 package yuku.alkitabconverter.internal_common;
 
+import yuku.alkitab.yes2.lexicon.LexiconPrefixTable;
 import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitab.yes2.section.LexiconSection;
 import yuku.alkitabconverter.util.CountingOutputStream;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.Rec;
@@ -43,6 +45,14 @@ public class InternalCommon {
 	 * @param prefix e.g. "tb"
 	 */
 	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb) {
+		createInternalFiles(outDir, prefix, bookNames, _recs, pericopeData, xrefDb, footnoteDb, null, null);
+	}
+
+	/**
+	 * @param prefix e.g. "tb"
+	 * @param lexiconFamilies word families as {@link yuku.alkitab.yes2.lexicon.LexiconCodec} encodes them, or null for none
+	 */
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb, LexiconPrefixTable lexiconPrefixTable, List<String> lexiconFamilies) {
 		final List<List<Rec>> books = new ArrayList<>();
 
 		// Gather books, fix missing "@@"
@@ -187,6 +197,13 @@ public class InternalCommon {
 			if (footnoteDb != null) {
 				final BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_footnotes_bt.bt", prefix))));
 				FootnoteDb.writeFootnoteEntriesTo(footnoteDb.toEntries(), bw);
+				bw.close();
+			}
+
+			// lexicon
+			if (lexiconFamilies != null) {
+				final BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_lexicon_bt.bt", prefix))));
+				LexiconSection.writeTo(bw, lexiconPrefixTable == null ? LexiconPrefixTable.EMPTY : lexiconPrefixTable, lexiconFamilies);
 				bw.close();
 			}
 

@@ -253,6 +253,10 @@
 			android:label="@string/search"
 			android:windowSoftInputMode="adjustResize" />
 		<activity
+			android:name="yuku.alkitab.base.smartsearch.ui.SearchLabActivity"
+			android:label="@string/search_lab_title"
+			android:windowSoftInputMode="adjustResize" />
+		<activity
 			android:name="yuku.alkitab.base.ac.DevotionActivity"
 			android:label="@string/menuDevotion">
 			<meta-data

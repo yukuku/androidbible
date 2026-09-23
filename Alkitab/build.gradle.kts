@@ -78,6 +78,7 @@ abstract class CopyProprietaryAssetsTask @Inject constructor(
             "*_pericope_blocks_bt.bt",
             "*_xrefs_bt.bt",
             "*_footnotes_bt.bt",
+            "*_lexicon_bt.bt",
         )
     }
 }
