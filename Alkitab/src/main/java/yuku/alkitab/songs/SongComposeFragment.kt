@@ -13,14 +13,7 @@ import yuku.alkitab.base.fr.base.BaseFragment
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.SongDocumentJson
 
-/**
- * Native Jetpack Compose song viewer, the default renderer in place of the
- * WebView-based [SongFragment], which [yuku.alkitab.base.settings.ExperimentalFlags.useComposeSong]
- * falls back to. Renders the
- * same [SongDocument] via [SongDocumentComposable] with the exact feature set
- * of the HTML/CSS path (see that composable's doc), routing scripture,
- * YouTube, and patch-text clicks back to the host activity.
- */
+/** Compose song viewer. [SongFragment] is the WebView fallback behind [yuku.alkitab.base.settings.ExperimentalFlags.useComposeSong]. */
 class SongComposeFragment : BaseFragment(), SongTextZoomable {
     private val args by lazy { requireArguments() }
     private val doc: SongDocument by lazy { SongDocumentJson.decode(args.getString(ARG_songJson)!!) }

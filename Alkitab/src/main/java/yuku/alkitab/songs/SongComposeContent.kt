@@ -64,47 +64,21 @@ import yuku.alkitab.songs.newdoc.VerseLine
 import yuku.alkitab.songs.newdoc.YoutubeBlock
 import yuku.alkitab.songs.newdoc.plainText
 
-/**
- * Native Jetpack Compose renderer for a [SongDocument] — the experimental
- * counterpart of the WebView/HTML path in [SongFragment]
- * ([yuku.alkitab.songs.newdoc.SongDocumentRenderer] + `templates/song.html`).
- * It walks [SongDocument.blocks] in document order and maps each block/role to
- * the same visual treatment `song.css` applies, preserving every feature:
- * verse numbering, refrain styling, captions, roles (title/tune/musical/
- * authors/…), inline `u`/`b`/`i` spans, per-line size/alignment, clickable
- * scripture references and YouTube links, copyright, and the "send corrections"
- * (patch text) link.
- *
- * Colors, base font size, line spacing, and typeface come from the same
- * preference-derived dimensions the WebView path feeds into `song.html`; the
- * two-finger pinch zoom is applied as [zoomPercent].
- */
-
-/** Immutable style inputs derived once from the caller's dimensions + zoom. */
 class SongComposeStyle(
-    /** ARGB text color. */
     val fontColor: Int,
-    /** ARGB verse-number color. */
     val verseNumberColor: Int,
-    /** ARGB background color. */
     val backgroundColor: Int,
-    /** Base body font size in dp, before the per-role multipliers. */
     val baseFontSizeDp: Float,
     val lineSpacingMult: Float,
-    /** Body typeface (user font); role text falls back to sans-serif. */
     val typeface: Typeface?,
     val zoomPercent: Int,
 ) {
-    /** Effective base size after applying the pinch-zoom factor. */
     val baseSizeSp = baseFontSizeDp * zoomPercent / 100f
 
     val bodyColor = Color(fontColor)
     val verseNumberColorC = Color(verseNumberColor)
 
-    /**
-     * The body font's natural line height in em (ascent + descent + line gap), the CSS
-     * `line-height: normal` that song.html measures before applying [lineSpacingMult].
-     */
+    /** The font's natural line height in em, before [lineSpacingMult]. */
     val normalLineHeightEm: Float = Paint().run {
         typeface = this@SongComposeStyle.typeface ?: Typeface.DEFAULT
         textSize = 100f
@@ -121,11 +95,11 @@ class SongComposeStyle(
     }
 }
 
-// Links keep the surrounding text color and are marked by the underline alone (song.css `a`).
 private val LINK_STYLE = SpanStyle(textDecoration = TextDecoration.Underline)
 
 private val ALLOWED_ALIGNS = setOf("start", "center", "end")
 
+/** Compose renderer for a [SongDocument], the counterpart of the WebView renderer in [SongFragment]. */
 @Composable
 fun SongDocumentComposable(
     doc: SongDocument,
@@ -137,20 +111,15 @@ fun SongDocumentComposable(
     onPatchTextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Verse text is sized in dp, so strip the system font-scale — the pinch
-    // zoom is the only multiplier, already folded into baseSizeSp.
+    // Sizes are in dp and pinch zoom is already in baseSizeSp, so ignore the system font scale.
     val baseDensity = LocalDensity.current
     val unscaledDensity = remember(baseDensity.density) {
         Density(density = baseDensity.density, fontScale = 1f)
     }
 
     CompositionLocalProvider(LocalDensity provides unscaledDensity) {
-        // SelectionContainer makes the whole song selectable so users can
-        // long-press to select and copy any part of the lyrics. Scripture,
-        // YouTube, and patch-text links inside stay tappable.
         SelectionContainer {
-            // Room to scroll the last line clear of the navigation bar the
-            // song draws behind.
+            // The song draws behind the navigation bar.
             val bottomInset = WindowInsets.safeDrawing
                 .asPaddingValues()
                 .calculateBottomPadding()
@@ -159,12 +128,9 @@ fun SongDocumentComposable(
                 modifier = modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    // song.html <body>: the default 8px margin plus padding 16px 8px
                     .padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 24.dp + bottomInset),
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    // The song code sits in the left gutter; when the first block is the
-                    // title, they share a row (code left, title centered beside it).
                     val titleBlock = (doc.blocks.firstOrNull() as? PBlock)?.takeIf { it.role == "title" }
                     val bodyBlocks = if (titleBlock != null) doc.blocks.drop(1) else doc.blocks
 
@@ -191,15 +157,10 @@ fun SongDocumentComposable(
     }
 }
 
-/**
- * Top-of-song header: the bold song [code] in the left gutter and, when the
- * first block is the title, the centered title in a weighted column beside it.
- */
 @Composable
 private fun SongHeader(code: String, titleBlock: PBlock?, style: SongComposeStyle) {
     Row(modifier = Modifier.fillMaxWidth()) {
         if (code.isNotEmpty()) {
-            // .code { font-size: 125%; font-weight: bold; margin-right: 0.5em; }, where em is the code's own size
             BasicText(
                 text = AnnotatedString(code),
                 style = roleTextStyle(style, sizeMult = 1.25f, sansSerif = true).copy(fontWeight = FontWeight.Bold),
@@ -208,13 +169,12 @@ private fun SongHeader(code: String, titleBlock: PBlock?, style: SongComposeStyl
         }
         if (titleBlock != null) {
             Box(modifier = Modifier.weight(1f)) {
-                PBlockView(titleBlock, style)
+                PBlockView(titleBlock, style, inRow = false)
             }
         }
     }
 }
 
-/** Renders any non-lyric block (lyric blocks need their running index). */
 @Composable
 private fun BlockView(
     block: Block,
@@ -223,18 +183,18 @@ private fun BlockView(
     onYoutubeClick: (String) -> Unit,
 ) {
     when (block) {
-        is PBlock -> PBlockView(block, style)
+        is PBlock -> PBlockView(block, style, inRow = false)
         is RowBlock -> RowBlockView(block, style, onScriptureClick, onYoutubeClick)
         is ScriptureBlock -> ScriptureView(block.osis, style, onScriptureClick)
         is YoutubeBlock -> YoutubeView(block, style, onYoutubeClick)
         is GapBlock -> Spacer(Modifier.height((block.size ?: 1f).em.toDp(style)))
-        is UnknownBlock -> {} // forward-compat sink: unrecognized block types are skipped
-        is LyricBlock -> {} // handled by the caller with its running index
+        is UnknownBlock -> {}
+        is LyricBlock -> {}
     }
 }
 
 @Composable
-private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = false) {
+private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean) {
     val role = block.role
     val sansSerif = role in SANS_SERIF_ROLES
     val sizeMult = block.size?.takeIf { it.isFinite() } ?: roleSizeMult(role)
@@ -246,9 +206,8 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = 
     val align = block.align?.takeIf { it in ALLOWED_ALIGNS }
     val textAlign = when {
         role == "title" || role == "title_original" -> TextAlign.Center
-        // A row item is shrink-to-fit, so its own align moves the item (see RowBlockView), not its text.
+        // In a row, align positions the item itself (see RowBlockView).
         inRow -> TextAlign.Start
-        // .tune { float: right; } → right-aligned on its own line
         role == "tune" -> TextAlign.End
         align == "center" -> TextAlign.Center
         align == "end" -> TextAlign.End
@@ -265,18 +224,14 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = 
         textAlign = textAlign ?: TextAlign.Unspecified,
     )
 
-    // .title, .title_original { margin-bottom: 8px; }
     val bottomMargin = if (role == "title" || role == "title_original") 8.dp else 0.dp
     BasicText(text = content, style = textStyle, modifier = Modifier.fillMaxWidth().padding(bottom = bottomMargin))
 }
 
 /**
- * Lays out row items like song.css `.row` (`display: flex; justify-content:
- * space-between; align-items: baseline`): each item takes its content width,
- * leftover space goes between the items, and a PBlock `align` of end/center
- * turns into auto margins that take that space instead. When the items do not
- * fit, they shrink in proportion to their content width but not below their
- * longest word, so a short item like "YouTube" never breaks mid-word.
+ * Items take their content width, with the leftover space between them, or before (end)
+ * or around (center) an aligned item. Items too wide to fit shrink, but not below their
+ * longest word. Items share a first baseline.
  */
 @Composable
 private fun RowBlockView(
@@ -289,7 +244,7 @@ private fun RowBlockView(
     Layout(
         modifier = Modifier.fillMaxWidth(),
         content = {
-            // One Box per item keeps measurables in step with items even when an item renders nothing.
+            // A Box per item, so measurables line up with items even when an item draws nothing.
             for (item in items) {
                 Box {
                     when (item) {
@@ -336,11 +291,7 @@ private fun RowBlockView(
     }
 }
 
-/**
- * CSS flex shrinking for `flex: 0 1 auto` items: when [maxWidths] overflow [available],
- * each item gives up space in proportion to its width, stopping at its [minWidths].
- * If even the minimum widths overflow, they are scaled down to fit.
- */
+/** Shrinks overflowing items in proportion to their width, stopping at [minWidths]. */
 private fun shrinkRowItems(maxWidths: List<Int>, minWidths: List<Int>, available: Int): List<Int> {
     val widths = maxWidths.map { it.toFloat() }.toMutableList()
     if (widths.sum() <= available) return maxWidths
@@ -400,7 +351,6 @@ private fun ScriptureView(osis: String, style: SongComposeStyle, onScriptureClic
 
 @Composable
 private fun YoutubeView(block: YoutubeBlock, style: SongComposeStyle, onYoutubeClick: (String) -> Unit) {
-    // only a valid 11-char id yields a link
     if (!YOUTUBE_ID_REGEX.matches(block.videoId)) return
 
     val annotated = buildAnnotatedString {
@@ -413,7 +363,6 @@ private fun YoutubeView(block: YoutubeBlock, style: SongComposeStyle, onYoutubeC
             append("YouTube")
         }
     }
-    // .youtube { margin: 0.5em 0; }
     BasicText(
         text = annotated,
         style = roleTextStyle(style, sizeMult = 1f, sansSerif = false),
@@ -423,12 +372,10 @@ private fun YoutubeView(block: YoutubeBlock, style: SongComposeStyle, onYoutubeC
 
 @Composable
 private fun LyricBlockView(block: LyricBlock, index: Int, totalCount: Int, style: SongComposeStyle) {
-    // .lyric { padding-left: 0.4em; }
     Column(modifier = Modifier.fillMaxWidth().padding(start = 0.4f.em.toDp(style))) {
         if (totalCount > 1 || block.caption != null) {
             val captionText = block.caption?.let { lineToAnnotated(it, style) }
                 ?: AnnotatedString("Versi ${index + 1}")
-            // .lyric_caption { font-weight: bold; font-size: 87.5%; padding-top: 1em; }, where em is the caption's own size
             BasicText(
                 text = captionText,
                 style = roleTextStyle(style, sizeMult = 0.875f, sansSerif = false)
@@ -457,8 +404,6 @@ private fun LyricBlockView(block: LyricBlock, index: Int, totalCount: Int, style
 
 @Composable
 private fun VerseView(verse: Verse, number: Int, style: SongComposeStyle) {
-    // .verse { margin: 0.3em; margin-top: 0.8em; padding-bottom: 0.8em; border-bottom: 1px dashed #ccc; }
-    // The 0.3em bottom margin collapses into the next verse's 0.8em top margin.
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -474,17 +419,10 @@ private fun VerseView(verse: Verse, number: Int, style: SongComposeStyle) {
     }
 }
 
-/**
- * NORMAL/TEXT verse: the lyric lines start 1em in and wrap to 3em
- * (song.css `.line { padding-left: 3em; text-indent: -2em; }`), with the
- * verse number floated into that first 1em. A number wider than the gutter
- * widens it rather than overlapping the text.
- */
 @Composable
 private fun NumberedVerse(verse: Verse, number: Int?, style: SongComposeStyle) {
     Row(modifier = Modifier.fillMaxWidth()) {
         if (number != null) {
-            // .verse_ordering { float: left; font-size: 120%; font-weight: 300; }
             BasicText(
                 text = AnnotatedString(number.toString()),
                 style = roleTextStyle(style, sizeMult = 1.2f, sansSerif = false).copy(
@@ -503,12 +441,6 @@ private fun NumberedVerse(verse: Verse, number: Int?, style: SongComposeStyle) {
     }
 }
 
-/**
- * REFRAIN verse: an italic "Ref.:" marker above italic lines, the block
- * indented 1em (song.css `.refrain { font-style: italic; padding-left: 1em; }`
- * plus the `Ref.:` `:before` marker; the numeric ordering is hidden). The
- * lines keep the `.line` 1em first-line inset, so they sit deeper than the marker.
- */
 @Composable
 private fun RefrainVerse(verse: Verse, style: SongComposeStyle) {
     Column(modifier = Modifier.fillMaxWidth().padding(start = 1f.em.toDp(style))) {
@@ -564,7 +496,6 @@ private fun FooterView(
 ) {
     Spacer(Modifier.height(0.8f.em.toDp(style)))
     if (!copyright.isNullOrEmpty()) {
-        // .copyright { font-size: 75%; text-transform: uppercase; font-weight: bold; opacity: 0.54; }
         BasicText(
             text = AnnotatedString(copyright.uppercase()),
             style = roleTextStyle(style, sizeMult = 0.75f, sansSerif = false).copy(
@@ -576,7 +507,6 @@ private fun FooterView(
     }
     Spacer(Modifier.height(8.dp))
     if (!patchTextLinkLabel.isNullOrEmpty()) {
-        // .patchtext { font-size: 75%; }
         val annotated = buildAnnotatedString {
             withLink(
                 LinkAnnotation.Clickable(
@@ -596,7 +526,6 @@ private fun FooterView(
 
 @Composable
 private fun DashedDivider() {
-    // border-bottom: 1px dashed #ccc, drawn with the browser's 3px dash and gap
     androidx.compose.foundation.Canvas(
         modifier = Modifier.fillMaxWidth().height(1.dp),
     ) {
@@ -616,15 +545,12 @@ private fun DashedDivider() {
     }
 }
 
-// ---- styling helpers ----
-
 private val SANS_SERIF_ROLES = setOf(
     "title", "title_original", "tune", "musical", "authors_lyric", "authors_music",
 )
 
 private val YOUTUBE_ID_REGEX = Regex("^[A-Za-z0-9_-]{11}$")
 
-/** Per-role font-size multiplier from song.css (relative to the body size). */
 private fun roleSizeMult(role: String?): Float = when (role) {
     "title" -> 1.25f
     "title_original", "tune", "musical", "authors_lyric", "authors_music" -> 0.875f
@@ -643,7 +569,6 @@ private fun lyricLineStyle(style: SongComposeStyle, sizeMult: Float): TextStyle 
     color = style.bodyColor,
     fontSize = (style.baseSizeSp * sizeMult).sp,
     lineHeight = (style.baseSizeSp * sizeMult * style.normalLineHeightEm * style.lineSpacingMult).sp,
-    // CSS splits the extra line height evenly above and below the glyphs
     lineHeightStyle = LineHeightStyle(
         alignment = LineHeightStyle.Alignment.Center,
         trim = LineHeightStyle.Trim.None,
@@ -652,7 +577,6 @@ private fun lyricLineStyle(style: SongComposeStyle, sizeMult: Float): TextStyle 
     platformStyle = PlatformTextStyle(includeFontPadding = false),
 )
 
-/** Convert an em value (relative to the zoomed base font size) into dp. */
 private fun androidx.compose.ui.unit.TextUnit.toDp(style: SongComposeStyle) =
     (this.value * style.baseSizeSp).dp
 
@@ -670,7 +594,6 @@ private fun lineToAnnotated(line: Line, style: SongComposeStyle): AnnotatedStrin
     }
 }
 
-/** Map the closed `u`/`b`/`i` inline-style vocabulary to a [SpanStyle]. */
 private fun spanStyleFor(styles: List<String>): SpanStyle? {
     if (styles.isEmpty()) return null
     var weight: FontWeight? = null
