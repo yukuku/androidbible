@@ -3,12 +3,12 @@
 	android:height="24dp"
 	android:viewportWidth="960"
 	android:viewportHeight="960">
-	<!-- Material Symbols "ink_highlighter". The artwork is authored in a
+	<!-- Material Symbols "ink_highlighter" (filled). The artwork is authored in a
 		"0 -960 960 960" viewBox, so the group shifts it down into Android's
 		"0 0 960 960" viewport. -->
 	<group android:translateY="960">
 		<path
 			android:fillColor="#fff"
-			android:pathData="M544-400 440-504 240-304l104 104 200-200Zm-47-161 104 104 199-199-104-104-199 199Zm-84-28 216 216-229 229q-24 24-56 24t-56-24l-2-2-26 26H60l126-126-2-2q-24-24-24-56t24-56l229-229Zm0 0 227-227q24-24 56-24t56 24l104 104q24 24 24 56t-24 56L629-373 413-589Z" />
+			android:pathData="m396-564 200 200-212 212q-19 19-52.5 19T279-152l-11-11-43 43H70l120-120-4-4q-22-22-21.5-55.5T187-355l209-209Zm43-43 216-216q17-17 43-17t43 17l112 112q17 17 16.5 45.5T852-620L639-407 439-607Z" />
 	</group>
 </vector>
