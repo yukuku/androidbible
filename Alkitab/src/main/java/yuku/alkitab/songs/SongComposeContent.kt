@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -105,10 +106,10 @@ class SongComposeStyle(
     }
 }
 
-// Link colors mirror song.css: scripture references are #33b5e5; the "a"
-// default (patch-text/youtube) is #03a9f4.
-private val SCRIPTURE_LINK_COLOR = Color(0xFF33B5E5)
-private val DEFAULT_LINK_COLOR = Color(0xFF03A9F4)
+// Link styles mirror song.css: scripture references are #33b5e5; the "a"
+// default (patch-text/youtube) is #03a9f4. Both keep the browser's link underline.
+private val SCRIPTURE_LINK_STYLE = SpanStyle(color = Color(0xFF33B5E5), textDecoration = TextDecoration.Underline)
+private val DEFAULT_LINK_STYLE = SpanStyle(color = Color(0xFF03A9F4), textDecoration = TextDecoration.Underline)
 
 private val ALLOWED_ALIGNS = setOf("start", "center", "end")
 
@@ -145,8 +146,8 @@ fun SongDocumentComposable(
                 modifier = modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    // body padding: 16px vertical, 8px horizontal (song.html <body>)
-                    .padding(start = 8.dp, top = 16.dp, end = 8.dp, bottom = 16.dp + bottomInset),
+                    // song.html <body>: the default 8px margin plus padding 16px 8px
+                    .padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 24.dp + bottomInset),
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     // The song code sits in the left gutter; when the first block is the
@@ -185,11 +186,11 @@ fun SongDocumentComposable(
 private fun SongHeader(code: String, titleBlock: PBlock?, style: SongComposeStyle) {
     Row(modifier = Modifier.fillMaxWidth()) {
         if (code.isNotEmpty()) {
-            // .code { font-size: 125%; font-weight: bold; margin-right: 0.5em; }
+            // .code { font-size: 125%; font-weight: bold; margin-right: 0.5em; }, where em is the code's own size
             BasicText(
                 text = AnnotatedString(code),
                 style = roleTextStyle(style, sizeMult = 1.25f, sansSerif = true).copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(end = 0.5f.em.toDp(style)),
+                modifier = Modifier.padding(end = 0.625f.em.toDp(style)),
             )
         }
         if (titleBlock != null) {
@@ -252,7 +253,9 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean = 
         textAlign = textAlign ?: TextAlign.Unspecified,
     )
 
-    BasicText(text = content, style = textStyle, modifier = Modifier.fillMaxWidth())
+    // .title, .title_original { margin-bottom: 8px; }
+    val bottomMargin = if (role == "title" || role == "title_original") 8.dp else 0.dp
+    BasicText(text = content, style = textStyle, modifier = Modifier.fillMaxWidth().padding(bottom = bottomMargin))
 }
 
 private enum class CellAlign { Start, Center, End }
@@ -267,10 +270,8 @@ private fun RowBlockView(
     val items = block.items
     // Each column gets a share of the row width proportional to its text length,
     // so a longer column gets more room and every column wraps within its share.
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top,
-    ) {
+    // Columns share a first baseline, like `.row { align-items: baseline; }`.
+    Row(modifier = Modifier.fillMaxWidth()) {
         items.forEachIndexed { index, item ->
             val weight = rowItemTextLength(item).coerceAtLeast(1).toFloat()
             // First column hugs the start, last column hugs the end, middle columns
@@ -286,7 +287,7 @@ private fun RowBlockView(
                 else -> CellAlign.Center
             }
             Box(
-                modifier = Modifier.weight(weight),
+                modifier = Modifier.weight(weight).alignByBaseline(),
                 contentAlignment = when (cellAlign) {
                     CellAlign.Start -> Alignment.TopStart
                     CellAlign.Center -> Alignment.TopCenter
@@ -325,7 +326,7 @@ private fun ScriptureView(osis: String, style: SongComposeStyle, onScriptureClic
             withLink(
                 LinkAnnotation.Clickable(
                     tag = part.osisId,
-                    styles = TextLinkStyles(SpanStyle(color = SCRIPTURE_LINK_COLOR)),
+                    styles = TextLinkStyles(SCRIPTURE_LINK_STYLE),
                 ) { onScriptureClick(part.osisId) },
             ) {
                 append(part.readable)
@@ -349,15 +350,17 @@ private fun YoutubeView(block: YoutubeBlock, style: SongComposeStyle, onYoutubeC
         withLink(
             LinkAnnotation.Clickable(
                 tag = block.videoId,
-                styles = TextLinkStyles(SpanStyle(color = DEFAULT_LINK_COLOR)),
+                styles = TextLinkStyles(DEFAULT_LINK_STYLE),
             ) { onYoutubeClick(block.videoId) },
         ) {
             append("YouTube")
         }
     }
+    // .youtube { margin: 0.5em 0; }
     BasicText(
         text = annotated,
         style = roleTextStyle(style, sizeMult = 1f, sansSerif = false),
+        modifier = Modifier.padding(vertical = 0.5f.em.toDp(style)),
     )
 }
 
@@ -368,12 +371,12 @@ private fun LyricBlockView(block: LyricBlock, index: Int, totalCount: Int, style
         if (totalCount > 1 || block.caption != null) {
             val captionText = block.caption?.let { lineToAnnotated(it, style) }
                 ?: AnnotatedString("Versi ${index + 1}")
-            // .lyric_caption { font-weight: bold; font-size: 87.5%; padding-top: 1em; }
+            // .lyric_caption { font-weight: bold; font-size: 87.5%; padding-top: 1em; }, where em is the caption's own size
             BasicText(
                 text = captionText,
                 style = roleTextStyle(style, sizeMult = 0.875f, sansSerif = false)
                     .copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(top = 1f.em.toDp(style)),
+                modifier = Modifier.padding(top = 0.875f.em.toDp(style)),
             )
         }
 
@@ -397,11 +400,12 @@ private fun LyricBlockView(block: LyricBlock, index: Int, totalCount: Int, style
 
 @Composable
 private fun VerseView(verse: Verse, number: Int, style: SongComposeStyle) {
-    // .verse { margin-top: 0.8em; padding-bottom: 0.8em; border-bottom: 1px dashed #ccc; }
+    // .verse { margin: 0.3em; margin-top: 0.8em; padding-bottom: 0.8em; border-bottom: 1px dashed #ccc; }
+    // The 0.3em bottom margin collapses into the next verse's 0.8em top margin.
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 0.8f.em.toDp(style)),
+            .padding(start = 0.3f.em.toDp(style), top = 0.8f.em.toDp(style), end = 0.3f.em.toDp(style)),
     ) {
         when (verse.kind) {
             VerseKind.REFRAIN -> RefrainVerse(verse, style)
@@ -409,48 +413,58 @@ private fun VerseView(verse: Verse, number: Int, style: SongComposeStyle) {
         }
 
         Spacer(Modifier.height(0.8f.em.toDp(style)))
-        DashedDivider(style)
+        DashedDivider()
     }
 }
 
 /**
- * NORMAL/TEXT verse: an optional floated verse number in a left gutter, then
- * the lyric lines with a hanging indent for wrapped continuations (song.css
- * puts the number at `float:left` and the `.line`s at
- * `padding-left:3em; text-indent:-2em`).
+ * NORMAL/TEXT verse: the lyric lines start 1em in and wrap to 3em
+ * (song.css `.line { padding-left: 3em; text-indent: -2em; }`), with the
+ * verse number floated into that first 1em. A number wider than the gutter
+ * widens it rather than overlapping the text.
  */
 @Composable
 private fun NumberedVerse(verse: Verse, number: Int?, style: SongComposeStyle) {
     Row(modifier = Modifier.fillMaxWidth()) {
         if (number != null) {
             // .verse_ordering { float: left; font-size: 120%; font-weight: 300; }
-            Box(modifier = Modifier.width(1.8f.em.toDp(style))) {
-                BasicText(
-                    text = AnnotatedString(number.toString()),
-                    style = roleTextStyle(style, sizeMult = 1.2f, sansSerif = false).copy(
-                        fontWeight = FontWeight.Light,
-                        color = style.verseNumberColorC,
-                    ),
-                )
-            }
+            BasicText(
+                text = AnnotatedString(number.toString()),
+                style = roleTextStyle(style, sizeMult = 1.2f, sansSerif = false).copy(
+                    fontWeight = FontWeight.Light,
+                    color = style.verseNumberColorC,
+                ),
+                modifier = Modifier
+                    .alignByBaseline()
+                    .widthIn(min = 1f.em.toDp(style))
+                    .padding(end = 0.25f.em.toDp(style)),
+            )
+        } else {
+            Spacer(Modifier.width(1f.em.toDp(style)))
         }
-        VerseLines(verse.lines, style, italic = false, modifier = Modifier.weight(1f))
+        VerseLines(verse.lines, style, italic = false, modifier = Modifier.weight(1f).alignByBaseline())
     }
 }
 
 /**
- * REFRAIN verse: a "Ref." marker above italic lines, the block indented
- * (song.css `.refrain { font-style: italic; padding-left: 1em; }` plus the
- * `Ref.:` `:before` marker; the numeric ordering is hidden).
+ * REFRAIN verse: an italic "Ref.:" marker above italic lines, the block
+ * indented 1em (song.css `.refrain { font-style: italic; padding-left: 1em; }`
+ * plus the `Ref.:` `:before` marker; the numeric ordering is hidden). The
+ * lines keep the `.line` 1em first-line inset, so they sit deeper than the marker.
  */
 @Composable
 private fun RefrainVerse(verse: Verse, style: SongComposeStyle) {
     Column(modifier = Modifier.fillMaxWidth().padding(start = 1f.em.toDp(style))) {
         BasicText(
             text = AnnotatedString("Ref.:"),
-            style = roleTextStyle(style, sizeMult = 0.75f, sansSerif = true),
+            style = roleTextStyle(style, sizeMult = 0.75f, sansSerif = true).copy(fontStyle = FontStyle.Italic),
         )
-        VerseLines(verse.lines, style, italic = true, modifier = Modifier.fillMaxWidth())
+        VerseLines(
+            verse.lines,
+            style,
+            italic = true,
+            modifier = Modifier.fillMaxWidth().padding(start = 1f.em.toDp(style)),
+        )
     }
 }
 
@@ -459,7 +473,6 @@ private fun VerseLines(lines: List<VerseLine>, style: SongComposeStyle, italic: 
     Column(modifier = modifier) {
         for (line in lines) {
             val (content, lineSizeMult, lineAlign) = resolveVerseLine(line, style)
-            // hanging indent so wrapped continuations sit deeper than the line start
             val lineStyle = lyricLineStyle(style, lineSizeMult).copy(
                 fontStyle = if (italic) FontStyle.Italic else null,
                 textAlign = when (lineAlign) {
@@ -467,7 +480,7 @@ private fun VerseLines(lines: List<VerseLine>, style: SongComposeStyle, italic: 
                     "end" -> TextAlign.End
                     else -> TextAlign.Unspecified
                 },
-                textIndent = TextIndent(firstLine = 0.sp, restLine = (style.baseSizeSp * 1.5f).sp),
+                textIndent = TextIndent(firstLine = 0.sp, restLine = (style.baseSizeSp * 2f).sp),
             )
             BasicText(text = content, style = lineStyle, modifier = Modifier.fillMaxWidth())
         }
@@ -511,7 +524,7 @@ private fun FooterView(
             withLink(
                 LinkAnnotation.Clickable(
                     tag = "patchtext",
-                    styles = TextLinkStyles(SpanStyle(color = DEFAULT_LINK_COLOR)),
+                    styles = TextLinkStyles(DEFAULT_LINK_STYLE),
                 ) { onPatchTextClick() },
             ) {
                 append(patchTextLinkLabel)
@@ -525,13 +538,12 @@ private fun FooterView(
 }
 
 @Composable
-private fun DashedDivider(style: SongComposeStyle) {
-    // border-bottom: 1px dashed #ccc;
+private fun DashedDivider() {
+    // border-bottom: 1px dashed #ccc, drawn with the browser's 3px dash and gap
     androidx.compose.foundation.Canvas(
         modifier = Modifier.fillMaxWidth().height(1.dp),
     ) {
-        val dashWidth = 6.dp.toPx()
-        val gap = 4.dp.toPx()
+        val dash = 3.dp.toPx()
         val y = size.height / 2f
         var x = 0f
         val color = Color(0xFFCCCCCC)
@@ -539,10 +551,10 @@ private fun DashedDivider(style: SongComposeStyle) {
             drawLine(
                 color = color,
                 start = androidx.compose.ui.geometry.Offset(x, y),
-                end = androidx.compose.ui.geometry.Offset((x + dashWidth).coerceAtMost(size.width), y),
+                end = androidx.compose.ui.geometry.Offset((x + dash).coerceAtMost(size.width), y),
                 strokeWidth = size.height,
             )
-            x += dashWidth + gap
+            x += dash * 2
         }
     }
 }
@@ -582,8 +594,9 @@ private fun lyricLineStyle(style: SongComposeStyle, sizeMult: Float): TextStyle 
     color = style.bodyColor,
     fontSize = (style.baseSizeSp * sizeMult).sp,
     lineHeight = (style.baseSizeSp * sizeMult * 1.2f * style.lineSpacingMult).sp,
+    // CSS splits the extra line height evenly above and below the glyphs
     lineHeightStyle = LineHeightStyle(
-        alignment = LineHeightStyle.Alignment.Proportional,
+        alignment = LineHeightStyle.Alignment.Center,
         trim = LineHeightStyle.Trim.None,
     ),
     fontFamily = style.bodyFontFamily,
