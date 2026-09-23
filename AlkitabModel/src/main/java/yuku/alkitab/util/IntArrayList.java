@@ -23,7 +23,7 @@ public class IntArrayList implements Parcelable {
     }
 
     private void expand() {
-        int[] newArray = new int[this.buf.length << 1];
+        int[] newArray = new int[Math.max(1, this.buf.length << 1)];
         System.arraycopy(this.buf, 0, newArray, 0, this.len);
         this.buf = newArray;
     }
