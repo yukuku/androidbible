@@ -6,13 +6,12 @@
 	android:viewportHeight="30">
 	<group
 		android:scaleX="1.25"
-		android:scaleY="1.25"
-		android:translateY="-0.12">
+		android:scaleY="1.25">
 		<path
 			android:fillColor="#ff9800"
-			android:fillType="evenOdd"
-			android:strokeColor="#e6000000"
-			android:strokeWidth="0.544"
-			android:pathData="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7 -7.75 7 -13c0 -3.87 -3.13 -7 -7 -7zM9.33 8.9A2.67 2.67 0 1 0 14.67 8.9A2.67 2.67 0 1 0 9.33 8.9Z" />
+			android:strokeColor="#212121"
+			android:strokeWidth="0.304"
+			android:strokeLineJoin="round"
+			android:pathData="M16 9V4h1c.55 0 1 -.45 1 -1s-.45 -1 -1 -1H7c-.55 0 -1 .45 -1 1s.45 1 1 1h1v5c0 1.66 -1.34 3 -3 3v2h5.97v7l1 1 1 -1v-7H19v-2c-1.66 0 -3 -1.34 -3 -3z" />
 	</group>
 </vector>
