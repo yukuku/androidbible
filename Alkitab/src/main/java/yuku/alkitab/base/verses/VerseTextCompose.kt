@@ -69,6 +69,13 @@ class VerseTextComposeView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
 ) : AbstractComposeView(context, attrs) {
 
+    init {
+        // The AndroidComposeView child is focusable, and a ListView row with a
+        // focusable descendant gets no item clicks or long clicks. The text is
+        // display-only, so nothing inside needs focus.
+        descendantFocusability = FOCUS_BLOCK_DESCENDANTS
+    }
+
     /** The appearance snapshot [bind] took, or null until the first bind. */
     internal var state by mutableStateOf<VerseTextComposeState?>(null)
         private set
