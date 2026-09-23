@@ -25,6 +25,8 @@
 
 Not on the original list but still Java: `SyncAdapter.java` and the devotion article parsers (`DevotionArticle.java` + the six `Article*.java` implementations).
 
+Also ported, beyond the original list (2026-09-23): `Levenshtein`, `AlphanumComparator`, `BookNameSorter`, `PdbBookNumberToBookIdMapping`, `SongFilter`, `Debouncer`, `CurrentReading`, `LidToAri`, `OldVerseTextDecoder`, `VerseTextDecoder` and `YesReaderFactory`. Each port first added characterization tests that pass on the Java code, then kept every Java comment. Problems found along the way and not fixed in the ports are tracked as [REM-46](REM-46-debouncer-thread-leak.md), [REM-47](REM-47-yesreaderfactory-file-leak.md) and [REM-48](REM-48-old-ascii-decoder.md).
+
 Use Android Studio's "Convert Java File to Kotlin" as a starting point, then manually clean up:
 - Replace `@Nullable`/`@NonNull` with Kotlin nullability
 - Replace `static` methods with top-level or companion object

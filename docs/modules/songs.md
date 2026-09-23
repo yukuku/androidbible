@@ -11,7 +11,7 @@ The songs module provides hymn/worship song browsing, searching, and audio playb
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongFragment.kt` — WebView-based song rendering with JavaScript (the default renderer)
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongComposeFragment.kt` + `SongComposeContent.kt` — native Jetpack Compose song renderer, the default drop-in replacement for `SongFragment` (see "Rendering" below)
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.kt` — Song book download, installation, metadata
-- `Alkitab/src/main/java/yuku/alkitab/songs/SongFilter.java` — Search/filter with regex and tokenized queries
+- `Alkitab/src/main/java/yuku/alkitab/songs/SongFilter.kt` — Search/filter with regex and tokenized queries
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongInfo.kt` — Lightweight song record (bookName, code, title, title_original)
 - `Alkitab/src/main/java/yuku/alkitab/songs/newdoc/` — Portable-song document model, JSON (de)serialization, legacy decoder/converter, and renderers (REM-21)
 - `KpriModel/` — Legacy song data model (`Song`, `Verse`, `Lyric`, `VerseKind`) — retained only as the on-device decoder's target type
