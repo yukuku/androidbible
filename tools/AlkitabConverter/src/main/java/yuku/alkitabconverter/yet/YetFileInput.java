@@ -3,6 +3,7 @@ package yuku.alkitabconverter.yet;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
+import yuku.alkitab.yes2.lexicon.EncodedFamily;
 import yuku.alkitab.yes2.lexicon.LexiconCodec;
 import yuku.alkitab.yes2.lexicon.LexiconPrefixTable;
 import yuku.alkitab.yes2.model.PericopeData;
@@ -12,6 +13,7 @@ import yuku.alkitabconverter.util.Rec;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +35,8 @@ public class YetFileInput {
 		public LinkedHashMap<Integer /* arif */, FootnoteEntry> footnoteEntries;
 		/** Null when the file has no lexicon lines. */
 		public List<LexiconPrefixTable.Rule> lexiconPrefixRules;
-		/** Word families as {@link LexiconCodec} encodes them. Null when the file has no lexicon lines. */
-		public List<String> lexiconFamilies;
+		/** Word families, forms in the notation of {@link LexiconCodec}. Null when the file has no lexicon lines. */
+		public List<EncodedFamily> lexiconFamilies;
 
 		public LexiconPrefixTable getLexiconPrefixTable() {
 			return lexiconPrefixRules == null ? LexiconPrefixTable.EMPTY : new LexiconPrefixTable(lexiconPrefixRules);
@@ -246,7 +248,7 @@ public class YetFileInput {
 					res.lexiconPrefixRules.add(new LexiconPrefixTable.Rule(splits[1], splits[2]));
 				} else if ("lexicon".equals(command)) {
 					if (res.lexiconFamilies == null) res.lexiconFamilies = new ArrayList<>();
-					res.lexiconFamilies.add(splits[1]);
+					res.lexiconFamilies.add(new EncodedFamily(splits[1], Arrays.asList(splits).subList(2, splits.length)));
 				} else if (command.trim().startsWith("#") || command.trim().length() == 0) {
 					// comment or blank line
 				} else {
@@ -313,7 +315,7 @@ public class YetFileInput {
 
 		if (res.lexiconFamilies != null) { // every family must decode with the prefix rules given
 			final LexiconPrefixTable table = res.getLexiconPrefixTable();
-			for (final String family : res.lexiconFamilies) {
+			for (final EncodedFamily family : res.lexiconFamilies) {
 				LexiconCodec.decodeFamily(family, table);
 			}
 			System.err.println("lexicon: " + res.lexiconFamilies.size() + " word families, " + (res.lexiconPrefixRules == null ? 0 : res.lexiconPrefixRules.size()) + " prefix rules");

@@ -65,9 +65,11 @@ val nasalPrefixTable = LexiconPrefixTable(
     )
 )
 
-/** Word families from lines in the lexicon's own encoding, e.g. `kasih ~ me<i di~i`. */
-fun familiesOf(vararg lines: String): Map<String, List<String>> =
-    lines.associate { LexiconCodec.decodeFamily(it, nasalPrefixTable) }
+/** Word families from a root followed by its forms in the `.yet` notation, e.g. `kasih ~ me<i di~i`. */
+fun familiesOf(vararg lines: String): Map<String, List<String>> = lines.associate { line ->
+    val words = line.split(' ')
+    words[0] to words.drop(1).map { LexiconCodec.decodeForm(words[0], it, nasalPrefixTable) }
+}
 
 fun lexiconOf(vararg lines: String) = SearchLexicon("TEST", LexiconOrigin.VERSION, familiesOf(*lines), 0)
 

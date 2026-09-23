@@ -70,15 +70,16 @@ the same limitation for whole-word matches; it has not been seen to matter in pr
 A word list is part of the Bible version's own data, like its cross-references and footnotes:
 the `lexicon` section of a yes file, or `{prefix}_lexicon_bt.bt` for the internal version. It
 reaches both from `lexicon_prefix` and `lexicon` lines in the version's `.yet`, which `YetToYes2`
-and `YetToInternal` carry over. The format, including the `~` and `<` abbreviations and the prefix
-table, is in [`docs/binary-formats.md`](../../binary-formats.md#lexicon-file-and-section).
+and `YetToInternal` carry over. The format (forms stored as tokens: the root, the root rewritten by
+a stored table such as `k -> ng`, a shared text piece, or a literal) is in
+[`docs/binary-formats.md`](../../binary-formats.md#lexicon-file-and-section).
 
 `Version.loadLexicon()` reads it (`Yes2Reader` and `InternalReader` implement it; other readers
 have none), and `LexiconRepository` caches it per version. The lists are produced offline; a
 version without one simply has no `lexicon` section.
 
-For Terjemahan Baru the list holds 2,952 families and 15,375 forms, 130 KiB as stored and 47 KB
-once the yes file's Snappy compression is applied.
+For Terjemahan Baru the list holds 2,942 families and 15,373 forms: 78 KiB as the internal file
+and 48 KB as the yes file's Snappy-compressed section.
 
 ### Rules-only word families
 
@@ -145,6 +146,7 @@ Verse counts, letter search against smart search with the version's own word lis
   its `.yet`, and checks that the yes file's `lexicon` section and the internal
   `tb_lexicon_bt.bt` decode to the same families. Skipped unless `ALKITAB_TB_YET` is set;
   `ALKITAB_TB_YES` and `ALKITAB_PROPRIETARY_DIR` enable the two format checks.
-- `LexiconCodecTest` (in `AlkitabYes2`): the `~` and `<` codec and a section round trip.
+- `LexiconCodecTest` (in `AlkitabYes2`): the `~` and `<` notation of the `.yet`, the token
+  encoding of the section, and a round trip.
 - `SmartSearchSnapshotTest`: renders the panel and the Search Lab, in English and Indonesian, to
   `Alkitab/build/snapshots/smart-search/` for review without a device.

@@ -1,5 +1,6 @@
 package yuku.alkitabconverter.internal_common;
 
+import yuku.alkitab.yes2.lexicon.EncodedFamily;
 import yuku.alkitab.yes2.lexicon.LexiconPrefixTable;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.section.LexiconSection;
@@ -50,9 +51,9 @@ public class InternalCommon {
 
 	/**
 	 * @param prefix e.g. "tb"
-	 * @param lexiconFamilies word families as {@link yuku.alkitab.yes2.lexicon.LexiconCodec} encodes them, or null for none
+	 * @param lexiconFamilies word families, forms in the notation of {@link yuku.alkitab.yes2.lexicon.LexiconCodec}, or null for none
 	 */
-	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb, LexiconPrefixTable lexiconPrefixTable, List<String> lexiconFamilies) {
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb, LexiconPrefixTable lexiconPrefixTable, List<EncodedFamily> lexiconFamilies) {
 		final List<List<Rec>> books = new ArrayList<>();
 
 		// Gather books, fix missing "@@"

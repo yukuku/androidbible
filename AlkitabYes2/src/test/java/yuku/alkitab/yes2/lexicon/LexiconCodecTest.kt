@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import yuku.alkitab.yes2.section.LexiconSection
 import yuku.bintex.BintexWriter
@@ -18,21 +19,23 @@ class LexiconCodecTest {
         )
     )
 
+    private fun decode(root: String, vararg forms: String) = forms.map { LexiconCodec.decodeForm(root, it, table) }
+
     @Test
     fun `tilde stands for the root`() {
-        assertEquals("kasih" to listOf("kasih", "dikasihi", "kekasih"), LexiconCodec.decodeFamily("kasih ~ di~i ke~", table))
+        assertEquals(listOf("kasih", "dikasihi", "kekasih"), decode("kasih", "~", "di~i", "ke~"))
     }
 
     @Test
     fun `less-than stands for the root with its start rewritten by the prefix table`() {
-        assertEquals(listOf("mengasihi"), LexiconCodec.decodeFamily("kasih me<i", table).second)
-        assertEquals(listOf("menyembah", "penyembahan"), LexiconCodec.decodeFamily("sembah me< pe<an", table).second)
-        assertEquals(listOf("menulis"), LexiconCodec.decodeFamily("tulis me<", table).second)
+        assertEquals(listOf("mengasihi"), decode("kasih", "me<i"))
+        assertEquals(listOf("menyembah", "penyembahan"), decode("sembah", "me<", "pe<an"))
+        assertEquals(listOf("menulis"), decode("tulis", "me<"))
     }
 
     @Test
-    fun `forms without markers are kept literally`() {
-        assertEquals(listOf("kepada-nya"), LexiconCodec.decodeFamily("kepada kepada-nya", table).second)
+    fun `a form without markers is kept literally`() {
+        assertEquals(listOf("mengutan"), decode("hutan", "mengutan"))
     }
 
     @Test
@@ -45,41 +48,76 @@ class LexiconCodecTest {
 
     @Test
     fun `encoding picks the root, then the rewritten root, and leaves the rest alone`() {
-        assertEquals(
-            "kasih ~ me<i di~i ~-nya ke~-ke~nya",
-            LexiconCodec.encodeFamily("kasih", listOf("kasih", "mengasihi", "dikasihi", "kasih-nya", "kekasih-kekasihnya"), table),
-        )
-        assertEquals("ajar meng~ ~an", LexiconCodec.encodeFamily("ajar", listOf("mengajar", "ajaran"), table))
+        assertEquals("me<i", LexiconCodec.encodeForm("kasih", "mengasihi", table))
+        assertEquals("ke~-ke~nya", LexiconCodec.encodeForm("kasih", "kekasih-kekasihnya", table))
+        assertEquals("me~-~kan", LexiconCodec.encodeForm("reka", "mereka-rekakan", table))
+        assertEquals("meng~", LexiconCodec.encodeForm("ajar", "mengajar", table))
     }
 
     @Test
-    fun `decoding what was encoded gives the forms back`() {
-        val forms = listOf("menyembuhkan", "sembuh", "kesembuhan", "penyembuhan", "sembuhkanlah")
-        val (root, decoded) = LexiconCodec.decodeFamily(LexiconCodec.encodeFamily("sembuh", forms, table), table)
-        assertEquals("sembuh", root)
-        assertEquals(forms, decoded)
+    fun `tokenizing splits at the root markers`() {
+        assertEquals(listOf("me", "~", "-", "~", "kan"), LexiconCodec.tokenize("me~-~kan"))
+        assertEquals(listOf("~"), LexiconCodec.tokenize("~"))
+        assertEquals(listOf("mengutan"), LexiconCodec.tokenize("mengutan"))
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `a rewritten root with no rule for it is rejected`() {
-        LexiconCodec.decodeFamily("ajar me<", table)
+        decode("ajar", "me<")
+    }
+
+    private fun roundTrip(vararg families: EncodedFamily): Pair<ByteArray, LexiconSection> {
+        val out = ByteArrayOutputStream()
+        LexiconSection.writeTo(BintexWriter(out), table, families.toList())
+        val bytes = out.toByteArray()
+        return bytes to LexiconSection.readFrom(ByteArrayInputStream(bytes))
     }
 
     @Test
     fun `the section round-trips through bintex`() {
-        val lines = listOf("kasih ~ me<i di~i", "sembah me< pe<an")
-        val out = ByteArrayOutputStream()
-        LexiconSection.writeTo(BintexWriter(out), table, lines)
-
-        val section = LexiconSection.readFrom(ByteArrayInputStream(out.toByteArray()))
+        val (_, section) = roundTrip(
+            EncodedFamily("kasih", listOf("~", "me<i", "di~i", "ke~-ke~nya")),
+            EncodedFamily("reka", listOf("me~-~kan", "~an")),
+            EncodedFamily("hutan", listOf("~", "mengutan")),
+        )
         assertEquals(listOf("k", "t", "s", "p"), section.prefixTable.rules.map { it.from })
-        assertEquals(listOf("kasih", "sembah"), section.families.keys.toList())
-        assertEquals(listOf("kasih", "mengasihi", "dikasihi"), section.families["kasih"])
-        assertEquals(listOf("menyembah", "penyembahan"), section.families["sembah"])
+        assertEquals(listOf("kasih", "reka", "hutan"), section.families.keys.toList())
+        assertEquals(listOf("kasih", "mengasihi", "dikasihi", "kekasih-kekasihnya"), section.families["kasih"])
+        assertEquals(listOf("mereka-rekakan", "rekaan"), section.families["reka"])
+        assertEquals(listOf("hutan", "mengutan"), section.families["hutan"])
+    }
+
+    @Test
+    fun `pieces used twice go in the table and pieces used once are written out`() {
+        // "me" is used twice, so the second family's form refers to it by a one-byte token;
+        // "mengutan" is used once, so it is written in full after a literal token.
+        val (bytes, _) = roundTrip(
+            EncodedFamily("kasih", listOf("me<i")),
+            EncodedFamily("sembah", listOf("me<")),
+            EncodedFamily("hutan", listOf("mengutan")),
+        )
+        val text = String(bytes, Charsets.ISO_8859_1)
+        assertEquals(1, Regex("me").findAll(text.substringBefore("kasih")).count())
+        assertTrue(text.contains("mengutan"))
+    }
+
+    @Test(expected = RuntimeException::class)
+    fun `a reserved token is rejected`() {
+        val out = ByteArrayOutputStream()
+        val bw = BintexWriter(out)
+        bw.writeUint8(2)
+        bw.writeUint8(0)
+        bw.writeVarUint(0)
+        bw.writeInt(1)
+        bw.writeAutoString("kasih")
+        bw.writeVarUint(1)
+        bw.writeVarUint(1)
+        bw.writeVarUint(3)
+        LexiconSection.readFrom(ByteArrayInputStream(out.toByteArray()))
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `the writer refuses a line the reader could not decode`() {
-        LexiconSection.writeTo(BintexWriter(ByteArrayOutputStream()), LexiconPrefixTable.EMPTY, listOf("kasih me<i"))
+    fun `the writer refuses a form the reader could not decode`() {
+        LexiconSection.writeTo(BintexWriter(ByteArrayOutputStream()), LexiconPrefixTable.EMPTY, listOf(EncodedFamily("kasih", listOf("me<i"))))
     }
 }

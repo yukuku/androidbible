@@ -5,6 +5,7 @@ import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.compress.SnappyOutputStream;
 import yuku.alkitab.yes2.io.MemoryRandomOutputStream;
+import yuku.alkitab.yes2.lexicon.EncodedFamily;
 import yuku.alkitab.yes2.lexicon.LexiconPrefixTable;
 import yuku.alkitab.yes2.io.RandomAccessFileRandomOutputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
@@ -149,9 +150,9 @@ public class Yes2Common {
     }
 
     /**
-     * @param lexiconFamilies word families as {@link yuku.alkitab.yes2.lexicon.LexiconCodec} encodes them, or null for none
+     * @param lexiconFamilies word families, forms in the notation of {@link yuku.alkitab.yes2.lexicon.LexiconCodec}, or null for none
      */
-    public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final LexiconPrefixTable lexiconPrefixTable, final List<String> lexiconFamilies) throws IOException {
+    public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final LexiconPrefixTable lexiconPrefixTable, final List<EncodedFamily> lexiconFamilies) throws IOException {
         RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
         raf.setLength(0);
         RandomOutputStream output = new RandomAccessFileRandomOutputStream(raf);
@@ -163,7 +164,7 @@ public class Yes2Common {
         createYesFile(ros, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, null, null);
     }
 
-    public static void createYesFile(final RandomOutputStream ros, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final LexiconPrefixTable lexiconPrefixTable, final List<String> lexiconFamilies) throws IOException {
+    public static void createYesFile(final RandomOutputStream ros, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final LexiconPrefixTable lexiconPrefixTable, final List<EncodedFamily> lexiconFamilies) throws IOException {
         VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, pericopeData != null);
 		BooksInfoSection booksInfoSection = getBooksInfoSection(versionInfo, textDb);
 		
@@ -326,7 +327,7 @@ public class Yes2Common {
 	static class CompressibleLexiconSection extends SectionContent implements SectionContent.Writer {
 		final CompressionInfo compressionInfo;
 
-		public CompressibleLexiconSection(final LexiconPrefixTable prefixTable, final List<String> families, boolean compressed) throws IOException {
+		public CompressibleLexiconSection(final LexiconPrefixTable prefixTable, final List<EncodedFamily> families, boolean compressed) throws IOException {
 			super(LexiconSection.SECTION_NAME);
 			compressionInfo = new CompressionInfo(compressed);
 

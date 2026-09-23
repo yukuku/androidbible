@@ -2,7 +2,7 @@ package yuku.alkitab.yes2.lexicon
 
 /**
  * Rewrites the start of a root the way a nasal prefix does, e.g. `k` to `ng` so that `me` + the
- * rewritten `kasih` spells `mengasih`. Stored with the lexicon, so a translation can carry its own.
+ * rewritten `kasih` spells `mengasih`. Stored with the lexicon, so a version can carry its own.
  *
  * When more than one rule matches a root, the longest [Rule.from] wins.
  */
@@ -23,68 +23,80 @@ class LexiconPrefixTable(val rules: List<Rule>) {
     }
 }
 
+/** A root and its forms, each form written the way [LexiconCodec] abbreviates it. */
+class EncodedFamily(val root: String, val forms: List<String>)
+
 /**
- * Text form of one word family: the root, then its forms, separated by spaces. Within a form,
- * [ROOT] stands for the root and [REWRITTEN_ROOT] for the root rewritten by the prefix table:
- *
- * ```
- * kasih ~ me<i di~i ke~
- * ```
- *
- * is `kasih`, `mengasihi`, `dikasihi` and `kekasih`, given the rule `k` to `ng`.
+ * The text notation for a form, used in `.yet` files: [ROOT] stands for the root and
+ * [REWRITTEN_ROOT] for the root rewritten by the prefix table. With root `kasih` and the rule
+ * `k` to `ng`, `me<i` is `mengasihi` and `ke~-ke~nya` is `kekasih-kekasihnya`.
  */
 object LexiconCodec {
     const val ROOT = '~'
     const val REWRITTEN_ROOT = '<'
 
-    /** Returns the root followed by its decoded forms. */
     @JvmStatic
-    fun decodeFamily(line: String, table: LexiconPrefixTable): Pair<String, List<String>> {
-        val tokens = line.split(' ').filter { it.isNotEmpty() }
-        require(tokens.isNotEmpty()) { "empty word family" }
-        val root = tokens[0]
-        val rewritten by lazy { table.rewrite(root) }
-        val forms = tokens.subList(1, tokens.size).map { token ->
-            if (token.indexOf(ROOT) < 0 && token.indexOf(REWRITTEN_ROOT) < 0) return@map token
-            buildString {
-                for (c in token) {
-                    when (c) {
-                        ROOT -> append(root)
-                        REWRITTEN_ROOT -> append(rewritten ?: throw IllegalArgumentException("no prefix rule applies to root '$root' in '$line'"))
-                        else -> append(c)
-                    }
+    fun decodeForm(root: String, encoded: String, table: LexiconPrefixTable): String {
+        if (encoded.indexOf(ROOT) < 0 && encoded.indexOf(REWRITTEN_ROOT) < 0) return encoded
+        return buildString {
+            for (token in tokenize(encoded)) {
+                when (token) {
+                    ROOT.toString() -> append(root)
+                    REWRITTEN_ROOT.toString() -> append(
+                        table.rewrite(root) ?: throw IllegalArgumentException("no prefix rule applies to root '$root' in '$encoded'")
+                    )
+                    else -> append(token)
                 }
             }
         }
-        return root to forms
     }
 
     /**
-     * Encodes a word family, replacing every occurrence of the root, or of the root rewritten by
-     * the prefix table, scanning left to right.
+     * Abbreviates [form], replacing every occurrence of the root, or of the root rewritten by the
+     * prefix table, scanning left to right.
      */
     @JvmStatic
-    fun encodeFamily(root: String, forms: List<String>, table: LexiconPrefixTable): String {
+    fun encodeForm(root: String, form: String, table: LexiconPrefixTable): String {
         requirePlain(root)
+        requirePlain(form)
         val rewritten = table.rewrite(root)
         return buildString {
-            append(root)
-            for (form in forms) {
-                requirePlain(form)
-                append(' ')
-                var i = 0
-                while (i < form.length) {
-                    when {
-                        form.startsWith(root, i) -> { append(ROOT); i += root.length }
-                        rewritten != null && form.startsWith(rewritten, i) -> { append(REWRITTEN_ROOT); i += rewritten.length }
-                        else -> { append(form[i]); i++ }
-                    }
+            var i = 0
+            while (i < form.length) {
+                when {
+                    form.startsWith(root, i) -> { append(ROOT); i += root.length }
+                    rewritten != null && form.startsWith(rewritten, i) -> { append(REWRITTEN_ROOT); i += rewritten.length }
+                    else -> { append(form[i]); i++ }
                 }
             }
         }
     }
 
+    /**
+     * Splits an abbreviated form into its tokens: `"~"`, `"<"`, or a run of text between them.
+     * `me~-~kan` is `me`, `~`, `-`, `~`, `kan`.
+     */
+    @JvmStatic
+    fun tokenize(encoded: String): List<String> {
+        val res = ArrayList<String>(4)
+        var start = 0
+        for (i in encoded.indices) {
+            val c = encoded[i]
+            if (c == ROOT || c == REWRITTEN_ROOT) {
+                if (i > start) res += encoded.substring(start, i)
+                res += c.toString()
+                start = i + 1
+            }
+        }
+        if (start < encoded.length) res += encoded.substring(start)
+        return res
+    }
+
+    @JvmStatic
+    fun decodeFamily(family: EncodedFamily, table: LexiconPrefixTable): List<String> =
+        family.forms.map { decodeForm(family.root, it, table) }
+
     private fun requirePlain(word: String) {
-        require(word.isNotEmpty() && word.none { it == ' ' || it == ROOT || it == REWRITTEN_ROOT }) { "not a plain word: '$word'" }
+        require(word.isNotEmpty() && word.none { it == ROOT || it == REWRITTEN_ROOT || it.isWhitespace() }) { "not a plain word: '$word'" }
     }
 }

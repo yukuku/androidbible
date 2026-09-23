@@ -158,36 +158,59 @@ Read by `XrefsSection.Reader` and `FootnotesSection.Reader`. Lookup uses unsigne
 the forms of it that occur in the version, so a search for any form can find them all:
 
 ```
-uint8   data_format_version   // must be 1
-uint8   prefix_rule_count
-valueString[prefix_rule_count * 2]   prefix_rules   // from, to, from, to, ...
-int     family_count
-valueString[family_count]            families
+uint8       data_format_version   // must be 2
+uint8       rewrite_count
+autostring  rewrites[rewrite_count * 2]   // from, to, from, to, ...
+varuint     piece_count
+autostring  pieces[piece_count]
+int         family_count
+family[family_count] {
+    autostring  root
+    varuint     form_count
+    form[form_count] {
+        varuint  token_count
+        token[token_count]        // varuint, then an autostring for a literal
+    }
+}
 ```
 
-Each family is the root followed by its forms, separated by spaces. Inside a form, `~` stands for
-the root and `<` for the root with its start rewritten by the first-matching (longest `from`)
-prefix rule:
+A form is its tokens joined together:
+
+| Token | Meaning |
+|---|---|
+| 0 | the root as is |
+| 1 | the root with its start rewritten by the first-matching (longest `from`) rewrite |
+| 2 | a literal: an autostring follows, spelled out in full |
+| 3 to 5 | reserved; a reader rejects them |
+| 6 and up | `pieces[token - 6]` |
+
+With the rewrites `k -> ng`, `t -> n`, `s -> ny`, `p -> m`:
 
 ```
-prefix rules: k -> ng, t -> n, s -> ny, p -> m
-kasih ~ me<i di~i ke~        =  kasih, mengasihi, dikasihi, kekasih
-sembah me< pe<an             =  menyembah, penyembahan
+root kasih:  mengasihi       = "me", 1, "i"
+             kekasih-kekasihnya = "ke", 0, "-", "ke", 0, "nya"
+root reka:   mereka-rekakan  = "me", 0, "-", 0, "kan"
+root hutan:  mengutan        = literal "mengutan"
 ```
 
-A form holding neither marker is stored literally. Read by `LexiconSection.readFrom()`, decoded
-by `LexiconCodec`; both are in `AlkitabYes2`. `InternalReader.loadLexicon()` reads the file,
+Any text can sit between two roots, not only a hyphen. The writer puts a text piece in the piece
+table when it is used at least twice across the lexicon, most used first so the common pieces get
+one-byte tokens, and writes the rest as literals. Read by `LexiconSection.readFrom()` in
+`AlkitabYes2`, which also holds the writer; `InternalReader.loadLexicon()` reads the file and
 `Yes2Reader.loadLexicon()` the section.
 
-In a `.yet` file the lexicon is written as it is stored, one line per rule and per family:
+In a `.yet` file a lexicon is written in a readable notation, one line per rewrite and per family,
+tab-separated like every other `.yet` line. In a form, `~` stands for the root and `<` for the
+rewritten root:
 
 ```
 lexicon_prefix<TAB>k<TAB>ng
-lexicon<TAB>kasih ~ me<i di~i ke~
+lexicon<TAB>kasih<TAB>~<TAB>me<i<TAB>di~i<TAB>ke~-ke~nya
+lexicon<TAB>hutan<TAB>~<TAB>mengutan
 ```
 
-`YetToYes2` and `YetToInternal` decode every family while reading, so a family naming a prefix rule
-that does not apply to its root is rejected before any output is written.
+The converters split each form at `~` and `<` into tokens. They decode every form while reading,
+so a form using `<` on a root no rewrite applies to is rejected before any output is written.
 
 ### Differences from YES2
 
