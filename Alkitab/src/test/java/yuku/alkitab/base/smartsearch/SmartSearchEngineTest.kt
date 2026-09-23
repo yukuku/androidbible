@@ -41,12 +41,12 @@ class SmartSearchEngineTest {
     )
 
     private val lexicon = lexiconOf(
-        "kasih ~ me<i di~i",
-        "berkat ~ di~i ~ilah",
-        "kata ber~ ~ ~-nya",
-        "sembuh ~ me<kan",
-        "sakit ~ pe<mu",
-        "iman ~ ber~",
+        "kasih kasih mengasihi dikasihi",
+        "berkat berkat diberkati berkatilah",
+        "kata berkata kata kata-nya",
+        "sembuh sembuh menyembuhkan",
+        "sakit sakit penyakitmu",
+        "iman iman beriman",
     )
 
     private val vocabulary = VersionVocabulary.build("test", version)
@@ -223,7 +223,7 @@ class SmartSearchEngineTest {
 
     @Test
     fun `the version's own lexicon is used when it carries one`() {
-        val v = versionOf(mapOf((0 to 1) to listOf("Aku mengasihi engkau.")), lexicon = familiesOf("kasih ~ me<i"))
+        val v = versionOf(mapOf((0 to 1) to listOf("Aku mengasihi engkau.")), lexicon = familiesOf("kasih kasih mengasihi"))
         val lex = LexiconRepository.builtInFor(v, "with-lexicon")!!
         assertEquals(LexiconOrigin.VERSION, lex.origin)
         assertEquals("kasih", lex.rootOf["mengasihi"])

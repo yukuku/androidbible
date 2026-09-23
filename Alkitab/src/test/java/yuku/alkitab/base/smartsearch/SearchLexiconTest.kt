@@ -6,7 +6,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SearchLexiconTest {
-    private val lex = lexiconOf("kasih ~ me<i di~i ~-nya", "sembuh me<kan di~kan")
+    private val lex = lexiconOf("kasih kasih mengasihi dikasihi kasih-nya", "sembuh menyembuhkan disembuhkan")
 
     @Test
     fun `every form maps to its root, and a root that never occurs bare still maps to itself`() {

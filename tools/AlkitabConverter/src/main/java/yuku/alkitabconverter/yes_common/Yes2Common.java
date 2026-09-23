@@ -5,8 +5,6 @@ import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.compress.SnappyOutputStream;
 import yuku.alkitab.yes2.io.MemoryRandomOutputStream;
-import yuku.alkitab.yes2.lexicon.EncodedFamily;
-import yuku.alkitab.yes2.lexicon.LexiconPrefixTable;
 import yuku.alkitab.yes2.io.RandomAccessFileRandomOutputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
@@ -34,6 +32,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Yes2Common {
@@ -146,25 +145,25 @@ public class Yes2Common {
 	}
 
     public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) throws IOException {
-        createYesFile(outputFile, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, null, null);
+        createYesFile(outputFile, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, null);
     }
 
     /**
-     * @param lexiconFamilies word families, forms in the notation of {@link yuku.alkitab.yes2.lexicon.LexiconCodec}, or null for none
+     * @param lexiconFamilies root to its forms, spelled out, or null for no lexicon
      */
-    public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final LexiconPrefixTable lexiconPrefixTable, final List<EncodedFamily> lexiconFamilies) throws IOException {
+    public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final Map<String, List<String>> lexiconFamilies) throws IOException {
         RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
         raf.setLength(0);
         RandomOutputStream output = new RandomAccessFileRandomOutputStream(raf);
-        createYesFile(output, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, lexiconPrefixTable, lexiconFamilies);
+        createYesFile(output, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, lexiconFamilies);
         output.close();
     }
 
     public static void createYesFile(final RandomOutputStream ros, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) throws IOException {
-        createYesFile(ros, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, null, null);
+        createYesFile(ros, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, null);
     }
 
-    public static void createYesFile(final RandomOutputStream ros, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final LexiconPrefixTable lexiconPrefixTable, final List<EncodedFamily> lexiconFamilies) throws IOException {
+    public static void createYesFile(final RandomOutputStream ros, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final Map<String, List<String>> lexiconFamilies) throws IOException {
         VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, pericopeData != null);
 		BooksInfoSection booksInfoSection = getBooksInfoSection(versionInfo, textDb);
 		
@@ -185,7 +184,7 @@ public class Yes2Common {
 		}
 
 		if (lexiconFamilies != null) {
-			yesWriter.sections.add(new CompressibleLexiconSection(lexiconPrefixTable == null ? LexiconPrefixTable.EMPTY : lexiconPrefixTable, lexiconFamilies, compressed));
+			yesWriter.sections.add(new CompressibleLexiconSection(lexiconFamilies, compressed));
 		}
 
 		yesWriter.writeToFile(ros);
@@ -327,12 +326,12 @@ public class Yes2Common {
 	static class CompressibleLexiconSection extends SectionContent implements SectionContent.Writer {
 		final CompressionInfo compressionInfo;
 
-		public CompressibleLexiconSection(final LexiconPrefixTable prefixTable, final List<EncodedFamily> families, boolean compressed) throws IOException {
+		public CompressibleLexiconSection(final Map<String, List<String>> families, boolean compressed) throws IOException {
 			super(LexiconSection.SECTION_NAME);
 			compressionInfo = new CompressionInfo(compressed);
 
 			final BintexWriter bw = new BintexWriter(compressionInfo.getOutputStream());
-			LexiconSection.writeTo(bw, prefixTable, families);
+			System.err.println(LexiconSection.writeTo(bw, families).describe());
 
 			compressionInfo.finalizeOutputStream();
 		}

@@ -40,9 +40,9 @@ Snappy compression is on by default; `--no-compress` turns it off.
 `--ignore-skipped-verses` permits gaps in verse numbering, though chapters
 must still be consecutive and each book must start at chapter 1 verse 1.
 
-A `.yet` may carry a smart-search lexicon in `lexicon_prefix` and `lexicon` lines; both converters
-pass it on, as the `lexicon` section and as `{prefix}_lexicon_bt.bt`. The lines are described in
-[binary-formats.md](binary-formats.md#lexicon-file-and-section).
+A `.yet` may carry a smart-search lexicon in `lexicon` lines, forms spelled out; both converters
+compress it and pass it on, as the `lexicon` section and as `{prefix}_lexicon_bt.bt`. The lines
+are described in [binary-formats.md](binary-formats.md#lexicon-file-and-section).
 
 ### Source-format importers
 

@@ -1,7 +1,5 @@
 package yuku.alkitabconverter.internal_common;
 
-import yuku.alkitab.yes2.lexicon.EncodedFamily;
-import yuku.alkitab.yes2.lexicon.LexiconPrefixTable;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.section.LexiconSection;
 import yuku.alkitabconverter.util.CountingOutputStream;
@@ -20,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -46,14 +45,14 @@ public class InternalCommon {
 	 * @param prefix e.g. "tb"
 	 */
 	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb) {
-		createInternalFiles(outDir, prefix, bookNames, _recs, pericopeData, xrefDb, footnoteDb, null, null);
+		createInternalFiles(outDir, prefix, bookNames, _recs, pericopeData, xrefDb, footnoteDb, null);
 	}
 
 	/**
 	 * @param prefix e.g. "tb"
-	 * @param lexiconFamilies word families, forms in the notation of {@link yuku.alkitab.yes2.lexicon.LexiconCodec}, or null for none
+	 * @param lexiconFamilies root to its forms, spelled out, or null for no lexicon
 	 */
-	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb, LexiconPrefixTable lexiconPrefixTable, List<EncodedFamily> lexiconFamilies) {
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb, Map<String, List<String>> lexiconFamilies) {
 		final List<List<Rec>> books = new ArrayList<>();
 
 		// Gather books, fix missing "@@"
@@ -204,7 +203,7 @@ public class InternalCommon {
 			// lexicon
 			if (lexiconFamilies != null) {
 				final BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_lexicon_bt.bt", prefix))));
-				LexiconSection.writeTo(bw, lexiconPrefixTable == null ? LexiconPrefixTable.EMPTY : lexiconPrefixTable, lexiconFamilies);
+				System.err.println(LexiconSection.writeTo(bw, lexiconFamilies).describe());
 				bw.close();
 			}
 

@@ -3,9 +3,6 @@ package yuku.alkitabconverter.yet;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
-import yuku.alkitab.yes2.lexicon.EncodedFamily;
-import yuku.alkitab.yes2.lexicon.LexiconCodec;
-import yuku.alkitab.yes2.lexicon.LexiconPrefixTable;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
@@ -33,14 +30,8 @@ public class YetFileInput {
 		public Map<Integer, String> bookAbbreviations; // key is book_1
 		public LinkedHashMap<Integer /* arif */, XrefEntry> xrefEntries;
 		public LinkedHashMap<Integer /* arif */, FootnoteEntry> footnoteEntries;
-		/** Null when the file has no lexicon lines. */
-		public List<LexiconPrefixTable.Rule> lexiconPrefixRules;
-		/** Word families, forms in the notation of {@link LexiconCodec}. Null when the file has no lexicon lines. */
-		public List<EncodedFamily> lexiconFamilies;
-
-		public LexiconPrefixTable getLexiconPrefixTable() {
-			return lexiconPrefixRules == null ? LexiconPrefixTable.EMPTY : new LexiconPrefixTable(lexiconPrefixRules);
-		}
+		/** Root to its forms, spelled out. Null when the file has no lexicon lines. */
+		public LinkedHashMap<String, List<String>> lexiconFamilies;
 
 		void addInfo(String k, String v) {
 			if (infos == null) infos = new LinkedHashMap<>();
@@ -243,12 +234,15 @@ public class YetFileInput {
 
 					res.addFootnoteEntry((Ari.encode(book_1 - 1, chapter_1, verse_1) << 8) | field_1, fe);
 
-				} else if ("lexicon_prefix".equals(command)) {
-					if (res.lexiconPrefixRules == null) res.lexiconPrefixRules = new ArrayList<>();
-					res.lexiconPrefixRules.add(new LexiconPrefixTable.Rule(splits[1], splits[2]));
 				} else if ("lexicon".equals(command)) {
-					if (res.lexiconFamilies == null) res.lexiconFamilies = new ArrayList<>();
-					res.lexiconFamilies.add(new EncodedFamily(splits[1], Arrays.asList(splits).subList(2, splits.length)));
+					if (res.lexiconFamilies == null) res.lexiconFamilies = new LinkedHashMap<>();
+					final List<String> forms = Arrays.asList(splits).subList(2, splits.length);
+					if (splits[1].isEmpty() || forms.isEmpty() || forms.contains("")) {
+						throw new RuntimeException("lexicon line needs a root and at least one form, none of them empty");
+					}
+					if (res.lexiconFamilies.put(splits[1], forms) != null) {
+						throw new RuntimeException("lexicon root listed twice: " + splits[1]);
+					}
 				} else if (command.trim().startsWith("#") || command.trim().length() == 0) {
 					// comment or blank line
 				} else {
@@ -313,12 +307,8 @@ public class YetFileInput {
 			}
 		}
 
-		if (res.lexiconFamilies != null) { // every family must decode with the prefix rules given
-			final LexiconPrefixTable table = res.getLexiconPrefixTable();
-			for (final EncodedFamily family : res.lexiconFamilies) {
-				LexiconCodec.decodeFamily(family, table);
-			}
-			System.err.println("lexicon: " + res.lexiconFamilies.size() + " word families, " + (res.lexiconPrefixRules == null ? 0 : res.lexiconPrefixRules.size()) + " prefix rules");
+		if (res.lexiconFamilies != null) {
+			System.err.println("lexicon: " + res.lexiconFamilies.size() + " word families");
 		}
 
 		for (Entry<Integer, Integer> e: nversePerBook.entrySet()) {

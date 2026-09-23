@@ -14,9 +14,6 @@ import yuku.alkitab.base.util.SearchEngineQuery
 import yuku.alkitab.model.Version
 import yuku.alkitab.yes2.Yes2Reader
 import yuku.alkitab.yes2.io.RandomAccessFileRandomInputStream
-import yuku.alkitab.yes2.lexicon.EncodedFamily
-import yuku.alkitab.yes2.lexicon.LexiconCodec
-import yuku.alkitab.yes2.lexicon.LexiconPrefixTable
 import yuku.alkitab.yes2.section.LexiconSection
 
 /**
@@ -51,19 +48,15 @@ class TerjemahanBaruSmartSearchTest {
             val yet = System.getenv("ALKITAB_TB_YET")?.let(::File)?.takeIf { it.isFile } ?: return
 
             val verses = LinkedHashMap<Pair<Int, Int>, MutableList<String>>()
-            val prefixRules = mutableListOf<LexiconPrefixTable.Rule>()
-            val encoded = mutableListOf<EncodedFamily>()
+            val fams = LinkedHashMap<String, List<String>>()
             yet.forEachLine { line ->
                 val f = line.split('\t')
                 when (f[0]) {
                     "verse" -> verses.getOrPut(f[1].toInt() - 1 to f[2].toInt()) { mutableListOf() } += line.split('\t', limit = 5)[4]
-                    "lexicon_prefix" -> prefixRules += LexiconPrefixTable.Rule(f[1], f[2])
-                    "lexicon" -> encoded += EncodedFamily(f[1], f.drop(2))
+                    "lexicon" -> fams[f[1]] = f.drop(2)
                 }
             }
-            if (encoded.isEmpty()) return
-            val table = LexiconPrefixTable(prefixRules)
-            val fams = encoded.associate { it.root to LexiconCodec.decodeFamily(it, table) }
+            if (fams.isEmpty()) return
             families = fams
 
             val v = versionOf(verses, locale = "in", shortName = "TB", lexicon = fams)

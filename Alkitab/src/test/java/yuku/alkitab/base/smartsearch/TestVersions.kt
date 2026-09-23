@@ -9,8 +9,6 @@ import yuku.alkitab.model.Version
 import yuku.alkitab.model.XrefEntry
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
-import yuku.alkitab.yes2.lexicon.LexiconCodec
-import yuku.alkitab.yes2.lexicon.LexiconPrefixTable
 
 /**
  * An in-memory [Version] for search tests. [verses] maps `(bookId, chapter)` to that chapter's
@@ -55,20 +53,10 @@ fun versionOf(
     }
 }
 
-/** The prefix rules the Indonesian word lists use. */
-val nasalPrefixTable = LexiconPrefixTable(
-    listOf(
-        LexiconPrefixTable.Rule("k", "ng"),
-        LexiconPrefixTable.Rule("t", "n"),
-        LexiconPrefixTable.Rule("s", "ny"),
-        LexiconPrefixTable.Rule("p", "m"),
-    )
-)
-
-/** Word families from a root followed by its forms in the `.yet` notation, e.g. `kasih ~ me<i di~i`. */
+/** Word families from a root followed by its forms, separated by spaces, e.g. `kasih mengasihi dikasihi`. */
 fun familiesOf(vararg lines: String): Map<String, List<String>> = lines.associate { line ->
     val words = line.split(' ')
-    words[0] to words.drop(1).map { LexiconCodec.decodeForm(words[0], it, nasalPrefixTable) }
+    words[0] to words.drop(1)
 }
 
 fun lexiconOf(vararg lines: String) = SearchLexicon("TEST", LexiconOrigin.VERSION, familiesOf(*lines), 0)

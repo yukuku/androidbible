@@ -158,9 +158,11 @@ Read by `XrefsSection.Reader` and `FootnotesSection.Reader`. Lookup uses unsigne
 the forms of it that occur in the version, so a search for any form can find them all:
 
 ```
-uint8       data_format_version   // must be 2
-uint8       rewrite_count
-autostring  rewrites[rewrite_count * 2]   // from, to, from, to, ...
+uint8       data_format_version   // must be 1
+uint8       start_rule_count
+autostring  start_rules[start_rule_count * 2]   // from, to, from, to, ...
+uint8       end_rule_count
+autostring  end_rules[end_rule_count * 2]
 varuint     piece_count
 autostring  pieces[piece_count]
 int         family_count
@@ -179,38 +181,43 @@ A form is its tokens joined together:
 | Token | Meaning |
 |---|---|
 | 0 | the root as is |
-| 1 | the root with its start rewritten by the first-matching (longest `from`) rewrite |
+| 1 | the root with its start rewritten by the start rules |
 | 2 | a literal: an autostring follows, spelled out in full |
-| 3 to 5 | reserved; a reader rejects them |
+| 3 | the root with its end rewritten by the end rules |
+| 4, 5 | reserved; a reader rejects them |
 | 6 and up | `pieces[token - 6]` |
 
-With the rewrites `k -> ng`, `t -> n`, `s -> ny`, `p -> m`:
+A start rule `from -> to` applies to a root beginning with `from` and replaces that beginning with
+`to`; an end rule does the same at the end. When several rules of a table match, the longest `from`
+wins. With the start rule `k -> ng` and the end rule `y -> i`:
 
 ```
-root kasih:  mengasihi       = "me", 1, "i"
+root kasih:  mengasihi          = "me", 1, "i"
              kekasih-kekasihnya = "ke", 0, "-", "ke", 0, "nya"
-root reka:   mereka-rekakan  = "me", 0, "-", 0, "kan"
-root hutan:  mengutan        = literal "mengutan"
+root reka:   mereka-rekakan     = "me", 0, "-", 0, "kan"
+root carry:  carried            = 3, "ed"
+root hutan:  mengutan           = literal "mengutan"
 ```
 
-Any text can sit between two roots, not only a hyphen. The writer puts a text piece in the piece
-table when it is used at least twice across the lexicon, most used first so the common pieces get
-one-byte tokens, and writes the rest as literals. Read by `LexiconSection.readFrom()` in
-`AlkitabYes2`, which also holds the writer; `InternalReader.loadLexicon()` reads the file and
-`Yes2Reader.loadLexicon()` the section.
+Any text can sit between two roots, not only a hyphen. Read by `LexiconSection.readFrom()` in
+`AlkitabYes2`; `InternalReader.loadLexicon()` reads the file and `Yes2Reader.loadLexicon()` the
+section.
 
-In a `.yet` file a lexicon is written in a readable notation, one line per rewrite and per family,
-tab-separated like every other `.yet` line. In a form, `~` stands for the root and `<` for the
-rewritten root:
+The rules and pieces are not written by hand. `LexiconSection.writeTo()` takes plain forms and
+`LexiconCompiler` chooses them to make the output small: it adopts rewrite rules one at a time,
+each time the one that saves the most bytes, splits every form into root tokens and text, and puts
+a text run in the piece table when it is used at least twice, most used first so the common pieces
+get one-byte tokens. The rest are literals. The chosen rules need not look like grammar: for
+Terjemahan Baru the start rules come out as `t -> ` (nothing), `s -> y`, `k -> g` and `p -> m`,
+sharing the piece `men`, which is a few bytes smaller than `k -> ng` and the like with `me`.
+
+In a `.yet` file a lexicon is one line per family, tab-separated like every other `.yet` line: the
+root, then each form spelled out.
 
 ```
-lexicon_prefix<TAB>k<TAB>ng
-lexicon<TAB>kasih<TAB>~<TAB>me<i<TAB>di~i<TAB>ke~-ke~nya
-lexicon<TAB>hutan<TAB>~<TAB>mengutan
+lexicon<TAB>kasih<TAB>kasih<TAB>mengasihi<TAB>dikasihi<TAB>kekasih-kekasihnya
+lexicon<TAB>hutan<TAB>hutan<TAB>mengutan
 ```
-
-The converters split each form at `~` and `<` into tokens. They decode every form while reading,
-so a form using `<` on a root no rewrite applies to is rejected before any output is written.
 
 ### Differences from YES2
 

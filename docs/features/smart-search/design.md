@@ -69,9 +69,10 @@ the same limitation for whole-word matches; it has not been seen to matter in pr
 
 A word list is part of the Bible version's own data, like its cross-references and footnotes:
 the `lexicon` section of a yes file, or `{prefix}_lexicon_bt.bt` for the internal version. It
-reaches both from `lexicon_prefix` and `lexicon` lines in the version's `.yet`, which `YetToYes2`
-and `YetToInternal` carry over. The format (forms stored as tokens: the root, the root rewritten by
-a stored table such as `k -> ng`, a shared text piece, or a literal) is in
+reaches both from `lexicon` lines in the version's `.yet`, which list each form spelled out.
+`YetToYes2` and `YetToInternal` compress them: `LexiconCompiler` finds rewrite rules for the start
+and the end of roots in the data, and stores each form as tokens (the root, a rewritten root, a
+shared text piece, or a literal). The format is in
 [`docs/binary-formats.md`](../../binary-formats.md#lexicon-file-and-section).
 
 `Version.loadLexicon()` reads it (`Yes2Reader` and `InternalReader` implement it; other readers
@@ -79,7 +80,7 @@ have none), and `LexiconRepository` caches it per version. The lists are produce
 version without one simply has no `lexicon` section.
 
 For Terjemahan Baru the list holds 2,942 families and 15,373 forms: 78 KiB as the internal file
-and 48 KB as the yes file's Snappy-compressed section.
+and 49 KB as the yes file's Snappy-compressed section.
 
 ### Rules-only word families
 
@@ -146,7 +147,7 @@ Verse counts, letter search against smart search with the version's own word lis
   its `.yet`, and checks that the yes file's `lexicon` section and the internal
   `tb_lexicon_bt.bt` decode to the same families. Skipped unless `ALKITAB_TB_YET` is set;
   `ALKITAB_TB_YES` and `ALKITAB_PROPRIETARY_DIR` enable the two format checks.
-- `LexiconCodecTest` (in `AlkitabYes2`): the `~` and `<` notation of the `.yet`, the token
-  encoding of the section, and a round trip.
+- `LexiconSectionTest` (in `AlkitabYes2`): the rewrite rules, the rules the compiler finds for
+  Indonesian and English samples, the token encoding, and a round trip.
 - `SmartSearchSnapshotTest`: renders the panel and the Search Lab, in English and Indonesian, to
   `Alkitab/build/snapshots/smart-search/` for review without a device.

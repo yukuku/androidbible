@@ -58,7 +58,7 @@ class SmartSearchSnapshotTest {
 
     private val lexicon = SearchLexicon(
         "TB", LexiconOrigin.VERSION,
-        familiesOf("sembuh ~ me<kan di~kan ke~an pe<an ~kanlah", "sakit ~ pe< ke~an me<i pe<mu pe<nya"),
+        familiesOf("sembuh sembuh menyembuhkan disembuhkan kesembuhan penyembuhan sembuhkanlah", "sakit sakit penyakit kesakitan menyakiti penyakitmu penyakitnya"),
         6,
     )
 
