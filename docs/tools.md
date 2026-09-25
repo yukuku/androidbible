@@ -40,6 +40,10 @@ Snappy compression is on by default; `--no-compress` turns it off.
 `--ignore-skipped-verses` permits gaps in verse numbering, though chapters
 must still be consecutive and each book must start at chapter 1 verse 1.
 
+A `.yet` may carry a smart-search lexicon in `lexicon` lines, forms spelled out; both converters
+compress it and pass it on, as the `lexicon` section and as `{prefix}_lexicon_bt.bt`. The lines
+are described in [binary-formats.md](binary-formats.md#lexicon-file-and-section).
+
 ### Source-format importers
 
 `AlkitabConverterProcesses` holds one package per imported Bible version,
@@ -95,7 +99,9 @@ holds the sources for the bundled plans (`bibleplan_*.txt`, `blueletter_*`,
 - `fakeandroid` supplies stubs for the Android classes those library modules
   reference (`android.util.Log`, `android.os.Parcel`,
   `android.os.Parcelable`, and the support annotations), which is what lets
-  them compile against a plain JDK.
+  them compile against a plain JDK. The library modules also import
+  `androidx.annotation`, which `fakeandroid` does not stub, so the
+  `androidx.annotation:annotation-jvm` jar has to be on the classpath too.
 - `prog` holds two third-party helpers. `wordsend` is a USFM toolset,
   bundled with the SIL fonts, whose `usfm2usfx.exe` the USFM importers
   invoke. `bdb_to_res_raw.php` is a standalone script.

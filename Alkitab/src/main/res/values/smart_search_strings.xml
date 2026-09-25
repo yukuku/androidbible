@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Search screen tips. [q] is replaced with a double quote at runtime. -->
+    <string name="search_syntax_tips_smart"><i>Search tips</i>\n\n<b>kasih</b> finds the whole word family: kasih, mengasihi, dikasihi, kekasih\n\n<b>+kasih</b> finds only the word kasih itself\n\n<b>[q]kota daud[q]</b> finds these words in this order\n\nWords that are not in the word list are matched letter by letter, so <b>yerus</b> still finds Yerusalem.</string>
+
+    <!-- Diagnostics panel on the search screen -->
+    <string name="smart_search_panel_title">Smart search</string>
+    <string name="smart_search_panel_expand">Show how this search worked</string>
+    <string name="smart_search_panel_collapse">Hide details</string>
+    <string name="smart_search_summary_compare">%1$d verses · +%2$d new · −%3$d dropped vs. letter search</string>
+    <string name="smart_search_summary_plain">%1$d verses</string>
+    <string name="smart_search_not_widened">No word was widened, so this search behaves exactly like the letter search.</string>
+
+    <string name="smart_search_lexicon_builtin">Word list built into %1$s.</string>
+    <string name="smart_search_off_no_builtin">\u201cBuilt-in only\u201d is selected in the Search Lab and this version has no word list, so words are matched letter by letter.</string>
+    <string name="smart_search_origin_version">built in</string>
+    <string name="smart_search_lexicon_rules">Rules only: word families were guessed from this version’s own words by affix rules. Expect mistakes such as kepada joining pada.</string>
+    <string name="smart_search_off_language">Smart search only knows Indonesian word formation, so %1$s is searched letter by letter.</string>
+    <string name="smart_search_off_disabled">Smart search is turned off.</string>
+
+    <string name="smart_search_how_direct">In the word list</string>
+    <string name="smart_search_how_peeled">Affixes peeled</string>
+    <string name="smart_search_how_own_family">Its own family</string>
+    <string name="smart_search_how_letters">Letter match</string>
+    <string name="smart_search_how_exact">Exact word</string>
+    <string name="smart_search_how_phrase">Phrase</string>
+
+    <string name="smart_search_explain_direct">“%1$s” belongs to the family of “%2$s”. Every form below counts, as a whole word.</string>
+    <string name="smart_search_explain_direct_root">Every form of \u201c%1$s\u201d below counts, as a whole word.</string>
+    <string name="smart_search_explain_peeled">“%1$s” does not occur in this translation, so its affixes were peeled off until a known form was left: %2$s. That form belongs to the family of “%3$s”.</string>
+    <string name="smart_search_explain_own_family">“%1$s” occurs %2$d times but has no relatives in this translation, so only this exact word counts. Words that merely contain the letters no longer match.</string>
+    <string name="smart_search_explain_fallback">“%1$s” is not a word this translation uses, and peeling affixes did not reach one, so any word containing these letters counts, as in the classic search.</string>
+    <string name="smart_search_explain_not_a_word">“%1$s” is not a plain word, so its letters are matched as in the classic search.</string>
+    <string name="smart_search_explain_exact">You asked for exactly “%1$s” with + or quotes, so its family is not added.</string>
+    <string name="smart_search_explain_phrase">These words, in this order, as whole words.</string>
+    <string name="smart_search_explain_off">Any word containing “%1$s”.</string>
+
+    <string name="smart_search_forms_legend">Highlighted forms can never be found by the letter search, because they do not contain “%1$s”.</string>
+    <string name="smart_search_forms_absent_legend">Faded forms are in the word list but never occur in this translation.</string>
+    <string name="smart_search_more_forms">+%1$d more</string>
+    <string name="smart_search_fewer_forms">show fewer</string>
+    <string name="smart_search_term_stats">%1$d verses on its own · %2$d ms</string>
+    <string name="smart_search_term_occurrences">%1$d occurrences in the text</string>
+
+    <string name="smart_search_filter_all">All %1$d</string>
+    <string name="smart_search_filter_new">New %1$d</string>
+    <string name="smart_search_filter_dropped">Dropped %1$d</string>
+    <string name="smart_search_filter_hint_new">Showing only the verses the letter search missed.</string>
+    <string name="smart_search_filter_hint_dropped">Showing the verses the letter search found but smart search leaves out. They usually hold a different word that happens to contain the letters, like berkata for berkat.</string>
+
+    <string name="smart_search_section_terms">What each word searched for</string>
+    <string name="smart_search_section_compare">Compared with the letter search</string>
+    <string name="smart_search_section_engine">Under the hood</string>
+    <string name="smart_search_engine_lexicon">%1$s · %2$d families · %3$d forms · loaded in %4$d ms</string>
+    <string name="smart_search_engine_vocabulary">Vocabulary: %1$d different words, %2$d in all</string>
+    <string name="smart_search_engine_vocabulary_built">Read the whole translation to learn its words in %1$d ms (first search only)</string>
+    <string name="smart_search_engine_timings">Planning %1$d ms · smart search %2$d ms · letter search %3$d ms</string>
+    <string name="smart_search_engine_timings_no_classic">Planning %1$d ms · smart search %2$d ms</string>
+    <string name="smart_search_open_lab">Open Search Lab</string>
+
+    <string name="smart_search_badge_new">NEW</string>
+    <string name="smart_search_badge_dropped">DROPPED</string>
+    <string name="smart_search_row_via">via %1$s</string>
+    <string name="smart_search_row_dropped">Only the letter search finds this verse.</string>
+
+    <string name="smart_search_origin_rules">rules only</string>
+
+    <!-- Search Lab -->
+    <string name="search_lab_title">Search Lab</string>
+    <string name="search_lab_menu">Search Lab</string>
+
+    <string name="search_lab_settings_title">Settings</string>
+    <string name="search_lab_mode_title">Word list</string>
+    <string name="search_lab_mode_auto">Automatic</string>
+    <string name="search_lab_mode_builtin">Built-in only</string>
+    <string name="search_lab_mode_builtin_desc">Use only the word list built into the Bible version. Without one, search stays letter by letter.</string>
+    <string name="search_lab_mode_rules">Rules only</string>
+    <string name="search_lab_mode_auto_desc">Use the word list built into the Bible version, or affix rules alone when it has none.</string>
+    <string name="search_lab_mode_rules_desc">Always guess word families from the version’s own words by affix rules. Useful for seeing what the built-in word list adds.</string>
+
+    <string name="search_lab_translation_title">Translation</string>
+    <string name="search_lab_change_version">Change</string>
+    <string name="search_lab_preparing">Reading the whole translation to learn its words…</string>
+    <string name="search_lab_selection_none">No word list is in use for this translation.</string>
+    <string name="search_lab_vocabulary">%1$d different words, %2$d in all, read in %3$d ms</string>
+    <string name="search_lab_lexicon_line">%1$s (%2$s): %3$d families, %4$d forms, loaded in %5$d ms</string>
+
+    <string name="search_lab_word_title">Try a word</string>
+    <string name="search_lab_word_hint">Type a word or a query, e.g. sembuhkan sakit</string>
+    <string name="search_lab_word_empty">Type something above to see how it would be searched.</string>
+    <string name="search_lab_compare_rules">With rules only</string>
+    <string name="search_lab_compare_curated">With the word list</string>
+    <string name="search_lab_counting">Counting verses…</string>
+    <string name="search_lab_counts">Letter search %1$d verses · smart search %2$d verses · +%3$d new · −%4$d dropped</string>
+    <string name="search_lab_form_count">%1$s ×%2$d</string>
+
+    <string name="search_lab_benchmark_title">Self-check</string>
+    <string name="search_lab_benchmark_desc">Runs a set of known-tricky searches against this translation and compares the letter search with smart search.</string>
+    <string name="search_lab_benchmark_run">Run self-check</string>
+    <string name="search_lab_benchmark_running">Running…</string>
+    <string name="search_lab_benchmark_col_query">Query</string>
+    <string name="search_lab_benchmark_col_letters">Letters</string>
+    <string name="search_lab_benchmark_col_smart">Smart</string>
+    <string name="search_lab_benchmark_col_new">New</string>
+    <string name="search_lab_benchmark_col_dropped">Dropped</string>
+    <string name="search_lab_benchmark_col_ms">ms</string>
+
+</resources>

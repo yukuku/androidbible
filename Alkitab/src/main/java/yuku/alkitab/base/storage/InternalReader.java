@@ -3,6 +3,7 @@ package yuku.alkitab.base.storage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.util.AppLog;
@@ -18,6 +19,7 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.section.FootnotesSection;
+import yuku.alkitab.yes2.section.LexiconSection;
 import yuku.alkitab.yes2.section.XrefsSection;
 import yuku.bintex.BintexReader;
 
@@ -325,6 +327,20 @@ public class InternalReader implements BibleReader {
         }
 
         return footnotesSection_.getFootnoteEntry(arif);
+    }
+
+    @Override
+    public Map<String, List<String>> loadLexicon() {
+        final String assetName = "internal/" + AppConfig.get().internalPrefix + "_lexicon_bt.bt";
+        try (InputStream in = App.context.getAssets().open(assetName)) {
+            return LexiconSection.readFrom(in).getFamilies();
+        } catch (IOException e) {
+            AppLog.d(TAG, "No lexicon in internal version");
+            return null;
+        } catch (Exception e) {
+            AppLog.e(TAG, "Error reading lexicon from internal", e);
+            return null;
+        }
     }
 }
 

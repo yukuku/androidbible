@@ -19,6 +19,12 @@ object ExperimentalFlags {
     fun useComposeSyncLogin(): Boolean =
         !Preferences.getBoolean(R.string.pref_useLegacySyncLogin_key, R.bool.pref_useLegacySyncLogin_default)
 
+    fun smartSearch(): Boolean =
+        Preferences.getBoolean(R.string.pref_smartSearch_key, R.bool.pref_smartSearch_default)
+
+    fun smartSearchDiagnostics(): Boolean =
+        Preferences.getBoolean(R.string.pref_smartSearchDiagnostics_key, R.bool.pref_smartSearchDiagnostics_default)
+
     fun debugRubyGeometry(): Boolean =
         Preferences.getBoolean(R.string.pref_debugRubyGeometry_key, R.bool.pref_debugRubyGeometry_default)
 }

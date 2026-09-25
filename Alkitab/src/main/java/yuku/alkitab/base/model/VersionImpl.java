@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
@@ -326,6 +327,12 @@ public class VersionImpl extends Version {
     @Override
     public synchronized FootnoteEntry getFootnoteEntry(final int arif) {
         return bibleReader.getFootnoteEntry(arif);
+    }
+
+    @Nullable
+    @Override
+    public Map<String, List<String>> loadLexicon() {
+        return bibleReader.loadLexicon();
     }
 
     @NonNull

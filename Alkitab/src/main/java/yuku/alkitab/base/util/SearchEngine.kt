@@ -6,6 +6,9 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.SparseBooleanArray
+import yuku.alkitab.base.smartsearch.FamilyMatcher
+import yuku.alkitab.base.smartsearch.PlannedTerm
+import yuku.alkitab.base.smartsearch.TermKind
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.model.Book
 import yuku.alkitab.model.Version
@@ -19,7 +22,10 @@ object SearchEngine {
      * Contains processed tokens that is more efficient to be passed in to methods here such as
      * [hilite] and [satisfiesTokens].
      */
-    class ReadyTokens(inputTokens: Array<String>) {
+    class ReadyTokens @JvmOverloads constructor(
+        inputTokens: Array<String>,
+        familyMatchers: Array<FamilyMatcher?>? = null,
+    ) {
         val tokenCount: Int = inputTokens.size
         val hasPlusses: BooleanArray = BooleanArray(tokenCount) { i ->
             QueryTokenizer.isPlussedToken(inputTokens[i])
@@ -32,6 +38,71 @@ object SearchEngine {
         val multiwordsTokens: Array<Array<String>?> = Array(tokenCount) { i ->
             if (hasPlusses[i]) QueryTokenizer.tokenizeMultiwordToken(tokens[i]) else null
         }
+        /** For a smart-search family term, the matcher that replaces the token's letter match. */
+        val families: Array<FamilyMatcher?> = Array(tokenCount) { i -> familyMatchers?.getOrNull(i) }
+
+        companion object {
+            @JvmStatic
+            fun fromPlan(terms: List<PlannedTerm>) = ReadyTokens(
+                terms.map { it.legacyToken }.toTypedArray(),
+                terms.map { it.matcher }.toTypedArray(),
+            )
+        }
+    }
+
+    /** The verses one term matched on its own, and how long finding them took. */
+    class TermOutcome(val term: PlannedTerm, val aris: IntArrayList, val millis: Long)
+
+    class PlanOutcome(val result: IntArrayList, val terms: List<TermOutcome>)
+
+    /**
+     * Searches for every term of a smart-search plan and intersects the results.
+     *
+     * Each term is searched across the whole selection on its own, rather than only inside the
+     * previous term's hits, so the diagnostics can report what every term found by itself.
+     */
+    @JvmStatic
+    fun searchByPlan(version: Version, terms: List<PlannedTerm>, bookIds: SparseBooleanArray): PlanOutcome {
+        val outcomes = terms.map { term ->
+            val t0 = System.nanoTime()
+            val aris = if (term.kind == TermKind.FAMILY) {
+                searchFamilyInside(version, term.matcher!!, bookIds)
+            } else {
+                searchByGrepInside(version, term.legacyToken, null, bookIds)
+            }
+            TermOutcome(term, aris, (System.nanoTime() - t0) / 1_000_000)
+        }
+
+        var result: IntArrayList? = null
+        for (o in outcomes.sortedBy { it.aris.size() }) {
+            result = if (result == null) o.aris else intersect(result, o.aris)
+        }
+        return PlanOutcome(result ?: IntArrayList(), outcomes)
+    }
+
+    private fun searchFamilyInside(version: Version, matcher: FamilyMatcher, bookIds: SparseBooleanArray): IntArrayList {
+        val res = IntArrayList()
+        val end = IntArray(1)
+        for (book in version.consecutiveBooks) {
+            if (!bookIds.get(book.bookId, false)) continue
+
+            for (chapter1 in 1..book.chapter_count) {
+                val text = version.loadChapterTextLowercasedWithoutSplit(book, chapter1) ?: continue
+                val ariBc = Ari.encode(book.bookId, chapter1, 0)
+                var verseStart = 0
+                var verse0 = 0
+                while (verseStart < text.length) {
+                    var verseEnd = text.indexOf('\n', verseStart)
+                    if (verseEnd == -1) verseEnd = text.length
+                    if (matcher.indexIn(text, verseStart, verseEnd, end) >= 0) {
+                        res.add(ariBc + verse0 + 1)
+                    }
+                    verseStart = verseEnd + 1
+                    verse0++
+                }
+            }
+        }
+        return res
     }
 
     @JvmStatic
@@ -257,11 +328,15 @@ object SearchEngine {
      */
     @JvmStatic
     fun satisfiesTokens(s: String, rt: ReadyTokens): Boolean {
+        val end = IntArray(1)
         for (i in 0 until rt.tokenCount) {
             val hasPlus = rt.hasPlusses[i]
+            val family = rt.families[i]
 
             val posToken: Int
-            if (hasPlus) {
+            if (family != null) {
+                posToken = family.indexIn(s, 0, s.length, end)
+            } else if (hasPlus) {
                 val multiwordTokens = rt.multiwordsTokens[i]
                 posToken = if (multiwordTokens != null) {
                     indexOfWholeMultiword(s, multiwordTokens, 0, false, null)
@@ -419,11 +494,16 @@ object SearchEngine {
         val hasPlusses = rt.hasPlusses
         val tokens = rt.tokens
         val multiwordsTokens = rt.multiwordsTokens
+        val families = rt.families
 
         val consumedLengthPtr = intArrayOf(0)
         while (true) {
             for (i in 0 until tokenCount) {
-                if (hasPlusses[i]) {
+                val family = families[i]
+                if (family != null) {
+                    attempts[i] = family.indexIn(plainText, pos, plainText.length, consumedLengthPtr)
+                    consumedLengths[i] = if (attempts[i] >= 0) consumedLengthPtr[0] - attempts[i] else 0
+                } else if (hasPlusses[i]) {
                     val mwt = multiwordsTokens[i]
                     if (mwt != null) {
                         attempts[i] = indexOfWholeMultiword(plainText, mwt, pos, false, consumedLengthPtr)

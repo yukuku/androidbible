@@ -128,4 +128,10 @@ enum class Prefkey {
      * never ran, resurrecting the deleted books on the next launch.
      */
     song_db_data_migration_v1_done,
+
+    /**
+     * Smart search: which lexicon to use, one of `auto`, `curated` or `rules`. See
+     * [yuku.alkitab.base.smartsearch.LexiconMode].
+     */
+    smartSearchLexiconMode,
 }
