@@ -170,6 +170,40 @@ class SmartSearchEngineTest {
         assertEquals(listOf(2, 2), outcome.terms.map { it.aris.size() })
     }
 
+
+    @Test
+    fun `kasihan and kasih remain separate roots when both families are available`() {
+        val v = versionOf(
+            mapOf((0 to 1) to listOf(
+                "Belas kasihan-Nya besar.",
+                "Kasihanilah aku.",
+                "Kasih itu sabar.",
+                "Aku mengasihi engkau.",
+            ))
+        )
+        val lex = lexiconOf(
+            "kasihan kasihan kasihan-nya kasihanilah",
+            "kasih kasih mengasihi dikasihi",
+        )
+        val p = SmartSearchPlanner(lex, VersionVocabulary.build("separate-roots", v))
+        val compassion = p.plan("kasihan")
+        val love = p.plan("kasih")
+
+        assertEquals("kasihan", compassion.single().root)
+        assertEquals(Resolution.LEXICON_DIRECT, compassion.single().resolution)
+        assertEquals("kasih", love.single().root)
+        assertTrue(compassion.single().forms.toSet().intersect(love.single().forms.toSet()).isEmpty())
+        assertEquals(
+            listOf(ari(1, 1), ari(1, 2)),
+            SearchEngine.searchByPlan(v, compassion, allBooksOf(v)).result.toList(),
+        )
+        assertEquals(
+            listOf(ari(1, 3), ari(1, 4)),
+            SearchEngine.searchByPlan(v, love, allBooksOf(v)).result.toList(),
+        )
+        assertEquals("kasihan", p.plan("kasihanilah").single().root)
+    }
+
     // Highlighting and filtering
 
     @Test
