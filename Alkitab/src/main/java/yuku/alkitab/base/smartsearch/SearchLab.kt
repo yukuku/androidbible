@@ -1,9 +1,7 @@
 package yuku.alkitab.base.smartsearch
 
 /**
- * Change counter for everything the Search Lab can alter (the switches, the word list mode, the
- * word list files). The search screen compares it on return and reruns its search when it moved,
- * so what it shows always reflects the current setup.
+ * Lets the search screen detect settings changes when returning from Search Lab.
  */
 object SearchLab {
     @Volatile

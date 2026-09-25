@@ -1,12 +1,8 @@
 package yuku.alkitab.base.smartsearch
 
 /**
- * Derives a lexicon on the device from a translation's own words, using affix rules alone.
- *
- * It exists so smart search can be tried on an Indonesian version that carries no lexicon of its
- * own, and so the two can be compared side by side in the Search Lab. It is knowingly weaker:
- * with nothing to say which words are roots, it peels as deep as the text allows, so `kepada`
- * joins `pada` and `sekarang` may join `karang`.
+ * Builds fallback families for versions without a lexicon. Without a dictionary of
+ * roots, it can group unrelated words such as `kepada` and `pada`.
  */
 object RulesLexiconBuilder {
     private val CLITICS = setOf("nya", "ku", "mu", "lah", "nyalah", "kulah", "mulah", "pun")

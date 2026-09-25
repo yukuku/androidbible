@@ -16,8 +16,7 @@ private const val EXTRA_versionId = "versionId"
 private const val EXTRA_query = "query"
 
 /**
- * The Search Lab: explains smart search in plain words and lets a tester switch it, pick the word
- * list, try words against the translation, run a self-check and manage word list files.
+ * Search settings, query comparisons, and diagnostics for testers.
  */
 class SearchLabActivity : BaseActivity() {
     private lateinit var viewModel: SearchLabViewModel

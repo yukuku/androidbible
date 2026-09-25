@@ -1,13 +1,8 @@
 package yuku.alkitab.base.smartsearch
 
 /**
- * Splits verse text into words the way the search lexicon was built: a word is a run of letters or
- * digits, and a hyphen between two such runs keeps them one word, so `kasih-Nya` and `orang-orang`
- * are single words. Verse formatting codes (`@6`, `@/`, `@<f1@>`) are skipped, so a code glued to a
- * word never becomes part of it.
- *
- * Works on both raw chapter text (with codes, verses separated by `\n`) and on plain text with the
- * codes already removed.
+ * Scans letters and digits, keeping hyphenated words together and skipping verse
+ * formatting codes. Accepts both raw chapter text and plain text.
  */
 object WordScanner {
     /**

@@ -1,14 +1,10 @@
 package yuku.alkitab.base.smartsearch
 
 /**
- * Finds whole words belonging to one word family in lowercase text.
+ * Matches whole words in lowercase text. Known hyphenated forms stay intact, so
+ * `mereka-rekakan` matches `reka`, not `mereka`. Unknown compounds may match by part.
  *
- * A hyphenated word is looked up whole first, because the lexicon lists compounds such as
- * `kasih-nya` and `mereka-rekakan` under the family they really belong to. Only a compound the
- * lexicon has never seen is split, so that its parts can still match: `mereka-rekakan` must not
- * match a search for the pronoun `mereka` merely because it starts with it.
- *
- * @param known every form of every family, i.e. the compounds the lexicon has an opinion on.
+ * @param known all forms listed in the lexicon.
  */
 class FamilyMatcher(val forms: Set<String>, private val known: Set<String>) {
     /**

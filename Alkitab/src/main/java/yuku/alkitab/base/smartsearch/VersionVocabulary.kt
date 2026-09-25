@@ -3,16 +3,11 @@ package yuku.alkitab.base.smartsearch
 import yuku.alkitab.model.Version
 
 /**
- * Every word a translation uses, with how often. Built once per translation by reading the whole
- * text, then kept in memory.
+ * Word counts for one translation. Used to build fallback families and to avoid
+ * stripping affixes from known words that have no listed family.
  *
- * Smart search needs it for two things: a typed word that occurs in the text but belongs to no
- * lexicon family is a family of one and must be matched as itself rather than peeled into some
- * unrelated root; and the rules-only lexicon is derived from it.
- *
- * @property counts occurrences of each lowercase word, hyphenated compounds counted whole.
- * @property partCounts occurrences of each hyphen-separated part, so `orang` is known from
- * `orang-orang` too.
+ * @property counts lowercase word counts, including whole hyphenated forms.
+ * @property partCounts counts of hyphen-separated parts, such as `orang` in `orang-orang`.
  */
 class VersionVocabulary(
     val versionKey: String,
