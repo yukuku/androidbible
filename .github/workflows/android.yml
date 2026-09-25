@@ -203,8 +203,14 @@ jobs:
           fi
           echo "tag=${LABEL}-${SHA:0:7}" >> "$GITHUB_OUTPUT"
 
+      # BUILD_COMMIT_HASH names the commit stamped into the APK filename and
+      # BuildConfig.LAST_COMMIT_HASH. On a pull_request event the checkout above is
+      # GitHub's ephemeral merge commit, so without this the build would stamp a
+      # hash that matches nothing on the PR branch. Empty on push events, where the
+      # build falls back to HEAD.
       - name: Build signed release (all production flavors)
         env:
+          BUILD_COMMIT_HASH: ${{ github.event.pull_request.head.sha }}
           ALKITAB_PROPRIETARY_DIR: ${{ github.workspace }}/proprietary
           SIGN_KEYSTORE: ${{ runner.temp }}/release.jks
           SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
@@ -300,8 +306,8 @@ jobs:
           # the user wants attached to the GH Release. Gradle's own output names
           # (which embed applicationId + build dist) are left alone so CI
           # artifact uploads keep working.
-          # Match gradle's `gitCommitHash` exactly (`git log -1 --format=%h`).
-          short_hash=$(git log -1 --format=%h)
+          # Match gradle's `gitCommitHash`, which abbreviates to a fixed 7 characters.
+          short_hash=$(git rev-parse --short=7 HEAD)
           stage=release-staging
           mkdir -p "$stage"
           yuku_apk="$stage/Alkitab-${versionCode}-${versionName}-${short_hash}.apk"
