@@ -1,78 +1,120 @@
-# Smart search
+# Smart search (prototype)
 
-This prototype expands Indonesian search terms to related words. Both smart search and its
-diagnostics are enabled by default under Experimental settings.
+Status: prototype. On by default behind the "Smart search (Indonesian)" experimental setting, with
+its diagnostics also on by default so testers can see what it does.
 
-For example, `kasih` finds `mengasihi`, while `berkat` no longer matches `berkata`.
-`kasihan` and `kasih` are intentionally separate roots in the TB lexicon.
+## The problem
 
-## Query handling
+Search matches letters. That fails in both directions for Indonesian, where words are built with
+affixes and some prefixes swallow the first letter of the root:
 
-`SearchActivity` calls `SmartSearchRunner`. It loads the version's lexicon and vocabulary,
-plans each term, then intersects the matching verses from the selected books.
-With diagnostics enabled, it also runs the old substring search for comparison.
-Each term is searched independently so diagnostics can show its own result count.
+- **It misses.** `kasih` + `meN-` + `-i` is spelled `mengasihi`; the `k` is gone, so a search for
+  `kasih` can never find it. A reader who types `sembuhkan sakit` gets 6 verses in Terjemahan Baru,
+  because `menyembuhkan` and `penyakit` do not contain the typed letters.
+- **It finds too much.** The letters of `berkat` sit inside `berkata`, so 3,059 verses come back
+  and fewer than 300 are about blessing. `iman` hides in `bagaimana`, `alam` in `dalam`.
 
-The planner uses the first matching rule:
+## How it works
 
-| Input | Behavior |
-|---|---|
-| `+word` or a quoted phrase | Keep the existing exact-match behavior |
-| Digits or punctuation | Use substring search |
-| A root or form in the lexicon | Match the whole word family |
-| A word in the text with no listed family | Match that word exactly |
-| An unknown word whose affixes can be removed to reach a known form | Match that family and the typed word |
-| Anything else | Use substring search |
+`SearchActivity` hands the query to `SmartSearchRunner`, which:
 
-The vocabulary check prevents a known word from being reduced to an unrelated root.
-Unknown fragments such as `yerus` still use substring search.
+1. **Selects a word list** for the translation (`LexiconRepository.select`), building the
+   translation's vocabulary on first use (`VocabularyCache`, one read of the whole text).
+2. **Plans** each query term (`SmartSearchPlanner`), deciding how it is matched and recording why.
+3. **Searches** every term on its own across the selected books and intersects the results
+   (`SearchEngine.searchByPlan`). Searching terms independently, instead of only inside the
+   previous term's hits, is what lets the diagnostics report each term's own count.
+4. With diagnostics on, **runs the classic letter search** for the same query so the two can be
+   compared verse by verse.
 
-`AffixPeeler` follows the builder's `query.py`. It tries prefixes and suffixes breadth first,
-restoring initial letters where needed (`mengasihi` → `kasihi`). It accepts only known forms
-and keeps at least three letters. Trying alternatives lets `amukan` reach `amuk` through `-an`
-instead of committing to `amu` through `-kan`.
+### How a term is resolved
 
-## Word boundaries
+Checked in this order; the first that applies wins.
 
-`WordScanner` treats letters and digits as words and keeps hyphenated forms together.
-It skips verse formatting codes. `FamilyMatcher` looks up a hyphenated word as a whole;
-only unknown compounds are split. This keeps `mereka-rekakan` in the `reka` family rather
-than matching the pronoun `mereka`.
+| Term | Resolution | Matched as |
+|---|---|---|
+| `+word`, `"a phrase"` | explicit | exactly as before |
+| contains digits or punctuation | not a word | letters, as before |
+| a form or root in the word list | in the word list | every form of its family, as whole words |
+| occurs in the text but belongs to no family | its own family | that exact word only |
+| peeling affixes reaches a listed form | affixes peeled | that form's family, plus the typed word |
+| anything else | letter match | letters, as before |
 
-A formatting code inside a word (`ber@9kata@7`) splits it. The old whole-word search has
-the same limitation.
+"Its own family" matters: without it, a word that occurs in the text but has no relatives could be
+peeled into an unrelated root. And the last row means an unknown word, or a fragment like `yerus`,
+is never worse off than with the classic search.
 
-## Lexicon files
+### Affix peeling
 
-The source `.yet` lists roots and their forms on `lexicon` lines. The converters produce:
+`AffixPeeler` ports `query.py` from the lexicon builder in `alkitab-sources`. It peels suffixes
+(`-lah`, `-kan`, `-an`, `-i`, clitics) and prefixes breadth first, so the shallowest landing wins
+and `amukan` reaches `amuk` rather than stopping at `amu` + `-kan`. Nasal prefixes restore the
+letter they swallowed, decided by the letter that follows: `meng-` before a vowel offers the root
+with and without `k`, `meny-` restores `s`, `mem-` restores `p` or `m` before a vowel and nothing
+before a consonant (`membawa`), and `men-` likewise with `t` or `n`. A stem is never shorter than
+three letters.
 
-- `YetToYes2`: a `lexicon` section in the downloadable `.yes` file.
-- `YetToInternal`: `{prefix}_lexicon_bt.bt` for the bundled version.
+### Matching words
 
-`LexiconCompiler` compresses forms using root tokens, rewrite rules, shared text, and literals.
-See the [binary format](../../binary-formats.md#lexicon-file-and-section).
-`Version.loadLexicon()` loads the data through `Yes2Reader` or `InternalReader`;
-`LexiconRepository` caches it per version.
+`WordScanner` splits text the way the lexicon builder does: runs of letters or digits, with a hyphen
+between two such runs keeping them one word (`kasih-Nya`, `orang-orang`). Formatting codes are
+skipped, so `@6kasih` is the word `kasih`. `FamilyMatcher` checks a hyphenated word whole first,
+since the word list assigns compounds to their real family (`mereka-rekakan` belongs to `reka`);
+only a compound the list has never seen is split so its parts can match.
 
-TB contains 2,942 families and 15,373 forms: 78 KiB bundled, or 49 KB compressed in `.yes`.
+A formatting code in the middle of a word (`ber@9kata@7`) splits it in two. The classic search has
+the same limitation for whole-word matches; it has not been seen to matter in practice.
 
-Without a lexicon, Indonesian versions use `RulesLexiconBuilder`. It groups words under the
-deepest reachable stem found in the text. This fallback is less accurate: it can group
-`kepada` with `pada`, or `kasihan` with `kasih`. The separate-root decision applies to the
-curated TB lexicon; the fallback cannot reliably make that distinction.
+## Word lists
+
+A word list is part of the Bible version's own data, like its cross-references and footnotes:
+the `lexicon` section of a yes file, or `{prefix}_lexicon_bt.bt` for the internal version. It
+reaches both from `lexicon` lines in the version's `.yet`, which list each form spelled out.
+`YetToYes2` and `YetToInternal` compress them: `LexiconCompiler` finds rewrite rules for the start
+and the end of roots in the data, and stores each form as tokens (the root, a rewritten root, a
+shared text piece, or a literal). The format is in
+[`docs/binary-formats.md`](../../binary-formats.md#lexicon-file-and-section).
+
+`Version.loadLexicon()` reads it (`Yes2Reader` and `InternalReader` implement it; other readers
+have none), and `LexiconRepository` caches it per version. The lists are produced offline; a
+version without one simply has no `lexicon` section.
+
+For Terjemahan Baru the list holds 2,942 families and 15,373 forms: 78 KiB as the internal file
+and 49 KB as the yes file's Snappy-compressed section.
+
+### Rules-only word families
+
+With no word list in an Indonesian version, `RulesLexiconBuilder` derives families on the
+device from the version's own vocabulary: each word joins the deepest stem, reachable by
+peeling, that also occurs in the text. It takes well under a second on Terjemahan Baru. It is
+knowingly weaker, because nothing says which words are roots: `kepada` joins
+`pada`, and `kasihan` joins `kasih`. The Search Lab can force either source so the two can be
+compared.
 
 ## Diagnostics
 
-The search panel shows term resolution, affix-removal steps, matching forms, counts, and timings.
-All / New / Dropped filters compare results with substring search. Rows show `NEW` or `DROPPED`
-badges and a `via …` line for matching forms.
+Everything below is visible to the user while "Smart search diagnostics" is on.
 
-Search Lab lets testers select automatic, built-in-only, or rules-only mode, try queries,
-and run known examples. Search tips follow the active language and search mode.
+- **Search screen panel** (`SmartSearchPanel`), above the results. The summary line gives the
+  verse count and how many verses were gained and dropped against the letter search. Chips list
+  **All**, only the **New** verses, or the **Dropped** ones (shown with the letter search's
+  highlighting). Expanded, it shows each term's resolution, the peel trail, every form searched
+  (with occurrence counts, forms the typed letters could never reach highlighted, and forms absent
+  from this translation faded), each term's own verse count and time, the word list in use, the
+  vocabulary size, and timings for planning, smart search and letter search.
+- **Result rows** carry a `NEW` badge when the letter search would have missed the verse, and a
+  `via …` line naming the family forms that matched. Dropped rows carry `DROPPED`.
+- **Search Lab** (`SearchLabActivity`, from the search screen's menu or the panel): the switches
+  and the word-list mode (automatic, built-in only, rules only), the selected list and vocabulary
+  for any version, a "try a word" box that plans the query with both the built-in list and rules
+  only and counts verses, and a self-check over known-tricky queries.
+- **Tips**: the empty search screen shows syntax tips matching what the search will do; the smart
+  version is shown only for Indonesian translations.
 
-## TB results
+## Measured on Terjemahan Baru
 
-Recorded by `TerjemahanBaruSmartSearchTest` using the version's lexicon:
+Verse counts, letter search against smart search with the version's own word list, from
+`TerjemahanBaruSmartSearchTest`:
 
 | Query | Letter search | Smart search | Gained | Dropped |
 |---|---:|---:|---:|---:|
@@ -85,20 +127,27 @@ Recorded by `TerjemahanBaruSmartSearchTest` using the version's lexicon:
 | `mengampuni` | 67 | 137 | 70 | 0 |
 | `+kasih` | 481 | 481 | 0 | 0 |
 
-## Limits
+## Open questions
 
-- The first search reads the whole translation to build its vocabulary. Run it off the main thread.
-- Marker filtering still uses substring matching.
-- New UI strings are available in English and Indonesian only.
+- **`kasihan` is its own family** in the word list, so the 145 verses `kasih` drops are mostly
+  *belas kasihan* ("compassion"). Whether a search for `kasih` should reach them is a product
+  decision for the word list, not the app.
+- **Cost of the first search.** Learning a translation's vocabulary reads the whole text once per
+  process, like one classic search. The diagnostics report the time.
+- **Other screens.** The marker list filter still matches letters; `ReadyTokens` accepts family
+  matchers, so it could adopt the same planner.
+- **Translations of the new strings** exist for English and Indonesian only.
 
 ## Tests
 
-- `WordScannerTest`, `AffixPeelerTest`, `SearchLexiconTest`: parsing and word families.
-- `SmartSearchEngineTest`: planning, results, highlighting, diagnostics, fallback rules,
-  and the separation of `kasihan` from `kasih`.
-- `TerjemahanBaruSmartSearchTest`: real TB results. Requires `ALKITAB_TB_YET`;
-  `ALKITAB_TB_YES` and `ALKITAB_PROPRIETARY_DIR` enable binary-format comparisons.
-  These checks are skipped when their inputs are missing.
-- `LexiconSectionTest`: encoding, rewrite rules, and round trips.
-- `SmartSearchSnapshotTest`: English and Indonesian panel and Lab renders, saved to
-  `Alkitab/build/snapshots/smart-search/`.
+- `WordScannerTest`, `AffixPeelerTest`, `SearchLexiconTest`: the building blocks.
+- `SmartSearchEngineTest`: planning, searching, highlighting, the gained/dropped report and the
+  rules-only builder, on an invented text.
+- `TerjemahanBaruSmartSearchTest`: the table above against the real text and the word list in
+  its `.yet`, and checks that the yes file's `lexicon` section and the internal
+  `tb_lexicon_bt.bt` decode to the same families. Skipped unless `ALKITAB_TB_YET` is set;
+  `ALKITAB_TB_YES` and `ALKITAB_PROPRIETARY_DIR` enable the two format checks.
+- `LexiconSectionTest` (in `AlkitabYes2`): the rewrite rules, the rules the compiler finds for
+  Indonesian and English samples, the token encoding, and a round trip.
+- `SmartSearchSnapshotTest`: renders the panel and the Search Lab, in English and Indonesian, to
+  `Alkitab/build/snapshots/smart-search/` for review without a device.
