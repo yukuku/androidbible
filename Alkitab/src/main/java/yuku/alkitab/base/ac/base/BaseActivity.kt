@@ -77,6 +77,9 @@ abstract class BaseActivity : AppCompatActivity() {
         }
 
         supportActionBar?.setBackgroundDrawable(primaryColor.toDrawable())
+        // On the reading screen the toolbar host extends behind the status bar.
+        // Its background must change with the toolbar when night mode changes.
+        findViewById<View>(R.id.toolbarHost)?.setBackgroundColor(primaryColor)
 
         findViewById<View>(R.id.panelBackForwardList)?.apply {
             background = PaintDrawable(primaryColor).apply {
