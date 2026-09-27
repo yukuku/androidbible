@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ComposeView
 import androidx.test.core.app.ApplicationProvider
 import java.io.File
 import java.io.FileOutputStream
@@ -384,8 +385,6 @@ class VerseItemSideBySideSnapshotTest {
 
     private fun renderCompose(case: Case): Bitmap {
         val activity = buildActivity()
-        val view = VerseItemComposeView(activity)
-        attachAndDoFirstLayout(activity, view)
 
         val ari = Ari.encode(0, 1, case.verseNumber)
         val highlightInfo = case.toHighlightInfo()
@@ -430,10 +429,20 @@ class VerseItemSideBySideSnapshotTest {
             onPinDropped = {},
         )
 
-        view.bind(state)
-        view.checked = case.checked
-        view.collapsed = case.text.isEmpty() && case.bookmarkCount == 0 && case.noteCount == 0 &&
-            case.progressMarkBits == 0 && !case.hasMaps
+        val view = ComposeView(activity)
+        attachAndDoFirstLayout(activity, view)
+        view.setContent {
+            VerseItemComposeContent(
+                state = state,
+                checked = case.checked,
+                collapsed = case.text.isEmpty() && case.bookmarkCount == 0 && case.noteCount == 0 &&
+                    case.progressMarkBits == 0 && !case.hasMaps,
+                audioHighlightColor = 0,
+                attentionStart = 0L,
+                dragHover = false,
+                onAttentionDone = {},
+            )
+        }
 
         // A plain idle does not advance Robolectric's frame clock. The initial
         // composition can still contain the pre-bind null state in that case.
@@ -521,7 +530,7 @@ class VerseItemSideBySideSnapshotTest {
 
         val w = view.measuredWidth.coerceAtLeast(1)
         val h = view.measuredHeight.coerceAtLeast(1)
-        if (view is VerseItemComposeView) {
+        if (view is ComposeView) {
             assertTrue("Compose snapshot was not laid out", h > 1)
         }
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
