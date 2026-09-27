@@ -62,15 +62,21 @@ Label overall units as readings, not chapters, days, verses, or minutes.
 record completion separately.
 
 **Proposed behavior:** retain plan identity, day, and passage sequence alongside
-the assigned range. Present a compact session control identifying the range and
-position within the day. Offer explicit completion and continuation to the next
+the assigned range. Use a small contextual icon in the existing reader toolbar;
+do not reserve a persistent strip below the verses. On request, reveal the range,
+position within the day, and completion actions in a temporary panel. Offer explicit completion and continuation to the next
 unfinished passage in the same day. After its last unfinished passage, show the
 daily completion state. Leaving the session does not mark anything complete.
 
 **Acceptance criteria:**
 
-- Single- and multi-chapter assignments show the complete assigned range while
-  reading; the session does not obscure normal Bible controls or verse content.
+- While collapsed, the session adds no vertical chrome and no overlay over
+  verses. Its icon has an accessible label and a usable touch target. If space
+  is insufficient, use the reader drawer action rather than squeezing existing
+  controls or adding a toolbar row.
+- Opening the panel shows the complete assigned range for single- and
+  multi-chapter assignments. Back or an outside tap closes it without completion;
+  focus returns to the icon. Completing and advancing closes the panel.
 - Completing a passage updates exactly its originating plan entry once and
   offers the correct next unfinished passage. Opening, scrolling, and dismissing
   a session do not change completion.

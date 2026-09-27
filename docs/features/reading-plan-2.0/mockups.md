@@ -1,7 +1,7 @@
 # Bilingual design mockups
 
-Created: 2026-09-28. These are proposed static layouts, not screenshots of a
-shipped feature or an interactive app prototype. They illustrate the backlog;
+Created: 2026-09-28. These are proposed layouts with an expandable reader control, not screenshots of a
+shipped feature or a functional app prototype. They illustrate the backlog;
 they do not change any entry's Proposed status.
 
 ## Open the mockups
@@ -9,11 +9,12 @@ they do not change any entry's Proposed status.
 - [English HTML](mockups/english.html)
 - [Indonesian HTML](mockups/indonesian.html)
 
-Open either file in a browser from a local checkout. Both work offline with the
-adjacent `styles.css` file and link to the other language. GitHub displays HTML
+Open either HTML file by itself in a browser. Each embeds its own CSS and icon
+SVG and needs no adjacent files, images, scripts, fonts, or network requests. GitHub displays HTML
 source rather than running it; the rendered overview images below are provided
-for PR review. Only the language and documentation links are interactive.
-Controls drawn inside the phone panels are static illustrations.
+for PR review. The reader plan icon opens and closes a native HTML disclosure; the other
+phone controls remain static illustrations. In-page navigation also works.
+The PNG overviews are for Markdown review only; neither HTML file loads them.
 
 | English overview | Indonesian overview |
 | --- | --- |
@@ -39,7 +40,7 @@ or gesture-only controls merely to make the screen look new.
 | Show details / Tampilkan daftar baca | Keep a visible reading-list action on the daily screen; open a dedicated day list | Retain the Indonesian label exactly. Clarify the English label to Show reading list. Back returns to the same day and scroll position. |
 | Plus/download and delete icons | Move management into a labeled overflow menu | Include Download a reading plan / Unduh jadwal baca and Remove downloaded plan / Hapus jadwal yang diunduh. Keep the familiar download wording. |
 | Date-menu recovery and drawer Restart | Consolidate management without abruptly removing old routes | During the transition, keep the old date-menu and drawer actions as aliases to the same new dialogs. Decide their later removal only after usability validation. |
-| Ordinary Bible reader | Add a compact plan-session strip in layout flow | Do not replace chapter navigation or overlay verse text. Back still returns to the plan. |
+| Ordinary Bible reader | Add a small contextual plan icon to the existing toolbar | No persistent bottom strip or new toolbar row. Reveal a temporary panel only on request. Back still returns to the plan. |
 | Checkmarks after finishing | Keep the completed list visible | Add calm completion feedback and an optional next-day action; never auto-advance. |
 
 Keep familiar English and Indonesian feature names, Reading Plan and Jadwal
@@ -52,7 +53,7 @@ curated copy, not evidence that arbitrary catalogue content is translated.
 | Screen | Backlog | Intended behavior |
 | --- | --- | --- |
 | Daily reading | RP2-001, RP2-003, RP2-005 | Show daily counts and a named Continue action. Preserve arrows, date, switcher, reference rows, and explicit checks. Today remains directly available. |
-| Reader session | RP2-002 | Show assigned passage, day, and sequence. Explicitly complete and advance to the next unfinished passage of that day. Leaving the session does not complete anything. |
+| Reader session | RP2-002 | Keep the plan icon collapsed while reading. Tap to reveal assigned passage, day, sequence, and explicit completion. Closing the panel does not complete anything. |
 | All days | RP2-003, RP2-004, RP2-007 | Show a compact date/status list. Selecting a day opens the same daily passage layout; return preserves position. The mockup shows a sample, not the entire plan. |
 | Returning after a break | RP2-001, RP2-008 | Explain earlier unfinished readings and distinguish next unread from today's schedule. The lower panel represents the confirmation opened by Adjust schedule, not a permanent second dashboard. |
 | Finished day | RP2-006 | Keep checked rows, confirm completion, and offer optional navigation. The whole-plan completion state remains specified in the backlog and is not illustrated here. |
@@ -68,6 +69,29 @@ complete. The two remaining readings from Day 1 plus three from Day 2 make
 five earlier unfinished readings. Shifting Day 1 to September 29 moves the
 30-day plan's finish from October 26 to October 28, preserving the checkmark.
 It does not mark the missed passages read or change their sequence.
+
+## RP2-002: Protect the reading area
+
+The default reader has only a small checklist icon in the existing toolbar,
+with a 48 px illustrative hit area and an accessible label. It adds no permanent
+height below the toolbar and no persistent panel over verses. Tap the icon to
+open the temporary context/completion panel; tap again to close it. The native
+disclosure supports keyboard activation. Completion remains an explicit action
+inside the panel, never an effect of opening or dismissing it.
+
+The app implementation should close the panel on Back or outside tap, return
+focus to the icon, and close it after completing and advancing. These behaviors
+are requirements, not simulated by the static completion labels in this HTML.
+Preserve chapter navigation, version, audio, and search controls. If the icon
+cannot fit at a narrow width or large font size without squeezing the reference
+or touch targets, expose the same labeled action through the reader navigation
+drawer instead of adding a second toolbar row or reducing the reading area.
+The icon is contextual to an active plan session; ordinary reading does not
+need an extra control. Validate discoverability with current users.
+
+| English: panel opened on request | Indonesian: panel opened on request |
+| --- | --- |
+| ![English plan controls revealed by the icon](mockups/english-reader-expanded.png) | ![Indonesian plan controls revealed by the icon](mockups/indonesian-reader-expanded.png) |
 
 ## English and Indonesian copy
 
