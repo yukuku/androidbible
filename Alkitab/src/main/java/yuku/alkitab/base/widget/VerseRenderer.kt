@@ -135,7 +135,7 @@ object VerseRenderer {
      */
     private fun renderVerseNumber(sb: SpannableStringBuilder, text_c: CharArray, text_len: Int, isVerseNumberShown: Boolean, verseNumberText: String, checked: Boolean): Int {
         // pos == 2 here (we start after "@@").
-        if (text_len >= 4 && text_c[2] == '@' && (text_c[3] == '^' || text_c[3] in '1'..'4')) {
+        if (startsWithGutterParagraph(text_c, text_len)) {
             // delegated to lVerseNumber instead
             return 0
         }

@@ -114,7 +114,7 @@ object VerseRendererCompose {
         text.toCharArray(text_c, 0, 0, text_len)
 
         val sb = AnnotatedString.Builder()
-        val gutterMode = isGutterMode(text_c, text_len)
+        val gutterMode = startsWithGutterParagraph(text_c, text_len)
 
         val startPosAfterVerseNumber = renderVerseNumber(sb, isVerseNumberShown, verseNumberText, checked, gutterMode)
         val gutterVerseNumber = if (isVerseNumberShown && gutterMode) verseNumberText else null
@@ -135,14 +135,6 @@ object VerseRendererCompose {
             sourceText = text,
         )
     }
-
-    /**
-     * Verse number goes to the gutter when the formatted body opens with `@^`
-     * or `@1`..`@4` (those paragraph markers take over the layout themselves).
-     * `@0` keeps the number inline.
-     */
-    private fun isGutterMode(text_c: CharArray, text_len: Int): Boolean =
-        text_len >= 4 && text_c[2] == '@' && (text_c[3] == '^' || text_c[3] in '1'..'4')
 
     private fun renderVerseNumber(
         sb: AnnotatedString.Builder,

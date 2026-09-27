@@ -33,6 +33,22 @@ class VerseRendererComposeRubyTest {
         VerseRendererCompose.render(isVerseNumberShown = isVerseNumberShown, ari = ARI, text = text, verseNumberText = "1")
 
     @Test
+    fun `a leading red marker before a paragraph indent leaves the number in the gutter`() {
+        val result = render("@@@6@^Sample text@5")
+        assertEquals("Sample text", result.text.text)
+        assertEquals("1", result.gutterVerseNumber)
+        assertEquals(0, result.startPosAfterVerseNumber)
+        assertTrue(result.text.paragraphStyles.isNotEmpty())
+    }
+
+    @Test
+    fun `leading style markers without an indented paragraph keep the number inline`() {
+        val result = render("@@@6@0Sample text@5")
+        assertEquals("1  Sample text", result.text.text)
+        assertEquals(null, result.gutterVerseNumber)
+    }
+
+    @Test
     fun `ruby tags leave the base text inline and report their ranges`() {
         val result = render("@@@<r=しゅ@>主@/は@<r=い@>言@/われる")
         assertEquals("1  主は言われる", result.text.text)
