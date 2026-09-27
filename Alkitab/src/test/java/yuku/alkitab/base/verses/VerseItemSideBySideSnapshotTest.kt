@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.test.core.app.ApplicationProvider
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -434,9 +435,9 @@ class VerseItemSideBySideSnapshotTest {
         view.collapsed = case.text.isEmpty() && case.bookmarkCount == 0 && case.noteCount == 0 &&
             case.progressMarkBits == 0 && !case.hasMaps
 
-        // Pump Compose's recompositions and choreographer frames so the first
-        // composition produces a TextLayoutResult before we measure.
-        idleLoopers()
+        // A plain idle does not advance Robolectric's frame clock. The initial
+        // composition can still contain the pre-bind null state in that case.
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(50, TimeUnit.MILLISECONDS)
 
         return measureAndDraw(view)
     }
@@ -495,26 +496,34 @@ class VerseItemSideBySideSnapshotTest {
             setBackgroundColor(AndroidColor.WHITE)
         }
         activity.setContentView(frame)
+        frame.measure(
+            View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
+        )
+        frame.layout(0, 0, VIEWPORT_WIDTH_PX, 640)
         idleLoopers()
     }
 
     private fun measureAndDraw(view: View): Bitmap {
         view.measure(
             View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.AT_MOST),
         )
         view.layout(0, 0, view.measuredWidth, view.measuredHeight.coerceAtLeast(1))
 
         // Ensure Compose finished its first frame before we draw.
-        idleLoopers()
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(50, TimeUnit.MILLISECONDS)
         view.measure(
             View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.AT_MOST),
         )
         view.layout(0, 0, view.measuredWidth, view.measuredHeight.coerceAtLeast(1))
 
         val w = view.measuredWidth.coerceAtLeast(1)
         val h = view.measuredHeight.coerceAtLeast(1)
+        if (view is VerseItemComposeView) {
+            assertTrue("Compose snapshot was not laid out", h > 1)
+        }
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         canvas.drawColor(AndroidColor.WHITE)
