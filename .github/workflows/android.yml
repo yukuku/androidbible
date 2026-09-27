@@ -33,6 +33,14 @@ jobs:
       - name: Unit tests
         run: ./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest
 
+      - name: Upload BSB Compose verse snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bsb-compose-verse-snapshots
+          path: Alkitab/build/snapshots/verse-item/bsb-mat15-*-compose.png
+          if-no-files-found: warn
+
       - name: Build with Gradle
         run: ./gradlew assemblePlainDebug bundlePlainDebug
 
