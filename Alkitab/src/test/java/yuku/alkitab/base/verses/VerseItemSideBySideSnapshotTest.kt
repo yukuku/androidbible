@@ -129,8 +129,8 @@ class VerseItemSideBySideSnapshotTest {
         val rows = StringBuilder()
 
         for (case in cases) {
-            val legacyBitmap = renderLegacy(case)
             val composeBitmap = renderCompose(case)
+            val legacyBitmap = renderLegacy(case)
 
             val legacyFile = File(outputDir, "${case.name}-legacy.png")
             val composeFile = File(outputDir, "${case.name}-compose.png")
@@ -430,7 +430,6 @@ class VerseItemSideBySideSnapshotTest {
         )
 
         val view = ComposeView(activity)
-        attachAndDoFirstLayout(activity, view)
         view.setContent {
             VerseItemComposeContent(
                 state = state,
@@ -443,6 +442,9 @@ class VerseItemSideBySideSnapshotTest {
                 onAttentionDone = {},
             )
         }
+        // Compose the already-bound content on first attachment; Robolectric's
+        // frame clock does not reliably drive later recompositions here.
+        attachAndDoFirstLayout(activity, view)
 
         // A plain idle does not advance Robolectric's frame clock. The initial
         // composition can still contain the pre-bind null state in that case.
