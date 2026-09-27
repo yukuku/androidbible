@@ -8,6 +8,8 @@ completion, and returning after a break understandable and consistent.
 
 - [Audit and evidence](audit.md): observed behavior, source findings,
   reproduction steps, screenshots, and limits of the review.
+- [Bilingual mockups and familiarity notes](mockups.md): six proposed screens
+  in English and Indonesian, with HTML files and review images.
 - [Prioritized backlog](backlog.md): stable tracking IDs, proposed changes,
   dependencies, and acceptance criteria.
 - [Existing module documentation](../../modules/reading-plans.md): background on
@@ -28,6 +30,13 @@ estimates or a committed release schedule. Start with RP2-001 and RP2-004,
 which address directly reproduced problems. Define the shared passage behavior
 in RP2-003 before integrating reader completion in RP2-002 and the full schedule
 in RP2-007. Use RP2-011 throughout delivery, not only at the end.
+
+## Familiarity requirement
+
+Keep the recognizable plan selector, day arrows, passage rows, right-side
+checkboxes, dark surface, and blue accents. Improve the existing reading flow
+without requiring users to learn a new app structure. The [mockup notes](mockups.md)
+record preserved landmarks, transitional navigation aliases, and bilingual copy.
 
 ## Tracking conventions
 

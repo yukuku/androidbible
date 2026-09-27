@@ -4,6 +4,11 @@ Created: 2026-09-27. All priorities and behaviors below are proposals, not
 shipped changes. See the [audit](audit.md) for evidence and the
 [tracking conventions](README.md#tracking-conventions) for status updates.
 
+See the [English and Indonesian mockups](mockups.md) for the visual direction.
+Familiarity is a requirement: preserve recognizable navigation and reading
+controls, and validate the transition with existing users in both languages.
+Mockups do not change the Proposed status of these entries.
+
 ## Tracking summary
 
 | ID | Priority | Status | Change | Dependency | Implementation PR |
@@ -133,6 +138,8 @@ When it differs from today, explain the distinction and retain access to today.
 - Day identity, daily progress, and primary action precede overall statistics.
 - Switching plans updates title, passages, counts, and actions consistently.
 - Download and removal no longer consume two always-visible toolbar actions.
+  Retain the familiar download wording in the overflow menu and keep the plan
+  switcher immediately visible near the top. Preserve arrows and the date menu.
 
 ## RP2-006: Day and whole-plan completion states
 
@@ -166,6 +173,9 @@ a calendar remains secondary navigation. Preserve position when returning.
 
 **Acceptance criteria:**
 
+- The daily-screen entry retains Tampilkan daftar baca in Indonesian and uses
+  the clearer Show reading list in English. Back returns to the previous day
+  and scroll position.
 - A long plan can jump to a requested valid day without repeated arrows or
   scrolling from the beginning. Out-of-range input is explained.
 - Status accurately represents partial days; passage actions follow RP2-003.
@@ -189,6 +199,9 @@ information outside the drawer; keep the internal ID secondary.
 **Acceptance criteria:**
 
 - Schedule adjustment preserves all marks and clearly previews date changes.
+- During the transition, existing date-menu recovery and drawer Restart actions
+  remain aliases to the same new dialogs. Later removal requires usability
+  validation with existing users, rather than disappearing in the first revamp.
 - Restart and removal explain their different consequences before confirmation;
   cancelling either changes nothing.
 - Removing then downloading a plan preserves its existing completion behavior;
