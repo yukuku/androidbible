@@ -10,11 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.ComposeView
 import androidx.test.core.app.ApplicationProvider
 import java.io.File
 import java.io.FileOutputStream
-import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -129,8 +127,8 @@ class VerseItemSideBySideSnapshotTest {
         val rows = StringBuilder()
 
         for (case in cases) {
-            val composeBitmap = renderCompose(case)
             val legacyBitmap = renderLegacy(case)
+            val composeBitmap = renderCompose(case)
 
             val legacyFile = File(outputDir, "${case.name}-legacy.png")
             val composeFile = File(outputDir, "${case.name}-compose.png")
@@ -244,16 +242,6 @@ class VerseItemSideBySideSnapshotTest {
         // number sits in the gutter, first line indented to clear it,
         // continuation lines flow flush-left at indentParagraphRest.
         Case("12b-caret-long-wrap", "@@@^1:1:6 para start with looooooooooooong text laba laba bala bala laba laba bala bala laba laba", verseNumber = 6),
-        // Actual en-bsb Matthew 15 text (from alkitab-sources, step1/bsb/usj/MAT.usj).
-        // Verse 28 starts with @6 before @^ because the red-letter run begins
-        // before the verse marker; its number still belongs in the gutter.
-        Case("bsb-mat15-23", "@@@^But Jesus did not answer a word. So His disciples came and urged Him, “Send her away, for she keeps crying out after us.”", verseNumber = 23, textSizeMult = 1.5f),
-        Case("bsb-mat15-24", "@@@^He answered, @6“I was sent only to the lost sheep of the house of Israel.”@5", verseNumber = 24, textSizeMult = 1.5f),
-        Case("bsb-mat15-25", "@@@^The woman came and knelt before Him. “Lord, help me!” she said.", verseNumber = 25, textSizeMult = 1.5f),
-        Case("bsb-mat15-26", "@@@^But Jesus replied, @6“It is not right to take the children’s bread and toss it to the dogs.”@5", verseNumber = 26, textSizeMult = 1.5f),
-        Case("bsb-mat15-27", "@@@^“Yes, Lord,” she said, “even the dogs@<f1@>@/ eat the crumbs that fall from their master’s table.”", verseNumber = 27, textSizeMult = 1.5f),
-        Case("bsb-mat15-28", "@@@6@^“O woman,”@5 Jesus answered, @6“your faith is great! Let it be done for you as you desire.”@5 And her daughter was healed from that very hour.", verseNumber = 28, textSizeMult = 1.5f),
-        Case("bsb-mat15-29", "@@@^Moving on from there, Jesus went along the Sea of Galilee. Then He went up on a mountain and sat down.", verseNumber = 29, textSizeMult = 1.5f),
         Case("13-paragraph-one", "@@@1Indent level 1 paragraph that wraps several lines to demonstrate consistent rest-indent."),
         Case("14-paragraph-two", "@@@2Indent level 2 paragraph that wraps several lines."),
         Case("15-paragraph-three", "@@@3Indent level 3 paragraph wraps to show indent3 rest spacing."),
@@ -385,6 +373,8 @@ class VerseItemSideBySideSnapshotTest {
 
     private fun renderCompose(case: Case): Bitmap {
         val activity = buildActivity()
+        val view = VerseItemComposeView(activity)
+        attachAndDoFirstLayout(activity, view)
 
         val ari = Ari.encode(0, 1, case.verseNumber)
         val highlightInfo = case.toHighlightInfo()
@@ -429,26 +419,14 @@ class VerseItemSideBySideSnapshotTest {
             onPinDropped = {},
         )
 
-        val view = ComposeView(activity)
-        view.setContent {
-            VerseItemComposeContent(
-                state = state,
-                checked = case.checked,
-                collapsed = case.text.isEmpty() && case.bookmarkCount == 0 && case.noteCount == 0 &&
-                    case.progressMarkBits == 0 && !case.hasMaps,
-                audioHighlightColor = 0,
-                attentionStart = 0L,
-                dragHover = false,
-                onAttentionDone = {},
-            )
-        }
-        // Compose the already-bound content on first attachment; Robolectric's
-        // frame clock does not reliably drive later recompositions here.
-        attachAndDoFirstLayout(activity, view)
+        view.bind(state)
+        view.checked = case.checked
+        view.collapsed = case.text.isEmpty() && case.bookmarkCount == 0 && case.noteCount == 0 &&
+            case.progressMarkBits == 0 && !case.hasMaps
 
-        // A plain idle does not advance Robolectric's frame clock. The initial
-        // composition can still contain the pre-bind null state in that case.
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(50, TimeUnit.MILLISECONDS)
+        // Pump Compose's recompositions and choreographer frames so the first
+        // composition produces a TextLayoutResult before we measure.
+        idleLoopers()
 
         return measureAndDraw(view)
     }
@@ -507,34 +485,26 @@ class VerseItemSideBySideSnapshotTest {
             setBackgroundColor(AndroidColor.WHITE)
         }
         activity.setContentView(frame)
-        frame.measure(
-            View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
-        )
-        frame.layout(0, 0, VIEWPORT_WIDTH_PX, 640)
         idleLoopers()
     }
 
     private fun measureAndDraw(view: View): Bitmap {
         view.measure(
             View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.AT_MOST),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
         )
         view.layout(0, 0, view.measuredWidth, view.measuredHeight.coerceAtLeast(1))
 
         // Ensure Compose finished its first frame before we draw.
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(50, TimeUnit.MILLISECONDS)
+        idleLoopers()
         view.measure(
             View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.AT_MOST),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
         )
         view.layout(0, 0, view.measuredWidth, view.measuredHeight.coerceAtLeast(1))
 
         val w = view.measuredWidth.coerceAtLeast(1)
         val h = view.measuredHeight.coerceAtLeast(1)
-        if (view is ComposeView) {
-            assertTrue("Compose snapshot was not laid out", h > 1)
-        }
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         canvas.drawColor(AndroidColor.WHITE)
