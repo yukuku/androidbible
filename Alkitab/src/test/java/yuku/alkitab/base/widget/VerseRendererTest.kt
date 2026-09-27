@@ -199,6 +199,14 @@ class VerseRendererTest {
     }
 
     @Test
+    fun `a leading red marker before a paragraph indent delegates the number to the gutter`() {
+        val ftr = VerseRenderer.FormattedTextResult()
+        val offset = render(text = "@@@6@^Sample text@5", verseNumberText = "1", ftr = ftr)
+        assertEquals("Sample text", ftr.result.toString())
+        assertEquals(0, offset)
+    }
+
+    @Test
     fun `a formatted verse that starts with @1 through @4 suppresses the inline verse number (paragraph markers take over layout)`() {
         for (marker in '1'..'4') {
             val ftr = VerseRenderer.FormattedTextResult()

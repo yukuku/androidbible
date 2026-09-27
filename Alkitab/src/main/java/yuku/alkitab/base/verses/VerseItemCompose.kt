@@ -765,7 +765,8 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                 style = textStyle.copy(
                     color = if (checked) textColor else Color(state.verseNumberColor),
                     fontSize = state.verseNumberFontSizeDp.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = composeFontFamilyFor(state.typeface),
                     lineHeight = TextUnit.Unspecified,
                 ),
                 modifier = Modifier
