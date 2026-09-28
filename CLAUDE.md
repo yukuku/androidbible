@@ -30,6 +30,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Run a single test method
 ./gradlew testPlainDebugUnitTest --tests "yuku.alkitab.base.util.QueryTokenizerTest.testQuotedPhrases"
+
+# Desktop converters in tools/ (plain JVM modules; see docs/tools.md)
+./gradlew :tools:converter-core:test :tools:cli:test
+./gradlew :tools:cli:fatJar   # tools/cli/build/libs/alkitab-tools.jar
 ```
 
 **Requirements**: JDK 21 (Zulu recommended), Android SDK with compile SDK 36, NDK 28.2.13676358.
@@ -148,6 +152,8 @@ The project is a multi-module Gradle build. The main app module is **`:Alkitab`*
 | `Snappy` | JNI Snappy compression (native C++ via NDK) |
 | `FlowLayout` | Flow layout widget |
 | `ImportedDesktopVerseUtil` | Desktop verse reference finder/parser |
+
+The `:tools:converter-core`, `:tools:cli` and `:tools:importers` modules are plain JVM modules for the desktop converters (`.yet` to `.yes` or internal files, `.rpa` to `.rpb` reading plans). They are not part of the app; `:tools:converter-core` compiles the source folders of the shared format modules above directly, and `:tools:cli` has golden tests against the checked-in `ddd_*` assets and reading plans. See [Tools](docs/tools.md).
 
 Bible-version downloads run inside `VersionDownloadWorker` (a `CoroutineWorker`) using the shared OkHttp client; the previous `PrDownloaderFixed` module was deleted in REM-19.
 
@@ -269,7 +275,7 @@ Detailed documentation for each major feature module:
 - [Architecture Deep Dive](docs/architecture.md) — Singleton patterns, data flow, module dependencies
 - [Build System](docs/build-system.md) — Flavors, signing, CI/CD, release process
 - [Google Play Publishing](docs/play-publishing.md) — Manual store uploads via `tools/play/publish.py`, GPP-shaped metadata layout
-- [Tools](docs/tools.md) — The desktop converters in `tools/` for Bible versions and reading plans, and the prebuilt jars
+- [Tools](docs/tools.md) — The desktop converter CLI in `tools/` for Bible versions and reading plans, its golden tests, and the prebuilt jars
 - [Text Rendering](docs/text-rendering.md) — Verse formatting pipeline and codes
 - [Binary Formats](docs/binary-formats.md) — YES2, Bintex, RPB file format specs
 - [Storage & Database](docs/storage.md) — SQLite schema, preferences, file storage

@@ -35,3 +35,8 @@ include(":BintexReader")
 include(":Afw")
 include(":FlowLayout")
 include(":ImportedDesktopVerseUtil")
+
+// Desktop converters (see docs/tools.md). Plain JVM modules, not part of the app.
+include(":tools:converter-core")
+include(":tools:cli")
+include(":tools:importers")
