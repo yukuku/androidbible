@@ -4,6 +4,10 @@
 
 Full-text search across Bible verses with token-based intersection, book/testament filtering, and search history.
 
+## Smart search
+
+When the "Smart search" experimental setting is on (the default in this prototype) and the translation is Indonesian, `SearchActivity` runs `SmartSearchRunner` instead of calling `searchByGrep` directly. A plain query word is widened to its whole word family from a word list and matched as whole words, so `kasih` finds `mengasihi` and `berkat` stops finding `berkata`. `+word` and quoted phrases keep the exact meaning described below. The design, the word list format, the diagnostics and the Search Lab are described in [`docs/features/smart-search/design.md`](../features/smart-search/design.md).
+
 ## Key Files
 
 - `Alkitab/src/main/java/yuku/alkitab/base/ac/SearchActivity.kt` — Search UI with history autocomplete

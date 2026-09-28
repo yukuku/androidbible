@@ -9,7 +9,9 @@ import android.os.SystemClock
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.util.SparseBooleanArray
 import android.view.Menu
@@ -26,6 +28,7 @@ import androidx.annotation.Keep
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
@@ -40,7 +43,18 @@ import me.zhanghai.android.fastscroll.FastScrollerBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.base.model.MVersion
+import yuku.alkitab.base.settings.ExperimentalFlags
+import yuku.alkitab.base.smartsearch.SearchLab
+import yuku.alkitab.base.smartsearch.SearchLexicon
+import yuku.alkitab.base.smartsearch.SelectionReason
+import yuku.alkitab.base.smartsearch.SmartSearchReport
+import yuku.alkitab.base.smartsearch.SmartSearchRunner
+import yuku.alkitab.base.smartsearch.ui.ResultFilter
+import yuku.alkitab.base.smartsearch.ui.SearchLabActivity
+import yuku.alkitab.base.smartsearch.ui.SmartSearchPanel
+import yuku.alkitab.base.smartsearch.ui.SmartSearchPanelState
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
@@ -77,6 +91,8 @@ class SearchActivity : BaseActivity() {
     private lateinit var bSearch: ImageButton
     private lateinit var lsSearchResults: RecyclerView
     private lateinit var tSearchTips: TextView
+    private lateinit var smartSearchPanel: ComposeView
+    private val panelState = SmartSearchPanelState()
     private lateinit var panelFilter: View
     private lateinit var cFilterOlds: CheckBox
     private lateinit var cFilterNews: CheckBox
@@ -88,7 +104,9 @@ class SearchActivity : BaseActivity() {
     private var selectedBookIds = SparseBooleanArray()
     private var openedBookId = 0
     private var filterUserAction = 0 // when it's not user action, set to nonzero
-    private val adapter = SearchAdapter(IntArrayList(), emptyList())
+    private val adapter = SearchAdapter()
+    private var hasSearched = false
+    private var seenLabGeneration = SearchLab.generation
 
     private var searchInVersion: Version = App.services.versions.activeVersion()
     private var searchInVersionId: String = App.services.versions.activeVersionId()
@@ -230,6 +248,16 @@ class SearchActivity : BaseActivity() {
         lsSearchResults.adapter = adapter
         FastScrollerBuilder(lsSearchResults).build()
         tSearchTips = findViewById(R.id.tSearchTips)
+        smartSearchPanel = findViewById(R.id.smartSearchPanel)
+        smartSearchPanel.setContent {
+            BibleAppTheme {
+                SmartSearchPanel(
+                    state = panelState,
+                    onFilterChanged = { applyResultFilter(it) },
+                    onOpenLab = { openSearchLab() },
+                )
+            }
+        }
         panelFilter = findViewById(R.id.panelFilter)
         cFilterOlds = findViewById(R.id.cFilterOlds)
         cFilterNews = findViewById(R.id.cFilterNews)
@@ -290,15 +318,7 @@ class SearchActivity : BaseActivity() {
             search(searchView.query.toString())
         }
 
-        run {
-            val sb = SpannableStringBuilder(tSearchTips.text)
-            while (true) {
-                val pos = TextUtils.indexOf(sb, "[q]")
-                if (pos < 0) break
-                sb.replace(pos, pos + 3, "\"")
-            }
-            tSearchTips.text = sb
-        }
+        displaySearchTips()
 
         val applied = App.services.uiDimensions.applied()
         tSearchTips.setBackgroundColor(applied.backgroundColor)
@@ -350,6 +370,59 @@ class SearchActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         searchHistoryAdapter.setData(loadSearchHistory())
+
+        // The Search Lab can switch smart search, its word list or its diagnostics; redo what is on screen with the new setup.
+        if (seenLabGeneration != SearchLab.generation) {
+            seenLabGeneration = SearchLab.generation
+            if (hasSearched) {
+                search(searchView.query.toString())
+            } else {
+                displaySearchTips()
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.activity_search, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menuSearchLab) {
+            openSearchLab()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun openSearchLab() {
+        startActivity(SearchLabActivity.createIntent(searchInVersionId, searchView.query.toString()))
+    }
+
+    /**
+     * The tips describe the syntax the search will actually apply: smart search only widens
+     * words in Indonesian translations.
+     */
+    private fun displaySearchTips() {
+        val smart = ExperimentalFlags.smartSearch() && SearchLexicon.sameLanguage("id", searchInVersion.locale)
+        val sb = SpannableStringBuilder(getText(if (smart) R.string.search_syntax_tips_smart else R.string.search_syntax_tips))
+        while (true) {
+            val pos = TextUtils.indexOf(sb, "[q]")
+            if (pos < 0) break
+            sb.replace(pos, pos + 3, "\"")
+        }
+        tSearchTips.text = sb
+        tSearchTips.isClickable = false
+        tSearchTips.setOnClickListener(null)
+    }
+
+    private fun applyResultFilter(filter: ResultFilter) {
+        panelState.filter = filter
+        adapter.setFilter(filter)
+        val any = adapter.itemCount > 0
+        lsSearchResults.isVisible = any
+        tSearchTips.isVisible = !any
+        lsSearchResults.scrollToPosition(0)
     }
 
     private fun displaySearchInVersion() {
@@ -515,6 +588,7 @@ class SearchActivity : BaseActivity() {
             textSizeMult = App.services.storage.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
 
             Appearances.applyTextAppearance(tSearchTips, textSizeMult)
+            if (!hasSearched) displaySearchTips()
             displaySearchInVersion()
             configureFilterDisplayOldNewTest()
             bVersion.text = selectedVersion.initials
@@ -559,7 +633,7 @@ class SearchActivity : BaseActivity() {
     @JvmInline
     value class SearchRequest(val query: SearchEngineQuery)
 
-    data class SearchResult(val query: SearchEngineQuery, val result: IntArrayList)
+    data class SearchResult(val query: SearchEngineQuery, val result: IntArrayList, val report: SmartSearchReport?)
 
     /**
      * So we can delay a bit before updating suggestions.
@@ -579,30 +653,48 @@ class SearchActivity : BaseActivity() {
             val query = request.query
             val totalMs = System.currentTimeMillis()
             val cpuMs = SystemClock.currentThreadTimeMillis()
-            val result = SearchEngine.searchByGrep(searchInVersion, query)
+            val report = if (ExperimentalFlags.smartSearch()) {
+                SmartSearchRunner.run(searchInVersion, searchInVersionId, query, ExperimentalFlags.smartSearchDiagnostics())
+            } else {
+                null
+            }
+            val result = report?.result ?: SearchEngine.searchByGrep(searchInVersion, query)
             val debugstats_totalTimeMs = System.currentTimeMillis() - totalMs
             val debugstats_cpuTimeMs = SystemClock.currentThreadTimeMillis() - cpuMs
 
             AppLog.d(
                 TAG,
                 "Search results: ${result.size()}\n" +
-                    "Method: grep\n" +
+                    "Method: ${if (report != null) "smart (${report.selection.reason})" else "grep"}\n" +
                     "Total time: $debugstats_totalTimeMs ms\n" +
                     "CPU (thread) time: $debugstats_cpuTimeMs ms"
             )
 
-            return SearchResult(query, result)
+            return SearchResult(query, result, report)
         }
 
         override fun onResult(searchResult: SearchResult) {
-            val (query, result) = searchResult
+            val (query, result, report) = searchResult
             progressbar.isVisible = false
             bSearch.isVisible = true
             actionMode?.finish()
+            hasSearched = true
 
-            val tokens = QueryTokenizer.tokenize(query.query_string).toList()
+            val classicTokens = SearchEngine.ReadyTokens(QueryTokenizer.tokenize(query.query_string))
+            val showDiagnostics = report != null &&
+                ExperimentalFlags.smartSearchDiagnostics() &&
+                report.selection.reason != SelectionReason.UNSUPPORTED_LANGUAGE
+            panelState.report = if (showDiagnostics) report else null
+            panelState.filter = ResultFilter.ALL
+            smartSearchPanel.isVisible = showDiagnostics
+
             adapter.uncheckAll()
-            adapter.setData(result, tokens)
+            adapter.setData(
+                result,
+                if (report != null) SearchEngine.ReadyTokens.fromPlan(report.plan) else classicTokens,
+                classicTokens,
+                if (showDiagnostics) report else null,
+            )
 
             tSearchTips.isVisible = result.size() == 0
             lsSearchResults.isVisible = result.size() > 0
@@ -718,14 +810,21 @@ class SearchActivity : BaseActivity() {
     class ResultHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val lReference: TextView = itemView.findViewById(R.id.lReference)
         val snippet: VerseTextSlot = VerseTextSlot.of(itemView, R.id.lSnippet)
+        val lSmartInfo: TextView = itemView.findViewById(R.id.lSmartInfo)
     }
 
-    inner class SearchAdapter(val searchResults: IntArrayList, tokens: List<String>) : RecyclerView.Adapter<ResultHolder>() {
+    inner class SearchAdapter : RecyclerView.Adapter<ResultHolder>() {
         init {
             setHasStableIds(true)
         }
 
-        var rt = SearchEngine.ReadyTokens(tokens.toTypedArray())
+        /** The verses currently listed: all results, or the slice [filter] selects. */
+        val searchResults = IntArrayList()
+        private var allResults = IntArrayList()
+        private var report: SmartSearchReport? = null
+        private var filter = ResultFilter.ALL
+        var rt = SearchEngine.ReadyTokens(emptyArray())
+        private var classicRt = SearchEngine.ReadyTokens(emptyArray())
         val checkedPositions = mutableSetOf<Int>()
 
         override fun getItemCount(): Int {
@@ -759,6 +858,7 @@ class SearchActivity : BaseActivity() {
 
             val rawVerseText = searchInVersion.loadVerseText(ari)
             val snippetHiliteColor = if (checked) checkedTextColor else hiliteColor
+            val rowRt = if (filter == ResultFilter.DROPPED) classicRt else rt
             holder.snippet.setText(
                 textSizeMult = textSizeMult,
                 colorOverride = if (checked) checkedTextColor else 0,
@@ -768,19 +868,26 @@ class SearchActivity : BaseActivity() {
 
                     val verseText = FormattedVerseText.removeSpecialCodes(rawVerseText)
                     if (verseText != null) {
-                        lSnippet.text = SearchEngine.hilite(verseText, rt, snippetHiliteColor)
+                        lSnippet.text = SearchEngine.hilite(verseText, rowRt, snippetHiliteColor)
                     } else {
                         lSnippet.setText(R.string.generic_verse_not_available_in_this_version)
                     }
                 },
                 compose = {
                     if (rawVerseText != null) {
-                        renderVerseText(ari, rawVerseText).withSearchHilite(rt, snippetHiliteColor)
+                        renderVerseText(ari, rawVerseText).withSearchHilite(rowRt, snippetHiliteColor)
                     } else {
                         AnnotatedString(getString(R.string.generic_verse_not_available_in_this_version))
                     }
                 },
             )
+
+            val info = smartInfo(ari, rawVerseText)
+            holder.lSmartInfo.isVisible = info != null
+            if (info != null) {
+                holder.lSmartInfo.text = info
+                holder.lSmartInfo.setTextColor(ColorUtils.setAlphaComponent(if (checked) checkedTextColor else App.services.uiDimensions.applied().fontColor, 0xb0))
+            }
 
             if (checked) {
                 holder.itemView.setBackgroundColor(checkedBgColor)
@@ -839,14 +946,63 @@ class SearchActivity : BaseActivity() {
             onCheckedVerseChanged()
         }
 
-        fun setData(searchResults: IntArrayList, tokens: List<String>) {
-            this.searchResults.clear()
-            for (i in 0 until searchResults.size()) {
-                this.searchResults.add(searchResults[i])
+        fun setData(results: IntArrayList, rt: SearchEngine.ReadyTokens, classicRt: SearchEngine.ReadyTokens, report: SmartSearchReport?) {
+            this.allResults = results
+            this.rt = rt
+            this.classicRt = classicRt
+            this.report = report
+            setFilter(ResultFilter.ALL)
+        }
+
+        fun setFilter(filter: ResultFilter) {
+            this.filter = filter
+            val report = report
+            val shown = when {
+                report == null || filter == ResultFilter.ALL -> allResults
+                filter == ResultFilter.NEW -> report.gained
+                else -> report.dropped
+            }
+            searchResults.clear()
+            for (i in 0 until shown.size()) {
+                searchResults.add(shown[i])
+            }
+            uncheckAll()
+        }
+
+        /**
+         * The diagnostics line under a result: whether the letter search would have missed or
+         * kept this verse, and which forms of the searched families it holds.
+         */
+        private fun smartInfo(ari: Int, rawVerseText: String?): CharSequence? {
+            val report = report ?: return null
+            val sb = SpannableStringBuilder()
+
+            fun badge(text: String, color: Int) {
+                val start = sb.length
+                sb.append("\u2009").append(text).append("\u2009")
+                sb.setSpan(BackgroundColorSpan(color), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                sb.setSpan(ForegroundColorSpan(0xffffffff.toInt()), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                sb.setSpan(StyleSpan(android.graphics.Typeface.BOLD), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                sb.append("  ")
             }
 
-            this.rt = SearchEngine.ReadyTokens(tokens.toTypedArray())
-            uncheckAll()
+            if (filter == ResultFilter.DROPPED) {
+                badge(getString(R.string.smart_search_badge_dropped), 0xffc62828.toInt())
+                sb.append(getString(R.string.smart_search_row_dropped))
+                return sb
+            }
+
+            if (report.isGained(ari)) badge(getString(R.string.smart_search_badge_new), 0xff00796b.toInt())
+
+            if (rawVerseText != null) {
+                val plain = FormattedVerseText.removeSpecialCodes(rawVerseText)?.lowercase(Locale.getDefault()).orEmpty()
+                val via = report.plan.flatMap { term ->
+                    term.matcher?.matchesIn(plain)?.filter { it != term.typed }.orEmpty()
+                }.distinct()
+                if (via.isNotEmpty()) sb.append(getString(R.string.smart_search_row_via, via.joinToString(", ")))
+            }
+
+            return if (sb.isEmpty()) null else sb
         }
     }
 

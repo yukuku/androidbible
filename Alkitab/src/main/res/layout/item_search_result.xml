@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:orientation="vertical"
 	android:padding="16dip">
 
 	<TextView
 		android:id="@+id/lReference"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentStart="true"
-		android:layout_alignParentEnd="true"
-		android:layout_alignParentTop="true"
 		android:gravity="center_vertical"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		tools:text="reference" />
@@ -20,12 +18,19 @@
 		android:id="@+id/lSnippet"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentEnd="true"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@id/lReference"
 		android:gravity="top"
 		android:textSize="14sp"
 		tools:text="snippet" />
 
-</RelativeLayout>
+	<TextView
+		android:id="@+id/lSmartInfo"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="4dp"
+		android:fontFamily="monospace"
+		android:textSize="12sp"
+		android:visibility="gone"
+		tools:text="NEW via menyembuhkan, penyakitmu"
+		tools:visibility="visible" />
+
+</LinearLayout>

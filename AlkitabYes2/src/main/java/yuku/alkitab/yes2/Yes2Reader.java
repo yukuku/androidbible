@@ -4,6 +4,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -18,6 +19,7 @@ import yuku.alkitab.yes2.model.SectionIndex;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
 import yuku.alkitab.yes2.section.FootnotesSection;
+import yuku.alkitab.yes2.section.LexiconSection;
 import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.TextSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
@@ -305,6 +307,22 @@ public class Yes2Reader implements BibleReader {
         }
 
         return footnotesSection_.getFootnoteEntry(arif);
+    }
+
+    @Override
+    public Map<String, List<String>> loadLexicon() {
+        try {
+            // Unlike the other sections, the lexicon may be the first thing asked of this reader.
+            loadSectionIndex();
+            final RandomInputStream sectionInput = prepareLoadSection(LexiconSection.SECTION_NAME);
+            if (sectionInput == null) {
+                return null;
+            }
+            return new LexiconSection.Reader().read(sectionInput).getFamilies();
+        } catch (Exception e) {
+            Log.e(TAG, "General exception in loading lexicon section", e);
+            return null;
+        }
     }
 
     /**

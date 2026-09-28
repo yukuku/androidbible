@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_syntax_tips_smart"><i>Tip pencarian</i>\n\n<b>kasih</b> menemukan seluruh keluarga katanya: kasih, mengasihi, dikasihi, kekasih\n\n<b>+kasih</b> hanya menemukan kata kasih itu sendiri\n\n<b>[q]kota daud[q]</b> menemukan kata-kata itu dengan urutan persis seperti itu\n\nKata yang tidak ada di daftar kata dicocokkan per huruf, jadi <b>yerus</b> tetap menemukan Yerusalem.</string>
+
+    <string name="smart_search_panel_title">Pencarian pintar</string>
+    <string name="smart_search_panel_expand">Tampilkan cara kerja pencarian ini</string>
+    <string name="smart_search_panel_collapse">Sembunyikan rincian</string>
+    <string name="smart_search_summary_compare">%1$d ayat · +%2$d baru · −%3$d dibuang dibanding pencarian huruf</string>
+    <string name="smart_search_summary_plain">%1$d ayat</string>
+    <string name="smart_search_not_widened">Tidak ada kata yang diperluas, jadi pencarian ini sama persis dengan pencarian huruf.</string>
+
+    <string name="smart_search_lexicon_builtin">Daftar kata bawaan %1$s.</string>
+    <string name="smart_search_off_no_builtin">Pilihan \u201cBawaan saja\u201d aktif di Lab Pencarian dan versi ini tidak punya daftar kata, jadi kata dicocokkan per huruf.</string>
+    <string name="smart_search_origin_version">bawaan</string>
+    <string name="smart_search_lexicon_rules">Kaidah saja: keluarga kata ditebak dari kata-kata versi ini sendiri dengan kaidah imbuhan. Kesalahan seperti kepada yang ikut masuk keluarga pada masih bisa terjadi.</string>
+    <string name="smart_search_off_language">Pencarian pintar baru mengenal pembentukan kata bahasa Indonesia, jadi %1$s dicari per huruf.</string>
+    <string name="smart_search_off_disabled">Pencarian pintar sedang dimatikan.</string>
+
+    <string name="smart_search_how_direct">Ada di daftar kata</string>
+    <string name="smart_search_how_peeled">Imbuhan dikupas</string>
+    <string name="smart_search_how_own_family">Keluarga sendiri</string>
+    <string name="smart_search_how_letters">Cocok huruf</string>
+    <string name="smart_search_how_exact">Kata persis</string>
+    <string name="smart_search_how_phrase">Frasa</string>
+
+    <string name="smart_search_explain_direct">“%1$s” termasuk keluarga kata “%2$s”. Semua bentuk di bawah ini ikut dicari, sebagai kata utuh.</string>
+    <string name="smart_search_explain_direct_root">Semua bentuk \u201c%1$s\u201d di bawah ini ikut dicari, sebagai kata utuh.</string>
+    <string name="smart_search_explain_peeled">“%1$s” tidak dipakai dalam terjemahan ini, jadi imbuhannya dikupas satu per satu sampai tersisa bentuk yang dikenal: %2$s. Bentuk itu termasuk keluarga kata “%3$s”.</string>
+    <string name="smart_search_explain_own_family">“%1$s” muncul %2$d kali tetapi tidak punya kerabat dalam terjemahan ini, jadi hanya kata itu persis yang dicari. Kata yang sekadar memuat huruf-hurufnya tidak lagi ikut.</string>
+    <string name="smart_search_explain_fallback">“%1$s” tidak dipakai dalam terjemahan ini, dan mengupas imbuhannya pun tidak sampai ke kata yang dikenal, jadi kata apa pun yang memuat huruf-huruf ini ikut dicari, seperti pencarian lama.</string>
+    <string name="smart_search_explain_not_a_word">“%1$s” bukan kata biasa, jadi huruf-hurufnya dicocokkan seperti pencarian lama.</string>
+    <string name="smart_search_explain_exact">Anda meminta “%1$s” persis dengan tanda + atau tanda kutip, jadi keluarga katanya tidak ikut dicari.</string>
+    <string name="smart_search_explain_phrase">Kata-kata ini dengan urutan persis seperti ini, sebagai kata utuh.</string>
+    <string name="smart_search_explain_off">Kata apa pun yang memuat “%1$s”.</string>
+
+    <string name="smart_search_forms_legend">Bentuk yang ditandai tidak mungkin ditemukan pencarian huruf, sebab tidak memuat “%1$s”.</string>
+    <string name="smart_search_forms_absent_legend">Bentuk yang pudar ada di daftar kata tetapi tidak pernah muncul dalam terjemahan ini.</string>
+    <string name="smart_search_more_forms">+%1$d lagi</string>
+    <string name="smart_search_fewer_forms">ringkas</string>
+    <string name="smart_search_term_stats">%1$d ayat untuk kata ini saja · %2$d ms</string>
+    <string name="smart_search_term_occurrences">muncul %1$d kali dalam teks</string>
+
+    <string name="smart_search_filter_all">Semua %1$d</string>
+    <string name="smart_search_filter_new">Baru %1$d</string>
+    <string name="smart_search_filter_dropped">Dibuang %1$d</string>
+    <string name="smart_search_filter_hint_new">Hanya menampilkan ayat yang terlewat oleh pencarian huruf.</string>
+    <string name="smart_search_filter_hint_dropped">Menampilkan ayat yang ditemukan pencarian huruf tetapi tidak oleh pencarian pintar. Biasanya isinya kata lain yang kebetulan memuat huruf-huruf itu, seperti berkata untuk berkat.</string>
+
+    <string name="smart_search_section_terms">Yang dicari untuk tiap kata</string>
+    <string name="smart_search_section_compare">Dibanding pencarian huruf</string>
+    <string name="smart_search_section_engine">Di balik layar</string>
+    <string name="smart_search_engine_lexicon">%1$s · %2$d keluarga · %3$d bentuk · dimuat dalam %4$d ms</string>
+    <string name="smart_search_engine_vocabulary">Kosakata: %1$d kata berbeda, %2$d kata seluruhnya</string>
+    <string name="smart_search_engine_vocabulary_built">Seluruh terjemahan dibaca untuk mengenali kata-katanya dalam %1$d ms (hanya pada pencarian pertama)</string>
+    <string name="smart_search_engine_timings">Perencanaan %1$d ms · pencarian pintar %2$d ms · pencarian huruf %3$d ms</string>
+    <string name="smart_search_engine_timings_no_classic">Perencanaan %1$d ms · pencarian pintar %2$d ms</string>
+    <string name="smart_search_open_lab">Buka Lab Pencarian</string>
+
+    <string name="smart_search_badge_new">BARU</string>
+    <string name="smart_search_badge_dropped">DIBUANG</string>
+    <string name="smart_search_row_via">lewat %1$s</string>
+    <string name="smart_search_row_dropped">Ayat ini hanya ditemukan pencarian huruf.</string>
+
+    <string name="smart_search_origin_rules">kaidah saja</string>
+
+    <string name="search_lab_title">Lab Pencarian</string>
+    <string name="search_lab_menu">Lab Pencarian</string>
+
+    <string name="search_lab_settings_title">Pengaturan</string>
+    <string name="search_lab_mode_title">Daftar kata</string>
+    <string name="search_lab_mode_auto">Otomatis</string>
+    <string name="search_lab_mode_builtin">Bawaan saja</string>
+    <string name="search_lab_mode_builtin_desc">Hanya pakai daftar kata bawaan versi Alkitab ini. Kalau tidak ada, pencarian tetap per huruf.</string>
+    <string name="search_lab_mode_rules">Kaidah saja</string>
+    <string name="search_lab_mode_auto_desc">Pakai daftar kata bawaan versi Alkitab ini, atau kaidah imbuhan saja kalau tidak ada.</string>
+    <string name="search_lab_mode_rules_desc">Selalu tebak keluarga kata dari kata-kata versi ini sendiri dengan kaidah imbuhan. Berguna untuk melihat apa sumbangan daftar kata bawaannya.</string>
+
+    <string name="search_lab_translation_title">Terjemahan</string>
+    <string name="search_lab_change_version">Ganti</string>
+    <string name="search_lab_preparing">Membaca seluruh terjemahan untuk mengenali kata-katanya…</string>
+    <string name="search_lab_selection_none">Belum ada daftar kata yang dipakai untuk terjemahan ini.</string>
+    <string name="search_lab_vocabulary">%1$d kata berbeda, %2$d kata seluruhnya, dibaca dalam %3$d ms</string>
+    <string name="search_lab_lexicon_line">%1$s (%2$s): %3$d keluarga, %4$d bentuk, dimuat dalam %5$d ms</string>
+
+    <string name="search_lab_word_title">Coba sebuah kata</string>
+    <string name="search_lab_word_hint">Ketik kata atau kueri, misalnya sembuhkan sakit</string>
+    <string name="search_lab_word_empty">Ketik sesuatu di atas untuk melihat bagaimana kata itu akan dicari.</string>
+    <string name="search_lab_compare_rules">Dengan kaidah saja</string>
+    <string name="search_lab_compare_curated">Dengan daftar kata</string>
+    <string name="search_lab_counting">Menghitung ayat…</string>
+    <string name="search_lab_counts">Pencarian huruf %1$d ayat · pencarian pintar %2$d ayat · +%3$d baru · −%4$d dibuang</string>
+    <string name="search_lab_form_count">%1$s ×%2$d</string>
+
+    <string name="search_lab_benchmark_title">Uji mandiri</string>
+    <string name="search_lab_benchmark_desc">Menjalankan sejumlah pencarian yang dikenal rawan pada terjemahan ini, lalu membandingkan pencarian huruf dengan pencarian pintar.</string>
+    <string name="search_lab_benchmark_run">Jalankan uji mandiri</string>
+    <string name="search_lab_benchmark_running">Sedang berjalan…</string>
+    <string name="search_lab_benchmark_col_query">Kueri</string>
+    <string name="search_lab_benchmark_col_letters">Huruf</string>
+    <string name="search_lab_benchmark_col_smart">Pintar</string>
+    <string name="search_lab_benchmark_col_new">Baru</string>
+    <string name="search_lab_benchmark_col_dropped">Dibuang</string>
+    <string name="search_lab_benchmark_col_ms">ms</string>
+
+</resources>

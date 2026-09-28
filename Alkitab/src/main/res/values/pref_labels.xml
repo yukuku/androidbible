@@ -32,6 +32,10 @@
 
     <string name="pref_experimental">Experimental features</string>
     <string name="pref_experimental_warning">May be unstable. Disable if you hit issues.</string>
+    <string name="pref_smartSearch_title">Smart search (Indonesian)</string>
+    <string name="pref_smartSearch_summary">Search whole word families instead of letters: “kasih” also finds “mengasihi”, and “berkat” stops finding “berkata”. Uses the word list built into the Bible version, or affix rules alone when it has none.</string>
+    <string name="pref_smartSearchDiagnostics_title">Smart search diagnostics</string>
+    <string name="pref_smartSearchDiagnostics_summary">Explain every search on the search screen: which forms each word was widened to, why, how the results differ from the classic letter match, and how long it took. Also runs the classic search alongside for comparison.</string>
     <string name="pref_debugRubyGeometry_title">Debug ruby geometry</string>
     <string name="pref_debugRubyGeometry_summary">Box every line, base and reading on screen, write the measurements behind them to the system log under the tag RubyGeom, and put a verse\u2019s measurements on the clipboard when you touch it. For diagnosing reading placement only; leave this off.</string>
     <string name="pref_useLegacyVerseItem_title">Verse (legacy views)</string>

@@ -12,6 +12,7 @@ import yuku.alkitab.yes2.model.VerseBytes;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
 import yuku.alkitab.yes2.section.FootnotesSection;
+import yuku.alkitab.yes2.section.LexiconSection;
 import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.XrefsSection;
@@ -31,6 +32,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Yes2Common {
@@ -143,14 +145,25 @@ public class Yes2Common {
 	}
 
     public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) throws IOException {
+        createYesFile(outputFile, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, null);
+    }
+
+    /**
+     * @param lexiconFamilies root to its forms, spelled out, or null for no lexicon
+     */
+    public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final Map<String, List<String>> lexiconFamilies) throws IOException {
         RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
         raf.setLength(0);
         RandomOutputStream output = new RandomAccessFileRandomOutputStream(raf);
-        createYesFile(output, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries);
+        createYesFile(output, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, lexiconFamilies);
         output.close();
     }
 
     public static void createYesFile(final RandomOutputStream ros, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) throws IOException {
+        createYesFile(ros, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries, null);
+    }
+
+    public static void createYesFile(final RandomOutputStream ros, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, final Map<String, List<String>> lexiconFamilies) throws IOException {
         VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, pericopeData != null);
 		BooksInfoSection booksInfoSection = getBooksInfoSection(versionInfo, textDb);
 		
@@ -168,6 +181,10 @@ public class Yes2Common {
 
 		if (footnoteEntries != null) {
 			yesWriter.sections.add(new CompressibleFootnotesSection(footnoteEntries, compressed));
+		}
+
+		if (lexiconFamilies != null) {
+			yesWriter.sections.add(new CompressibleLexiconSection(lexiconFamilies, compressed));
 		}
 
 		yesWriter.writeToFile(ros);
@@ -305,6 +322,28 @@ public class Yes2Common {
 		}
 	}
 
+
+	static class CompressibleLexiconSection extends SectionContent implements SectionContent.Writer {
+		final CompressionInfo compressionInfo;
+
+		public CompressibleLexiconSection(final Map<String, List<String>> families, boolean compressed) throws IOException {
+			super(LexiconSection.SECTION_NAME);
+			compressionInfo = new CompressionInfo(compressed);
+
+			final BintexWriter bw = new BintexWriter(compressionInfo.getOutputStream());
+			System.err.println(LexiconSection.writeTo(bw, families).describe());
+
+			compressionInfo.finalizeOutputStream();
+		}
+
+		@Override public ValueMap getAttributes() {
+			return compressionInfo.getSectionAttributes();
+		}
+
+		@Override public void write(RandomOutputStream output) throws IOException {
+			compressionInfo.writeOutputBufferTo(output);
+		}
+	}
 
 	static class CompressibleFootnotesSection extends SectionContent implements SectionContent.Writer {
 		final CompressionInfo compressionInfo;

@@ -32,6 +32,7 @@ The primary Bible text file format. Each `.yes` file contains one complete Bible
 | `xrefs`       | Cross-reference entries                                                                                   |
 | `footnotes`   | Footnote entries                                                                                          |
 | `pericopies`  | Section headers (pericopes) with ARI positions                                                            |
+| `lexicon`     | Word families for smart search (optional). Same format as the internal lexicon file, see below            |
 
 ### Text Encoding
 
@@ -68,6 +69,7 @@ The `prefix` determines all filenames. Version ID is always `"internal"` (from `
 | `{prefix}_pericope_blocks_bt.bt`        | Bintex     | Pericope titles and parallel passage references              |
 | `{prefix}_footnotes_bt.bt`              | Bintex     | Footnote entries indexed by ARIF                             |
 | `{prefix}_xrefs_bt.bt`                  | Bintex     | Cross-reference entries indexed by ARIF                      |
+| `{prefix}_lexicon_bt.bt`                | Bintex     | Word families for smart search (optional)                    |
 
 ### Reader: `InternalReader.java`
 
@@ -149,6 +151,73 @@ valueString[entry_count]    contents   // entry text
 - Bits 7-0: field index within that verse (1-based), allowing multiple entries per verse
 
 Read by `XrefsSection.Reader` and `FootnotesSection.Reader`. Lookup uses unsigned binary search on the sorted ARIF array.
+
+### Lexicon File and Section
+
+`{prefix}_lexicon_bt.bt` and the YES2 `lexicon` section share one format. It lists, for each root,
+the forms of it that occur in the version, so a search for any form can find them all:
+
+```
+uint8       data_format_version   // must be 1
+uint8       start_rule_count
+autostring  start_rules[start_rule_count * 2]   // from, to, from, to, ...
+uint8       end_rule_count
+autostring  end_rules[end_rule_count * 2]
+varuint     piece_count
+autostring  pieces[piece_count]
+int         family_count
+family[family_count] {
+    autostring  root
+    varuint     form_count
+    form[form_count] {
+        varuint  token_count
+        token[token_count]        // varuint, then an autostring for a literal
+    }
+}
+```
+
+A form is its tokens joined together:
+
+| Token | Meaning |
+|---|---|
+| 0 | the root as is |
+| 1 | the root with its start rewritten by the start rules |
+| 2 | a literal: an autostring follows, spelled out in full |
+| 3 | the root with its end rewritten by the end rules |
+| 4, 5 | reserved; a reader rejects them |
+| 6 and up | `pieces[token - 6]` |
+
+A start rule `from -> to` applies to a root beginning with `from` and replaces that beginning with
+`to`; an end rule does the same at the end. When several rules of a table match, the longest `from`
+wins. With the start rule `k -> ng` and the end rule `y -> i`:
+
+```
+root kasih:  mengasihi          = "me", 1, "i"
+             kekasih-kekasihnya = "ke", 0, "-", "ke", 0, "nya"
+root reka:   mereka-rekakan     = "me", 0, "-", 0, "kan"
+root carry:  carried            = 3, "ed"
+root hutan:  mengutan           = literal "mengutan"
+```
+
+Any text can sit between two roots, not only a hyphen. Read by `LexiconSection.readFrom()` in
+`AlkitabYes2`; `InternalReader.loadLexicon()` reads the file and `Yes2Reader.loadLexicon()` the
+section.
+
+The rules and pieces are not written by hand. `LexiconSection.writeTo()` takes plain forms and
+`LexiconCompiler` chooses them to make the output small: it adopts rewrite rules one at a time,
+each time the one that saves the most bytes, splits every form into root tokens and text, and puts
+a text run in the piece table when it is used at least twice, most used first so the common pieces
+get one-byte tokens. The rest are literals. The chosen rules need not look like grammar: for
+Terjemahan Baru the start rules come out as `t -> ` (nothing), `s -> y`, `k -> g` and `p -> m`,
+sharing the piece `men`, which is a few bytes smaller than `k -> ng` and the like with `me`.
+
+In a `.yet` file a lexicon is one line per family, tab-separated like every other `.yet` line: the
+root, then each form spelled out.
+
+```
+lexicon<TAB>kasih<TAB>kasih<TAB>mengasihi<TAB>dikasihi<TAB>kekasih-kekasihnya
+lexicon<TAB>hutan<TAB>hutan<TAB>mengutan
+```
 
 ### Differences from YES2
 

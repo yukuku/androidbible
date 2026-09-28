@@ -321,7 +321,7 @@
     <string name="menu_compare">Compare</string>
 
     <string name="search_in_version_short_name_placeholder">Find in %s</string>
-    <string name="search_syntax_tips"><i>Search tips:</i>\n\n<b>+word</b> for that exact word\n<b>[q]city of david[q]</b> for that exact phrase</string>
+    <string name="search_syntax_tips"><i>Search tips</i>\n\n<b>light</b> finds every word containing these letters: light, lights, delight\n\n<b>+light</b> finds only the word light itself\n\n<b>[q]city of david[q]</b> finds these words in this order</string>
     <string name="search_no_result">No verses found for <b>^1</b>.</string>
     <string name="search_no_result_fallback">Tap here to go to <u>^1</u>.</string>
     <string name="search_clear_history">Clear search history</string>

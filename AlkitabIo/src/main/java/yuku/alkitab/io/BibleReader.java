@@ -1,6 +1,7 @@
 package yuku.alkitab.io;
 
 import java.util.List;
+import java.util.Map;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.PericopeBlock;
@@ -35,4 +36,14 @@ public interface BibleReader {
 	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
 	 */
 	FootnoteEntry getFootnoteEntry(int arif);
+
+	/**
+	 * The word families smart search widens a query to: each root mapped to the forms of it that
+	 * occur in this version.
+	 *
+	 * @return null if this version carries none
+	 */
+	default Map<String, List<String>> loadLexicon() {
+		return null;
+	}
 }

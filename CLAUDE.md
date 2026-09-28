@@ -244,7 +244,7 @@ Uses operation deltas (add/mod/del) with base revisions. Firebase Cloud Messagin
 
 Custom binary format for Bible text files (`.yes`):
 - Header magic bytes, then section index (Bintex-encoded)
-- Sections: `versionInfo`, `booksInfo`, `text`, `xrefs`, `footnotes`, `pericopies`
+- Sections: `versionInfo`, `booksInfo`, `text`, `xrefs`, `footnotes`, `pericopies`, and the optional `lexicon` (smart-search word families, also shipped as `{prefix}_lexicon_bt.bt` for internal versions)
 - Text section supports Snappy compression
 - Loaded via `YesReaderFactory` → `Yes2Reader`
 - PDB (PalmBible+) files are converted to YES2 on import

@@ -116,7 +116,7 @@ public class YetToYes2 {
 		}
 
 		boolean compressed = !nocompress;
-		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, result.pericopeData, compressed, result.xrefEntries, result.footnoteEntries);
+		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, result.pericopeData, compressed, result.xrefEntries, result.footnoteEntries, result.lexiconFamilies);
 
 		return 0;
 	}

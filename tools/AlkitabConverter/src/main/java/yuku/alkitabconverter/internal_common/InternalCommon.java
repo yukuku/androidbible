@@ -1,6 +1,7 @@
 package yuku.alkitabconverter.internal_common;
 
 import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitab.yes2.section.LexiconSection;
 import yuku.alkitabconverter.util.CountingOutputStream;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.Rec;
@@ -17,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -43,6 +45,14 @@ public class InternalCommon {
 	 * @param prefix e.g. "tb"
 	 */
 	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb) {
+		createInternalFiles(outDir, prefix, bookNames, _recs, pericopeData, xrefDb, footnoteDb, null);
+	}
+
+	/**
+	 * @param prefix e.g. "tb"
+	 * @param lexiconFamilies root to its forms, spelled out, or null for no lexicon
+	 */
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb, Map<String, List<String>> lexiconFamilies) {
 		final List<List<Rec>> books = new ArrayList<>();
 
 		// Gather books, fix missing "@@"
@@ -187,6 +197,13 @@ public class InternalCommon {
 			if (footnoteDb != null) {
 				final BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_footnotes_bt.bt", prefix))));
 				FootnoteDb.writeFootnoteEntriesTo(footnoteDb.toEntries(), bw);
+				bw.close();
+			}
+
+			// lexicon
+			if (lexiconFamilies != null) {
+				final BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_lexicon_bt.bt", prefix))));
+				System.err.println(LexiconSection.writeTo(bw, lexiconFamilies).describe());
 				bw.close();
 			}
 
