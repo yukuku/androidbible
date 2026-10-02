@@ -48,7 +48,7 @@ The rest of this document assumes "**faithful functional port**" — same featur
 
 ### Where the mass is
 
-- `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt` is **~2,321 lines** — the monolithic main reader activity (gestures, split view, action mode, navigation history, font zoom, volume-key nav). CLAUDE.md flags it at ~2,900 lines; either way it dominates the UI port.
+- `Alkitab/src/main/java/yuku/alkitab/base/IsiActivity.kt` is **~2,321 lines** — the monolithic main reader activity (gestures, split view, action mode, navigation history, font zoom, volume-key nav). AGENTS.md flags it at ~2,900 lines; either way it dominates the UI port.
 - The next largest units are `VerseRenderer`, `FormattedTextRenderer`, `VersesControllerImpl`, and `InternalDbHelper`.
 - Kotlin is concentrated in the main app (42% of main-app LOC); library modules remain mostly Java.
 
@@ -159,7 +159,7 @@ Core Data is technically viable but would require re-modeling every entity, migr
 
 Special caveats:
 
-- **`KpriModel.Song`** stores a `Parcelable`-serialized blob in its DB row (CLAUDE.md calls out this design as a known bad decision). On iOS that blob is unreadable — Android's `Parcel` format is a private, unstable runtime format, so a Swift reimplementation isn't viable. Options: (a) define a portable serialization format (JSON) and migrate Android to write it, which is REM-21 in the tech-debt plan; (b) ship iOS with fresh song DBs and let users re-download their song books. **Recommend (a)**, done on Android *before* the iOS port begins — it's a worthwhile cleanup independently of porting, and it's the only option that preserves existing song data cross-platform. This is also consistent with the §14 recommendation against KMP (no shared Kotlin parser to bridge through).
+- **`KpriModel.Song`** stores a `Parcelable`-serialized blob in its DB row (AGENTS.md calls out this design as a known bad decision). On iOS that blob is unreadable — Android's `Parcel` format is a private, unstable runtime format, so a Swift reimplementation isn't viable. Options: (a) define a portable serialization format (JSON) and migrate Android to write it, which is REM-21 in the tech-debt plan; (b) ship iOS with fresh song DBs and let users re-download their song books. **Recommend (a)**, done on Android *before* the iOS port begins — it's a worthwhile cleanup independently of porting, and it's the only option that preserves existing song data cross-platform. This is also consistent with the §14 recommendation against KMP (no shared Kotlin parser to bridge through).
 
 Migration effort: ~200 hours including the `Parcelable` song remediation.
 
@@ -410,7 +410,7 @@ A disciplined team will scope the MVP smaller — reader + markers + sync is pro
 
 1. **`IsiActivity` is a monolith.** Any missed behavior (volume-key nav, split-view scroll coupling, gesture priority) will be caught only by users. Budget time for regression hunting after the first beta.
 2. **Formatting code parser edge cases.** The inline `@` code family is load-bearing and idiosyncratic. Build a golden-master test suite from Android first; port tests to Swift.
-3. **`Parcelable` song blobs.** CLAUDE.md already flags this as a bad design; iOS cannot read them. Plan the migration (§7).
+3. **`Parcelable` song blobs.** AGENTS.md already flags this as a bad design; iOS cannot read them. Plan the migration (§7).
 4. **ContentProvider integrations.** If other apps depend on the ContentProvider, iOS has no equivalent — confirm the dependency set before committing.
 5. **AppWidget UX.** WidgetKit's timeline model is different; users expecting real-time updates may notice.
 6. **Database migration tail.** The migration ladder stretches back to schema version 50. If any iOS user ever imports a very old Android backup, the full ladder needs to work in Swift too. Recommendation: port migrations from the latest backward-compatible floor (e.g. the earliest version still seen in the wild) and reject older backups explicitly.

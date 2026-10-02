@@ -180,7 +180,7 @@ Test layout:
 - `docs/tech-debt-remediation.md` — add REM-32 ✅ entry, update Sprint 5/6 lines
 - `docs/storage.md` — split the SongDb section: Room-backed now, legacy as rollback shadow
 - `docs/modules/songs.md` — note Room backing in the Storage paragraph
-- `CLAUDE.md` — extend the SQLite-databases section to mention `AlkitabSongRoomDb` and demote `SongDbHelper` to rollback-shadow
+- `AGENTS.md` — extend the SQLite-databases section to mention `AlkitabSongRoomDb` and demote `SongDbHelper` to rollback-shadow
 
 **Untouched:**
 - `Alkitab/src/main/java/yuku/alkitab/base/storage/SongDbHelper.java` — preserved as the rollback safety net for the migrated tables.

@@ -41,7 +41,7 @@ Contributing
 
 Every pull request against `develop` runs the unit tests and a `plainDebug` build. Pull requests from branches inside this repository also get signed release APKs for all production flavors, uploaded to a preview URL and linked in a comment on the pull request. Pull requests from forks skip that job, since it needs secrets that forks cannot read.
 
-Before working on the codebase, read [CLAUDE.md](CLAUDE.md) for the architecture overview, module structure, ARI verse addressing, and code conventions.
+Before working on the codebase, read [AGENTS.md](AGENTS.md) for the architecture overview, module structure, ARI verse addressing, and code conventions.
 
 Bible translations/versions
 ---------------------------
@@ -68,7 +68,7 @@ The inter-app API lives in the `AlkitabIntegration` module, and `extensions/exam
 Developer Documentation
 -----------------------
 
-Start with [CLAUDE.md](CLAUDE.md) (architecture overview, module structure, ARI encoding, code conventions, and build instructions), then the `docs/` folder:
+Start with [AGENTS.md](AGENTS.md) (architecture overview, module structure, ARI encoding, code conventions, and build instructions), then the `docs/` folder:
 
 **Architecture & infrastructure**
 - [Architecture Deep Dive](docs/architecture.md) — singleton patterns, data flow, module dependencies

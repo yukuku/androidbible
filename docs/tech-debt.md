@@ -1,6 +1,6 @@
 # Tech Debt, Improvements & Critiques
 
-Status last verified against the code on 2026-07-15. Refer to code by symbol name, not line number, and don't record library version numbers — both rot quickly (see Documentation Conventions in CLAUDE.md).
+Status last verified against the code on 2026-07-15. Refer to code by symbol name, not line number, and don't record library version numbers — both rot quickly (see Documentation Conventions in AGENTS.md).
 
 ## TD-01: IsiActivity Mega Class
 

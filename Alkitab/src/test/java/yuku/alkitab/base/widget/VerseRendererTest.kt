@@ -29,7 +29,7 @@ import yuku.alkitab.debug.R
  * `applyParagraphStyle`, `processFormattingCodes`, `processSpecialTags`) can be performed
  * without behavioral drift. They intentionally treat the current implementation as the
  * contract — if a test reveals what looks like a bug, flag it rather than silently "fixing"
- * it here (per CLAUDE.md's unit-testing guidance).
+ * it here (per AGENTS.md's unit-testing guidance).
  *
  * Why Robolectric? [VerseRenderer] builds real Android [android.text.SpannableStringBuilder]s
  * and attaches real [StyleSpan] / [ForegroundColorSpan] / [LeadingMarginSpan] /

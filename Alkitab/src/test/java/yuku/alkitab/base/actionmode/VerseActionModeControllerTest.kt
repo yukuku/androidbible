@@ -41,7 +41,7 @@ import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 
 /**
- * Robolectric is required here (not pure JUnit, see CLAUDE.md "Unit Testing"):
+ * Robolectric is required here (not pure JUnit, see AGENTS.md "Unit Testing"):
  *
  * - `onCreateActionMode` calls `host.activity.menuInflater.inflate(R.menu.context_isi, menu)`,
  *   which needs real Resources to parse the menu XML.
