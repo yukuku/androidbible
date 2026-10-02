@@ -10,7 +10,7 @@
 
 **MIDI scope decision:** MIDI plays through ExoPlayer's experimental MIDI decoder (bundled JSyn software synth). Sound may differ audibly from the old `android.media.MediaPlayer` system synth — this CANNOT be verified headless and must be checked by ear in manual QA.
 
-**Style (per CLAUDE.md):** Kotlin for new code; NO default parameter values (explicit at every call site); default to no comments (only non-obvious WHY); surgical but clean (no dead code, no compat shims); match existing style.
+**Style (per AGENTS.md):** Kotlin for new code; NO default parameter values (explicit at every call site); default to no comments (only non-obvious WHY); surgical but clean (no dead code, no compat shims); match existing style.
 
 ---
 
