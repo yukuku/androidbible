@@ -29,8 +29,6 @@ dialog is not simply reused with its old passage.
 
 ![A verse dialog showing Hebrews 2:1-4](images/opening-verses.png)
 
-The screenshot is from an older app release; the appearance may differ.
-
 ### Specify the target
 
 Prefix the target with the addressing format:

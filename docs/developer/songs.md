@@ -87,7 +87,7 @@ Untuk acuan ayat, gunakan nama kitab OSIS yang tercantum pada tautan tersebut.
 ## Example / Contoh
 
 The examples below show the song-book text format.
-Lirik di bawah ini dipertahankan dari panduan asli.
+Contoh di bawah ini menunjukkan format teks buku lagu.
 
 ```text
 code 3
@@ -117,10 +117,6 @@ namun saat Kau panggilku, ku janji berubah."
 ```
 
 ![Zakeus, with its title, authors, key, stanzas, and refrain](images/songs.png)
-
-The screenshot is from an older app release; the appearance may differ.
-Tangkapan layar berasal dari versi aplikasi yang lebih lama; tampilannya
-dapat berbeda.
 
 ## Underlining / Garis bawah
 
