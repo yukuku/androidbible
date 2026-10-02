@@ -555,4 +555,9 @@
 	<string name="audio_log_state_error">error</string>
 	<string name="audio_play_from_verse">Play audio from this verse</string>
 
+    <string name="devotion_download_queued">Waiting to download this reading…</string>
+    <string name="devotion_downloading">Downloading this reading…</string>
+    <string name="devotion_download_failed">Could not download this reading. Check your connection and try again.</string>
+    <string name="devotion_unavailable">This reading is not available from the server yet.</string>
+    <string name="devotion_retry">Retry</string>
 </resources>

@@ -30,7 +30,7 @@ Request body contains `simpleToken`, `installation_id`, `fcm_token`, and per-ent
 ```
 GET /devotion/get?name={kind}&date={yyyymmdd}
 ```
-Returns devotional article text. Downloaded by `DevotionDownloader` (REM-05: a single-thread `ExecutorService` with a `LinkedBlockingDeque` queue and a clean `shutdown()` path).
+Returns devotional article text, or `NG` when content is unavailable. `DevotionDownloader` deduplicates by source/date and gives selected readings a separate foreground executor from prefetch. Its cancellable backend uses a 30-second total HTTP call timeout and publishes retained loading/failure/unavailable state. See [Devotions](modules/devotions.md) for cache, Retry, and lifecycle behavior.
 
 ### Song Book Downloads
 
