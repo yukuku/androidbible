@@ -87,7 +87,7 @@ Untuk acuan ayat, gunakan nama kitab OSIS yang tercantum pada tautan tersebut.
 ## Example / Contoh
 
 The examples below show the song-book text format.
-Lirik di bawah ini dipertahankan dari panduan asli.
+Contoh di bawah ini menunjukkan format teks buku lagu.
 
 ```text
 code 3
@@ -117,10 +117,6 @@ namun saat Kau panggilku, ku janji berubah."
 ```
 
 ![Zakeus, with its title, authors, key, stanzas, and refrain](images/songs.png)
-
-The screenshot is from an older app release; the appearance may differ.
-Tangkapan layar berasal dari versi aplikasi yang lebih lama; tampilannya
-dapat berbeda.
 
 ## Underlining / Garis bawah
 
@@ -215,16 +211,15 @@ pipeline can also parse the richer `@doc` text format and converts both
 formats to JSON song documents. See the [song authoring specification](https://github.com/yukuku/kidung-data/blob/develop/docs/newdoc/20260615-newdoc-format.md)
 for `@doc` syntax and the [Songs module guide](../modules/songs.md) for the
 app's storage, downloads, and rendering. The [portable-songs design](../features/portable-songs/design.md)
-explains the document model; its initial status and migration descriptions
-are historical, so use the module guide for current app behavior.
+explains the document model.
 
 Format teks dasar di atas tetap didukung. Alur penerbitan saat ini juga
 dapat membaca format teks `@doc` yang lebih kaya, lalu mengubah kedua format
-menjadi dokumen lagu JSON. Lihat spesifikasi penulisan lagu untuk sintaks
-`@doc` dan panduan modul Songs untuk penyimpanan, pengunduhan, serta
-penampilan lagu di aplikasi. Dokumen desain portable-songs menjelaskan model
-dokumen; status awal dan uraian migrasinya bersifat historis. Gunakan panduan
-modul untuk perilaku aplikasi saat ini.
+menjadi dokumen lagu JSON. Lihat [spesifikasi penulisan lagu](https://github.com/yukuku/kidung-data/blob/develop/docs/newdoc/20260615-newdoc-format.md)
+untuk sintaks `@doc` dan [panduan modul Songs](../modules/songs.md) untuk
+penyimpanan, pengunduhan, serta penampilan lagu di aplikasi. Dokumen
+[desain portable-songs](../features/portable-songs/design.md) menjelaskan model
+dokumen.
 
 ## Submit a song book / Mengirimkan buku lagu
 

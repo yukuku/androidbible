@@ -147,9 +147,6 @@ Preview the readings, check the references, and then publish the plan through
 the form. See the [available plans](https://alkitab.app/rp) for existing
 contributions.
 
-To edit, replace, or delete a submitted plan, contact
-[help@alkitab.app](mailto:help@alkitab.app).
-
 ## Common mistakes
 
 - Use tabs between fields. In an editor with visible whitespace enabled,
