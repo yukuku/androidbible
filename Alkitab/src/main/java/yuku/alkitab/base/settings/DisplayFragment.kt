@@ -29,6 +29,10 @@ class DisplayFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_display)
 
+        findPreference<ListPreference>(getString(R.string.pref_currentReadingDisplay_key))?.let {
+            SettingsActivity.autoDisplayListPreference(it)
+        }
+
         val pref_language = findPreference<ListPreference>(getString(R.string.pref_language_key))
         if (pref_language != null) {
             pref_language.onPreferenceChangeListener = configurationPreferenceChangeListener

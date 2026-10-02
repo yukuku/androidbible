@@ -39,7 +39,7 @@
 		<FrameLayout
 			android:id="@+id/panelCurrentReadingHeader"
 			android:layout_width="match_parent"
-			android:layout_height="32dp">
+			android:layout_height="48dp">
 
 			<TextView
 				android:layout_width="wrap_content"
@@ -50,6 +50,16 @@
 				android:textColor="#bebebe"
 				android:textSize="12sp" />
 
+            <ImageButton
+                android:id="@+id/bCurrentReadingComplete"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_marginEnd="48dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/current_reading_mark_complete"
+                android:src="@drawable/ic_current_reading_complete"
+                android:visibility="gone" />
 			<ImageButton
 				android:id="@+id/bCurrentReadingClose"
 				android:layout_width="wrap_content"

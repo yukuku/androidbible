@@ -96,6 +96,19 @@
 
 		</FrameLayout>
 
+        <TextView
+            android:id="@+id/currentReadingCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textSize="13sp"
+            android:background="?selectableItemBackground"
+            android:visibility="gone" />
 		<FrameLayout
 			android:id="@+id/nontoolbar"
 			android:layout_width="match_parent"

@@ -95,6 +95,9 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.BackForwardListController
 import yuku.alkitab.base.util.CurrentReading
+import yuku.alkitab.base.util.ReadingPassage
+import yuku.alkitab.base.verses.ReadingGuide
+import yuku.alkitab.base.verses.ReadingGuideMode
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.audio.AudioBarController
@@ -719,6 +722,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
+        AppEvents.observe(this, AppEvents.currentReadingChanged, ::updateCurrentReading)
+        AppEvents.observe(this, AppEvents.activeVersionChanged, ::updateCurrentReading)
 
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
@@ -1152,7 +1157,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         lsSplit0.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences(useSmallerHorizontalPadding))
         lsSplit1.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences(useSmallerHorizontalPadding))
 
+        updateCurrentReading()
         updateSystemBarAppearance()
+    }
+
+    private fun updateCurrentReading() {
+        val mode = ReadingGuideMode.selected()
+        val aris = CurrentReading.get()
+        val ranges = aris?.let { ReadingPassage.resolve(it, activeSplit0.version::getBook) }.orEmpty()
+        val guide = ReadingGuide(mode, ranges)
+        uiSplit0 = uiSplit0.copy(readingGuide = guide)
+        val splitRanges = activeSplit1?.version?.let { version -> aris?.let { ReadingPassage.resolve(it, version::getBook) } }.orEmpty()
+        uiSplit1 = uiSplit1.copy(readingGuide = ReadingGuide(mode, splitRanges))
+
+        val caption = root.requireViewById<TextView>(R.id.currentReadingCaption)
+        caption.isVisible = mode == ReadingGuideMode.CAPTION && aris != null
+        caption.text = if (caption.isVisible) getString(R.string.current_reading_caption, CurrentReading.reference(activeSplit0.version)) else ""
+        caption.setTextColor(App.services.uiDimensions.applied().fontColor)
+        caption.setOnClickListener { bCurrentReadingReference_click() }
+        ViewCompat.requestApplyInsets(drawerLayout)
     }
 
     override fun onStop() {
@@ -1527,7 +1550,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val insets = windowInsets.getInsets(safeAreaTypes)
             v.setPadding(insets.left, 0, insets.right, 0)
 
-            val topEdgeCovered = !fullScreen && !isBottomToolbarOnText()
+            val caption = root.requireViewById<View>(R.id.currentReadingCaption)
+            val toolbarCoversTop = !fullScreen && !isBottomToolbarOnText()
+            val captionPadding = (8 * resources.displayMetrics.density).toInt()
+            caption.setPadding(insets.left + (16 * resources.displayMetrics.density).toInt(),
+                captionPadding + if (toolbarCoversTop) 0 else insets.top,
+                insets.right + (16 * resources.displayMetrics.density).toInt(), captionPadding)
+            val topEdgeCovered = toolbarCoversTop || caption.isVisible
             val topInset = if (topEdgeCovered) 0 else insets.top
             val bottomEdgeCovered = (!fullScreen && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
             val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
@@ -1599,23 +1628,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // root contains 3 children: the toolbar host, nontoolbar, and the audio bar.
-        // The audio bar always sits directly below the content (above the
-        // bottom-anchored verse-nav toolbar when that mode is enabled), so
-        // the order varies with the toolbar-location preference.
+        // The reading caption sits above the content, and the audio bar below
+        // it; the navigation toolbar can occupy either edge.
 
         if (!fullScreen) {
             val audioBar = root.requireViewById<View>(R.id.audio_bar)
+            val caption = root.requireViewById<View>(R.id.currentReadingCaption)
             root.removeView(toolbarHost)
             root.removeView(nontoolbar)
             root.removeView(audioBar)
+            root.removeView(caption)
 
             if (isBottomToolbarOnText()) {
+                root.addView(caption)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
                 root.addView(toolbarHost)
             } else {
                 root.addView(toolbarHost)
+                root.addView(caption)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
             }
@@ -2339,12 +2370,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     override fun bCurrentReadingClose_click() {
         CurrentReading.clear()
+        updateCurrentReading()
+    }
+
+    override fun bCurrentReadingComplete_click() {
+        if (CurrentReading.completePlan()) updateCurrentReading()
     }
 
     override fun bCurrentReadingReference_click() {
         val aris = CurrentReading.get() ?: return
 
-        val ari_start = aris[0]
+        val ari_start = ReadingPassage.resolve(aris, activeSplit0.version::getBook)?.firstOrNull()?.start ?: aris[0]
         jumpToAri(ari_start)
 
         leftDrawer.closeDrawer()

@@ -251,6 +251,8 @@ public abstract class LeftDrawer extends NestedScrollView {
 			void bCurrentReadingClose_click();
 
 			void bCurrentReadingReference_click();
+
+			void bCurrentReadingComplete_click();
 		}
 
 		public interface Handle {
@@ -274,6 +276,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 		View panelCurrentReadingHeader;
 		View bCurrentReadingClose;
+		View bCurrentReadingComplete;
 		TextView bCurrentReadingReference;
 
 		Listener listener;
@@ -320,6 +323,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			panelCurrentReadingHeader = findViewById(R.id.panelCurrentReadingHeader);
 			bCurrentReadingClose = findViewById(R.id.bCurrentReadingClose);
+			bCurrentReadingComplete = findViewById(R.id.bCurrentReadingComplete);
 			bCurrentReadingReference = findViewById(R.id.bCurrentReadingReference);
 
 			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
@@ -363,6 +367,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 			cSplitVersion.setOnCheckedChangeListener(cSplitVersion_checkedChange);
 
 			bCurrentReadingClose.setOnClickListener(v -> listener.bCurrentReadingClose_click());
+			bCurrentReadingComplete.setOnClickListener(v -> listener.bCurrentReadingComplete_click());
 			bCurrentReadingReference.setOnClickListener(v -> listener.bCurrentReadingReference_click());
 
 			displayCurrentReading();
@@ -385,8 +390,10 @@ public abstract class LeftDrawer extends NestedScrollView {
 				panelCurrentReadingHeader.setVisibility(VISIBLE);
 				bCurrentReadingReference.setVisibility(VISIBLE);
 
-				bCurrentReadingReference.setText(App.services.versions.activeVersion().referenceRange(aris[0], aris[1]));
+				bCurrentReadingReference.setText(CurrentReading.reference(App.services.versions.activeVersion()));
 			}
+			final CurrentReading.Plan plan = CurrentReading.getPlan();
+			bCurrentReadingComplete.setVisibility(plan != null && App.services.storage.getDb().listReadingPlanNames().contains(plan.getName()) ? VISIBLE : GONE);
 		}
 
 		CompoundButton.OnCheckedChangeListener cFullScreen_checkedChange = new CompoundButton.OnCheckedChangeListener() {

@@ -4,7 +4,8 @@ data class VersesUiModel(
     val textSizeMult: Float,
     val verseSelectionMode: VersesController.VerseSelectionMode,
     val isVerseNumberShown: Boolean,
-    val dictionaryModeAris: Set<Int>
+    val dictionaryModeAris: Set<Int>,
+    val readingGuide: ReadingGuide = ReadingGuide.NONE,
 ) {
     companion object {
         @JvmField
