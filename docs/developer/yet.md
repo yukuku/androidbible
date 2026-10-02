@@ -113,7 +113,7 @@ info	<key>	<value>
 | `description` | No | Longer description, which can include copyright information |
 | `locale` | No | Two-letter language code, or a three-letter code where needed |
 
-For historical compatibility, use `in` for Indonesian rather than `id`.
+Use `in` for Indonesian rather than `id` in the `locale` field.
 
 ```text
 info	shortName	KJV

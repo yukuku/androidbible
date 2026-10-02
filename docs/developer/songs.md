@@ -211,8 +211,7 @@ pipeline can also parse the richer `@doc` text format and converts both
 formats to JSON song documents. See the [song authoring specification](https://github.com/yukuku/kidung-data/blob/develop/docs/newdoc/20260615-newdoc-format.md)
 for `@doc` syntax and the [Songs module guide](../modules/songs.md) for the
 app's storage, downloads, and rendering. The [portable-songs design](../features/portable-songs/design.md)
-explains the document model; its initial status and migration descriptions
-are historical, so use the module guide for current app behavior.
+explains the document model.
 
 Format teks dasar di atas tetap didukung. Alur penerbitan saat ini juga
 dapat membaca format teks `@doc` yang lebih kaya, lalu mengubah kedua format
@@ -220,8 +219,7 @@ menjadi dokumen lagu JSON. Lihat [spesifikasi penulisan lagu](https://github.com
 untuk sintaks `@doc` dan [panduan modul Songs](../modules/songs.md) untuk
 penyimpanan, pengunduhan, serta penampilan lagu di aplikasi. Dokumen
 [desain portable-songs](../features/portable-songs/design.md) menjelaskan model
-dokumen; status awal dan uraian migrasinya bersifat historis. Gunakan panduan
-modul untuk perilaku aplikasi saat ini.
+dokumen.
 
 ## Submit a song book / Mengirimkan buku lagu
 
