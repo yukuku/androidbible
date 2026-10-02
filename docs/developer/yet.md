@@ -1,114 +1,119 @@
-# YET file format specification
+# Bible versions: YET file format
 
-A YET file is a plain text file for a translation or version of the Bible. It will always contain the version information, book names, and the verse text. Optionally, it can also include pericope headings, footnotes, and cross references.
+A YET file is a plain-text source for a Bible translation or version. It
+contains version information, book names, and verse text. It can also include
+section headings (pericopes), parallel passages, footnotes, cross-references,
+and text formatting.
 
-A YET file can be converted into a YES binary file with the .yes file extension that [Alkitab / Quick Bible](https://www.alkitab.app) app can open natively.
+Convert `.yet` source into a `.yes` binary file before opening it in
+Alkitab / Quick Bible. The app reads YES files; it does not import YET source
+directly. See [Binary Formats](../binary-formats.md) for the runtime format.
 
-## About editing text files
+## Prepare a text file
 
-You need a good plain text editor, such as [Visual Studio Code](https://code.visualstudio.com/), [Sublime Text](http://www.sublimetext.com/) or Notepad++. Do not use Microsoft Word or Wordpad. You will need access to the raw text of the Bible version you want to process.
+Use a plain-text editor such as [Visual Studio Code](https://code.visualstudio.com/),
+[Sublime Text](https://www.sublimetext.com/), or Notepad++. A word-processing
+document such as `.docx` is not a YET file. You need the Bible text you want
+to process and permission to distribute it if you plan to share the result.
 
-Alternatively, you may want to use tools that support converting and exporting to Quick Bible YET format:
+You can also use tools with Quick Bible YET export support, such as
+[BibleMultiConverter](https://github.com/schierlm/BibleMultiConverter/) or
+[Bibledit](https://bibledit.org/).
 
-- [BibleMultiConverter](https://github.com/schierlm/BibleMultiConverter/) command-line tool
+Save the file with:
 
-- Cloud editor on [bibledit.org](http://bibledit.org/)
+- UTF-8 encoding without a byte order mark (BOM).
+- LF line endings (`\n`, byte `0x0a`), rather than CRLF (`\r\n`).
+- One tab character (`\t`, byte `0x09`) between fields.
+- The `.yet` extension, rather than `.txt`.
 
-When saving a YET file, please note the following:
+If you prefer a spreadsheet, copy its cells into a plain-text editor. Check
+that the pasted columns are separated by tabs and that the editor saves
+UTF-8 with LF line endings.
 
-- Save in **UTF-8 encoding without BOM** (byte order marker).
+The record types are:
 
-- The EOL (end-of-line) character must be **LF only ("\\n")** (single byte 0x0a, also known as **UNIX format**), not CRLF ("\\r\\n") (0x0d 0x0a also known as Windows or DOS format).
+| Record | Required? | Contents |
+| --- | --- | --- |
+| `info` | Yes | Version metadata |
+| `book_name` | Yes | Names of the books present in this version |
+| `verse` | Yes | One record per verse |
+| `pericope` | No | Section heading at the beginning of a verse |
+| `parallel` | No | Parallel passage for the preceding heading |
+| `footnote` | No | Footnote addressed from a verse |
+| `xref` | No | Cross-reference addressed from a verse |
 
-- Fields in a line must be separated with tab characters (**\\t**, 0x09).
+The examples in this guide use actual tabs in record lines. Angle-bracketed
+fields in syntax diagrams, such as `<book>`, are placeholders.
 
-  - Tip: You can also use Excel or similar apps to create a .yet file if you are more comfortable with it. After creating the spreadsheet, copy the cells and paste it to a text editor, which will result in columns separated by tabs.
+Sample YET files:
 
-- Use the file extension **.yet** when saving (not .txt)
+- [KJV with red letters](https://drive.google.com/file/d/0B0mZXH9nEuQ0SEtKM1poR2lFZlU/view).
+- [KJV without red letters](https://drive.google.com/file/d/0B0mZXH9nEuQ0YmhkYkphOG9Pdms/view).
+- [Indonesian TSI with footnotes and cross-references](https://drive.google.com/file/d/1Dez7jFhZQTMXEwivJlKFgv7UYc9BtwyP/view).
+- [The repository's dummy Bible](../../tools/in-ddd/in-ddd.yet), which exercises
+  formatting without distributing a real translation.
 
-The YET file contains the following sections:
+## Convert YET to YES
 
-- `info`: required
+Install a Java runtime, then obtain `YetToYes2.jar` from the
+[prebuilt converter folder](https://drive.google.com/drive/folders/0B0mZXH9nEuQ0dGdxbUI5T1lyeUU?resourcekey=0-V_emMiw0Q1APka5ddsS2rA&usp=sharing).
+Open a terminal in the directory containing the jar and run:
 
-- `book_name`: required
-
-- `verse`: required
-
-- `pericope` (and `parallel`): optional
-
-- `footnote`: optional
-
-- `xref`: optional
-
-Please refer to the YET file sections section for details.
-
-**Sample files** — Here are some examples of YET files. Use a text editor to open them.
-
-- [KJV with red letter](https://drive.google.com/file/d/0B0mZXH9nEuQ0SEtKM1poR2lFZlU/edit?usp=sharing)
-
-- [KJV without red letter](https://drive.google.com/file/d/0B0mZXH9nEuQ0YmhkYkphOG9Pdms/edit?usp=sharing)
-
-- [Indonesian TSI with footnotes and cross-references](https://drive.google.com/open?id=1Dez7jFhZQTMXEwivJlKFgv7UYc9BtwyP)
-
-## Converting YET to YES files
-
-YET files are the text files you can read, but in order to be read by the Alkitab / Quick Bible apps, they have to be converted to YES files.
-
-### How to convert YET to YES file, the easy way
-
-You will need to have [Java Runtime](https://www.azul.com/downloads/?package=jdk#zulu) installed on your computer. Download [**YetToYes2.jar**](http://goo.gl/eV83IS). Open the command-line prompt or Terminal, go to the same directory as **YetToYes2.jar** file and run:
-
-```text
-java -jar YetToYes2.jar input_file output_file
-```
-
-For example:
-
-```text
+```sh
 java -jar YetToYes2.jar ABCV.yet ABCV.yes
 ```
 
-If the conversion is successful, you will get the YES file in the same directory as the YET file.
+The second argument specifies the output path. If it is omitted, the tool
+writes a `.yes` file next to the input `.yet` file:
 
-### How to convert YET to internal format
-
-If you want to build your own version of the Quick Bible app from the [sources](https://github.com/yukuku/androidbible), there will be a default translation that you have to include in the app.
-
-You will need to create a YET file and then convert it to an internal format by using the [**YetToInternal.jar**](https://goo.gl/f2HtLC) tool. This tool generates a folder containing the internal files that you should copy to `Alkitab/src/main/assets/internal` folder.
-
-How to run it is similar to how to run YetToYes2.jar above. For example:
-
-```text
-java -jar YetToInternal.jar ABCV.yet
-java -jar YetToInternal.jar --help  (to access help)
-java -jar YetToInternal.jar ABCV.yet -p xyz (to change default prefix ddd to xyz prefix)
+```sh
+java -jar YetToYes2.jar ABCV.yet
+java -jar YetToYes2.jar --help
 ```
 
-A folder called `ABCV` will be created and it contains the internal files.
+After a successful conversion, copy the YES file to the device and open it
+from the app's Versions screen. See [Tools](../tools.md) for converter options
+and the desktop source project.
 
-## YET file sections
+## Convert YET to the built-in format
 
-### Version info
+A custom app build also needs a default Bible version. Use `YetToInternal.jar`
+from the same converter folder to produce its internal assets:
 
-Information about the current bible version is specified at the beginning of the file.
+```sh
+java -jar YetToInternal.jar ABCV.yet
+java -jar YetToInternal.jar --help
+java -jar YetToInternal.jar --prefix xyz ABCV.yet
+```
 
-The format of the version info line is as follows:
+By default, this creates a directory named `ABCV` beside `ABCV.yet`. Without
+`--prefix` (or `-p`), filenames use the prefix `ddd`.
+
+For the open-source `plain` flavor, place the generated files in
+`Alkitab/src/plain/assets/internal/`. If you change the prefix or version
+metadata, update the `<internal>` declaration in
+[app_config.xml](../../Alkitab/src/main/res/xml/app_config.xml) accordingly.
+Production flavors use the proprietary asset overlay described in
+[Build System](../build-system.md); their text does not come from the plain
+flavor's assets.
+
+## Version info
+
+Put the version metadata at the beginning of the file:
 
 ```text
 info	<key>	<value>
 ```
 
-Key is one of the predefined strings:
+| Key | Required? | Meaning |
+| --- | --- | --- |
+| `longName` | Yes | Full translation name, such as `Terjemahan Baru` or `English Standard Version` |
+| `shortName` | No | Abbreviation, usually uppercase, such as `TB`, `ESV`, or `KJV` |
+| `description` | No | Longer description, which can include copyright information |
+| `locale` | No | Two-letter language code, or a three-letter code where needed |
 
-- `longName` (required): The non-abbreviated name of the translation. “Terjemahan Baru”, “English Standard Version”, “American Standard”.
-
-- `shortName` (optional): All-capital abbreviated name. “TB”, “ESV”, “KJV”.
-
-- `description` (optional): Longer description of the version, might include copyright info as well.
-
-- `locale` (optional): 2 letter (preferred) or 3 letter language code. For historical reasons, use “in” for Indonesian, not “id”.
-
-Example:
+For historical compatibility, use `in` for Indonesian rather than `id`.
 
 ```text
 info	shortName	KJV
@@ -117,202 +122,177 @@ info	description	King James Version (Authorized Version 1611)
 info	locale	en
 ```
 
-### Book names
+## Book names
 
-All available books must be named. Unavailable books (e.g. OT books) need not be named.
-
-The format of the book name line is as follows:
+Name every book included in the version. Omit books that are unavailable:
 
 ```text
 book_name	<book_id>	<book_name>
 ```
 
-book\_id is a number from 1-66: 1 for Genesis, 66 for Revelation.
-
-book\_name is the name of the book. Please use short names (“1 Corinthians” instead of “First letter of Paul to the Corinthians”)
-
-Example:
+The standard book numbers run from `1` (Genesis) to `66` (Revelation). Use
+concise names, such as `1 Corinthians` rather than `First Letter of Paul to
+the Corinthians`.
 
 ```text
 book_name	1	Genesis
 book_name	2	Exodus
 ```
 
-Optionally, you may include abbreviations for the book names. Please keep it to 3 characters for single-width characters (Latin etc.) or 2 characters for double-width characters (Chinese etc.) This is particularly useful for Non-English translations. Abbreviations will be shown in the grid navigation, and users will be able to navigate that Bible version by manually typing in the abbreviations.
+You can add an optional abbreviation, used in grid navigation and typed
+references. Aim for no more than three single-width characters (such as
+Latin letters), or two double-width characters (such as Chinese characters):
 
 ```text
 book_name	<book_id>	<book_name>	<book_abbreviation>
 ```
 
-Example:
-
 ```text
 book_name	1	创世纪	创
 book_name	2	出埃及记	出
-…
 book_name	9	撒母耳记上	撒上
 book_name	10	撒母耳记下	撒下
 ```
 
-If you add more books e.g. Apocryphal books, please number them according to this [book number scheme](https://github.com/yukuku/androidbible/blob/develop/publication/doc/book%20numbers.txt). If the book you want to add is not listed there, you can use any other number starting from 201 up to 255.
+For additional books, use the [book-number table](../../publication/doc/book%20numbers.txt).
+For a book not listed there, the source format reserves numbers `201` through
+`255`. These are one-based YET numbers. In ARI references, subtract one to
+obtain the book ID.
 
-### Bible text
+## Bible text
 
-Each verse is on its own line. (New-lines in a verse are specified using a tag, more below.)
-
-The format of the verse line is as follows:
+Each verse occupies one physical line:
 
 ```text
 verse	<book>	<chapter>	<verse>	<verse_text>
 ```
 
-Book is a number from 1 to 66: 1 for Genesis, 66 for Revelation.
+Use the book numbers above. Chapter and verse numbers start at `1` and have
+a maximum of `255`. Keep chapters and verses in order. Start each included
+book at chapter 1, verse 1, and do not skip or duplicate verse numbers.
+Represent a missing verse with an empty final field, retaining its preceding
+tab. The app skips blank verse text.
 
-(Other books follow this [book number scheme](https://github.com/yukuku/androidbible/blob/develop/publication/doc/book%20numbers.txt).)
+Use formatting tags for line breaks within a verse; a physical newline
+starts a new record. If the translation needs no headings, footnotes,
+cross-references, or formatting, the required records above are sufficient.
 
-Chapter starts from 1, max 255
+## Pericope headings and parallel passages
 
-Verse starts from 1, max 255
-
-No duplicated or skipped verse numbers are allowed. Use a blank verse\_text for any skipped verses. In the app, any blank verses will be skipped.
-
-If your Bible version does not have any special text formatting, pericope titles or parallel verses, then you are done! The rest of the document will describe how to write those extra content.
-
-### Pericope headings
-
-Because pericope headings are addressed using book-chapter-verse, they are only available at the beginning of verses. Currently, a new pericope heading at the middle of a verse is not supported.
-
-It may also contain one or more parallel verse ranges for the pericope.
-
-The format of the pericope heading is as follows:
+A pericope is a section heading addressed by book, chapter, and verse. It
+appears before that verse; headings in the middle of a verse are not supported.
 
 ```text
 pericope	<book>	<chapter>	<verse>	<title>
-```
-
-Book, chapter, and verse follows the numbering in verse text
-
-Title is the title of the pericope. It may not contain any formatting tags except italics `@9` and `@7`.
-
-then, optionally followed by one or more parallel lines:
-
-```text
 parallel	<parallel_spec>
 ```
 
-parallel\_spec can be one of the following:
+Use the same numbering as the `verse` records. A title may contain italic
+tags (`@9` and `@7`), but no other formatting tags. Put each optional
+`parallel` record after the heading it belongs to. Several headings, each
+with their parallel passages, can precede the same verse.
 
-- A plain text like `Luk. 3:1` or `John 3:16-18` The actual verse reference will be guessed based on the book names of the current version. This is the simplest format, but it’s not 100% guaranteed that the correct verse will be linked.
+A parallel specification consists of a reference and its display text:
 
-- OSIS ID (book.chapter.verse or book.chapter.verse-book.chapter.verse) specified before the displayed text. The book names are standardized. This must be written as `@o:Luke.3.1 Luk. 3:1` or `@o:John.3.16-John.3.18 John 3:16-18`. See below for list of OSIS book names.
+| Form | Example | Notes |
+| --- | --- | --- |
+| Plain display text | `Luk. 3:1` | The app guesses the reference using the current version's book names |
+| OSIS | `@o:Luke.3.1 Luk. 3:1` | Uses standard OSIS book names |
+| ARI | `@a:257 Gen. 1:1` | Uses a zero-based book ID packed with chapter and verse |
+| KJV LID | `@lid:1 Gen. 1:1` | Uses KJV sequential verse numbering, from 1 to 31102 |
 
-- BCV integer with (book number that starts from 0 (Genesis) to 65 (Revelation)) \* 65536 + (chapter number starting from 1) \* 256 + (verse number starting from 1). This must be written as `@a:257 Gen. 1:1` or `@a:0x000101-0x000115 Gen. 1:1-21`
+Explicit references are more reliable than guessed display text. Ranges are
+also supported:
 
-- LID (1-31102 following KJV versification) specified before the displayed text. This must be written as `@lid:1 Gen. 1:1` or `@lid:1-21 Gen. 1:1-21`
+```text
+parallel	@o:John.3.16-John.3.18 John 3:16-18
+parallel	@a:0x000101-0x000115 Gen. 1:1-21
+parallel	@lid:1-21 Gen. 1:1-21
+```
 
-Example:
+Example heading with a parallel passage:
 
 ```text
 pericope	10	3	2	Para putrane kakung … Dawud
 parallel	@o:1Chr.3.1-1Chr.3.4 1Bb 3:1-4
 ```
 
-Note: You can have more than one pericope header (and its "parallel" lines) per verse. They will be displayed sequentially above the verse.
+See [Opening verses](opening-verses.md#specify-the-target) for ARI and LID
+and [Reading plans](reading-plans.md#osis-book-names) for standard OSIS names.
 
-### Footnotes
+## Footnotes
 
-Footnotes are used to add more information about a word or a phrase, from explaining the meaning of it to clarifying translation decisions. Footnotes are stored not inline within the text, but on a separate “table”. Each footnote entry has its own line. The format of the footnote line is:
+Store each footnote separately from the verse text:
 
 ```text
 footnote	<book>	<chapter>	<verse>	<index>	<content>
 ```
 
-Book, chapter, and verse is where the footnote is referred from.
-
-The index is a number starting from 1 for each verse, that increases sequentially if there is more than one footnote on a verse.
-
-The content may contain formatting tags as follows:
-
-- Italics (`@9` and `@7`).
-
-- Links to other verses, e.g. `@<to:Gen.2.1@>Going to Gen 2:1@/`
-
-- URLs that have to start with http:// or https://.
-
-For example, a footnote on Matt. 3:7:
+The address identifies the verse containing the footnote marker. Within
+each verse, number footnotes consecutively from `1`; indices fit in the range
+`1` through `255`. Content can include italics (`@9` / `@7`), verse links
+such as `@<to:Gen.2.1@>Going to Gen 2:1@/`, and URLs beginning with `http://`
+or `https://`.
 
 ```text
 footnote	40	3	7	1	@@@9Pharisees@7 is a Jewish group that...
 footnote	40	3	7	2	@@@9Sadducees@7 is a leader of the Jewish religion...
 ```
 
-Then, to refer to that footnote, a special tag is inserted inline on the verse\_text as `@<fx@>@/` where x is the index of the footnote as above. Remember to have `@@` at the beginning of the verse\_text if that verse contains a footnote reference.
-
-For example, on the verse text section of Matt. 3:7:
+Insert `@<f1@>@/`, `@<f2@>@/`, and so on into the verse to refer to the
+entries. Begin the verse text with `@@` so the renderer processes the tags:
 
 ```text
 verse	40	3	7	@@But when he saw many of the Pharisees@<f1@>@/ and Sadducees@<f2@>@/ coming to where he was baptizing, he said to them: "You brood of vipers! Who warned you to flee from the coming wrath?
 ```
 
-It will be rendered as:
+The app displays clickable footnote markers after “Pharisees” and “Sadducees”.
+Every marker must have a corresponding footnote record.
 
-```text
-But when he saw many of the Pharisees1 and Sadducees2 coming to where he was baptizing, he said to them: "You brood of vipers! Who warned you to flee from the coming wrath?
-```
+## Cross-references (xrefs)
 
-### Cross references (xrefs)
-
-Cross references are used to provide a link to another verse that is relate to the current verse. The most common use is providing a link to an Old Testament verse on a New Testament verse where the Old Testament verse is quoted.
-
-Each cross-reference entry has its own line. The format of the cross-reference line is:
+A cross-reference links a verse to a related passage, for example an Old
+Testament passage quoted in the New Testament:
 
 ```text
 xref	<book>	<chapter>	<verse>	<index>	<content>
 ```
 
-Book, chapter, and verse is where the cross-reference entry is referred from.
+Number references consecutively from `1` within each verse, separately from
+the footnote indices. Indices range from `1` through `255`. Use italic tags
+and the verse-link tags below in the content.
 
-The index is a number starting from 1 for each verse that increases sequentially if there is more than one cross-reference on a verse.
-
-The content may contain formatting tags, but currently it’s limited to italics `@9` and `@7` only. To make a link to a certain verse, use the special tag as described below.
-
-An example from Acts 1:20:
-
-```text
-Peter continued, "This was written in the book of Psalms, where it says,
-    'Let his home become desolate,
-        with no one living in it.'※
-It also says,
-    'Let someone else take his position.'※
-```
-
-The first cross-reference mark points to Ps. 69:25 and the second one to Ps. 109:8.
-
-The verse is written in the .yet file as:
+For Acts 1:20, the first reference points to Psalm 69:25 and the second to
+Psalm 109:8:
 
 ```text
 verse	44	1	20	@@@^Peter continued, "This was written in the book of Psalms, where it says, @1'Let his home become desolate, @2with no one living in it.'@<x1@>@/@0It also says, @1'Let someone else take his position.'@<x2@>@/
-```
-
-And its corresponding xref lines:
-
-```text
 xref	44	1	20	1	@<ta:1197337@>Ps. 69:25@/
 xref	44	1	20	2	Taken from @<ta:0x126d08@>Ps. 109:8@/
 ```
 
-#### Verse links
+This renders as indented quotations with a clickable cross-reference marker
+at each `@<xN@>@/` location. Every marker needs a matching `xref` record.
 
-Note that there is a special tag that refers to a verse. You can see the number 1197337 and 0x126d08 on the content above. 1197337 is 18 \* **65536** + 69 \* **256** + 25 which refers to Book 18 (Psalms, with book 0 as Genesis and 65 as Revelation), chapter 69, verse 25. The numbers 65536 and 256 are fixed. The numbers can also be written as lower-case hexadecimal prefixed with 0x. (Other books follow this [book number table](https://github.com/yukuku/androidbible/blob/develop/publication/doc/book%20numbers.txt), minus one since the book number here starts from zero)
+### Verse links
 
-Other than `a:`, it also supports `o:` for OSIS IDs (do not use your translation's book names) and `lid:` for KJV 1-31102 versification. You can choose the one you prefer. Example:
+The link syntax is `@<t<target>@><display_text>@/`, where the target uses
+`a:`, `o:`, or `lid:`. For ARI, book IDs are zero-based:
+
+```text
+1197337 = 18 * 65536 + 69 * 256 + 25 = Psalm 69:25
+0x126d08 = 18 * 65536 + 109 * 256 + 8 = Psalm 109:8
+```
+
+You can use decimal or `0x` hexadecimal ARI values, standard OSIS identifiers,
+or KJV LIDs:
 
 ```text
 xref	44	1	20	1	@<to:Ps.69.25@>Ps. 69:25@/
 xref	44	1	20	2	Taken from @<tlid:15764@>Ps. 109:8@/
 ```
 
-It also supports verse ranges separated by `-` and commas, e.g.:
+Hyphens and commas specify ranges and separate passages:
 
 ```text
 xref	58	4	7	1	@<ta:1203975-1203976@>Ps. 95:7-8@/; @<ta:3736327-3736328,3736333,3736577@>Heb. 3:7-8, 13; 4:1@/
@@ -320,82 +300,66 @@ xref	58	4	7	1	@<ta:1203975-1203976@>Ps. 95:7-8@/; @<ta:3736327-3736328,3736333,3
 
 ## Text formatting
 
-For verses without any formatting, just write the text as is. Note: *the formatting tags below are entirely optional*. Please ignore this documentation section if your Bible text is a plain text.
-
-For verses with formatting, use the formatting tags below to format the verse text.
-
-All formatting tags consist of the `@` character, followed by another character. Formatting tags are divided into 2 kinds: paragraph tags and character tags.
+Plain verse text needs no tags. For formatted verse text, start with `@@`.
+Tags use `@` followed by a character, or an inline element of the form
+`@<...@>...@/`. Formatting resets at the beginning of every verse.
 
 ### Paragraph tags
 
-`@0` starts a new line with indentation level set to zero
+| Tag | Effect |
+| --- | --- |
+| `@0` | Start a new line with no indentation |
+| `@1` | Start a new line with one indentation level |
+| `@2` | Start a new line with two indentation levels |
+| `@3` | Start a new line with three indentation levels |
+| `@4` | Start a new line with four indentation levels |
+| `@^` | Start a new paragraph |
 
-`@1` starts a new line with indentation level to single (“left side” in poems)
+Each verse begins at indentation level zero, so an initial `@0` is
+unnecessary. Use it to return to zero after an indented line. Reserve the
+deeper levels for text that needs them, such as poetry.
 
-`@2` starts a new line with indentation level to double (“right side” in poems)
-
-`@3` starts a new line with indentation level to triple (don’t use this if not needed)
-
-`@4` starts a new line with indentation level to 4x (don’t use this if not needed)
-
-Each verse starts as if it began with `@0`, and each verse is independent of the previous verses. `@0` is not needed at the beginning of the verse text. `@0` is used just to return the indentation to zero when the indentation has been adjusted to non-zero previously.
-
-`@^` marks the beginning of the paragraph. This is used for:
-
-- A verse that is of a different paragraph from the previous verse (so, put the `@^` at the beginning of the verse)
-
-- A verse at the beginning of a chapter (verse 1) that starts a new paragraph (so, put the `@^` at the beginning of the verse)
-
-- A new paragraph in the middle of a verse (so, put the `@^` at the middle of the verse)
-
-Example verse\_text:
+Use `@^` at the start of a verse when it begins a new paragraph, including
+verse 1 of a chapter, or in the middle of a verse for a paragraph break.
 
 ```text
 @@@1Lihatlah laut itu, besar dan luas wilayahnya, @2di situ bergerak, tidak terbilang banyaknya, @2binatang-binatang yang kecil dan besar.
 ```
 
-Rendered as:
+This displays the first line at one indentation level and the next two
+lines at two levels:
 
 ```text
-    Lihatlah laut itu, besar dan luas wilayahnya,               |
-        di situ bergerak, tidak terbilang banyaknya,            |
-        binatang-binatang yang kecil dan besar.                 |
+    Lihatlah laut itu, besar dan luas wilayahnya,
+        di situ bergerak, tidak terbilang banyaknya,
+        binatang-binatang yang kecil dan besar.
 ```
-
-Example verse\_text:
 
 ```text
 @@@^Teofilus yang mulia, @^Banyak orang telah berusaha menyusun suatu berita tentang peristiwa-peristiwa yang telah terjadi di antara kita,
 ```
 
-Rendered as:
-
-```text
-    Teofilus yang mulia,                       |
-                                               |
-    Banyak orang telah berusaha menyusun suatu |
-berita tentang peristiwa-peristiwa yang telah  |
-terjadi di antara kita,                        |
-```
+This separates the greeting and the following sentence into two paragraphs.
 
 ### Character tags
 
-`@6` starts, and `@5` ends words of Jesus (usually red text)
+| Start | End | Effect |
+| --- | --- | --- |
+| `@6` | `@5` | Words of Jesus, usually displayed in red |
+| `@9` | `@7` | Italics, for example words added by the translator |
+| `@8` | None | Force a line break |
 
-`@9` starts, and `@7` ends italicized text (e.g. for translator's additional words inserted into the text)
+Restart red-letter or italic formatting in each verse that needs it; a
+previous verse's formatting does not carry over.
 
-`@8` forces a line break
-
-Remember that formatting resets on every verse. So if you want to continue having red text or italic, start the verse with the appropriate tags.
-
-Example verse\_text:
+Example verse text with poetry and line breaks:
 
 ```text
 @@@1Apabila Engkau mengirim roh-Mu, mereka tercipta, @2dan Engkau membaharui muka bumi. @8
 @@@1Biarlah habis orang-orang berdosa dari bumi, @2dan biarlah orang-orang fasik tidak ada lagi! @8@1Pujilah TUHAN, hai jiwaku! @2Haleluya!
 ```
 
-Rendered as:
+Rendered layout:
 
 ```text
     Apabila Engkau mengirim roh-Mu, mereka tercipta,
@@ -408,30 +372,36 @@ Rendered as:
         Haleluya!
 ```
 
-Example verse\_text:
+Example with red-letter text in consecutive verses:
 
 ```text
 @@Dan kata-Nya lagi: @6"Aku berkata kepadamu, sesungguhnya tidak ada nabi yang dihargai di tempat asalnya.@5
 @@@6Dan Aku berkata kepadamu, dan kata-Ku ini benar: Pada zaman Elia terdapat banyak perempuan janda di Israel ketika langit tertutup selama tiga tahun dan enam bulan dan ketika bahaya kelaparan yang hebat menimpa seluruh negeri.@5
 ```
 
-Rendered as:
+Each verse starts its own red-letter span. The formatting tags are hidden in
+the rendered text. See [Text Rendering](../text-rendering.md) for the rendering
+pipeline and the [ruby design](../features/ruby/design.md) for additional
+annotations supported by the Compose renderer.
+
+## OSIS book names
+
+Old Testament:
 
 ```text
-Dan kata-Nya lagi: "Aku berkata kepadamu, sesungguhnya tidak ada nabi yang dihargai di tempat asalnya.
-Dan Aku berkata kepadamu, dan kata-Ku ini benar: Pada zaman Elia terdapat banyak perempuan janda di Israel ketika langit tertutup selama tiga tahun dan enam bulan dan ketika bahaya kelaparan yang hebat menimpa seluruh negeri.
+Gen Exod Lev Num Deut Josh Judg Ruth 1Sam 2Sam 1Kgs 2Kgs 1Chr 2Chr Ezra Neh
+Esth Job Ps Prov Eccl Song Isa Jer Lam Ezek Dan Hos Joel Amos Obad Jonah Mic
+Nah Hab Zeph Hag Zech Mal
 ```
 
-### OSIS book names
+New Testament:
 
-**Old Testament books**
-
-Gen Exod Lev Num Deut Josh Judg Ruth 1Sam 2Sam 1Kgs 2Kgs 1Chr 2Chr Ezra Neh Esth Job Ps Prov Eccl Song Isa Jer Lam Ezek Dan Hos Joel Amos Obad Jonah Mic Nah Hab Zeph Hag Zech Mal
-
-**New Testament books**
-
-Matt Mark Luke John Acts Rom 1Cor 2Cor Gal Eph Phil Col 1Thess 2Thess 1Tim 2Tim Titus Phlm Heb Jas 1Pet 2Pet 1John 2John 3John Jude Rev
+```text
+Matt Mark Luke John Acts Rom 1Cor 2Cor Gal Eph Phil Col 1Thess 2Thess 1Tim
+2Tim Titus Phlm Heb Jas 1Pet 2Pet 1John 2John 3John Jude Rev
+```
 
 ## Contact
 
-Questions about the file format and submitting your Bible translations can be addressed to help@alkitab.app.
+Send format questions or translations you are permitted to distribute to
+[help@alkitab.app](mailto:help@alkitab.app).

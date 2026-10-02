@@ -1,54 +1,93 @@
-**File format**
+# Making song books / Membuat buku lagu
 
-Untuk menuliskan lagu-lagu, format yang dipakai adalah plain text file (.txt). Gunakan utf-8 dengan UNIX line ending. (Kalau kurang paham, kami akan membantu membetulkannya.)
+Use a plain-text `.txt` file to submit a song book or hymnal for
+Alkitab / Quick Bible. The publishing tools convert the text to song documents;
+the app downloads the resulting data rather than opening the `.txt` file.
 
-*For song books, please use/save the text file to a plain text file format (.txt). Encoding must be utf-8, UNIX line endings.*
+Gunakan berkas teks biasa (`.txt`) untuk mengirimkan buku lagu atau kumpulan
+nyanyian bagi Alkitab / Quick Bible. Alat penerbitan mengubah teks menjadi
+dokumen lagu; aplikasi mengunduh hasilnya, bukan membuka berkas `.txt` langsung.
 
-**Software**
+## File format and editor / Format berkas dan editor
 
-Anda bisa menggunakan berbagai macam software text editor seperti Microsoft Word/TextEdit/Notepad/Sublime Text.
+Save as UTF-8 with LF (Unix) line endings. Use a plain-text editor such as
+Visual Studio Code, Sublime Text, or Notepad++. If you use TextEdit, select
+plain-text mode. A Word document or an RTF file is not a song-book source.
 
-*You can use any text editor program such as Microsoft Word/TextEdit/Notepad/Sublime Text, etc.*
+Simpan dengan pengodean UTF-8 dan akhir baris LF (Unix). Gunakan editor teks
+biasa seperti Visual Studio Code, Sublime Text, atau Notepad++. Jika memakai
+TextEdit, pilih mode teks biasa. Dokumen Word atau berkas RTF bukan berkas
+sumber buku lagu. Hubungi kami jika Anda memerlukan bantuan dengan formatnya.
 
-**Format penulisan**
+## Song structure / Struktur lagu
 
-Berikut adalah format penulisan yang lengkap untuk satu lagu:
+Put metadata before the lyrics. Separate a metadata name from its value with
+a space. Key and time signatures are standalone lines. Omit optional lines
+when their information is unavailable. Replace the angle-bracketed placeholders
+in the example below with the actual song information.
 
-*Here is the* ***complete*** *writing format for one song:*
+Tuliskan keterangan sebelum lirik. Pisahkan nama keterangan dan nilainya
+dengan spasi. Nada dasar dan birama ditulis pada baris tersendiri. Keterangan
+yang tidak tersedia boleh dihilangkan. Ganti contoh isian dalam tanda kurung
+sudut di bawah ini dengan keterangan lagu yang sebenarnya.
 
 ```text
-code ← nomor lagu song number
-title ← judul lagu song title
-title_original ← judul lagu asli original song title (if 'title' is translated from the original language)
-1= ← nada dasar, mis. 1=C (artinya Do=C) key signature, e.g. 1=D means the tonic is in D
-4/4 ← ketukan time signature (in case of multiple time signatures, separate with comma. e.g. "2/4, 3/4")
-tune ← jenis melodi the "tune" of the song (some songs can share the same tune)
-authors_lyric ← pengarang lirik/syair the authors of lyrics (separate with ';' if multiple)
-authors_music ← pengarang musik the authors of the music (separate with ';' if multiple)
-scriptureReferences ← acuan ayat where the lyrics are taken from, in OSIS format
+code <song number>
+title <song title>
+title_original <original-language title>
+1=C
+4/4
+tune <tune name>
+authors_lyric <lyricist>; <another lyricist>
+authors_music <composer>; <another composer>
+scriptureReferences Gen.8.10
 
 *1
-(bait 1 first stanza)
+<first stanza>
 
 *ref
-(kalau ada ref, harap ditulis satu kali saja, tidak perlu berulang-ulang setelah tiap bait)
-if there is a refrain, just type it once instead of copy/pasting it after every stanza
+<refrain, written once>
 
 *2
-(bait 2 kalau ada second stanza (if any))
+<second stanza>
 
 *3
-(bait 3 kalau ada third stanza (if any))
+<third stanza>
 
-(dst)
-(and so on)
-
-=== ← pemisah antar lagu divider between songs
+===
 ```
 
-Sebagai contoh:
+| Field or marker | English | Bahasa Indonesia |
+| --- | --- | --- |
+| `code` | Song number or code, required and unique within the book | Nomor atau kode lagu, wajib diisi dan harus unik dalam buku |
+| `title` | Song title, required | Judul lagu, wajib diisi |
+| `title_original` | Original title if the song has been translated | Judul asli jika lagu diterjemahkan |
+| `1=C` | Key: the tonic (do) is C; for D, write `1=D` | Nada dasar: do adalah C; untuk D, tulis `1=D` |
+| `4/4` | Time signature; separate multiple signatures with commas, such as `2/4, 3/4` | Birama; pisahkan beberapa birama dengan koma, misalnya `2/4, 3/4` |
+| `tune` | Tune name; different songs can share a tune | Nama melodi; beberapa lagu dapat memakai melodi yang sama |
+| `authors_lyric` | Lyricists, separated by semicolons | Pengarang lirik, dipisahkan dengan titik koma |
+| `authors_music` | Composers, separated by semicolons | Pengarang musik, dipisahkan dengan titik koma |
+| `scriptureReferences` | Scripture references in OSIS format | Acuan ayat dalam format OSIS |
+| `*1`, `*2`, `*3` | Start of each numbered stanza | Awal setiap bait bernomor |
+| `*ref` | Refrain | Refrein |
+| `===` | Divider between songs | Pemisah antarlagu |
 
-*So for example, you could type something like this for a song:*
+Every song needs a code, a title, and lyrics. Even a song with one stanza
+needs `*1` before its first lyric line. Write the refrain once; do not copy it
+after each stanza. All other metadata is optional.
+
+Setiap lagu harus memiliki kode, judul, dan lirik. Lagu yang hanya memiliki
+satu bait tetap memerlukan `*1` sebelum baris lirik pertama. Tuliskan refrein
+satu kali saja; tidak perlu menyalinnya setelah setiap bait. Keterangan
+lainnya bersifat opsional.
+
+For scripture references, use the [OSIS book names](reading-plans.md#osis-book-names).
+Untuk acuan ayat, gunakan nama kitab OSIS yang tercantum pada tautan tersebut.
+
+## Example / Contoh
+
+The examples below show the song-book text format.
+Lirik di bawah ini dipertahankan dari panduan asli.
 
 ```text
 code 3
@@ -77,31 +116,31 @@ namun saat Kau panggilku, ku janji berubah."
 ===
 ```
 
-Dan beginilah lagu tersebut ditampilkan di layar:
+![Zakeus, with its title, authors, key, stanzas, and refrain](images/songs.png)
 
-*And this is how the song will be displayed on the screen:*
+The screenshot is from an older app release; the appearance may differ.
+Tangkapan layar berasal dari versi aplikasi yang lebih lama; tampilannya
+dapat berbeda.
 
-![Screenshot from the original document](images/songs.png)
+## Underlining / Garis bawah
 
-**Special notes**
+Use `<u>...</u>` to underline a word or part of a word sung as one syllable
+or beat. For example, write `se<u>mua</u>` if “semua” is sung as “se-mua”
+rather than “se-mu-a”. A diphthong such as “bagai”, normally pronounced
+“ba-gai”, does not need an extra underline merely to indicate that diphthong.
 
-- \<u\>\</u\> adalah simbol untuk **underline** untuk kata yang dinyanyikan 1 ketuk. Misalnya, "semua" yang dinyanyikan dalam 2 ketuk sebagai "se-mua", dituliskan "se\<u\>mua\</u\>", nantinya akan ditampilkan sebagai "semua". Harap diperhatikan bahwa diftong seperti "bagai" memang sudah dibaca "ba-gai" bukan "ba-ga-i", maka tidak perlu diberi tanda \<u\>\</u\> lagi.
+Gunakan `<u>...</u>` untuk menggarisbawahi kata atau bagian kata yang
+dinyanyikan sebagai satu suku kata atau ketukan. Misalnya, tulis
+`se<u>mua</u>` jika “semua” dinyanyikan sebagai “se-mua”, bukan “se-mu-a”.
+Diftong seperti “bagai”, yang biasanya dibaca “ba-gai”, tidak perlu diberi
+garis bawah hanya untuk menandai diftong tersebut.
 
-*Use \<u\>\</u\> to underline a word or a part of a word that is sung in a syllable*
+These are literal tags in the source file, not rich-text formatting applied
+by a word processor.
+Tag tersebut ditulis langsung dalam berkas sumber, bukan sebagai pemformatan
+teks oleh pengolah kata.
 
-- Untuk setiap lagu, yang **harus ada** adalah **code** (nomor lagu), **title** (judul lagu), dan isi (lirik) lagu tersebut. Keterangan lainnya seperti nada dasar/ketukan/pengarang boleh ada, boleh juga tidak ada.
-
-*Each song* ***must have*** *the* ***code*** *(song number),* ***title*** *(song title), and the* ***content*** *(lyrics). Other information such as the key signature, time signature, and author(s) are optional.*
-
-- Jika satu lagu hanya terdiri dari satu bait, tetap harus ada tanda "\*1" sebelum bait pertama.
-
-*If a song has only one verse, you still need to put "\*1" before the first line of the verse.*
-
-Jika anda memiliki pertanyaan, silakan hubungi kami di [help@bibleforandroid.com](mailto:help@bibleforandroid.com) atau [yukuku@gmail.com](mailto:yukuku@gmail.com)
-
-*If you have any questions, contact us at* [*help@bibleforandroid.com*](mailto:help@bibleforandroid.com) *or* [*yukuku@gmail.com*](mailto:yukuku@gmail.com)
-
-**Examples from the "English Hymns" book**
+## Examples from English Hymns / Contoh dari English Hymns
 
 ```text
 code 54
@@ -133,9 +172,7 @@ I will look to the skies, where the day never dies,
 I will sing of the joy in my soul.
 
 ===
-```
 
-```text
 code 1990
 title Count Your Blessings
 scriptureReferences Prov.10.6
@@ -170,3 +207,31 @@ Do not be disheartened, God is over all;
 Count your many blessings, angels will attend,
 Help and comfort give you to your journey’s end.
 ```
+
+## Current publishing format / Format penerbitan saat ini
+
+The basic text format above remains supported. The current publishing
+pipeline can also parse the richer `@doc` text format and converts both
+formats to JSON song documents. See the [song authoring specification](https://github.com/yukuku/kidung-data/blob/develop/docs/newdoc/20260615-newdoc-format.md)
+for `@doc` syntax and the [Songs module guide](../modules/songs.md) for the
+app's storage, downloads, and rendering. The [portable-songs design](../features/portable-songs/design.md)
+explains the document model; its initial status and migration descriptions
+are historical, so use the module guide for current app behavior.
+
+Format teks dasar di atas tetap didukung. Alur penerbitan saat ini juga
+dapat membaca format teks `@doc` yang lebih kaya, lalu mengubah kedua format
+menjadi dokumen lagu JSON. Lihat spesifikasi penulisan lagu untuk sintaks
+`@doc` dan panduan modul Songs untuk penyimpanan, pengunduhan, serta
+penampilan lagu di aplikasi. Dokumen desain portable-songs menjelaskan model
+dokumen; status awal dan uraian migrasinya bersifat historis. Gunakan panduan
+modul untuk perilaku aplikasi saat ini.
+
+## Submit a song book / Mengirimkan buku lagu
+
+Send your source file and the book's title, attribution, and distribution
+permission information to [help@alkitab.app](mailto:help@alkitab.app). The team
+reviews submissions for inclusion in the app.
+
+Kirimkan berkas sumber beserta judul buku, keterangan pengarang, dan informasi
+izin distribusi ke [help@alkitab.app](mailto:help@alkitab.app). Tim akan
+meninjau kiriman untuk dipertimbangkan masuk ke aplikasi.

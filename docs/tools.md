@@ -17,10 +17,9 @@ building this project. See [Prebuilt jars](#prebuilt-jars) below.
 
 The pipeline is `source format` → `.yet` → `.yes` (or the internal format).
 `.yet` is a plain-text intermediate, meant to be readable and editable by
-hand, and is the format described on the
-[developer page](https://alkitab.app/developer). `.yes` is the binary format
-the app reads at runtime. See [binary-formats.md](binary-formats.md) for both
-specifications.
+hand, and is described in the [YET authoring guide](developer/yet.md).
+`.yes` is the binary format the app reads at runtime. See
+[binary-formats.md](binary-formats.md) for its specification.
 
 | Module | Main class | Purpose |
 |---|---|---|
@@ -76,7 +75,9 @@ Regenerate the assets by running `YetToInternal` over it.
 | `RpaToRpb` | Converts an `.rpa` reading plan source into the binary `.rpb` the app reads |
 | `RpbTester` | Dumps an `.rpb` file so you can check what a conversion produced |
 
-`.rpa` is the plain-text authoring format. `tools/AlkitabConverter/file/`
+`.rpa` is the plain-text authoring format. The [RPA authoring guide](developer/reading-plans.md)
+describes the current upload syntax; the desktop `RpaToRpb` parser uses the
+older `plan` records with explicit ARI pairs. `tools/AlkitabConverter/file/`
 holds the sources for the bundled plans (`bibleplan_*.txt`, `blueletter_*`,
 `esv_*`) as worked examples. The `.rpb` format is specified in
 [binary-formats.md](binary-formats.md), and the app side is covered in

@@ -1,185 +1,243 @@
-## Introduction
+# Alkitab / Quick Bible extensions
 
-Your app can be called from within Alkitab / Quick Bible when the user selects a verse or multiple verses. This is supported since Alkitab / Quick Bible version 4.3.
+An extension is an Android app that can be opened from the reader's verse
+selection menu. It receives the selected verse locations and, optionally,
+their text. This integration was introduced in Alkitab / Quick Bible 4.3.
 
-This can be useful if your app provides extra information regarding the selected verse(s), such as a commentaries, dictionaries, guides, devotions, share providers, or anything that you can think of! We call those "extension" apps.
+Extensions can provide commentaries, dictionaries, study guides, devotions,
+or additional sharing options. For example, an image-sharing app can expose
+“Share as Image”: the user selects a verse, opens the overflow menu, and
+chooses that item. The extension receives the verse address and text, draws
+an image, and offers Android's share chooser.
 
-For example: You create an app called "ImageSharer". This app creates images from a verse text selected by the user. So, the user would select a verse from Alkitab / Quick Bible, tap the overflow menu icon, and select "Share as Image" (This is because ImageSharer is installed). Then, ImageSharer receives the verse location (book, chapter, and verse number) along with the text from Alkitab / Quick Bible. ImageSharer draws an image containing the verse text in a nice background and lets the user do anything with it.
+![Share as Image in the verse-selection menu](images/extensions.png)
 
-![Screenshot from the original document](images/extensions.png)
+## Declare an extension activity
 
-"Share as Image" is an example extension.
-
-## Integration
-
-To make your app works as an extension app, you have to declare on your application manifest `AndroidManifest.xml` the following activity:
-
-```xml
-<activity
-android:name="your.own.Activity"
-android:label="Extension Title"
-android:exported="true"
-android:enabled="true">
-	<intent-filter>
-		<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
-	</intent-filter>
-	<meta-data
-		android:name="supportsMultipleVerses"
-		android:value="true"
-/>
-<meta-data
-	android:name="includeVerseText"
-	android:value="true"
-/>
-<meta-data
-	android:name="includeVerseTextFormatting"
-	android:value="false"
-	/>
-</activity>
-```
-
-The value of `android:label` attribute will be used as the menu item title in Alkitab / Quick Bible.
-
-As shown above, there are optional meta-data tags that you can specify.
-
-- `supportsMultipleVerses` (`true` | `false`, default = `false`) Indicates whether the extension can be invoked when the user selects more than 1 verse. When `false`, if the user selects more than 1 verse, the extension will not be shown in the Alkitab / Quick Bible menu.
-
-- `includeVerseText` (`true` | `false`, default = `false`) Indicates whether to send the verse text as well. Keep this `false` unless you need it, because this can decrease performance.
-
-- `includeVerseTextFormatting` (`true` | `false`, default = `false`) Only relevant when `includeVerseText` meta-data value is `true`. When `true`, the verse text will contain [formatting tags](https://docs.google.com/document/d/1SGk70g7R3UfN1MTF5jFE9u5bNCY7J9Jeftiq5RjZA0A/edit) (the character '`@`' followed by another character, or '`@<`' followed by some auxiliary string and followed by '`@>`'). If you don't understand this, just keep it false.
-
-## Receiving the selected verses
-
-When the user selects one or more verses, the extension app will appear on the overflow menu of Alkitab / Quick Bible app.
-
-In order for your application to know which verse(s) the user selected, you need to examine the extras of the intent that is sent to your application's activity. The following extras are sent:
-
-### `aris`
-
-Type: integer array
-
-The value is an integer array in ascending order, where each element of the array is an ari. The length of the array is equal to the number of selected verses. Ari is a value that contains the book, chapter, and verse.
-
-The book, chapter, and verse in an ari are encoded as (book \<\< 16 | chapter \<\< 8 | verse), where:
-
-- book starts at 0 for Genesis, and so on until 65 for Revelation
-
-- chapter and verse start at 1
-
-To get the book from an ari, use the following:
-
-```text
-int book = (ari & 0xff0000) >> 16;
-```
-
-To get the chapter number from an ari, use the following:
-
-```text
-int chapter = (ari & 0xff00) >> 8;
-```
-
-To get the verse number from an ari, use the following:
-
-```text
-int verse = ari & 0xff;
-```
-
-### `verseTexts`
-
-Type: string array
-
-This extra only exist when `includeVerseText` meta-data is true. The value is a string array where each element contains the text from the selected verse. If the `includeVerseTextFormatting` meta-data is true, the text will also contains [formatting tags](https://docs.google.com/document/d/1SGk70g7R3UfN1MTF5jFE9u5bNCY7J9Jeftiq5RjZA0A/edit).
-
-If the user uses the Split feature in Alkitab / Quick Bible app, the text sent is the primary one.
-
-Each element corresponds to the `aris` extra value. An element may be null or empty string if the verse text is not available for a certain reason (e.g. the user selects a verse in a secondary version when using Split feature, but that verse is not available on the primary version).
-
-## Example
-
-This example extension draws a verse to an bitmap, saves it as an image file, and then shares it using the standard Android sharer.
-
-AndroidManifest.xml
+Inside `<application>` in your `AndroidManifest.xml`, declare an enabled,
+exported activity with the action
+`yuku.alkitab.extensions.action.SHOW_VERSE_INFO`:
 
 ```xml
 <activity
-android:name="yuku.alkitab.imagesharer.ShareVerseActivity"
-android:label="Share as Image"
-android:exported="true"
-android:enabled="true">
-	<intent-filter>
-		<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
-	</intent-filter>
-	<meta-data
-		android:name="supportsMultipleVerses"
-		android:value="false"
-/>
-<meta-data
-	android:name="includeVerseText"
-	android:value="true"
-/>
-<meta-data
-	android:name="includeVerseTextFormatting"
-	android:value="false"
-	/>
+    android:name=".VerseInfoActivity"
+    android:label="Extension Title"
+    android:exported="true"
+    android:enabled="true">
+    <intent-filter>
+        <action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
+    </intent-filter>
+    <meta-data android:name="supportsMultipleVerses" android:value="true" />
+    <meta-data android:name="includeVerseText" android:value="true" />
+    <meta-data android:name="includeVerseTextFormatting" android:value="false" />
 </activity>
 ```
 
-ShareVerseActivity.java
+Replace the class name and label with your own. The activity's label becomes
+the menu-item title. The reader discovers the activity through its intent
+filter, then launches it using an explicit component. Alkitab / Quick Bible's
+manifest already declares package visibility for the extension action.
 
-```java
-public class ShareVerseActivity extends Activity {
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+### Optional metadata
 
-		// get the selected verse and its text
-		Intent intent = getIntent();
-		int[] aris = intent.getIntArrayExtra("aris");
-		String[] verseTexts = intent.getStringArrayExtra("verseTexts");
+All three values default to `false` when omitted:
 
-		// safety check
-		if (aris == null || aris.length < 1
-|| verseTexts == null || verseTexts.length < 1) {
-			finish();
-			return;
-		}
+| Metadata | Meaning |
+| --- | --- |
+| `supportsMultipleVerses` | If true, the extension is also offered when more than one verse is selected. Otherwise, it is offered only for a single verse. |
+| `includeVerseText` | If true, include the verse text. Request it only when needed, since preparing the text adds work. |
+| `includeVerseTextFormatting` | If true and `includeVerseText` is true, preserve the internal formatting tags. Otherwise, strip them before sending the text. |
 
-		// this example does not support multiple verses
-// so use the first one only
-int book = (aris[0] & 0xff0000) >> 16;
-int chapter = (aris[0] & 0xff00) >> 8;
-int verse = aris[0] & 0xff;
+Formatted text is not HTML. It uses the
+[YET formatting tags](yet.md#text-formatting), including `@@`, `@6`, and
+`@<...@>...@/`. Leave `includeVerseTextFormatting` false unless your extension
+understands those tags.
 
-		// get the name of book
-		String bookName = "unknown";
-		if (book < 66) {
-			bookName = new String[] {"Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus", "Philemon", "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", "Revelation"}[book];
-		}
+## Receive selected verses
 
-		// construct a reference string: Bookname chapter:verse
-		String reference = bookName + " " + chapter + ":" + verse;
+Read these extras from the activity's incoming intent:
 
-		// draw on a bitmap
-		Bitmap b = Bitmap.createBitmap(800, 800, Bitmap.Config.ARGB_8888);
-		Canvas c = new Canvas(b);
-		Paint p = new Paint();
-		p.setColor(0xff0000ff); // blue
+| Extra | Kotlin type | Presence |
+| --- | --- | --- |
+| `aris` | `IntArray` | Selected verse addresses, in ascending order |
+| `verseTexts` | `Array<String?>` | Only when `includeVerseText` is true |
 
-		c.drawText(reference, 40, 200, p);
-		c.drawText(verseTexts[0], 40, 240, p);
+The arrays correspond by index: `verseTexts[i]` is the text for `aris[i]`.
+Validate the extras before using them, since the exported activity can also
+be launched by other apps.
 
-		// save as image and share
-		try {
-			FileOutputStream f = new FileOutputStream("/sdcard/tmp.png");
-		b.compress(Bitmap.CompressFormat.PNG, 100, f);
-		f.close();
+### Decode ARI
 
-		ShareCompat.IntentBuilder.from(this)
-			.setType("image/png")
-			.addStream(Uri.fromFile(new File("/sdcard/tmp.png")))
-			.startChooser();
-	} catch (IOException e) {
-		Log.e("Error", "error saving image", e); // do something
-		}
-	}
+Each ARI encodes a zero-based book ID, a one-based chapter, and a one-based
+verse:
+
+```kotlin
+val book = (ari ushr 16) and 0xff
+val chapter = (ari ushr 8) and 0xff
+val verse = ari and 0xff
+```
+
+Book `0` is Genesis and book `65` is Revelation. Additional books use the
+[book-number table](../../publication/doc/book%20numbers.txt), with one
+subtracted from the YET book number. See [Opening verses](opening-verses.md#specify-the-target)
+for the encoding formula.
+
+### Handle verse text
+
+Text comes from the primary Bible version, including when the reader is in
+split view. An element can be null or empty if that version lacks the selected
+verse, even if the secondary version contains it. Check each element before
+rendering or sharing it.
+
+## Example: share one verse as an image
+
+This example supports one verse and requests plain text. It draws a reference
+and the verse into a bitmap, saves the image in the app's cache, and shares a
+`content://` URI with temporary read permission. The sample reference uses
+the book number so it also handles books beyond the standard 66; a finished
+app can map the ID to a localized book name.
+
+Add AndroidX Core KTX to your extension app's dependencies for `FileProvider`.
+Choose the dependency version using your project's existing configuration.
+These snippets belong to the extension app, not the Bible reader's manifest.
+
+### AndroidManifest.xml
+
+Inside `<application>`:
+
+```xml
+<activity
+    android:name=".ShareVerseActivity"
+    android:label="Share as Image"
+    android:exported="true"
+    android:enabled="true">
+    <intent-filter>
+        <action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
+    </intent-filter>
+    <meta-data android:name="supportsMultipleVerses" android:value="false" />
+    <meta-data android:name="includeVerseText" android:value="true" />
+    <meta-data android:name="includeVerseTextFormatting" android:value="false" />
+</activity>
+
+<provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/share_paths" />
+</provider>
+```
+
+### res/xml/share_paths.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="shared_images" path="shared/" />
+</paths>
+```
+
+### ShareVerseActivity.kt
+
+Set the package declaration to your extension app's namespace. This minimal
+example keeps image generation in `onCreate`; larger images or multiple verses
+should use background work and show progress in the extension's UI.
+
+```kotlin
+package com.example.imagesharer
+
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.os.Bundle
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.FileProvider
+import androidx.core.graphics.createBitmap
+import java.io.File
+import java.io.IOException
+
+class ShareVerseActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val aris = intent.getIntArrayExtra("aris")
+        val verseTexts = intent.getStringArrayExtra("verseTexts")
+        val verseText = verseTexts?.singleOrNull()
+        if (aris == null || aris.size != 1 || aris[0] <= 0 || verseText.isNullOrEmpty()) {
+            finish()
+            return
+        }
+
+        val book = (aris[0] ushr 16) and 0xff
+        val chapter = (aris[0] ushr 8) and 0xff
+        val verse = aris[0] and 0xff
+        val reference = "Book ${book + 1} $chapter:$verse"
+
+        val text = TextView(this).apply {
+            this.text = "$reference\n\n$verseText"
+            textSize = 20f
+            setTextColor(Color.BLUE)
+            setBackgroundColor(Color.WHITE)
+            setPadding(40, 40, 40, 40)
+            measure(View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+            layout(0, 0, measuredWidth, measuredHeight)
+        }
+
+        val image = createBitmap(text.measuredWidth, text.measuredHeight,
+            Bitmap.Config.ARGB_8888)
+        text.draw(Canvas(image))
+
+        try {
+            val directory = File(cacheDir, "shared")
+            if (!directory.isDirectory && !directory.mkdirs()) {
+                throw IOException("Cannot create shared image directory")
+            }
+            val file = File.createTempFile("verse-", ".png", directory)
+            file.outputStream().use { stream ->
+                if (!image.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
+                    throw IOException("Cannot encode image")
+                }
+            }
+
+            val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+            val share = Intent(Intent.ACTION_SEND).apply {
+                type = "image/png"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                clipData = ClipData.newRawUri("Verse image", uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(Intent.createChooser(share, "Share verse image"))
+        } catch (_: IOException) {
+            Toast.makeText(this, "Unable to share this verse image.", Toast.LENGTH_LONG).show()
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(this, "Unable to share this verse image.", Toast.LENGTH_LONG).show()
+        } finally {
+            image.recycle()
+        }
+        finish()
+    }
 }
 ```
+
+The `FileProvider` authority and `shared/` directory must match the manifest
+and path XML above. See Android's [file-sharing documentation](https://developer.android.com/training/secure-file-sharing/share-file)
+for content URIs and temporary permissions.
+
+The repository's [example-imagesharer](../../extensions/example-imagesharer)
+is a buildable Kotlin sample with image sharing and separate plain-text and
+formatted-text activities for multiple verses. It uses the main app's shared
+version catalog and matching Gradle wrapper. See its [README](../../extensions/example-imagesharer/README.md)
+for build commands and instructions for trying it in Alkitab / Quick Bible.
+Shared images stay in the app's cache; a finished app should periodically
+remove old files when they are no longer being shared.
+
+Questions: [help@alkitab.app](mailto:help@alkitab.app).

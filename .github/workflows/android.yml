@@ -36,6 +36,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemblePlainDebug bundlePlainDebug
 
+      - name: Build and check the extension sample
+        working-directory: extensions/example-imagesharer
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug testDebugUnitTest lintDebug 2>&1 | tail -60
+
   # Publishes each PR's signed release APKs (all production flavors) to a
   # Cloudflare Worker (static assets) and comments workers.dev download
   # links on the PR. Each upload is a worker *version* with its own
