@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Tampilan bacaan saat ini</string>
+    <string name="current_reading_display_off">Nonaktif</string>
+    <string name="current_reading_display_labels">Label awal dan akhir</string>
+    <string name="current_reading_display_line">Garis tipis di kiri</string>
+    <string name="current_reading_display_caption">Keterangan bacaan tetap</string>
+    <string name="current_reading_start">Awal bacaan</string>
+    <string name="current_reading_end">Akhir bacaan</string>
+    <string name="current_reading_caption">Bacaan: %s</string>
+    <string name="current_reading_completed">Bacaan ini sudah selesai</string>
+</resources>

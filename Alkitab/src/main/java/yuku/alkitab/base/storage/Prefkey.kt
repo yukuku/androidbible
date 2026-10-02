@@ -106,6 +106,7 @@ enum class Prefkey {
 
     /** Current reading vars  */
     current_reading_ari_start, current_reading_ari_end,
+    current_reading_ranges, current_reading_plan_name, current_reading_plan_day, current_reading_plan_sequence,
 
     /** Option to ask for verse number in goto screen  */
     gotoAskForVerse,

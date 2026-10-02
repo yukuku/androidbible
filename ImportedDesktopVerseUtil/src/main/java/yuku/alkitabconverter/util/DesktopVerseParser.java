@@ -94,6 +94,12 @@ public class DesktopVerseParser {
 	};
 	
 	static HashMap<String, Integer> bookNameToId = new HashMap<String, Integer>(512);
+
+	public static int bookIdFromName(String name) {
+		String normalized = name.trim().replace(".", "").replaceAll("\\s+", " ").toLowerCase(java.util.Locale.ROOT);
+		Integer id = bookNameToId.get(normalized);
+		return id == null ? -1 : id;
+	}
 	
 	static {
 		for (int i = 0, len = orderedBooks.length; i < len; i++) {

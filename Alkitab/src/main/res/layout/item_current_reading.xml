@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:minHeight="48dp"
+	android:gravity="center_vertical"
+	android:orientation="horizontal">
+
+	<Button
+		android:id="@+id/bCurrentReadingReference"
+		style="?buttonBarButtonStyle"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:minHeight="48dp"
+		android:fontFamily="sans-serif-regular"
+		android:gravity="center_vertical"
+		android:paddingEnd="0dp"
+		android:paddingStart="16dp"
+		android:textAllCaps="false"
+		android:textColor="#fff"
+		android:textSize="16sp"
+		tools:text="Genesis 1–3" />
+
+	<CheckBox
+		android:id="@+id/cCurrentReadingComplete"
+		android:layout_width="48dp"
+		android:layout_height="48dp"
+		android:drawablePadding="0dp"
+		android:contentDescription="@string/current_reading_completed"
+		android:visibility="gone" />
+
+</LinearLayout>

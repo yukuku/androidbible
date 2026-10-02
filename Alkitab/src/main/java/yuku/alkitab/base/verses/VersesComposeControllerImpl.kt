@@ -79,6 +79,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.App
+import yuku.alkitab.util.Ari
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesDataModel.ItemType
@@ -824,9 +825,13 @@ class VersesComposeControllerImpl(
                         key = { position -> itemKey(data, position) },
                         contentType = { position -> data.getItemViewType(position) },
                     ) { position ->
-                        when (data.getItemViewType(position)) {
-                            ItemType.verseText -> VerseRow(data, ui, listeners, position)
-                            ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
+                        val verse = data.getItemViewType(position) == ItemType.verseText
+                        val verse_1 = if (verse) data.getVerse_1FromPosition(position) else data.locateVerse_1FromPosition(position).verse_1
+                        ReadingGuideRow(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, verse_1), verse, App.services.uiDimensions.applied().fontColor) {
+                            when (data.getItemViewType(position)) {
+                                ItemType.verseText -> VerseRow(data, ui, listeners, position)
+                                ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
+                            }
                         }
                     }
                 }

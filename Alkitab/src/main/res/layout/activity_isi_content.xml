@@ -96,6 +96,11 @@
 
 		</FrameLayout>
 
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/currentReadingCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 		<FrameLayout
 			android:id="@+id/nontoolbar"
 			android:layout_width="match_parent"

@@ -2,6 +2,9 @@ package yuku.alkitab.base.util
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,8 +19,7 @@ class CurrentReadingTest {
     @Before
     fun setUp() {
         Preferences.invalidate()
-        Preferences.remove(Prefkey.current_reading_ari_start)
-        Preferences.remove(Prefkey.current_reading_ari_end)
+        CurrentReading.clear()
     }
 
     @Test
@@ -53,5 +55,39 @@ class CurrentReadingTest {
         Preferences.setInt(Prefkey.current_reading_ari_start, 0x010203)
 
         assertArrayEquals(intArrayOf(0x010203, 0), CurrentReading.get())
+    }
+
+    @Test
+    fun `a reading plan records the exact day and sequence selected`() {
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12, 3)
+        assertEquals(CurrentReading.Plan("plan-a", 12, 3), CurrentReading.getPlan())
+        assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.get())
+    }
+
+    @Test
+    fun `opening a devotional list removes the reading plan completion target`() {
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12, 3)
+        val ranges = intArrayOf(0x280905, 0x280906, 0x28090e, 0x280917)
+        CurrentReading.setRanges(ranges)
+        assertArrayEquals(ranges, CurrentReading.get())
+        assertNull(CurrentReading.getPlan())
+        assertFalse(CurrentReading.setPlanCompleted(true))
+    }
+
+    @Test
+    fun `dismissal removes both the guide ranges and the completion target`() {
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12, 3)
+        CurrentReading.clear()
+        assertNull(CurrentReading.get())
+        assertNull(CurrentReading.getPlan())
+        assertTrue(!Preferences.contains(Prefkey.current_reading_ranges))
+    }
+
+    @Test
+    fun `corrupt persisted range data does not crash the drawer`() {
+        Preferences.setString(Prefkey.current_reading_ranges, "broken")
+        assertNull(CurrentReading.get())
+        Preferences.setString(Prefkey.current_reading_ranges, "[1,2,3]")
+        assertNull(CurrentReading.get())
     }
 }

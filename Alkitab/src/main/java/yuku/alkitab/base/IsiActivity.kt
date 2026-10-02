@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
@@ -95,6 +96,10 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.BackForwardListController
 import yuku.alkitab.base.util.CurrentReading
+import yuku.alkitab.base.util.ReadingPassage
+import yuku.alkitab.base.verses.ReadingGuide
+import yuku.alkitab.base.verses.ReadingGuideMode
+import yuku.alkitab.base.verses.CurrentReadingIndicator
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.audio.AudioBarController
@@ -243,6 +248,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override lateinit var floater: Floater
     private val useComposeToolbar by lazy { ExperimentalFlags.useComposeToolbar() }
     private var toolbarState by mutableStateOf(ReaderToolbarState())
+    private var currentReadingIndicatorReference by mutableStateOf("")
+    private var currentReadingIndicatorColor by mutableStateOf(0xff000000.toInt())
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
     private var fullscreenReferenceToast: Toast? = null
 
@@ -529,10 +536,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
-            if (root.childCount != 3 ||
+            if (root.childCount != 4 ||
                 root.getChildAt(0).id != R.id.toolbarHost ||
-                root.getChildAt(1).id != R.id.nontoolbar ||
-                root.getChildAt(2).id != R.id.audio_bar
+                root.getChildAt(1).id != R.id.currentReadingCaption ||
+                root.getChildAt(2).id != R.id.nontoolbar ||
+                root.getChildAt(3).id != R.id.audio_bar
             ) {
                 throw RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation")
             }
@@ -717,8 +725,20 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         resolveAlkitabGptAsync()
 
+        root.requireViewById<ComposeView>(R.id.currentReadingCaption).apply {
+            consumeWindowInsets = false
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                BibleAppTheme {
+                    CurrentReadingIndicator(currentReadingIndicatorReference, currentReadingIndicatorColor, { bCurrentReadingReference_click(0) })
+                }
+            }
+        }
+
         lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
+        AppEvents.observe(this, AppEvents.currentReadingChanged, ::updateCurrentReading)
+        AppEvents.observe(this, AppEvents.activeVersionChanged, ::updateCurrentReading)
 
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
@@ -1152,7 +1172,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         lsSplit0.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences(useSmallerHorizontalPadding))
         lsSplit1.setViewPadding(SettingsActivity.getPaddingBasedOnPreferences(useSmallerHorizontalPadding))
 
+        updateCurrentReading()
         updateSystemBarAppearance()
+    }
+
+    private fun updateCurrentReading() {
+        leftDrawer.displayCurrentReading()
+        val mode = ReadingGuideMode.selected()
+        val aris = CurrentReading.get()
+        val ranges = aris?.let { ReadingPassage.resolve(it, activeSplit0.version::getBook) }.orEmpty()
+        val guide = ReadingGuide(mode, ranges)
+        uiSplit0 = uiSplit0.copy(readingGuide = guide)
+        val splitRanges = activeSplit1?.version?.let { version -> aris?.let { ReadingPassage.resolve(it, version::getBook) } }.orEmpty()
+        uiSplit1 = uiSplit1.copy(readingGuide = ReadingGuide(mode, splitRanges))
+
+        val caption = root.requireViewById<ComposeView>(R.id.currentReadingCaption)
+        caption.isVisible = mode == ReadingGuideMode.CAPTION && aris != null
+        currentReadingIndicatorReference = if (caption.isVisible) CurrentReading.reference(activeSplit0.version).orEmpty() else ""
+        currentReadingIndicatorColor = App.services.uiDimensions.applied().fontColor
+        ViewCompat.requestApplyInsets(drawerLayout)
     }
 
     override fun onStop() {
@@ -1527,7 +1565,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val insets = windowInsets.getInsets(safeAreaTypes)
             v.setPadding(insets.left, 0, insets.right, 0)
 
-            val topEdgeCovered = !fullScreen && !isBottomToolbarOnText()
+            val caption = root.requireViewById<View>(R.id.currentReadingCaption)
+            val toolbarCoversTop = !fullScreen && !isBottomToolbarOnText()
+            caption.setPadding(insets.left, if (toolbarCoversTop) 0 else insets.top, insets.right, 0)
+            val topEdgeCovered = toolbarCoversTop || caption.isVisible
             val topInset = if (topEdgeCovered) 0 else insets.top
             val bottomEdgeCovered = (!fullScreen && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
             val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
@@ -1599,23 +1640,25 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // root contains 3 children: the toolbar host, nontoolbar, and the audio bar.
-        // The audio bar always sits directly below the content (above the
-        // bottom-anchored verse-nav toolbar when that mode is enabled), so
-        // the order varies with the toolbar-location preference.
+        // The reading caption sits above the content, and the audio bar below
+        // it; the navigation toolbar can occupy either edge.
 
         if (!fullScreen) {
             val audioBar = root.requireViewById<View>(R.id.audio_bar)
+            val caption = root.requireViewById<View>(R.id.currentReadingCaption)
             root.removeView(toolbarHost)
             root.removeView(nontoolbar)
             root.removeView(audioBar)
+            root.removeView(caption)
 
             if (isBottomToolbarOnText()) {
+                root.addView(caption)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
                 root.addView(toolbarHost)
             } else {
                 root.addView(toolbarHost)
+                root.addView(caption)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
             }
@@ -2339,12 +2382,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     override fun bCurrentReadingClose_click() {
         CurrentReading.clear()
+        updateCurrentReading()
     }
 
-    override fun bCurrentReadingReference_click() {
-        val aris = CurrentReading.get() ?: return
+    override fun cCurrentReadingComplete_checkedChange(rangeIndex: Int, checked: Boolean) {
+        CurrentReading.setPlanCompleted(checked, rangeIndex)
+    }
 
-        val ari_start = aris[0]
+    override fun bCurrentReadingReference_click(rangeIndex: Int) {
+        val aris = CurrentReading.get() ?: return
+        if (rangeIndex !in 0 until aris.size / 2) return
+        val range = intArrayOf(aris[rangeIndex * 2], aris[rangeIndex * 2 + 1])
+        val ari_start = ReadingPassage.resolve(range, activeSplit0.version::getBook)?.firstOrNull()?.start ?: range[0]
         jumpToAri(ari_start)
 
         leftDrawer.closeDrawer()

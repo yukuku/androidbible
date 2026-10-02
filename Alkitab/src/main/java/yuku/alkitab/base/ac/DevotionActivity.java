@@ -33,6 +33,8 @@ import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleRoc;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
+import yuku.alkitab.base.util.CurrentReading;
+import yuku.alkitab.base.util.ReadingPassage;
 import yuku.alkitab.base.devotion.DevotionDownloader;
 import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.settings.SettingsActivity;
@@ -40,7 +42,6 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.ClipboardUtil;
-import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
@@ -384,36 +385,18 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             extraInfo.date = getDateFormat().format(currentDate);
             startActivity(PatchTextActivity.createIntent(lContent.getText(), App.getDefaultGson().toJson(extraInfo), referenceUrl));
         } else {
-            int ari;
-            if (reference.startsWith("ari:")) {
-                ari = Integer.parseInt(reference.substring(4));
-                startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-
-            } else { // we need to parse it manually by text
-                final Jumper jumper = new Jumper(reference);
-                if (!jumper.getParseSucceeded()) {
-                    MaterialDialogJavaHelper.showOkDialog(DevotionActivity.this, getString(R.string.alamat_tidak_sah_alamat, reference));
-                    return;
-                }
-
-                // Make sure references are parsed using Indonesian book names.
-                String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
-                int[] bookIds = new int[bookNames.length];
-                for (int i = 0, len = bookNames.length; i < len; i++) {
-                    bookIds[i] = i;
-                }
-
-                final int bookId = jumper.getBookId(bookNames, bookIds);
-                final int chapter_1 = jumper.getChapter();
-                final int verse_1 = jumper.getVerse();
-                ari = Ari.encode(bookId, chapter_1, verse_1);
-
-                final boolean hasRange = jumper.getHasRange();
-                if (hasRange || verse_1 == 0) {
-                    startActivity(Launcher.openAppAtBibleLocation(ari));
-                } else {
-                    startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-                }
+            final var version = App.services.versions.activeVersion();
+            final int[] ranges = ReadingPassage.parse(reference, version::getBook);
+            if (ranges == null) {
+                MaterialDialogJavaHelper.showOkDialog(DevotionActivity.this, getString(R.string.alamat_tidak_sah_alamat, reference));
+                return;
+            }
+            CurrentReading.setRanges(ranges);
+            final int openingAri = ReadingPassage.resolve(ranges, version::getBook).get(0).getStart();
+            if (ranges.length == 2 && ranges[0] == ranges[1] && Ari.toVerse(ranges[0]) != 0) {
+                startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(openingAri));
+            } else {
+                startActivity(Launcher.openAppAtBibleLocation(openingAri));
             }
         }
     };
