@@ -261,7 +261,7 @@ Writer automatically picks the smallest element size that fits all values.
 - `BintexReader/` module — `BintexReader.java`
 - `BintexWriter/` module — `BintexWriter.java`
 
-## RPB — Reading Plan Format
+## RPB: Reading Plan Format
 
 Binary format for reading plan files.
 
@@ -270,18 +270,25 @@ Binary format for reading plan files.
 ```
 [Header]  7 bytes: 0x52 0x8a 0x61 0x34 0x00 0xe0 0xea
 [Version] 1 byte: 0x01
-[Body]    Bintex-encoded:
-  name         (string)
+[Info]    Bintex VALUE Simple Map:
   title        (string)
   description  (string)
   duration     (int, number of days)
-  url          (string, optional)
-  For each day (duration times):
-    verse_count  (int)
-    ari_values   (int array, verse_count entries)
+[Days]    For each day (duration times):
+  ari_count    (uint8, twice the number of reading ranges)
+  ari_values   (ari_count Bintex INT values, ordered as start/end pairs)
+[Footer]  1 byte: 0x00
 ```
 
-Each ARI value identifies a verse or verse range to read for that day.
+Each pair of ARI values identifies an inclusive reading range. A zero verse
+component denotes the first verse at a range's start or the last verse at
+its end. The one-byte count limits a day to 127 ranges (254 ARI entries).
+The plan name is supplied separately by the download or database entry;
+it is not serialized in the RPB info map.
+
+See the [RPA authoring guide](developer/reading-plans.md) for the source
+format and upload workflow. `ReadingPlanManager.readInfo` and `readVersion1`
+read the binary format in the app.
 
 ## Snappy Compression
 

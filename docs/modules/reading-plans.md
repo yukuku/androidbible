@@ -17,16 +17,20 @@ Reading plans use a custom binary format (`.rpb`):
 ```
 Header: 0x52 0x8a 0x61 0x34 0x00 0xe0 0xea (7 bytes)
 Version: 1 (uint8)
-Body (Bintex-encoded):
-  - name (string)
+Info (Bintex VALUE Simple Map):
   - title (string)
   - description (string)
   - duration (int, number of days)
-  - url (string, optional)
-  - For each day:
-    - verse count (int)
-    - ARI values (int array)
+Days (duration entries):
+  - ARI count (uint8, two entries per reading range)
+  - ARI values (Bintex INT values, ordered as start/end pairs)
+Footer: 0x00
 ```
+
+The plan name is supplied separately when the app imports or reads the plan.
+Each day can hold up to 127 ranges. See [Binary Formats](../binary-formats.md#rpb-reading-plan-format)
+for the runtime encoding and the [RPA authoring guide](../developer/reading-plans.md)
+for creating and publishing a plan.
 
 ## Progress Tracking
 

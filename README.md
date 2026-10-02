@@ -7,6 +7,7 @@ Get the apps on Google Play: [Alkitab](https://play.google.com/store/apps/detail
 
 - [Official Website](https://alkitab.app)
 - [Developer Page](https://alkitab.app/developer) for creating your own Bible versions, song books, reading plans, and integrations
+- [Content and Integration Guides](docs/developer/README.md) for the developer documentation maintained in this repository
 - [Changelog](CHANGELOG.md)
 - [Development Blog](https://blog.alkitab.app)
 - [Discussion Group](https://groups.google.com/group/bibleforandroid)
@@ -46,7 +47,7 @@ Before working on the codebase, read [AGENTS.md](AGENTS.md) for the architecture
 Bible translations/versions
 ---------------------------
 
-This app natively uses *.yes* files for the Bible text. You can create a *.yes* file easily by preparing a plain text file (a *.yet* file). See [the developer page](https://alkitab.app/developer) for instructions, and [docs/binary-formats.md](docs/binary-formats.md) for the format specifications.
+This app natively uses *.yes* files for the Bible text. You can create a *.yes* file by preparing a plain text file (a *.yet* file). See the [YET authoring guide](docs/developer/yet.md) for instructions and [docs/binary-formats.md](docs/binary-formats.md) for the binary format specifications.
 
 To add a version to the app, open it from the Versions screen. The app accepts *.yes* files directly, and converts PalmBible+ *.pdb* files to *.yes* with its built-in converter for your own use. Gzipped files (*.yes.gz*, *.pdb.gz*) are decompressed transparently.
 
@@ -63,7 +64,7 @@ Bible for Android is not only open-source, but also designed in a flexible manne
 - Open specific verses from your app
 - Make your own app that gives further insight regarding specific verses callable by Alkitab / Quick Bible
 
-The inter-app API lives in the `AlkitabIntegration` module, and `extensions/example-imagesharer` is a working example of an extension app. See the [Developer page](https://alkitab.app/developer) for more information.
+The inter-app API lives in the `AlkitabIntegration` module. See the [content and integration guides](docs/developer/README.md) for authoring formats, opening verses, and writing extensions. The `extensions/example-imagesharer` project contains historical examples; the [extension guide](docs/developer/extensions.md) includes an updated file-sharing example for current Android apps.
 
 Developer Documentation
 -----------------------
