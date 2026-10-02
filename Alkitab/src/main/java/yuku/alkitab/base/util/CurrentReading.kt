@@ -4,6 +4,7 @@ import yuku.afw.storage.Preferences
 import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.App
+import yuku.alkitab.base.model.ReadingPlan
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.Ari
 
@@ -66,12 +67,23 @@ object CurrentReading {
     }
 
     @JvmStatic
-    fun completePlan(): Boolean {
-        val plan = getPlan() ?: return false
-        if (plan.name !in App.services.storage.db.listReadingPlanNames()) return false
-        ReadingPlanManager.updateReadingPlanProgress(plan.name, plan.day, plan.sequence, true)
+    fun getPlanCompletion(): Boolean? {
+        val plan = installedPlan() ?: return null
+        val codes = App.services.storage.db.getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(plan.name))
+        val code = (plan.day shl 8) or plan.sequence
+        return (0 until codes.size()).any { codes.get(it) == code }
+    }
+
+    private fun installedPlan(): Plan? {
+        val plan = getPlan() ?: return null
+        return plan.takeIf { it.name in App.services.storage.db.listReadingPlanNames() }
+    }
+
+    @JvmStatic
+    fun setPlanCompleted(completed: Boolean): Boolean {
+        val plan = installedPlan() ?: return false
+        ReadingPlanManager.updateReadingPlanProgress(plan.name, plan.day, plan.sequence, completed)
         AppEvents.emitReadingPlanProgressChanged()
-        clear()
         return true
     }
 

@@ -50,15 +50,14 @@
 				android:textColor="#bebebe"
 				android:textSize="12sp" />
 
-            <ImageButton
-                android:id="@+id/bCurrentReadingComplete"
+            <CheckBox
+                android:id="@+id/cCurrentReadingComplete"
                 android:layout_width="48dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
                 android:layout_marginEnd="48dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:contentDescription="@string/current_reading_mark_complete"
-                android:src="@drawable/ic_current_reading_complete"
+                android:drawablePadding="0dp"
+                android:contentDescription="@string/current_reading_completed"
                 android:visibility="gone" />
 			<ImageButton
 				android:id="@+id/bCurrentReadingClose"

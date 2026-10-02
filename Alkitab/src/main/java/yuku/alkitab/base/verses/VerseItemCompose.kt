@@ -44,6 +44,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.PlatformTextStyle
@@ -507,7 +508,7 @@ private const val RUBY_GEOMETRY_HOLD_MS = 1000L
  */
 @Composable
 private fun rubyGeometryCopyOnHold(ari: Int): Modifier {
-    if (!ExperimentalFlags.debugRubyGeometry()) return Modifier
+    if (LocalInspectionMode.current || !ExperimentalFlags.debugRubyGeometry()) return Modifier
     val context = LocalContext.current
     return Modifier.pointerInput(ari) {
         awaitPointerEventScope {
@@ -753,7 +754,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
                     debugAri = state.attribute.ari,
                     debugSource = state.render.sourceText,
-                    debug = ExperimentalFlags.debugRubyGeometry(),
+                    debug = !LocalInspectionMode.current && ExperimentalFlags.debugRubyGeometry(),
                 ),
             onTextLayout = { textLayoutResult = it },
         )

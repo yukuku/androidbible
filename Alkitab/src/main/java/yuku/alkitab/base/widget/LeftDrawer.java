@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
@@ -252,7 +253,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			void bCurrentReadingReference_click();
 
-			void bCurrentReadingComplete_click();
+			void cCurrentReadingComplete_checkedChange(boolean checked);
 		}
 
 		public interface Handle {
@@ -276,7 +277,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 		View panelCurrentReadingHeader;
 		View bCurrentReadingClose;
-		View bCurrentReadingComplete;
+		CheckBox cCurrentReadingComplete;
 		TextView bCurrentReadingReference;
 
 		Listener listener;
@@ -323,7 +324,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			panelCurrentReadingHeader = findViewById(R.id.panelCurrentReadingHeader);
 			bCurrentReadingClose = findViewById(R.id.bCurrentReadingClose);
-			bCurrentReadingComplete = findViewById(R.id.bCurrentReadingComplete);
+			cCurrentReadingComplete = findViewById(R.id.cCurrentReadingComplete);
 			bCurrentReadingReference = findViewById(R.id.bCurrentReadingReference);
 
 			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
@@ -367,7 +368,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 			cSplitVersion.setOnCheckedChangeListener(cSplitVersion_checkedChange);
 
 			bCurrentReadingClose.setOnClickListener(v -> listener.bCurrentReadingClose_click());
-			bCurrentReadingComplete.setOnClickListener(v -> listener.bCurrentReadingComplete_click());
 			bCurrentReadingReference.setOnClickListener(v -> listener.bCurrentReadingReference_click());
 
 			displayCurrentReading();
@@ -377,9 +377,16 @@ public abstract class LeftDrawer extends NestedScrollView {
 			// was not actually selected during app startup.
 			AppEvents.observeOnView(this, AppEvents.currentReadingChanged, this::displayCurrentReading);
 			AppEvents.observeOnView(this, AppEvents.activeVersionChanged, this::displayCurrentReading);
+			AppEvents.observeOnView(this, AppEvents.readingPlanProgressChanged, this::displayCurrentReading);
 		}
 
-		void displayCurrentReading() {
+		@Override
+		public void onAttachedToWindow() {
+			super.onAttachedToWindow();
+			displayCurrentReading();
+		}
+
+		public void displayCurrentReading() {
 			if (isInEditMode()) return;
 
 			final int[] aris = CurrentReading.get();
@@ -392,8 +399,14 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 				bCurrentReadingReference.setText(CurrentReading.reference(App.services.versions.activeVersion()));
 			}
-			final CurrentReading.Plan plan = CurrentReading.getPlan();
-			bCurrentReadingComplete.setVisibility(plan != null && App.services.storage.getDb().listReadingPlanNames().contains(plan.getName()) ? VISIBLE : GONE);
+			final Boolean completed = CurrentReading.getPlanCompletion();
+			cCurrentReadingComplete.setOnCheckedChangeListener(null);
+			cCurrentReadingComplete.setVisibility(completed != null ? VISIBLE : GONE);
+			cCurrentReadingComplete.setChecked(Boolean.TRUE.equals(completed));
+			cCurrentReadingComplete.setOnCheckedChangeListener((buttonView, isChecked) -> {
+				listener.cCurrentReadingComplete_checkedChange(isChecked);
+				displayCurrentReading();
+			});
 		}
 
 		CompoundButton.OnCheckedChangeListener cFullScreen_checkedChange = new CompoundButton.OnCheckedChangeListener() {

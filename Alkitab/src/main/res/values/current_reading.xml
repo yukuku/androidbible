@@ -10,7 +10,7 @@
     <string name="current_reading_start">Start of reading</string>
     <string name="current_reading_end">End of reading</string>
     <string name="current_reading_caption">Reading: %s</string>
-    <string name="current_reading_mark_complete">Mark this reading as completed</string>
+    <string name="current_reading_completed">This reading is completed</string>
     <string-array name="current_reading_display_labels">
         <item>@string/current_reading_display_off</item>
         <item>@string/current_reading_display_labels</item>

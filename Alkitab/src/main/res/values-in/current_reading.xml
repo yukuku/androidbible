@@ -8,5 +8,5 @@
     <string name="current_reading_start">Awal bacaan</string>
     <string name="current_reading_end">Akhir bacaan</string>
     <string name="current_reading_caption">Bacaan: %s</string>
-    <string name="current_reading_mark_complete">Tandai bacaan ini sudah selesai</string>
+    <string name="current_reading_completed">Bacaan ini sudah selesai</string>
 </resources>
