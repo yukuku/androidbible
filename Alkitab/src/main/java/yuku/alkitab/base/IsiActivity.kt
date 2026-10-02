@@ -730,7 +730,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 BibleAppTheme {
-                    CurrentReadingIndicator(currentReadingIndicatorReference, currentReadingIndicatorColor, ::bCurrentReadingReference_click)
+                    CurrentReadingIndicator(currentReadingIndicatorReference, currentReadingIndicatorColor, { bCurrentReadingReference_click(0) })
                 }
             }
         }
@@ -2385,14 +2385,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         updateCurrentReading()
     }
 
-    override fun cCurrentReadingComplete_checkedChange(checked: Boolean) {
-        CurrentReading.setPlanCompleted(checked)
+    override fun cCurrentReadingComplete_checkedChange(rangeIndex: Int, checked: Boolean) {
+        CurrentReading.setPlanCompleted(checked, rangeIndex)
     }
 
-    override fun bCurrentReadingReference_click() {
+    override fun bCurrentReadingReference_click(rangeIndex: Int) {
         val aris = CurrentReading.get() ?: return
-
-        val ari_start = ReadingPassage.resolve(aris, activeSplit0.version::getBook)?.firstOrNull()?.start ?: aris[0]
+        if (rangeIndex !in 0 until aris.size / 2) return
+        val range = intArrayOf(aris[rangeIndex * 2], aris[rangeIndex * 2 + 1])
+        val ari_start = ReadingPassage.resolve(range, activeSplit0.version::getBook)?.firstOrNull()?.start ?: range[0]
         jumpToAri(ari_start)
 
         leftDrawer.closeDrawer()

@@ -32,9 +32,13 @@ Body (Bintex-encoded):
 
 Progress is stored in the `ReadingPlanProgress` database table. Each reading within a day is identified by a reading code: `(dayNumber << 8) | sequenceIndex`. This allows tracking completion of individual verse ranges within a single day.
 
+Opening a passage activates every passage for that plan day in the reader's current reading section, while navigating to the passage that was tapped. The drawer lists each passage on a separate row with its own completion checkbox. Ticking or unticking a row changes only that passage's saved progress and keeps all current reading guides visible. The X beside the current reading header clears all active passages and guides without changing saved progress.
+
+Display settings offer start/end labels, a thin line on the left, or a fixed reference listing the active passages. The setting defaults to Off and applies to both reading-plan and devotional passages.
+
 ## Sync
 
-Reading plan progress syncs via `Sync_Rp`. The sync protocol handles merging progress from multiple devices — since progress is additive (readings can only be marked complete), conflict resolution is straightforward union merge.
+Reading plan progress syncs via `Sync_Rp`. Its delta protocol includes additions, changes, and deletions so marking or unmarking a passage can sync across devices.
 
 ## Database Tables
 

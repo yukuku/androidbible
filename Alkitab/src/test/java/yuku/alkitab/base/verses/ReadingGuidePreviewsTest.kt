@@ -41,13 +41,13 @@ class ReadingGuidePreviewsTest {
         App.services = previousServices
     }
 
-    private fun render(mode: ReadingGuideMode, dark: Boolean) {
+    private fun render(mode: ReadingGuideMode, dark: Boolean, multiplePassages: Boolean = false) {
         val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
         activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
         val view = ComposeView(activity)
         view.setContent {
             CompositionLocalProvider(LocalInspectionMode provides true) {
-                ReadingGuidePreviewContent(mode)
+                ReadingGuidePreviewContent(mode, multiplePassages)
             }
         }
         activity.setContentView(view, ViewGroup.LayoutParams(360, ViewGroup.LayoutParams.WRAP_CONTENT))
@@ -62,7 +62,7 @@ class ReadingGuidePreviewsTest {
         val background = if (dark) 0xff202020.toInt() else android.graphics.Color.WHITE
         assertTrue(bitmap.getPixel(0, bitmap.height / 2) == background)
         assertTrue((0 until bitmap.height).any { y -> (16 until bitmap.width - 16).any { x -> bitmap.getPixel(x, y) != background } })
-        val path = File("build/test-artifacts/reading-guide-previews/${mode.preferenceValue}-${if (dark) "dark" else "light"}.png")
+        val path = File("build/test-artifacts/reading-guide-previews/${mode.preferenceValue}-${if (dark) "dark" else "light"}${if (multiplePassages) "-multiple" else ""}.png")
         path.parentFile?.mkdirs()
         path.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
@@ -87,4 +87,13 @@ class ReadingGuidePreviewsTest {
     @Test
     @Config(qualifiers = "w360dp-h800dp-night-mdpi")
     fun `fixed current reading indicator preview renders in dark mode`() = render(ReadingGuideMode.CAPTION, true)
+
+    @Test
+    fun `multiple passage label preview renders without application services`() = render(ReadingGuideMode.LABELS, false, true)
+
+    @Test
+    fun `multiple passage line preview renders without application services`() = render(ReadingGuideMode.LINE, false, true)
+
+    @Test
+    fun `multiple passage caption preview renders without application services`() = render(ReadingGuideMode.CAPTION, false, true)
 }

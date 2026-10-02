@@ -57,16 +57,39 @@ private fun CurrentReadingIndicatorPreview() {
     ReadingGuidePreviewContent(ReadingGuideMode.CAPTION)
 }
 
+@Preview(name = "Multiple passages", group = "Start and end markers", widthDp = 360)
 @Composable
-internal fun ReadingGuidePreviewContent(mode: ReadingGuideMode, modifier: Modifier = Modifier) {
+private fun MultipleReadingBoundaryMarkersPreview() {
+    ReadingGuidePreviewContent(ReadingGuideMode.LABELS, multiplePassages = true)
+}
+
+@Preview(name = "Multiple passages", group = "Left side line", widthDp = 360)
+@Composable
+private fun MultipleReadingLeftLinePreview() {
+    ReadingGuidePreviewContent(ReadingGuideMode.LINE, multiplePassages = true)
+}
+
+@Preview(name = "Multiple passages", group = "Current reading indicator", widthDp = 360)
+@Composable
+private fun MultipleCurrentReadingIndicatorPreview() {
+    ReadingGuidePreviewContent(ReadingGuideMode.CAPTION, multiplePassages = true)
+}
+
+@Composable
+internal fun ReadingGuidePreviewContent(mode: ReadingGuideMode, multiplePassages: Boolean = false, modifier: Modifier = Modifier) {
     val dark = isSystemInDarkTheme()
     val color = if (dark) 0xffeeeeee.toInt() else 0xff202020.toInt()
     val background = if (dark) Color(0xff202020) else Color.White
-    val guide = ReadingGuide(mode, listOf(ReadingRange(Ari.encode(53, 6, 6), Ari.encode(53, 6, 10))))
+    val ranges = if (multiplePassages) {
+        listOf(ReadingRange(Ari.encode(53, 6, 6), Ari.encode(53, 6, 7)), ReadingRange(Ari.encode(53, 6, 9), Ari.encode(53, 6, 10)))
+    } else {
+        listOf(ReadingRange(Ari.encode(53, 6, 6), Ari.encode(53, 6, 10)))
+    }
+    val guide = ReadingGuide(mode, ranges)
     BibleAppTheme {
         Column(modifier.fillMaxWidth().background(background)) {
             if (mode == ReadingGuideMode.CAPTION) {
-                CurrentReadingIndicator("1 Timothy 6:6–10", color, {})
+                CurrentReadingIndicator(if (multiplePassages) "1 Timothy 6:6–7; 1 Timothy 6:9–10" else "1 Timothy 6:6–10", color, {})
             }
             Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                 BasicText("1 Timothy 6", style = TextStyle(color = Color(color), fontSize = 20.sp), modifier = Modifier.padding(bottom = 12.dp))

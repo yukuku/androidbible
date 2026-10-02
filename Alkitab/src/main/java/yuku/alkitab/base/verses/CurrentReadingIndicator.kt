@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import yuku.alkitab.debug.R
@@ -26,8 +25,6 @@ internal fun CurrentReadingIndicator(reference: String, color: Int, onClick: () 
         BasicText(
             stringResource(R.string.current_reading_caption, reference),
             style = TextStyle(color = Color(color), fontSize = 13.sp),
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
         )
     }
 }
