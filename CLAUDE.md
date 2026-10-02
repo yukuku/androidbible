@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Follow [AGENTS.md](AGENTS.md) for task completion: implementation tasks automatically require a PR targeting `develop` so GitHub Actions builds release APKs, unless the user explicitly requests otherwise.
+
 ## Project Overview
 
 **Bible for Android** (Alkitab / Quick Bible) — a 100% free, open-source Bible reader app for Android. Published on Google Play as "Alkitab" (Indonesian) and "Quick Bible" (non-Indonesian). The codebase supports multiple product flavors, 100+ downloadable Bible versions, song books, devotions, reading plans, cloud sync, and a daily verse widget.
