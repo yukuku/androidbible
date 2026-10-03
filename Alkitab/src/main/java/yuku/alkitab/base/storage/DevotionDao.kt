@@ -44,7 +44,7 @@ class DevotionDao(private val helper: InternalDbHelper) {
                 Table.Devotion.name.name + "=? and " + Table.Devotion.date.name + "=?",
                 arrayOf(article.kind.name, article.date),
             )
-            db.insert(Table.Devotion.tableName(), null, values)
+            db.insertOrThrow(Table.Devotion.tableName(), null, values)
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
@@ -79,7 +79,7 @@ class DevotionDao(private val helper: InternalDbHelper) {
             return when (kind) {
                 DevotionActivity.DevotionKind.RH -> ArticleRenunganHarian(date, body, readyToUse)
                 DevotionActivity.DevotionKind.SH -> ArticleSantapanHarian(date, body, readyToUse)
-                DevotionActivity.DevotionKind.ME_EN -> ArticleMorningEveningEnglish(date, body, true)
+                DevotionActivity.DevotionKind.ME_EN -> ArticleMorningEveningEnglish(date, body, readyToUse)
                 DevotionActivity.DevotionKind.MEID_A -> ArticleMeidA(date, body, readyToUse)
                 DevotionActivity.DevotionKind.ROC -> ArticleRoc(date, body, readyToUse)
             }

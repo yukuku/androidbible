@@ -1,6 +1,7 @@
 package yuku.alkitab.base.ac;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -18,6 +20,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ShareCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,7 +90,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
     @Override
     public void bReload_click() {
-        willNeed(this.currentKind, getDateFormat().format(currentDate), true);
+        getDownloader().retry(currentKind.name, getDateFormat().format(currentDate));
+        display();
     }
 
     @Override
@@ -94,9 +99,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         currentKind = kind;
         Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
 
-        Background.run(() -> prefetch(currentKind));
-
         display();
+        startPrefetch(kind);
     }
 
     @Override
@@ -205,6 +209,13 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
     TwofingerLinearLayout root;
     TextView lContent;
     NestedScrollView scrollContent;
+    View downloadStatus;
+    TextView lDownloadStatus;
+    MaterialButton bRetry;
+    CircularProgressIndicator downloadProgress;
+    String displayedKey;
+    String renderedKey;
+    String renderedBody;
 
     boolean renderSucceeded = false;
 
@@ -234,6 +245,11 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         root = findViewById(R.id.root);
         lContent = findViewById(R.id.lContent);
         scrollContent = findViewById(R.id.scrollContent);
+        downloadStatus = findViewById(R.id.downloadStatus);
+        lDownloadStatus = findViewById(R.id.lDownloadStatus);
+        bRetry = findViewById(R.id.bRetry);
+        downloadProgress = findViewById(R.id.downloadProgress);
+        bRetry.setOnClickListener(v -> bReload_click());
         applyScrollPastBottomInset(scrollContent);
 
         root.setTwofingerEnabled(false);
@@ -241,20 +257,15 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
         final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));
 
-        currentKind = storedKind == null ? DEFAULT_DEVOTION_KIND : storedKind;
-        currentDate = new Date();
-
-        Background.run(() -> prefetch(currentKind));
+        final DevotionKind restoredKind = savedInstanceState == null ? null : DevotionKind.getByName(savedInstanceState.getString("devotionKind"));
+        currentKind = restoredKind != null ? restoredKind : storedKind == null ? DEFAULT_DEVOTION_KIND : storedKind;
+        currentDate = savedInstanceState == null ? new Date() : new Date(savedInstanceState.getLong("devotionDate", System.currentTimeMillis()));
 
         display();
+        final DevotionKind prefetchKind = currentKind;
+        startPrefetch(prefetchKind);
 
-        AppEvents.observeWhileStartedWithValue(this, AppEvents.devotionDownloaded, event -> {
-            AppLog.d(TAG, "Got DOWNLOADED event for name=" + event.name + " date=" + event.date);
-            if (getDateFormat().format(currentDate).equals(event.date) && currentKind.name.equals(event.name)) {
-                AppLog.d(TAG, "It is for us, displaying now");
-                display();
-            }
-        });
+        AppEvents.observeWhileStarted(this, getDownloader().getChanges(), this::display);
     }
 
     @Override
@@ -265,8 +276,14 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
 
         { // apply background color, and clear window background to prevent overdraw
             getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            root.setBackgroundColor(applied.backgroundColor);
             scrollContent.setBackgroundColor(applied.backgroundColor);
         }
+
+        lDownloadStatus.setTextColor(applied.fontColor);
+        bRetry.setTextColor(applied.fontColor);
+        bRetry.setStrokeColor(ColorStateList.valueOf(applied.fontColor));
+        downloadProgress.setIndicatorColor(applied.fontColor);
 
         // text formats
         lContent.setTextColor(applied.fontColor);
@@ -277,7 +294,23 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         final Rect padding = SettingsActivity.getPaddingBasedOnPreferences();
         lContent.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 
+        display();
+
         getWindow().getDecorView().setKeepScreenOn(Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default)));
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("devotionKind", currentKind.name);
+        outState.putLong("devotionDate", currentDate.getTime());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(@NonNull Menu menu) {
+        menu.findItem(R.id.menuCopy).setEnabled(renderSucceeded);
+        menu.findItem(R.id.menuShare).setEnabled(renderSucceeded);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -317,9 +350,13 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
     void display() {
         final String date = getDateFormat().format(currentDate);
         final DevotionArticle article = App.services.storage.getDb().tryGetDevotion(currentKind.name, date);
-        if (article == null || !article.getReadyToUse()) {
-            willNeed(currentKind, date, true);
+        final String key = currentKind.name + ":" + date;
+        if (!key.equals(displayedKey)) {
+            displayedKey = key;
+            scrollContent.scrollTo(0, 0);
         }
+        getDownloader().select(currentKind.name, date, article == null);
+        final DevotionDownloader.State state = getDownloader().getState(currentKind.name, date);
 
         if (article == null) {
             AppLog.d(TAG, "rendering null article");
@@ -327,21 +364,33 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             AppLog.d(TAG, "rendering article name=" + article.getKind().name + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse());
         }
 
-        if (article != null && article.getReadyToUse()) {
-            renderSucceeded = true;
-
+        renderSucceeded = article != null && article.getReadyToUse();
+        lContent.setVisibility(renderSucceeded ? View.VISIBLE : View.GONE);
+        if (renderSucceeded && (!key.equals(renderedKey) || !Objects.equals(article.getBody(), renderedBody))) {
+            renderedKey = key;
+            renderedBody = article.getBody();
             lContent.setText(article.getContent(verseClickListener), TextView.BufferType.SPANNABLE);
             lContent.setLinksClickable(true);
             lContent.setMovementMethod(LinkMovementMethod.getInstance());
-        } else {
-            renderSucceeded = false;
-
-            if (article == null) {
-                lContent.setText(R.string.belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada);
-            } else { // berarti belum siap pakai
-                lContent.setText(R.string.belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan);
-            }
+        } else if (!renderSucceeded) {
+            renderedKey = null;
+            renderedBody = null;
+            lContent.setText("");
         }
+
+        final boolean waiting = state == DevotionDownloader.State.QUEUED;
+        final boolean downloading = state == DevotionDownloader.State.DOWNLOADING;
+        final boolean failed = state == DevotionDownloader.State.FAILED;
+        final boolean unavailable = !waiting && !downloading && (state == DevotionDownloader.State.UNAVAILABLE || (article != null && !article.getReadyToUse()));
+        final boolean showStatus = waiting || downloading || failed || unavailable;
+        downloadStatus.setVisibility(showStatus ? View.VISIBLE : View.GONE);
+        downloadProgress.setVisibility(waiting || downloading ? View.VISIBLE : View.GONE);
+        bRetry.setVisibility(failed || unavailable ? View.VISIBLE : View.GONE);
+        if (waiting) lDownloadStatus.setText(R.string.devotion_download_queued);
+        else if (downloading) lDownloadStatus.setText(R.string.devotion_downloading);
+        else if (failed) lDownloadStatus.setText(R.string.devotion_download_failed);
+        else if (unavailable) lDownloadStatus.setText(R.string.devotion_unavailable);
+        invalidateOptionsMenu();
 
         { // widget texts
             final String dateDisplay = getCurrentDateDisplay();
@@ -425,12 +474,15 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
         return getString(WEEKDAY_NAMES_RESIDS[day]);
     }
 
-    synchronized void willNeed(final DevotionKind kind, final String date, final boolean prioritize) {
-        final DevotionArticle article = kind.getArticle(date);
-        devotionDownloader.add(article, prioritize);
+    protected DevotionDownloader getDownloader() {
+        return devotionDownloader;
     }
 
-    public void prefetch(DevotionKind kind) {
+    protected void startPrefetch(DevotionKind kind) {
+        Background.run(() -> prefetch(kind));
+    }
+
+    private static void prefetch(DevotionKind kind) {
         final Date today = new Date();
 
         // delete those older than 180 days!
@@ -443,7 +495,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements LeftDraw
             final String date = getDateFormat().format(today);
             if (App.services.storage.getDb().tryGetDevotion(kind.name, date) == null) {
                 AppLog.d(TAG, "Prefetcher need to get " + kind + " " + date);
-                willNeed(kind, date, false);
+                devotionDownloader.addPrefetch(kind.name, date);
             }
 
             // go to the next day

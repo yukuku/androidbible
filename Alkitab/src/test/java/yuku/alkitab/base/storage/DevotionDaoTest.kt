@@ -1,6 +1,7 @@
 package yuku.alkitab.base.storage
 
 import android.app.Application
+import android.database.sqlite.SQLiteException
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -14,6 +15,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import yuku.alkitab.base.ac.DevotionActivity
+import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish
 import yuku.alkitab.base.devotion.ArticleRenunganHarian
 import yuku.alkitab.base.devotion.ArticleSantapanHarian
 import java.util.Date
@@ -68,6 +70,23 @@ class DevotionDaoTest {
     }
 
     @Test
+    fun `an unavailable Morning and Evening row stays unavailable when reopened`() {
+        dao.storeArticle(ArticleMorningEveningEnglish("20260929").apply { fillIn("NG") })
+        val loaded = dao.tryGet("me-en", "20260929")!!
+        assertFalse(loaded.readyToUse)
+        assertNull(loaded.body)
+    }
+
+    @Test
+    fun `a ready Morning and Evening row round trips both readings`() {
+        val body = "<h2>Morning</h2><p>Morning text</p><h2>Evening</h2><p>Evening text</p>"
+        dao.storeArticle(ArticleMorningEveningEnglish("20260929").apply { fillIn(body) })
+        val loaded = dao.tryGet("me-en", "20260929")!!
+        assertTrue(loaded.readyToUse)
+        assertEquals(body, loaded.body)
+    }
+
+    @Test
     fun `storeArticle replaces the row for the same name-date pair on re-store`() {
         dao.storeArticle(ArticleRenunganHarian("20260420", "first", true))
         dao.storeArticle(ArticleRenunganHarian("20260420", "second", true))
@@ -96,6 +115,33 @@ class DevotionDaoTest {
             "rh-tomorrow",
             dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260421")!!.body,
         )
+    }
+
+    @Test
+    fun `a failed cache replacement throws and rolls back to the offline reading`() {
+        dao.storeArticle(ArticleMorningEveningEnglish("20260929", "cached", true))
+        helper.writableDatabase.execSQL(
+            "CREATE TRIGGER fail_devotion_insert BEFORE INSERT ON Devotion " +
+                "BEGIN SELECT RAISE(FAIL, 'test disk error'); END",
+        )
+        try {
+            dao.storeArticle(ArticleMorningEveningEnglish("20260929", "replacement", true))
+            org.junit.Assert.fail("Storage failure must reach the downloader")
+        } catch (_: SQLiteException) {
+            assertEquals("cached", dao.tryGet("me-en", "20260929")!!.body)
+        }
+    }
+
+    @Test
+    fun `all sources round trip readiness for both cached readings and unavailable rows`() {
+        DevotionActivity.DevotionKind.values().forEach { kind ->
+            val reading = kind.getArticle("20260929").apply { fillIn("<p>Reading</p>") }
+            dao.storeArticle(reading)
+            assertTrue(dao.tryGet(kind.name, "20260929")!!.readyToUse)
+            assertEquals(reading.body, dao.tryGet(kind.name, "20260929")!!.body)
+            dao.storeArticle(kind.getArticle("20260929").apply { fillIn("NG") })
+            assertFalse(dao.tryGet(kind.name, "20260929")!!.readyToUse)
+        }
     }
 
     @Test

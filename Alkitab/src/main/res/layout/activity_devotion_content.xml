@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
@@ -22,14 +23,55 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent">
 
-			<yuku.alkitab.base.widget.FixedTextView
-				android:id="@+id/lContent"
-				android:layout_width="wrap_content"
+			<LinearLayout
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:paddingStart="@dimen/text_side_padding"
-				android:paddingEnd="@dimen/text_side_padding"
-				android:textIsSelectable="true"
-				tools:text="Devotion content here." />
+				android:orientation="vertical">
+
+				<LinearLayout
+					android:id="@+id/downloadStatus"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:gravity="center"
+					android:padding="24dp"
+					android:visibility="gone">
+
+					<com.google.android.material.progressindicator.CircularProgressIndicator
+						android:id="@+id/downloadProgress"
+						style="@style/Widget.MaterialComponents.CircularProgressIndicator.Small"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:indeterminate="true"
+						app:indicatorColor="@color/accent" />
+
+					<TextView
+						android:id="@+id/lDownloadStatus"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="16dp"
+						android:gravity="center"
+						android:accessibilityLiveRegion="polite"
+						android:textAppearance="?android:textAppearanceMedium" />
+
+					<com.google.android.material.button.MaterialButton
+						android:id="@+id/bRetry"
+						style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="16dp"
+						android:text="@string/devotion_retry" />
+				</LinearLayout>
+
+				<yuku.alkitab.base.widget.FixedTextView
+					android:id="@+id/lContent"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingStart="@dimen/text_side_padding"
+					android:paddingEnd="@dimen/text_side_padding"
+					android:textIsSelectable="true"
+					tools:text="Devotion content here." />
+			</LinearLayout>
 		</androidx.core.widget.NestedScrollView>
 
 	</yuku.alkitab.base.widget.TwofingerLinearLayout>
