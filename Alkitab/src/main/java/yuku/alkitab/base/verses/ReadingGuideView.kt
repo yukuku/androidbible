@@ -13,12 +13,33 @@ import yuku.alkitab.debug.R
 class ReadingGuideView(val content: View) : LinearLayout(content.context) {
     private val startLabel = TextView(context)
     private val endLabel = TextView(context)
-    private val paint = Paint()
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeCap = Paint.Cap.ROUND }
     private var showLine = false
+    private var startsLine = false
+    private var endsLine = false
     private val body = FrameLayout(context)
 
     fun drawEdgeLine(canvas: Canvas) {
-        if (showLine) canvas.drawRect(0f, y + body.top, minOf(2 * resources.displayMetrics.density, x), y + body.bottom, paint)
+        if (!showLine) return
+        val density = resources.displayMetrics.density
+        val top = y + body.top
+        val bottom = y + body.bottom
+        paint.strokeWidth = 2 * density
+        canvas.save()
+        canvas.clipRect(4 * density, top, 6 * density, bottom)
+        canvas.drawLine(5 * density, top + if (startsLine) density else 0f, 5 * density, bottom - if (endsLine) density else 0f, paint)
+        canvas.restore()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        updateBodyPadding()
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    private fun updateBodyPadding() {
+        val margin = (parent as? View)?.paddingLeft ?: 0
+        val extra = if (showLine) (kotlin.math.ceil(10 * resources.displayMetrics.density).toInt() - margin).coerceAtLeast(0) else 0
+        body.setPadding(extra, 0, 0, 0)
     }
 
     init {
@@ -46,7 +67,10 @@ class ReadingGuideView(val content: View) : LinearLayout(content.context) {
         endLabel.setTextColor(color)
         paint.color = readingGuideLineColor(color, backgroundColor)
         showLine = guide.mode == ReadingGuideMode.LINE && guide.includes(ari)
-        body.invalidate()
+        startsLine = guide.startsAt(ari)
+        endsLine = guide.endsAt(ari)
+        updateBodyPadding()
+        (parent as? View)?.invalidate()
     }
 }
 

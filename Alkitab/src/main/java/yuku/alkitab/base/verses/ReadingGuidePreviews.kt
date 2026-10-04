@@ -42,43 +42,43 @@ private val previewPassage = listOf(
 @Preview(name = "Dark", group = "Start and end markers", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ReadingBoundaryMarkersPreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.LABELS)
+    ReadingGuidePreviewContent(ReadingGuideMode.LABELS, false, 16)
 }
 
 @Preview(name = "Light", group = "Left side line", widthDp = 360)
 @Preview(name = "Dark", group = "Left side line", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ReadingLeftLinePreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.LINE)
+    ReadingGuidePreviewContent(ReadingGuideMode.LINE, false, 16)
 }
 
 @Preview(name = "Light", group = "Current reading indicator", widthDp = 360)
 @Preview(name = "Dark", group = "Current reading indicator", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun CurrentReadingIndicatorPreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.CAPTION)
+    ReadingGuidePreviewContent(ReadingGuideMode.CAPTION, false, 16)
 }
 
 @Preview(name = "Multiple passages", group = "Start and end markers", widthDp = 360)
 @Composable
 private fun MultipleReadingBoundaryMarkersPreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.LABELS, multiplePassages = true)
+    ReadingGuidePreviewContent(ReadingGuideMode.LABELS, true, 16)
 }
 
 @Preview(name = "Multiple passages", group = "Left side line", widthDp = 360)
 @Composable
 private fun MultipleReadingLeftLinePreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.LINE, multiplePassages = true)
+    ReadingGuidePreviewContent(ReadingGuideMode.LINE, true, 16)
 }
 
 @Preview(name = "Multiple passages", group = "Current reading indicator", widthDp = 360)
 @Composable
 private fun MultipleCurrentReadingIndicatorPreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.CAPTION, multiplePassages = true)
+    ReadingGuidePreviewContent(ReadingGuideMode.CAPTION, true, 16)
 }
 
 @Composable
-internal fun ReadingGuidePreviewContent(mode: ReadingGuideMode, multiplePassages: Boolean = false, modifier: Modifier = Modifier) {
+internal fun ReadingGuidePreviewContent(mode: ReadingGuideMode, multiplePassages: Boolean, leftMarginDp: Int, modifier: Modifier = Modifier) {
     val dark = isSystemInDarkTheme()
     val color = if (dark) 0xffeeeeee.toInt() else 0xff202020.toInt()
     val background = if (dark) Color(0xff202020) else Color.White
@@ -93,12 +93,12 @@ internal fun ReadingGuidePreviewContent(mode: ReadingGuideMode, multiplePassages
             if (mode == ReadingGuideMode.CAPTION) {
                 CurrentReadingIndicator(if (multiplePassages) "1 Timothy 6:6–7; 1 Timothy 6:9–10" else "1 Timothy 6:6–10", color, {})
             }
-            Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+            Column(Modifier.padding(start = leftMarginDp.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
                 BasicText("1 Timothy 6", style = TextStyle(color = Color(color), fontSize = 20.sp), modifier = Modifier.padding(bottom = 12.dp))
                 previewPassage.forEachIndexed { index, text ->
                     val verse = index + 5
                     val ari = Ari.encode(53, 6, verse)
-                    ReadingGuideRow(guide, ari, true, color, background.toArgb(), with(LocalDensity.current) { 16.dp.toPx() }) {
+                    ReadingGuideRow(guide, ari, true, color, background.toArgb(), with(LocalDensity.current) { leftMarginDp.dp.toPx() }) {
                         VerseItemComposeContent(
                             state = previewVerseState(ari, text, color),
                             checked = false,
