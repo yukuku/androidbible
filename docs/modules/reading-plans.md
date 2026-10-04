@@ -34,7 +34,7 @@ Progress is stored in the `ReadingPlanProgress` database table. Each reading wit
 
 Opening a passage activates every passage for that plan day in the reader's current reading section, while navigating to the passage that was tapped. The drawer lists each passage on a separate row with its own completion checkbox. Ticking or unticking a row changes only that passage's saved progress and keeps all current reading guides visible. The X beside the current reading header clears all active passages and guides without changing saved progress.
 
-Display settings offer start/end labels, a thin line on the left, or a fixed reference listing the active passages. The left-side line is drawn behind verse items without adding a gutter or changing their width or indentation. Opaque verse backgrounds can cover the line. The setting defaults to Off and applies to both reading-plan and devotional passages.
+Display settings offer start/end labels, a thin line on the left, or a fixed reference listing the active passages. The left-side line sits flush against the left edge of the reading pane, outside the existing text margin. It does not change verse width or indentation and does not overlap verse text or highlights. In split view, each pane uses its own left edge. The line uses the reading text color at full opacity when its contrast against the page is at least 3:1; otherwise it uses whichever of black or white provides higher contrast. This also applies to custom day and night colors. If the left text margin is narrower than the line, the line narrows to fit; a zero margin hides the line rather than covering text. The setting defaults to Off and applies to both reading-plan and devotional passages.
 
 ## Sync
 

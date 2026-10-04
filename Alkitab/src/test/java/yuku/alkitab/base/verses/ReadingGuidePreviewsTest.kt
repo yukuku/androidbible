@@ -60,7 +60,18 @@ class ReadingGuidePreviewsTest {
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         view.draw(Canvas(bitmap))
         val background = if (dark) 0xff202020.toInt() else android.graphics.Color.WHITE
-        assertTrue(bitmap.getPixel(0, bitmap.height / 2) == background)
+        if (mode == ReadingGuideMode.LINE) {
+            val ink = if (dark) 0xffeeeeee.toInt() else 0xff202020.toInt()
+            assertTrue(androidx.core.graphics.ColorUtils.calculateContrast(ink, background) >= 3.0)
+            val markedRows = (0 until bitmap.height).filter { bitmap.getPixel(0, it) == ink }
+            assertTrue(markedRows.isNotEmpty())
+            for (y in markedRows) {
+                assertTrue(bitmap.getPixel(1, y) == ink)
+                assertTrue((2 until 16).all { bitmap.getPixel(it, y) == background })
+            }
+        } else {
+            assertTrue(bitmap.getPixel(0, bitmap.height / 2) == background)
+        }
         assertTrue((0 until bitmap.height).any { y -> (16 until bitmap.width - 16).any { x -> bitmap.getPixel(x, y) != background } })
         val path = File("build/test-artifacts/reading-guide-previews/${mode.preferenceValue}-${if (dark) "dark" else "light"}${if (multiplePassages) "-multiple" else ""}.png")
         path.parentFile?.mkdirs()

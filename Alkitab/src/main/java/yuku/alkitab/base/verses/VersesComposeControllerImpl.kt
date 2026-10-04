@@ -827,7 +827,7 @@ class VersesComposeControllerImpl(
                     ) { position ->
                         val verse = data.getItemViewType(position) == ItemType.verseText
                         val verse_1 = if (verse) data.getVerse_1FromPosition(position) else data.locateVerse_1FromPosition(position).verse_1
-                        ReadingGuideRow(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, verse_1), verse, App.services.uiDimensions.applied().fontColor) {
+                        ReadingGuideRow(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, verse_1), verse, App.services.uiDimensions.applied().fontColor, App.services.uiDimensions.applied().backgroundColor, paddingLeftPx.toFloat()) {
                             when (data.getItemViewType(position)) {
                                 ItemType.verseText -> VerseRow(data, ui, listeners, position)
                                 ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))

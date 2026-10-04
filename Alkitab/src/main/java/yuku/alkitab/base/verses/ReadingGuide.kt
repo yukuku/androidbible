@@ -1,5 +1,7 @@
 package yuku.alkitab.base.verses
 
+import android.graphics.Color
+import androidx.core.graphics.ColorUtils
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.util.ReadingRange
 import yuku.alkitab.debug.R
@@ -21,4 +23,11 @@ data class ReadingGuide(val mode: ReadingGuideMode, val ranges: List<ReadingRang
     companion object {
         val NONE = ReadingGuide(ReadingGuideMode.OFF, emptyList())
     }
+}
+
+internal fun readingGuideLineColor(fontColor: Int, backgroundColor: Int): Int {
+    val foreground = ColorUtils.setAlphaComponent(fontColor, 255)
+    val background = ColorUtils.setAlphaComponent(backgroundColor, 255)
+    if (ColorUtils.calculateContrast(foreground, background) >= 3.0) return foreground
+    return if (ColorUtils.calculateContrast(Color.BLACK, background) >= ColorUtils.calculateContrast(Color.WHITE, background)) Color.BLACK else Color.WHITE
 }

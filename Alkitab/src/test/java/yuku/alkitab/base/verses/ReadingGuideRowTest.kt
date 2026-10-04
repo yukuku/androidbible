@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -35,22 +39,31 @@ class ReadingGuideRowTest {
     private val ink = 0xff202020.toInt()
     private val highlight = 0xffffff00.toInt()
 
-    private fun render(mode: ReadingGuideMode, multiplePassages: Boolean, opaque: Boolean): Bitmap {
+    private fun render(mode: ReadingGuideMode, multiplePassages: Boolean, opaque: Boolean, lazy: Boolean): Bitmap {
         val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
         activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
         val view = ComposeView(activity)
         val ranges = listOf(ReadingRange(0x280905, 0x280906)) + if (multiplePassages) listOf(ReadingRange(0x280908, 0x280909)) else emptyList()
         val guide = ReadingGuide(mode, ranges)
         view.setContent {
-            Column(Modifier.background(Color.White)) {
-                for (ari in if (multiplePassages) (0x280905..0x280909).toList() else (0x280905..0x280907).toList()) {
-                    ReadingGuideRow(guide, ari, true, ink) {
-                        Box(Modifier.fillMaxWidth().height(30.dp).background(if (opaque) Color(highlight) else Color.Transparent).onGloballyPositioned {
-                            assertEquals(0f, it.positionInRoot().x, 0f)
-                            assertEquals(200, it.size.width)
-                        })
+            val rows: @Composable () -> Unit = {
+                Column {
+                    for (ari in if (multiplePassages) (0x280905..0x280909).toList() else (0x280905..0x280907).toList()) {
+                        ReadingGuideRow(guide, ari, true, ink, android.graphics.Color.WHITE, 16f) {
+                            Box(Modifier.fillMaxWidth().height(30.dp).background(if (opaque) Color(highlight) else Color.Transparent).onGloballyPositioned {
+                                assertEquals(16f, it.positionInRoot().x, 0f)
+                                assertEquals(184, it.size.width)
+                            })
+                        }
                     }
                 }
+            }
+            if (lazy) {
+                LazyColumn(Modifier.height(90.dp).background(Color.White), contentPadding = PaddingValues.Absolute(left = 16.dp)) {
+                    item { rows() }
+                }
+            } else {
+                Column(Modifier.background(Color.White).padding(start = 16.dp)) { rows() }
             }
         }
         activity.setContentView(view, ViewGroup.LayoutParams(200, ViewGroup.LayoutParams.WRAP_CONTENT))
@@ -64,7 +77,7 @@ class ReadingGuideRowTest {
 
     @Test
     fun `the two dp line stops at the passage boundary without shifting or narrowing verses`() {
-        val bitmap = render(ReadingGuideMode.LINE, false, false)
+        val bitmap = render(ReadingGuideMode.LINE, false, false, false)
         assertEquals(90, bitmap.height)
         for (y in listOf(10, 40)) {
             assertEquals(ink, bitmap.getPixel(0, y))
@@ -76,17 +89,21 @@ class ReadingGuideRowTest {
     }
 
     @Test
-    fun `opaque verse backgrounds cover the line because it is drawn behind the content`() {
-        val bitmap = render(ReadingGuideMode.LINE, false, true)
+    fun `the edge line stays outside opaque verse backgrounds`() {
+        val bitmap = render(ReadingGuideMode.LINE, false, true, false)
+        assertEquals(ink, bitmap.getPixel(0, 10))
+        assertEquals(ink, bitmap.getPixel(0, 40))
+        assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(0, 70))
         for (y in listOf(10, 40, 70)) {
-            assertEquals(highlight, bitmap.getPixel(0, y))
+            assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(15, y))
+            assertEquals(highlight, bitmap.getPixel(16, y))
             assertEquals(highlight, bitmap.getPixel(199, y))
         }
     }
 
     @Test
     fun `boundary labels reserve space outside existing verse highlights`() {
-        val bitmap = render(ReadingGuideMode.LABELS, false, true)
+        val bitmap = render(ReadingGuideMode.LABELS, false, true, false)
         assertTrue(bitmap.height > 90)
         assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(199, 0))
         assertEquals(highlight, bitmap.getPixel(199, bitmap.height - 1))
@@ -94,14 +111,14 @@ class ReadingGuideRowTest {
 
     @Test
     fun `off mode preserves verse dimensions and the entire highlight background`() {
-        val bitmap = render(ReadingGuideMode.OFF, false, true)
+        val bitmap = render(ReadingGuideMode.OFF, false, true, false)
         assertEquals(90, bitmap.height)
-        for (y in listOf(10, 40, 70)) assertEquals(highlight, bitmap.getPixel(0, y))
+        for (y in listOf(10, 40, 70)) assertEquals(highlight, bitmap.getPixel(16, y))
     }
 
     @Test
     fun `the left line marks both disjoint passages and leaves the gap unmarked`() {
-        val bitmap = render(ReadingGuideMode.LINE, true, false)
+        val bitmap = render(ReadingGuideMode.LINE, true, false, false)
         assertEquals(150, bitmap.height)
         for (y in listOf(10, 40, 100, 130)) assertEquals(ink, bitmap.getPixel(0, y))
         assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(0, 70))
@@ -110,8 +127,20 @@ class ReadingGuideRowTest {
 
     @Test
     fun `each disjoint passage receives its own start and end labels`() {
-        val single = render(ReadingGuideMode.LABELS, false, true)
-        val multiple = render(ReadingGuideMode.LABELS, true, true)
+        val single = render(ReadingGuideMode.LABELS, false, true, false)
+        val multiple = render(ReadingGuideMode.LABELS, true, true, false)
         assertEquals(2 * (single.height - 90), multiple.height - 150)
+    }
+
+    @Test
+    fun `lazy list padding does not clip the edge line or shift verse content`() {
+        val bitmap = render(ReadingGuideMode.LINE, false, true, true)
+        assertEquals(ink, bitmap.getPixel(0, 10))
+        assertEquals(ink, bitmap.getPixel(1, 40))
+        assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(0, 70))
+        for (y in listOf(10, 40, 70)) {
+            assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(15, y))
+            assertEquals(highlight, bitmap.getPixel(16, y))
+        }
     }
 }

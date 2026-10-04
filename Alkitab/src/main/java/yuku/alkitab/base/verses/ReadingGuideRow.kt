@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -17,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import yuku.alkitab.debug.R
 
 @Composable
-internal fun ReadingGuideRow(guide: ReadingGuide, ari: Int, verse: Boolean, color: Int, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+internal fun ReadingGuideRow(guide: ReadingGuide, ari: Int, verse: Boolean, color: Int, backgroundColor: Int, leftInsetPx: Float, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     if (guide.mode == ReadingGuideMode.OFF || guide.mode == ReadingGuideMode.CAPTION || guide.ranges.isEmpty()) {
         content()
         return
@@ -29,7 +30,7 @@ internal fun ReadingGuideRow(guide: ReadingGuide, ari: Int, verse: Boolean, colo
             ReadingBoundaryLabel(stringResource(R.string.current_reading_start), color)
         }
         Box(Modifier.fillMaxWidth().drawBehind {
-            if (line && guide.includes(ari)) drawRect(Color(color), size = Size(2.dp.toPx(), size.height))
+            if (line && guide.includes(ari)) drawRect(Color(readingGuideLineColor(color, backgroundColor)), topLeft = Offset(-leftInsetPx, 0f), size = Size(minOf(2.dp.toPx(), leftInsetPx), size.height))
         }) {
             content()
         }

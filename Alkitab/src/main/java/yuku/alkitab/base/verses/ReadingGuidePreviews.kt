@@ -11,6 +11,8 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -96,7 +98,7 @@ internal fun ReadingGuidePreviewContent(mode: ReadingGuideMode, multiplePassages
                 previewPassage.forEachIndexed { index, text ->
                     val verse = index + 5
                     val ari = Ari.encode(53, 6, verse)
-                    ReadingGuideRow(guide, ari, true, color) {
+                    ReadingGuideRow(guide, ari, true, color, background.toArgb(), with(LocalDensity.current) { 16.dp.toPx() }) {
                         VerseItemComposeContent(
                             state = previewVerseState(ari, text, color),
                             checked = false,

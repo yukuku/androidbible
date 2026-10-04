@@ -67,6 +67,7 @@ class VersesControllerImpl(
         this.layoutManager = layoutManager
         rv.layoutManager = layoutManager
         rv.addOnScrollListener(rvScrollListener)
+        rv.addItemDecoration(ReadingGuideDecoration())
 
         val adapter = VersesAdapter(
             attention = attention,
@@ -661,7 +662,7 @@ class VerseTextHolder(private val view: VerseItem, private val guide: ReadingGui
     ) {
         val verse_1 = index + 1
         val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
-        guide?.bind(ui.readingGuide, ari, true, App.services.uiDimensions.applied().fontColor)
+        guide?.bind(ui.readingGuide, ari, true, App.services.uiDimensions.applied().fontColor, App.services.uiDimensions.applied().backgroundColor)
         val text = data.verses_.getVerse(index)
         val verseNumberText = data.verses_.getVerseNumberText(index)
         val highlightInfo = data.versesAttributes.highlightInfoMap_[index]
@@ -828,7 +829,7 @@ class VerseTextComposeHolder(private val view: VerseItemComposeView, private val
     ) {
         val verse_1 = index + 1
         val text = data.verses_.getVerse(index)
-        guide?.bind(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, verse_1), true, App.services.uiDimensions.applied().fontColor)
+        guide?.bind(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, verse_1), true, App.services.uiDimensions.applied().fontColor, App.services.uiDimensions.applied().backgroundColor)
 
         val state = buildVerseItemComposeState(
             context = view.context,
@@ -863,7 +864,7 @@ class PericopeHolder(private val view: PericopeHeaderItem, private val guide: Re
      * @param index the index of verse
      */
     fun bind(data: VersesDataModel, ui: VersesUiModel, listeners: VersesListeners, position: Int, index: Int) {
-        guide?.bind(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, data.locateVerse_1FromPosition(position).verse_1), false, App.services.uiDimensions.applied().fontColor)
+        guide?.bind(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, data.locateVerse_1FromPosition(position).verse_1), false, App.services.uiDimensions.applied().fontColor, App.services.uiDimensions.applied().backgroundColor)
         val pericopeBlock = data.pericopeBlocks_[index]
 
         val lCaption = view.findViewById<TextView>(R.id.lCaption)
