@@ -1,7 +1,6 @@
 package yuku.alkitab.base.verses
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,7 +30,7 @@ internal fun ReadingGuideRow(guide: ReadingGuide, ari: Int, verse: Boolean, colo
         }
         Box(Modifier.fillMaxWidth().drawBehind {
             if (line && guide.includes(ari)) drawRect(Color(color), size = Size(2.dp.toPx(), size.height))
-        }.absolutePadding(left = if (line) 8.dp else 0.dp)) {
+        }) {
             content()
         }
         if (labels && guide.endsAt(ari)) {

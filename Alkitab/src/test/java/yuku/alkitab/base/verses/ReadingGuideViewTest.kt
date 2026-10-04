@@ -32,10 +32,14 @@ class ReadingGuideViewTest {
     }
 
     @Test
-    fun `clearing the reading removes labels and the reserved line gutter`() {
+    fun `line mode and recycled rows keep the verse at its original position and width`() {
         val view = view()
         view.bind(ReadingGuide(ReadingGuideMode.LINE, ranges), 0x280905, true, 0xff000000.toInt())
-        assertEquals(8, view.getChildAt(1).paddingLeft)
+        view.measure(View.MeasureSpec.makeMeasureSpec(200, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+        assertEquals(0, view.getChildAt(1).paddingLeft)
+        assertEquals(0, view.content.left)
+        assertEquals(200, view.content.width)
         view.bind(ReadingGuide.NONE, 0x280905, true, 0xff000000.toInt())
         assertEquals(0, view.getChildAt(1).paddingLeft)
         assertEquals(View.GONE, view.getChildAt(0).visibility)

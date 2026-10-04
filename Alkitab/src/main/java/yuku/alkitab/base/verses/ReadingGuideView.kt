@@ -47,8 +47,6 @@ class ReadingGuideView(val content: View) : LinearLayout(content.context) {
         endLabel.setTextColor(color)
         paint.color = color
         showLine = guide.mode == ReadingGuideMode.LINE && guide.includes(ari)
-        val gutter = if (guide.mode == ReadingGuideMode.LINE) (8 * resources.displayMetrics.density).toInt() else 0
-        body.setPadding(gutter, 0, 0, 0)
         body.invalidate()
     }
 }
