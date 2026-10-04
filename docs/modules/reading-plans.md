@@ -36,6 +36,12 @@ Opening a passage activates every passage for that plan day in the reader's curr
 
 Display settings offer start/end labels, a thin line on the left, or a fixed reference listing the active passages. The rounded left-side line is inset 4 dp from the reading pane edge and is 2 dp wide. Marked items keep at least 4 dp between the line and their text area. Existing margins of 10 dp or more preserve text placement; smaller margins shift only marked items to a 10 dp text start. Unmarked items keep the user's chosen padding. In split view, each pane uses its own left edge. The line uses the reading text color at full opacity when its contrast against the page is at least 3:1; otherwise it uses whichever of black or white provides higher contrast. This also applies to custom day and night colors. The setting defaults to Off and applies to both reading-plan and devotional passages.
 
+### Reading guide previews
+
+Open `ReadingGuidePreviews.kt` in Android Studio's Design or Split view. The named `@Preview` entries include light and dark variants for every scenario. The `Reading line` groups cover padding (zero, reduced, minimum clearance, and wide), ranges (single verse, disjoint, adjacent, empty, another chapter, and displayed boundaries), opaque backgrounds, selection, audio highlighting, large reading text, narrow and split panes, sepia colors, low-contrast color fallback, and disabled guides. Start/end labels and the fixed reading indicator also have single- and multiple-passage previews in both themes.
+
+The previews use the actual Compose guide and verse components with sample text. They do not require an active plan, database, or running audio player. The audio example shows the visual highlight, not playback controls. Rendering tests export sample images under `Alkitab/build/test-artifacts/reading-guide-previews/`.
+
 ## Sync
 
 Reading plan progress syncs via `Sync_Rp`. Its delta protocol includes additions, changes, and deletions so marking or unmarking a passage can sync across devices.

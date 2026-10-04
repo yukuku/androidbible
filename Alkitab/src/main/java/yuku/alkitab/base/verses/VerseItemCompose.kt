@@ -686,9 +686,7 @@ internal fun computeLineMetrics(
 @Composable
 private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, lineMetrics: LineMetrics, modifier: Modifier = Modifier) {
     val textColor = if (checked) {
-        Color(TextColorUtil.getForCheckedVerse(
-            Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-        ))
+        Color(TextColorUtil.getForCheckedVerse(selectedVerseBackgroundColor()))
     } else {
         Color(state.fontColor)
     }
@@ -941,10 +939,18 @@ private fun buildAttributeItems(attribute: AttributeState, context: android.cont
 
 // ---- Overlays / decorations ----
 
-private fun Modifier.checkedOverlay(checked: Boolean): Modifier = if (!checked) this else this.drawBehind {
-    val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-    val color = ColorUtils.setAlphaComponent(colorRgb, TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA)
-    drawRect(color = Color(color))
+@Composable
+private fun selectedVerseBackgroundColor(): Int = if (LocalInspectionMode.current) {
+    LocalContext.current.resources.getInteger(R.integer.pref_selectedVerseBgColor_default)
+} else {
+    Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
+}
+
+@Composable
+private fun Modifier.checkedOverlay(checked: Boolean): Modifier {
+    if (!checked) return this
+    val color = ColorUtils.setAlphaComponent(selectedVerseBackgroundColor(), TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA)
+    return drawBehind { drawRect(color = Color(color)) }
 }
 
 @Composable
