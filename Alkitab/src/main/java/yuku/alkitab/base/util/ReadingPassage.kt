@@ -23,12 +23,14 @@ object ReadingPassage {
             if (verse !in 1..b.verse_counts[chapter - 1]) return null
             return Ari.encode(b.bookId, chapter, verse)
         }
-        return aris.toList().chunked(2).map { (start, end) ->
-            val first = boundary(start, false) ?: return null
-            val last = boundary(end, true) ?: return null
+        val ranges = ArrayList<ReadingRange>(aris.size / 2)
+        for (index in aris.indices step 2) {
+            val first = boundary(aris[index], false) ?: return null
+            val last = boundary(aris[index + 1], true) ?: return null
             if (first > last) return null
-            ReadingRange(first, last)
+            ranges.add(ReadingRange(first, last))
         }
+        return ranges
     }
 
     /** Decodes devotional links, including lists whose later verses inherit their chapter. */
