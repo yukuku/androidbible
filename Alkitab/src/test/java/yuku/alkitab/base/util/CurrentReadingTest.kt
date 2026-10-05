@@ -71,7 +71,7 @@ class CurrentReadingTest {
         CurrentReading.setRanges(ranges)
         assertArrayEquals(ranges, CurrentReading.get())
         assertNull(CurrentReading.getPlan())
-        assertFalse(CurrentReading.setPlanCompleted(true))
+        assertFalse(CurrentReading.setPlanCompleted(true, 0))
     }
 
     @Test

@@ -16,7 +16,6 @@ object CurrentReading {
 
     @JvmStatic
     fun setRanges(aris: IntArray) {
-        require(aris.isNotEmpty() && aris.size % 2 == 0)
         Preferences.withTransaction {
             Preferences.setString(Prefkey.current_reading_ranges, App.getDefaultGson().toJson(aris))
             Preferences.remove(Prefkey.current_reading_ari_start)
@@ -27,13 +26,18 @@ object CurrentReading {
         AppEvents.emitCurrentReadingChanged()
     }
 
+    /**
+     * @property firstSequence Zero-based sequence of the first active range within the plan day.
+     * A range at index i belongs to reading sequence firstSequence + i.
+     */
     data class Plan(val name: String, val day: Int, val firstSequence: Int)
 
+    /**
+     * @param firstSequence The plan day's original sequence for the first pair in [aris].
+     * Use 0 for the entire day, or the first passage's zero-based sequence for a subset.
+     */
     @JvmStatic
-    @JvmOverloads
-    fun setReadingPlan(aris: IntArray, name: String, day: Int, firstSequence: Int = 0) {
-        require(aris.isNotEmpty() && aris.size % 2 == 0)
-        require(name.isNotEmpty() && day >= 0 && firstSequence >= 0 && firstSequence.toLong() + aris.size / 2 <= 256)
+    fun setReadingPlan(aris: IntArray, name: String, day: Int, firstSequence: Int) {
         Preferences.withTransaction {
             Preferences.setString(Prefkey.current_reading_ranges, App.getDefaultGson().toJson(aris))
             Preferences.remove(Prefkey.current_reading_ari_start)
@@ -47,11 +51,13 @@ object CurrentReading {
 
     @JvmStatic
     fun getPlan(): Plan? {
-        val ranges = get() ?: return null
+        if (get() == null) return null
         val name = Preferences.getString(Prefkey.current_reading_plan_name) ?: return null
-        val day = Preferences.getInt(Prefkey.current_reading_plan_day, -1)
-        val sequence = Preferences.getInt(Prefkey.current_reading_plan_sequence, -1)
-        return if (name.isNotEmpty() && day >= 0 && sequence >= 0 && sequence.toLong() + ranges.size / 2 <= 256) Plan(name, day, sequence) else null
+        return Plan(
+            name,
+            Preferences.getInt(Prefkey.current_reading_plan_day, 0),
+            Preferences.getInt(Prefkey.current_reading_plan_sequence, 0),
+        )
     }
 
     @JvmStatic
@@ -84,8 +90,7 @@ object CurrentReading {
     }
 
     @JvmStatic
-    @JvmOverloads
-    fun getPlanCompletion(rangeIndex: Int = 0): Boolean? = getPlanCompletions()?.getOrNull(rangeIndex)
+    fun getPlanCompletion(rangeIndex: Int): Boolean? = getPlanCompletions()?.getOrNull(rangeIndex)
 
     private fun installedPlan(): Plan? {
         val plan = getPlan() ?: return null
@@ -93,8 +98,7 @@ object CurrentReading {
     }
 
     @JvmStatic
-    @JvmOverloads
-    fun setPlanCompleted(completed: Boolean, rangeIndex: Int = 0): Boolean {
+    fun setPlanCompleted(completed: Boolean, rangeIndex: Int): Boolean {
         val plan = installedPlan() ?: return false
         val ranges = get() ?: return false
         if (rangeIndex !in 0 until ranges.size / 2) return false

@@ -348,7 +348,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
     public void goToIsiActivity(final int dayNumber, final int sequence) {
         final int[] selectedVerses = readingPlan.dailyVerses[dayNumber];
         final int ari_start = selectedVerses[sequence * 2];
-        CurrentReading.setReadingPlan(selectedVerses, readingPlan.info.name, dayNumber);
+        CurrentReading.setReadingPlan(selectedVerses, readingPlan.info.name, dayNumber, 0);
 
         startActivity(Launcher.openAppAtBibleLocation(ari_start));
     }

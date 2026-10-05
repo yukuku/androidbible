@@ -59,11 +59,11 @@ class CurrentReadingCompletionTest {
     @Test
     fun `ticking a passage updates only its original plan day and sequence and keeps it active`() {
         CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "original", 12, 3)
-        assertEquals(false, CurrentReading.getPlanCompletion())
-        assertTrue(CurrentReading.setPlanCompleted(true))
+        assertEquals(false, CurrentReading.getPlanCompletion(0))
+        assertTrue(CurrentReading.setPlanCompleted(true, 0))
         verify(exactly = 1) { db.insertOrUpdateReadingPlanProgress(ReadingPlan.gidFromName("original"), (12 shl 8) or 3, any()) }
         verify(exactly = 0) { db.insertOrUpdateReadingPlanProgress(ReadingPlan.gidFromName("other"), any(), any()) }
-        assertEquals(true, CurrentReading.getPlanCompletion())
+        assertEquals(true, CurrentReading.getPlanCompletion(0))
         assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.get())
         assertEquals(CurrentReading.Plan("original", 12, 3), CurrentReading.getPlan())
     }
@@ -74,23 +74,23 @@ class CurrentReadingCompletionTest {
         val code = (12 shl 8) or 3
         progress[gid] = mutableSetOf(code, code + 1)
         CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "original", 12, 3)
-        assertEquals(true, CurrentReading.getPlanCompletion())
-        assertTrue(CurrentReading.setPlanCompleted(false))
+        assertEquals(true, CurrentReading.getPlanCompletion(0))
+        assertTrue(CurrentReading.setPlanCompleted(false, 0))
         verify(exactly = 1) { db.deleteReadingPlanProgress(gid, code) }
         assertEquals(setOf(code + 1), progress[gid])
-        assertEquals(false, CurrentReading.getPlanCompletion())
+        assertEquals(false, CurrentReading.getPlanCompletion(0))
         assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.get())
     }
 
     @Test
     fun `completion survives reopening the reading and closing it does not erase progress`() {
         CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "original", 12, 3)
-        CurrentReading.setPlanCompleted(true)
+        CurrentReading.setPlanCompleted(true, 0)
         CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "original", 12, 3)
-        assertEquals(true, CurrentReading.getPlanCompletion())
+        assertEquals(true, CurrentReading.getPlanCompletion(0))
         CurrentReading.clear()
         assertNull(CurrentReading.get())
-        assertNull(CurrentReading.getPlanCompletion())
+        assertNull(CurrentReading.getPlanCompletion(0))
         verify(exactly = 0) { db.deleteReadingPlanProgress(any(), any()) }
         assertEquals(setOf((12 shl 8) or 3), progress[ReadingPlan.gidFromName("original")])
     }
@@ -99,10 +99,10 @@ class CurrentReadingCompletionTest {
     fun `dismissal and devotional references never mark a reading plan complete`() {
         CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "original", 12, 3)
         CurrentReading.clear()
-        assertFalse(CurrentReading.setPlanCompleted(true))
+        assertFalse(CurrentReading.setPlanCompleted(true, 0))
         CurrentReading.setRanges(intArrayOf(0x280905, 0x280906))
-        assertFalse(CurrentReading.setPlanCompleted(true))
-        assertNull(CurrentReading.getPlanCompletion())
+        assertFalse(CurrentReading.setPlanCompleted(true, 0))
+        assertNull(CurrentReading.getPlanCompletion(0))
         verify(exactly = 0) { db.insertOrUpdateReadingPlanProgress(any(), any(), any()) }
         verify(exactly = 0) { db.deleteReadingPlanProgress(any(), any()) }
     }
@@ -111,9 +111,9 @@ class CurrentReadingCompletionTest {
     fun `a deleted reading plan cannot acquire new completion records`() {
         every { db.listReadingPlanNames() } returns emptyList()
         CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "deleted", 12, 3)
-        assertFalse(CurrentReading.setPlanCompleted(true))
-        assertFalse(CurrentReading.setPlanCompleted(false))
-        assertNull(CurrentReading.getPlanCompletion())
+        assertFalse(CurrentReading.setPlanCompleted(true, 0))
+        assertFalse(CurrentReading.setPlanCompleted(false, 0))
+        assertNull(CurrentReading.getPlanCompletion(0))
         verify(exactly = 0) { db.insertOrUpdateReadingPlanProgress(any(), any(), any()) }
         verify(exactly = 0) { db.deleteReadingPlanProgress(any(), any()) }
     }
@@ -124,7 +124,7 @@ class CurrentReadingCompletionTest {
         val gid = ReadingPlan.gidFromName("original")
         progress[gid] = mutableSetOf((12 shl 8) or 1, (13 shl 8) or 2)
         progress[ReadingPlan.gidFromName("other")] = mutableSetOf((12 shl 8) or 0)
-        CurrentReading.setReadingPlan(ranges, "original", 12)
+        CurrentReading.setReadingPlan(ranges, "original", 12, 0)
         assertArrayEquals(booleanArrayOf(false, true, false), CurrentReading.getPlanCompletions())
         assertTrue(CurrentReading.setPlanCompleted(true, 2))
         assertTrue(CurrentReading.setPlanCompleted(false, 1))
@@ -136,7 +136,7 @@ class CurrentReadingCompletionTest {
 
     @Test
     fun `invalid row indices cannot change plan completion`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12)
+        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12, 0)
         for (index in listOf(-1, 2, Int.MAX_VALUE)) {
             assertFalse(CurrentReading.setPlanCompleted(true, index))
             assertNull(CurrentReading.getPlanCompletion(index))
