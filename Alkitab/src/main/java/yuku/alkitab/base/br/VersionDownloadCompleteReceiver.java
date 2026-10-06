@@ -21,6 +21,7 @@ import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.base.util.Foreground;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.io.OptionalGzipInputStream;
@@ -105,7 +106,7 @@ public class VersionDownloadCompleteReceiver {
 			} catch (IOException e) {
 				AppLog.e(TAG, "I/O error when saving downloaded version", e);
 				Foreground.run(() -> context.startActivity(
-					AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_saving_io_error))
+					AlertDialogActivity.createOkIntent(null, Localized.string(R.string.version_download_saving_io_error))
 						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 				));
 				AppEvents.emitVersionListReload();
@@ -123,7 +124,7 @@ public class VersionDownloadCompleteReceiver {
 				destFile.delete();
 
 				Foreground.run(() -> context.startActivity(
-					AlertDialogActivity.createOkIntent(null, context.getString(R.string.version_download_corrupted_file))
+					AlertDialogActivity.createOkIntent(null, Localized.string(R.string.version_download_corrupted_file))
 						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 				));
 				AppEvents.emitVersionListReload();
@@ -151,7 +152,7 @@ public class VersionDownloadCompleteReceiver {
 			MVersionDb.clearVersionImplCache();
 
 			Foreground.run(() -> {
-				Toast.makeText(App.context, TextUtils.expandTemplate(context.getText(R.string.version_download_complete), mvDb.longName), Toast.LENGTH_LONG).show();
+				Toast.makeText(App.context, TextUtils.expandTemplate(Localized.text(R.string.version_download_complete), mvDb.longName), Toast.LENGTH_LONG).show();
 			});
 
 			AppEvents.emitVersionListReload();

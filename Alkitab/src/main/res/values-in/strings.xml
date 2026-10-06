@@ -157,6 +157,7 @@
     <string name="menuDisplay">Tampilan</string>
     <string name="text_appearance_font">Jenis Huruf</string>
     <string name="text_appearance_theme_custom">Lainnya&#8230;</string>
+    <string name="text_appearance_color_theme">Tema warna</string>
     <string name="text_appearance_text_size">Ukuran teks</string>
     <string name="text_appearance_text_size_for_version">Ukuran huruf untuk ^1</string>
     <string name="text_appearance_line_spacing">Jarak antarbaris</string>

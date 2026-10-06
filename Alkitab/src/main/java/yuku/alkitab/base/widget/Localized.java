@@ -39,6 +39,6 @@ public class Localized {
         }
 
         AppLog.d(TAG, "Need to adjust resources for pref locale: " + prefLocale);
-        return currentResources = ConfigurationWrapper.wrap(App.context).getResources();
+        return currentResources = ConfigurationWrapper.localizedContext(App.context).getResources();
     }
 }

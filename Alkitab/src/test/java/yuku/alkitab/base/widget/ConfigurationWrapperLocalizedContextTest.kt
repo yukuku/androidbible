@@ -79,4 +79,34 @@ class ConfigurationWrapperLocalizedContextTest {
 
         assertEquals("Loading Genesis 1", localized.getString(R.string.audio_log_loading, "Genesis 1"))
     }
+
+    @Test
+    fun `appearance actions and color theme have Indonesian translations`() {
+        Preferences.setString(R.string.pref_language_key, "in")
+
+        val localized = ConfigurationWrapper.localizedContext(AfwApp.context)
+
+        assertEquals("Dapatkan huruf lainnya…", localized.getString(R.string.get_more_fonts))
+        assertEquals("Tema warna", localized.getString(R.string.text_appearance_color_theme))
+    }
+
+    @Test
+    fun `background strings follow language changes without changing application resources`() {
+        Preferences.setString(R.string.pref_language_key, "in")
+
+        assertEquals("Gagal mengecek daftar versi.", Localized.string(R.string.version_config_updater_error_download_modify_time))
+        assertEquals("Daftar versi tidak tersedia: offline", Localized.string(R.string.version_config_updater_error_modify_time_failed, "offline"))
+        assertEquals("^1 terunduh", Localized.text(R.string.version_download_complete).toString())
+        assertEquals("Download more fonts…", AfwApp.context.getString(R.string.get_more_fonts))
+
+        Preferences.setString(R.string.pref_language_key, "en")
+
+        assertEquals("Download more fonts…", Localized.string(R.string.get_more_fonts))
+
+        Preferences.setString(R.string.pref_language_key, "in")
+
+        assertEquals("Tema warna", Localized.string(R.string.text_appearance_color_theme))
+        assertEquals("Download more fonts…", AfwApp.context.getString(R.string.get_more_fonts))
+    }
+
 }
