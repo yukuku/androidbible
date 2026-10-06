@@ -31,7 +31,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: Unit tests
-        run: ./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest
+        run: |
+          set -o pipefail
+          ./gradlew :ImportedDesktopVerseUtil:testDebugUnitTest testPlainDebugUnitTest testPlainReleaseUnitTest 2>&1 | tail -60
 
       - name: Build with Gradle
         run: ./gradlew assemblePlainDebug bundlePlainDebug

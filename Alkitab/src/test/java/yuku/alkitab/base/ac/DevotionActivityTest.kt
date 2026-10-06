@@ -43,6 +43,10 @@ import yuku.alkitab.base.services.UiDimensionsProvider
 import yuku.alkitab.base.storage.InternalDb
 import yuku.alkitab.base.storage.InternalDbHelper
 import yuku.alkitab.base.storage.Prefkey
+import yuku.alkitab.base.util.CurrentReading
+import yuku.alkitab.base.widget.CallbackSpan
+import yuku.alkitab.model.Book
+import yuku.alkitab.model.Version
 import yuku.alkitab.debug.R
 
 @RunWith(RobolectricTestRunner::class)
@@ -121,6 +125,29 @@ class DevotionActivityTest {
         testDownloader.shutdown()
         App.services = originalServices
         helper.close()
+    }
+
+    @Test fun `devotional links retain disjoint reading guides in the new downloader activity`() {
+        val version = mockk<Version>()
+        every { App.services.versions.activeVersion() } returns version
+        every { version.getBook(40) } returns Book().apply {
+            bookId = 40
+            chapter_count = 16
+            verse_counts = IntArray(16) { 50 }
+        }
+        val listener = ReflectionHelpers.getField<CallbackSpan.OnClickListener<String>>(activity, "verseClickListener")
+        listener.onClick(activity.findViewById(R.id.lContent), "Markus 9:5-6,14-23")
+        try {
+            assertArrayEquals(intArrayOf(0x280905, 0x280906, 0x28090e, 0x280917), CurrentReading.getRanges())
+            assertEquals(0x280905, shadowOf(activity).nextStartedActivity.getIntExtra("ari", -1))
+            assertEquals(activity.getString(R.string.devotion_download_queued), status())
+            foreground.runNext()
+            idle()
+            assertTrue(activity.findViewById<TextView>(R.id.lContent).text.contains("Morning text"))
+            assertArrayEquals(intArrayOf(0x280905, 0x280906, 0x28090e, 0x280917), CurrentReading.getRanges())
+        } finally {
+            CurrentReading.clear()
+        }
     }
 
     @Test fun `waiting failure and Retry button lead to the selected complete reading`() {

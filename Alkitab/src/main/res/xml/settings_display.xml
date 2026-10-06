@@ -37,4 +37,12 @@
 		android:defaultValue="@integer/pref_selectedVerseBgColor_default"
 		android:key="@string/pref_selectedVerseBgColor_key"
 		android:title="@string/pref_selectedVerseBgColor_title" />
+    <ListPreference
+        android:key="@string/pref_currentReadingDisplay_key"
+        android:title="@string/pref_currentReadingDisplay_title"
+        android:defaultValue="@string/pref_currentReadingDisplay_default"
+        android:entries="@array/current_reading_display_labels"
+        android:entryValues="@array/current_reading_display_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
 </PreferenceScreen>

@@ -1,0 +1,136 @@
+package yuku.alkitab.base.verses
+
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.os.Looper
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalInspectionMode
+import io.mockk.mockk
+import java.io.File
+import org.junit.After
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import yuku.alkitab.base.App
+import yuku.alkitab.base.services.AppServices
+
+@RunWith(RobolectricTestRunner::class)
+@Config(application = yuku.afw.App::class, sdk = [34], qualifiers = "w360dp-h800dp-mdpi")
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+class ReadingGuidePreviewsTest {
+    private lateinit var previousServices: AppServices
+
+    @Before
+    fun setUp() {
+        previousServices = App.services
+        App.services = AppServices(mockk(), mockk(), mockk())
+    }
+
+    @After
+    fun tearDown() {
+        App.services = previousServices
+    }
+
+    private fun renderBitmap(width: Int, content: @Composable () -> Unit): Bitmap {
+        val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
+        activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
+        val view = ComposeView(activity)
+        view.setContent {
+            CompositionLocalProvider(LocalInspectionMode provides true) {
+                content()
+            }
+        }
+        activity.setContentView(view, ViewGroup.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT))
+        val applicationContext = yuku.afw.App.context
+        yuku.afw.App.context = null
+        try {
+            repeat(2) {
+                Shadows.shadowOf(Looper.getMainLooper()).idle()
+                view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+            }
+            assertTrue("The preview should contain the passage and its guide", view.height > 300)
+            val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            view.draw(Canvas(bitmap))
+            return bitmap
+        } finally {
+            yuku.afw.App.context = applicationContext
+        }
+    }
+
+    private fun render(mode: ReadingGuideMode, dark: Boolean, multiplePassages: Boolean, leftMarginDp: Int) {
+        val bitmap = renderBitmap(360) { ReadingGuidePreviewContent(mode, multiplePassages, leftMarginDp) }
+        val background = if (dark) 0xff202020.toInt() else android.graphics.Color.WHITE
+        if (mode == ReadingGuideMode.LINE) {
+            val ink = if (dark) 0xffeeeeee.toInt() else 0xff202020.toInt()
+            assertTrue(androidx.core.graphics.ColorUtils.calculateContrast(ink, background) >= 3.0)
+            val markedRows = (0 until bitmap.height).filter { y -> bitmap.getPixel(4, y) == ink && bitmap.getPixel(5, y) == ink && ((0 until 4) + (6 until maxOf(10, leftMarginDp))).all { bitmap.getPixel(it, y) == background } }
+            assertTrue(markedRows.size > 20)
+            for (y in markedRows) {
+                assertTrue(bitmap.getPixel(5, y) == ink)
+                assertTrue(((0 until 4) + (6 until maxOf(10, leftMarginDp))).all { bitmap.getPixel(it, y) == background })
+            }
+        } else {
+            assertTrue(bitmap.getPixel(0, bitmap.height / 2) == background)
+        }
+        assertTrue((0 until bitmap.height).any { y -> (16 until bitmap.width - 16).any { x -> bitmap.getPixel(x, y) != background } })
+        val path = File("build/test-artifacts/reading-guide-previews/${mode.preferenceValue}-${if (dark) "dark" else "light"}${if (multiplePassages) "-multiple" else ""}${if (leftMarginDp != 16) "-margin-$leftMarginDp" else ""}.png")
+        path.parentFile?.mkdirs()
+        path.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    @Test
+    fun `left side line preview renders without application services`() = render(ReadingGuideMode.LINE, false, false, 16)
+
+    @Test
+    @Config(qualifiers = "w360dp-h800dp-night-mdpi")
+    fun `left side line preview renders in dark mode`() = render(ReadingGuideMode.LINE, true, false, 16)
+
+    @Test
+    fun `multiple passage line preview renders without application services`() = render(ReadingGuideMode.LINE, false, true, 16)
+
+    @Test
+    fun `rounded line preview renders with zero text margin`() = render(ReadingGuideMode.LINE, false, false, 0)
+
+    @Test
+    @Config(qualifiers = "w360dp-h800dp-night-mdpi")
+    fun `rounded line preview renders with reduced margin in dark mode`() = render(ReadingGuideMode.LINE, true, false, 4)
+
+    private fun renderCases(dark: Boolean) {
+        val directory = File("build/test-artifacts/reading-guide-previews/cases/${if (dark) "dark" else "light"}")
+        directory.mkdirs()
+        for (case in ReadingGuidePreviewCase.entries) {
+            val bitmap = renderBitmap(360) { ReadingGuideCaseContent(case) }
+            if (case in setOf(ReadingGuidePreviewCase.RTL, ReadingGuidePreviewCase.RTL_ZERO_PADDING, ReadingGuidePreviewCase.RTL_DISJOINT)) {
+                val ink = if (dark) 0xffeeeeee.toInt() else 0xff202020.toInt()
+                val markedRows = (0 until bitmap.height).filter { bitmap.getPixel(354, it) == ink && bitmap.getPixel(355, it) == ink }
+                assertTrue("RTL guide must appear on the right", markedRows.size > 20)
+                assertTrue("RTL guide must leave the left edge clear", markedRows.all { bitmap.getPixel(4, it) != ink })
+            }
+            File(directory, "${case.name.lowercase()}.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        }
+        val narrow = renderBitmap(180) { ReadingGuideCaseContent(ReadingGuidePreviewCase.ZERO_PADDING) }
+        File(directory, "narrow.png").outputStream().use { narrow.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        val split = renderBitmap(600) { ReadingGuideSplitPreviewContent() }
+        File(directory, "split.png").outputStream().use { split.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    @Test
+    fun `all reading guide scenarios render in light previews without application services`() = renderCases(false)
+
+    @Test
+    @Config(qualifiers = "w360dp-h800dp-night-mdpi")
+    fun `all reading guide scenarios render in dark previews without application services`() = renderCases(true)
+
+}

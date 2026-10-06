@@ -44,6 +44,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.PlatformTextStyle
@@ -507,7 +508,7 @@ private const val RUBY_GEOMETRY_HOLD_MS = 1000L
  */
 @Composable
 private fun rubyGeometryCopyOnHold(ari: Int): Modifier {
-    if (!ExperimentalFlags.debugRubyGeometry()) return Modifier
+    if (LocalInspectionMode.current || !ExperimentalFlags.debugRubyGeometry()) return Modifier
     val context = LocalContext.current
     return Modifier.pointerInput(ari) {
         awaitPointerEventScope {
@@ -685,9 +686,7 @@ internal fun computeLineMetrics(
 @Composable
 private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, lineMetrics: LineMetrics, modifier: Modifier = Modifier) {
     val textColor = if (checked) {
-        Color(TextColorUtil.getForCheckedVerse(
-            Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-        ))
+        Color(TextColorUtil.getForCheckedVerse(selectedVerseBackgroundColor()))
     } else {
         Color(state.fontColor)
     }
@@ -753,7 +752,7 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                     gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
                     debugAri = state.attribute.ari,
                     debugSource = state.render.sourceText,
-                    debug = ExperimentalFlags.debugRubyGeometry(),
+                    debug = !LocalInspectionMode.current && ExperimentalFlags.debugRubyGeometry(),
                 ),
             onTextLayout = { textLayoutResult = it },
         )
@@ -940,10 +939,18 @@ private fun buildAttributeItems(attribute: AttributeState, context: android.cont
 
 // ---- Overlays / decorations ----
 
-private fun Modifier.checkedOverlay(checked: Boolean): Modifier = if (!checked) this else this.drawBehind {
-    val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-    val color = ColorUtils.setAlphaComponent(colorRgb, TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA)
-    drawRect(color = Color(color))
+@Composable
+private fun selectedVerseBackgroundColor(): Int = if (LocalInspectionMode.current) {
+    LocalContext.current.resources.getInteger(R.integer.pref_selectedVerseBgColor_default)
+} else {
+    Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
+}
+
+@Composable
+private fun Modifier.checkedOverlay(checked: Boolean): Modifier {
+    if (!checked) return this
+    val color = ColorUtils.setAlphaComponent(selectedVerseBackgroundColor(), TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA)
+    return drawBehind { drawRect(color = Color(color)) }
 }
 
 @Composable

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
@@ -250,7 +251,9 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			void bCurrentReadingClose_click();
 
-			void bCurrentReadingReference_click();
+			void bCurrentReadingReference_click(int rangeIndex);
+
+			void cCurrentReadingComplete_checkedChange(int rangeIndex, boolean checked);
 		}
 
 		public interface Handle {
@@ -274,7 +277,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 		View panelCurrentReadingHeader;
 		View bCurrentReadingClose;
-		TextView bCurrentReadingReference;
+		ViewGroup panelCurrentReadingRows;
 
 		Listener listener;
 		Handle handle = new Handle() {
@@ -320,7 +323,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			panelCurrentReadingHeader = findViewById(R.id.panelCurrentReadingHeader);
 			bCurrentReadingClose = findViewById(R.id.bCurrentReadingClose);
-			bCurrentReadingReference = findViewById(R.id.bCurrentReadingReference);
+			panelCurrentReadingRows = findViewById(R.id.panelCurrentReadingRows);
 
 			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
 
@@ -363,7 +366,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 			cSplitVersion.setOnCheckedChangeListener(cSplitVersion_checkedChange);
 
 			bCurrentReadingClose.setOnClickListener(v -> listener.bCurrentReadingClose_click());
-			bCurrentReadingReference.setOnClickListener(v -> listener.bCurrentReadingReference_click());
 
 			displayCurrentReading();
 
@@ -372,20 +374,47 @@ public abstract class LeftDrawer extends NestedScrollView {
 			// was not actually selected during app startup.
 			AppEvents.observeOnView(this, AppEvents.currentReadingChanged, this::displayCurrentReading);
 			AppEvents.observeOnView(this, AppEvents.activeVersionChanged, this::displayCurrentReading);
+			AppEvents.observeOnView(this, AppEvents.readingPlanProgressChanged, this::displayCurrentReading);
 		}
 
-		void displayCurrentReading() {
+		@Override
+		public void onAttachedToWindow() {
+			super.onAttachedToWindow();
+			displayCurrentReading();
+		}
+
+		public void displayCurrentReading() {
 			if (isInEditMode()) return;
 
-			final int[] aris = CurrentReading.get();
+			final int[] aris = CurrentReading.getRanges();
+			final int rowCount = aris == null ? 0 : aris.length / 2;
+			panelCurrentReadingHeader.setVisibility(rowCount == 0 ? GONE : VISIBLE);
+			panelCurrentReadingRows.setVisibility(rowCount == 0 ? GONE : VISIBLE);
+			while (panelCurrentReadingRows.getChildCount() > rowCount) {
+				panelCurrentReadingRows.removeViewAt(panelCurrentReadingRows.getChildCount() - 1);
+			}
+			while (panelCurrentReadingRows.getChildCount() < rowCount) {
+				LayoutInflater.from(getContext()).inflate(R.layout.item_current_reading, panelCurrentReadingRows, true);
+			}
 			if (aris == null) {
-				panelCurrentReadingHeader.setVisibility(GONE);
-				bCurrentReadingReference.setVisibility(GONE);
-			} else {
-				panelCurrentReadingHeader.setVisibility(VISIBLE);
-				bCurrentReadingReference.setVisibility(VISIBLE);
-
-				bCurrentReadingReference.setText(App.services.versions.activeVersion().referenceRange(aris[0], aris[1]));
+				return;
+			}
+			final boolean[] completed = CurrentReading.getPlanCompletions();
+			for (int index = 0; index < rowCount; index++) {
+				final int rangeIndex = index;
+				final View row = panelCurrentReadingRows.getChildAt(index);
+				final TextView reference = row.findViewById(R.id.bCurrentReadingReference);
+				final CheckBox checkbox = row.findViewById(R.id.cCurrentReadingComplete);
+				reference.setText(CurrentReading.reference(App.services.versions.activeVersion(), rangeIndex));
+				reference.setOnClickListener(v -> listener.bCurrentReadingReference_click(rangeIndex));
+				checkbox.setOnCheckedChangeListener(null);
+				checkbox.setVisibility(completed != null ? VISIBLE : GONE);
+				checkbox.setChecked(completed != null && completed[index]);
+				checkbox.setContentDescription(getContext().getString(R.string.current_reading_completed) + ": " + reference.getText());
+				checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+					listener.cCurrentReadingComplete_checkedChange(rangeIndex, isChecked);
+					displayCurrentReading();
+				});
 			}
 		}
 

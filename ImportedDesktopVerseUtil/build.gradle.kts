@@ -11,6 +11,10 @@ android {
 
     testOptions {
         targetSdk = libs.versions.targetSdk.get().toInt()
+        unitTests.all {
+            it.systemProperty("user.language", "en")
+            it.systemProperty("user.country", "US")
+        }
     }
 
     buildTypes {
@@ -25,12 +29,11 @@ android {
     }
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+kotlin {
+    jvmToolchain(21)
 }
 
 dependencies {
     implementation(project(":AlkitabModel"))
+    testImplementation(libs.junit)
 }

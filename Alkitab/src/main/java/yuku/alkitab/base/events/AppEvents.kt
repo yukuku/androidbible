@@ -47,7 +47,7 @@ object AppEvents {
     @JvmField
     val needsRestart: MutableSharedFlow<Unit> = bus()
 
-    /** The reading-plan "current reading" selection changed (set / cleared). */
+    /** The current passage from a reading plan or devotion changed (set / cleared). */
     @JvmField
     val currentReadingChanged: MutableSharedFlow<Unit> = bus()
 

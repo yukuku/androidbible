@@ -40,7 +40,8 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.ClipboardUtil
-import yuku.alkitab.base.util.Jumper
+import yuku.alkitab.base.util.CurrentReading
+import yuku.alkitab.base.util.ReadingPassage
 import yuku.alkitab.base.widget.CallbackSpan
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper
@@ -323,28 +324,18 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
             }
             startActivity(PatchTextActivity.createIntent(lContent.text, App.getDefaultGson().toJson(extraInfo), referenceUrl))
         } else {
-            if (reference.startsWith("ari:")) {
-                val ari = reference.substring(4).toInt()
-                startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
-            } else { // we need to parse it manually by text
-                val jumper = Jumper(reference)
-                if (!jumper.parseSucceeded) {
-                    MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.alamat_tidak_sah_alamat, reference))
-                } else {
-                    // Make sure references are parsed using Indonesian book names.
-                    val bookNames = resources.getStringArray(R.array.standard_book_names_in)
-                    val bookIds = IntArray(bookNames.size) { it }
-                    val bookId = jumper.getBookId(bookNames, bookIds)
-                    val chapter_1 = jumper.chapter
-                    val verse_1 = jumper.verse
-                    val ari = Ari.encode(bookId, chapter_1, verse_1)
-                    val hasRange = jumper.hasRange
-                    if (hasRange || verse_1 == 0) {
-                        startActivity(Launcher.openAppAtBibleLocation(ari))
-                    } else {
-                        startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari))
-                    }
-                }
+            val version = App.services.versions.activeVersion()
+            val ranges = ReadingPassage.parse(reference, version::getBook)
+            if (ranges == null) {
+                MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.alamat_tidak_sah_alamat, reference))
+                return@OnClickListener
+            }
+            val openingAri = ReadingPassage.resolve(ranges, version::getBook)?.firstOrNull()?.start ?: return@OnClickListener
+            CurrentReading.setRanges(ranges)
+            if (ranges.size == 2 && ranges[0] == ranges[1] && Ari.toVerse(ranges[0]) != 0) {
+                startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(openingAri))
+            } else {
+                startActivity(Launcher.openAppAtBibleLocation(openingAri))
             }
         }
     }

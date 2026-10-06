@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Tampilan bacaan saat ini</string>
+    <string name="current_reading_display_off">Nonaktif</string>
+    <string name="current_reading_display_line">Garis tipis di samping teks</string>
+    <string name="current_reading_completed">Bacaan ini sudah selesai</string>
+</resources>

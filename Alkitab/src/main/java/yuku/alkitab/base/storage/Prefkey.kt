@@ -104,8 +104,14 @@ enum class Prefkey {
     /** The whole history (with many entries) */
     history,
 
-    /** Current reading vars  */
+    /** Single-range fallback read when current_reading_ranges is absent. */
     current_reading_ari_start, current_reading_ari_end,
+
+    /** JSON array of alternating start/end ARIs for the active passages. */
+    current_reading_ranges,
+
+    /** Plan identity and zero-based day linking active passages to saved completion. */
+    current_reading_plan_name, current_reading_plan_day,
 
     /** Option to ask for verse number in goto screen  */
     gotoAskForVerse,

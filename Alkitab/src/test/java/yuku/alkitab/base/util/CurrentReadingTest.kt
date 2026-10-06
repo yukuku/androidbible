@@ -2,6 +2,9 @@ package yuku.alkitab.base.util
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,42 +19,75 @@ class CurrentReadingTest {
     @Before
     fun setUp() {
         Preferences.invalidate()
-        Preferences.remove(Prefkey.current_reading_ari_start)
-        Preferences.remove(Prefkey.current_reading_ari_end)
+        CurrentReading.clear()
     }
 
     @Test
-    fun `get returns null when no current reading was set`() {
-        assertNull(CurrentReading.get())
+    fun `getRanges returns null when no current reading was set`() {
+        assertNull(CurrentReading.getRanges())
     }
 
     @Test
-    fun `get returns the start and end aris that were set`() {
-        CurrentReading.set(0x010203, 0x010210)
+    fun `getRanges returns the start and end aris that were set`() {
+        CurrentReading.setRanges(intArrayOf(0x010203, 0x010210))
 
-        assertArrayEquals(intArrayOf(0x010203, 0x010210), CurrentReading.get())
+        assertArrayEquals(intArrayOf(0x010203, 0x010210), CurrentReading.getRanges())
     }
 
     @Test
-    fun `a later set replaces the earlier reading`() {
-        CurrentReading.set(0x010203, 0x010210)
-        CurrentReading.set(0x020101, 0x020105)
+    fun `a later setRanges replaces the earlier reading`() {
+        CurrentReading.setRanges(intArrayOf(0x010203, 0x010210))
+        CurrentReading.setRanges(intArrayOf(0x020101, 0x020105))
 
-        assertArrayEquals(intArrayOf(0x020101, 0x020105), CurrentReading.get())
+        assertArrayEquals(intArrayOf(0x020101, 0x020105), CurrentReading.getRanges())
     }
 
     @Test
     fun `clear removes the current reading`() {
-        CurrentReading.set(0x010203, 0x010210)
+        CurrentReading.setRanges(intArrayOf(0x010203, 0x010210))
         CurrentReading.clear()
 
-        assertNull(CurrentReading.get())
+        assertNull(CurrentReading.getRanges())
     }
 
     @Test
-    fun `get defaults the end to 0 when only the start is stored`() {
+    fun `getRanges defaults the end to 0 when only the start is stored`() {
         Preferences.setInt(Prefkey.current_reading_ari_start, 0x010203)
 
-        assertArrayEquals(intArrayOf(0x010203, 0), CurrentReading.get())
+        assertArrayEquals(intArrayOf(0x010203, 0), CurrentReading.getRanges())
+    }
+
+    @Test
+    fun `a reading plan records its identity and selected day`() {
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12)
+        assertEquals(CurrentReading.Plan("plan-a", 12), CurrentReading.getPlan())
+        assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.getRanges())
+    }
+
+    @Test
+    fun `opening a devotional list removes the reading plan completion target`() {
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12)
+        val ranges = intArrayOf(0x280905, 0x280906, 0x28090e, 0x280917)
+        CurrentReading.setRanges(ranges)
+        assertArrayEquals(ranges, CurrentReading.getRanges())
+        assertNull(CurrentReading.getPlan())
+        assertFalse(CurrentReading.setPlanCompleted(true, 0))
+    }
+
+    @Test
+    fun `dismissal removes both the guide ranges and the completion target`() {
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12)
+        CurrentReading.clear()
+        assertNull(CurrentReading.getRanges())
+        assertNull(CurrentReading.getPlan())
+        assertTrue(!Preferences.contains(Prefkey.current_reading_ranges))
+    }
+
+    @Test
+    fun `corrupt persisted range data does not crash the drawer`() {
+        Preferences.setString(Prefkey.current_reading_ranges, "broken")
+        assertNull(CurrentReading.getRanges())
+        Preferences.setString(Prefkey.current_reading_ranges, "[1,2,3]")
+        assertNull(CurrentReading.getRanges())
     }
 }

@@ -67,6 +67,7 @@ class VersesControllerImpl(
         this.layoutManager = layoutManager
         rv.layoutManager = layoutManager
         rv.addOnScrollListener(rvScrollListener)
+        rv.addItemDecoration(ReadingGuideDecoration())
 
         val adapter = VersesAdapter(
             attention = attention,
@@ -526,7 +527,8 @@ class VersesControllerImpl(
         attention.verses_1 += verse_1
         attention.start = System.currentTimeMillis()
 
-        layoutManager.findViewByPosition(pos)?.invalidate()
+        val row = layoutManager.findViewByPosition(pos)
+        (if (row is ReadingGuideView) row.content else row)?.invalidate()
     }
 
     override fun setAudioHighlight(verse_1: Int, color: Int) {
@@ -608,6 +610,7 @@ class VersesControllerImpl(
      */
     private fun setAudioHighlightOnRow(view: View?, color: Int) {
         when (view) {
+            is ReadingGuideView -> setAudioHighlightOnRow(view.content, color)
             is VerseItem -> view.audioHighlightColor = color
             is VerseItemComposeView -> view.audioHighlightColor = color
         }
@@ -643,7 +646,7 @@ class AudioHighlight {
 
 sealed class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
+class VerseTextHolder(private val view: VerseItem, private val guide: ReadingGuideView? = null) : ItemHolder(guide ?: view) {
     /**
      * @param index the index of verse
      */
@@ -659,6 +662,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
     ) {
         val verse_1 = index + 1
         val ari = Ari.encodeWithBc(data.ari_bc_, verse_1)
+        guide?.bind(ui.readingGuide, ari, App.services.uiDimensions.applied().fontColor, App.services.uiDimensions.applied().backgroundColor)
         val text = data.verses_.getVerse(index)
         val verseNumberText = data.verses_.getVerseNumberText(index)
         val highlightInfo = data.versesAttributes.highlightInfoMap_[index]
@@ -812,7 +816,7 @@ class VerseTextHolder(private val view: VerseItem) : ItemHolder(view) {
  * are reused from the legacy [yuku.alkitab.base.widget.AttributeView] inside the
  * Compose view so the suspected text-rendering bug stays the only variable.
  */
-class VerseTextComposeHolder(private val view: VerseItemComposeView) : ItemHolder(view) {
+class VerseTextComposeHolder(private val view: VerseItemComposeView, private val guide: ReadingGuideView? = null) : ItemHolder(guide ?: view) {
     fun bind(
         data: VersesDataModel,
         ui: VersesUiModel,
@@ -825,6 +829,7 @@ class VerseTextComposeHolder(private val view: VerseItemComposeView) : ItemHolde
     ) {
         val verse_1 = index + 1
         val text = data.verses_.getVerse(index)
+        guide?.bind(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, verse_1), App.services.uiDimensions.applied().fontColor, App.services.uiDimensions.applied().backgroundColor)
 
         val state = buildVerseItemComposeState(
             context = view.context,
@@ -854,11 +859,12 @@ class VerseTextComposeHolder(private val view: VerseItemComposeView) : ItemHolde
     }
 }
 
-class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
+class PericopeHolder(private val view: PericopeHeaderItem, private val guide: ReadingGuideView? = null) : ItemHolder(guide ?: view) {
     /**
      * @param index the index of verse
      */
     fun bind(data: VersesDataModel, ui: VersesUiModel, listeners: VersesListeners, position: Int, index: Int) {
+        guide?.bind(ui.readingGuide, Ari.encodeWithBc(data.ari_bc_, data.locateVerse_1FromPosition(position).verse_1), App.services.uiDimensions.applied().fontColor, App.services.uiDimensions.applied().backgroundColor)
         val pericopeBlock = data.pericopeBlocks_[index]
 
         val lCaption = view.findViewById<TextView>(R.id.lCaption)
@@ -873,7 +879,7 @@ class PericopeHolder(private val view: PericopeHeaderItem) : ItemHolder(view) {
             App.services.uiDimensions.applied().pericopeSpacingTop
         }
 
-        this.itemView.setPadding(0, paddingTop, 0, App.services.uiDimensions.applied().pericopeSpacingBottom)
+        view.setPadding(0, paddingTop, 0, App.services.uiDimensions.applied().pericopeSpacingBottom)
 
         Appearances.applyPericopeTitleAppearance(lCaption, ui.textSizeMult)
 
@@ -1014,15 +1020,18 @@ class VersesAdapter(
 
         return when (viewType) {
             ItemType.verseText.ordinal -> {
-                VerseTextHolder(inflater.inflate(R.layout.item_verse, parent, false) as VerseItem)
+                val view = inflater.inflate(R.layout.item_verse, parent, false) as VerseItem
+                VerseTextHolder(view, ReadingGuideView(view))
             }
 
             VIEW_TYPE_VERSE_TEXT_COMPOSE -> {
-                VerseTextComposeHolder(VerseItemComposeView(parent.context))
+                val view = VerseItemComposeView(parent.context)
+                VerseTextComposeHolder(view, ReadingGuideView(view))
             }
 
             ItemType.pericope.ordinal -> {
-                PericopeHolder(inflater.inflate(R.layout.item_pericope_header, parent, false) as PericopeHeaderItem)
+                val view = inflater.inflate(R.layout.item_pericope_header, parent, false) as PericopeHeaderItem
+                PericopeHolder(view, ReadingGuideView(view))
             }
 
             else -> throw RuntimeException("Unknown viewType $viewType")

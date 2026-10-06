@@ -49,6 +49,7 @@ import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -67,6 +68,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.updateLayoutParams
@@ -87,6 +89,7 @@ import yuku.alkitab.base.widget.FormattedTextRenderer
 import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.ReferenceParallelClickData
+import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 
 private const val TAG = "VersesComposeCtl"
@@ -824,9 +827,19 @@ class VersesComposeControllerImpl(
                         key = { position -> itemKey(data, position) },
                         contentType = { position -> data.getItemViewType(position) },
                     ) { position ->
-                        when (data.getItemViewType(position)) {
-                            ItemType.verseText -> VerseRow(data, ui, listeners, position)
-                            ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
+                        val verse = data.getItemViewType(position) == ItemType.verseText
+                        val verse_1 = if (verse) data.getVerse_1FromPosition(position) else data.locateVerse_1FromPosition(position).verse_1
+                        ReadingGuideRow(
+                            guide = ui.readingGuide,
+                            ari = Ari.encodeWithBc(data.ari_bc_, verse_1),
+                            color = App.services.uiDimensions.applied().fontColor,
+                            backgroundColor = App.services.uiDimensions.applied().backgroundColor,
+                            startInsetPx = (if (LocalLayoutDirection.current == LayoutDirection.Rtl) paddingRightPx else paddingLeftPx).toFloat(),
+                        ) {
+                            when (data.getItemViewType(position)) {
+                                ItemType.verseText -> VerseRow(data, ui, listeners, position)
+                                ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
+                            }
                         }
                     }
                 }
