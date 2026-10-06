@@ -25,33 +25,16 @@ class ReadingGuideViewTest {
     private val ranges = listOf(ReadingRange(0x280905, 0x280906), ReadingRange(0x28090e, 0x280917))
 
     @Test
-    fun `only the actual boundaries receive labels and a recycled row drops them`() {
-        val view = view()
-        val guide = ReadingGuide(ReadingGuideMode.LABELS, ranges)
-        view.bind(guide, 0x280905, true, 0xff000000.toInt(), Color.WHITE)
-        assertEquals(View.VISIBLE, view.getChildAt(0).visibility)
-        assertEquals(View.GONE, view.getChildAt(2).visibility)
-        view.bind(guide, 0x280906, true, 0xff000000.toInt(), Color.WHITE)
-        assertEquals(View.GONE, view.getChildAt(0).visibility)
-        assertEquals(View.VISIBLE, view.getChildAt(2).visibility)
-        view.bind(guide, 0x280909, true, 0xff000000.toInt(), Color.WHITE)
-        assertEquals(View.GONE, view.getChildAt(0).visibility)
-        assertEquals(View.GONE, view.getChildAt(2).visibility)
-    }
-
-    @Test
     fun `recycled rows release the clearance reserved for a marked verse`() {
         val view = view()
-        view.bind(ReadingGuide(ReadingGuideMode.LINE, ranges), 0x280905, true, 0xff000000.toInt(), Color.WHITE)
+        view.bind(ReadingGuide(ReadingGuideMode.LINE, ranges), 0x280905, 0xff000000.toInt(), Color.WHITE)
         view.measure(View.MeasureSpec.makeMeasureSpec(200, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
         view.layout(0, 0, view.measuredWidth, view.measuredHeight)
-        assertEquals(10, view.getChildAt(1).paddingLeft)
+        assertEquals(10, view.getChildAt(0).paddingLeft)
         assertEquals(10, view.content.left)
         assertEquals(190, view.content.width)
-        view.bind(ReadingGuide.NONE, 0x280905, true, 0xff000000.toInt(), Color.WHITE)
-        assertEquals(0, view.getChildAt(1).paddingLeft)
-        assertEquals(View.GONE, view.getChildAt(0).visibility)
-        assertEquals(View.GONE, view.getChildAt(2).visibility)
+        view.bind(ReadingGuide.NONE, 0x280905, 0xff000000.toInt(), Color.WHITE)
+        assertEquals(0, view.getChildAt(0).paddingLeft)
     }
 
     private fun checkRecycler(leftMargin: Int) {
@@ -70,7 +53,7 @@ class ReadingGuideViewTest {
                 return object : RecyclerView.ViewHolder(ReadingGuideView(content)) {}
             }
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-                (holder.itemView as ReadingGuideView).bind(ReadingGuide(ReadingGuideMode.LINE, ranges), 0x280905 + position, true, Color.BLACK, Color.WHITE)
+                (holder.itemView as ReadingGuideView).bind(ReadingGuide(ReadingGuideMode.LINE, ranges), 0x280905 + position, Color.BLACK, Color.WHITE)
             }
         }
         recycler.measure(View.MeasureSpec.makeMeasureSpec(200, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(90, View.MeasureSpec.EXACTLY))

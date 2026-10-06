@@ -49,7 +49,7 @@ class ReadingGuideRowTest {
             val rows: @Composable () -> Unit = {
                 Column {
                     for (ari in if (multiplePassages) (0x280905..0x280909).toList() else (0x280905..0x280907).toList()) {
-                        ReadingGuideRow(guide, ari, true, ink, android.graphics.Color.WHITE, leftMargin.toFloat()) {
+                        ReadingGuideRow(guide, ari, ink, android.graphics.Color.WHITE, leftMargin.toFloat()) {
                             Box(Modifier.fillMaxWidth().height(30.dp).background(if (opaque) Color(highlight) else Color.Transparent).onGloballyPositioned {
                                 val expectedLeft = if (mode == ReadingGuideMode.LINE && guide.includes(ari)) maxOf(leftMargin, 10) else leftMargin
                                 assertEquals(expectedLeft.toFloat(), it.positionInRoot().x, 0f)
@@ -107,14 +107,6 @@ class ReadingGuideRowTest {
     }
 
     @Test
-    fun `boundary labels reserve space outside existing verse highlights`() {
-        val bitmap = render(ReadingGuideMode.LABELS, false, true, false, 16)
-        assertTrue(bitmap.height > 90)
-        assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(199, 0))
-        assertEquals(highlight, bitmap.getPixel(199, bitmap.height - 1))
-    }
-
-    @Test
     fun `off mode preserves verse dimensions and the entire highlight background`() {
         val bitmap = render(ReadingGuideMode.OFF, false, true, false, 16)
         assertEquals(90, bitmap.height)
@@ -128,13 +120,6 @@ class ReadingGuideRowTest {
         for (y in listOf(10, 40, 100, 130)) assertEquals(ink, bitmap.getPixel(4, y))
         assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(4, 70))
         for (y in listOf(10, 40, 70, 100, 130)) assertEquals(android.graphics.Color.WHITE, bitmap.getPixel(10, y))
-    }
-
-    @Test
-    fun `each disjoint passage receives its own start and end labels`() {
-        val single = render(ReadingGuideMode.LABELS, false, true, false, 16)
-        val multiple = render(ReadingGuideMode.LABELS, true, true, false, 16)
-        assertEquals(2 * (single.height - 90), multiple.height - 150)
     }
 
     @Test

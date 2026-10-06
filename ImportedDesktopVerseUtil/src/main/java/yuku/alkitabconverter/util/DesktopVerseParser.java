@@ -3,6 +3,7 @@ package yuku.alkitabconverter.util;
 import yuku.alkitab.util.IntArrayList;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,14 +17,11 @@ public class DesktopVerseParser {
 	///////////////////////////////////// ... 4 numbers (chapter or chapter:verse, with ',' or ';' or 'dan') which is not followed by nofollow
 	static Pattern reg = Pattern.compile("(((" + bookNamesPattern_indonesian + "|" + bookNamesPattern_english + ")(?:\\.?\\s+|\\.))(\\d+(?:(?:-|:|(?:;\\s*\\d+:\\s*)|,|\\.|\\d|dan|\\s)+\\d+)?))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
-	static Pattern numberRangeSplitter = Pattern.compile("\\s*(;|,|dan)\\s*" /* NOT case insensitive */);
-	
-	static Pattern numberStartEndSplitter = Pattern.compile("\\s*--?\\s*");
+	private static final Pattern numberRangeSplitter = Pattern.compile("\\s*(?:;|,|dan)\\s*", Pattern.CASE_INSENSITIVE);
+	private static final Pattern numberStartEndSplitter = Pattern.compile("\\s*--?\\s*");
+	private static final Pattern address = Pattern.compile("\\s*(\\d{1,3})(?:\\s*[:.]\\s*(\\d{1,3}))?\\s*");
+	private static final Pattern completeReference = Pattern.compile("^(.+?)(?:\\s+|\\.\\s*)(\\d[\\d\\s:.,;\\-a-zA-Z]*)$");
 
-	static Pattern chapterVerse = Pattern.compile("(\\d+)\\s*[:.]\\s*(\\d+)");
-
-	static Pattern numbersOnly = Pattern.compile("[0-9]+");
-	
 	static String[] orderedBooks = {
 		"kejadian|kej|genesis|gen|ge|gn",
 		"kel|keluaran|exodus|exod|exo|ex",
@@ -96,11 +94,23 @@ public class DesktopVerseParser {
 	static HashMap<String, Integer> bookNameToId = new HashMap<String, Integer>(512);
 
 	public static int bookIdFromName(String name) {
-		String normalized = name.trim().replace(".", "").replaceAll("\\s+", " ").toLowerCase(java.util.Locale.ROOT);
-		Integer id = bookNameToId.get(normalized);
+		StringBuilder normalized = new StringBuilder(name.length());
+		boolean pendingSpace = false;
+		for (int index = 0; index < name.length(); index++) {
+			char c = name.charAt(index);
+			if (c == '.') continue;
+			if (Character.isWhitespace(c)) {
+				pendingSpace = normalized.length() > 0;
+			} else {
+				if (pendingSpace) normalized.append(' ');
+				normalized.append(c);
+				pendingSpace = false;
+			}
+		}
+		Integer id = bookNameToId.get(normalized.toString().toLowerCase(Locale.ROOT));
 		return id == null ? -1 : id;
 	}
-	
+
 	static {
 		for (int i = 0, len = orderedBooks.length; i < len; i++) {
 			for (String bookName: orderedBooks[i].split("\\|")) {
@@ -109,95 +119,66 @@ public class DesktopVerseParser {
 		}
 	}
 	
-	/**
-	 * If succeeded, will return start-end pairs [start, end, start, end, ...]. Single verses will have the same values for both start and end.
-	 * @return null when failed 
-	 */
-	public static IntArrayList verseStringToAri(String verse) {
-		Matcher m = reg.matcher(verse);
-		
-		if (!m.find()) {
-			return null;
+	/** Returns complete start/end ARI pairs, rejecting malformed or overflowing addresses. */
+	public static IntArrayList parseReference(String reference) {
+		String normalized = normalizeDashes(reference).trim();
+		Matcher match = completeReference.matcher(normalized);
+		if (!match.matches()) {
+			int book = bookIdFromName(normalized);
+			if (book < 0) return null;
+			IntArrayList result = new IntArrayList(2);
+			result.add(book << 16);
+			result.add(book << 16);
+			return result;
 		}
-		
-		String bookName = m.group(3).toLowerCase();
-		Integer bookId = bookNameToId.get(bookName);
-		if (bookId == null) {
-			return null;
-		}
-		
-		int book_0 = bookId;
-		boolean singleChapterBook = (book_0 == 30 /* obaja */
-			|| book_0 == 56 /* filemon */
-			|| book_0 == 62 /* 2yoh */
-			|| book_0 == 63 /* 3yoh */
-			|| book_0 == 64 /* yudas */
-		);
-		
-		int lastChapter = 0;
-		
-		int book_0_shifted = book_0 << 16;
-		
-		IntArrayList res = new IntArrayList();
-		
-		String numbers = m.group(4);
-		String[] ranges = numberRangeSplitter.split(numbers);
-		for (String range: ranges) {
-			String[] startend = numberStartEndSplitter.split(range);
-			if (startend.length == 1) {
-				int cv = parseCv(startend[0], singleChapterBook, lastChapter);
-				if (cv != 0) {
-					res.add(book_0_shifted | cv); // start
-					res.add(book_0_shifted | cv); // end same as start
-					lastChapter = (cv >> 8) & 0xff;
-				}
-			} else if (startend.length == 2) {
-				int cvStart = parseCv(startend[0], singleChapterBook, lastChapter);
-				if (cvStart != 0) {
-					final int cvEnd;
-					String startend_1_trim = startend[1].trim();
-					if (numbersOnly.matcher(startend_1_trim).matches()) { // check for cases like "2:3-17" (chapter 2 verse 3 to chapter 2 verse 17) or "14-17" (chapter 14 to chapter 17)
-						final int startend_1_number = Integer.parseInt(startend_1_trim);
-						if ((cvStart & 0xff) == 0) { // cvStart has no verse number, so this is for cases like "14-17" (chapter 14 to chapter 17)
-							cvEnd = startend_1_number << 8;
-						} else { // for cases like "2:3-17" (chapter 2 verse 3 to chapter 2 verse 17)
-							cvEnd = (cvStart & 0xff00) | startend_1_number;
-						}
-					} else {
-						cvEnd = parseCv(startend[1], singleChapterBook, lastChapter);
-					}
-					if (cvEnd != 0) {
-						if (cvEnd >= cvStart) {
-							res.add(book_0_shifted | cvStart);
-							res.add(book_0_shifted | cvEnd);
-							lastChapter = (cvEnd >> 8) & 0xff;
-						}
-					}
-				}
-			}
-		}
-		
-		return res;
+		int book = bookIdFromName(match.group(1));
+		return book < 0 ? null : parseNumbers(match.group(2), book, false);
 	}
 
-	private static int parseCv(String cv, boolean singleChapterBook, int previousChapter) {
-		if (numbersOnly.matcher(cv).matches()) { // either c:0 or 1:v
-			int n = Integer.parseInt(cv);
-			if (singleChapterBook) {
-				return 0x0100 | (n & 0xff);
-			} else if (previousChapter != 0) {
-				return ((previousChapter & 0xff) << 8) | (n & 0xff);
-			} else {
-				return (n & 0xff) << 8;
-			}
-		} else {
-			Matcher m = chapterVerse.matcher(cv);
-			if (m.matches()) {
-				int c = Integer.parseInt(m.group(1));
-				int v = Integer.parseInt(m.group(2));
-				return ((c & 0xff) << 8) | (v & 0xff);
-			}
+	/** Extracts a reference from prose; bare numbers in single-chapter books denote verses. */
+	public static IntArrayList verseStringToAri(String verse) {
+		Matcher match = reg.matcher(normalizeDashes(verse));
+		if (!match.find()) return null;
+		int book = bookIdFromName(match.group(3));
+		return book < 0 ? null : parseNumbers(match.group(4), book, true);
+	}
+
+	private static String normalizeDashes(String value) {
+		return value.replace('\u2013', '-').replace('\u2014', '-');
+	}
+
+	private static IntArrayList parseNumbers(String numbers, int book, boolean singleChapterVerses) {
+		boolean verseMode = singleChapterVerses && (book == 30 || book == 56 || book == 62 || book == 63 || book == 64);
+		int chapter = verseMode ? 1 : 0;
+		IntArrayList result = new IntArrayList();
+		for (String range : numberRangeSplitter.split(numbers, -1)) {
+			String[] ends = numberStartEndSplitter.split(range, -1);
+			if (ends.length < 1 || ends.length > 2) return null;
+			int start = parseAddress(ends[0], chapter, verseMode, singleChapterVerses);
+			if (start < 0) return null;
+			chapter = start >> 8;
+			verseMode = (start & 0xff) != 0;
+			int end = ends.length == 1 ? start : parseAddress(ends[1], chapter, verseMode, singleChapterVerses);
+			if (end < start) return null;
+			result.add((book << 16) | start);
+			result.add((book << 16) | end);
+			chapter = end >> 8;
+			verseMode = (end & 0xff) != 0;
 		}
-		return 0;
+		return result;
+	}
+
+	private static int parseAddress(String value, int chapter, boolean verseMode, boolean allowWholeChapter) {
+		Matcher match = address.matcher(value);
+		if (!match.matches()) return -1;
+		int first = Integer.parseInt(match.group(1));
+		String secondText = match.group(2);
+		if (first > 255) return -1;
+		if (secondText != null) {
+			int second = Integer.parseInt(secondText);
+			return first == 0 || second == 0 || second > 255 ? -1 : (first << 8) | second;
+		}
+		if (first == 0 && !(allowWholeChapter && verseMode)) return -1;
+		return verseMode ? (chapter << 8) | first : first << 8;
 	}
 }

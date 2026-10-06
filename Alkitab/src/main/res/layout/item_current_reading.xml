@@ -25,7 +25,9 @@
 
 	<CheckBox
 		android:id="@+id/cCurrentReadingComplete"
-		android:layout_width="48dp"
+		android:layout_width="32dp"
+		android:layout_marginStart="8dp"
+		android:layout_marginEnd="8dp"
 		android:layout_height="48dp"
 		android:drawablePadding="0dp"
 		android:contentDescription="@string/current_reading_completed"

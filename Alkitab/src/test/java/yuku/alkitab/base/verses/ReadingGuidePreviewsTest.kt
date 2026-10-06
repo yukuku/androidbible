@@ -91,13 +91,6 @@ class ReadingGuidePreviewsTest {
     }
 
     @Test
-    fun `start and end marker preview renders without application services`() = render(ReadingGuideMode.LABELS, false, false, 16)
-
-    @Test
-    @Config(qualifiers = "w360dp-h800dp-night-mdpi")
-    fun `start and end marker preview renders in dark mode`() = render(ReadingGuideMode.LABELS, true, false, 16)
-
-    @Test
     fun `left side line preview renders without application services`() = render(ReadingGuideMode.LINE, false, false, 16)
 
     @Test
@@ -105,20 +98,7 @@ class ReadingGuidePreviewsTest {
     fun `left side line preview renders in dark mode`() = render(ReadingGuideMode.LINE, true, false, 16)
 
     @Test
-    fun `fixed current reading indicator preview renders without application services`() = render(ReadingGuideMode.CAPTION, false, false, 16)
-
-    @Test
-    @Config(qualifiers = "w360dp-h800dp-night-mdpi")
-    fun `fixed current reading indicator preview renders in dark mode`() = render(ReadingGuideMode.CAPTION, true, false, 16)
-
-    @Test
-    fun `multiple passage label preview renders without application services`() = render(ReadingGuideMode.LABELS, false, true, 16)
-
-    @Test
     fun `multiple passage line preview renders without application services`() = render(ReadingGuideMode.LINE, false, true, 16)
-
-    @Test
-    fun `multiple passage caption preview renders without application services`() = render(ReadingGuideMode.CAPTION, false, true, 16)
 
     @Test
     fun `rounded line preview renders with zero text margin`() = render(ReadingGuideMode.LINE, false, false, 0)

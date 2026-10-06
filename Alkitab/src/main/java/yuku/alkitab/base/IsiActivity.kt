@@ -99,7 +99,6 @@ import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.util.ReadingPassage
 import yuku.alkitab.base.verses.ReadingGuide
 import yuku.alkitab.base.verses.ReadingGuideMode
-import yuku.alkitab.base.verses.CurrentReadingIndicator
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
 import yuku.alkitab.base.audio.AudioBarController
@@ -248,8 +247,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override lateinit var floater: Floater
     private val useComposeToolbar by lazy { ExperimentalFlags.useComposeToolbar() }
     private var toolbarState by mutableStateOf(ReaderToolbarState())
-    private var currentReadingIndicatorReference by mutableStateOf("")
-    private var currentReadingIndicatorColor by mutableStateOf(0xff000000.toInt())
     private lateinit var backForwardListController: BackForwardListController<ImageButton, ImageButton>
     private var fullscreenReferenceToast: Toast? = null
 
@@ -536,11 +533,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // If layout is changed, updateToolbarLocation must be updated as well. This will be called in DEBUG to make sure
         // updateToolbarLocation is also updated when layout is updated.
         if (BuildConfig.DEBUG) {
-            if (root.childCount != 4 ||
+            if (root.childCount != 3 ||
                 root.getChildAt(0).id != R.id.toolbarHost ||
-                root.getChildAt(1).id != R.id.currentReadingCaption ||
-                root.getChildAt(2).id != R.id.nontoolbar ||
-                root.getChildAt(3).id != R.id.audio_bar
+                root.getChildAt(1).id != R.id.nontoolbar ||
+                root.getChildAt(2).id != R.id.audio_bar
             ) {
                 throw RuntimeException("Layout changed and this is no longer compatible with updateToolbarLocation")
             }
@@ -724,16 +720,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         resolveAlkitabGptAsync()
-
-        root.requireViewById<ComposeView>(R.id.currentReadingCaption).apply {
-            consumeWindowInsets = false
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                BibleAppTheme {
-                    CurrentReadingIndicator(currentReadingIndicatorReference, currentReadingIndicatorColor, { bCurrentReadingReference_click(0) })
-                }
-            }
-        }
 
         lifecycleScope.launch { AppEvents.attributeMapChanged.collect { reloadBothAttributeMaps() } }
         lifecycleScope.launch { AppEvents.needsRestart.collect { needsRestart = true } }
@@ -1186,10 +1172,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         val splitRanges = activeSplit1?.version?.let { version -> aris?.let { ReadingPassage.resolve(it, version::getBook) } }.orEmpty()
         uiSplit1 = uiSplit1.copy(readingGuide = ReadingGuide(mode, splitRanges))
 
-        val caption = root.requireViewById<ComposeView>(R.id.currentReadingCaption)
-        caption.isVisible = mode == ReadingGuideMode.CAPTION && aris != null
-        currentReadingIndicatorReference = if (caption.isVisible) CurrentReading.reference(activeSplit0.version).orEmpty() else ""
-        currentReadingIndicatorColor = App.services.uiDimensions.applied().fontColor
         ViewCompat.requestApplyInsets(drawerLayout)
     }
 
@@ -1565,10 +1547,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val insets = windowInsets.getInsets(safeAreaTypes)
             v.setPadding(insets.left, 0, insets.right, 0)
 
-            val caption = root.requireViewById<View>(R.id.currentReadingCaption)
             val toolbarCoversTop = !fullScreen && !isBottomToolbarOnText()
-            caption.setPadding(insets.left, if (toolbarCoversTop) 0 else insets.top, insets.right, 0)
-            val topEdgeCovered = toolbarCoversTop || caption.isVisible
+            val topEdgeCovered = toolbarCoversTop
             val topInset = if (topEdgeCovered) 0 else insets.top
             val bottomEdgeCovered = (!fullScreen && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
             val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
@@ -1640,25 +1620,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // - not fullscreen, toolbar at bottom
         // - not fullscreen, toolbar at top
 
-        // The reading caption sits above the content, and the audio bar below
-        // it; the navigation toolbar can occupy either edge.
-
         if (!fullScreen) {
             val audioBar = root.requireViewById<View>(R.id.audio_bar)
-            val caption = root.requireViewById<View>(R.id.currentReadingCaption)
             root.removeView(toolbarHost)
             root.removeView(nontoolbar)
             root.removeView(audioBar)
-            root.removeView(caption)
 
             if (isBottomToolbarOnText()) {
-                root.addView(caption)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
                 root.addView(toolbarHost)
             } else {
                 root.addView(toolbarHost)
-                root.addView(caption)
                 root.addView(nontoolbar)
                 root.addView(audioBar)
             }

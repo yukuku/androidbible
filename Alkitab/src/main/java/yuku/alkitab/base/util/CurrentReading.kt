@@ -61,11 +61,6 @@ object CurrentReading {
     }
 
     @JvmStatic
-    fun reference(version: Version): String? = get()?.toList()?.chunked(2)?.joinToString("; ") {
-        if (it[0] == it[1] && Ari.toChapter(it[0]) == 0) version.reference(it[0]) else version.referenceRange(it[0], it[1])
-    }
-
-    @JvmStatic
     fun reference(version: Version, rangeIndex: Int): String? {
         val ranges = get() ?: return null
         if (rangeIndex !in 0 until ranges.size / 2) return null

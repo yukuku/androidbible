@@ -39,7 +39,7 @@
 		<FrameLayout
 			android:id="@+id/panelCurrentReadingHeader"
 			android:layout_width="match_parent"
-			android:layout_height="48dp">
+			android:layout_height="32dp">
 
 			<TextView
 				android:layout_width="wrap_content"
@@ -48,11 +48,11 @@
 				android:layout_marginStart="16dp"
 				android:text="@string/left_drawer_current_reading_title"
 				android:textColor="#bebebe"
-				android:textSize="12sp" />
+				android:textSize="14sp" />
 
 			<ImageButton
 				android:id="@+id/bCurrentReadingClose"
-				android:layout_width="wrap_content"
+				android:layout_width="48dp"
 				android:layout_height="match_parent"
 				android:layout_gravity="end"
 				android:background="?selectableItemBackgroundBorderless"
@@ -80,7 +80,7 @@
 				android:layout_marginStart="16dp"
 				android:text="@string/menuProgress"
 				android:textColor="#bebebe"
-				android:textSize="12sp" />
+				android:textSize="14sp" />
 
 			<ImageButton
 				android:id="@+id/bProgressMarkList"

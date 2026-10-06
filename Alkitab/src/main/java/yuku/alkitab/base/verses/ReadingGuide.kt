@@ -7,7 +7,7 @@ import yuku.alkitab.base.util.ReadingRange
 import yuku.alkitab.debug.R
 
 enum class ReadingGuideMode(val preferenceValue: String) {
-    OFF("off"), LABELS("labels"), LINE("line"), CAPTION("caption");
+    OFF("off"), LINE("line");
 
     companion object {
         fun fromPreference(value: String?) = entries.firstOrNull { it.preferenceValue == value } ?: OFF

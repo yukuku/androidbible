@@ -89,5 +89,7 @@ class ReadingPassageTest {
     fun `unknown display preference values leave all guides off`() {
         assertEquals(ReadingGuideMode.OFF, ReadingGuideMode.fromPreference(null))
         assertEquals(ReadingGuideMode.OFF, ReadingGuideMode.fromPreference("unexpected"))
+        assertEquals(ReadingGuideMode.OFF, ReadingGuideMode.fromPreference("labels"))
+        assertEquals(ReadingGuideMode.OFF, ReadingGuideMode.fromPreference("caption"))
     }
 }

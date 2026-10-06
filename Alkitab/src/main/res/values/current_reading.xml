@@ -4,20 +4,13 @@
     <string name="pref_currentReadingDisplay_default" translatable="false">off</string>
     <string name="pref_currentReadingDisplay_title">Current reading display</string>
     <string name="current_reading_display_off">Off</string>
-    <string name="current_reading_display_labels">Start and end labels</string>
     <string name="current_reading_display_line">Thin line on the left</string>
-    <string name="current_reading_display_caption">Fixed reading reference</string>
-    <string name="current_reading_start">Start of reading</string>
-    <string name="current_reading_end">End of reading</string>
-    <string name="current_reading_caption">Reading: %s</string>
     <string name="current_reading_completed">This reading is completed</string>
     <string-array name="current_reading_display_labels">
         <item>@string/current_reading_display_off</item>
-        <item>@string/current_reading_display_labels</item>
         <item>@string/current_reading_display_line</item>
-        <item>@string/current_reading_display_caption</item>
     </string-array>
     <string-array name="current_reading_display_values" translatable="false">
-        <item>off</item><item>labels</item><item>line</item><item>caption</item>
+        <item>off</item><item>line</item>
     </string-array>
 </resources>

@@ -1,5 +1,9 @@
 package yuku.alkitab.base.widget
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import java.io.File
 import android.os.Looper
 import android.view.View
 import android.widget.CheckBox
@@ -21,6 +25,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import yuku.alkitab.base.App
 import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.services.AppServices
@@ -33,7 +38,8 @@ import yuku.alkitab.model.Version
 import yuku.alkitab.util.IntArrayList
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = yuku.afw.App::class, sdk = [34])
+@Config(application = yuku.afw.App::class, sdk = [34], qualifiers = "mdpi")
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 class LeftDrawerCurrentReadingTest {
     private lateinit var previousServices: AppServices
     private lateinit var db: InternalDb
@@ -238,4 +244,37 @@ class LeftDrawerCurrentReadingTest {
         assertEquals(setOf((12 shl 8) or 1), progress)
         verify(exactly = 0) { db.deleteReadingPlanProgress(any(), any()) }
     }
+    @Test
+    fun `drawer header stays compact and visible controls share an optical center`() {
+        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12, 0)
+        val drawer = drawer()
+        drawer.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(900, View.MeasureSpec.EXACTLY))
+        drawer.layout(0, 0, 320, 900)
+        assertEquals(32, drawer.panelCurrentReadingHeader.height)
+        val close = drawer.bCurrentReadingClose
+        val check = checkbox(drawer, 0)
+        fun opticalCenter(view: View): Float {
+            val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            view.draw(Canvas(bitmap))
+            var left = view.width
+            var right = -1
+            for (y in 0 until bitmap.height) for (x in 0 until bitmap.width) {
+                if (Color.alpha(bitmap.getPixel(x, y)) > 128) {
+                    left = minOf(left, x)
+                    right = maxOf(right, x)
+                }
+            }
+            assertTrue("Control must draw a visible glyph", right >= left)
+            return view.left + (left + right + 1) / 2f
+        }
+        assertEquals(opticalCenter(close), opticalCenter(check), 1f)
+        val headerTitle = (drawer.panelCurrentReadingHeader as android.view.ViewGroup).getChildAt(0) as TextView
+        assertEquals(14f, headerTitle.textSize, 0f)
+        val bitmap = Bitmap.createBitmap(drawer.width, drawer.height, Bitmap.Config.ARGB_8888)
+        drawer.draw(Canvas(bitmap))
+        val output = File("build/test-artifacts/reading-guide-previews/drawer.png")
+        output.parentFile?.mkdirs()
+        output.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
 }

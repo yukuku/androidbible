@@ -31,21 +31,14 @@ import yuku.alkitab.base.widget.VerseRendererCompose
 import yuku.alkitab.util.Ari
 
 private val previewPassage = listOf(
-    "Perverse disputings of men of corrupt minds, and destitute of the truth, supposing that gain is godliness: from such withdraw thyself.",
-    "But godliness with contentment is great gain.",
-    "For we brought nothing into this world, and it is certain we can carry nothing out.",
-    "And having food and raiment let us be therewith content.",
-    "But they that will be rich fall into temptation and a snare, and into many foolish and hurtful lusts, which drown men in destruction and perdition.",
-    "For the love of money is the root of all evil: which while some coveted after, they have erred from the faith, and pierced themselves through with many sorrows.",
-    "But thou, O man of God, flee these things; and follow after righteousness, godliness, faith, love, patience, meekness.",
+    "The basket holds apples, pears, and a bunch of ripe bananas for the afternoon picnic.",
+    "A small cat rests beside the window while birds gather in the garden.",
+    "Fresh bread and a bowl of warm soup are ready on the kitchen table.",
+    "The ducks swim across the pond, leaving gentle ripples behind them.",
+    "Carrots, beans, and tomatoes grow in neat rows, with sunflowers beside the fence and a shady path around the garden.",
+    "After the rain, we walk through the orchard and collect fallen leaves. The air is cool, and the branches carry the scent of ripe fruit.",
+    "We share sliced oranges and roasted corn before packing the basket for the journey home.",
 )
-
-@Preview(name = "Light", group = "Start and end markers", widthDp = 360)
-@Preview(name = "Dark", group = "Start and end markers", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun ReadingBoundaryMarkersPreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.LABELS, false, 16)
-}
 
 @Preview(name = "Light", group = "Left side line", widthDp = 360)
 @Preview(name = "Dark", group = "Left side line", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -54,32 +47,11 @@ private fun ReadingLeftLinePreview() {
     ReadingGuidePreviewContent(ReadingGuideMode.LINE, false, 16)
 }
 
-@Preview(name = "Light", group = "Current reading indicator", widthDp = 360)
-@Preview(name = "Dark", group = "Current reading indicator", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun CurrentReadingIndicatorPreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.CAPTION, false, 16)
-}
-
-@Preview(name = "Multiple passages", group = "Start and end markers", widthDp = 360)
-@Preview(name = "Multiple passages dark", group = "Start and end markers", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun MultipleReadingBoundaryMarkersPreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.LABELS, true, 16)
-}
-
 @Preview(name = "Multiple passages", group = "Left side line", widthDp = 360)
 @Preview(name = "Multiple passages dark", group = "Left side line", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun MultipleReadingLeftLinePreview() {
     ReadingGuidePreviewContent(ReadingGuideMode.LINE, true, 16)
-}
-
-@Preview(name = "Multiple passages", group = "Current reading indicator", widthDp = 360)
-@Preview(name = "Multiple passages dark", group = "Current reading indicator", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun MultipleCurrentReadingIndicatorPreview() {
-    ReadingGuidePreviewContent(ReadingGuideMode.CAPTION, true, 16)
 }
 
 @Composable
@@ -147,15 +119,12 @@ private fun ReadingGuideSample(mode: ReadingGuideMode, ranges: List<ReadingRange
     val guide = ReadingGuide(mode, ranges)
     BibleAppTheme {
         Column(modifier.fillMaxWidth().background(background)) {
-            if (mode == ReadingGuideMode.CAPTION) {
-                CurrentReadingIndicator(if (ranges.size > 1) "1 Timothy 6:6–7; 1 Timothy 6:9–10" else "1 Timothy 6:6–10", color, {})
-            }
             Column(Modifier.padding(start = leftMarginDp.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
                 BasicText("1 Timothy 6", style = TextStyle(color = Color(color), fontSize = 20.sp), modifier = Modifier.padding(bottom = 12.dp))
                 previewPassage.forEachIndexed { index, text ->
                     val verse = index + 5
                     val ari = Ari.encode(53, 6, verse)
-                    ReadingGuideRow(guide, ari, true, color, background.toArgb(), with(LocalDensity.current) { leftMarginDp.dp.toPx() }) {
+                    ReadingGuideRow(guide, ari, color, background.toArgb(), with(LocalDensity.current) { leftMarginDp.dp.toPx() }) {
                         Box(if (case == ReadingGuidePreviewCase.OPAQUE_BACKGROUND && guide.includes(ari)) Modifier.background(if (dark) Color(0xff554419) else Color(0xffffed99)) else Modifier) {
                             VerseItemComposeContent(
                                 state = previewVerseState(ari, text, color, if (case == ReadingGuidePreviewCase.LARGE_TEXT) 28f else 17f),
