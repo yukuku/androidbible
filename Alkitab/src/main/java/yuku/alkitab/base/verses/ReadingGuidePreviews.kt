@@ -124,7 +124,13 @@ private fun ReadingGuideSample(mode: ReadingGuideMode, ranges: List<ReadingRange
                 previewPassage.forEachIndexed { index, text ->
                     val verse = index + 5
                     val ari = Ari.encode(53, 6, verse)
-                    ReadingGuideRow(guide, ari, color, background.toArgb(), with(LocalDensity.current) { leftMarginDp.dp.toPx() }) {
+                    ReadingGuideRow(
+                        guide = guide,
+                        ari = ari,
+                        color = color,
+                        backgroundColor = background.toArgb(),
+                        leftInsetPx = with(LocalDensity.current) { leftMarginDp.dp.toPx() },
+                    ) {
                         Box(if (case == ReadingGuidePreviewCase.OPAQUE_BACKGROUND && guide.includes(ari)) Modifier.background(if (dark) Color(0xff554419) else Color(0xffffed99)) else Modifier) {
                             VerseItemComposeContent(
                                 state = previewVerseState(ari, text, color, if (case == ReadingGuidePreviewCase.LARGE_TEXT) 28f else 17f),

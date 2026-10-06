@@ -49,7 +49,13 @@ class ReadingGuideRowTest {
             val rows: @Composable () -> Unit = {
                 Column {
                     for (ari in if (multiplePassages) (0x280905..0x280909).toList() else (0x280905..0x280907).toList()) {
-                        ReadingGuideRow(guide, ari, ink, android.graphics.Color.WHITE, leftMargin.toFloat()) {
+                        ReadingGuideRow(
+                            guide = guide,
+                            ari = ari,
+                            color = ink,
+                            backgroundColor = android.graphics.Color.WHITE,
+                            leftInsetPx = leftMargin.toFloat(),
+                        ) {
                             Box(Modifier.fillMaxWidth().height(30.dp).background(if (opaque) Color(highlight) else Color.Transparent).onGloballyPositioned {
                                 val expectedLeft = if (mode == ReadingGuideMode.LINE && guide.includes(ari)) maxOf(leftMargin, 10) else leftMargin
                                 assertEquals(expectedLeft.toFloat(), it.positionInRoot().x, 0f)
