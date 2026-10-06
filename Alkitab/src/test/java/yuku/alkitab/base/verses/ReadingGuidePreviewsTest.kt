@@ -112,6 +112,12 @@ class ReadingGuidePreviewsTest {
         directory.mkdirs()
         for (case in ReadingGuidePreviewCase.entries) {
             val bitmap = renderBitmap(360) { ReadingGuideCaseContent(case) }
+            if (case in setOf(ReadingGuidePreviewCase.RTL, ReadingGuidePreviewCase.RTL_ZERO_PADDING, ReadingGuidePreviewCase.RTL_DISJOINT)) {
+                val ink = if (dark) 0xffeeeeee.toInt() else 0xff202020.toInt()
+                val markedRows = (0 until bitmap.height).filter { bitmap.getPixel(354, it) == ink && bitmap.getPixel(355, it) == ink }
+                assertTrue("RTL guide must appear on the right", markedRows.size > 20)
+                assertTrue("RTL guide must leave the left edge clear", markedRows.all { bitmap.getPixel(4, it) != ink })
+            }
             File(directory, "${case.name.lowercase()}.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         }
         val narrow = renderBitmap(180) { ReadingGuideCaseContent(ReadingGuidePreviewCase.ZERO_PADDING) }

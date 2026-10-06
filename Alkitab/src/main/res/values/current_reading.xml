@@ -4,7 +4,7 @@
     <string name="pref_currentReadingDisplay_default" translatable="false">off</string>
     <string name="pref_currentReadingDisplay_title">Current reading display</string>
     <string name="current_reading_display_off">Off</string>
-    <string name="current_reading_display_line">Thin line on the left</string>
+    <string name="current_reading_display_line">Thin line beside the text</string>
     <string name="current_reading_completed">This reading is completed</string>
     <string-array name="current_reading_display_labels">
         <item>@string/current_reading_display_off</item>

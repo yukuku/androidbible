@@ -49,6 +49,7 @@ import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -67,6 +68,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.updateLayoutParams
@@ -79,7 +81,6 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.App
-import yuku.alkitab.util.Ari
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesDataModel.ItemType
@@ -88,6 +89,7 @@ import yuku.alkitab.base.widget.FormattedTextRenderer
 import yuku.alkitab.base.widget.LeftDrawer.PROGRESS_MARK_DRAG_MIME_TYPE
 import yuku.alkitab.base.widget.ParallelClickData
 import yuku.alkitab.base.widget.ReferenceParallelClickData
+import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
 
 private const val TAG = "VersesComposeCtl"
@@ -832,7 +834,7 @@ class VersesComposeControllerImpl(
                             ari = Ari.encodeWithBc(data.ari_bc_, verse_1),
                             color = App.services.uiDimensions.applied().fontColor,
                             backgroundColor = App.services.uiDimensions.applied().backgroundColor,
-                            leftInsetPx = paddingLeftPx.toFloat(),
+                            startInsetPx = (if (LocalLayoutDirection.current == LayoutDirection.Rtl) paddingRightPx else paddingLeftPx).toFloat(),
                         ) {
                             when (data.getItemViewType(position)) {
                                 ItemType.verseText -> VerseRow(data, ui, listeners, position)

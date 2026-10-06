@@ -37,10 +37,11 @@ class ReadingGuideViewTest {
         assertEquals(0, view.getChildAt(0).paddingLeft)
     }
 
-    private fun checkRecycler(leftMargin: Int) {
+    private fun checkRecycler(startMargin: Int, rtl: Boolean) {
         val recycler = RecyclerView(ApplicationProvider.getApplicationContext())
         recycler.setBackgroundColor(Color.WHITE)
-        recycler.setPadding(leftMargin, 0, 0, 0)
+        recycler.layoutDirection = if (rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
+        recycler.setPaddingRelative(startMargin, 0, 0, 0)
         recycler.layoutManager = LinearLayoutManager(recycler.context)
         recycler.addItemDecoration(ReadingGuideDecoration())
         recycler.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -60,24 +61,45 @@ class ReadingGuideViewTest {
         recycler.layout(0, 0, 200, 90)
         val bitmap = Bitmap.createBitmap(200, 90, Bitmap.Config.ARGB_8888)
         recycler.draw(Canvas(bitmap))
-        assertEquals(Color.BLACK, bitmap.getPixel(4, 10))
-        assertEquals(Color.BLACK, bitmap.getPixel(5, 40))
+        fun pixel(x: Int, y: Int) = bitmap.getPixel(if (rtl) 199 - x else x, y)
+        assertEquals(Color.BLACK, pixel(4, 10))
+        assertEquals(Color.BLACK, pixel(5, 40))
         for (index in 0..2) {
             val y = index * 30 + 10
-            val expectedLeft = if (index < 2) maxOf(leftMargin, 10) else leftMargin
-            if (expectedLeft > 0) assertEquals(Color.WHITE, bitmap.getPixel(expectedLeft - 1, y))
-            assertEquals(Color.YELLOW, bitmap.getPixel(expectedLeft, y))
+            val expectedLeft = if (index < 2) maxOf(startMargin, 10) else startMargin
+            if (expectedLeft > 0) assertEquals(Color.WHITE, pixel(expectedLeft - 1, y))
+            assertEquals(Color.YELLOW, pixel(expectedLeft, y))
             val row = recycler.getChildAt(index) as ReadingGuideView
-            assertEquals(expectedLeft, row.left + row.content.left)
+            assertEquals(if (rtl) 0 else expectedLeft, row.left + row.content.left)
             assertEquals(200 - expectedLeft, row.content.width)
         }
     }
 
     @Test
-    fun `normal margins preserve verse placement beside the inset line`() = checkRecycler(16)
+    fun `normal margins preserve verse placement beside the inset line`() = checkRecycler(16, rtl = false)
 
     @Test
     fun `small margins add clearance only to marked verses`() {
-        for (margin in listOf(0, 4, 8, 10)) checkRecycler(margin)
+        for (margin in listOf(0, 4, 8, 10)) checkRecycler(margin, rtl = false)
+    }
+
+    @Test
+    fun `RTL recycler draws on the right and reserves clearance only for marked rows`() {
+        for (margin in listOf(0, 4, 8, 10, 16)) checkRecycler(margin, rtl = true)
+    }
+
+    @Test
+    fun `recycled RTL rows release their right side clearance`() {
+        val view = view()
+        view.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        view.bind(ReadingGuide(ReadingGuideMode.LINE, ranges), 0x280905, Color.BLACK, Color.WHITE)
+        view.measure(View.MeasureSpec.makeMeasureSpec(200, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+        assertEquals(0, view.getChildAt(0).paddingLeft)
+        assertEquals(10, view.getChildAt(0).paddingRight)
+        assertEquals(0, view.content.left)
+        assertEquals(190, view.content.width)
+        view.bind(ReadingGuide.NONE, 0x280905, Color.BLACK, Color.WHITE)
+        assertEquals(0, view.getChildAt(0).paddingRight)
     }
 }

@@ -20,9 +20,10 @@ class ReadingGuideView(val content: View) : LinearLayout(content.context) {
         val top = y + body.top
         val bottom = y + body.bottom
         paint.strokeWidth = 2 * density
+        val lineX = if (layoutDirection == LAYOUT_DIRECTION_RTL) ((parent as? View)?.width ?: width) - 5 * density else 5 * density
         canvas.save()
-        canvas.clipRect(4 * density, top, 6 * density, bottom)
-        canvas.drawLine(5 * density, top + if (startsLine) density else 0f, 5 * density, bottom - if (endsLine) density else 0f, paint)
+        canvas.clipRect(lineX - density, top, lineX + density, bottom)
+        canvas.drawLine(lineX, top + if (startsLine) density else 0f, lineX, bottom - if (endsLine) density else 0f, paint)
         canvas.restore()
     }
 
@@ -32,9 +33,9 @@ class ReadingGuideView(val content: View) : LinearLayout(content.context) {
     }
 
     private fun updateBodyPadding() {
-        val margin = (parent as? View)?.paddingLeft ?: 0
+        val margin = (parent as? View)?.paddingStart ?: 0
         val extra = if (showLine) (kotlin.math.ceil(10 * resources.displayMetrics.density).toInt() - margin).coerceAtLeast(0) else 0
-        body.setPadding(extra, 0, 0, 0)
+        body.setPaddingRelative(extra, 0, 0, 0)
     }
 
     init {

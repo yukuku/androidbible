@@ -11,16 +11,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -55,26 +58,26 @@ private fun MultipleReadingLeftLinePreview() {
 }
 
 @Composable
-internal fun ReadingGuidePreviewContent(mode: ReadingGuideMode, multiplePassages: Boolean, leftMarginDp: Int, modifier: Modifier = Modifier) {
+internal fun ReadingGuidePreviewContent(mode: ReadingGuideMode, multiplePassages: Boolean, startMarginDp: Int, modifier: Modifier = Modifier) {
     val ranges = if (multiplePassages) {
         listOf(ReadingRange(Ari.encode(53, 6, 6), Ari.encode(53, 6, 7)), ReadingRange(Ari.encode(53, 6, 9), Ari.encode(53, 6, 10)))
     } else {
         listOf(ReadingRange(Ari.encode(53, 6, 6), Ari.encode(53, 6, 10)))
     }
-    ReadingGuideSample(mode, ranges, leftMarginDp, ReadingGuidePreviewCase.NORMAL, modifier)
+    ReadingGuideSample(mode, ranges, startMarginDp, ReadingGuidePreviewCase.NORMAL, modifier)
 }
 
 internal enum class ReadingGuidePreviewCase {
     NORMAL, ZERO_PADDING, PADDING_4, PADDING_8, PADDING_9, PADDING_10, WIDE_PADDING,
     SINGLE_VERSE, DISJOINT_RANGES, ADJACENT_RANGES, EMPTY_RANGES, OUTSIDE_CHAPTER,
     FIRST_VISIBLE_VERSE, LAST_VISIBLE_VERSE, OPAQUE_BACKGROUND, SELECTED_VERSE,
-    AUDIO_HIGHLIGHT, LARGE_TEXT, SEPIA, LOW_CONTRAST, OFF,
+    AUDIO_HIGHLIGHT, LARGE_TEXT, SEPIA, LOW_CONTRAST, OFF, RTL, RTL_ZERO_PADDING, RTL_DISJOINT,
 }
 
 @Composable
 internal fun ReadingGuideCaseContent(case: ReadingGuidePreviewCase, modifier: Modifier = Modifier) {
     val margin = when (case) {
-        ReadingGuidePreviewCase.ZERO_PADDING, ReadingGuidePreviewCase.OPAQUE_BACKGROUND, ReadingGuidePreviewCase.SELECTED_VERSE -> 0
+        ReadingGuidePreviewCase.RTL_ZERO_PADDING, ReadingGuidePreviewCase.ZERO_PADDING, ReadingGuidePreviewCase.OPAQUE_BACKGROUND, ReadingGuidePreviewCase.SELECTED_VERSE -> 0
         ReadingGuidePreviewCase.PADDING_4 -> 4
         ReadingGuidePreviewCase.PADDING_8 -> 8
         ReadingGuidePreviewCase.PADDING_9 -> 9
@@ -85,7 +88,7 @@ internal fun ReadingGuideCaseContent(case: ReadingGuidePreviewCase, modifier: Mo
     fun range(start: Int, end: Int) = ReadingRange(Ari.encode(53, 6, start), Ari.encode(53, 6, end))
     val ranges = when (case) {
         ReadingGuidePreviewCase.SINGLE_VERSE -> listOf(range(7, 7))
-        ReadingGuidePreviewCase.DISJOINT_RANGES -> listOf(range(6, 7), range(9, 10))
+        ReadingGuidePreviewCase.RTL_DISJOINT, ReadingGuidePreviewCase.DISJOINT_RANGES -> listOf(range(6, 7), range(9, 10))
         ReadingGuidePreviewCase.ADJACENT_RANGES -> listOf(range(6, 7), range(8, 10))
         ReadingGuidePreviewCase.EMPTY_RANGES -> emptyList()
         ReadingGuidePreviewCase.OUTSIDE_CHAPTER -> listOf(ReadingRange(Ari.encode(53, 5, 1), Ari.encode(53, 5, 3)))
@@ -105,7 +108,7 @@ internal fun ReadingGuideSplitPreviewContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ReadingGuideSample(mode: ReadingGuideMode, ranges: List<ReadingRange>, leftMarginDp: Int, case: ReadingGuidePreviewCase, modifier: Modifier = Modifier) {
+private fun ReadingGuideSample(mode: ReadingGuideMode, ranges: List<ReadingRange>, startMarginDp: Int, case: ReadingGuidePreviewCase, modifier: Modifier = Modifier) {
     val dark = isSystemInDarkTheme()
     val background = when (case) {
         ReadingGuidePreviewCase.SEPIA -> if (dark) Color(0xff30291f) else Color(0xfff4ecd8)
@@ -117,30 +120,33 @@ private fun ReadingGuideSample(mode: ReadingGuideMode, ranges: List<ReadingRange
         else -> if (dark) 0xffeeeeee.toInt() else 0xff202020.toInt()
     }
     val guide = ReadingGuide(mode, ranges)
-    BibleAppTheme {
-        Column(modifier.fillMaxWidth().background(background)) {
-            Column(Modifier.padding(start = leftMarginDp.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
-                BasicText("1 Timothy 6", style = TextStyle(color = Color(color), fontSize = 20.sp), modifier = Modifier.padding(bottom = 12.dp))
-                previewPassage.forEachIndexed { index, text ->
-                    val verse = index + 5
-                    val ari = Ari.encode(53, 6, verse)
-                    ReadingGuideRow(
-                        guide = guide,
-                        ari = ari,
-                        color = color,
-                        backgroundColor = background.toArgb(),
-                        leftInsetPx = with(LocalDensity.current) { leftMarginDp.dp.toPx() },
-                    ) {
-                        Box(if (case == ReadingGuidePreviewCase.OPAQUE_BACKGROUND && guide.includes(ari)) Modifier.background(if (dark) Color(0xff554419) else Color(0xffffed99)) else Modifier) {
-                            VerseItemComposeContent(
-                                state = previewVerseState(ari, text, color, if (case == ReadingGuidePreviewCase.LARGE_TEXT) 28f else 17f),
-                                checked = case == ReadingGuidePreviewCase.SELECTED_VERSE && verse == 7,
-                                collapsed = false,
-                                audioHighlightColor = if (case == ReadingGuidePreviewCase.AUDIO_HIGHLIGHT && verse == 7) 0xff00a5ff.toInt() else 0,
-                                attentionStart = 0L,
-                                dragHover = false,
-                                onAttentionDone = {},
-                            )
+    val rtl = case in setOf(ReadingGuidePreviewCase.RTL, ReadingGuidePreviewCase.RTL_ZERO_PADDING, ReadingGuidePreviewCase.RTL_DISJOINT)
+    CompositionLocalProvider(LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LocalLayoutDirection.current) {
+        BibleAppTheme {
+            Column(modifier.fillMaxWidth().background(background)) {
+                Column(Modifier.padding(start = startMarginDp.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
+                    BasicText(if (rtl) "تيموثاوس الأولى ٦" else "1 Timothy 6", style = TextStyle(color = Color(color), fontSize = 20.sp), modifier = Modifier.padding(bottom = 12.dp))
+                    previewPassage.forEachIndexed { index, text ->
+                        val verse = index + 5
+                        val ari = Ari.encode(53, 6, verse)
+                        ReadingGuideRow(
+                            guide = guide,
+                            ari = ari,
+                            color = color,
+                            backgroundColor = background.toArgb(),
+                            startInsetPx = with(LocalDensity.current) { startMarginDp.dp.toPx() },
+                        ) {
+                            Box(if (case == ReadingGuidePreviewCase.OPAQUE_BACKGROUND && guide.includes(ari)) Modifier.background(if (dark) Color(0xff554419) else Color(0xffffed99)) else Modifier) {
+                                VerseItemComposeContent(
+                                    state = previewVerseState(ari, if (rtl) "تستريح قطة صغيرة بجانب النافذة، وتغرد الطيور في الحديقة." else text, color, if (case == ReadingGuidePreviewCase.LARGE_TEXT) 28f else 17f, rtl),
+                                    checked = case == ReadingGuidePreviewCase.SELECTED_VERSE && verse == 7,
+                                    collapsed = false,
+                                    audioHighlightColor = if (case == ReadingGuidePreviewCase.AUDIO_HIGHLIGHT && verse == 7) 0xff00a5ff.toInt() else 0,
+                                    attentionStart = 0L,
+                                    dragHover = false,
+                                    onAttentionDone = {},
+                                )
+                            }
                         }
                     }
                 }
@@ -149,7 +155,7 @@ private fun ReadingGuideSample(mode: ReadingGuideMode, ranges: List<ReadingRange
     }
 }
 
-private fun previewVerseState(ari: Int, text: String, color: Int, fontSize: Float) = VerseItemComposeState(
+private fun previewVerseState(ari: Int, text: String, color: Int, fontSize: Float, showAttributes: Boolean) = VerseItemComposeState(
     render = VerseRendererCompose.Result(
         text = buildAnnotatedString {
             withStyle(SpanStyle(fontSize = 0.7.em, baselineShift = BaselineShift(0.3f))) {
@@ -171,7 +177,7 @@ private fun previewVerseState(ari: Int, text: String, color: Int, fontSize: Floa
     lineSpacingMult = 1.15f,
     typeface = Typeface.DEFAULT,
     fontBold = Typeface.NORMAL,
-    attribute = AttributeState(0, 0, 0, false, 1f, null, null, ari, object : VersesController.AttributeListener() {}, List(AttributeView.PROGRESS_MARK_TOTAL_COUNT) { null }),
+    attribute = AttributeState(if (showAttributes) 1 else 0, if (showAttributes) 1 else 0, 0, false, 1f, null, null, ari, object : VersesController.AttributeListener() {}, List(AttributeView.PROGRESS_MARK_TOTAL_COUNT) { null }),
     onClick = {},
     onInlineLinkClick = { _, _ -> },
     onPinDropped = {},
@@ -322,4 +328,25 @@ private fun ReadingGuideNarrowPanePreview() {
 @Composable
 private fun ReadingGuideSplitPanesPreview() {
     ReadingGuideSplitPreviewContent()
+}
+
+@Preview(name = "RTL - light", group = "Reading line: Direction", widthDp = 360)
+@Preview(name = "RTL - dark", group = "Reading line: Direction", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ReadingGuideRtlPreview() {
+    ReadingGuideCaseContent(ReadingGuidePreviewCase.RTL)
+}
+
+@Preview(name = "RTL zero padding - light", group = "Reading line: Direction", widthDp = 360)
+@Preview(name = "RTL zero padding - dark", group = "Reading line: Direction", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ReadingGuideRtlZeroPaddingPreview() {
+    ReadingGuideCaseContent(ReadingGuidePreviewCase.RTL_ZERO_PADDING)
+}
+
+@Preview(name = "RTL disjoint - light", group = "Reading line: Direction", widthDp = 360)
+@Preview(name = "RTL disjoint - dark", group = "Reading line: Direction", widthDp = 360, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ReadingGuideRtlDisjointPreview() {
+    ReadingGuideCaseContent(ReadingGuidePreviewCase.RTL_DISJOINT)
 }
