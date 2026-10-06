@@ -53,6 +53,10 @@ object Connections {
         builder.build()
     }
 
+    val devotionOkHttp: OkHttpClient by lazy {
+        okHttp.newBuilder().callTimeout(30, TimeUnit.SECONDS).build()
+    }
+
     @JvmStatic
     val longTimeoutOkHttpClient: OkHttpClient by lazy {
         val builder = newOkHttpClientBuilder()

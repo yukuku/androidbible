@@ -1,44 +1,17 @@
 # Devotions Module
 
-## Overview
+The devotional reader offers daily articles from sources configured for each app flavor, including Morning & Evening and Indonesian devotional publishers. Articles are downloaded on demand and cached for offline reading; nearby dates are prefetched in the background.
 
-Provides daily devotional reading content from multiple sources (primarily Indonesian devotional publishers). Articles are downloaded on demand and cached locally in the database.
+The selected source and date take priority over prefetching. Downloads are deduplicated, and switching readings cancels obsolete foreground work. The screen shows waiting, downloading, failure, and unavailable-content states, with Retry for failures or content that is not yet published. Refresh failures preserve cached readings.
 
-## Key Files
+The reader restores its selection and download status across activity lifecycle changes and follows the app's language and reading appearance settings. Source-specific article parsers handle formatting and links to Bible passages or other readings.
 
-- `Alkitab/src/main/java/yuku/alkitab/base/ac/DevotionActivity.java` — Devotion reader UI
-- `Alkitab/src/main/java/yuku/alkitab/base/devotion/DevotionDownloader.kt` — Background downloader (single-thread `ExecutorService` + `LinkedBlockingDeque` queue with clean shutdown)
-- `Alkitab/src/main/java/yuku/alkitab/base/devotion/DevotionArticle.java` — Abstract base class
-- Article implementations: `ArticleMorningEveningEnglish`, `ArticleFromSabda`, `ArticleMeidA`, `ArticleRoc`, `ArticleRenunganHarian`, `ArticleSantapanHarian`
+Key entry points:
 
-## Download System
+- `DevotionActivity.kt`: reader, date/source navigation, loading UI, and lifecycle handling.
+- `DevotionDownloader.kt`: coroutine scheduling, prioritization, deduplication, and retained status.
+- `DevotionDownloadBackend.kt`: HTTP retrieval and cache updates.
+- `DevotionArticle` and its source implementations: article parsing and links.
+- `DevotionDao`: access to the devotional cache.
 
-`DevotionDownloader` runs work on a single-thread `ExecutorService`, fed by a `LinkedBlockingDeque` (so a `take()` provides natural backpressure):
-- **Endpoint**: `GET /devotion/get?name={kind}&date={yyyymmdd}` via `Connections.downloadString(url)`
-- Queue supports both LIFO (front) and FIFO (back) insertion for prioritization
-- `shutdown()` sets a `volatile` flag and calls `executor.shutdownNow()`; the loop handles `InterruptedException` by re-interrupting and breaking
-- Articles cached in the `Devotion` database table
-- `touchTime` tracks access for cache management
-- On completion the downloader emits an `AppEvents` `SharedFlow` event
-
-## Article Parsing
-
-Each article type has its own parser that:
-1. Extracts the HTML/text body from the server response
-2. Converts internal verse references (URLs) to verse callback spans
-3. Handles links to other devotional articles
-4. Separates web links from internal verse navigation links
-
-## Available Devotion Types
-
-Configured per-flavor in `AppConfig` via `R.xml.app_config`. The Indonesian version (`yuku_alkitab`) includes multiple devotion sources; the English version (`yuku_quick_bible`) includes Morning & Evening.
-
-## Database
-
-The `Devotion` table stores:
-- `name` — devotion kind identifier
-- `date` — article date (yyyymmdd)
-- `body` — cached article content
-- `readyToUse` — whether download is complete
-- `touchTime` — last access time
-- `dataFormatVersion` — schema version for migration
+Downloader, backend, reader, and cache tests cover priority, retry, offline behavior, and lifecycle recovery using controlled requests and local storage, without the production server.
