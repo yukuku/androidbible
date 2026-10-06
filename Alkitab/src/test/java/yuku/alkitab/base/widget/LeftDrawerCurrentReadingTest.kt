@@ -209,12 +209,12 @@ class LeftDrawerCurrentReadingTest {
         assertTrue(checkbox(drawer, 0).isChecked)
         assertFalse(checkbox(drawer, 1).isChecked)
         assertTrue(checkbox(drawer, 2).isChecked)
-        assertArrayEquals(ranges, CurrentReading.get())
+        assertArrayEquals(ranges, CurrentReading.getRanges())
         checkbox(drawer, 0).performClick()
         assertFalse(checkbox(drawer, 0).isChecked)
         assertTrue(checkbox(drawer, 2).isChecked)
         assertEquals(setOf((12 shl 8) or 2), progress)
-        assertArrayEquals(ranges, CurrentReading.get())
+        assertArrayEquals(ranges, CurrentReading.getRanges())
         assertEquals(View.VISIBLE, drawer.panelCurrentReadingHeader.visibility)
     }
 

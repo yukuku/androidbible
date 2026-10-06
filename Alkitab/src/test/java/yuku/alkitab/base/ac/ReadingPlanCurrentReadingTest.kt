@@ -27,7 +27,7 @@ class ReadingPlanCurrentReadingTest {
             dailyVerses = arrayOf(intArrayOf(0x020100, 0x020200), day)
         }
         activity.goToIsiActivity(1, 2)
-        assertArrayEquals(day, CurrentReading.get())
+        assertArrayEquals(day, CurrentReading.getRanges())
         assertEquals(CurrentReading.Plan("plan-a", 1), CurrentReading.getPlan())
         assertEquals(day[4], Shadows.shadowOf(activity).nextStartedActivity.getIntExtra("ari", -1))
     }
@@ -41,7 +41,7 @@ class ReadingPlanCurrentReadingTest {
             dailyVerses = arrayOf(day)
         }
         activity.goToIsiActivity(0, 0)
-        assertArrayEquals(day, CurrentReading.get())
+        assertArrayEquals(day, CurrentReading.getRanges())
         assertEquals(CurrentReading.Plan("plan-a", 0), CurrentReading.getPlan())
     }
 }

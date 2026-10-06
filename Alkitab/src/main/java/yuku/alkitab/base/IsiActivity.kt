@@ -1165,7 +1165,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private fun updateCurrentReading() {
         leftDrawer.displayCurrentReading()
         val mode = ReadingGuideMode.selected()
-        val aris = CurrentReading.get()
+        val aris = CurrentReading.getRanges()
         val ranges = aris?.let { ReadingPassage.resolve(it, activeSplit0.version::getBook) }.orEmpty()
         val guide = ReadingGuide(mode, ranges)
         uiSplit0 = uiSplit0.copy(readingGuide = guide)
@@ -2363,7 +2363,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     override fun bCurrentReadingReference_click(rangeIndex: Int) {
-        val aris = CurrentReading.get() ?: return
+        val aris = CurrentReading.getRanges() ?: return
         if (rangeIndex !in 0 until aris.size / 2) return
         val range = intArrayOf(aris[rangeIndex * 2], aris[rangeIndex * 2 + 1])
         val ari_start = ReadingPassage.resolve(range, activeSplit0.version::getBook)?.firstOrNull()?.start ?: range[0]

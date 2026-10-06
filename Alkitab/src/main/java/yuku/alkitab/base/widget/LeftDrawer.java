@@ -386,7 +386,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 		public void displayCurrentReading() {
 			if (isInEditMode()) return;
 
-			final int[] aris = CurrentReading.get();
+			final int[] aris = CurrentReading.getRanges();
 			final int rowCount = aris == null ? 0 : aris.length / 2;
 			panelCurrentReadingHeader.setVisibility(rowCount == 0 ? GONE : VISIBLE);
 			panelCurrentReadingRows.setVisibility(rowCount == 0 ? GONE : VISIBLE);

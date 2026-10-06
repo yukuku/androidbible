@@ -64,7 +64,7 @@ class CurrentReadingCompletionTest {
         verify(exactly = 1) { db.insertOrUpdateReadingPlanProgress(ReadingPlan.gidFromName("original"), (12 shl 8), any()) }
         verify(exactly = 0) { db.insertOrUpdateReadingPlanProgress(ReadingPlan.gidFromName("other"), any(), any()) }
         assertEquals(true, CurrentReading.getPlanCompletion(0))
-        assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.get())
+        assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.getRanges())
         assertEquals(CurrentReading.Plan("original", 12), CurrentReading.getPlan())
     }
 
@@ -79,7 +79,7 @@ class CurrentReadingCompletionTest {
         verify(exactly = 1) { db.deleteReadingPlanProgress(gid, code) }
         assertEquals(setOf(code + 1), progress[gid])
         assertEquals(false, CurrentReading.getPlanCompletion(0))
-        assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.get())
+        assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.getRanges())
     }
 
     @Test
@@ -89,7 +89,7 @@ class CurrentReadingCompletionTest {
         CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "original", 12)
         assertEquals(true, CurrentReading.getPlanCompletion(0))
         CurrentReading.clear()
-        assertNull(CurrentReading.get())
+        assertNull(CurrentReading.getRanges())
         assertNull(CurrentReading.getPlanCompletion(0))
         verify(exactly = 0) { db.deleteReadingPlanProgress(any(), any()) }
         assertEquals(setOf((12 shl 8)), progress[ReadingPlan.gidFromName("original")])
@@ -131,7 +131,7 @@ class CurrentReadingCompletionTest {
         assertArrayEquals(booleanArrayOf(false, false, true), CurrentReading.getPlanCompletions())
         assertEquals(setOf((12 shl 8) or 2, (13 shl 8) or 2), progress[gid])
         assertEquals(setOf((12 shl 8) or 0), progress[ReadingPlan.gidFromName("other")])
-        assertArrayEquals(ranges, CurrentReading.get())
+        assertArrayEquals(ranges, CurrentReading.getRanges())
     }
 
     @Test
