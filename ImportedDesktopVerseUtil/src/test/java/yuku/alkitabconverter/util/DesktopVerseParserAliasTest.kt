@@ -20,12 +20,13 @@ class DesktopVerseParserAliasTest(private val input: String, private val book: I
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: {0}")
-        fun cases(): List<Array<Any>> = DesktopVerseParserAliasTest::class.java
-            .getResourceAsStream("/desktop-verse-parser-golden.tsv")!!.bufferedReader().useLines { lines ->
-                lines.filter { it.startsWith("alias-") }.map {
-                    val columns = it.split('\t')
-                    arrayOf<Any>(columns[2], columns[0].removePrefix("alias-").toInt())
-                }.toList()
-            }
+        fun cases(): List<Array<Any>> = requireNotNull(
+            DesktopVerseParserAliasTest::class.java.getResourceAsStream("/desktop-verse-parser-golden.tsv"),
+        ).bufferedReader().useLines { lines ->
+            lines.filter { it.startsWith("alias-") }.map {
+                val columns = it.split('\t')
+                arrayOf<Any>(columns[2], columns[0].removePrefix("alias-").toInt())
+            }.toList()
+        }
     }
 }

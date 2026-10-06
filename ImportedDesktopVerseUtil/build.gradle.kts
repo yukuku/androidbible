@@ -11,6 +11,10 @@ android {
 
     testOptions {
         targetSdk = libs.versions.targetSdk.get().toInt()
+        unitTests.all {
+            it.systemProperty("user.language", "en")
+            it.systemProperty("user.country", "US")
+        }
     }
 
     buildTypes {

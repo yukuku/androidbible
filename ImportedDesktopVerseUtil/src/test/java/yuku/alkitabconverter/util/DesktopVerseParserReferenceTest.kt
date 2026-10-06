@@ -66,7 +66,6 @@ class DesktopVerseParserReferenceTest {
 
     @Test
     fun `strict book lookup is independent of the device locale`() {
-        val original = Locale.getDefault()
         try {
             for (language in listOf("en", "id", "tr")) {
                 Locale.setDefault(Locale.forLanguageTag(language))
@@ -74,7 +73,7 @@ class DesktopVerseParserReferenceTest {
                 assertPairs("I TIMOTIUS 1:1", 0x350101, 0x350101)
             }
         } finally {
-            Locale.setDefault(original)
+            Locale.setDefault(Locale.US)
         }
     }
 
@@ -94,10 +93,10 @@ class DesktopVerseParserReferenceTest {
 
     @Test
     fun `chapter lists agree across APIs while single chapter shorthand remains supported`() {
-        val legacy = DesktopVerseParser.verseStringToAri("Gen 1,3")!!
+        val legacy = requireNotNull(DesktopVerseParser.verseStringToAri("Gen 1,3"))
         assertArrayEquals(intArrayOf(0x000100, 0x000100, 0x000300, 0x000300), IntArray(legacy.size()) { legacy.get(it) })
         assertPairs("Gen 1,3", 0x000100, 0x000100, 0x000300, 0x000300)
-        val jude = DesktopVerseParser.verseStringToAri("jud 9-12")!!
+        val jude = requireNotNull(DesktopVerseParser.verseStringToAri("jud 9-12"))
         assertArrayEquals(intArrayOf(0x400109, 0x40010c), IntArray(jude.size()) { jude.get(it) })
         assertPairs("jud 1:9-12", 0x400109, 0x40010c)
     }
