@@ -312,6 +312,21 @@ public class VersionImpl extends Version {
         return singleVerse.getVerse(0);
     }
 
+    @Override
+    public synchronized String loadChapterTextWithoutSplit(Book book, int chapter_1) {
+        if (book == null) {
+            return null;
+        }
+
+        SingleChapterVerses singleVerse = bibleReader.loadVerseText(book, chapter_1, true, false);
+
+        if (singleVerse == null) {
+            return null;
+        }
+
+        return singleVerse.getVerse(0);
+    }
+
     /**
      * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
      */

@@ -72,6 +72,24 @@ public abstract class Version {
 	 * @return null if the chapter is not available.
 	 */
 	public abstract String loadChapterTextLowercasedWithoutSplit(Book book, int chapter_1);
+
+	/**
+	 * Like {@link #loadChapterTextLowercasedWithoutSplit(Book, int)}, but keeps capitals.
+	 * Every verse ends with '\n', the last one too; search relies on it.
+	 */
+	@Nullable
+	public String loadChapterTextWithoutSplit(Book book, int chapter_1) {
+		final SingleChapterVerses verses = loadChapterText(book, chapter_1);
+		if (verses == null) {
+			return null;
+		}
+
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0, len = verses.getVerseCount(); i < len; i++) {
+			sb.append(verses.getVerse(i)).append('\n');
+		}
+		return sb.toString();
+	}
 	
 	/**
 	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
