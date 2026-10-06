@@ -176,7 +176,7 @@ class DevotionActivityTest {
         result = DevotionDownloader.State.FAILED
         foreground.runNext()
         idle()
-        assertEquals("Renungan ini tidak dapat diunduh. Periksa koneksi Anda dan coba lagi.", status())
+        assertEquals("Gagal mengunduh renungan. Periksa koneksi Anda dan coba lagi.", status())
         assertEquals("Coba lagi", activity.bRetry.text.toString())
     }
 
@@ -290,6 +290,18 @@ class DevotionActivityTest {
                 View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
             )
             view.layout(0, 0, width, height)
+            if (state != "reading") {
+                val statusBounds = android.graphics.Rect()
+                val viewportBounds = android.graphics.Rect()
+                activity.findViewById<View>(R.id.downloadStatus).getGlobalVisibleRect(statusBounds)
+                activity.findViewById<View>(R.id.scrollContent).getGlobalVisibleRect(viewportBounds)
+                assertEquals(viewportBounds, statusBounds)
+                val children = listOf(R.id.downloadProgress, R.id.lDownloadStatus, R.id.bRetry)
+                    .map { activity.findViewById<View>(it) }.filter { it.visibility == View.VISIBLE }
+                    .map { child -> android.graphics.Rect().also { child.getGlobalVisibleRect(it) } }
+                val center = (children.minOf { it.top } + children.maxOf { it.bottom }) / 2f
+                assertEquals(viewportBounds.exactCenterY(), center, 16f)
+            }
             val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             view.draw(Canvas(bitmap))
             // Native snapshots pin the indeterminate animation rather than depending on frame timing.

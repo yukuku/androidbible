@@ -11,6 +11,7 @@ import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.Keep
 import androidx.appcompat.widget.Toolbar
@@ -273,6 +274,10 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         val failed = state == DevotionDownloader.State.FAILED
         val unavailable = !waiting && !downloading && (state == DevotionDownloader.State.UNAVAILABLE || (article != null && !article.readyToUse))
         val showStatus = waiting || downloading || failed || unavailable
+        val statusHeight = if (renderSucceeded) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
+        if (downloadStatus.layoutParams.height != statusHeight) {
+            downloadStatus.layoutParams = downloadStatus.layoutParams.apply { height = statusHeight }
+        }
         downloadStatus.visibility = if (showStatus) View.VISIBLE else View.GONE
         downloadProgress.visibility = if (waiting || downloading) View.VISIBLE else View.GONE
         bRetry.visibility = if (failed || unavailable) View.VISIBLE else View.GONE

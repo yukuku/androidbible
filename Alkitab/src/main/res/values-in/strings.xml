@@ -512,9 +512,9 @@
     <string name="color_picker_tab_sliders">Penggeser</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>
     <string name="fcm_registration_skipped_debug">Registrasi FCM dilewati pada versi debug.</string>
-    <string name="devotion_download_queued">Menunggu unduhan renungan ini…</string>
-    <string name="devotion_downloading">Mengunduh renungan ini…</string>
-    <string name="devotion_download_failed">Renungan ini tidak dapat diunduh. Periksa koneksi Anda dan coba lagi.</string>
+    <string name="devotion_download_queued">Menunggu unduhan...</string>
+    <string name="devotion_downloading">Mengunduh...</string>
+    <string name="devotion_download_failed">Gagal mengunduh renungan. Periksa koneksi Anda dan coba lagi.</string>
     <string name="devotion_unavailable">Renungan ini belum tersedia di server.</string>
     <string name="devotion_retry">Coba lagi</string>
 </resources>
