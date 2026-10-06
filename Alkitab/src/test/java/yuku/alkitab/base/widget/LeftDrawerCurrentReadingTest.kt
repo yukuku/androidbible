@@ -101,7 +101,7 @@ class LeftDrawerCurrentReadingTest {
 
     @Test
     fun `the checkbox ticks and unticks the plan reading without dismissing its reference`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x350606, 0x35060a), "original", 12, 3)
+        CurrentReading.setReadingPlan(intArrayOf(0x350606, 0x35060a), "original", 12)
         val drawer = drawer()
         val listener = mockk<LeftDrawer.Text.Listener>(relaxed = true)
         every { listener.cCurrentReadingComplete_checkedChange(any(), any()) } answers {
@@ -124,8 +124,8 @@ class LeftDrawerCurrentReadingTest {
 
     @Test
     fun `opening an already completed reading shows a tick without changing progress`() {
-        progress.add((12 shl 8) or 3)
-        CurrentReading.setReadingPlan(intArrayOf(0x350606, 0x35060a), "original", 12, 3)
+        progress.add((12 shl 8))
+        CurrentReading.setReadingPlan(intArrayOf(0x350606, 0x35060a), "original", 12)
         val drawer = drawer()
         val listener = mockk<LeftDrawer.Text.Listener>(relaxed = true)
         drawer.listener = listener
@@ -137,13 +137,13 @@ class LeftDrawerCurrentReadingTest {
 
     @Test
     fun `a progress event refreshes the checkbox without invoking its user callback`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x350606, 0x35060a), "original", 12, 3)
+        CurrentReading.setReadingPlan(intArrayOf(0x350606, 0x35060a), "original", 12)
         val drawer = drawer()
         val listener = mockk<LeftDrawer.Text.Listener>(relaxed = true)
         drawer.listener = listener
         (drawer.context as AppCompatActivity).setContentView(drawer)
         Shadows.shadowOf(Looper.getMainLooper()).idle()
-        progress.add((12 shl 8) or 3)
+        progress.add((12 shl 8))
         AppEvents.emitReadingPlanProgressChanged()
         Shadows.shadowOf(Looper.getMainLooper()).idle()
         assertTrue(checkbox(drawer).isChecked)
@@ -152,7 +152,7 @@ class LeftDrawerCurrentReadingTest {
 
     @Test
     fun `closing a passage removes its drawer reference without completing the plan`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x350606, 0x35060a), "original", 12, 3)
+        CurrentReading.setReadingPlan(intArrayOf(0x350606, 0x35060a), "original", 12)
         val drawer = drawer()
         val listener = mockk<LeftDrawer.Text.Listener>(relaxed = true)
         every { listener.bCurrentReadingClose_click() } answers { CurrentReading.clear() }
@@ -168,7 +168,7 @@ class LeftDrawerCurrentReadingTest {
     @Test
     fun `each daily reading has a separate reference and checkbox with one close button in the header`() {
         val ranges = intArrayOf(0x000100, 0x000300, 0x120101, 0x120106, 0x270101, 0x27010a)
-        CurrentReading.setReadingPlan(ranges, "original", 12, 0)
+        CurrentReading.setReadingPlan(ranges, "original", 12)
         val version = App.services.versions.activeVersion()
         every { version.referenceRange(ranges[0], ranges[1]) } returns "Genesis 1–3"
         every { version.referenceRange(ranges[2], ranges[3]) } returns "Psalms 1:1–6"
@@ -196,7 +196,7 @@ class LeftDrawerCurrentReadingTest {
     @Test
     fun `toggling one daily row preserves other checkboxes and every active range`() {
         val ranges = intArrayOf(0x000100, 0x000300, 0x120101, 0x120106, 0x270101, 0x27010a)
-        CurrentReading.setReadingPlan(ranges, "original", 12, 0)
+        CurrentReading.setReadingPlan(ranges, "original", 12)
         progress.add((12 shl 8) or 0)
         val drawer = drawer()
         val listener = mockk<LeftDrawer.Text.Listener>(relaxed = true)
@@ -220,7 +220,7 @@ class LeftDrawerCurrentReadingTest {
 
     @Test
     fun `each reference row navigates to its own range`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12, 0)
+        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12)
         val drawer = drawer()
         val listener = mockk<LeftDrawer.Text.Listener>(relaxed = true)
         drawer.listener = listener
@@ -231,7 +231,7 @@ class LeftDrawerCurrentReadingTest {
 
     @Test
     fun `the header close button clears all rows without erasing their completed progress`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12, 0)
+        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12)
         progress.add((12 shl 8) or 1)
         val drawer = drawer()
         val listener = mockk<LeftDrawer.Text.Listener>(relaxed = true)
@@ -246,7 +246,7 @@ class LeftDrawerCurrentReadingTest {
     }
     @Test
     fun `drawer header stays compact and visible controls share an optical center`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12, 0)
+        CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12)
         val drawer = drawer()
         drawer.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(900, View.MeasureSpec.EXACTLY))
         drawer.layout(0, 0, 320, 900)

@@ -26,25 +26,16 @@ object CurrentReading {
         AppEvents.emitCurrentReadingChanged()
     }
 
-    /**
-     * @property firstSequence Zero-based sequence of the first active range within the plan day.
-     * A range at index i belongs to reading sequence firstSequence + i.
-     */
-    data class Plan(val name: String, val day: Int, val firstSequence: Int)
+    data class Plan(val name: String, val day: Int)
 
-    /**
-     * @param firstSequence The plan day's original sequence for the first pair in [aris].
-     * Use 0 for the entire day, or the first passage's zero-based sequence for a subset.
-     */
     @JvmStatic
-    fun setReadingPlan(aris: IntArray, name: String, day: Int, firstSequence: Int) {
+    fun setReadingPlan(aris: IntArray, name: String, day: Int) {
         Preferences.withTransaction {
             Preferences.setString(Prefkey.current_reading_ranges, App.getDefaultGson().toJson(aris))
             Preferences.remove(Prefkey.current_reading_ari_start)
             Preferences.remove(Prefkey.current_reading_ari_end)
             Preferences.setString(Prefkey.current_reading_plan_name, name)
             Preferences.setInt(Prefkey.current_reading_plan_day, day)
-            Preferences.setInt(Prefkey.current_reading_plan_sequence, firstSequence)
         }
         AppEvents.emitCurrentReadingChanged()
     }
@@ -56,7 +47,6 @@ object CurrentReading {
         return Plan(
             name,
             Preferences.getInt(Prefkey.current_reading_plan_day, 0),
-            Preferences.getInt(Prefkey.current_reading_plan_sequence, 0),
         )
     }
 
@@ -72,7 +62,6 @@ object CurrentReading {
     private fun clearPlan() {
         Preferences.remove(Prefkey.current_reading_plan_name)
         Preferences.remove(Prefkey.current_reading_plan_day)
-        Preferences.remove(Prefkey.current_reading_plan_sequence)
     }
 
     @JvmStatic
@@ -81,7 +70,7 @@ object CurrentReading {
         val ranges = get() ?: return null
         val codes = App.services.storage.db.getAllReadingCodesByReadingPlanProgressGid(ReadingPlan.gidFromName(plan.name))
         val completed = (0 until codes.size()).map { codes.get(it) }.toSet()
-        return BooleanArray(ranges.size / 2) { index -> ((plan.day shl 8) or (plan.firstSequence + index)) in completed }
+        return BooleanArray(ranges.size / 2) { index -> ((plan.day shl 8) or index) in completed }
     }
 
     @JvmStatic
@@ -97,7 +86,7 @@ object CurrentReading {
         val plan = installedPlan() ?: return false
         val ranges = get() ?: return false
         if (rangeIndex !in 0 until ranges.size / 2) return false
-        ReadingPlanManager.updateReadingPlanProgress(plan.name, plan.day, plan.firstSequence + rangeIndex, completed)
+        ReadingPlanManager.updateReadingPlanProgress(plan.name, plan.day, rangeIndex, completed)
         AppEvents.emitReadingPlanProgressChanged()
         return true
     }

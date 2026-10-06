@@ -110,8 +110,8 @@ enum class Prefkey {
     /** JSON array of alternating start/end ARIs for the active passages. */
     current_reading_ranges,
 
-    /** Plan identity, zero-based day, and first sequence linking active passages to saved completion. */
-    current_reading_plan_name, current_reading_plan_day, current_reading_plan_sequence,
+    /** Plan identity and zero-based day linking active passages to saved completion. */
+    current_reading_plan_name, current_reading_plan_day,
 
     /** Option to ask for verse number in goto screen  */
     gotoAskForVerse,

@@ -58,15 +58,15 @@ class CurrentReadingTest {
     }
 
     @Test
-    fun `a reading plan records the exact day and sequence selected`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12, 3)
-        assertEquals(CurrentReading.Plan("plan-a", 12, 3), CurrentReading.getPlan())
+    fun `a reading plan records its identity and selected day`() {
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12)
+        assertEquals(CurrentReading.Plan("plan-a", 12), CurrentReading.getPlan())
         assertArrayEquals(intArrayOf(0x270106, 0x270110), CurrentReading.get())
     }
 
     @Test
     fun `opening a devotional list removes the reading plan completion target`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12, 3)
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12)
         val ranges = intArrayOf(0x280905, 0x280906, 0x28090e, 0x280917)
         CurrentReading.setRanges(ranges)
         assertArrayEquals(ranges, CurrentReading.get())
@@ -76,7 +76,7 @@ class CurrentReadingTest {
 
     @Test
     fun `dismissal removes both the guide ranges and the completion target`() {
-        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12, 3)
+        CurrentReading.setReadingPlan(intArrayOf(0x270106, 0x270110), "plan-a", 12)
         CurrentReading.clear()
         assertNull(CurrentReading.get())
         assertNull(CurrentReading.getPlan())
