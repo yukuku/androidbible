@@ -39,7 +39,7 @@ public abstract class ArticleFromSabda extends DevotionArticle {
 
 	@Override
 	public int hashCode() {
-		return date.hashCode() * 31 + getKind().name.hashCode();
+		return date.hashCode() * 31 + getKind().sourceName.hashCode();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Response
@@ -34,7 +35,7 @@ class DevotionDownloadBackendTest {
     }.build()
     private val backend = DevotionDownloadBackend(
         client = { client }, url = { "http://localhost/devotion?name=${it.name}&date=${it.date}" },
-        cached = { cache[it] }, store = { cache[Key(it.kind.name, it.date)] = it },
+        cached = { cache[it] }, store = { cache[Key(it.kind.sourceName, it.date)] = it },
     )
 
     @Test fun `HTTP failure and offline errors are failures and retry stores the complete reading`() {
@@ -77,8 +78,8 @@ class DevotionDownloadBackendTest {
 
     @Test fun `all sources use cached readings without network access`() {
         DevotionKind.values().forEach { kind ->
-            val sourceKey = Key(kind.name, key.date)
-            cache[sourceKey] = kind.getArticle(key.date).apply { fillIn("<p>Cached ${kind.name}</p>") }
+            val sourceKey = Key(kind.sourceName, key.date)
+            cache[sourceKey] = kind.getArticle(key.date).apply { fillIn("<p>Cached ${kind.sourceName}</p>") }
             assertEquals(State.READY, backend.createRequest(sourceKey, false).execute())
         }
         assertEquals(0, requests)
@@ -120,11 +121,11 @@ class DevotionDownloadBackendTest {
         val localBackend = DevotionDownloadBackend(
             client = { localClient }, url = { "http://127.0.0.1:${server.address.port}/devotion/${it.date}" },
             cached = { localCache[it] }, store = {
-                localCache[Key(it.kind.name, it.date)] = it
+                localCache[Key(it.kind.sourceName, it.date)] = it
                 selectedStored.countDown()
             },
         )
-        val downloader = DevotionDownloader(localBackend)
+        val downloader = DevotionDownloader(localBackend, Dispatchers.IO, Dispatchers.IO)
         try {
             downloader.select("me-en", "20260925", true)
             assertTrue(started.await(5, TimeUnit.SECONDS))

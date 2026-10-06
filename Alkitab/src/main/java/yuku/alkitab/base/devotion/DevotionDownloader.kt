@@ -1,15 +1,19 @@
 package yuku.alkitab.base.devotion
 
 import java.util.ArrayDeque
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class DevotionDownloader @JvmOverloads constructor(
-    private val backend: Backend = DevotionDownloadBackend(),
-    private val foregroundExecutor: ExecutorService = Executors.newSingleThreadExecutor(),
-    private val prefetchExecutor: ExecutorService = Executors.newSingleThreadExecutor(),
+class DevotionDownloader(
+    private val backend: Backend,
+    private val foregroundDispatcher: CoroutineDispatcher,
+    private val prefetchDispatcher: CoroutineDispatcher,
 ) {
     data class Key(val name: String, val date: String)
     enum class State { QUEUED, DOWNLOADING, READY, FAILED, UNAVAILABLE }
@@ -28,6 +32,7 @@ class DevotionDownloader @JvmOverloads constructor(
         var cancelled = false
     }
 
+    private val scope = CoroutineScope(SupervisorJob() + foregroundDispatcher)
     private val pending = ArrayDeque<Work>()
     private val workByKey = mutableMapOf<Key, Work>()
     private val states = linkedMapOf<Key, State>()
@@ -95,7 +100,7 @@ class DevotionDownloader @JvmOverloads constructor(
             if (next != null) {
                 pending.remove(next)
                 foreground = next
-                foregroundExecutor.execute { download(next, true) }
+                scope.launch(foregroundDispatcher) { download(next, true) }
             }
         }
         if (prefetch == null) {
@@ -103,7 +108,7 @@ class DevotionDownloader @JvmOverloads constructor(
             if (next != null) {
                 pending.remove(next)
                 prefetch = next
-                prefetchExecutor.execute { download(next, false) }
+                scope.launch(prefetchDispatcher) { download(next, false) }
             }
         }
     }
@@ -144,7 +149,14 @@ class DevotionDownloader @JvmOverloads constructor(
         }
         workByKey.clear()
         pending.clear()
-        foregroundExecutor.shutdownNow()
-        prefetchExecutor.shutdownNow()
+        scope.cancel()
+    }
+
+    companion object {
+        fun create(): DevotionDownloader {
+            // Two IO slots keep a blocking prefetch transfer from occupying the selected reading's slot.
+            val dispatcher = Dispatchers.IO.limitedParallelism(2)
+            return DevotionDownloader(DevotionDownloadBackend.create(), dispatcher, dispatcher)
+        }
     }
 }

@@ -1,13 +1,20 @@
 package yuku.alkitab.base.ac
 
 import android.app.Application
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.os.Bundle
 import android.os.Looper
 import android.view.View
 import android.widget.TextView
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import io.mockk.every
 import io.mockk.mockk
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
 import org.junit.After
@@ -21,13 +28,15 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import org.robolectric.annotation.LooperMode
+import org.robolectric.util.ReflectionHelpers
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.ac.DevotionActivity.DevotionKind
 import yuku.alkitab.base.devotion.DevotionDownloader
-import yuku.alkitab.base.devotion.ManualExecutor
+import yuku.alkitab.base.devotion.ManualDispatcher
 import yuku.alkitab.base.services.AppServices
 import yuku.alkitab.base.services.StorageProvider
 import yuku.alkitab.base.services.UiDimensionsProvider
@@ -49,8 +58,8 @@ class DevotionActivityTest {
         }
     }
     companion object { lateinit var testDownloader: DevotionDownloader }
-    private val foreground = ManualExecutor()
-    private val background = ManualExecutor()
+    private val foreground = ManualDispatcher()
+    private val background = ManualDispatcher()
     private lateinit var helper: InternalDbHelper
     private lateinit var db: InternalDb
     private lateinit var originalServices: AppServices
@@ -211,7 +220,7 @@ class DevotionActivityTest {
         activity.bPrev_click()
         activity.bPrev_click()
         activity.cbKind_itemSelected(DevotionKind.MEID_A)
-        activity.currentDate = format.parse("20260925")
+        activity.currentDate = format.parse("20260925")!!
         activity.display()
         foreground.runAll()
         idle()
@@ -251,4 +260,106 @@ class DevotionActivityTest {
         assertEquals(Color.WHITE, activity.lContent.currentTextColor)
         assertEquals(1, requests.size)
     }
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "en-rUS-w393dp-h851dp-mdpi")
+    fun `capture the devotional screens in light mode`() = captureScreens(false)
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "en-rUS-w393dp-h851dp-mdpi")
+    fun `capture the devotional screens in dark mode`() = captureScreens(true)
+
+    private fun captureScreens(dark: Boolean) {
+        val theme = if (dark) "dark" else "light"
+        val dimensions = App.services.uiDimensions.applied()
+        dimensions.backgroundColor = if (dark) Color.BLACK else Color.WHITE
+        dimensions.fontColor = if (dark) Color.WHITE else Color.BLACK
+        Preferences.setBoolean(Prefkey.is_night_mode, dark)
+        controller.pause().stop().start().resume().visible()
+        idle()
+
+        val screenshots = linkedMapOf<String, Bitmap>()
+        fun capture(state: String) {
+            idle()
+            val view = activity.window.decorView
+            val width = 393
+            val height = 851
+            view.measure(
+                View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
+            )
+            view.layout(0, 0, width, height)
+            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            view.draw(Canvas(bitmap))
+            // Native snapshots pin the indeterminate animation rather than depending on frame timing.
+            val progress = activity.findViewById<CircularProgressIndicator>(R.id.downloadProgress)
+            if (progress.visibility == View.VISIBLE) {
+                val delegate = ReflectionHelpers.getField<Any>(progress.indeterminateDrawable, "animatorDelegate")
+                ReflectionHelpers.callInstanceMethod<Unit>(
+                    delegate, "setAnimationFraction",
+                    ReflectionHelpers.ClassParameter.from(Float::class.javaPrimitiveType, 0.1f),
+                )
+            }
+            view.draw(Canvas(bitmap))
+            screenshots[state] = bitmap
+            saveScreenshot(bitmap, "$theme-$state.png")
+        }
+
+        capture("queued")
+        onExecute = { capture("downloading") }
+        result = DevotionDownloader.State.FAILED
+        foreground.runNext()
+        idle()
+        assertEquals(activity.getString(R.string.devotion_download_failed), status())
+        capture("failed")
+
+        onExecute = {}
+        activity.bRetry.performClick()
+        result = DevotionDownloader.State.UNAVAILABLE
+        foreground.runNext()
+        idle()
+        assertEquals(activity.getString(R.string.devotion_unavailable), status())
+        capture("unavailable")
+
+        output = """
+            <h2>Morning</h2>
+            <p><i>“My grace is sufficient for thee.”</i><br/>2 Corinthians 12:9</p>
+            <p>Begin this day with confidence in the strength that God supplies.
+            Bring your cares to him in prayer, and trust him with the work before you.</p>
+            <h2>Evening</h2>
+            <p><i>“The Lord is my shepherd; I shall not want.”</i><br/>Psalm 23:1</p>
+            <p>As the day draws to a close, remember the care of the Shepherd.
+            Give thanks for his provision and rest in his peace.</p>
+        """.trimIndent()
+        activity.bRetry.performClick()
+        result = DevotionDownloader.State.READY
+        foreground.runNext()
+        idle()
+        assertTrue(visible(R.id.lContent))
+        capture("reading")
+        assertEquals(5, screenshots.size)
+
+        val strip = Bitmap.createBitmap(393 * screenshots.size, 891, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(strip)
+        canvas.drawColor(if (dark) Color.BLACK else Color.WHITE)
+        val label = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = if (dark) Color.WHITE else Color.BLACK
+            textSize = 18f
+        }
+        screenshots.entries.forEachIndexed { index, (state, bitmap) ->
+            canvas.drawText("$theme / $state", index * 393f + 16f, 26f, label)
+            canvas.drawBitmap(bitmap, null, RectF(index * 393f, 40f, (index + 1) * 393f, 891f), null)
+        }
+        saveScreenshot(strip, "$theme-overview.png")
+    }
+
+    private fun saveScreenshot(bitmap: Bitmap, name: String) {
+        val directory = File(System.getProperty("user.dir"), "build/snapshots/devotions")
+        check(directory.isDirectory || directory.mkdirs())
+        FileOutputStream(File(directory, name)).use {
+            assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it))
+        }
+    }
+
 }

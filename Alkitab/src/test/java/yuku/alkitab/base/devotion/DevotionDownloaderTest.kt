@@ -3,6 +3,7 @@ package yuku.alkitab.base.devotion
 import java.io.IOException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Test
@@ -10,8 +11,8 @@ import yuku.alkitab.base.devotion.DevotionDownloader.Key
 import yuku.alkitab.base.devotion.DevotionDownloader.State
 
 class DevotionDownloaderTest {
-    private val foreground = ManualExecutor()
-    private val background = ManualExecutor()
+    private val foreground = ManualDispatcher()
+    private val background = ManualDispatcher()
     private val created = mutableListOf<Key>()
     private val cancelled = mutableListOf<Key>()
     private var action: (Key) -> State = { State.READY }
@@ -34,6 +35,7 @@ class DevotionDownloaderTest {
         val started = CountDownLatch(1)
         val release = CountDownLatch(1)
         val selectedDone = CountDownLatch(1)
+        val dispatcher = Dispatchers.IO.limitedParallelism(2)
         val realDownloader = DevotionDownloader({ key, _ ->
             object : DevotionDownloader.Request {
                 override fun cancel() { release.countDown() }
@@ -45,7 +47,7 @@ class DevotionDownloaderTest {
                     return State.READY
                 }
             }
-        })
+        }, dispatcher, dispatcher)
         try {
             realDownloader.addPrefetch(a.name, a.date)
             assertTrue(started.await(5, TimeUnit.SECONDS))

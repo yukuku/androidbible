@@ -1,6 +1,7 @@
 package yuku.alkitab.base.storage
 
 import android.content.ContentValues
+import java.util.Date
 import yuku.alkitab.base.ac.DevotionActivity
 import yuku.alkitab.base.devotion.ArticleMeidA
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish
@@ -9,7 +10,6 @@ import yuku.alkitab.base.devotion.ArticleRoc
 import yuku.alkitab.base.devotion.ArticleSantapanHarian
 import yuku.alkitab.base.devotion.DevotionArticle
 import yuku.alkitab.base.util.Sqlitil
-import java.util.Date
 
 /**
  * Type-safe accessor for the `Devotion` table (cached devotional articles).
@@ -18,14 +18,14 @@ import java.util.Date
 class DevotionDao(private val helper: InternalDbHelper) {
 
     /**
-     * Upserts the article row identified by `(kind.name, date)`. Implemented
+     * Upserts the article row identified by `(kind.sourceName, date)`. Implemented
      * as delete-then-insert inside a transaction because the table has no
      * uniqueness constraint.
      */
     fun storeArticle(article: DevotionArticle) {
         val db = helper.writableDatabase
         val values = ContentValues().apply {
-            put(Table.Devotion.name.name, article.kind.name)
+            put(Table.Devotion.name.name, article.kind.sourceName)
             put(Table.Devotion.date.name, article.date)
             put(Table.Devotion.readyToUse.name, if (article.readyToUse) 1 else 0)
             if (article.readyToUse) {
@@ -42,7 +42,7 @@ class DevotionDao(private val helper: InternalDbHelper) {
             db.delete(
                 Table.Devotion.tableName(),
                 Table.Devotion.name.name + "=? and " + Table.Devotion.date.name + "=?",
-                arrayOf(article.kind.name, article.date),
+                arrayOf(article.kind.sourceName, article.date),
             )
             db.insertOrThrow(Table.Devotion.tableName(), null, values)
             db.setTransactionSuccessful()

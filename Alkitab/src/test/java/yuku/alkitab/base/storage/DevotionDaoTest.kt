@@ -2,6 +2,7 @@ package yuku.alkitab.base.storage
 
 import android.app.Application
 import android.database.sqlite.SQLiteException
+import java.util.Date
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -18,7 +19,6 @@ import yuku.alkitab.base.ac.DevotionActivity
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish
 import yuku.alkitab.base.devotion.ArticleRenunganHarian
 import yuku.alkitab.base.devotion.ArticleSantapanHarian
-import java.util.Date
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
@@ -41,14 +41,14 @@ class DevotionDaoTest {
 
     @Test
     fun `tryGet returns null when nothing was stored for the name-date pair`() {
-        assertNull(dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260420"))
+        assertNull(dao.tryGet(DevotionActivity.DevotionKind.RH.sourceName, "20260420"))
     }
 
     @Test
     fun `storeArticle then tryGet round-trips body and readyToUse for RH`() {
         dao.storeArticle(ArticleRenunganHarian("20260420", "hello body", true))
 
-        val loaded = dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260420")
+        val loaded = dao.tryGet(DevotionActivity.DevotionKind.RH.sourceName, "20260420")
         assertNotNull(loaded)
         assertTrue(loaded is ArticleRenunganHarian)
         assertEquals("hello body", loaded!!.body)
@@ -61,7 +61,7 @@ class DevotionDaoTest {
         // DevotionDao.storeArticle which nulls the body column in that case.
         dao.storeArticle(ArticleRenunganHarian("20260420", "placeholder", false))
 
-        val loaded = dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260420")!!
+        val loaded = dao.tryGet(DevotionActivity.DevotionKind.RH.sourceName, "20260420")!!
         assertFalse(loaded.readyToUse)
         // The stored body column is null; ArticleFromSabda.getBody() is @NonNull-annotated
         // but returns the raw field, so the runtime value may be null regardless of the
@@ -93,7 +93,7 @@ class DevotionDaoTest {
 
         assertEquals(
             "second",
-            dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260420")!!.body,
+            dao.tryGet(DevotionActivity.DevotionKind.RH.sourceName, "20260420")!!.body,
         )
     }
 
@@ -105,15 +105,15 @@ class DevotionDaoTest {
 
         assertEquals(
             "rh-body",
-            dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260420")!!.body,
+            dao.tryGet(DevotionActivity.DevotionKind.RH.sourceName, "20260420")!!.body,
         )
         assertEquals(
             "sh-body",
-            dao.tryGet(DevotionActivity.DevotionKind.SH.name, "20260420")!!.body,
+            dao.tryGet(DevotionActivity.DevotionKind.SH.sourceName, "20260420")!!.body,
         )
         assertEquals(
             "rh-tomorrow",
-            dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260421")!!.body,
+            dao.tryGet(DevotionActivity.DevotionKind.RH.sourceName, "20260421")!!.body,
         )
     }
 
@@ -137,10 +137,10 @@ class DevotionDaoTest {
         DevotionActivity.DevotionKind.values().forEach { kind ->
             val reading = kind.getArticle("20260929").apply { fillIn("<p>Reading</p>") }
             dao.storeArticle(reading)
-            assertTrue(dao.tryGet(kind.name, "20260929")!!.readyToUse)
-            assertEquals(reading.body, dao.tryGet(kind.name, "20260929")!!.body)
+            assertTrue(dao.tryGet(kind.sourceName, "20260929")!!.readyToUse)
+            assertEquals(reading.body, dao.tryGet(kind.sourceName, "20260929")!!.body)
             dao.storeArticle(kind.getArticle("20260929").apply { fillIn("NG") })
-            assertFalse(dao.tryGet(kind.name, "20260929")!!.readyToUse)
+            assertFalse(dao.tryGet(kind.sourceName, "20260929")!!.readyToUse)
         }
     }
 
@@ -156,7 +156,7 @@ class DevotionDaoTest {
         val deleted = dao.deleteWithTouchTimeBefore(futureCutoff)
         assertEquals(2, deleted)
 
-        assertNull(dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260418"))
-        assertNull(dao.tryGet(DevotionActivity.DevotionKind.RH.name, "20260419"))
+        assertNull(dao.tryGet(DevotionActivity.DevotionKind.RH.sourceName, "20260418"))
+        assertNull(dao.tryGet(DevotionActivity.DevotionKind.RH.sourceName, "20260419"))
     }
 }
