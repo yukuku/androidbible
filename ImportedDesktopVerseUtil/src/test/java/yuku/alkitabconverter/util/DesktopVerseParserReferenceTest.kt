@@ -93,9 +93,9 @@ class DesktopVerseParserReferenceTest {
     }
 
     @Test
-    fun `legacy chapter lists and single chapter shorthand remain distinct from strict references`() {
+    fun `chapter lists agree across APIs while single chapter shorthand remains supported`() {
         val legacy = DesktopVerseParser.verseStringToAri("Gen 1,3")!!
-        assertArrayEquals(intArrayOf(0x000100, 0x000100, 0x000103, 0x000103), IntArray(legacy.size()) { legacy.get(it) })
+        assertArrayEquals(intArrayOf(0x000100, 0x000100, 0x000300, 0x000300), IntArray(legacy.size()) { legacy.get(it) })
         assertPairs("Gen 1,3", 0x000100, 0x000100, 0x000300, 0x000300)
         val jude = DesktopVerseParser.verseStringToAri("jud 9-12")!!
         assertArrayEquals(intArrayOf(0x400109, 0x40010c), IntArray(jude.size()) { jude.get(it) })

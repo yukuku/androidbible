@@ -123,32 +123,32 @@ object DesktopVerseParser {
         for (range in ranges) {
             val startend = numberStartEndSplitter.split(range)
             if (startend.size == 1) {
-                val cv = parseCv(startend[0], singleChapterBook, lastChapter)
+                val cv = parseCv(startend[0], singleChapterBook, lastChapter) ?: return null
                 if (cv != 0) {
                     res.add(book_0_shifted or cv) // start
                     res.add(book_0_shifted or cv) // end same as start
-                    lastChapter = (cv shr 8) and 0xff
+                    lastChapter = if ((cv and 0xff) != 0) (cv shr 8) and 0xff else 0
                 }
             } else if (startend.size == 2) {
-                val cvStart = parseCv(startend[0], singleChapterBook, lastChapter)
+                val cvStart = parseCv(startend[0], singleChapterBook, lastChapter) ?: return null
                 if (cvStart != 0) {
                     val cvEnd: Int
                     val startend_1_trim = startend[1].trim { it <= ' ' }
                     if (numbersOnly.matcher(startend_1_trim).matches()) { // check for cases like "2:3-17" (chapter 2 verse 3 to chapter 2 verse 17) or "14-17" (chapter 14 to chapter 17)
-                        val startend_1_number = startend_1_trim.toInt()
+                        val startend_1_number = startend_1_trim.toIntOrNull()?.takeIf { it in 0..255 } ?: return null
                         if ((cvStart and 0xff) == 0) { // cvStart has no verse number, so this is for cases like "14-17" (chapter 14 to chapter 17)
                             cvEnd = startend_1_number shl 8
                         } else { // for cases like "2:3-17" (chapter 2 verse 3 to chapter 2 verse 17)
                             cvEnd = (cvStart and 0xff00) or startend_1_number
                         }
                     } else {
-                        cvEnd = parseCv(startend[1], singleChapterBook, lastChapter)
+                        cvEnd = parseCv(startend[1], singleChapterBook, lastChapter) ?: return null
                     }
                     if (cvEnd != 0) {
                         if (cvEnd >= cvStart) {
                             res.add(book_0_shifted or cvStart)
                             res.add(book_0_shifted or cvEnd)
-                            lastChapter = (cvEnd shr 8) and 0xff
+                            lastChapter = if ((cvEnd and 0xff) != 0) (cvEnd shr 8) and 0xff else 0
                         }
                     }
                 }
@@ -157,9 +157,9 @@ object DesktopVerseParser {
         return res
     }
 
-    private fun parseCv(cv: String, singleChapterBook: Boolean, previousChapter: Int): Int {
+    private fun parseCv(cv: String, singleChapterBook: Boolean, previousChapter: Int): Int? {
         if (numbersOnly.matcher(cv).matches()) { // either c:0 or 1:v
-            val n = cv.toInt()
+            val n = cv.toIntOrNull()?.takeIf { it in 0..255 } ?: return null
             return if (singleChapterBook) {
                 0x0100 or (n and 0xff)
             } else if (previousChapter != 0) {
@@ -170,8 +170,8 @@ object DesktopVerseParser {
         } else {
             val m = chapterVerse.matcher(cv)
             if (m.matches()) {
-                val c = m.group(1)!!.toInt()
-                val v = m.group(2)!!.toInt()
+                val c = m.group(1)!!.toIntOrNull()?.takeIf { it in 0..255 } ?: return null
+                val v = m.group(2)!!.toIntOrNull()?.takeIf { it in 0..255 } ?: return null
                 return ((c and 0xff) shl 8) or (v and 0xff)
             }
         }

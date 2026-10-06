@@ -9,7 +9,7 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 class DesktopVerseParserGoldenTest(private val category: String, private val language: String, private val input: String, private val expected: String) {
     @Test
-    fun `legacy parsing matches the frozen Java outcome`() {
+    fun `prose parsing matches the reviewed golden outcome`() {
         val original = Locale.getDefault()
         try {
             Locale.setDefault(Locale.forLanguageTag(language))
