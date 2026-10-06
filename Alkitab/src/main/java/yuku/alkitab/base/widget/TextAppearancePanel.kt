@@ -433,7 +433,7 @@ class TextAppearancePanel(
     @Composable
     private fun FontRow() {
         val escapeColor = colorResource(R.color.escape)
-        val options = buildFontOptions(uiFontEntries, escapeColor)
+        val options = buildFontOptions(uiFontEntries, escapeColor, stringResource(R.string.get_more_fonts))
         val currentDisplay = displayNameForFont(uiFontName, uiFontEntries)
         val currentFamily = fontFamilyForName(uiFontName, uiFontEntries)
 
@@ -660,7 +660,11 @@ class TextAppearancePanel(
         val color: Color? = null,
     )
 
-    private fun buildFontOptions(entries: List<FontManager.FontEntry>, escapeColor: Color): List<FontOption> {
+    private fun buildFontOptions(
+        entries: List<FontManager.FontEntry>,
+        escapeColor: Color,
+        getMoreFontsLabel: String,
+    ): List<FontOption> {
         val options = ArrayList<FontOption>(entries.size + 4)
         options += FontOption("DEFAULT", "Roboto", FontFamily.SansSerif)
         options += FontOption("SERIF", "Droid Serif", FontFamily.Serif)
@@ -668,7 +672,7 @@ class TextAppearancePanel(
         for (entry in entries) {
             options += FontOption(entry.name, entry.name, familyForCustomFont(entry.name))
         }
-        options += FontOption(null, App.context.getString(R.string.get_more_fonts), null, escapeColor)
+        options += FontOption(null, getMoreFontsLabel, null, escapeColor)
         return options
     }
 

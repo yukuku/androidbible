@@ -21,6 +21,7 @@ import okhttp3.ResponseBody;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.util.AppLog;
+import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 
 public class DownloadService extends Service {
@@ -190,7 +191,7 @@ public class DownloadService extends Service {
 				boolean renameOk = entry.tempFile.renameTo(entry.completeFile);
 				if (!renameOk) {
 					AppLog.w(TAG, "Failed to rename file from " + entry.tempFile + " to " + entry.completeFile);
-					entry.errorMsg = getString(R.string.dl_failed_to_rename_temporary_file);
+					entry.errorMsg = Localized.string(R.string.dl_failed_to_rename_temporary_file);
 					changeState(State.failed);
 					return entry;
 				}

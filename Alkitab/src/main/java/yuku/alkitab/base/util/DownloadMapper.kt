@@ -23,6 +23,7 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.AlertDialogActivity
 import yuku.alkitab.base.br.VersionDownloadCompleteReceiver
 import yuku.alkitab.base.events.AppEvents
+import yuku.alkitab.base.widget.Localized
 import yuku.alkitab.debug.R
 
 /**
@@ -201,13 +202,13 @@ class DownloadMapper private constructor() {
         val msg: CharSequence = when (errorType) {
             VersionDownloadWorker.ERROR_CONNECTION,
             VersionDownloadWorker.ERROR_CANCELLED ->
-                TextUtils.expandTemplate(App.context.getString(R.string.version_download_network_error), row.title)
+                TextUtils.expandTemplate(Localized.string(R.string.version_download_network_error), row.title)
 
             VersionDownloadWorker.ERROR_STORAGE ->
-                App.context.getString(R.string.version_download_saving_io_error)
+                Localized.string(R.string.version_download_saving_io_error)
 
             else ->
-                TextUtils.expandTemplate(App.context.getString(R.string.version_download_server_error), row.title)
+                TextUtils.expandTemplate(Localized.string(R.string.version_download_server_error), row.title)
         }
 
         App.context.startActivity(
