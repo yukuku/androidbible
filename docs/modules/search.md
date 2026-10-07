@@ -9,7 +9,7 @@ Full-text search across Bible verses with token-based intersection, book/testame
 - `Alkitab/src/main/java/yuku/alkitab/base/ac/SearchActivity.kt` — Search UI with history autocomplete
 - `Alkitab/src/main/java/yuku/alkitab/base/util/SearchEngine.kt` — Core search engine (grep-based, token intersection)
 - `Alkitab/src/main/java/yuku/alkitab/base/util/QueryTokenizer.kt` — Tokenizes queries with quote and plus-sign support
-- `Alkitab/src/main/java/yuku/alkitab/base/util/SearchEngineQuery.kt` — Data class holding query string and optional book filter (`bookIds: SparseBooleanArray?`)
+- `Alkitab/src/main/java/yuku/alkitab/base/util/SearchEngineQuery.kt`: data class holding the query string, optional book filter (`bookIds: SparseBooleanArray?`) and `SearchOptions`
 
 ## Query Tokenization
 
@@ -37,11 +37,23 @@ The `+` prefix on a token determines the matching mode:
 
 ### Multi-word Token Processing
 
-When a `+`-prefixed token contains multiple words, `QueryTokenizer.tokenizeMultiwordToken()` splits it on word boundaries (`[\p{javaLetterOrDigit}'-]+`). The search then uses `indexOfWholeMultiword()` which:
+When a `+`-prefixed token contains multiple words, `QueryTokenizer.tokenizeMultiwordToken()` splits it on word boundaries (`[\p{javaLetterOrDigit}'-]+`). The search then uses `indexOfMultiword()` which:
 - Finds each word as a whole-word match
 - Strips inline formatting tags (`@<...@>...@/`) between words
 - Skips punctuation between words
 - Requires all words to appear in sequence within the same verse
+
+### Search Options
+
+`SearchActivity` shows three checkboxes under the book filter. They are carried in `SearchEngineQuery.options` (`SearchOptions`), saved in `Prefkey.search_exact_phrase`, `search_whole_words` and `search_match_capitals`, and all off by default. `SearchEngine.ReadyTokens.forQuery()` applies them on top of the query syntax, so `+word` and quoted phrases keep working when an option is off. Only verse search uses them; the marker list builds `ReadyTokens` from plain tokens.
+
+| Option | Behavior |
+|--------|----------|
+| Exact Phrase | All words of the query become one multi-word phrase token, matched in order like a quoted phrase. Unless Whole Words is on (or the first/last query token is `+`-prefixed or quoted), the first word may start inside a longer word and the last word may end inside one (`ReadyTokens.looseStarts` / `looseEnds`). Without it, words match in any order. |
+| Whole Words | Every token is treated as `+`-prefixed. |
+| Match Capitals | The query is not lowercased and the chapter text comes from `Version.loadChapterTextWithoutSplit()` instead of the lowercased variant. A word also matches its ALL-CAPS form (`ReadyTokens.upperTokens`), so "Lord" finds "LORD" but "Him" does not find "him". |
+
+Highlighting goes through the same `ReadyTokens`, so `hilite()` follows the options.
 
 ## Search Algorithm
 
@@ -56,8 +68,8 @@ When a `+`-prefixed token contains multiple words, `QueryTokenizer.tokenizeMulti
    - Load chapter text (lowercased, formatting codes intact) via `version.loadChapterTextLowercasedWithoutSplit(book, chapter_1)`
    - For each verse in the chapter, check if the token matches:
      - Substring tokens: `indexOf()` on lowercased text
-     - Whole-word tokens: `indexOfWholeWord()` — checks that match boundaries are non-letter/non-digit
-     - Multi-word tokens: `indexOfWholeMultiword()` — sequential word matching with tag/punctuation tolerance
+     - Whole-word tokens: `indexOfWord()` with both boundaries required: match boundaries are non-letter/non-digit
+     - Multi-word tokens: `indexOfMultiword()`: sequential word matching with tag/punctuation tolerance
    - Collect matching verse ARIs into an `IntArrayList`
    - **If this is not the first token**, intersect the new results with the previous token's results (only verses matching ALL tokens survive)
 5. Return final intersection as the result set

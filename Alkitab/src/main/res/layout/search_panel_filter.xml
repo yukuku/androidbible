@@ -1,57 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:orientation="vertical"
 	android:paddingEnd="0dp"
 	android:paddingStart="12dp">
 
-	<CheckBox
-		android:id="@+id/cFilterOlds"
-		android:layout_width="wrap_content"
-		android:layout_height="32dp"
-		android:layout_alignParentStart="true"
-		android:checked="true"
-		android:text="@string/perj_lama" />
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
 
-	<CheckBox
-		android:id="@+id/cFilterNews"
-		android:layout_width="wrap_content"
-		android:layout_height="32dp"
-		android:layout_alignBaseline="@+id/cFilterOlds"
-		android:layout_marginStart="8dp"
-		android:layout_toEndOf="@+id/cFilterOlds"
-		android:checked="true"
-		android:text="@string/perj_baru" />
+		<CheckBox
+			android:id="@+id/cFilterOlds"
+			android:layout_width="wrap_content"
+			android:layout_height="32dp"
+			android:layout_alignParentStart="true"
+			android:checked="true"
+			android:text="@string/perj_lama" />
 
-	<ImageButton
-		android:id="@+id/bEditFilter"
-		style="?buttonBarButtonStyle"
-		android:layout_width="48dp"
-		android:layout_height="48dp"
-		android:layout_alignParentEnd="true"
-		android:contentDescription="@string/desc_change_selected_books"
-		android:src="@drawable/ic_search_book_filter" />
+		<CheckBox
+			android:id="@+id/cFilterNews"
+			android:layout_width="wrap_content"
+			android:layout_height="32dp"
+			android:layout_alignBaseline="@+id/cFilterOlds"
+			android:layout_marginStart="8dp"
+			android:layout_toEndOf="@+id/cFilterOlds"
+			android:checked="true"
+			android:text="@string/perj_baru" />
 
-	<TextView
-		android:id="@+id/tFilterAdvanced"
-		android:layout_width="wrap_content"
-		android:layout_height="32dp"
-		android:layout_alignParentStart="false"
-		android:layout_below="@+id/cFilterOlds"
-		android:layout_marginStart="32dp"
-		android:gravity="center_vertical"
-		android:maxLines="2"
-		android:textColor="?android:attr/textColorPrimaryDisableOnly"
-		android:textSize="14sp"
-		tools:text="@string/search_filter_multiple_books_selected" />
+		<ImageButton
+			android:id="@+id/bEditFilter"
+			style="?buttonBarButtonStyle"
+			android:layout_width="48dp"
+			android:layout_height="48dp"
+			android:layout_alignParentEnd="true"
+			android:contentDescription="@string/desc_change_selected_books"
+			android:src="@drawable/ic_search_book_filter" />
 
-	<CheckBox
-		android:id="@+id/cFilterSingleBook"
-		android:layout_width="wrap_content"
-		android:layout_height="32dp"
-		android:layout_below="@+id/cFilterOlds"
-		tools:text="(book name) only"
-		tools:visibility="gone" />
+		<TextView
+			android:id="@+id/tFilterAdvanced"
+			android:layout_width="wrap_content"
+			android:layout_height="32dp"
+			android:layout_alignParentStart="false"
+			android:layout_below="@+id/cFilterOlds"
+			android:layout_marginStart="32dp"
+			android:gravity="center_vertical"
+			android:maxLines="2"
+			android:textColor="?android:attr/textColorPrimaryDisableOnly"
+			android:textSize="14sp"
+			tools:text="@string/search_filter_multiple_books_selected" />
 
-</RelativeLayout>
+		<CheckBox
+			android:id="@+id/cFilterSingleBook"
+			android:layout_width="wrap_content"
+			android:layout_height="32dp"
+			android:layout_below="@+id/cFilterOlds"
+			tools:text="(book name) only"
+			tools:visibility="gone" />
+
+	</RelativeLayout>
+
+	<yuku.devoxx.flowlayout.FlowLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:horizontalSpacing="8dp"
+		app:verticalSpacing="0dp">
+
+		<CheckBox
+			android:id="@+id/cExactPhrase"
+			android:layout_width="wrap_content"
+			android:layout_height="32dp"
+			android:text="@string/search_option_exact_phrase" />
+
+		<CheckBox
+			android:id="@+id/cWholeWords"
+			android:layout_width="wrap_content"
+			android:layout_height="32dp"
+			android:text="@string/search_option_whole_words" />
+
+		<CheckBox
+			android:id="@+id/cMatchCapitals"
+			android:layout_width="wrap_content"
+			android:layout_height="32dp"
+			android:text="@string/search_option_match_capitals" />
+
+	</yuku.devoxx.flowlayout.FlowLayout>
+
+</LinearLayout>

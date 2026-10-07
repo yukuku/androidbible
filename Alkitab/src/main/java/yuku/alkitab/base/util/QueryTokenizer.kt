@@ -16,14 +16,16 @@ object QueryTokenizer {
      *
      * @return List of tokens, starting with the character '+' if it is to be matched in a whole-word/whole-phrase manner.
      * No tokens will be an empty string or "+" (just a plus sign). After the optional '+', there will not be another '+'.
+     * @param lowercase false keeps capitals, for case-sensitive search.
      */
     @JvmStatic
-    fun tokenize(query: String?): Array<String> {
+    @JvmOverloads
+    fun tokenize(query: String?, lowercase: Boolean = true): Array<String> {
         if (query.isNullOrEmpty()) return emptyArray()
 
         val rawTokens = mutableListOf<String>()
 
-        val matcher = oneToken.matcher(query.lowercase(Locale.getDefault()))
+        val matcher = oneToken.matcher(if (lowercase) query.lowercase(Locale.getDefault()) else query)
         while (matcher.find()) {
             rawTokens.add((matcher.group(1) ?: "") + matcher.group(2)!!)
         }
@@ -95,13 +97,18 @@ object QueryTokenizer {
      * @return null if the input produces fewer than two words (i.e. it is not actually a multiword).
      */
     internal fun tokenizeMultiwordToken(token: String): Array<String>? {
+        val res = splitWords(token)
+        if (res.size <= 1) return null
+        return res.toTypedArray()
+    }
+
+    /** Like [tokenizeMultiwordToken], but never null. */
+    internal fun splitWords(token: String): List<String> {
         val res = mutableListOf<String>()
         val m = pattern_letters.matcher(token)
         while (m.find()) {
             res.add(m.group())
         }
-
-        if (res.size <= 1) return null
-        return res.toTypedArray()
+        return res
     }
 }

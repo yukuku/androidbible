@@ -44,6 +44,9 @@ enum class Prefkey {
     /** Search history (JSON: [yuku.alkitab.base.ac.SearchActivity.SearchHistory])  */
     searchHistory,
 
+    /** Search option checkboxes (boolean)  */
+    search_exact_phrase, search_whole_words, search_match_capitals,
+
     /** Version config updater: the modify time we have currently. Unix time.  */
     version_config_current_modify_time,
 
