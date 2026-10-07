@@ -94,6 +94,7 @@ class LeftDrawerCurrentReadingTest {
     fun `a devotional passage appears in the drawer without a completion checkbox`() {
         CurrentReading.setRanges(intArrayOf(0x350606, 0x35060a))
         val drawer = drawer()
+        assertEquals(View.VISIBLE, drawer.findViewById<View>(R.id.dividerCurrentReading).visibility)
         assertEquals(View.VISIBLE, drawer.panelCurrentReadingHeader.visibility)
         assertEquals("1 Timotius 6:6–10", reference(drawer).text.toString())
         assertEquals(View.GONE, checkbox(drawer).visibility)
@@ -159,6 +160,7 @@ class LeftDrawerCurrentReadingTest {
         drawer.listener = listener
         drawer.bCurrentReadingClose.performClick()
         drawer.displayCurrentReading()
+        assertEquals(View.GONE, drawer.findViewById<View>(R.id.dividerCurrentReading).visibility)
         assertEquals(View.GONE, drawer.panelCurrentReadingHeader.visibility)
         assertEquals(View.GONE, drawer.panelCurrentReadingRows.visibility)
         assertEquals(0, drawer.panelCurrentReadingRows.childCount)
@@ -275,6 +277,41 @@ class LeftDrawerCurrentReadingTest {
         val output = File("build/test-artifacts/reading-guide-previews/drawer.png")
         output.parentFile?.mkdirs()
         output.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    @Test
+    fun `drawer scrolls behind system bars while its end items rest inside safe insets`() {
+        val drawer = drawer()
+        drawer.setPadding(13, 24, 17, 32)
+        drawer.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(420, View.MeasureSpec.EXACTLY))
+        drawer.layout(0, 0, 320, 420)
+        fun topInDrawer(view: View): Int {
+            var top = view.top
+            var parent = view.parent as View
+            while (parent !== drawer) {
+                top += parent.top - parent.scrollY
+                parent = parent.parent as View
+            }
+            return top - drawer.scrollY
+        }
+        fun pixel(y: Int): Int {
+            val bitmap = Bitmap.createBitmap(drawer.width, drawer.height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            canvas.translate(-drawer.scrollX.toFloat(), -drawer.scrollY.toFloat())
+            drawer.draw(canvas)
+            return bitmap.getPixel(180, y)
+        }
+        val bible = drawer.findViewById<View>(R.id.bBible)
+        val help = drawer.findViewById<View>(R.id.bHelp)
+        assertEquals(24, topInDrawer(bible))
+        drawer.scrollTo(0, 40)
+        assertEquals(Color.rgb(55, 71, 79), pixel(12))
+        drawer.scrollTo(0, 10_000)
+        assertEquals(drawer.height - 32, topInDrawer(help) + help.height)
+        drawer.scrollBy(0, -16)
+        assertEquals(Color.rgb(55, 71, 79), pixel(drawer.height - 24))
+        assertEquals(13, drawer.getChildAt(0).left)
+        assertEquals(drawer.width - 17, drawer.getChildAt(0).right)
     }
 
 }

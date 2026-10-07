@@ -14,8 +14,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:animateLayoutChanges="true"
-		android:orientation="vertical"
-		android:showDividers="middle">
+		android:orientation="vertical">
 
 		<include
 			layout="@layout/left_drawer_header"
@@ -35,6 +34,12 @@
 			android:textAllCaps="false"
 			android:textColor="#fff"
 			android:textSize="16sp" />
+
+		<View
+			android:id="@+id/dividerCurrentReading"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:background="#33ffffff" />
 
 		<FrameLayout
 			android:id="@+id/panelCurrentReadingHeader"
@@ -68,6 +73,11 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="vertical" />
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:background="#33ffffff" />
 
 		<FrameLayout
 			android:layout_width="match_parent"
@@ -146,6 +156,11 @@
 				android:src="@drawable/ic_attr_progress_mark_5" />
 
 		</LinearLayout>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:background="#33ffffff" />
 
 		<Button
 			android:id="@+id/bDisplay"

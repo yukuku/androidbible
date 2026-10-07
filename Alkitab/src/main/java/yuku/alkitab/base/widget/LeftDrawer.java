@@ -63,6 +63,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 	public LeftDrawer(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
+		setClipToPadding(false);
 		activity = isInEditMode() ? null : (Activity) context;
 	}
 
@@ -388,6 +389,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			final int[] aris = CurrentReading.getRanges();
 			final int rowCount = aris == null ? 0 : aris.length / 2;
+			findViewById(R.id.dividerCurrentReading).setVisibility(rowCount == 0 ? GONE : VISIBLE);
 			panelCurrentReadingHeader.setVisibility(rowCount == 0 ? GONE : VISIBLE);
 			panelCurrentReadingRows.setVisibility(rowCount == 0 ? GONE : VISIBLE);
 			while (panelCurrentReadingRows.getChildCount() > rowCount) {

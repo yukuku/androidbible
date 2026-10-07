@@ -843,6 +843,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     override fun onVisibleVersionsChanged() {
+        updateCurrentReading()
         resolveAudioSetsAsync()
         audioBinder.onActiveVersionChanged()
         refreshAudioControls()
@@ -1169,8 +1170,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         val ranges = aris?.let { ReadingPassage.resolve(it, activeSplit0.version::getBook) }.orEmpty()
         val guide = ReadingGuide(mode, ranges)
         uiSplit0 = uiSplit0.copy(readingGuide = guide)
-        val splitRanges = activeSplit1?.version?.let { version -> aris?.let { ReadingPassage.resolve(it, version::getBook) } }.orEmpty()
-        uiSplit1 = uiSplit1.copy(readingGuide = ReadingGuide(mode, splitRanges))
+        uiSplit1 = uiSplit1.copy(readingGuide = guide)
 
         ViewCompat.requestApplyInsets(drawerLayout)
     }
