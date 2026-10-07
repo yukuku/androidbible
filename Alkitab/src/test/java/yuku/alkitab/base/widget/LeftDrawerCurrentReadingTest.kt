@@ -247,7 +247,7 @@ class LeftDrawerCurrentReadingTest {
         verify(exactly = 0) { db.deleteReadingPlanProgress(any(), any()) }
     }
     @Test
-    fun `drawer header stays compact and visible controls share an optical center`() {
+    fun `drawer headers stay compact and controls use consistent end spacing`() {
         CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12)
         val drawer = drawer()
         drawer.setSafeAreaInsets(0, 24, 0, 32)
@@ -282,7 +282,7 @@ class LeftDrawerCurrentReadingTest {
             for (checked in listOf(false, true)) {
                 toggle.isChecked = checked
                 toggle.jumpDrawablesToCurrentState()
-                assertEquals(opticalCenter(check), opticalCenter(toggle, trackOnly = true), 1f)
+                assertEquals(opticalCenter(check) - 8f, opticalCenter(toggle, trackOnly = true), 1f)
             }
             toggle.isChecked = id == R.id.cSplitVersion
             toggle.jumpDrawablesToCurrentState()
