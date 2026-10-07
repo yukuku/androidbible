@@ -250,18 +250,24 @@ class LeftDrawerCurrentReadingTest {
     fun `drawer header stays compact and visible controls share an optical center`() {
         CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12)
         val drawer = drawer()
+        drawer.setSafeAreaInsets(0, 24, 0, 32)
         drawer.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(900, View.MeasureSpec.EXACTLY))
         drawer.layout(0, 0, 320, 900)
         assertEquals(32, drawer.panelCurrentReadingHeader.height)
         val close = drawer.bCurrentReadingClose
         val check = checkbox(drawer, 0)
-        fun opticalCenter(view: View): Float {
+        fun opticalCenter(view: View, trackOnly: Boolean = false): Float {
             val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
             view.draw(Canvas(bitmap))
+            if (trackOnly) {
+                bitmap.eraseColor(Color.TRANSPARENT)
+                (view as androidx.appcompat.widget.SwitchCompat).trackDrawable.draw(Canvas(bitmap))
+            }
+            val minimumAlpha = if (trackOnly) 32 else 128
             var left = view.width
             var right = -1
-            for (y in 0 until bitmap.height) for (x in 0 until bitmap.width) {
-                if (Color.alpha(bitmap.getPixel(x, y)) > 128) {
+            for (y in 0 until bitmap.height) for (x in (if (trackOnly) (bitmap.width - 64).coerceAtLeast(0) else 0) until bitmap.width) {
+                if (Color.alpha(bitmap.getPixel(x, y)) > minimumAlpha) {
                     left = minOf(left, x)
                     right = maxOf(right, x)
                 }
@@ -270,6 +276,22 @@ class LeftDrawerCurrentReadingTest {
             return view.left + (left + right + 1) / 2f
         }
         assertEquals(opticalCenter(close), opticalCenter(check), 1f)
+        for (id in intArrayOf(R.id.cFullScreen, R.id.cNightMode, R.id.cSplitVersion)) {
+            val toggle = drawer.findViewById<androidx.appcompat.widget.SwitchCompat>(id)
+            toggle.setOnCheckedChangeListener(null)
+            for (checked in listOf(false, true)) {
+                toggle.isChecked = checked
+                toggle.jumpDrawablesToCurrentState()
+                assertEquals(opticalCenter(check), opticalCenter(toggle, trackOnly = true), 1f)
+            }
+            toggle.isChecked = id == R.id.cSplitVersion
+            toggle.jumpDrawablesToCurrentState()
+        }
+        assertEquals(drawer.findViewById<View>(R.id.dividerCurrentReading).bottom + 8, drawer.panelCurrentReadingHeader.top)
+        val content = drawer.getChildAt(0) as android.view.ViewGroup
+        val pinsHeader = drawer.findViewById<View>(R.id.bProgressMarkList).parent as View
+        val dividerBeforePins = content.getChildAt(content.indexOfChild(pinsHeader) - 1)
+        assertEquals(dividerBeforePins.bottom + 8, pinsHeader.top)
         val headerTitle = (drawer.panelCurrentReadingHeader as android.view.ViewGroup).getChildAt(0) as TextView
         assertEquals(14f, headerTitle.textSize, 0f)
         val bitmap = Bitmap.createBitmap(drawer.width, drawer.height, Bitmap.Config.ARGB_8888)
@@ -282,7 +304,7 @@ class LeftDrawerCurrentReadingTest {
     @Test
     fun `drawer scrolls behind system bars while its end items rest inside safe insets`() {
         val drawer = drawer()
-        drawer.setPadding(13, 24, 17, 32)
+        drawer.setSafeAreaInsets(13, 24, 17, 32)
         drawer.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(420, View.MeasureSpec.EXACTLY))
         drawer.layout(0, 0, 320, 420)
         fun topInDrawer(view: View): Int {
@@ -304,6 +326,7 @@ class LeftDrawerCurrentReadingTest {
         val bible = drawer.findViewById<View>(R.id.bBible)
         val help = drawer.findViewById<View>(R.id.bHelp)
         assertEquals(24, topInDrawer(bible))
+        assertEquals(Color.rgb(55, 71, 79), pixel(12))
         drawer.scrollTo(0, 40)
         assertEquals(Color.rgb(55, 71, 79), pixel(12))
         drawer.scrollTo(0, 10_000)

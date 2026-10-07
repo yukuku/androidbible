@@ -29,6 +29,7 @@ import yuku.afw.storage.Preferences
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.widget.ConfigurationWrapper
+import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.Localized
 import yuku.alkitab.debug.R
 
@@ -178,14 +179,10 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Pads a full-height panel that extends behind the system bars (e.g. a
-     * navigation drawer) into the safe area on all sides.
-     */
-    protected fun applySafeAreaPadding(view: View) {
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+    protected fun applySafeAreaPadding(view: LeftDrawer) {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
             val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
-            v.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+            view.setSafeAreaInsets(insets.left, insets.top, insets.right, insets.bottom)
             windowInsets
         }
     }

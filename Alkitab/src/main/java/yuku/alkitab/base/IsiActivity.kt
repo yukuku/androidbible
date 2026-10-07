@@ -1591,9 +1591,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             windowInsets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(leftDrawer) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(leftDrawer) { _, windowInsets ->
             val insets = windowInsets.getInsets(safeAreaTypes)
-            v.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+            leftDrawer.setSafeAreaInsets(insets.left, insets.top, insets.right, insets.bottom)
             windowInsets
         }
     }

@@ -125,6 +125,12 @@ public abstract class LeftDrawer extends NestedScrollView {
 		});
 	}
 
+	public void setSafeAreaInsets(final int left, final int top, final int right, final int bottom) {
+		setPadding(left, 0, right, bottom);
+		final View header = (View) bBible.getParent();
+		header.setPadding(0, top, 0, 0);
+	}
+
 	void setDrawerItemSelected(@NonNull TextView drawerItem) {
 		final int selectedTextColor = ResourcesCompat.getColor(getResources(), R.color.accent, getContext().getTheme());
 		drawerItem.setTextColor(selectedTextColor);
