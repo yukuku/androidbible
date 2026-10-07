@@ -158,7 +158,8 @@ jobs:
           set -euo pipefail
           stage=release-staging
           mkdir -p "$stage"
-          short_hash=$(git log -1 --format=%h)
+          # Match gradle's `gitCommitHash`, which abbreviates to a fixed 7 characters.
+          short_hash=$(git rev-parse --short=7 HEAD)
           for flavor in yuku_alkitab yuku_quick_bible sabda_alkitab; do
             case "$flavor" in
               yuku_alkitab) label=Alkitab ;;

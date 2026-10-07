@@ -105,15 +105,25 @@ fun firebaseApiKeyProblem(jsonFile: File?, applicationId: String): String? {
     } else null
 }
 
-// Last git commit hash, baked into BuildConfig.LAST_COMMIT_HASH and the APK filename.
+// Short git commit hash, baked into BuildConfig.LAST_COMMIT_HASH and the APK filename.
+// BUILD_COMMIT_HASH wins when set: on a pull_request event CI checks out GitHub's
+// ephemeral merge commit, whose hash names nothing on the PR branch, so the workflow
+// passes the PR head commit instead. Abbreviated to a fixed 7 characters so the name
+// matches what the PR preview page and comment print (git's own abbreviation length
+// grows with the repo).
 // Falls back to "0000000" outside of a git checkout (e.g. some CI source archives).
-val gitCommitHash: String = try {
-    val hash = providers.exec {
-        commandLine("git", "log", "-1", "--format=format:%h")
-    }.standardOutput.asText.get().trim()
-    hash.ifEmpty { "0000000" }
-} catch (_: Exception) {
-    "0000000"
+val gitCommitHash: String = run {
+    val override = providers.environmentVariable("BUILD_COMMIT_HASH").orNull?.trim().orEmpty()
+    val hash = override.ifEmpty {
+        try {
+            providers.exec {
+                commandLine("git", "log", "-1", "--format=format:%h")
+            }.standardOutput.asText.get().trim()
+        } catch (_: Exception) {
+            ""
+        }
+    }
+    hash.take(7).ifEmpty { "0000000" }
 }
 
 // Counter for dev version names: commits since versionBase last changed, so it

@@ -131,6 +131,8 @@ Each same-repo PR gets its signed release APKs published to the `alkitab-pr` Clo
 
 Configuration is two repository secrets — `CLOUDFLARE_API_TOKEN` (created from the "Edit Cloudflare Workers" token template) and `CLOUDFLARE_ACCOUNT_ID`. Without them the job skips cleanly, so CI stays green. The worker needs no manual creation: the first run bootstraps it via `wrangler deploy`, then retries the version upload.
 
+`actions/checkout` resolves a `pull_request` event to GitHub's ephemeral merge commit (the PR head merged into the base), which is what CI should build but is a commit that exists on no branch. The `signed-release` job therefore passes the PR head SHA to Gradle as `BUILD_COMMIT_HASH`, so the hash in the APK filename, in `BuildConfig.LAST_COMMIT_HASH`, and in the preview page and comment is the PR head commit a reader can actually look up.
+
 Two caveats: the APKs are production-signed and share application IDs with the Play Store builds, so installing one replaces the installed app; and preview URLs are public with no documented expiry, so a build stays reachable until its version is deleted (Cloudflare Access can gate them if that is not acceptable).
 
 ## Release Build
@@ -163,11 +165,12 @@ Environment variables:
 - `BUILD_DIST` — distribution channel identifier embedded in the APK filename. Defaults to `dev` when unset.
 - `VERSION_STAGE` — `dev` (default), `beta`, or `release`; picks how `versionName` is assembled. `-PversionStage=` does the same and wins if both are given. See "Versioning" above.
 - `VERSION_CODE` — pins `versionCode` instead of deriving it from the clock, so a rebuild of the same commit produces the same number. The release workflow sets it once per run.
+- `BUILD_COMMIT_HASH` — the commit stamped into `BuildConfig.LAST_COMMIT_HASH` and the APK filename, overriding the checked-out `HEAD`. Only CI sets it, for `pull_request` builds (see "PR APK previews"). Any length is accepted; the build abbreviates to 7 characters.
 
 What the Gradle build does:
 1. `CopyProprietaryAssetsTask` (per production flavor) copies the Bible assets in `$ALKITAB_PROPRIETARY_DIR/overlay/<applicationId>/text_raw/` into `Alkitab/build/generated/proprietaryAssets/<flavor>/internal/`. Only the files `InternalReader` opens are taken (`*.txt` book text plus the index, pericope, xrefs and footnotes Bintex files), so anything else the overlay happens to carry stays out of the APK. Wired into AGP via `androidComponents { onVariants { ... addGeneratedSourceDirectory(...) } }` so every consumer (mergeAssets, lint vital, etc.) automatically depends on it. Fails fast if the env var is unset or the overlay is missing.
 2. `copyProprietaryGoogleServices<Flavor>` (per production flavor) copies `$ALKITAB_PROPRIETARY_DIR/google-services.json` into `Alkitab/src/<flavor>/google-services.json`, where the GMS plugin's source-set lookup picks it up. Those destinations are matched by the existing `google-services.json` line in `.gitignore`, so they're never committed — they behave like build artifacts that just happen to live under `src/`. The plain flavor falls back to the committed placeholder at `Alkitab/google-services.json`.
-3. The git commit hash is read at config time and exposed as `BuildConfig.LAST_COMMIT_HASH` (consumed by `AboutActivity` and `InstallationUtil`).
+3. The git commit hash (`$BUILD_COMMIT_HASH`, else `HEAD`, abbreviated to 7 characters) is read at config time and exposed as `BuildConfig.LAST_COMMIT_HASH` (consumed by `AboutActivity` and `InstallationUtil`).
 4. The release APK is named `Alkitab-{versionCode}-{versionName}-{commitHash}-{applicationId}-{BUILD_DIST}.apk`.
 5. For non-plain release builds, `validate<Variant>FirebaseConfig` reads the post-copy `Alkitab/src/<flavor>/google-services.json` and aborts the build if the API key is missing or a placeholder.
 6. `debugSymbolLevel = "SYMBOL_TABLE"` makes AGP emit `Alkitab/build/outputs/native-debug-symbols/<variant>/native-debug-symbols.zip` and embed the same symbols in the AAB, so the Play Console can symbolicate crashes in the Snappy JNI code.
