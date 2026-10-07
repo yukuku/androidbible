@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reading Plan 2.0: familiar, with clearer next steps</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#edf0f2;color:#24343d;font:16px/1.5 system-ui,sans-serif}
+header,main,footer{max-width:1260px;margin:auto;padding:28px}
+h1{font-size:30px;margin:0 0 12px}
+h2{font-size:21px;margin:4px 0}
+p{margin:10px 0 16px}
+a{color:#075b83}
+nav{display:flex;gap:20px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,350px),1fr));gap:32px;align-items:start}
+.example>p{min-height:96px}
+.phone{max-width:380px;margin:auto;background:#303030;color:#fafafa;border-radius:16px;overflow:hidden;box-shadow:0 4px 18px #0002}
+.status{padding:8px 16px;background:#455a64;font-size:12px;display:flex;justify-content:space-between}
+.toolbar{background:#455a64;display:flex;align-items:center;gap:12px;padding:12px 16px;min-height:56px}
+.toolbar strong{flex:1;font-size:18px}
+.icon{font-size:24px;min-width:24px;text-align:center}
+.content{padding:16px}
+.plan{display:flex;gap:12px;align-items:center;font-size:20px;margin:0 0 16px;font-weight:600}
+.plan span:first-child{flex:1}
+.date{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:center;padding:12px 0;border-bottom:1px solid #ffffff26}
+.date strong{display:block}
+.muted{color:#c2c7cb;font-size:14px}
+.pillbar{display:flex;gap:16px;flex-wrap:wrap;padding:14px 0}
+.action{color:#4fc3f7;font-weight:600}
+.primary{display:block;background:#4fc3f7;color:#132d38;padding:13px 16px;border-radius:5px;text-align:center;font-weight:650;margin:16px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;border-bottom:1px solid #ffffff14}
+.row span:first-child{flex:1}
+.check{width:22px;height:22px;border:2px solid #b5bec2;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.checked{background:#4fc3f7;border-color:#4fc3f7;color:#173440;font-weight:bold}
+.summary{margin-top:24px;padding-top:16px;border-top:1px solid #ffffff26}
+.track{height:5px;background:#505050;margin:12px 0}
+.fill{height:100%;background:#4fc3f7}
+.notice{padding:14px;background:#394348;border-left:3px solid #4fc3f7;margin:16px 0}
+.success{color:#80cbc4;font-weight:600}
+.verse{background:#f4f1e9;color:#252525;padding:22px;min-height:280px;font:20px/1.7 Georgia,serif}
+.verse small{font:14px system-ui;color:#555}
+.dayrow{padding:14px 0;border-bottom:1px solid #ffffff26;display:flex;justify-content:space-between;gap:10px}
+.dayrow strong{display:block}
+.sheet{background:#3b3b3b;border-radius:12px;padding:18px;margin-top:18px}
+.sheet h3{margin-top:0}
+.meta{font-size:13px;font-weight:600;color:#46616c;letter-spacing:.04em}
+.sample{border:1px solid #ffffff26;padding:12px;margin:16px 0}
+.catalogue{background:#f4f4f4;color:#222;padding:16px}
+.catalogue .muted{color:#555}
+.catalogue h3{margin:6px 0}
+.catalogue .sample{border-color:#ccc}
+footer{font-size:14px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:450px){header,main,footer{padding:18px}
+.example>p{min-height:0}
+}
+@media print{body{background:white}
+.grid{display:block}
+.example{break-inside:avoid;margin:24px 0}
+.phone{box-shadow:none}
+nav{display:none}
+}
+
+#reader .phone{position:relative}
+#reader .toolbar{gap:4px;padding:8px}
+#reader .toolbar strong{min-width:0;font-size:16px;overflow-wrap:anywhere}
+#reader .verse{min-height:490px}
+.plan-control{flex:0 0 48px}
+.plan-control summary{width:48px;height:48px;display:grid;place-items:center;cursor:pointer;list-style:none;border-radius:6px;color:#4fc3f7}
+.plan-control summary::-webkit-details-marker{display:none}
+.plan-control summary:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+.plan-control summary svg{width:22px;height:22px}
+.plan-control[open] summary{background:#263238}
+.plan-popover{position:absolute;top:96px;right:8px;left:8px;background:#263238;color:#fafafa;padding:18px;border-radius:8px;z-index:2;box-shadow:0 6px 18px #0005}
+.plan-popover strong{font-size:18px!important}
+.plan-popover .muted{margin-top:8px}
+
+</style>
+</head>
+<body>
+<header>
+<h1>Reading Plan 2.0: familiar, with clearer next steps</h1>
+<p>Self-contained layout proposals. Tap the blue plan icon in the reader toolbar to reveal or hide the reading controls. Other phone controls are static illustrations; no app data changes.</p>
+<nav><a href="#reader">Try the compact reader control</a><a href="#daily">Daily reading</a></nav>
+</header>
+<main class="grid">
+<section class="example" id="daily">
+<div class="meta">RP2-001 · RP2-003 · RP2-005</div>
+<h2>Daily reading</h2>
+<p>Keep the plan switcher, day arrows and right-side checkboxes. Make the next reading explicit.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">☰</span>
+<strong>Reading Plan</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="content">
+<div class="plan">
+<span>Bible Plan Gospels</span>
+<span aria-hidden="true">⌄</span>
+</div>
+<div class="date">
+<span class="icon" aria-hidden="true">‹</span>
+<div>
+<strong>Day 1 of 30</strong>
+<span class="muted">Sep 27, 2026 ⌄</span>
+</div>
+<span class="icon" aria-hidden="true">›</span>
+</div>
+<div class="pillbar">
+<span class="action">Today</span>
+<span class="action">Show reading list</span>
+</div>
+<strong>1 of 3 readings complete</strong>
+<div class="primary">Continue · Matthew 2</div>
+<div class="row">
+<span>Matthew 1</span>
+<span class="sr">complete</span>
+<span class="check checked" aria-hidden="true">✓</span>
+</div>
+<div class="row">
+<span>Matthew 2</span>
+<span class="sr">not complete</span>
+<span class="check " aria-hidden="true">
+</span>
+</div>
+<div class="row">
+<span>Matthew 3</span>
+<span class="sr">not complete</span>
+<span class="check " aria-hidden="true">
+</span>
+</div>
+<div class="summary">
+<span class="muted">Plan progress</span>
+<div class="track" aria-hidden="true">
+<div class="fill" style="width:1.12%">
+</div>
+</div>
+<span class="muted">1 of 89 readings complete</span>
+</div>
+</div>
+</div>
+</section>
+<section class="example" id="reader">
+<div class="meta">RP2-002</div>
+<h2>Reading with plan context</h2>
+<p>A small plan icon in the existing toolbar keeps the verse area available. Tap it for passage context and explicit completion.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">☰</span>
+<span aria-hidden="true">‹</span>
+<strong>Matthew 2</strong>
+<span aria-hidden="true">›</span>
+<span>KJV</span>
+<span aria-hidden="true">♫</span>
+<span aria-hidden="true">⌕</span>
+<details class="plan-control"><summary aria-label="Reading plan: Day 1, reading 2 of 3. Show or hide controls" title="Reading plan: Day 1, reading 2 of 3. Show or hide controls"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 12l3 3 5-6"/></svg></summary><div class="plan-popover">
+<strong>Bible Plan Gospels</strong>
+<div class="muted">Day 1 · Reading 2 of 3</div>
+<p>Assigned passage: Matthew 2</p>
+<div class="primary">Mark complete & next</div>
+<div class="action">Back to plan</div><p class="muted">Tap the plan icon again to close. Opening or closing this panel does not mark a reading complete.</p></div></details>
+</div>
+<div class="verse">
+<small>Matthew 2 · illustrative text area</small>
+<p>[Bible text in your selected translation.]</p>
+</div>
+</div>
+</section>
+<section class="example" id="all-days">
+<div class="meta">RP2-003 · RP2-007</div>
+<h2>All days</h2>
+<p>Keep the reading-list action on the daily screen, with a clearer English label. Opening a day returns to the same passage rows.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">‹</span>
+<strong>Reading list</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="content">
+<div class="plan">
+<span>Bible Plan Gospels</span>
+<span aria-hidden="true">⌄</span>
+</div>
+<div class="pillbar">
+<span class="action">Today</span>
+<span class="action">First unread</span>
+<span class="action">Go to day…</span>
+</div>
+<div class="dayrow">
+<div>
+<strong>Day 1</strong>
+<span class="muted">Sep 27, 2026 · 1 of 3 complete</span>
+</div>
+<span aria-hidden="true">›</span>
+</div>
+<div class="dayrow">
+<div>
+<strong>Day 2</strong>
+<span class="muted">Sep 28, 2026 · Not read</span>
+</div>
+<span aria-hidden="true">›</span>
+</div>
+<div class="dayrow">
+<div>
+<strong>Day 3</strong>
+<span class="muted">Sep 29, 2026 · Not read</span>
+</div>
+<span aria-hidden="true">›</span>
+</div>
+</div>
+</div>
+</section>
+<section class="example" id="reschedule">
+<div class="meta">RP2-001 · RP2-008</div>
+<h2>Returning after a break</h2>
+<p>Explain earlier unfinished work without a red deficit percentage. Adjusting dates stays separate from restarting.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">☰</span>
+<strong>Reading Plan</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="content">
+<div class="plan">
+<span>Bible Plan Gospels</span>
+<span aria-hidden="true">⌄</span>
+</div>
+<div class="notice">
+<strong>5 readings from earlier days remain.</strong>
+<p>Your next unread day is Day 1 (Sep 27). Today’s schedule is Day 3 (Sep 29).</p>
+<span class="action">Continue · Matthew 2</span>
+</div>
+<div class="sheet">
+<h3>Adjust schedule</h3>
+<strong>Move the next unread day to today?</strong>
+<p>Your completed readings stay checked. No readings will be marked complete.</p>
+<p>Day 1: Sep 27 → Sep 29, 2026</p>
+<p>Planned finish: Oct 26 → Oct 28, 2026</p>
+<div class="primary">Move schedule</div>
+<span class="action">Cancel</span>
+</div>
+</div>
+</div>
+</section>
+<section class="example" id="complete">
+<div class="meta">RP2-006</div>
+<h2>A finished day</h2>
+<p>Keep the completed checklist on screen. Offer the next day without automatically navigating away.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">☰</span>
+<strong>Reading Plan</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="content">
+<div class="plan">
+<span>Bible Plan Gospels</span>
+<span aria-hidden="true">⌄</span>
+</div>
+<div class="date">
+<span class="icon" aria-hidden="true">‹</span>
+<div>
+<strong>Day 1 of 30</strong>
+<span class="muted">Sep 27, 2026 ⌄</span>
+</div>
+<span class="icon" aria-hidden="true">›</span>
+</div>
+<div class="pillbar">
+<span class="action">Today</span>
+<span class="action">Show reading list</span>
+</div>
+<p class="success">✓ Today’s readings are complete</p>
+<strong>3 of 3 readings complete</strong>
+<div class="row">
+<span>Matthew 1</span>
+<span class="sr">complete</span>
+<span class="check checked" aria-hidden="true">✓</span>
+</div>
+<div class="row">
+<span>Matthew 2</span>
+<span class="sr">complete</span>
+<span class="check checked" aria-hidden="true">✓</span>
+</div>
+<div class="row">
+<span>Matthew 3</span>
+<span class="sr">complete</span>
+<span class="check checked" aria-hidden="true">✓</span>
+</div>
+<div class="primary">View next day</div>
+<div class="summary">
+<span class="muted">Plan progress</span>
+<div class="track" aria-hidden="true">
+<div class="fill" style="width:3.37%">
+</div>
+</div>
+<span class="muted">3 of 89 readings complete</span>
+</div>
+</div>
+</div>
+</section>
+<section class="example" id="preview">
+<div class="meta">RP2-009</div>
+<h2>Plan preview</h2>
+<p>Retain the catalogue and familiar download route. Put a deliberate start step before scheduling.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">‹</span>
+<strong>Download a reading plan</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="catalogue">
+<h3>Bible Plan Gospels</h3>
+<p>Read the four Gospels in 30 days. Usually three chapters per day.</p>
+<div class="sample">
+<strong>Sample: Day 1</strong>
+<p>Matthew 1 · Matthew 2 · Matthew 3</p>
+</div>
+<p>Starting date<br>
+<strong>Sep 27, 2026 ⌄</strong>
+</p>
+<div class="primary">Start plan</div>
+<p class="muted">Plan ID: bibleplan_gospels</p>
+</div>
+</div>
+</section>
+</main>
+<footer>Design direction: retain the dark plan surface and blue accents; keep navigation and reading actions recognizable. These are illustrative layouts, not approved final specifications. The preview retains the existing catalogue’s light surface. Dates, counts and translations are sample content.</footer>
+</body>
+</html>
