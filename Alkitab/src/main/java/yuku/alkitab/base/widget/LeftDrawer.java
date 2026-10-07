@@ -63,6 +63,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 	public LeftDrawer(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
+		setClipToPadding(false);
 		activity = isInEditMode() ? null : (Activity) context;
 	}
 
@@ -122,6 +123,12 @@ public abstract class LeftDrawer extends NestedScrollView {
 			bHelp_click();
 			closeDrawer();
 		});
+	}
+
+	public void setSafeAreaInsets(final int left, final int top, final int right, final int bottom) {
+		setPadding(left, 0, right, bottom);
+		final View header = (View) bBible.getParent();
+		header.setPadding(0, top, 0, 0);
 	}
 
 	void setDrawerItemSelected(@NonNull TextView drawerItem) {
@@ -388,6 +395,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			final int[] aris = CurrentReading.getRanges();
 			final int rowCount = aris == null ? 0 : aris.length / 2;
+			findViewById(R.id.dividerCurrentReading).setVisibility(rowCount == 0 ? GONE : VISIBLE);
 			panelCurrentReadingHeader.setVisibility(rowCount == 0 ? GONE : VISIBLE);
 			panelCurrentReadingRows.setVisibility(rowCount == 0 ? GONE : VISIBLE);
 			while (panelCurrentReadingRows.getChildCount() > rowCount) {

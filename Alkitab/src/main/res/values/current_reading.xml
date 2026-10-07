@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="pref_currentReadingDisplay_key" translatable="false">currentReadingDisplay</string>
-    <string name="pref_currentReadingDisplay_default" translatable="false">off</string>
+    <string name="pref_currentReadingDisplay_default" translatable="false">line</string>
     <string name="pref_currentReadingDisplay_title">Current reading display</string>
     <string name="current_reading_display_off">Off</string>
     <string name="current_reading_display_line">Thin line beside the text</string>

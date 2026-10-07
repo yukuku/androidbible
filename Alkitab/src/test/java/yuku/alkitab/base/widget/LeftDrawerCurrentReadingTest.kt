@@ -94,6 +94,7 @@ class LeftDrawerCurrentReadingTest {
     fun `a devotional passage appears in the drawer without a completion checkbox`() {
         CurrentReading.setRanges(intArrayOf(0x350606, 0x35060a))
         val drawer = drawer()
+        assertEquals(View.VISIBLE, drawer.findViewById<View>(R.id.dividerCurrentReading).visibility)
         assertEquals(View.VISIBLE, drawer.panelCurrentReadingHeader.visibility)
         assertEquals("1 Timotius 6:6–10", reference(drawer).text.toString())
         assertEquals(View.GONE, checkbox(drawer).visibility)
@@ -159,6 +160,7 @@ class LeftDrawerCurrentReadingTest {
         drawer.listener = listener
         drawer.bCurrentReadingClose.performClick()
         drawer.displayCurrentReading()
+        assertEquals(View.GONE, drawer.findViewById<View>(R.id.dividerCurrentReading).visibility)
         assertEquals(View.GONE, drawer.panelCurrentReadingHeader.visibility)
         assertEquals(View.GONE, drawer.panelCurrentReadingRows.visibility)
         assertEquals(0, drawer.panelCurrentReadingRows.childCount)
@@ -245,21 +247,27 @@ class LeftDrawerCurrentReadingTest {
         verify(exactly = 0) { db.deleteReadingPlanProgress(any(), any()) }
     }
     @Test
-    fun `drawer header stays compact and visible controls share an optical center`() {
+    fun `drawer headers stay compact and controls use consistent end spacing`() {
         CurrentReading.setReadingPlan(intArrayOf(0x000100, 0x000300, 0x120101, 0x120106), "original", 12)
         val drawer = drawer()
+        drawer.setSafeAreaInsets(0, 24, 0, 32)
         drawer.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(900, View.MeasureSpec.EXACTLY))
         drawer.layout(0, 0, 320, 900)
         assertEquals(32, drawer.panelCurrentReadingHeader.height)
         val close = drawer.bCurrentReadingClose
         val check = checkbox(drawer, 0)
-        fun opticalCenter(view: View): Float {
+        fun opticalCenter(view: View, trackOnly: Boolean = false): Float {
             val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
             view.draw(Canvas(bitmap))
+            if (trackOnly) {
+                bitmap.eraseColor(Color.TRANSPARENT)
+                (view as androidx.appcompat.widget.SwitchCompat).trackDrawable.draw(Canvas(bitmap))
+            }
+            val minimumAlpha = if (trackOnly) 32 else 128
             var left = view.width
             var right = -1
-            for (y in 0 until bitmap.height) for (x in 0 until bitmap.width) {
-                if (Color.alpha(bitmap.getPixel(x, y)) > 128) {
+            for (y in 0 until bitmap.height) for (x in (if (trackOnly) (bitmap.width - 64).coerceAtLeast(0) else 0) until bitmap.width) {
+                if (Color.alpha(bitmap.getPixel(x, y)) > minimumAlpha) {
                     left = minOf(left, x)
                     right = maxOf(right, x)
                 }
@@ -268,6 +276,22 @@ class LeftDrawerCurrentReadingTest {
             return view.left + (left + right + 1) / 2f
         }
         assertEquals(opticalCenter(close), opticalCenter(check), 1f)
+        for (id in intArrayOf(R.id.cFullScreen, R.id.cNightMode, R.id.cSplitVersion)) {
+            val toggle = drawer.findViewById<androidx.appcompat.widget.SwitchCompat>(id)
+            toggle.setOnCheckedChangeListener(null)
+            for (checked in listOf(false, true)) {
+                toggle.isChecked = checked
+                toggle.jumpDrawablesToCurrentState()
+                assertEquals(opticalCenter(check) - 8f, opticalCenter(toggle, trackOnly = true), 1f)
+            }
+            toggle.isChecked = id == R.id.cSplitVersion
+            toggle.jumpDrawablesToCurrentState()
+        }
+        assertEquals(drawer.findViewById<View>(R.id.dividerCurrentReading).bottom + 8, drawer.panelCurrentReadingHeader.top)
+        val content = drawer.getChildAt(0) as android.view.ViewGroup
+        val pinsHeader = drawer.findViewById<View>(R.id.bProgressMarkList).parent as View
+        val dividerBeforePins = content.getChildAt(content.indexOfChild(pinsHeader) - 1)
+        assertEquals(dividerBeforePins.bottom + 8, pinsHeader.top)
         val headerTitle = (drawer.panelCurrentReadingHeader as android.view.ViewGroup).getChildAt(0) as TextView
         assertEquals(14f, headerTitle.textSize, 0f)
         val bitmap = Bitmap.createBitmap(drawer.width, drawer.height, Bitmap.Config.ARGB_8888)
@@ -275,6 +299,42 @@ class LeftDrawerCurrentReadingTest {
         val output = File("build/test-artifacts/reading-guide-previews/drawer.png")
         output.parentFile?.mkdirs()
         output.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    @Test
+    fun `drawer scrolls behind system bars while its end items rest inside safe insets`() {
+        val drawer = drawer()
+        drawer.setSafeAreaInsets(13, 24, 17, 32)
+        drawer.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(420, View.MeasureSpec.EXACTLY))
+        drawer.layout(0, 0, 320, 420)
+        fun topInDrawer(view: View): Int {
+            var top = view.top
+            var parent = view.parent as View
+            while (parent !== drawer) {
+                top += parent.top - parent.scrollY
+                parent = parent.parent as View
+            }
+            return top - drawer.scrollY
+        }
+        fun pixel(y: Int): Int {
+            val bitmap = Bitmap.createBitmap(drawer.width, drawer.height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            canvas.translate(-drawer.scrollX.toFloat(), -drawer.scrollY.toFloat())
+            drawer.draw(canvas)
+            return bitmap.getPixel(180, y)
+        }
+        val bible = drawer.findViewById<View>(R.id.bBible)
+        val help = drawer.findViewById<View>(R.id.bHelp)
+        assertEquals(24, topInDrawer(bible))
+        assertEquals(Color.rgb(55, 71, 79), pixel(12))
+        drawer.scrollTo(0, 40)
+        assertEquals(Color.rgb(55, 71, 79), pixel(12))
+        drawer.scrollTo(0, 10_000)
+        assertEquals(drawer.height - 32, topInDrawer(help) + help.height)
+        drawer.scrollBy(0, -16)
+        assertEquals(Color.rgb(55, 71, 79), pixel(drawer.height - 24))
+        assertEquals(13, drawer.getChildAt(0).left)
+        assertEquals(drawer.width - 17, drawer.getChildAt(0).right)
     }
 
 }
