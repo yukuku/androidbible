@@ -140,6 +140,31 @@
 
 			</yuku.alkitab.base.widget.TwofingerLinearLayout>
 
+			<androidx.appcompat.widget.AppCompatButton
+				android:id="@+id/bPrereleaseFeedback"
+				android:layout_width="wrap_content"
+				android:layout_height="40dp"
+				android:layout_gravity="start|bottom"
+				android:layout_marginStart="16dp"
+				android:layout_marginBottom="8dp"
+				android:background="@drawable/back_forward_list_background"
+				android:elevation="8dp"
+				android:foreground="?selectableItemBackground"
+				android:gravity="center"
+				android:minWidth="0dp"
+				android:minHeight="0dp"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp"
+				android:paddingTop="0dp"
+				android:paddingBottom="0dp"
+				android:stateListAnimator="@null"
+				android:textAllCaps="false"
+				android:textColor="@android:color/white"
+				android:textSize="14sp"
+				android:visibility="gone"
+				tools:text="Dev 123 feedback"
+				tools:visibility="visible" />
+
 			<LinearLayout
 				android:id="@+id/panelBackForwardList"
 				android:layout_width="wrap_content"
