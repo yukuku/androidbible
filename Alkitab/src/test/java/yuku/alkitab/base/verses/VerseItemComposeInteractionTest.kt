@@ -2,6 +2,7 @@ package yuku.alkitab.base.verses
 
 import android.app.Activity
 import android.graphics.Typeface
+import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.view.MotionEvent
@@ -9,9 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.BroadcastFrameClock
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.createFontFamilyResolver
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.android.asCoroutineDispatcher
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -21,6 +27,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
+import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import yuku.afw.App as AfwApp
@@ -38,6 +45,11 @@ import yuku.alkitab.util.Ari
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class VerseItemComposeInteractionTest {
 
+    private val frameClock = BroadcastFrameClock()
+    private var frameTimeNanos = 0L
+    private val activities = mutableListOf<ActivityController<AppCompatActivity>>()
+    private lateinit var originalDimensions: S.CalculatedDimensions
+
     private val ROW_WIDTH_PX = 360
 
     private val LONG_BODY = "A bowl of steaming noodles arrived at the table, topped with a soft " +
@@ -47,6 +59,7 @@ class VerseItemComposeInteractionTest {
     @Before
     fun setUp() {
         AfwApp.initWithAppContext(ApplicationProvider.getApplicationContext())
+        originalDimensions = S.applied()
 
         S.overrideAppliedDimensions(
             S.CalculatedDimensions().apply {
@@ -62,6 +75,13 @@ class VerseItemComposeInteractionTest {
                 indentParagraphRest = 5
             }
         )
+    }
+
+    @After
+    fun tearDown() {
+        activities.asReversed().forEach { it.pause().stop().destroy() }
+        idleLoopers()
+        S.overrideAppliedDimensions(originalDimensions)
     }
 
     private class TapRecorder {
@@ -107,9 +127,9 @@ class VerseItemComposeInteractionTest {
     }
 
     private fun composeRow(text: String, recorder: TapRecorder): VerseItemComposeView {
-        // `setup()` runs through onResume so the decor view is attached, which
-        // is what lets AbstractComposeView find a WindowRecomposer.
-        val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
+        val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        activities += controller
+        val activity = controller.get()
         activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
 
         val view = VerseItemComposeView(activity)
@@ -119,13 +139,19 @@ class VerseItemComposeInteractionTest {
         return view
     }
 
-    private fun attachAndLayout(activity: Activity, view: View) {
+    private fun attachAndLayout(activity: Activity, view: VerseItemComposeView) {
         val frame = FrameLayout(activity)
+        activity.setContentView(frame)
+        // Robolectric resets Choreographer between tests, but Compose caches its
+        // main dispatcher. Each fixture needs a dispatcher and clock it can drive.
+        val dispatcher = Handler(Looper.getMainLooper()).asCoroutineDispatcher()
+        view.setParentCompositionContext(
+            frame.createLifecycleAwareWindowRecomposer(dispatcher + frameClock)
+        )
         frame.addView(
             view,
             ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT),
         )
-        activity.setContentView(frame)
         idleLoopers()
     }
 
@@ -150,14 +176,14 @@ class VerseItemComposeInteractionTest {
     }
 
     private fun idleLoopers() {
+        Snapshot.sendApplyNotifications()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        frameTimeNanos += 16_000_000L
+        frameClock.sendFrame(frameTimeNanos)
         Shadows.shadowOf(Looper.getMainLooper()).idle()
     }
 
     @Test
-    // Own sdk for a fresh Robolectric sandbox: only its first activity gets a
-    // ticking frame clock, and without one BasicText never reports a
-    // TextLayoutResult to hit-test against.
-    @Config(sdk = [33])
     fun `a tap near the footnote marker opens it and a tap away from it selects the verse`() {
         val recorder = TapRecorder()
         // The marker sits at the very start of the verse, so the bottom of a
@@ -180,10 +206,30 @@ class VerseItemComposeInteractionTest {
     fun `tapping a verse with no inline links selects it`() {
         val recorder = TapRecorder()
         val view = composeRow("@@$LONG_BODY", recorder)
+        assertTrue("row should wrap onto several lines", view.measuredHeight > 60)
 
         tap(view, 40f, view.measuredHeight - 6f)
 
         assertEquals(1, recorder.verseClicks)
+    }
+
+    @Test
+    fun `rebinding an attached verse row renders its new text and routes taps to its new callback`() {
+        val first = TapRecorder()
+        val view = composeRow("@@Short verse", first)
+        val firstHeight = view.measuredHeight
+        tap(view, 40f, firstHeight - 6f)
+        assertEquals(1, first.verseClicks)
+
+        val second = TapRecorder()
+        view.bind(buildState("@@$LONG_BODY", second))
+        layoutRow(view)
+        assertTrue("the longer verse should increase the row height", view.measuredHeight > firstHeight)
+        tap(view, 40f, view.measuredHeight - 6f)
+
+        assertEquals(1, second.verseClicks)
+        assertEquals("the rebound row must not call the first callback", 1, first.verseClicks)
+        assertTrue(second.linkClicks.isEmpty())
     }
 
     private fun resolveTypeface(typeface: Typeface?, bold: Boolean): Typeface {
