@@ -215,7 +215,7 @@ fun ReaderToolbar(
 private fun fixed(width: Int, height: Int) = Constraints(width, width, height, height)
 
 @Composable
-private fun BarIconButton(
+internal fun BarIconButton(
     painter: Int,
     contentDescription: String?,
     contentColor: Color,
@@ -416,7 +416,7 @@ private const val REFERENCE_MAX_LINES = 2
  * changer's.
  */
 @Composable
-private fun VersionAudioControl(
+internal fun VersionAudioControl(
     state: ReaderToolbarState,
     contentColor: Color,
     onVersionClick: () -> Unit,
