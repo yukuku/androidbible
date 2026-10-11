@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">Mga komento sa %1$s</string>
+    <string name="prerelease_feedback_message">Salamat sa pagsulay sa bersyon nga %1$s. Kung naa kay mga kalisdanan, problema, suhestiyon, o ideya, ipadala kini kanamo pinaagi sa email sa pagpindot niini nga pindutanan:</string>
+    <string name="prerelease_feedback_send_email">Padala og email</string>
+    <string name="prerelease_feedback_hide">Itago ang pindutanan nga \"%1$s\"</string>
+    <string name="prerelease_feedback_no_email_app">Walay naka-install nga email app. Palihog ipadala ang imong mga komento sa help@alkitab.app.</string>
+</resources>

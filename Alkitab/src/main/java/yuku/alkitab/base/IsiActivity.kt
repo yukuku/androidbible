@@ -86,6 +86,7 @@ import yuku.alkitab.base.dialog.TypeBookmarkDialog
 import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.dialog.XrefDialog
 import yuku.alkitab.base.events.AppEvents
+import yuku.alkitab.base.feedback.PrereleaseFeedback
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.settings.ExperimentalFlags
@@ -593,6 +594,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         // for splitting
         splitViewManager.installListeners()
+
+        findViewById<TextView>(R.id.bPrereleaseFeedback).apply {
+            PrereleaseFeedback.version?.let { version ->
+                text = getString(R.string.prerelease_feedback_button, version.label)
+                setOnClickListener {
+                    PrereleaseFeedback.show(this@IsiActivity) { isVisible = false }
+                }
+            }
+        }
 
         setupSafeAreaInsets()
 
@@ -1193,6 +1203,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         super.onStart()
 
         applyPreferences()
+        findViewById<View>(R.id.bPrereleaseFeedback).isVisible = PrereleaseFeedback.isReaderButtonVisible()
 
         window.decorView.keepScreenOn = Preferences.getBoolean(R.string.pref_keepScreenOn_key, R.bool.pref_keepScreenOn_default)
 
@@ -1543,6 +1554,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // touches the window top and only the bottom pane the window bottom.
         val panelBackForwardList = nontoolbar.findViewById<View>(R.id.panelBackForwardList)
         val panelBackForwardListBaseBottomMargin = (panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+        val feedbackButtonContainer = nontoolbar.findViewById<View>(R.id.feedbackButtonContainer)
+        val feedbackButtonBaseBottomMargin = (feedbackButtonContainer.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
         ViewCompat.setOnApplyWindowInsetsListener(nontoolbar) { v, windowInsets ->
             val insets = windowInsets.getInsets(safeAreaTypes)
             v.setPadding(insets.left, 0, insets.right, 0)
@@ -1559,6 +1572,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
             panelBackForwardList.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = panelBackForwardListBaseBottomMargin + bottomInset
+            }
+            feedbackButtonContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = feedbackButtonBaseBottomMargin + bottomInset
             }
             windowInsets
         }

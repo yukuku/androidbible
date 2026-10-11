@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">Zpětná vazba k %1$s</string>
+    <string name="prerelease_feedback_message">Děkujeme, že zkoušíte verzi %1$s. Pokud máte nějaké potíže, problémy, návrhy nebo nápady, napište nám email stisknutím tohoto tlačítka:</string>
+    <string name="prerelease_feedback_send_email">Odeslat email</string>
+    <string name="prerelease_feedback_hide">Skrýt tlačítko „%1$s“</string>
+    <string name="prerelease_feedback_no_email_app">Není nainstalována žádná aplikace pro email. Zpětnou vazbu prosím pošlete na help@alkitab.app.</string>
+</resources>

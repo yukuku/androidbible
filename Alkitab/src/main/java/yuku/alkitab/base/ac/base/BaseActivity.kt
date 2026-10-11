@@ -82,11 +82,13 @@ abstract class BaseActivity : AppCompatActivity() {
         // Its background must change with the toolbar when night mode changes.
         findViewById<View>(R.id.toolbarHost)?.setBackgroundColor(primaryColor)
 
-        findViewById<View>(R.id.panelBackForwardList)?.apply {
-            background = PaintDrawable(primaryColor).apply {
-                setCornerRadius(resources.getDimension(R.dimen.back_forward_list_corner_radius))
+        for (id in intArrayOf(R.id.panelBackForwardList, R.id.bPrereleaseFeedback)) {
+            findViewById<View>(id)?.apply {
+                background = PaintDrawable(primaryColor).apply {
+                    setCornerRadius(resources.getDimension(R.dimen.back_forward_list_corner_radius))
+                }
+                clipToOutline = true
             }
-            clipToOutline = true
         }
 
         if (edgeToEdge) {

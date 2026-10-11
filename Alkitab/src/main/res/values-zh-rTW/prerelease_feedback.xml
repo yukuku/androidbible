@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">%1$s 意見</string>
+    <string name="prerelease_feedback_message">謝謝你試用 %1$s 版本。如果你遇到困難、問題，或有建議、想法，請按此按鈕向我們傳送電郵：</string>
+    <string name="prerelease_feedback_send_email">傳送電郵</string>
+    <string name="prerelease_feedback_hide">隱藏「%1$s」按鈕</string>
+    <string name="prerelease_feedback_no_email_app">未安裝電郵應用程式。請將你的意見傳送至 help@alkitab.app。</string>
+</resources>

@@ -22,6 +22,7 @@ import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.base.feedback.PrereleaseFeedback
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 
@@ -59,6 +60,15 @@ class AboutActivity : BaseActivity() {
         bHelp = findViewById(R.id.bHelp)
         bHelp.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, "https://alkitab.app/guide?utm_source=app&utm_medium=button&utm_campaign=help".toUri()))
+        }
+
+        findViewById<View>(R.id.bAboutPrereleaseFeedback).apply {
+            val version = PrereleaseFeedback.version
+            visibility = if (version != null) View.VISIBLE else View.GONE
+            if (version != null) {
+                findViewById<TextView>(R.id.tPrereleaseFeedback).text = getString(R.string.prerelease_feedback_button, version.label)
+                setOnClickListener { PrereleaseFeedback.show(this@AboutActivity) }
+            }
         }
 
         bMaterialSources = findViewById(R.id.bMaterialSources)

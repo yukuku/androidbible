@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">Σχόλια για %1$s</string>
+    <string name="prerelease_feedback_message">Σας ευχαριστούμε που δοκιμάζετε την έκδοση %1$s. Αν αντιμετωπίζετε δυσκολίες ή προβλήματα ή έχετε προτάσεις ή ιδέες, στείλτε μας ένα μήνυμα ηλεκτρονικού ταχυδρομείου πατώντας αυτό το κουμπί:</string>
+    <string name="prerelease_feedback_send_email">Αποστολή μηνύματος ηλεκτρονικού ταχυδρομείου</string>
+    <string name="prerelease_feedback_hide">Απόκρυψη του κουμπιού «%1$s»</string>
+    <string name="prerelease_feedback_no_email_app">Δεν υπάρχει εγκατεστημένη εφαρμογή ηλεκτρονικού ταχυδρομείου. Στείλτε τα σχόλιά σας στη διεύθυνση help@alkitab.app.</string>
+</resources>

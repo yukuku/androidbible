@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">%1$sへのご意見</string>
+    <string name="prerelease_feedback_message">%1$sバージョンをお試しいただき、ありがとうございます。使い勝手の問題、不具合、ご意見や改善のアイデアがありましたら、このボタンを押してeメールでお知らせください。</string>
+    <string name="prerelease_feedback_send_email">eメールを送信</string>
+    <string name="prerelease_feedback_hide">「%1$s」ボタンを非表示</string>
+    <string name="prerelease_feedback_no_email_app">eメールアプリがインストールされていません。help@alkitab.appまでご意見をお送りください。</string>
+</resources>

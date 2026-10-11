@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">Phản hồi về %1$s</string>
+    <string name="prerelease_feedback_message">Cảm ơn bạn đã dùng thử phiên bản %1$s. Nếu bạn gặp khó khăn, vấn đề, có đề nghị hoặc ý tưởng, hãy gửi email cho chúng tôi bằng cách nhấn nút này:</string>
+    <string name="prerelease_feedback_send_email">Gửi email</string>
+    <string name="prerelease_feedback_hide">Ẩn nút \"%1$s\"</string>
+    <string name="prerelease_feedback_no_email_app">Chưa cài đặt ứng dụng email. Vui lòng gửi phản hồi của bạn đến help@alkitab.app.</string>
+</resources>

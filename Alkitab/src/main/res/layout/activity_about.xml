@@ -78,6 +78,33 @@
 			</LinearLayout>
 
 			<FrameLayout
+				android:id="@+id/bAboutPrereleaseFeedback"
+				android:visibility="gone"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
+				android:layout_marginTop="16dp"
+				android:background="#2a2a2a"
+				android:elevation="4dp"
+				android:foreground="?selectableItemBackground"
+				android:gravity="center_horizontal"
+				android:orientation="vertical"
+				android:paddingStart="24dp"
+				android:paddingEnd="24dp">
+
+				<TextView
+					android:id="@+id/tPrereleaseFeedback"
+					android:layout_width="match_parent"
+					android:layout_height="48dp"
+					android:gravity="center_vertical"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="#fff"
+					tools:text="Beta feedback" />
+
+			</FrameLayout>
+
+			<FrameLayout
 				android:id="@+id/bHelp"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

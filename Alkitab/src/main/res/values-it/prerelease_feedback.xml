@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">Commenti su %1$s</string>
+    <string name="prerelease_feedback_message">Grazie per aver provato la versione %1$s. Se hai difficoltà, problemi, suggerimenti o idee, inviaci un’email premendo questo bottone:</string>
+    <string name="prerelease_feedback_send_email">Invia email</string>
+    <string name="prerelease_feedback_hide">Nascondi il bottone «%1$s»</string>
+    <string name="prerelease_feedback_no_email_app">Non è installata alcuna app per le email. Invia i tuoi commenti a help@alkitab.app.</string>
+</resources>
