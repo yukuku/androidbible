@@ -1,5 +1,6 @@
 package yuku.alkitab.base.feedback
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import java.io.File
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -67,8 +69,10 @@ class PrereleaseFeedbackSnapshotTest {
         settleWindows()
         val navigation = activity.findViewById<View>(R.id.panelBackForwardList)
         assertEquals(navigation.height, button.height)
-        assertEquals(navigation.bottom, button.bottom)
-        assertTrue(button.right < navigation.left)
+        val buttonLocation = IntArray(2).also { button.getLocationOnScreen(it) }
+        val navigationLocation = IntArray(2).also { navigation.getLocationOnScreen(it) }
+        assertEquals(navigationLocation[1] + navigation.height, buttonLocation[1] + button.height)
+        assertTrue(buttonLocation[0] + button.width < navigationLocation[0])
         writeWindows("reader.png")
 
         button.performClick()
@@ -85,6 +89,35 @@ class PrereleaseFeedbackSnapshotTest {
         assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.bAboutPrereleaseFeedback).visibility)
         settleWindows()
         writeWindows("about.png")
+    }
+
+    @Test
+    fun `translated reader labels stay clear of navigation on a narrow screen`() {
+        val activity = Robolectric.buildActivity(FeedbackSnapshotHostActivity::class.java).setup().get()
+        activity.setContentView(R.layout.activity_isi_content)
+        val button = activity.findViewById<TextView>(R.id.bPrereleaseFeedback)
+        val navigation = activity.findViewById<View>(R.id.panelBackForwardList)
+        button.visibility = View.VISIBLE
+        navigation.visibility = View.VISIBLE
+        val languages = activity.resources.getStringArray(R.array.pref_language_values).filter { it != "DEFAULT" } + "ms"
+        val overlappingLanguages = mutableListOf<String>()
+        languages.forEach { language ->
+            val configuration = Configuration(activity.resources.configuration).apply {
+                setLocale(Locale.forLanguageTag(language))
+            }
+            val context = activity.createConfigurationContext(configuration)
+            button.text = context.getString(R.string.prerelease_feedback_button, "Dev 123456")
+            val root = activity.window.decorView
+            root.measure(
+                View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
+            )
+            root.layout(0, 0, 320, 640)
+            val buttonLocation = IntArray(2).also { button.getLocationOnScreen(it) }
+            val navigationLocation = IntArray(2).also { navigation.getLocationOnScreen(it) }
+            if (buttonLocation[0] + button.width >= navigationLocation[0]) overlappingLanguages += language
+        }
+        assertTrue("Reader feedback overlaps navigation for $overlappingLanguages", overlappingLanguages.isEmpty())
     }
 
     private fun settleWindows() {

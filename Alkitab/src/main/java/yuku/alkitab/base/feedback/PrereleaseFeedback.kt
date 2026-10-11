@@ -66,12 +66,13 @@ private fun FeedbackSheetContent(
     onHide: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val feedbackButtonText = stringResource(R.string.prerelease_feedback_button, label)
     Column(
         modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = stringResource(R.string.prerelease_feedback_button, label),
+            text = feedbackButtonText,
             style = MaterialTheme.typography.titleLarge,
         )
         Text(stringResource(R.string.prerelease_feedback_message, label))
@@ -80,7 +81,7 @@ private fun FeedbackSheetContent(
         }
         TextButton(onClick = onHide, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = stringResource(R.string.prerelease_feedback_hide, label),
+                text = stringResource(R.string.prerelease_feedback_hide, feedbackButtonText),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

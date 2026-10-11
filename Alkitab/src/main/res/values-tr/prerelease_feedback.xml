@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">%1$s geri bildirimi</string>
+    <string name="prerelease_feedback_message">%1$s sürümünü denediğiniz için teşekkürler. Zorluklarınız, sorunlarınız, önerileriniz veya fikirleriniz varsa bu butona basarak bize e-posta yollayın:</string>
+    <string name="prerelease_feedback_send_email">E-posta yolla</string>
+    <string name="prerelease_feedback_hide">\"%1$s\" butonunu gizle</string>
+    <string name="prerelease_feedback_no_email_app">Yüklü bir e-posta uygulaması yok. Lütfen geri bildiriminizi help@alkitab.app adresine yollayın.</string>
+</resources>

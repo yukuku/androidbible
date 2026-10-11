@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">Tilbagemelding om %1$s</string>
+    <string name="prerelease_feedback_message">Tak, fordi du prøver %1$s-versionen. Hvis du har vanskeligheder, problemer, forslag eller idéer, kan du sende os en email ved at trykke på denne knap:</string>
+    <string name="prerelease_feedback_send_email">Send email</string>
+    <string name="prerelease_feedback_hide">Skjul knappen \"%1$s\"</string>
+    <string name="prerelease_feedback_no_email_app">Der er ikke installeret nogen email-app. Send venligst din tilbagemelding til help@alkitab.app.</string>
+</resources>

@@ -1554,8 +1554,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // touches the window top and only the bottom pane the window bottom.
         val panelBackForwardList = nontoolbar.findViewById<View>(R.id.panelBackForwardList)
         val panelBackForwardListBaseBottomMargin = (panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
-        val feedbackButton = nontoolbar.findViewById<View>(R.id.bPrereleaseFeedback)
-        val feedbackButtonBaseBottomMargin = (feedbackButton.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+        val feedbackButtonContainer = nontoolbar.findViewById<View>(R.id.feedbackButtonContainer)
+        val feedbackButtonBaseBottomMargin = (feedbackButtonContainer.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
         ViewCompat.setOnApplyWindowInsetsListener(nontoolbar) { v, windowInsets ->
             val insets = windowInsets.getInsets(safeAreaTypes)
             v.setPadding(insets.left, 0, insets.right, 0)
@@ -1573,7 +1573,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             panelBackForwardList.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = panelBackForwardListBaseBottomMargin + bottomInset
             }
-            feedbackButton.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            feedbackButtonContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = feedbackButtonBaseBottomMargin + bottomInset
             }
             windowInsets

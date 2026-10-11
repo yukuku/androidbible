@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">ความคิดเห็นเกี่ยวกับ %1$s</string>
+    <string name="prerelease_feedback_message">ขอบคุณที่ทดลองใช้เวอร์ชั่น %1$s หากพบความยากลำบาก ปัญหา หรือมีข้อเสนอหรือแนวคิด กรุณาส่งอีเมลถึงเราโดยกดปุ่มนี้:</string>
+    <string name="prerelease_feedback_send_email">ส่งอีเมล</string>
+    <string name="prerelease_feedback_hide">ซ่อนปุ่ม \"%1$s\"</string>
+    <string name="prerelease_feedback_no_email_app">ไม่ได้ติดตั้งแอปอีเมล กรุณาส่งความคิดเห็นของท่านไปที่ help@alkitab.app</string>
+</resources>

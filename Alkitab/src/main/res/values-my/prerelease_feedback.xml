@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">%1$s အကြံပြုချက်များ</string>
+    <string name="prerelease_feedback_message">%1$s ဗားရှင်းကို စမ်းသုံးပေးသည့်အတွက် ကျေးဇူးတင်ပါသည်။ အခက်အခဲများ၊ ပြဿနာများ၊ အကြံပြုချက်များ သို့မဟုတ် အကြံဥာဏ်များရှိပါက ဤခလုတ်ကိုနှိပ်၍ ကျွန်ုပ်တို့ထံ အီးမေးလ်ပို့ပါ။</string>
+    <string name="prerelease_feedback_send_email">အီးမေးလ်ပို့ရန်</string>
+    <string name="prerelease_feedback_hide">\"%1$s\" ခလုတ်ကို ဖျောက်ရန်</string>
+    <string name="prerelease_feedback_no_email_app">အီးမေးလ်အက်ပလီကေးရှင်း ထည့်သွင်းထားခြင်းမရှိပါ။ သင်၏အကြံပြုချက်များကို help@alkitab.app သို့ ပို့ပေးပါ။</string>
+</resources>

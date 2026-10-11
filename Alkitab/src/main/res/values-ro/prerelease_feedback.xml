@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">Păreri despre %1$s</string>
+    <string name="prerelease_feedback_message">Vă mulțumim că încercați versiunea %1$s. Dacă aveți dificultăți, probleme, sugestii sau idei, trimiteți-ne un email apăsând acest buton:</string>
+    <string name="prerelease_feedback_send_email">Trimite email</string>
+    <string name="prerelease_feedback_hide">Ascunde butonul „%1$s”</string>
+    <string name="prerelease_feedback_no_email_app">Nu este instalată nicio aplicație de email. Trimiteți părerile dvs. la help@alkitab.app.</string>
+</resources>

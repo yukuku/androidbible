@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prerelease_feedback_button">Maklum balas %1$s</string>
+    <string name="prerelease_feedback_message">Terima kasih kerana mencuba versi %1$s. Jika anda menghadapi kesukaran, masalah, atau mempunyai cadangan atau buah fikiran, hantar e-mel kepada kami dengan menekan butang ini:</string>
+    <string name="prerelease_feedback_send_email">Hantar e-mel</string>
+    <string name="prerelease_feedback_hide">Sembunyikan butang \"%1$s\"</string>
+    <string name="prerelease_feedback_no_email_app">Tiada aplikasi e-mel dipasang. Sila hantar maklum balas anda ke help@alkitab.app.</string>
+</resources>
