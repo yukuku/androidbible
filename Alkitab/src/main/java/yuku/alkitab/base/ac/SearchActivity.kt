@@ -26,6 +26,11 @@ import androidx.annotation.Keep
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
@@ -40,6 +45,8 @@ import me.zhanghai.android.fastscroll.FastScrollerBuilder
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
+import yuku.alkitab.base.compose.BibleAppTheme
+import yuku.alkitab.base.compose.toolbar.SearchToolbar
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
@@ -51,8 +58,8 @@ import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.QueryTokenizer
 import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.SearchEngineQuery
-import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.util.TextColorUtil
+import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.verses.VerseTextSlot
 import yuku.alkitab.base.verses.renderVerseText
 import yuku.alkitab.base.verses.withSearchHilite
@@ -71,7 +78,7 @@ private const val TAG = "SearchActivity"
 
 class SearchActivity : BaseActivity() {
     private lateinit var root: View
-    private lateinit var bVersion: TextView
+    private var versionInitials by mutableStateOf("")
     private lateinit var searchView: SearchView
     private lateinit var progressbar: CircularProgressIndicator
     private lateinit var bSearch: ImageButton
@@ -240,10 +247,19 @@ class SearchActivity : BaseActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         setupEdgeToEdgeDisplay(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        bVersion = findViewById(R.id.bVersion)
-        bVersion.setOnClickListener(bVersion_click)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        findViewById<ComposeView>(R.id.composeToolbar).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                BibleAppTheme {
+                    SearchToolbar(
+                        versionInitials = versionInitials,
+                        onNavigateUp = ::navigateUp,
+                        onVersionClick = ::selectSearchVersion,
+                    )
+                }
+            }
+        }
         searchView = findViewById<SearchView>(R.id.searchView).apply {
             findAutoCompleteTextView()?.threshold = 0
             suggestionsAdapter = SearchHistoryAdapter().also { searchHistoryAdapter = it }
@@ -354,7 +370,7 @@ class SearchActivity : BaseActivity() {
 
     private fun displaySearchInVersion() {
         val versionInitials = searchInVersion.initials
-        bVersion.text = versionInitials
+        this.versionInitials = versionInitials
         searchView.queryHint = getString(R.string.search_in_version_short_name_placeholder, versionInitials)
 
         @Suppress("NotifyDataSetChanged")
@@ -497,7 +513,7 @@ class SearchActivity : BaseActivity() {
         filterUserAction--
     }
 
-    private val bVersion_click = View.OnClickListener {
+    private fun selectSearchVersion() {
         VersionDialogHelper.openVersionsDialog(this, App.services.versions, searchInVersionId) { mv: MVersion ->
             val selectedVersion = mv.version
             if (selectedVersion == null) {
@@ -517,7 +533,6 @@ class SearchActivity : BaseActivity() {
             Appearances.applyTextAppearance(tSearchTips, textSizeMult)
             displaySearchInVersion()
             configureFilterDisplayOldNewTest()
-            bVersion.text = selectedVersion.initials
 
             @Suppress("NotifyDataSetChanged")
             adapter.notifyDataSetChanged()

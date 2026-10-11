@@ -12,27 +12,14 @@
 		android:theme="@style/ThemeOverlay.Alkitab.Toolbar"
 		android:layout_width="match_parent"
 		android:layout_height="?attr/actionBarSize"
-		android:background="?attr/colorPrimary">
+		android:background="?attr/colorPrimary"
+		app:contentInsetStart="0dp"
+		app:contentInsetEnd="0dp">
 
-		<TextView
-			android:id="@+id/bVersion"
-			style="@style/FakeSpinner"
-			android:layout_width="72dp"
-			android:layout_height="match_parent"
-			android:layout_gravity="end"
-			android:layout_marginEnd="16dp"
-			android:gravity="center"
-			android:textStyle="bold"
-			tools:text="VERSNM" />
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_gravity="end"
-			android:gravity="center_vertical"
-			android:padding="8dp"
-			android:text="@string/search_version_select_label"
-			android:textAppearance="?android:textAppearanceSmall" />
+		<androidx.compose.ui.platform.ComposeView
+			android:id="@+id/composeToolbar"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
 
 	</androidx.appcompat.widget.Toolbar>
 
