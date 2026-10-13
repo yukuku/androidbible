@@ -11,23 +11,23 @@ class ReaderSelectionActionMode(
     private val toolbar: Toolbar,
     private val callback: Callback,
 ) : ActionMode() {
-    private var finished = false
+    private var isFinished = false
     private var customView: View? = null
 
     fun start(): Boolean {
         toolbar.menu.clear()
         toolbar.setNavigationOnClickListener { finish() }
-        toolbar.setOnMenuItemClickListener { !finished && callback.onActionItemClicked(this, it) }
+        toolbar.setOnMenuItemClickListener { !isFinished && callback.onActionItemClicked(this, it) }
         return callback.onCreateActionMode(this, menu)
     }
 
     override fun invalidate() {
-        if (!finished) callback.onPrepareActionMode(this, menu)
+        if (!isFinished) callback.onPrepareActionMode(this, menu)
     }
 
     override fun finish() {
-        if (finished) return
-        finished = true
+        if (isFinished) return
+        isFinished = true
         toolbar.dismissPopupMenus()
         toolbar.setNavigationOnClickListener(null)
         toolbar.setOnMenuItemClickListener(null)

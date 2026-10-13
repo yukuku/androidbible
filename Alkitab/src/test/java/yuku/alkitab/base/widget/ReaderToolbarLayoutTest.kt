@@ -40,27 +40,27 @@ class ReaderToolbarLayoutTest {
         root.addView(audio, originalAudio.layoutParams)
         try {
             for ((width, height) in listOf(360 to 640, 640 to 360)) {
-                for (bottom in listOf(false, true)) {
-                    for (fullscreen in listOf(false, true)) {
-                        for (useCompose in listOf(false, true)) {
+                for (isBottom in listOf(false, true)) {
+                    for (isFullScreen in listOf(false, true)) {
+                        for (isComposeEnabled in listOf(false, true)) {
                             for (audioHeight in listOf(0, 64)) {
                                 audio.updateLayoutParams { this.height = audioHeight }
-                                for (selected in listOf(false, true, false)) {
-                                    updateReaderToolbarLayout(root, fullscreen, bottom, selected, useCompose)
+                                for (isSelected in listOf(false, true, false)) {
+                                    updateReaderToolbarLayout(root, isFullScreen, isBottom, isSelected, isComposeEnabled)
                                     root.measure(
                                         View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
                                         View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
                                     )
                                     root.layout(0, 0, width, height)
-                                    assertEquals(!fullscreen || selected, host.isVisible)
-                                    assertEquals(selected, selection.isVisible)
-                                    assertEquals(!fullscreen && !selected, toolbar.isVisible)
-                                    assertEquals(!fullscreen && !selected && useCompose, compose.isVisible)
+                                    assertEquals(!isFullScreen || isSelected, host.isVisible)
+                                    assertEquals(isSelected, selection.isVisible)
+                                    assertEquals(!isFullScreen && !isSelected, toolbar.isVisible)
+                                    assertEquals(!isFullScreen && !isSelected && isComposeEnabled, compose.isVisible)
                                     assertSame(content, root.findViewById(R.id.nontoolbar))
                                     assertTrue(content.height > 0)
                                     if (host.isVisible) {
-                                        if (selected) assertEquals(host.height, selection.height)
-                                        if (bottom) {
+                                        if (isSelected) assertEquals(host.height, selection.height)
+                                        if (isBottom) {
                                             assertEquals(height, host.bottom)
                                             assertTrue(content.bottom <= host.top)
                                             assertTrue(audio.bottom <= host.top)

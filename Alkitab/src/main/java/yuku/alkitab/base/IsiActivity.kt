@@ -1382,6 +1382,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private fun installComposeToolbar() {
         if (!useComposeToolbar) return
 
+        // The transparent Compose bar needs the retained toolbar
+        // underneath it for the day/night background.
         bVersion.visibility = View.GONE
         (bGoto.parent as View).visibility = View.GONE
 

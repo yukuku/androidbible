@@ -7,17 +7,17 @@ import yuku.alkitab.debug.R
 
 internal fun updateReaderToolbarLayout(
     root: ViewGroup,
-    fullScreen: Boolean,
-    toolbarAtBottom: Boolean,
-    selectionActive: Boolean,
-    useComposeToolbar: Boolean,
+    isFullScreen: Boolean,
+    isToolbarAtBottom: Boolean,
+    isSelectionActive: Boolean,
+    isComposeToolbarEnabled: Boolean,
 ) {
     val host = root.requireViewById<View>(R.id.toolbarHost)
-    host.isVisible = !fullScreen || selectionActive
-    root.requireViewById<View>(R.id.toolbar).isVisible = !fullScreen && !selectionActive
-    root.requireViewById<View>(R.id.composeToolbar).isVisible = !fullScreen && !selectionActive && useComposeToolbar
-    root.requireViewById<View>(R.id.selectionToolbar).isVisible = selectionActive
-    val index = if (toolbarAtBottom) root.childCount - 1 else 0
+    host.isVisible = !isFullScreen || isSelectionActive
+    root.requireViewById<View>(R.id.toolbar).isVisible = !isFullScreen && !isSelectionActive
+    root.requireViewById<View>(R.id.composeToolbar).isVisible = !isFullScreen && !isSelectionActive && isComposeToolbarEnabled
+    root.requireViewById<View>(R.id.selectionToolbar).isVisible = isSelectionActive
+    val index = if (isToolbarAtBottom) root.childCount - 1 else 0
     if (root.indexOfChild(host) != index) {
         root.removeView(host)
         root.addView(host, index)
