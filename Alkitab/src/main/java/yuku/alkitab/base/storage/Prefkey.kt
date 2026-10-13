@@ -14,7 +14,7 @@ enum class Prefkey {
      */
     history_button_understood,
 
-    prerelease_feedback_hidden,
+    prerelease_feedback_hidden_commit,
 
     /** Bold  */
     boldHuruf,

@@ -67,7 +67,7 @@ class AboutActivity : BaseActivity() {
             visibility = if (version != null) View.VISIBLE else View.GONE
             if (version != null) {
                 findViewById<TextView>(R.id.tPrereleaseFeedback).text = getString(R.string.prerelease_feedback_button, version.label)
-                setOnClickListener { PrereleaseFeedback.show(this@AboutActivity) }
+                setOnClickListener { PrereleaseFeedback.show(this@AboutActivity, onHidden = null) }
             }
         }
 

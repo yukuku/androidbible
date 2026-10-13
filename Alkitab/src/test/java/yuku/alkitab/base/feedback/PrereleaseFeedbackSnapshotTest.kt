@@ -30,6 +30,7 @@ import yuku.afw.App
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.ac.AboutActivity
 import yuku.alkitab.base.storage.Prefkey
+import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 
 class FeedbackSnapshotHostActivity : AppCompatActivity() {
@@ -47,7 +48,7 @@ class PrereleaseFeedbackSnapshotTest {
     fun setUp() {
         assumeNotNull(PrereleaseFeedback.version)
         App.initWithAppContext(RuntimeEnvironment.getApplication())
-        Preferences.setBoolean(Prefkey.prerelease_feedback_hidden, false)
+        Preferences.setString(Prefkey.prerelease_feedback_hidden_commit, null)
     }
 
     @Test
@@ -83,12 +84,28 @@ class PrereleaseFeedbackSnapshotTest {
 
     @Test
     fun `About feedback stays available when the reader button is hidden`() {
-        Preferences.setBoolean(Prefkey.prerelease_feedback_hidden, true)
+        Preferences.setString(Prefkey.prerelease_feedback_hidden_commit, BuildConfig.LAST_COMMIT_HASH)
         assertFalse(PrereleaseFeedback.isReaderButtonVisible())
         val activity = Robolectric.buildActivity(AboutActivity::class.java).setup().get()
         assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.bAboutPrereleaseFeedback).visibility)
         settleWindows()
         writeWindows("about.png")
+        activity.findViewById<View>(R.id.bAboutPrereleaseFeedback).performClick()
+        settleWindows()
+        writeWindows("about-feedback-sheet.png")
+    }
+
+    @Test
+    fun `reader feedback is visible until hidden for the current commit`() {
+        assertTrue(PrereleaseFeedback.isReaderButtonVisible())
+        Preferences.setString(Prefkey.prerelease_feedback_hidden_commit, BuildConfig.LAST_COMMIT_HASH)
+        assertFalse(PrereleaseFeedback.isReaderButtonVisible())
+    }
+
+    @Test
+    fun `reader feedback reappears when the hidden commit differs from the app`() {
+        Preferences.setString(Prefkey.prerelease_feedback_hidden_commit, "older-commit")
+        assertTrue(PrereleaseFeedback.isReaderButtonVisible())
     }
 
     @Test
