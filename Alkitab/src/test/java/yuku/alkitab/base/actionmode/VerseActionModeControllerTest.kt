@@ -5,6 +5,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.Toolbar
 import androidx.test.core.app.ApplicationProvider
 import io.mockk.Runs
 import io.mockk.clearAllMocks
@@ -121,6 +122,29 @@ class VerseActionModeControllerTest {
     fun tearDown() {
         clearAllMocks()
         unmockkAll()
+    }
+
+    @Test
+    fun `reader toolbar shows the reference and selection count and updates split actions`() {
+        activity.setTheme(R.style.Theme_Alkitab)
+        val toolbar = Toolbar(activity)
+        val toolbarMode = ReaderSelectionActionMode(toolbar, controller)
+        assertTrue(toolbarMode.start())
+        toolbarMode.invalidate()
+        assertEquals("Gen 1", toolbar.title.toString())
+        assertEquals(activity.getString(R.string.verse_select_one_verse_selected), toolbar.subtitle)
+        assertTrue(toolbar.menu.findItem(R.id.menuCompare).isVisible)
+        every { host.selectedVersesSplit0_1 } returns ints(1, 3)
+        every { host.activeSplit1Version } returns mockk(relaxed = true)
+        toolbarMode.invalidate()
+        assertEquals(activity.getString(R.string.verse_select_multiple_verse_selected, "2"), toolbar.subtitle)
+        assertFalse(toolbar.menu.findItem(R.id.menuCompare).isVisible)
+        assertFalse(toolbar.menu.findItem(R.id.menuAddBookmark).isVisible)
+        assertFalse(toolbar.menu.findItem(R.id.menuCopy).isVisible)
+        assertTrue(toolbar.menu.findItem(R.id.menuCopyBothSplits).isVisible)
+        toolbarMode.finish()
+        toolbarMode.finish()
+        verify(exactly = 1) { actions.onActionModeDestroyed() }
     }
 
     // ----- onPrepareActionMode: menu visibility -----

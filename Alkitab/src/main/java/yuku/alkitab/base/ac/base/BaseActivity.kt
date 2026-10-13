@@ -95,6 +95,7 @@ abstract class BaseActivity : AppCompatActivity() {
         // On the reading screen the toolbar host extends behind the status bar.
         // Its background must change with the toolbar when night mode changes.
         findViewById<View>(R.id.toolbarHost)?.setBackgroundColor(primaryColor)
+        findViewById<View>(R.id.selectionToolbar)?.setBackgroundColor(primaryColor)
 
         for (id in intArrayOf(R.id.panelBackForwardList, R.id.bPrereleaseFeedback)) {
             findViewById<View>(id)?.apply {
