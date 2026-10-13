@@ -86,7 +86,7 @@
 				android:visibility="gone" />
 
 
-			<androidx.appcompat.widget.Toolbar
+			<yuku.alkitab.base.widget.FloatingSelectionToolbar
 				android:id="@+id/selectionToolbar"
 				android:theme="@style/ThemeOverlay.Alkitab.Toolbar"
 				android:layout_width="match_parent"

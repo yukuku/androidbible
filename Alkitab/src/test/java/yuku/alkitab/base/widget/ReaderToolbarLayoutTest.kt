@@ -1,5 +1,6 @@
 package yuku.alkitab.base.widget
 
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +22,7 @@ import yuku.alkitab.debug.R
 @Config(application = App::class, sdk = [34], qualifiers = "w360dp-h640dp-mdpi")
 class ReaderToolbarLayoutTest {
     @Test
-    fun `selection reserves space at either edge and restores both reader toolbars and fullscreen`() {
+    fun `selection floats without moving fullscreen content and stays docked otherwise`() {
         App.initWithAppContext(ApplicationProvider.getApplicationContext())
         val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
         val activity = controller.get()
@@ -45,14 +46,15 @@ class ReaderToolbarLayoutTest {
                         for (isComposeEnabled in listOf(false, true)) {
                             for (audioHeight in listOf(0, 64)) {
                                 audio.updateLayoutParams { this.height = audioHeight }
+                                var fullscreenBounds: Rect? = null
                                 for (isSelected in listOf(false, true, false)) {
                                     updateReaderToolbarLayout(root, isFullScreen, isBottom, isSelected, isComposeEnabled)
-                                    root.measure(
+                                    layout.measure(
                                         View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
                                         View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
                                     )
-                                    root.layout(0, 0, width, height)
-                                    assertEquals(!isFullScreen || isSelected, host.isVisible)
+                                    layout.layout(0, 0, width, height)
+                                    assertEquals(!isFullScreen, host.isVisible)
                                     assertEquals(isSelected, selection.isVisible)
                                     assertEquals(!isFullScreen && !isSelected, toolbar.isVisible)
                                     assertEquals(!isFullScreen && !isSelected && isComposeEnabled, compose.isVisible)
@@ -70,6 +72,19 @@ class ReaderToolbarLayoutTest {
                                         }
                                     } else {
                                         assertEquals(height - audioHeight, content.height)
+                                        val bounds = Rect(content.left, content.top, content.right, content.bottom)
+                                        if (fullscreenBounds == null) fullscreenBounds = bounds
+                                        assertEquals(fullscreenBounds, bounds)
+                                        if (isSelected) {
+                                            assertSame(layout, selection.parent)
+                                            assertEquals(16, selection.left)
+                                            assertEquals(width - 16, selection.right)
+                                            if (isBottom) assertEquals(height - 16, selection.bottom)
+                                            else assertEquals(16, selection.top)
+                                            assertTrue(selection.height > 0 && selection.height < height / 2)
+                                            assertEquals(8f, selection.elevation)
+                                            assertTrue(selection.clipToOutline)
+                                        }
                                     }
                                 }
                             }
