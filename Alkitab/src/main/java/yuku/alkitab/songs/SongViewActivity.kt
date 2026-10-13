@@ -636,7 +636,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         handle.setCode(doc.code)
 
         val copyright = SongBookUtil.getCopyright(bookName)
-        val patchTextLinkLabel = getString(R.string.patch_text_open_link)
+        val patchTextLinkLabel = if (bookName?.startsWith("_") == true) null else getString(R.string.patch_text_open_link)
         templateCustomVars.putString("copyright", copyright ?: "")
         templateCustomVars.putString("patch_text_open_link", patchTextLinkLabel)
 
