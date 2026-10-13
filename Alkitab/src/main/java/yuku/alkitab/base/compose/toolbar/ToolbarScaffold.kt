@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ToolbarScaffold(
-    toolbarAtBottom: Boolean,
+    isToolbarAtBottom: Boolean,
     toolbarColor: Color,
     toolbar: @Composable () -> Unit,
     snackbarHost: @Composable () -> Unit,
@@ -25,7 +25,7 @@ fun ToolbarScaffold(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val bar: @Composable () -> Unit = {
-        val edge = if (toolbarAtBottom) WindowInsetsSides.Bottom else WindowInsetsSides.Top
+        val edge = if (isToolbarAtBottom) WindowInsetsSides.Bottom else WindowInsetsSides.Top
         Box(
             Modifier
                 .background(toolbarColor)
@@ -37,8 +37,8 @@ fun ToolbarScaffold(
     Scaffold(
         modifier = modifier.imePadding(),
         containerColor = containerColor,
-        topBar = { if (!toolbarAtBottom) bar() },
-        bottomBar = { if (toolbarAtBottom) bar() },
+        topBar = { if (!isToolbarAtBottom) bar() },
+        bottomBar = { if (isToolbarAtBottom) bar() },
         snackbarHost = snackbarHost,
         content = content,
     )

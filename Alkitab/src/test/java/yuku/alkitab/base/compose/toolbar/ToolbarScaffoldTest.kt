@@ -41,7 +41,7 @@ import yuku.alkitab.base.compose.BibleAppTheme
 class ToolbarScaffoldTest {
     @Test
     fun `toolbar and content stay clear of system bars and keyboard in both positions`() {
-        for (bottom in listOf(false, true)) {
+        for (isBottom in listOf(false, true)) {
             for (keyboardHeight in listOf(0, 280)) {
                 val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
                 val activity = controller.get()
@@ -57,7 +57,7 @@ class ToolbarScaffoldTest {
                 view.setContent {
                     BibleAppTheme {
                         ToolbarScaffold(
-                            toolbarAtBottom = bottom,
+                            isToolbarAtBottom = isBottom,
                             toolbarColor = MaterialTheme.colorScheme.secondaryContainer,
                             toolbar = {
                                 Box(Modifier.fillMaxWidth().height(56.dp).onGloballyPositioned {
@@ -94,7 +94,7 @@ class ToolbarScaffoldTest {
                     }
                     assertEquals(56f, toolbarBounds.height, 0.1f)
                     assertTrue(contentBounds.height > 0)
-                    if (bottom) {
+                    if (isBottom) {
                         assertEquals((640 - maxOf(24, keyboardHeight)).toFloat(), toolbarBounds.bottom, 0.1f)
                         assertTrue(contentBounds.bottom <= toolbarBounds.top)
                         assertEquals(24f, contentBounds.top, 0.1f)

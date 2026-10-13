@@ -85,7 +85,7 @@ class GotoActivity : BaseActivity(), BaseGotoFragment.GotoFinishListener {
             setContent {
                 BibleAppTheme {
                     GotoScreen(
-                        toolbarAtBottom = toolbarAtBottom,
+                        isToolbarAtBottom = isToolbarAtBottom,
                         toolbarColor = Color(toolbarBackgroundColor),
                         initialBookId = bookId,
                         initialChapter_1 = chapter_1,

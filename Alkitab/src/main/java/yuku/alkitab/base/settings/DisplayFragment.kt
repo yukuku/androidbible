@@ -42,6 +42,7 @@ class DisplayFragment : PreferenceFragmentCompat() {
 
         val pref_bottomToolbarOnText = findPreference<CheckBoxPreference>(getString(R.string.pref_bottomToolbarOnText_key))
         pref_bottomToolbarOnText?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+            // The preference is stored only after this listener returns true.
             Handler(Looper.getMainLooper()).post {
                 (activity as? BaseActivity)?.refreshToolbarPlacement()
                 AppEvents.emitNeedsRestart()

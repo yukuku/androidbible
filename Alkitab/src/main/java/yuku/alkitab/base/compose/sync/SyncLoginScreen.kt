@@ -97,7 +97,7 @@ object SyncLoginComposeHost {
         activity.setContent {
             BibleAppTheme {
                 SyncLoginScreen(
-                    toolbarAtBottom = activity.toolbarAtBottom,
+                    isToolbarAtBottom = activity.isToolbarAtBottom,
                     toolbarColor = Color(activity.toolbarBackgroundColor),
                     onUp = callbacks::onUp,
                     onLogin = { email, password, onResult -> callbacks.login(email, password) { s, m -> onResult(s, m) } },
@@ -120,7 +120,7 @@ private enum class SyncLoginMode { SIGN_IN, CREATE_ACCOUNT, RESET, CHANGE_PASSWO
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SyncLoginScreen(
-    toolbarAtBottom: Boolean,
+    isToolbarAtBottom: Boolean,
     toolbarColor: Color,
     onUp: () -> Unit,
     onLogin: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
@@ -269,14 +269,13 @@ fun SyncLoginScreen(
     }
 
     ToolbarScaffold(
-        toolbarAtBottom = toolbarAtBottom,
+        isToolbarAtBottom = isToolbarAtBottom,
         toolbarColor = toolbarColor,
         containerColor = MaterialTheme.colorScheme.background,
         toolbar = {
             TopAppBar(
                 windowInsets = WindowInsets(0, 0, 0, 0),
-                // The blue-gray of every View toolbar, so this screen's chrome
-                // matches the rest of the app.
+                // Keep the Compose and View screens on the same day/night toolbar palette.
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = toolbarColor,
                     navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,

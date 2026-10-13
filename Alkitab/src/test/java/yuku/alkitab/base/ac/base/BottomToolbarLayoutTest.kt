@@ -61,13 +61,13 @@ class BottomToolbarLayoutTest {
 
     @Test
     fun `toolbar color follows night mode in both positions and restores the day color`() {
-        for (bottom in listOf(false, true)) {
-            withLayout(R.layout.activity_settings, bottom, false) { container, _ ->
+        for (isBottom in listOf(false, true)) {
+            withLayout(R.layout.activity_settings, isBottom, false) { container, _ ->
                 val activity = container.context as ToolbarLayoutTestActivity
-                for (night in listOf(false, true, false)) {
-                    Preferences.setBoolean(Prefkey.is_night_mode, night)
+                for (isNightMode in listOf(false, true, false)) {
+                    Preferences.setBoolean(Prefkey.is_night_mode, isNightMode)
                     activity.refreshColors()
-                    val expected = activity.getColor(if (night) R.color.primary_night_mode else R.color.primary)
+                    val expected = activity.getColor(if (isNightMode) R.color.primary_night_mode else R.color.primary)
                     assertEquals(expected, activity.toolbarBackgroundColor)
                 }
             }
@@ -142,12 +142,12 @@ class BottomToolbarLayoutTest {
 
     @Test
     fun `scrolling content receives navigation padding only without a bottom toolbar`() {
-        for (bottom in listOf(false, true)) {
-            withLayout(R.layout.activity_markers, bottom, true) { container, _ ->
+        for (isBottom in listOf(false, true)) {
+            withLayout(R.layout.activity_markers, isBottom, true) { container, _ ->
                 val list = container.findViewById<View>(android.R.id.list)
                 val base = list.paddingBottom
                 applyInsetsAndLayout(container, 0)
-                assertEquals(base + if (bottom) 0 else 24, list.paddingBottom)
+                assertEquals(base + if (isBottom) 0 else 24, list.paddingBottom)
             }
         }
     }
@@ -157,25 +157,25 @@ class BottomToolbarLayoutTest {
         withLayout(R.layout.activity_about, false, false) { container, toolbar ->
             val content = container.getChildAt(1)
             val activity = container.context as ToolbarLayoutTestActivity
-            for (bottom in listOf(true, false, true)) {
-                Preferences.setBoolean(App.context.getString(R.string.pref_bottomToolbarOnText_key), bottom)
+            for (isBottom in listOf(true, false, true)) {
+                Preferences.setBoolean(App.context.getString(R.string.pref_bottomToolbarOnText_key), isBottom)
                 activity.refreshToolbarPlacement()
                 applyInsetsAndLayout(container, 0)
                 assertTrue(content.parent === container)
-                assertEquals(if (bottom) 1 else 0, container.indexOfChild(toolbar))
-                assertEquals(if (bottom) 640 else toolbar.height, toolbar.bottom)
+                assertEquals(if (isBottom) 1 else 0, container.indexOfChild(toolbar))
+                assertEquals(if (isBottom) 640 else toolbar.height, toolbar.bottom)
                 assertTrue(content.height > 0)
-                assertTrue(if (bottom) content.bottom <= toolbar.top else content.top >= toolbar.bottom)
+                assertTrue(if (isBottom) content.bottom <= toolbar.top else content.top >= toolbar.bottom)
                 assertTrue(!activity.isFinishing && !activity.isDestroyed)
             }
         }
     }
 
-    private fun withLayout(layout: Int, bottom: Boolean, scrollPast: Boolean, check: (LinearLayout, Toolbar) -> Unit) {
-        Preferences.setBoolean(App.context.getString(R.string.pref_bottomToolbarOnText_key), bottom)
+    private fun withLayout(layout: Int, isBottom: Boolean, isScrollPastBottomEnabled: Boolean, check: (LinearLayout, Toolbar) -> Unit) {
+        Preferences.setBoolean(App.context.getString(R.string.pref_bottomToolbarOnText_key), isBottom)
         val intent = Intent(ApplicationProvider.getApplicationContext(), ToolbarLayoutTestActivity::class.java)
             .putExtra("layout", layout)
-            .putExtra("scrollPast", scrollPast)
+            .putExtra("scrollPast", isScrollPastBottomEnabled)
         val controller = Robolectric.buildActivity(ToolbarLayoutTestActivity::class.java, intent).setup()
         try {
             val toolbar = controller.get().findViewById<Toolbar>(R.id.toolbar)
