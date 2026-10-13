@@ -11,11 +11,11 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.format.DateFormat
 import android.text.method.LinkMovementMethod
-import android.util.TypedValue
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.URLSpan
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.Menu
@@ -28,16 +28,17 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.view.ActionMode
+import androidx.appcompat.widget.SwitchCompat
+import androidx.appcompat.widget.Toolbar
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.appcompat.view.ActionMode
-import androidx.appcompat.widget.SwitchCompat
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
@@ -72,10 +73,16 @@ import yuku.alkitab.base.ac.MarkersActivity
 import yuku.alkitab.base.ac.NoteActivity
 import yuku.alkitab.base.ac.SearchActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
+import yuku.alkitab.base.actionmode.ReaderSelectionActionMode
 import yuku.alkitab.base.actionmode.RibkaEligibility
 import yuku.alkitab.base.actionmode.VerseActionModeActions
 import yuku.alkitab.base.actionmode.VerseActionModeController
 import yuku.alkitab.base.actionmode.VerseActionModeHost
+import yuku.alkitab.base.audio.AudioBarController
+import yuku.alkitab.base.audio.AudioSetSelections
+import yuku.alkitab.base.audio.AudioSetsRepository
+import yuku.alkitab.base.audio.ui.AudioHighlightColor
+import yuku.alkitab.base.audio.ui.AudioSourceOption
 import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.base.compose.toolbar.ReaderToolbar
 import yuku.alkitab.base.compose.toolbar.ReaderToolbarActions
@@ -97,25 +104,20 @@ import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.Appearances
 import yuku.alkitab.base.util.BackForwardListController
 import yuku.alkitab.base.util.CurrentReading
-import yuku.alkitab.base.util.ReadingPassage
-import yuku.alkitab.base.verses.ReadingGuide
-import yuku.alkitab.base.verses.ReadingGuideMode
 import yuku.alkitab.base.util.History
 import yuku.alkitab.base.util.InstallationUtil
-import yuku.alkitab.base.audio.AudioBarController
-import yuku.alkitab.base.audio.AudioSetSelections
-import yuku.alkitab.base.audio.AudioSetsRepository
-import yuku.alkitab.base.audio.ui.AudioHighlightColor
-import yuku.alkitab.base.audio.ui.AudioSourceOption
 import yuku.alkitab.base.util.Jumper
 import yuku.alkitab.base.util.LidToAri
 import yuku.alkitab.base.util.OtherAppIntegration
+import yuku.alkitab.base.util.ReadingPassage
 import yuku.alkitab.base.util.RequestCodes
-import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.util.Sqlitil
 import yuku.alkitab.base.util.TargetDecoder
+import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.util.safeQuery
 import yuku.alkitab.base.util.toIntArray
+import yuku.alkitab.base.verses.ReadingGuide
+import yuku.alkitab.base.verses.ReadingGuideMode
 import yuku.alkitab.base.verses.VerseAttributeLoader
 import yuku.alkitab.base.verses.VersesController
 import yuku.alkitab.base.verses.VersesDataModel
@@ -144,6 +146,7 @@ import yuku.alkitab.base.widget.TextAppearancePanel
 import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRenderer
+import yuku.alkitab.base.widget.updateReaderToolbarLayout
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Book
@@ -186,7 +189,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     // --- VerseActionModeActions overrides ---
     override fun uncheckAllVersesSplit0() { lsSplit0.uncheckAllVerses(true) }
-    override fun onActionModeDestroyed() { actionMode = null }
+    override fun onActionModeDestroyed() {
+        actionMode = null
+        selectionBackCallback.isEnabled = false
+        updateToolbarLocation()
+        updateSystemBarAppearance()
+    }
     override fun isAudioAvailableForVerseAction(): Boolean = audioBinder.isPlayFromVerseAvailable
     override fun playAudioFromVerse(verse_1: Int) { audioBinder.showFromVerse(verse_1) }
 
@@ -281,6 +289,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     val history get() = History
 
     override var actionMode: ActionMode? = null
+    private val selectionBackCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() { actionMode?.finish() }
+    }
     private var dictionaryMode = false
     override var textAppearancePanel: TextAppearancePanel? = null
 
@@ -426,7 +437,13 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
 
             if (actionMode == null) {
-                actionMode = startSupportActionMode(actionModeController)
+                val mode = ReaderSelectionActionMode(findViewById(R.id.selectionToolbar), actionModeController)
+                if (mode.start()) {
+                    actionMode = mode
+                    selectionBackCallback.isEnabled = true
+                    updateToolbarLocation()
+                    updateSystemBarAppearance()
+                }
             }
 
             actionMode?.invalidate()
@@ -511,6 +528,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         composeToolbar = findViewById(R.id.composeToolbar)
         composeReferenceAnchor = findViewById(R.id.composeReferenceAnchor)
         setSupportActionBar(toolbar)
+        onBackPressedDispatcher.addCallback(this, selectionBackCallback)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(!useComposeToolbar)
             setDisplayShowTitleEnabled(false)
@@ -1221,6 +1239,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     override fun onDestroy() {
+        actionMode?.finish()
         // Only the activity-side bindings: the service stays alive while audio plays.
         audioBinder.detach()
         super.onDestroy()
@@ -1228,6 +1247,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     override fun onBackPressed() {
         when {
+            actionMode != null -> actionMode?.finish()
+
             textAppearancePanel != null -> {
                 textAppearancePanel?.hide()
                 textAppearancePanel = null
@@ -1361,9 +1382,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     private fun installComposeToolbar() {
         if (!useComposeToolbar) return
 
-        // The AppCompat toolbar stays, emptied out. It is what the action bar
-        // tints for night mode and what hosts the verse action mode, and the
-        // Compose bar draws over it with no background of its own.
         bVersion.visibility = View.GONE
         (bGoto.parent as View).visibility = View.GONE
 
@@ -1493,7 +1511,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         fullScreen = yes
 
         val controller = WindowCompat.getInsetsController(window, window.decorView)
-        toolbarHost.visibility = if (yes) View.GONE else View.VISIBLE
         if (yes) {
             supportActionBar?.hide()
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -1560,10 +1577,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val insets = windowInsets.getInsets(safeAreaTypes)
             v.setPadding(insets.left, 0, insets.right, 0)
 
-            val toolbarCoversTop = !fullScreen && !isBottomToolbarOnText()
+            val toolbarCoversTop = toolbarHost.isVisible && !isBottomToolbarOnText()
             val topEdgeCovered = toolbarCoversTop
             val topInset = if (topEdgeCovered) 0 else insets.top
-            val bottomEdgeCovered = (!fullScreen && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
+            val bottomEdgeCovered = (toolbarHost.isVisible && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
             val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
             val stackedSplit = splitHandleButton.isVisible && splitRoot.orientation == LinearLayout.VERTICAL
             lsSplit0.setViewVerticalInsets(topInset, if (stackedSplit) 0 else bottomInset)
@@ -1626,33 +1643,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // The toolbar background is dark in both day and night mode, so bar
         // icons over it are always light; over the verse background they
         // follow its luminance.
-        controller.isAppearanceLightStatusBars = if (!fullScreen && !bottomToolbar) false else lightBackground
-        controller.isAppearanceLightNavigationBars = if (!fullScreen && bottomToolbar) false else lightBackground
+        controller.isAppearanceLightStatusBars = if (toolbarHost.isVisible && !bottomToolbar) false else lightBackground
+        controller.isAppearanceLightNavigationBars = if (toolbarHost.isVisible && bottomToolbar) false else lightBackground
     }
 
     private fun updateToolbarLocation() {
-        // 3 kinds of possible layout:
-        // - fullscreen
-        // - not fullscreen, toolbar at bottom
-        // - not fullscreen, toolbar at top
-
-        if (!fullScreen) {
-            val audioBar = root.requireViewById<View>(R.id.audio_bar)
-            root.removeView(toolbarHost)
-            root.removeView(nontoolbar)
-            root.removeView(audioBar)
-
-            if (isBottomToolbarOnText()) {
-                root.addView(nontoolbar)
-                root.addView(audioBar)
-                root.addView(toolbarHost)
-            } else {
-                root.addView(toolbarHost)
-                root.addView(nontoolbar)
-                root.addView(audioBar)
-            }
-        }
-
+        updateReaderToolbarLayout(root, fullScreen, isBottomToolbarOnText(), actionMode != null, useComposeToolbar)
         ViewCompat.requestApplyInsets(drawerLayout)
     }
 

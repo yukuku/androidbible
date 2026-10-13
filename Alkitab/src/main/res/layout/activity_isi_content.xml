@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/overlayContainer"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
@@ -83,6 +84,17 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:visibility="gone" />
+
+
+			<androidx.appcompat.widget.Toolbar
+				android:id="@+id/selectionToolbar"
+				android:theme="@style/ThemeOverlay.Alkitab.Toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:visibility="gone"
+				app:navigationIcon="@drawable/ic_audio_close"
+				app:navigationContentDescription="@string/desc_close"
+				app:titleTextAppearance="@style/SmallerActionModeTitleTextAppearance" />
 
 			<!--
 				Tracks the bounds of the Compose reference button so the
