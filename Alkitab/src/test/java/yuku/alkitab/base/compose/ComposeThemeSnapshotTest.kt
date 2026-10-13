@@ -125,6 +125,7 @@ class ComposeThemeSnapshotTest {
         ) {
             GotoScreen(
                 toolbarAtBottom = false,
+                toolbarColor = MaterialTheme.colorScheme.secondaryContainer,
                 initialBookId = 0,
                 initialChapter_1 = 1,
                 initialVerse_1 = 1,
@@ -167,6 +168,7 @@ class ComposeThemeSnapshotTest {
         ) {
             SyncLoginScreen(
                 toolbarAtBottom = false,
+                toolbarColor = MaterialTheme.colorScheme.secondaryContainer,
                 onUp = {},
                 onLogin = { _, _, _ -> },
                 onRegister = { _, _, _ -> },

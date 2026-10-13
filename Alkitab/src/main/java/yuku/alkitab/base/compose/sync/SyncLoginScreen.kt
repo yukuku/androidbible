@@ -49,6 +49,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -97,6 +98,7 @@ object SyncLoginComposeHost {
             BibleAppTheme {
                 SyncLoginScreen(
                     toolbarAtBottom = activity.toolbarAtBottom,
+                    toolbarColor = Color(activity.toolbarBackgroundColor),
                     onUp = callbacks::onUp,
                     onLogin = { email, password, onResult -> callbacks.login(email, password) { s, m -> onResult(s, m) } },
                     onRegister = { email, password, onResult -> callbacks.register(email, password) { s, m -> onResult(s, m) } },
@@ -119,6 +121,7 @@ private enum class SyncLoginMode { SIGN_IN, CREATE_ACCOUNT, RESET, CHANGE_PASSWO
 @Composable
 fun SyncLoginScreen(
     toolbarAtBottom: Boolean,
+    toolbarColor: Color,
     onUp: () -> Unit,
     onLogin: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
     onRegister: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
@@ -267,6 +270,7 @@ fun SyncLoginScreen(
 
     ToolbarScaffold(
         toolbarAtBottom = toolbarAtBottom,
+        toolbarColor = toolbarColor,
         containerColor = MaterialTheme.colorScheme.background,
         toolbar = {
             TopAppBar(
@@ -274,7 +278,7 @@ fun SyncLoginScreen(
                 // The blue-gray of every View toolbar, so this screen's chrome
                 // matches the rest of the app.
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    containerColor = toolbarColor,
                     navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,

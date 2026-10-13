@@ -17,6 +17,7 @@ import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.NavUtils
@@ -50,6 +51,8 @@ abstract class BaseActivity : AppCompatActivity() {
     private var edgeToEdge = false
     private var edgeToEdgeHasToolbar = false
     var toolbarAtBottom by mutableStateOf(false)
+        private set
+    var toolbarBackgroundColor by mutableIntStateOf(Color.TRANSPARENT)
         private set
     private var edgeToEdgeToolbar: Toolbar? = null
 
@@ -87,6 +90,7 @@ abstract class BaseActivity : AppCompatActivity() {
             ResourcesCompat.getColor(resources, R.color.primary_dark, theme)
         }
 
+        toolbarBackgroundColor = primaryColor
         supportActionBar?.setBackgroundDrawable(primaryColor.toDrawable())
         // On the reading screen the toolbar host extends behind the status bar.
         // Its background must change with the toolbar when night mode changes.

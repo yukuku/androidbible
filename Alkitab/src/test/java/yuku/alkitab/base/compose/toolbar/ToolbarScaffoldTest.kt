@@ -58,6 +58,7 @@ class ToolbarScaffoldTest {
                     BibleAppTheme {
                         ToolbarScaffold(
                             toolbarAtBottom = bottom,
+                            toolbarColor = MaterialTheme.colorScheme.secondaryContainer,
                             toolbar = {
                                 Box(Modifier.fillMaxWidth().height(56.dp).onGloballyPositioned {
                                     toolbarBounds = it.boundsInRoot()

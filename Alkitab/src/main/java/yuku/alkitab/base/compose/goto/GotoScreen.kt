@@ -47,6 +47,7 @@ import yuku.alkitab.debug.R
 @Composable
 fun GotoScreen(
     toolbarAtBottom: Boolean,
+    toolbarColor: Color,
     initialBookId: Int,
     initialChapter_1: Int,
     initialVerse_1: Int,
@@ -71,13 +72,14 @@ fun GotoScreen(
 
     ToolbarScaffold(
         toolbarAtBottom = toolbarAtBottom,
+        toolbarColor = toolbarColor,
         snackbarHost = {},
         // Same role the audio bar paints itself with, so the two read as one
         // surface when the bar is showing over the reader behind this screen.
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         toolbar = {
             Surface(
-                color = MaterialTheme.colorScheme.secondaryContainer,
+                color = toolbarColor,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 tonalElevation = 0.dp,
             ) {

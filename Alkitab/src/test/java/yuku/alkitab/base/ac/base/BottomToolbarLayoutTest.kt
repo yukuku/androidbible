@@ -23,9 +23,12 @@ import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import yuku.afw.App
 import yuku.afw.storage.Preferences
+import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.debug.R
 
 class ToolbarLayoutTestActivity : BaseActivity() {
+    fun refreshColors() = applyNightModeColors()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Alkitab)
         super.onCreate(savedInstanceState)
@@ -54,6 +57,21 @@ class BottomToolbarLayoutTest {
             name = ToolbarLayoutTestActivity::class.java.name
             theme = R.style.Theme_Alkitab
         })
+    }
+
+    @Test
+    fun `toolbar color follows night mode in both positions and restores the day color`() {
+        for (bottom in listOf(false, true)) {
+            withLayout(R.layout.activity_settings, bottom, false) { container, _ ->
+                val activity = container.context as ToolbarLayoutTestActivity
+                for (night in listOf(false, true, false)) {
+                    Preferences.setBoolean(Prefkey.is_night_mode, night)
+                    activity.refreshColors()
+                    val expected = activity.getColor(if (night) R.color.primary_night_mode else R.color.primary)
+                    assertEquals(expected, activity.toolbarBackgroundColor)
+                }
+            }
+        }
     }
 
     @Test
