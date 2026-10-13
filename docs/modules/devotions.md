@@ -6,6 +6,8 @@ The selected source and date take priority over prefetching. Downloads are dedup
 
 The reader restores its selection and download status across activity lifecycle changes and follows the app's language and reading appearance settings. Source-specific article parsers handle formatting and links to Bible passages or other readings.
 
+Two-finger pinch gestures temporarily resize the article text between 50% and 200% of the reader font size, using the same gesture handling and limits as Songs. The zoom remains when switching dates or sources and when returning to the same activity. A newly created activity starts at the configured reader font size; zoom never changes the saved reading appearance settings.
+
 Key entry points:
 
 - `DevotionActivity.kt`: reader, date/source navigation, loading UI, and lifecycle handling.

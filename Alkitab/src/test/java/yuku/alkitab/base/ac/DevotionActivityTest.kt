@@ -8,6 +8,8 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Bundle
 import android.os.Looper
+import android.preference.PreferenceManager
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -45,6 +47,7 @@ import yuku.alkitab.base.storage.InternalDbHelper
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.widget.CallbackSpan
+import yuku.alkitab.base.widget.TwofingerLinearLayout
 import yuku.alkitab.model.Book
 import yuku.alkitab.model.Version
 import yuku.alkitab.debug.R
@@ -125,6 +128,123 @@ class DevotionActivityTest {
         testDownloader.shutdown()
         App.services = originalServices
         helper.close()
+    }
+
+    @Test fun `pinches resize the article cumulatively within the song zoom limits`() {
+        foreground.runNext()
+        idle()
+        val initialSize = activity.lContent.textSize
+        val content = activity.lContent.text
+        pinch(1.5f)
+        assertEquals(initialSize * 1.5f, activity.lContent.textSize, 0.01f)
+        pinch(1.2f)
+        assertEquals(initialSize * 1.8f, activity.lContent.textSize, 0.01f)
+        pinch(3f)
+        assertEquals(initialSize * 2f, activity.lContent.textSize, 0.01f)
+        pinch(0.1f)
+        assertEquals(initialSize * 0.5f, activity.lContent.textSize, 0.01f)
+        assertSame(content, activity.lContent.text)
+        assertEquals(18f, App.services.uiDimensions.applied().fontSize2dp, 0f)
+    }
+
+    @Test fun `temporary zoom survives reading changes and returning with updated reader settings`() {
+        foreground.runNext()
+        idle()
+        val initialSize = activity.lContent.textSize
+        pinch(1.5f)
+        activity.bNext_click()
+        foreground.runNext()
+        idle()
+        assertEquals(initialSize * 1.5f, activity.lContent.textSize, 0.01f)
+        activity.cbKind_itemSelected(DevotionKind.RH)
+        foreground.runNext()
+        idle()
+        assertEquals(initialSize * 1.5f, activity.lContent.textSize, 0.01f)
+        controller.pause().stop()
+        App.services.uiDimensions.applied().fontSize2dp = 22f
+        controller.start().resume().visible()
+        idle()
+        val density = activity.resources.displayMetrics.density
+        assertEquals(22f * density * 1.5f, activity.lContent.textSize, 0.01f)
+    }
+
+    @Test fun `a newly created reader resets temporary zoom without changing saved appearance`() {
+        foreground.runNext()
+        idle()
+        val initialSize = activity.lContent.textSize
+        val storedPreferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+        val preferences = storedPreferences.all.toMap()
+        pinch(1.5f)
+        assertEquals(preferences, storedPreferences.all)
+        val saved = Bundle()
+        controller.saveInstanceState(saved).pause().stop().destroy()
+        controller = Robolectric.buildActivity(TestActivity::class.java).create(saved).start().resume().visible()
+        idle()
+        assertEquals(initialSize, activity.lContent.textSize, 0.01f)
+        assertEquals(preferences, storedPreferences.all)
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "en-rUS-w393dp-h851dp-mdpi")
+    fun `zoomed devotional text reflows within the reader width`() {
+        output = "<h2>Morning</h2><p>" + "Begin this day with confidence in the strength that God supplies. ".repeat(20) + "</p>"
+        foreground.runNext()
+        idle()
+        val view = activity.window.decorView
+        fun capture(name: String) {
+            idle()
+            view.measure(
+                View.MeasureSpec.makeMeasureSpec(393, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(851, View.MeasureSpec.EXACTLY),
+            )
+            view.layout(0, 0, 393, 851)
+            val bitmap = Bitmap.createBitmap(393, 851, Bitmap.Config.ARGB_8888)
+            view.draw(Canvas(bitmap))
+            saveScreenshot(bitmap, name)
+        }
+        capture("pinch-normal.png")
+        val originalWidth = activity.lContent.width
+        val originalLines = activity.lContent.lineCount
+        pinch(2f)
+        capture("pinch-zoomed.png")
+        assertEquals(originalWidth, activity.lContent.width)
+        assertTrue(activity.lContent.lineCount > originalLines)
+        assertEquals(36f, activity.lContent.textSize, 0.01f)
+    }
+
+    private fun pinch(scale: Float) {
+        val root = activity.findViewById<TwofingerLinearLayout>(R.id.root)
+        val density = activity.resources.displayMetrics.density
+        val downTime = android.os.SystemClock.uptimeMillis()
+        var time = downTime
+        fun touch(action: Int, span: Float, pointerCount: Int) {
+            val properties = Array(pointerCount) { index -> MotionEvent.PointerProperties().apply {
+                id = index
+                toolType = MotionEvent.TOOL_TYPE_FINGER
+            } }
+            val coordinates = Array(pointerCount) { index -> MotionEvent.PointerCoords().apply {
+                x = (200f + if (index == 0) -span / 2f else span / 2f) * density
+                y = 300f * density
+                pressure = 1f
+                size = 1f
+            } }
+            time += 16
+            val event = MotionEvent.obtain(downTime, time, action, pointerCount, properties, coordinates,
+                0, 0, 1f, 1f, 0, 0, android.view.InputDevice.SOURCE_TOUCHSCREEN, 0)
+            try {
+                root.dispatchTouchEvent(event)
+            } finally {
+                event.recycle()
+            }
+        }
+        touch(MotionEvent.ACTION_DOWN, 100f, 1)
+        touch(MotionEvent.ACTION_POINTER_DOWN or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), 100f, 2)
+        touch(MotionEvent.ACTION_MOVE, 100f, 2)
+        touch(MotionEvent.ACTION_MOVE, 200f, 2)
+        touch(MotionEvent.ACTION_MOVE, 200f * scale, 2)
+        touch(MotionEvent.ACTION_POINTER_UP or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), 200f * scale, 2)
+        touch(MotionEvent.ACTION_UP, 200f * scale, 1)
     }
 
     @Test fun `devotional links retain disjoint reading guides in the new downloader activity`() {

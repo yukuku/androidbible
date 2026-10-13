@@ -51,9 +51,23 @@ import yuku.alkitab.util.Ari
 import yuku.alkitabintegration.display.Launcher
 
 open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.Listener {
+    private var textZoomPercent = 100
     private val rootListener = object : TwofingerLinearLayout.OnefingerListener() {
+        private var gestureZoomPercent = 100
+        private var gestureTextSize = 0f
+
         override fun onOnefingerLeft() = bNext_click()
         override fun onOnefingerRight() = bPrev_click()
+
+        override fun onTwofingerStart() {
+            gestureZoomPercent = textZoomPercent
+            gestureTextSize = lContent.textSize
+        }
+
+        override fun onTwofingerScale(scale: Float) {
+            textZoomPercent = (gestureZoomPercent * scale).toInt().coerceIn(50, 200)
+            lContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, gestureTextSize * textZoomPercent / gestureZoomPercent)
+        }
     }
 
     override fun bPrev_click() {
@@ -165,7 +179,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         downloadProgress = findViewById(R.id.downloadProgress)
         bRetry.setOnClickListener { bReload_click() }
         applyScrollPastBottomInset(scrollContent)
-        root.setTwofingerEnabled(false)
+        root.setTwofingerEnabled(true)
         root.setListener(rootListener)
 
         val storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.sourceName))
@@ -193,7 +207,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         // text formats
         lContent.setTextColor(applied.fontColor)
         lContent.setTypeface(applied.fontFace, applied.fontBold)
-        lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp)
+        lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * textZoomPercent / 100f)
         lContent.setLineSpacing(0f, applied.lineSpacingMult)
         val padding: Rect = SettingsActivity.getPaddingBasedOnPreferences()
         lContent.setPadding(padding.left, padding.top, padding.right, padding.bottom)
