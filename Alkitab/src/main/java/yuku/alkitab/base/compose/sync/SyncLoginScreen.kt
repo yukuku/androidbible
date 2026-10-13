@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,7 +32,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -61,7 +61,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.util.PatternsCompat
 import java.util.Locale
 import kotlinx.coroutines.launch
+import yuku.afw.storage.Preferences
 import yuku.alkitab.base.compose.BibleAppTheme
+import yuku.alkitab.base.compose.toolbar.ToolbarScaffold
 import yuku.alkitab.debug.R
 
 /**
@@ -262,9 +264,12 @@ fun SyncLoginScreen(
         SyncLoginMode.CHANGE_PASSWORD -> R.string.sync_login_change_password_button
     }
 
-    Scaffold(
-        topBar = {
+    ToolbarScaffold(
+        toolbarAtBottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default),
+        containerColor = MaterialTheme.colorScheme.background,
+        toolbar = {
             TopAppBar(
+                windowInsets = WindowInsets(0, 0, 0, 0),
                 // The blue-gray of every View toolbar, so this screen's chrome
                 // matches the rest of the app.
                 colors = TopAppBarDefaults.topAppBarColors(

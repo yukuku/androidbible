@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -40,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import yuku.afw.storage.Preferences
+import yuku.alkitab.base.compose.toolbar.ToolbarScaffold
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.debug.R
 
@@ -68,14 +68,13 @@ fun GotoScreen(
 
     var menuOpen by remember { mutableStateOf(false) }
 
-    Scaffold(
+    ToolbarScaffold(
+        toolbarAtBottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default),
+        snackbarHost = {},
         // Same role the audio bar paints itself with, so the two read as one
         // surface when the bar is showing over the reader behind this screen.
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        topBar = {
-            // Single bar: back button, tabs (taking remaining width), overflow menu —
-            // mirroring the legacy XML where TabLayout sat inside Toolbar, painted
-            // with the same blue-gray the View toolbars wear.
+        toolbar = {
             Surface(
                 color = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,

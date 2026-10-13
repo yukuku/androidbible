@@ -80,6 +80,7 @@ class GotoActivity : BaseActivity(), BaseGotoFragment.GotoFinishListener {
         useCompose = ExperimentalFlags.useComposeGoto()
 
         if (useCompose) {
+            setupEdgeToEdgeComposeToolbar()
             setContent {
                 BibleAppTheme {
                     GotoScreen(
