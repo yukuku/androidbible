@@ -84,6 +84,7 @@ class GotoActivity : BaseActivity(), BaseGotoFragment.GotoFinishListener {
             setContent {
                 BibleAppTheme {
                     GotoScreen(
+                        toolbarAtBottom = toolbarAtBottom,
                         initialBookId = bookId,
                         initialChapter_1 = chapter_1,
                         initialVerse_1 = verse_1,

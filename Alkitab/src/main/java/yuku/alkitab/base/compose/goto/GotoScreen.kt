@@ -46,6 +46,7 @@ import yuku.alkitab.debug.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GotoScreen(
+    toolbarAtBottom: Boolean,
     initialBookId: Int,
     initialChapter_1: Int,
     initialVerse_1: Int,
@@ -69,7 +70,7 @@ fun GotoScreen(
     var menuOpen by remember { mutableStateOf(false) }
 
     ToolbarScaffold(
-        toolbarAtBottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default),
+        toolbarAtBottom = toolbarAtBottom,
         snackbarHost = {},
         // Same role the audio bar paints itself with, so the two read as one
         // surface when the bar is showing over the reader behind this screen.

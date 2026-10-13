@@ -2,7 +2,6 @@ package yuku.alkitab.base.compose.sync
 
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -61,7 +60,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.util.PatternsCompat
 import java.util.Locale
 import kotlinx.coroutines.launch
-import yuku.afw.storage.Preferences
+import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.base.compose.toolbar.ToolbarScaffold
 import yuku.alkitab.debug.R
@@ -93,10 +92,11 @@ interface SyncLoginCallbacks {
 /** Java-friendly bridge so [SyncLoginActivity] (still Java) can install the Compose UI. */
 object SyncLoginComposeHost {
     @JvmStatic
-    fun setContent(activity: ComponentActivity, callbacks: SyncLoginCallbacks) {
+    fun setContent(activity: BaseActivity, callbacks: SyncLoginCallbacks) {
         activity.setContent {
             BibleAppTheme {
                 SyncLoginScreen(
+                    toolbarAtBottom = activity.toolbarAtBottom,
                     onUp = callbacks::onUp,
                     onLogin = { email, password, onResult -> callbacks.login(email, password) { s, m -> onResult(s, m) } },
                     onRegister = { email, password, onResult -> callbacks.register(email, password) { s, m -> onResult(s, m) } },
@@ -118,6 +118,7 @@ private enum class SyncLoginMode { SIGN_IN, CREATE_ACCOUNT, RESET, CHANGE_PASSWO
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SyncLoginScreen(
+    toolbarAtBottom: Boolean,
     onUp: () -> Unit,
     onLogin: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
     onRegister: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
@@ -265,7 +266,7 @@ fun SyncLoginScreen(
     }
 
     ToolbarScaffold(
-        toolbarAtBottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default),
+        toolbarAtBottom = toolbarAtBottom,
         containerColor = MaterialTheme.colorScheme.background,
         toolbar = {
             TopAppBar(

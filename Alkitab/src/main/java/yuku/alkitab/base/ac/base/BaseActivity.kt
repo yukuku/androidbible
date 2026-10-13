@@ -16,6 +16,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.NavUtils
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.res.ResourcesCompat
@@ -46,7 +49,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private var edgeToEdge = false
     private var edgeToEdgeHasToolbar = false
-    private var toolbarAtBottom = false
+    var toolbarAtBottom by mutableStateOf(false)
+        private set
+    private var edgeToEdgeToolbar: Toolbar? = null
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(ConfigurationWrapper.wrap(base))
@@ -55,6 +60,7 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        refreshToolbarPlacement()
         applyNightModeColors()
 
         val currentConfigurationSerialNumber = ConfigurationWrapper.getSerialCounter()
@@ -142,16 +148,17 @@ abstract class BaseActivity : AppCompatActivity() {
         toolbarAtBottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)
         val container = toolbar.parent as LinearLayout
         ViewGroupCompat.installCompatInsetsDispatch(container)
-        if (toolbarAtBottom) {
-            // A match-parent child measured before the toolbar would leave it no space.
-            container.children.filter { it !== toolbar }.forEach { child ->
-                child.updateLayoutParams<LinearLayout.LayoutParams> {
-                    if (height == ViewGroup.LayoutParams.MATCH_PARENT) {
-                        height = 0
-                        weight = 1f
-                    }
+        edgeToEdgeToolbar = toolbar
+        // A match-parent child measured before the toolbar would leave it no space.
+        container.children.filter { it !== toolbar }.forEach { child ->
+            child.updateLayoutParams<LinearLayout.LayoutParams> {
+                if (height == ViewGroup.LayoutParams.MATCH_PARENT) {
+                    height = 0
+                    weight = 1f
                 }
             }
+        }
+        if (toolbarAtBottom) {
             container.removeView(toolbar)
             container.addView(toolbar)
         }
@@ -168,22 +175,36 @@ abstract class BaseActivity : AppCompatActivity() {
             v.updateLayoutParams { height = actionBarSize + top + bottom }
             windowInsets
         }
-        if (toolbarAtBottom) {
-            val basePadding = Rect(container.paddingLeft, container.paddingTop, container.paddingRight, container.paddingBottom)
-            ViewCompat.setOnApplyWindowInsetsListener(container) { v, windowInsets ->
-                val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
-                val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
-                v.setPadding(
-                    basePadding.left + insets.left,
-                    basePadding.top + insets.top,
-                    basePadding.right + insets.right,
-                    basePadding.bottom + ime.bottom,
-                )
-                windowInsets
+        val basePadding = Rect(container.paddingLeft, container.paddingTop, container.paddingRight, container.paddingBottom)
+        ViewCompat.setOnApplyWindowInsetsListener(container) { v, windowInsets ->
+            val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
+            val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+            val bottom = when {
+                toolbarAtBottom -> ime.bottom
+                scrollPastBottom -> 0
+                else -> maxOf(insets.bottom, ime.bottom)
             }
-        } else {
-            setupContainerInsets(container, includeTop = false, includeBottom = !scrollPastBottom)
+            v.setPadding(
+                basePadding.left + insets.left,
+                basePadding.top + if (toolbarAtBottom) insets.top else 0,
+                basePadding.right + insets.right,
+                basePadding.bottom + bottom,
+            )
+            windowInsets
         }
+    }
+
+    fun refreshToolbarPlacement() {
+        val bottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)
+        if (toolbarAtBottom == bottom) return
+        toolbarAtBottom = bottom
+        edgeToEdgeToolbar?.let { toolbar ->
+            val container = toolbar.parent as LinearLayout
+            container.removeView(toolbar)
+            container.addView(toolbar, if (bottom) container.childCount else 0)
+            ViewCompat.requestApplyInsets(container)
+        }
+        if (edgeToEdge) applyNightModeColors()
     }
 
     /**

@@ -134,6 +134,25 @@ class BottomToolbarLayoutTest {
         }
     }
 
+    @Test
+    fun `changing toolbar position preserves the existing activity and content`() {
+        withLayout(R.layout.activity_about, false, false) { container, toolbar ->
+            val content = container.getChildAt(1)
+            val activity = container.context as ToolbarLayoutTestActivity
+            for (bottom in listOf(true, false, true)) {
+                Preferences.setBoolean(App.context.getString(R.string.pref_bottomToolbarOnText_key), bottom)
+                activity.refreshToolbarPlacement()
+                applyInsetsAndLayout(container, 0)
+                assertTrue(content.parent === container)
+                assertEquals(if (bottom) 1 else 0, container.indexOfChild(toolbar))
+                assertEquals(if (bottom) 640 else toolbar.height, toolbar.bottom)
+                assertTrue(content.height > 0)
+                assertTrue(if (bottom) content.bottom <= toolbar.top else content.top >= toolbar.bottom)
+                assertTrue(!activity.isFinishing && !activity.isDestroyed)
+            }
+        }
+    }
+
     private fun withLayout(layout: Int, bottom: Boolean, scrollPast: Boolean, check: (LinearLayout, Toolbar) -> Unit) {
         Preferences.setBoolean(App.context.getString(R.string.pref_bottomToolbarOnText_key), bottom)
         val intent = Intent(ApplicationProvider.getApplicationContext(), ToolbarLayoutTestActivity::class.java)

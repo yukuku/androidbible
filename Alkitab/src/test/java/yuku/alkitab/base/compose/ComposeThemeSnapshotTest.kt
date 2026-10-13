@@ -124,6 +124,7 @@ class ComposeThemeSnapshotTest {
             heightPx = 720,
         ) {
             GotoScreen(
+                toolbarAtBottom = false,
                 initialBookId = 0,
                 initialChapter_1 = 1,
                 initialVerse_1 = 1,
@@ -165,6 +166,7 @@ class ComposeThemeSnapshotTest {
             heightPx = 860,
         ) {
             SyncLoginScreen(
+                toolbarAtBottom = false,
                 onUp = {},
                 onLogin = { _, _, _ -> },
                 onRegister = { _, _, _ -> },
