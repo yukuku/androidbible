@@ -7,6 +7,7 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.events.AppEvents
 import yuku.alkitab.base.widget.ConfigurationWrapper
 import yuku.alkitab.debug.R
@@ -41,8 +42,11 @@ class DisplayFragment : PreferenceFragmentCompat() {
 
         val pref_bottomToolbarOnText = findPreference<CheckBoxPreference>(getString(R.string.pref_bottomToolbarOnText_key))
         pref_bottomToolbarOnText?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-            // do this after this method returns true
-            Handler(Looper.getMainLooper()).post { AppEvents.emitNeedsRestart() }
+            // The preference is stored only after this listener returns true.
+            Handler(Looper.getMainLooper()).post {
+                (activity as? BaseActivity)?.refreshToolbarPlacement()
+                AppEvents.emitNeedsRestart()
+            }
             true
         }
     }

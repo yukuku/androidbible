@@ -2,10 +2,10 @@ package yuku.alkitab.base.compose.sync
 
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,7 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -50,6 +49,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -61,7 +61,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.util.PatternsCompat
 import java.util.Locale
 import kotlinx.coroutines.launch
+import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.compose.BibleAppTheme
+import yuku.alkitab.base.compose.toolbar.ToolbarScaffold
 import yuku.alkitab.debug.R
 
 /**
@@ -91,10 +93,12 @@ interface SyncLoginCallbacks {
 /** Java-friendly bridge so [SyncLoginActivity] (still Java) can install the Compose UI. */
 object SyncLoginComposeHost {
     @JvmStatic
-    fun setContent(activity: ComponentActivity, callbacks: SyncLoginCallbacks) {
+    fun setContent(activity: BaseActivity, callbacks: SyncLoginCallbacks) {
         activity.setContent {
             BibleAppTheme {
                 SyncLoginScreen(
+                    isToolbarAtBottom = activity.isToolbarAtBottom,
+                    toolbarColor = Color(activity.toolbarBackgroundColor),
                     onUp = callbacks::onUp,
                     onLogin = { email, password, onResult -> callbacks.login(email, password) { s, m -> onResult(s, m) } },
                     onRegister = { email, password, onResult -> callbacks.register(email, password) { s, m -> onResult(s, m) } },
@@ -116,6 +120,8 @@ private enum class SyncLoginMode { SIGN_IN, CREATE_ACCOUNT, RESET, CHANGE_PASSWO
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SyncLoginScreen(
+    isToolbarAtBottom: Boolean,
+    toolbarColor: Color,
     onUp: () -> Unit,
     onLogin: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
     onRegister: (email: String, password: String, onResult: (Boolean, String?) -> Unit) -> Unit,
@@ -262,13 +268,16 @@ fun SyncLoginScreen(
         SyncLoginMode.CHANGE_PASSWORD -> R.string.sync_login_change_password_button
     }
 
-    Scaffold(
-        topBar = {
+    ToolbarScaffold(
+        isToolbarAtBottom = isToolbarAtBottom,
+        toolbarColor = toolbarColor,
+        containerColor = MaterialTheme.colorScheme.background,
+        toolbar = {
             TopAppBar(
-                // The blue-gray of every View toolbar, so this screen's chrome
-                // matches the rest of the app.
+                windowInsets = WindowInsets(0, 0, 0, 0),
+                // Keep the Compose and View screens on the same day/night toolbar palette.
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    containerColor = toolbarColor,
                     navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
