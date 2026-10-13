@@ -11,18 +11,25 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.NavUtils
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
+import androidx.core.view.ViewGroupCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import yuku.afw.storage.Preferences
@@ -43,6 +50,11 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private var edgeToEdge = false
     private var edgeToEdgeHasToolbar = false
+    var isToolbarAtBottom by mutableStateOf(false)
+        private set
+    var toolbarBackgroundColor by mutableIntStateOf(Color.TRANSPARENT)
+        private set
+    private var edgeToEdgeToolbar: Toolbar? = null
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(ConfigurationWrapper.wrap(base))
@@ -51,6 +63,7 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        refreshToolbarPlacement()
         applyNightModeColors()
 
         val currentConfigurationSerialNumber = ConfigurationWrapper.getSerialCounter()
@@ -77,6 +90,7 @@ abstract class BaseActivity : AppCompatActivity() {
             ResourcesCompat.getColor(resources, R.color.primary_dark, theme)
         }
 
+        toolbarBackgroundColor = primaryColor
         supportActionBar?.setBackgroundDrawable(primaryColor.toDrawable())
         // On the reading screen the toolbar host extends behind the status bar.
         // Its background must change with the toolbar when night mode changes.
@@ -105,41 +119,30 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun updateSystemBarIconAppearance(toolbarColor: Int) {
         val backgroundColor = TypedValue().apply { theme.resolveAttribute(android.R.attr.colorBackground, this, true) }.data
         val controller = WindowCompat.getInsetsController(window, window.decorView)
-        val statusBarBackground = if (edgeToEdgeHasToolbar) toolbarColor else backgroundColor
+        val statusBarBackground = if (edgeToEdgeHasToolbar && !isToolbarAtBottom) toolbarColor else backgroundColor
         controller.isAppearanceLightStatusBars = ColorUtils.calculateLuminance(statusBarBackground) > 0.5
-        controller.isAppearanceLightNavigationBars = ColorUtils.calculateLuminance(backgroundColor) > 0.5
+        val navigationBarBackground = if (edgeToEdgeHasToolbar && isToolbarAtBottom) toolbarColor else backgroundColor
+        controller.isAppearanceLightNavigationBars = ColorUtils.calculateLuminance(navigationBarBackground) > 0.5
     }
 
     /**
-     * Makes the window draw edge-to-edge, which Android 15 enforces when
-     * targeting SDK 35 while ignoring window.statusBarColor. The toolbar
-     * grows behind the status bar keeping its background color, and its
-     * parent container is padded away from the navigation bar, side system
-     * bars, display cutout, and on-screen keyboard (replacing the legacy
-     * adjustResize behavior, which does not work in an edge-to-edge window).
-     * System bar icon appearance then follows the toolbar and theme
-     * background colors instead of the legacy statusBarColor.
-     *
-     * Call after setContentView. The toolbar must be a direct child of the
-     * container that spans the whole window; for drawer layouts that is the
-     * main-content container, and the drawer itself needs
-     * [applySafeAreaPadding] separately.
+     * Call after setContentView with the toolbar directly inside a vertical
+     * LinearLayout spanning the window. The toolbar owns the system-bar inset
+     * at its preferred edge; the container handles the remaining safe area and
+     * keyboard inset. Drawer layouts need [applySafeAreaPadding] separately.
      */
     protected fun setupEdgeToEdgeDisplay(toolbar: Toolbar) {
-        setupEdgeToEdgeToolbar(toolbar)
-        setupContainerInsets(toolbar.parent as View, includeTop = false, includeBottom = true)
+        setupEdgeToEdgeToolbar(toolbar, isScrollPastBottomEnabled = false)
     }
 
     /**
-     * [setupEdgeToEdgeDisplay] for an activity whose content scrolls behind
-     * the navigation bar: the container keeps its bottom edge at the window
-     * bottom and the content itself adds the bottom inset as scroll-past
-     * padding. The keyboard inset is left out as well, so this suits content
-     * without text input.
+     * With a top toolbar, content must use [applyScrollPastBottomInset] to keep
+     * its last item reachable beneath the navigation bar. The container omits
+     * keyboard padding in that position, so this is for content without text input.
+     * A bottom toolbar owns the navigation inset and stays above the keyboard.
      */
     protected fun setupEdgeToEdgeDisplayWithoutBottomInset(toolbar: Toolbar) {
-        setupEdgeToEdgeToolbar(toolbar)
-        setupContainerInsets(toolbar.parent as View, includeTop = false, includeBottom = false)
+        setupEdgeToEdgeToolbar(toolbar, isScrollPastBottomEnabled = true)
     }
 
     /**
@@ -151,8 +154,30 @@ abstract class BaseActivity : AppCompatActivity() {
         setupContainerInsets(container, includeTop = true, includeBottom = true)
     }
 
-    private fun setupEdgeToEdgeToolbar(toolbar: Toolbar) {
+    protected fun setupEdgeToEdgeComposeToolbar() {
         enableEdgeToEdgeInternal(hasToolbar = true)
+        isToolbarAtBottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)
+    }
+
+    private fun setupEdgeToEdgeToolbar(toolbar: Toolbar, isScrollPastBottomEnabled: Boolean) {
+        enableEdgeToEdgeInternal(hasToolbar = true)
+        isToolbarAtBottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)
+        val container = toolbar.parent as LinearLayout
+        ViewGroupCompat.installCompatInsetsDispatch(container)
+        edgeToEdgeToolbar = toolbar
+        // A match-parent child measured before the toolbar would leave it no space.
+        container.children.filter { it !== toolbar }.forEach { child ->
+            child.updateLayoutParams<LinearLayout.LayoutParams> {
+                if (height == ViewGroup.LayoutParams.MATCH_PARENT) {
+                    height = 0
+                    weight = 1f
+                }
+            }
+        }
+        if (isToolbarAtBottom) {
+            container.removeView(toolbar)
+            container.addView(toolbar)
+        }
 
         val tv = TypedValue()
         theme.resolveAttribute(androidx.appcompat.R.attr.actionBarSize, tv, true)
@@ -160,10 +185,42 @@ abstract class BaseActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, windowInsets ->
             val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
-            v.updatePadding(top = insets.top)
-            v.updateLayoutParams { height = actionBarSize + insets.top }
+            val top = if (isToolbarAtBottom) 0 else insets.top
+            val bottom = if (isToolbarAtBottom && !windowInsets.isVisible(WindowInsetsCompat.Type.ime())) insets.bottom else 0
+            v.updatePadding(top = top, bottom = bottom)
+            v.updateLayoutParams { height = actionBarSize + top + bottom }
             windowInsets
         }
+        val basePadding = Rect(container.paddingLeft, container.paddingTop, container.paddingRight, container.paddingBottom)
+        ViewCompat.setOnApplyWindowInsetsListener(container) { v, windowInsets ->
+            val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
+            val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+            val bottom = when {
+                isToolbarAtBottom -> ime.bottom
+                isScrollPastBottomEnabled -> 0
+                else -> maxOf(insets.bottom, ime.bottom)
+            }
+            v.setPadding(
+                basePadding.left + insets.left,
+                basePadding.top + if (isToolbarAtBottom) insets.top else 0,
+                basePadding.right + insets.right,
+                basePadding.bottom + bottom,
+            )
+            windowInsets
+        }
+    }
+
+    fun refreshToolbarPlacement() {
+        val isBottom = Preferences.getBoolean(R.string.pref_bottomToolbarOnText_key, R.bool.pref_bottomToolbarOnText_default)
+        if (isToolbarAtBottom == isBottom) return
+        isToolbarAtBottom = isBottom
+        edgeToEdgeToolbar?.let { toolbar ->
+            val container = toolbar.parent as LinearLayout
+            container.removeView(toolbar)
+            container.addView(toolbar, if (isBottom) container.childCount else 0)
+            ViewCompat.requestApplyInsets(container)
+        }
+        if (edgeToEdge) applyNightModeColors()
     }
 
     /**
@@ -176,7 +233,7 @@ abstract class BaseActivity : AppCompatActivity() {
         view.clipToPadding = false
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
             val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
-            v.updatePadding(bottom = basePaddingBottom + insets.bottom)
+            v.updatePadding(bottom = basePaddingBottom + if (isToolbarAtBottom) 0 else insets.bottom)
             windowInsets
         }
     }

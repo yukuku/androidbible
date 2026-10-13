@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.compose.setContent
+import androidx.compose.ui.graphics.Color
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -80,9 +81,12 @@ class GotoActivity : BaseActivity(), BaseGotoFragment.GotoFinishListener {
         useCompose = ExperimentalFlags.useComposeGoto()
 
         if (useCompose) {
+            setupEdgeToEdgeComposeToolbar()
             setContent {
                 BibleAppTheme {
                     GotoScreen(
+                        isToolbarAtBottom = isToolbarAtBottom,
+                        toolbarColor = Color(toolbarBackgroundColor),
                         initialBookId = bookId,
                         initialChapter_1 = chapter_1,
                         initialVerse_1 = verse_1,

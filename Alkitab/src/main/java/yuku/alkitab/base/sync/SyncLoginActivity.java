@@ -68,6 +68,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
         useCompose = ExperimentalFlags.INSTANCE.useComposeSyncLogin();
         if (useCompose) {
+            setupEdgeToEdgeComposeToolbar();
             SyncLoginComposeHost.setContent(this, this);
             return;
         }
