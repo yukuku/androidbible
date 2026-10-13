@@ -340,7 +340,7 @@ private fun CloseButton(
 ) {
     IconButton(onClick = { onCommand(AudioBarCommand.Close) }) {
         Icon(
-            painter = painterResource(R.drawable.ic_audio_close),
+            painter = painterResource(R.drawable.ic_close),
             contentDescription = stringResource(R.string.audio_bar_close),
         )
     }

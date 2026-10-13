@@ -24,7 +24,7 @@ class ReaderSelectionActionModeTest {
         val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
         activity.setTheme(R.style.Theme_Alkitab)
         val toolbar = Toolbar(activity)
-        toolbar.setNavigationIcon(R.drawable.ic_audio_close)
+        toolbar.setNavigationIcon(R.drawable.ic_close)
         toolbar.setNavigationContentDescription(R.string.desc_close)
         var clicked = 0
         var prepared = 0
