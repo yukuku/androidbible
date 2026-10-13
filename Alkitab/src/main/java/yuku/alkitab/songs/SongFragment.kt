@@ -112,6 +112,8 @@ class SongFragment : BaseFragment(), SongTextZoomable {
                 template = templateVarReplace(template, key, customVars[key])
             }
 
+            val patchTextLinkLabel = customVars.getString("patch_text_open_link")
+            template = templateDivReplace(template, "patchtext", patchTextLinkLabel?.let { "<a href='patchtext:'>$it</a>" })
             template = templateDivReplace(template, "code", doc.code)
             val songContent = SongDocumentRenderer.renderDocument(doc, { osis -> ScriptureReferenceRenderer.render(BIBLE_PROTOCOL, osis) }, false)
             template = templateVarReplace(template, "song_content", songContent)
