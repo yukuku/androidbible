@@ -3,6 +3,6 @@
     <string name="prerelease_feedback_button">Masukan %1$s</string>
     <string name="prerelease_feedback_message">Terima kasih sudah mencoba versi %1$s. Jika ada kesulitan, masalah, saran, atau ide, kirimkan email kepada kami dengan menekan tombol ini:</string>
     <string name="prerelease_feedback_send_email">Kirim email</string>
-    <string name="prerelease_feedback_hide">Sembunyikan tombol \"%1$s\"</string>
+    <string name="prerelease_feedback_hide">Sembunyikan dulu tombolnya</string>
     <string name="prerelease_feedback_no_email_app">Tidak ada aplikasi email yang terpasang. Silakan kirim masukan ke help@alkitab.app.</string>
 </resources>

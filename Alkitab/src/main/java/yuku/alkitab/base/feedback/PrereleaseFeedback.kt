@@ -30,9 +30,9 @@ object PrereleaseFeedback {
     val version: PrereleaseVersion? = PrereleaseVersion.parse(App.getVersionName())
 
     fun isReaderButtonVisible(): Boolean =
-        version != null && !Preferences.getBoolean(Prefkey.prerelease_feedback_hidden, false)
+        version != null && Preferences.getString(Prefkey.prerelease_feedback_hidden_commit) != BuildConfig.LAST_COMMIT_HASH
 
-    fun show(activity: Activity, onHidden: () -> Unit = {}) {
+    fun show(activity: Activity, onHidden: (() -> Unit)?) {
         val version = version ?: return
         ComposeBottomSheetHost.show(activity) { dismiss ->
             FeedbackSheetContent(
@@ -49,10 +49,12 @@ object PrereleaseFeedback {
                         Toast.makeText(activity, R.string.prerelease_feedback_no_email_app, Toast.LENGTH_LONG).show()
                     }
                 },
-                onHide = {
-                    Preferences.setBoolean(Prefkey.prerelease_feedback_hidden, true)
-                    onHidden()
-                    dismiss()
+                onHide = onHidden?.let { callback ->
+                    {
+                        Preferences.setString(Prefkey.prerelease_feedback_hidden_commit, BuildConfig.LAST_COMMIT_HASH)
+                        callback()
+                        dismiss()
+                    }
                 },
             )
         }
@@ -63,7 +65,7 @@ object PrereleaseFeedback {
 private fun FeedbackSheetContent(
     label: String,
     onSendEmail: () -> Unit,
-    onHide: () -> Unit,
+    onHide: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val feedbackButtonText = stringResource(R.string.prerelease_feedback_button, label)
@@ -79,11 +81,13 @@ private fun FeedbackSheetContent(
         Button(onClick = onSendEmail, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.prerelease_feedback_send_email))
         }
-        TextButton(onClick = onHide, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = stringResource(R.string.prerelease_feedback_hide, feedbackButtonText),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        if (onHide != null) {
+            TextButton(onClick = onHide, modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(R.string.prerelease_feedback_hide, feedbackButtonText),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
