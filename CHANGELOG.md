@@ -4,6 +4,28 @@ A user-facing history of Bible for Android (Alkitab / Quick Bible).
 Internal refactors, dependency bumps, CI tweaks, and pure
 translation-only updates are generally omitted.
 
+## 5.0.0-beta.4 — 2026-10-14
+
+- Optional reading guides mark the passages from your current reading
+  plan or devotion in the Bible reader. The drawer shows every passage
+  for the day, with separate checkboxes to track reading-plan progress.
+- Devotion downloads prioritize the day you open, show clearer loading
+  and error states, and let you retry a failed download.
+- A beta feedback button opens a sheet for reporting problems by email.
+  Hiding the reader button applies only to the current build, so it
+  returns when you install an update.
+- The search screen uses the new toolbar and capsule version switcher.
+  More screens honor the bottom-toolbar preference, and verse actions
+  stay at the preferred edge without shifting text in fullscreen mode.
+- Verse-rendering fixes: verse numbers have the correct weight, BSB
+  paragraphs have the correct indentation, and tapping a verse in the
+  marker list opens it reliably. Reading guides also support right-to-left
+  layouts, and the reading status bar uses the correct night-mode color.
+- Song layout, line spacing, and link colors more closely match the
+  previous renderer. Correction links are hidden for private songbooks.
+- Appearance and download messages respect the app's language setting.
+  Drawer scrolling, toolbar icons, and submenu alignment are improved.
+
 ## 5.0.0-beta.3 — 2026-09-23
 
 * Compose screens are now the default (toolbar, verses, navigation, song, sync login),
