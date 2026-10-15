@@ -3,18 +3,21 @@
 **Source:** 2026-07 code audit
 **Module:** AlkitabYes2 (`Yes2VerseTextDecoder.java`)
 **BRICE:** B=3 R=3 I=5 C=5 E=3 → **3.8**
-**Phase:** 1 — Quick Wins & Safety Fixes (2026-07 audit)
+**Phase:** 1, Quick Wins & Safety Fixes (2026-07 audit)
 
-**Status:** Not started.
+**Status:** Completed on 2026-10-15.
 
-**Problem:** `Yes2VerseTextDecoder.Ascii.separateIntoVerses` lowercases with the wrong index — `verseBuf[i] |= 0x20` (verse counter) instead of `verseBuf[j]` (byte counter). For `.yes` versions with `textEncoding == 1` (also the fallback for unknown encodings), search misses matches spanning uppercase letters and corrupts one byte per verse in the search buffer. Display is unaffected; the lowercased path is search-only.
+**Problem:** `Yes2VerseTextDecoder.Ascii.separateIntoVerses` used the verse index when lowercasing bytes. For `.yes` versions with `textEncoding == 1`, including the ASCII fallback for unknown encodings, uppercase letters remained in search text and an unrelated byte could be modified. Display text was unaffected.
 
-**Steps:**
-1. One-character fix: `verseBuf[i]` → `verseBuf[j]`.
-2. Extend the YES2 round-trip test (currently UTF-8-only) with an ASCII-encoded fixture asserting `separateIntoVerses(..., lowercased = true)` returns fully lowercased text and `lowercased = false` returns the original.
-3. Grep for other `[i]`/`[j]` mix-ups in the sibling decoders while in there.
+**Completed work:**
 
-**Difficulty:** Trivial (~1 hour).
+- Lowercase the current byte using the byte index in `Yes2VerseTextDecoder.Ascii.separateIntoVerses`.
+- Extend `Yes2RoundTripTest` with ASCII and unknown-encoding fixtures covering compressed and uncompressed files, separate verses and joined chapter text, uppercase and mixed-case text, punctuation, empty and short verses, and unchanged display text after search decoding.
+- Inspect the sibling UTF-8 decoder loops in `Yes2VerseTextDecoder.Utf8` and `Utf8Decoder`. No equivalent verse-index/byte-index mix-up was found.
+
+**Validation:** Both new regression tests failed against the original decoder before the fix. All 19 YES2 debug unit tests and `assemblePlainDebug` pass with the fix. The library does not expose a release unit-test task.
+
+**Remaining work:** None within this scope. Other decoding concerns remain tracked separately in REM-39 and REM-48.
 
 ---
 

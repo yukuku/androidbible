@@ -32,7 +32,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 - [REM-33: Make Data-Transfer Import Safe](tech-debt-remediation/REM-33-import-safety.md) ✅ **3.8** (completed 2026-10-15; safe previews, transaction cleanup, reference validation, deleted-plan progress backups)
 - [REM-35: Fix "Update Song Book" dataFormatVersion Handling](tech-debt-remediation/REM-35-songbook-update-dfv.md) ✅ **3.8** (completed 2026-07-20; mixed-version books are replaced by book name and stored as current JSON)
-- [REM-36: Fix YES2 ASCII Search Decoder](tech-debt-remediation/REM-36-yes2-ascii-decoder.md) — **3.8** (one-character fix; search broken for ASCII-encoded versions)
+- [REM-36: Fix YES2 ASCII Search Decoder](tech-debt-remediation/REM-36-yes2-ascii-decoder.md) ✅ **3.8** (completed 2026-10-15; ASCII search decoding and round-trip coverage)
 - [REM-34: Fix Sync Request Delivery and Shared-State Races](tech-debt-remediation/REM-34-sync-delivery.md) ✅ **3.4** (completed 2026-10-15; persisted delivery, shared-state guards)
 
 ## Phase 2: Architecture Improvements (BRICE 3.0–3.9)
@@ -100,7 +100,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 | [REM-26](tech-debt-remediation/REM-26-verserenderer-kotlin.md)          | ~~Port VerseRenderer to Kotlin~~ ✅                                   | **3.8** | 3     |
 | [REM-33](tech-debt-remediation/REM-33-import-safety.md)                 | Make data-transfer import safe (2026-07 audit)                       | **3.8** | 1     |
 | [REM-35](tech-debt-remediation/REM-35-songbook-update-dfv.md)           | ~~Fix song book update dataFormatVersion~~ ✅                        | **3.8** | 1     |
-| [REM-36](tech-debt-remediation/REM-36-yes2-ascii-decoder.md)            | Fix YES2 ASCII search decoder (2026-07 audit)                        | **3.8** | 1     |
+| [REM-36](tech-debt-remediation/REM-36-yes2-ascii-decoder.md)            | ~~Fix YES2 ASCII search decoder~~ ✅                                | **3.8** | 1     |
 | [REM-37](tech-debt-remediation/REM-37-bible-audio-state.md)             | Bible audio state + appearance (split wiring complete)              | **3.8** | 2     |
 | [REM-46](tech-debt-remediation/REM-46-debouncer-thread-leak.md)         | Stop Debouncer thread leak (2026-09 Kotlin conversion)               | **3.6** | 2     |
 | [REM-47](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md)    | Close YesReaderFactory header file (2026-09 Kotlin conversion)       | **3.6** | 2     |
@@ -144,7 +144,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 ### 2026-07 audit follow-up (suggested)
 
-**Sprint 7 (1 week), user-data safety first:** REM-36 (search fix), ~~REM-35~~✅ (song-book update, completed 2026-07-20), ~~REM-33~~✅ (import safety, completed 2026-10-15), plus the REM-41 widget direction fix
+**Sprint 7 (1 week), user-data safety first:** ~~REM-36~~✅ (search fix, completed 2026-10-15), ~~REM-35~~✅ (song-book update, completed 2026-07-20), ~~REM-33~~✅ (import safety, completed 2026-10-15), plus the REM-41 widget direction fix
 **Sprint 8 (1 week):** REM-34 (sync delivery/races), rest of REM-41 (defensive guards)
 **Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding), REM-40 (download robustness)
 
