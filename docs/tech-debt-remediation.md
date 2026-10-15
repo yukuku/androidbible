@@ -2,6 +2,8 @@
 
 This document is an index over the prioritized remediation plan for each tech debt item identified in [tech-debt.md](tech-debt.md). Each task has its own file under [`tech-debt-remediation/`](tech-debt-remediation/), scoped to a specific module or subsystem and evaluated using the BRICE framework.
 
+Summary reconciled with the implementation, test sources, and task records on 2026-10-15. A check mark means the stated scope is complete; partial tasks retain their remaining steps in the linked record. This documentation review does not replace runtime validation of open findings.
+
 ## BRICE Evaluation Framework
 
 | Dimension                   | Description                                                                | Scale                    |
@@ -27,7 +29,7 @@ This document is an index over the prioritized remediation plan for each tech de
 ### From the 2026-07 code audit
 
 - [REM-33: Make Data-Transfer Import Safe](tech-debt-remediation/REM-33-import-safety.md) — **3.8** (import dry-run destroys reading history, failed-import transaction leak, round-trip gaps)
-- [REM-35: Fix "Update Song Book" dataFormatVersion Handling](tech-debt-remediation/REM-35-songbook-update-dfv.md) — **3.8** (mixed dataFormatVersion → duplicate songs + crash-on-read)
+- [REM-35: Fix "Update Song Book" dataFormatVersion Handling](tech-debt-remediation/REM-35-songbook-update-dfv.md) ✅ **3.8** (completed 2026-07-20; mixed-version books are replaced by book name and stored as current JSON)
 - [REM-36: Fix YES2 ASCII Search Decoder](tech-debt-remediation/REM-36-yes2-ascii-decoder.md) — **3.8** (one-character fix; search broken for ASCII-encoded versions)
 - [REM-34: Fix Sync Request Delivery and Shared-State Races](tech-debt-remediation/REM-34-sync-delivery.md) — **3.4** (dropped sync requests, shared-state races)
 
@@ -43,10 +45,10 @@ This document is an index over the prioritized remediation plan for each tech de
 - [REM-18: Add Test Coverage for Core Modules](tech-debt-remediation/REM-18-test-coverage.md) ✅ **3.4**
 - [REM-23: Port ybuild.sh to Gradle](tech-debt-remediation/REM-23-ybuild-gradle.md) ✅ **3.8**
 - [REM-24: Refactor S.kt Service Locator](tech-debt-remediation/REM-24-s-service-locator.md) ✅ (24a–24d done) **3.2**
-- [REM-37: Bible Audio — MediaSession State & Split-View Wiring](tech-debt-remediation/REM-37-bible-audio-state.md) — **3.8** (2026-07 audit)
+- [REM-37: Bible Audio: MediaSession State & Split-View Wiring](tech-debt-remediation/REM-37-bible-audio-state.md): **3.8** (partial; split-version wiring complete, playback observation and appearance invalidation remain)
 - [REM-38: Reader Lifecycle Fixes](tech-debt-remediation/REM-38-reader-lifecycle.md) — **3.4** (2026-07 audit)
 - [REM-39: Text Decoding Correctness](tech-debt-remediation/REM-39-text-decoding.md) — **3.4** (2026-07 audit)
-- [REM-41: Defensive Data Guards](tech-debt-remediation/REM-41-defensive-guards.md) — **3.4** (2026-07 audit)
+- [REM-41: Defensive Data Guards](tech-debt-remediation/REM-41-defensive-guards.md): **3.4** (partial; devotion request deduplication complete, other guards remain)
 - [REM-40: Version Download Robustness](tech-debt-remediation/REM-40-download-robustness.md) — **3.4** (2026-07 audit)
 
 ### From the REM-16 Kotlin conversion (2026-09)
@@ -57,7 +59,7 @@ This document is an index over the prioritized remediation plan for each tech de
 
 ## Phase 3: Modernization (BRICE 2.5–3.0)
 
-- [REM-15: Introduce Kotlin Coroutines](tech-debt-remediation/REM-15-coroutines.md) — **3.2**
+- [REM-15: Introduce Kotlin Coroutines](tech-debt-remediation/REM-15-coroutines.md): **3.2** (partial; devotion downloads complete, sync/search/version loading remain)
 - [REM-16: Convert Core Java Files to Kotlin](tech-debt-remediation/REM-16-java-to-kotlin.md) — **3.0** (9 of 11 files ported)
 - [REM-17: Migrate Build to Kotlin DSL & Version Catalogs](tech-debt-remediation/REM-17-kotlin-dsl-build.md) ✅ **3.0**
 - [REM-19: Replace PRDownloaderFixed with WorkManager Downloads](tech-debt-remediation/REM-19-prdownloader-replacement.md) ✅ **2.8**
@@ -68,8 +70,8 @@ This document is an index over the prioritized remediation plan for each tech de
 ## Phase 4: Long-term / Major Refactors (BRICE < 2.5)
 
 - [REM-21: Migrate Song Storage from Parcelable to JSON](tech-debt-remediation/REM-21-song-json-storage.md) ✅ **2.8** — app-side done; backend redirect branching and `kidung-data` authoring are out of scope (separate repos).
-- [REM-22: Introduce Jetpack Compose for New Screens](tech-debt-remediation/REM-22-jetpack-compose.md) — **2.6** (kicked off; the Goto Compose port is the default, with the legacy screen as an experimental opt-out)
-- [REM-45: Migrate the IsiActivity Shell to Compose (Staged)](tech-debt-remediation/REM-45-isiactivity-compose-shell.md) — **2.2** (planned; gated on retiring the legacy RecyclerView verse pipeline, now an experimental opt-out — see the staged plan for the ordering rationale)
+- [REM-22: Introduce Jetpack Compose for New Screens](tech-debt-remediation/REM-22-jetpack-compose.md): **2.6** (ongoing; navigation, verse lists/dialogs, reader toolbar, songs, and sync login default to Compose; search toolbar also ported)
+- [REM-45: Migrate the IsiActivity Shell to Compose (Staged)](tech-debt-remediation/REM-45-isiactivity-compose-shell.md): **2.2** (partial; normal toolbar ported, selection toolbar and other shell elements remain; split-container migration depends on retiring the legacy verse pipeline)
 - [REM-44: Make the Daily-Verse Widget's Version Fallback Explicit](tech-debt-remediation/REM-44-widget-version-fallback.md) — **2.6** (2026-07 audit)
 - [REM-42: Bounded Eviction for the Version Cache](tech-debt-remediation/REM-42-version-cache-eviction.md) — **2.4** (2026-07 audit)
 - [REM-43: Surface or Resolve Cross-Device Sync Conflicts](tech-debt-remediation/REM-43-sync-conflict-handling.md) — **2.4** (long-standing last-write-wins limitation)
@@ -88,9 +90,9 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-23](tech-debt-remediation/REM-23-ybuild-gradle.md)                 | ~~Port ybuild.sh to Gradle~~ ✅                                       | **3.8** | 2     |
 | [REM-26](tech-debt-remediation/REM-26-verserenderer-kotlin.md)          | ~~Port VerseRenderer to Kotlin~~ ✅                                   | **3.8** | 3     |
 | [REM-33](tech-debt-remediation/REM-33-import-safety.md)                 | Make data-transfer import safe (2026-07 audit)                       | **3.8** | 1     |
-| [REM-35](tech-debt-remediation/REM-35-songbook-update-dfv.md)           | Fix song book update dataFormatVersion (2026-07 audit)               | **3.8** | 1     |
+| [REM-35](tech-debt-remediation/REM-35-songbook-update-dfv.md)           | ~~Fix song book update dataFormatVersion~~ ✅                        | **3.8** | 1     |
 | [REM-36](tech-debt-remediation/REM-36-yes2-ascii-decoder.md)            | Fix YES2 ASCII search decoder (2026-07 audit)                        | **3.8** | 1     |
-| [REM-37](tech-debt-remediation/REM-37-bible-audio-state.md)             | Bible audio MediaSession state + split wiring (2026-07 audit)        | **3.8** | 2     |
+| [REM-37](tech-debt-remediation/REM-37-bible-audio-state.md)             | Bible audio state + appearance (split wiring complete)              | **3.8** | 2     |
 | [REM-46](tech-debt-remediation/REM-46-debouncer-thread-leak.md)         | Stop Debouncer thread leak (2026-09 Kotlin conversion)               | **3.6** | 2     |
 | [REM-47](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md)    | Close YesReaderFactory header file (2026-09 Kotlin conversion)       | **3.6** | 2     |
 | [REM-06](tech-debt-remediation/REM-06-isiactivity-gestures.md)          | ~~Extract IsiActivity gestures~~ ✅                                   | **3.4** | 2     |
@@ -103,23 +105,23 @@ This document is an index over the prioritized remediation plan for each tech de
 | [REM-38](tech-debt-remediation/REM-38-reader-lifecycle.md)              | Reader lifecycle fixes (2026-07 audit)                               | **3.4** | 2     |
 | [REM-39](tech-debt-remediation/REM-39-text-decoding.md)                 | Text decoding correctness (2026-07 audit)                            | **3.4** | 2     |
 | [REM-40](tech-debt-remediation/REM-40-download-robustness.md)           | Version download robustness (2026-07 audit)                          | **3.4** | 2     |
-| [REM-41](tech-debt-remediation/REM-41-defensive-guards.md)              | Defensive data guards (2026-07 audit)                                | **3.4** | 2     |
+| [REM-41](tech-debt-remediation/REM-41-defensive-guards.md)              | Defensive data guards (devotion deduplication complete)             | **3.4** | 2     |
 | [REM-25](tech-debt-remediation/REM-25-verserenderer-decompose.md)       | ~~Decompose VerseRenderer.render~~ ✅                                 | **3.4** | 3     |
 | [REM-24](tech-debt-remediation/REM-24-s-service-locator.md)             | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅         | **3.2** | 2     |
 | [REM-08](tech-debt-remediation/REM-08-isiactivity-split-view.md)        | ~~Extract split view manager~~ ✅                                     | **3.2** | 2     |
 | [REM-32](tech-debt-remediation/REM-32-room-song-db.md)                  | ~~Room migration (SongDb)~~ ✅                                        | **3.2** | 2     |
-| [REM-15](tech-debt-remediation/REM-15-coroutines.md)                    | Introduce coroutines                                                 | **3.2** | 3     |
+| [REM-15](tech-debt-remediation/REM-15-coroutines.md)                    | Introduce coroutines (devotion downloads complete)                   | **3.2** | 3     |
 | [REM-16](tech-debt-remediation/REM-16-java-to-kotlin.md)                | Java→Kotlin conversion (9/11 done)                                   | **3.0** | 3     |
 | [REM-17](tech-debt-remediation/REM-17-kotlin-dsl-build.md)              | ~~Kotlin DSL build migration~~ ✅                                     | **3.0** | 3     |
 | [REM-20](tech-debt-remediation/REM-20-ambilwarna-replacement.md)        | ~~Replace AmbilWarna~~ ✅                                             | **3.0** | 3     |
 | [REM-48](tech-debt-remediation/REM-48-old-ascii-decoder.md)             | Harden OldVerseTextDecoder.Ascii (2026-09 Kotlin conversion)         | **3.0** | 2     |
 | [REM-19](tech-debt-remediation/REM-19-prdownloader-replacement.md)      | ~~Replace PRDownloader~~ ✅                                           | **2.8** | 3     |
 | [REM-21](tech-debt-remediation/REM-21-song-json-storage.md)             | ~~Song storage migration~~ ✅ (app-side)                              | **2.8** | 4     |
-| [REM-22](tech-debt-remediation/REM-22-jetpack-compose.md)               | Jetpack Compose adoption (kicked off)                                | **2.6** | 4     |
+| [REM-22](tech-debt-remediation/REM-22-jetpack-compose.md)               | Jetpack Compose adoption (ongoing across multiple screens)           | **2.6** | 4     |
 | [REM-44](tech-debt-remediation/REM-44-widget-version-fallback.md)       | Explicit widget version fallback (2026-07 audit)                     | **2.6** | 4     |
 | [REM-42](tech-debt-remediation/REM-42-version-cache-eviction.md)        | Bounded version-cache eviction (2026-07 audit)                       | **2.4** | 4     |
 | [REM-43](tech-debt-remediation/REM-43-sync-conflict-handling.md)        | Surface/resolve sync conflicts                                       | **2.4** | 4     |
-| [REM-45](tech-debt-remediation/REM-45-isiactivity-compose-shell.md)     | IsiActivity Compose shell (staged; gated on retiring the legacy verse pipeline) | **2.2** | 4     |
+| [REM-45](tech-debt-remediation/REM-45-isiactivity-compose-shell.md)     | IsiActivity Compose shell (partial; normal toolbar ported)           | **2.2** | 4     |
 
 ## Suggested Execution Order
 
@@ -133,10 +135,17 @@ This document is an index over the prioritized remediation plan for each tech de
 
 ### 2026-07 audit follow-up (suggested)
 
-**Sprint 7 (1 week) — user-data safety first:** REM-36 (1-line search fix), REM-35 (song book update), REM-33 (import safety), plus the REM-41 widget one-liner
+**Sprint 7 (1 week), user-data safety first:** REM-36 (search fix), ~~REM-35~~✅ (song-book update, completed 2026-07-20), REM-33 (import safety), plus the REM-41 widget direction fix
 **Sprint 8 (1 week):** REM-34 (sync delivery/races), rest of REM-41 (defensive guards)
 **Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding), REM-40 (download robustness)
 
 ### 2026-09 Kotlin conversion follow-up (suggested)
 
 **Sprint 10 (a few days):** REM-47 (one-line `use {}` fix), REM-46 (Debouncer thread leak), REM-48 (YES1 ASCII decoder)
+
+### Partial work completed as of 2026-10-15
+
+- REM-15: devotion downloads use coroutines and observable state with cancellation and retry tests. Sync, search, and chapter-loading work remain.
+- REM-37: split-version changes reach `IsiActivity.onVisibleVersionsChanged`, which refreshes audio sources and controls. MediaSession-driven playback observation and highlight-color invalidation remain.
+- REM-41: devotion requests deduplicate by source/date, covered by `DevotionDownloaderTest`. Widget, verse bounds, reading-plan bounds/footer, and downgrade guards remain.
+- REM-22/45: Compose adoption extends beyond Goto and verse content to the normal reader toolbar, song content, sync login, and the search toolbar. The selection toolbar and the remaining reader shell are separate unfinished work.

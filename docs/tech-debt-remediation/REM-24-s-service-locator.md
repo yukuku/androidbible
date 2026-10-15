@@ -10,7 +10,7 @@
 **24d caller-migration follow-up shipped 2026-05-12:**
 - `App.services` is now initialized eagerly at the static field declaration in `App.java` rather than only inside `staticInit()`. This keeps `App.services.*` non-null for callers that exercise migrated code in tests that deliberately bypass `App.onCreate()` / `App.staticInit()` (e.g. `ProviderTest`, `VerseRendererTest`'s setup). The adapter objects on `S` only touch context/preferences when their methods are invoked, so eager init is safe before `App.context` is set.
 - `AppServices`'s `storage` / `versions` / `uiDimensions` fields are annotated `@JvmField` so Java callers can write `App.services.versions.activeVersion()` (matching Kotlin syntax) instead of `App.services.getVersions().activeVersion()`.
-- One deliberately un-migrated call site remains: the `S.db.listAllVersions().isEmpty()` check inside `IsiActivity.openVersionsDialog`. The rest of that method already uses `App.services.versions`; the single `S.db` line is left for the next person touching that method to migrate, to keep diffs cohesive.
+- As of 2026-10-15, `IsiActivity.openVersionsDialog` delegates to `VersionDialogHelper` with `App.services.versions`. Direct `S` imports remain in legacy navigation fragments, note/patch-text activities, `VersionDialogHelper`, and the dimensions-provider type.
 
 **What shipped on 2026-05-12:**
 - New `yuku.alkitab.base.services` package with `StorageProvider`, `VersionManager`, `UiDimensionsProvider`, and `AppServices` (see `Alkitab/src/main/java/yuku/alkitab/base/services/`).
@@ -18,10 +18,10 @@
 - `openVersionsDialog` / `openVersionsDialogWithNone` moved off `S` into `yuku.alkitab.base.util.VersionDialogHelper`. Callers in `IsiActivity.kt` and `SearchActivity.kt` were updated.
 - `recalculateAppliedValuesBasedOnPreferences()` renamed to `recalculate()` to match the interface (single call site in `IsiActivity.kt`).
 - Active-version state collapsed from three mutable nullable fields to a single `@Volatile var state: ActiveVersionState` data-class reference so all readers see a consistent `(mVersion, version, versionId)` triple.
-- `App.staticInit()` now constructs `App.services = new AppServices(S.storage, S.versions, S.uiDimensions)` before any other init step.
+- `App.services` is constructed eagerly at the static field declaration in `App.java`, before `App.staticInit()` runs.
 - `AppServicesTest` (4 cases) demonstrates the new interfaces are fake-implementable in pure JUnit — no Robolectric or Android context required.
 
-**Current state (pre-refactor, kept for context):** `S.kt` is a Kotlin `object` singleton mixing database access (`db`, `songDb`), active version state, and UI dimensions (`CalculatedDimensions`). Imported by 50 files with 161+ call sites. Untestable without a full Android environment.
+**Remaining debt (reviewed 2026-10-15):** `S` supplies the interface implementations and owns lazy databases that require `App.context`. Most consumers resolve dependencies through the global `App.services` container. `CalculatedDimensions` exposes mutable fields; its holder uses Compose snapshot state so Compose readers observe `recalculate()` replacements, while View consumers still require explicit refreshes. Interface test doubles are supported, as demonstrated by `AppServicesTest`. Step 24e remains optional/deferred.
 
 **Recommended approach: Incremental interface extraction, then manual DI**
 
