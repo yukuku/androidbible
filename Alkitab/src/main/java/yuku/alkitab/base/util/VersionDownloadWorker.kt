@@ -21,12 +21,8 @@ import yuku.alkitab.base.connection.Connections
  * starts from byte 0; any stale bytes already at the destination path
  * are discarded before the request goes out.
  *
- * Note: we deliberately do *not* support HTTP Range-based resume. The temp
- * file path identifies a download attempt, not the
- * server's file contents, so a leftover partial could be from a different
- * version (e.g. the user's app was updated, or the server's source file
- * changed). Resuming would risk producing a Frankenstein of bytes from two
- * different files. A failed download just retries from byte 0.
+ * Resume is not supported because the server's file may have changed.
+ * Each retry downloads the whole file to avoid mixing old and new content.
  *
  * Progress is reported via [setProgress] as the pair (current, total) of
  * raw on-disk bytes. If the response has no Content-Length (e.g. chunked
