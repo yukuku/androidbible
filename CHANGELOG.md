@@ -180,6 +180,7 @@ the first wave of a Jetpack Compose migration.
 - **Beta-version announcement banner** removed.
 - **Search reverse-index removed**; search still works and translation
   downloads are smaller.
+- Extensions system revived — installed extensions list auto-updates.
 - Widget rendering fixed on Android 12 (tap responsiveness, Bible Maps
   hand-off).
 - Progress-mark names can be reset to the default.
@@ -558,6 +559,9 @@ the first wave of a Jetpack Compose migration.
 
 ## 4.3.0 — 2015-09-30
 
+- **Extensions**: third-party apps can add attribute icons and popups
+  to verses. The list auto-refreshes as extensions are installed or
+  uninstalled.
 - **Maps indicator** on verses with geographic references — tap for a
   popup. Companion **Bible Maps** app works with this, including
   star-able "anchor" locations that persist across both apps.
@@ -585,6 +589,8 @@ the first wave of a Jetpack Compose migration.
 
 ## 4.3 Beta 3 — 2015-08-25
 
+- Support for extension apps: create your own app that enriches
+  user-selected verses (docs).
 - Fixed an unresponsive pointer when dragging the verse floater.
 - Fixed memory leaks.
 
