@@ -5,14 +5,13 @@
 **BRICE:** B=3 R=2 I=4 C=4 E=4 → **3.4**
 **Phase:** 2 — Architecture Improvements (2026-07 audit)
 
-**Status:** Not started.
+**Status:** Complete (2026-10-15).
 
-**Steps:**
-1. Rewrite `VersionDownloadCompleteReceiver`'s finalization with try-with-resources for `fis`/`ogis`/the `AtomicFile` stream, calling `af.failWrite(fos)` on any failure so the `AtomicFile` contract is honored and no fds/temp files leak.
-2. Reconcile persisted WorkManager state on startup: either cancel all `WORK_TAG` work whose `DownloadMapper` row is missing (simplest — the user just re-taps download), or persist enough of the row (`attrs`) to let `VersionDownloadCompleteReceiver` finalize an orphaned SUCCEEDED download. Also delete the temp file when work lands in FAILED/CANCELLED, not only in `consumeAndRemove`.
-3. Tests: extend `DownloadMapperTest` with an orphaned-work reconciliation case; a finalization test with a corrupt gzip fixture.
-
-**Difficulty:** Medium (~1 day).
+**Implementation:**
+- `VersionDownloadCompleteReceiver.finalizeDownload` scopes both input streams and pairs every started atomic write with `finishWrite` or `failWrite`. Decompression failures preserve the existing destination.
+- Application startup reconciles persisted tagged work with the in-memory mapper, cancels orphaned unfinished work, and removes untracked temporary files. Interrupted downloads can be requested again by the user.
+- Each attempt has a unique temporary path. Mapper failure/cancellation and worker failure/cancellation clean up temporary files without deleting a newer attempt's output.
+- Regression coverage verifies orphan cancellation, preservation of tracked files, removal cleanup, corrupt-gzip rollback, successful plain/gzip finalization, and partial HTTP transfer cleanup.
 
 ---
 

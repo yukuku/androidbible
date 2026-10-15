@@ -8,7 +8,7 @@ import java.io.IOException;
  * This class is an intentionally incomplete UTF-8 decoder that only supports up to U+FFFF.
  */
 public class Utf8Decoder {
-	public static char[] buf = new char[1000];
+	private static final ThreadLocal<char[]> buf_ = ThreadLocal.withInitial(() -> new char[1000]);
 
 	static final ThreadLocal<byte[]> byte_buf_ = ThreadLocal.withInitial(() -> new byte[1000]);
 
@@ -19,39 +19,42 @@ public class Utf8Decoder {
 	}
 
 	public static String toString(byte[] ba, int start, int length) {
-		if (buf.length < ba.length) {
-			buf = new char[ba.length + 1000];
+		if (start < 0 || length < 0 || start > ba.length - length) {
+			throw new IndexOutOfBoundsException();
+		}
+		char[] buf = buf_.get();
+		if (buf.length < length) {
+			buf = new char[length + 1000];
+			buf_.set(buf);
 		}
 
 		int pos = 0;
 
-		try {
-			for (int i = start; i < start + length; i++) {
-				int c0 = ba[i] & 0xff;
+		for (int i = start; i < start + length; i++) {
+			int c0 = ba[i] & 0xff;
 
-				if (c0 < 0x80) {
-					// input 1 byte, output 7 bit
-					buf[pos++] = (char) c0;
-					continue;
-				}
-
-				i++;
-				int c1 = ba[i] & 0xff;
-
-				if (c0 < 0xe0) {
-					// input 2 byte, output 5+6 = 11 bit
-					buf[pos++] = (char) (((c0 & 0x1f) << 6) | (c1 & 0x3f));
-					continue;
-				}
-
-				i++;
-				int c2 = ba[i] & 0xff;
-
-				// input 3 byte, output 4+6+6 = 16 bit
-				buf[pos++] = (char) (((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f));
+			if (c0 < 0x80) {
+				// input 1 byte, output 7 bit
+				buf[pos++] = (char) c0;
+				continue;
 			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// biarin
+
+			if (i + 1 >= start + length) throw new IllegalArgumentException("Truncated UTF-8 sequence");
+			i++;
+			int c1 = ba[i] & 0xff;
+
+			if (c0 < 0xe0) {
+				// input 2 byte, output 5+6 = 11 bit
+				buf[pos++] = (char) (((c0 & 0x1f) << 6) | (c1 & 0x3f));
+				continue;
+			}
+
+			if (i + 1 >= start + length) throw new IllegalArgumentException("Truncated UTF-8 sequence");
+			i++;
+			int c2 = ba[i] & 0xff;
+
+			// input 3 byte, output 4+6+6 = 16 bit
+			buf[pos++] = (char) (((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f));
 		}
 
 		return new String(buf, 0, pos);
@@ -62,49 +65,52 @@ public class Utf8Decoder {
 	}
 
 	public static String toStringLowerCase(byte[] ba, int start, int length) {
-		if (buf.length < ba.length) {
-			buf = new char[ba.length + 1000];
+		if (start < 0 || length < 0 || start > ba.length - length) {
+			throw new IndexOutOfBoundsException();
+		}
+		char[] buf = buf_.get();
+		if (buf.length < length) {
+			buf = new char[length + 1000];
+			buf_.set(buf);
 		}
 
 		int pos = 0;
 
-		try {
-			for (int i = start; i < start + length; i++) {
-				int c0 = ba[i] & 0xff;
+		for (int i = start; i < start + length; i++) {
+			int c0 = ba[i] & 0xff;
 
-				if (c0 < 0x80) {
-					// input 1 byte, output 7 bit
+			if (c0 < 0x80) {
+				// input 1 byte, output 7 bit
 
-					if (c0 >= 'A' && c0 <= 'Z') {
-						buf[pos++] = (char) (c0 | 0x20);
-					} else {
-						buf[pos++] = (char) c0;
-					}
-
-					continue;
+				if (c0 >= 'A' && c0 <= 'Z') {
+					buf[pos++] = (char) (c0 | 0x20);
+				} else {
+					buf[pos++] = (char) c0;
 				}
 
-				i++;
-				int c1 = ba[i] & 0xff;
-
-				if (c0 < 0xe0) {
-					// input 2 byte, output 5+6 = 11 bit
-					final int c = ((c0 & 0x1f) << 6) | (c1 & 0x3f);
-					buf[pos++] = (char) Character.toLowerCase(c);
-					continue;
-				}
-
-				i++;
-				int c2 = ba[i] & 0xff;
-
-				{
-					// input 3 byte, output 4+6+6 = 16 bit
-					final int c = ((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f);
-					buf[pos++] = (char) Character.toLowerCase(c);
-				}
+				continue;
 			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// biarin
+
+			if (i + 1 >= start + length) throw new IllegalArgumentException("Truncated UTF-8 sequence");
+			i++;
+			int c1 = ba[i] & 0xff;
+
+			if (c0 < 0xe0) {
+				// input 2 byte, output 5+6 = 11 bit
+				final int c = ((c0 & 0x1f) << 6) | (c1 & 0x3f);
+				buf[pos++] = (char) Character.toLowerCase(c);
+				continue;
+			}
+
+			if (i + 1 >= start + length) throw new IllegalArgumentException("Truncated UTF-8 sequence");
+			i++;
+			int c2 = ba[i] & 0xff;
+
+			{
+				// input 3 byte, output 4+6+6 = 16 bit
+				final int c = ((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f);
+				buf[pos++] = (char) Character.toLowerCase(c);
+			}
 		}
 
 		return new String(buf, 0, pos);

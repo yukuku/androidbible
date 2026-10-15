@@ -1,6 +1,5 @@
 package yuku.alkitab.base.util
 
-import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -23,7 +22,10 @@ object QueryTokenizer {
 
         val rawTokens = mutableListOf<String>()
 
-        val matcher = oneToken.matcher(query.lowercase(Locale.getDefault()))
+        val normalizedQuery = buildString(query.length) {
+            for (c in query) append(Character.toLowerCase(c))
+        }
+        val matcher = oneToken.matcher(normalizedQuery)
         while (matcher.find()) {
             rawTokens.add((matcher.group(1) ?: "") + matcher.group(2)!!)
         }

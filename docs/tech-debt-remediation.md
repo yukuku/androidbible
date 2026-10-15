@@ -49,15 +49,15 @@ Summary reconciled with the implementation, test sources, and task records on 20
 - [REM-24: Refactor S.kt Service Locator](tech-debt-remediation/REM-24-s-service-locator.md) ✅ (24a–24d done) **3.2**
 - [REM-37: Bible Audio: MediaSession State & Split-View Wiring](tech-debt-remediation/REM-37-bible-audio-state.md): ✅ **3.8** (completed 2026-10-15; playback observation and appearance refresh)
 - [REM-38: Reader Lifecycle Fixes](tech-debt-remediation/REM-38-reader-lifecycle.md): ✅ **3.4** (completed 2026-10-15; restoration, intent parsing, dialog lifecycle)
-- [REM-39: Text Decoding Correctness](tech-debt-remediation/REM-39-text-decoding.md) — **3.4** (2026-07 audit)
+- [REM-39: Text Decoding Correctness](tech-debt-remediation/REM-39-text-decoding.md): ✅ Complete on 2026-10-15
 - [REM-41: Defensive Data Guards](tech-debt-remediation/REM-41-defensive-guards.md): ✅ Complete on 2026-10-15
-- [REM-40: Version Download Robustness](tech-debt-remediation/REM-40-download-robustness.md) — **3.4** (2026-07 audit)
+- [REM-40: Version Download Robustness](tech-debt-remediation/REM-40-download-robustness.md): ✅ Complete on 2026-10-15
 
 ### From the REM-16 Kotlin conversion (2026-09)
 
 - [REM-46: Stop Debouncer From Leaking a Thread per Instance](tech-debt-remediation/REM-46-debouncer-thread-leak.md) ✅ **3.6** (completed 2026-10-15; coroutine delay and shared IO threads)
 - [REM-47: Close the Header File in YesReaderFactory on Read Failure](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md) ✅ **3.6** (completed 2026-10-15; scoped header reads close on failure)
-- [REM-48: Harden OldVerseTextDecoder.Ascii](tech-debt-remediation/REM-48-old-ascii-decoder.md) **3.0** (4,000-byte verse limit, inconsistent non-ASCII decoding, input mutation)
+- [REM-48: Harden OldVerseTextDecoder.Ascii](tech-debt-remediation/REM-48-old-ascii-decoder.md): ✅ Complete on 2026-10-15
 
 ## Phase 3: Modernization (BRICE 2.5–3.0)
 
@@ -112,8 +112,8 @@ Summary reconciled with the implementation, test sources, and task records on 20
 | [REM-18](tech-debt-remediation/REM-18-test-coverage.md)                 | ~~Add test coverage~~ ✅                                              | **3.4** | 2     |
 | [REM-34](tech-debt-remediation/REM-34-sync-delivery.md)                 | ~~Fix sync delivery + shared-state races~~ ✅                         | **3.4** | 1     |
 | [REM-38](tech-debt-remediation/REM-38-reader-lifecycle.md)              | ~~Reader lifecycle fixes~~ ✅                               | **3.4** | 2     |
-| [REM-39](tech-debt-remediation/REM-39-text-decoding.md)                 | Text decoding correctness (2026-07 audit)                            | **3.4** | 2     |
-| [REM-40](tech-debt-remediation/REM-40-download-robustness.md)           | Version download robustness (2026-07 audit)                          | **3.4** | 2     |
+| [REM-39](tech-debt-remediation/REM-39-text-decoding.md)                 | ~~Text decoding correctness (2026-07 audit)~~ ✅ | **3.4** | 2     |
+| [REM-40](tech-debt-remediation/REM-40-download-robustness.md)           | ~~Version download robustness (2026-07 audit)~~ ✅ | **3.4** | 2     |
 | [REM-41](tech-debt-remediation/REM-41-defensive-guards.md)              | ~~Defensive data guards~~ ✅             | **3.4** | 2     |
 | [REM-25](tech-debt-remediation/REM-25-verserenderer-decompose.md)       | ~~Decompose VerseRenderer.render~~ ✅                                 | **3.4** | 3     |
 | [REM-24](tech-debt-remediation/REM-24-s-service-locator.md)             | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅         | **3.2** | 2     |
@@ -123,7 +123,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 | [REM-16](tech-debt-remediation/REM-16-java-to-kotlin.md)                | Java→Kotlin conversion (9/11 done)                                   | **3.0** | 3     |
 | [REM-17](tech-debt-remediation/REM-17-kotlin-dsl-build.md)              | ~~Kotlin DSL build migration~~ ✅                                     | **3.0** | 3     |
 | [REM-20](tech-debt-remediation/REM-20-ambilwarna-replacement.md)        | ~~Replace AmbilWarna~~ ✅                                             | **3.0** | 3     |
-| [REM-48](tech-debt-remediation/REM-48-old-ascii-decoder.md)             | Harden OldVerseTextDecoder.Ascii (2026-09 Kotlin conversion)         | **3.0** | 2     |
+| [REM-48](tech-debt-remediation/REM-48-old-ascii-decoder.md)             | ~~Harden OldVerseTextDecoder.Ascii (2026-09 Kotlin conversion)~~ ✅ | **3.0** | 2     |
 | [REM-19](tech-debt-remediation/REM-19-prdownloader-replacement.md)      | ~~Replace PRDownloader~~ ✅                                           | **2.8** | 3     |
 | [REM-21](tech-debt-remediation/REM-21-song-json-storage.md)             | ~~Song storage migration~~ ✅ (app-side)                              | **2.8** | 4     |
 | [REM-22](tech-debt-remediation/REM-22-jetpack-compose.md)               | Jetpack Compose adoption (ongoing across multiple screens)           | **2.6** | 4     |
@@ -146,11 +146,11 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 **Sprint 7 (1 week), user-data safety first:** ~~REM-36~~✅ (search fix, completed 2026-10-15), ~~REM-35~~✅ (song-book update, completed 2026-07-20), ~~REM-33~~✅ (import safety, completed 2026-10-15), ~~REM-41~~✅ (defensive guards and deliberate widget retry strides, completed 2026-10-15)
 **Sprint 8 (1 week):** REM-34 (sync delivery/races), ~~REM-41~~✅ (defensive guards, completed 2026-10-15)
-**Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding), REM-40 (download robustness)
+**Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding, complete 2026-10-15), REM-40 (download robustness, complete 2026-10-15)
 
 ### 2026-09 Kotlin conversion follow-up (suggested)
 
-**Sprint 10 (a few days):** REM-47 and REM-46 complete (2026-10-15); REM-48 (YES1 ASCII decoder) remains.
+**Sprint 10 (a few days):** REM-47 and REM-46 complete (2026-10-15); REM-48 (YES1 ASCII decoder) complete on 2026-10-15.
 
 ### Partial work completed as of 2026-10-15
 

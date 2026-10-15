@@ -14,11 +14,13 @@ import androidx.work.workDataOf
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.AlertDialogActivity
 import yuku.alkitab.base.br.VersionDownloadCompleteReceiver
@@ -97,7 +99,7 @@ class DownloadMapper private constructor() {
 
     fun enqueue(downloadKey: String, url: String, title: String, attrs: Map<String, String>) {
         val dir = downloadTempDirPath()
-        val name = downloadTempBasename(downloadKey)
+        val name = "${downloadTempBasename(downloadKey)}-${UUID.randomUUID()}.tmp"
         val destPath = File(dir, name).absolutePath
 
         val requestBuilder = OneTimeWorkRequest.Builder(VersionDownloadWorker::class.java)
@@ -121,7 +123,6 @@ class DownloadMapper private constructor() {
         val request = requestBuilder.build()
 
         val workManager = WorkManager.getInstance(App.context)
-        workManager.enqueue(request)
 
         val id = nextId.getAndIncrement()
         val row = Row(
@@ -136,6 +137,7 @@ class DownloadMapper private constructor() {
         synchronized(this) {
             currentByKey[downloadKey] = row
             currentById[id] = row
+            workManager.enqueue(request)
         }
 
         // scope uses Dispatchers.Main and enqueue() is always invoked from the main
@@ -222,10 +224,12 @@ class DownloadMapper private constructor() {
 
     private fun silentlyDrop(row: Row) {
         synchronized(this) {
-            currentByKey.remove(row.key)
+            if (currentByKey[row.key] === row) currentByKey.remove(row.key)
             currentById.remove(row.id)
         }
         row.observerJob?.cancel()
+        File(row.destPath).delete()
+        AppEvents.emitVersionListReload()
     }
 
     /** Stop and remove from in-memory list. */
@@ -233,7 +237,7 @@ class DownloadMapper private constructor() {
         val row: Row? = synchronized(this) {
             val r = currentById[id]
             if (r != null) {
-                currentByKey.remove(r.key)
+                if (currentByKey[r.key] === r) currentByKey.remove(r.key)
                 currentById.remove(r.id)
             }
             r
@@ -241,6 +245,7 @@ class DownloadMapper private constructor() {
         if (row != null) {
             row.observerJob?.cancel()
             WorkManager.getInstance(App.context).cancelWorkById(row.workId)
+            File(row.destPath).delete()
         }
     }
 
@@ -260,8 +265,6 @@ class DownloadMapper private constructor() {
     fun consumeAndRemove(id: Int) {
         val row = synchronized(this) { currentById[id] } ?: return
         silentlyDrop(row)
-        @Suppress("ResultOfMethodCallIgnored")
-        File(row.destPath).delete()
     }
 
     /**
@@ -288,6 +291,36 @@ class DownloadMapper private constructor() {
         return id
     }
 
+    fun reconcileOnStartup() {
+        scope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    reconcilePersistedWork(WorkManager.getInstance(App.context))
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                AppLog.e(TAG, "Unable to reconcile version downloads", e)
+            }
+        }
+    }
+
+    internal fun reconcilePersistedWork(workManager: WorkManager) {
+        val work = workManager.getWorkInfosByTag(WORK_TAG).get()
+        synchronized(this) {
+            val activeIds = currentById.values.map { it.workId }.toSet()
+            for (info in work) {
+                if (info.id !in activeIds && !info.state.isFinished) {
+                    workManager.cancelWorkById(info.id).result.get()
+                }
+            }
+            val activePaths = currentById.values.map { it.destPath }.toSet()
+            File(downloadTempDirPath()).listFiles()?.forEach { file ->
+                if (file.absolutePath !in activePaths) file.delete()
+            }
+        }
+    }
+
     private fun downloadTempDirPath(): String {
         val res = File(App.context.cacheDir, "DownloadMapper-tmp")
         res.mkdirs()
@@ -304,7 +337,7 @@ class DownloadMapper private constructor() {
 
     companion object {
         private const val TAG = "DownloadMapper"
-        private const val WORK_TAG = "VersionDownload"
+        internal const val WORK_TAG = "VersionDownload"
         private const val PROGRESS_NOTIFY_INTERVAL_MS = 250L
 
         @JvmField
