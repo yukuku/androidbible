@@ -33,7 +33,7 @@ import java.util.Date
  *
  * A bare [Application] is configured (rather than the real
  * `yuku.alkitab.base.App`) so we don't run the heavy onCreate path (Firebase,
- * FCM, extension receivers). The test-scope shadows of
+ * FCM). The test-scope shadows of
  * `com.google.firebase.crashlytics.FirebaseCrashlytics` and `android.util.Log`
  * (under `Alkitab/src/test/java/…`) keep `AppLog`'s static initializer happy,
  * so we don't need to bootstrap FirebaseApp here either.

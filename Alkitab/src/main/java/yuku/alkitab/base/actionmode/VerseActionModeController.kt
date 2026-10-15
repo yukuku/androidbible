@@ -1,14 +1,11 @@
 package yuku.alkitab.base.actionmode
 
-import android.content.ActivityNotFoundException
-import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.ActionMode
 import androidx.core.app.ShareCompat
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
@@ -22,8 +19,6 @@ import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.util.AlkitabGptIntegration
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.ClipboardUtil
-import yuku.alkitab.base.util.ExtensionManager
-import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.OtherAppIntegration
 import yuku.alkitab.base.util.RequestCodes
 import yuku.alkitab.base.util.ShareUrl
@@ -42,7 +37,7 @@ private const val EXTRA_verseUrl = "verseUrl"
 
 /**
  * Action-mode callback for verse selection (copy, share, bookmark, highlight,
- * compare, dictionary, extensions, etc.).
+ * compare, dictionary, etc.).
  *
  * The controller is deliberately kept free of direct Activity references: it
  * reads state through [host] and invokes operations through [actions]. Framework
@@ -53,11 +48,6 @@ class VerseActionModeController(
     private val host: VerseActionModeHost,
     private val actions: VerseActionModeActions,
 ) : ActionMode.Callback {
-
-    private val MENU_GROUP_EXTENSIONS = Menu.FIRST + 1
-    private val MENU_EXTENSIONS_FIRST_ID = 0x1000
-
-    private val extensions = mutableListOf<ExtensionManager.Info>()
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         host.activity.menuInflater.inflate(R.menu.context_isi, menu)
@@ -166,18 +156,6 @@ class VerseActionModeController(
 
         val menuPlayAudioFromVerse = menu.findItem(R.id.menuPlayAudioFromVerse)
         menuPlayAudioFromVerse.isVisible = single && actions.isAudioAvailableForVerseAction()
-
-        // extensions
-        extensions.clear()
-        extensions.addAll(ExtensionManager.getExtensions())
-
-        menu.removeGroup(MENU_GROUP_EXTENSIONS)
-
-        for ((i, extension) in extensions.withIndex()) {
-            if (single || /* not single */ extension.supportsMultipleVerses) {
-                menu.add(MENU_GROUP_EXTENSIONS, MENU_EXTENSIONS_FIRST_ID + i, 0, extension.label)
-            }
-        }
 
         return true
     }
@@ -503,60 +481,6 @@ class VerseActionModeController(
                         host.activity.startActivity(RibkaReportActivity.createIntent(ari, reference, verseText, versionDescription))
                     }
                 }
-                true
-            }
-
-            in MENU_EXTENSIONS_FIRST_ID until MENU_EXTENSIONS_FIRST_ID + extensions.size -> {
-                val extension = extensions[itemId - MENU_EXTENSIONS_FIRST_ID]
-
-                val intent = Intent(ExtensionManager.ACTION_SHOW_VERSE_INFO)
-                intent.component = ComponentName(extension.activityInfo.packageName, extension.activityInfo.name)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-                // prepare extra "aris"
-                val aris = IntArray(selected.size())
-                val ariBc = Ari.encode(host.activeSplit0Book.bookId, host.chapter_1, 0)
-                run {
-                    var i = 0
-                    val len = selected.size()
-                    while (i < len) {
-                        val verse_1 = selected.get(i)
-                        val ari = Ari.encodeWithBc(ariBc, verse_1)
-                        aris[i] = ari
-                        i++
-                    }
-                }
-                intent.putExtra("aris", aris)
-
-                if (extension.includeVerseText) {
-                    // prepare extra "verseTexts"
-                    val verseTexts = arrayOfNulls<String>(selected.size())
-                    var i = 0
-                    val len = selected.size()
-                    while (i < len) {
-                        val verse_1 = selected.get(i)
-
-                        val verseText = host.dataSplit0.getVerseText(verse_1)
-                        if (extension.includeVerseTextFormatting) {
-                            verseTexts[i] = verseText
-                        } else {
-                            verseTexts[i] = FormattedVerseText.removeSpecialCodes(verseText)
-                        }
-                        i++
-                    }
-                    intent.putExtra("verseTexts", verseTexts)
-                }
-
-                try {
-                    host.activity.startActivity(intent)
-                } catch (_: ActivityNotFoundException) {
-                    MaterialAlertDialogBuilder(host.activity)
-                        .setMessage("Error ANFE starting extension\n\n${extension.activityInfo.packageName}/${extension.activityInfo.name}")
-                        .setPositiveButton(R.string.ok, null)
-                        .show()
-                }
-
                 true
             }
 

@@ -461,10 +461,6 @@
 		<package android:name="org.sabda.gpt" />
 		<package android:name="yuku.esvsbasal" />
 		<package android:name="palki.maps" />
-
-		<intent>
-			<action android:name="yuku.alkitab.extensions.action.SHOW_VERSE_INFO" />
-		</intent>
 	</queries>
 
 </manifest>

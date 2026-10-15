@@ -13,7 +13,7 @@ App.services.uiDimensions.applied() → CalculatedDimensions
 
 `App.services` is an `AppServices` container holding three interfaces — `StorageProvider`, `VersionManager`, `UiDimensionsProvider` — introduced by REM-24. In production all three are implemented by adapter properties on `S` (`S.storage`, `S.versions`, `S.uiDimensions`). The original `S.db` / `S.applied()` / `S.activeVersion()` accessors still work for legacy callers, and `App.services` is initialized eagerly at the class-load of `App.java` so it is non-null even from tests that bypass `App.onCreate()` / `App.staticInit()`.
 
-`App.staticInit()` must be called before features that depend on Firebase, FCM, extensions, or feedback senders. It is invoked from `App.onCreate()` and defensively from `ContentProvider.onCreate()`.
+`App.staticInit()` must be called before features that depend on Firebase, FCM, or feedback senders. It is invoked from `App.onCreate()` and defensively from `ContentProvider.onCreate()`.
 
 ## Module Dependency Graph
 
@@ -46,7 +46,6 @@ The app uses traditional Activity/Fragment architecture for the reader, with som
   - Bible text display via `VersesControllerImpl` (RecyclerView)
   - Navigation history (`BackForwardListController`)
   - Volume-button navigation
-  - Extension integration
   Extracted siblings (under `yuku.alkitab.base.widget`):
   - `ReaderGestureHandler` — two-finger pinch zoom, chapter swipe, goto-button floater drag
   - `VerseActionModeController` — copy/share/bookmark action mode
@@ -79,14 +78,6 @@ Split-pane display of two Bible versions is owned by `SplitViewManager` (`Alkita
 - Weak-reference observer pattern for change notification
 
 `S.applied()` returns `CalculatedDimensions` — a computed snapshot of all UI-relevant preferences (font sizes, colors, line spacing, indentation). This is recalculated on preference changes and applied globally.
-
-## Extension System
-
-The app supports external extensions (other apps) that can:
-- Provide additional verse information (maps, dictionaries, commentaries)
-- Register via broadcast intents
-- Be invoked from the verse action mode in `IsiActivity`
-- Communicate via the `AlkitabIntegration` API
 
 ## Version Loading Architecture
 
