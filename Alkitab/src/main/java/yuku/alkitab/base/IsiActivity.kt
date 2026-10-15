@@ -731,7 +731,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // load chapter and verse
         display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
 
-        if (intentResult != null) { // also add to history if not opening the last seen verse
+        if (savedInstanceState == null && intentResult != null) {
             history.add(openingAri)
         }
 
@@ -757,12 +757,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         val audioBarView: ComposeView = findViewById(R.id.audio_bar)
         audioBinder.attach(audioBarHost, audioBarView)
         lifecycleScope.launch {
-            audioBinder.uiState.collect { state ->
-                val playing = state.playingVersionId
-                val split0Match = playing != null && playing == activeSplit0.versionId
-                val split1Match = playing != null && playing == activeSplit1?.versionId
-                applyAudioHighlightTo(lsSplit0, if (split0Match) state.verse_1 else 0)
-                applyAudioHighlightTo(lsSplit1, if (split1Match) state.verse_1 else 0)
+            audioBinder.uiState.collect {
+                refreshAudioHighlights()
             }
         }
         lifecycleScope.launch {
@@ -780,6 +776,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             hasAlkitabGpt = true
             actionMode?.invalidate()
         }
+    }
+
+    private fun refreshAudioHighlights() {
+        val state = audioBinder.uiState.value
+        val playing = state.playingVersionId
+        val isSplit0Match = playing != null && playing == activeSplit0.versionId
+        val isSplit1Match = playing != null && playing == activeSplit1?.versionId
+        applyAudioHighlightTo(lsSplit0, if (isSplit0Match) state.verse_1 else 0)
+        applyAudioHighlightTo(lsSplit1, if (isSplit1Match) state.verse_1 else 0)
     }
 
     private fun applyAudioHighlightTo(controller: VersesController, verse_1: Int) {
@@ -917,7 +922,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 val lid = intent.getIntExtra("lid", 0)
                 val ari = LidToAri.lidToAri(lid)
                 if (ari != 0) {
-                    jumpToAri(ari)
                     IntentResult(ari, selectVerse, selectVerseCount)
                 } else {
                     null
@@ -1146,6 +1150,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override fun applyPreferences() {
         // make sure S applied variables are set first
         App.services.uiDimensions.recalculate()
+        audioHighlightColorCached = 0
+        refreshAudioHighlights()
 
         // apply background color, and clear window background to prevent overdraw
         window.setBackgroundDrawableResource(android.R.color.transparent)
@@ -1229,8 +1235,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             needsRestart = false
             recreate()
         }
-        // The reading theme may have changed while we were stopped.
-        audioHighlightColorCached = 0
 
         audioBinder.reshowIfSessionActive()
 
@@ -1341,9 +1345,11 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
 
             holder.itemView.setOnClickListener {
+                val position = holder.bindingAdapterPosition
+                if (position == RecyclerView.NO_POSITION) return@setOnClickListener
+                val ari = history.getEntry(position).ari
                 dismissDialog()
-
-                jumpToAri(history.getEntry(holder.bindingAdapterPosition).ari)
+                jumpToAri(ari)
             }
         }
 

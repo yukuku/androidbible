@@ -1,19 +1,23 @@
-# REM-38: Reader Lifecycle Fixes (History Pollution, Double Navigation, Dialog Leak)
+# REM-38: Reader Lifecycle Fixes
 
-**Source:** 2026-07 code audit
-**Module:** Main reader (`IsiActivity`, `ShareUrl`, `VerseActionModeController`)
+**Source:** 2026-07 code audit, verified against implementation on 2026-10-15
+**Module:** `IsiActivity`, `ShareUrl`
 **BRICE:** B=3 R=3 I=4 C=4 E=3 → **3.4**
-**Phase:** 2 — Architecture Improvements (2026-07 audit)
+**Phase:** 2
 
-**Status:** Not started.
+**Status:** Complete on 2026-10-15.
 
-**Steps:**
-1. Distinguish "restored after rotation" from "launched via intent" in `IsiActivity.onCreate` — restore the saved ari without `history.add(...)` / `backForwardListController.newEntry(...)` / the sync-triggering side effects. (REM-09's ViewModel would make this structural; this is the tactical fix.)
-2. In `tryGetIntentResultFromView`, make the `lid` branch return the `IntentResult` without calling `jumpToAri` as a side effect (mirror the `ari` branch), so external `lid` intents navigate once and insert one back/forward entry.
-3. In `ShareUrl`, dismiss the progress dialog when the activity is destroyed (lifecycle observer or `DialogFragment`) and guard completion callbacks with `isDestroyed` in addition to `isFinishing`.
-4. Add the `bindingAdapterPosition != RecyclerView.NO_POSITION` guard to the history-dialog adapter click handler (every other adapter in the file has it).
+## Confirmed findings and implementation
 
-**Difficulty:** Easy (~half a day for steps 2–4; step 1 needs a careful pass over the `onCreate` intent flow).
+- Restoring a saved ARI called `History.add`, replacing the entry's GID and timestamp and making the next history save eligible for sync. Only a fresh intent launch adds opening history.
+- The initial back/forward entry remains necessary: `BackForwardListController` owns a new activity-local list. Initializing that list does not write history or trigger sync. Skipping initialization on restoration would leave the first subsequent navigation without a source entry. Preserving the entire back/forward list across recreation is separate from this tactical fix.
+- The `lid` intent parser called `jumpToAri` before returning the destination for normal opening. It returns the same result shape as the ARI branch without navigation side effects.
+- `ShareUrl` observes the activity lifecycle, cancels its request, and dismisses the dialog on destruction without invoking UI callbacks. Completion checks both `isFinishing` and `isDestroyed`. Dismissal unregisters the observer, and response bodies close even when cancellation wins the race.
+- History clicks ignore `RecyclerView.NO_POSITION` and capture the destination before dismissing the dialog.
+
+## Validation
+
+`IsiActivityIntentTest` covers LID parsing, saved-state history preservation, immediate highlight repainting, and detached history-row clicks. `ShareUrlLifecycleTest` covers destruction during a request, a completion already queued at destruction, ordinary user cancellation, and successful completion with response cleanup. Local verification uses `assemblePlainDebug` and relevant `testPlainDebugUnitTest` classes.
 
 ---
 

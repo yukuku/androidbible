@@ -1,19 +1,22 @@
-# REM-37: Bible Audio — Observe MediaSession-Driven State & Split-View Wiring
+# REM-37: Bible Audio State and Appearance
 
-**Source:** 2026-07 code audit
-**Module:** Bible audio (`audio/BibleAudioPlayer`, `BibleAudioService`, `AudioBarController`) + `SplitViewManager` + `IsiActivity`
+**Source:** 2026-07 code audit, verified against implementation on 2026-10-15
+**Module:** Bible audio, `SplitViewManager`, `IsiActivity`
 **BRICE:** B=4 R=3 I=4 C=4 E=4 → **3.8**
-**Phase:** 2 — Architecture Improvements (2026-07 audit)
+**Phase:** 2
 
-**Status:** Partial, reviewed on 2026-10-15. Split-version notification wiring (step 2) is complete. MediaSession-driven playback observation and appearance invalidation remain open.
+**Status:** Complete on 2026-10-15.
 
-**Steps:**
-1. Forward `onIsPlayingChanged` (or `onPlayWhenReadyChanged`) through `BibleAudioPlayer.Listener` and drive `_playbackState.isPlaying` + the position-polling job from it, so play/pause from the notification, lock screen, or Bluetooth is reflected in the in-app bar, slider, and verse highlight — and so the 100 ms poller stops while paused. `SongAudioService` already does this; mirror it.
-2. ✅ **Complete:** `SplitViewManager.loadSplitVersion` and `disableSplitVersion` call `SplitViewActions.onVisibleVersionsChanged`. `IsiActivity.onVisibleVersionsChanged` updates reading state, resolves audio sources, calls `audioBinder.onActiveVersionChanged()`, and refreshes both toolbar variants through `refreshAudioControls()`.
-3. Invalidate `IsiActivity.audioHighlightColorCached` on every theme/appearance change (night-mode toggle, TextAppearancePanel), not just in `onStart`.
-4. Tests: extend `AudioBarControllerReshowTest`/coordinator tests for the notification-resume path; a Robolectric test for highlight-color invalidation is optional.
+## Confirmed findings and implementation
 
-**Difficulty:** Easy-Medium (~1 day).
+- MediaSession controls reach the underlying player without invoking the service's `play` and `pause` methods. After an in-app pause cancels polling, external resume could leave playback state and position frozen. External pause could also leave the poller running.
+- `BibleAudioPlayer.Listener` forwards `onIsPlayingChanged`. `BibleAudioService` updates playback state and starts or cancels polling from that callback, including buffering and audio-focus suppression. Actual playback also acquires the audio coordinator. Reaching READY while paused does not start polling.
+- The reader cached its audio highlight color until `onStart`, so night mode and text-appearance changes could retain the old color. `applyPreferences` invalidates the cache and reapplies the current highlight to both panes immediately, including while playback is paused.
+- Split-version notification wiring was already complete: `loadSplitVersion` and `disableSplitVersion` call `onVisibleVersionsChanged`, which refreshes audio sources and controls. No additional split wiring was needed.
+
+## Validation
+
+`BibleAudioServicePlaybackTest` exercises external resume, pause, resumed position updates, coordinator ownership, and READY while paused. `IsiActivityIntentTest` also verifies immediate highlight repainting after an appearance change without a playback event. Existing audio-bar, coordinator, and highlight-color tests cover related behavior. Local verification uses `assemblePlainDebug` and the relevant `testPlainDebugUnitTest` classes. Physical lock-screen and Bluetooth interaction are not covered by these JVM tests.
 
 ---
 

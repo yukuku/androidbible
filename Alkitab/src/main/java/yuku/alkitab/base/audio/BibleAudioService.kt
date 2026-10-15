@@ -196,6 +196,16 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     private var loadGeneration = 0
 
     private val playerListener = object : BibleAudioPlayer.Listener {
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            _playbackState.update { it.copy(isPlaying = isPlaying) }
+            if (isPlaying) {
+                AudioPlaybackCoordinator.acquire(this@BibleAudioService)
+                startPositionPolling()
+            } else {
+                positionJob?.cancel()
+            }
+        }
+
         override fun onBuffering() {
             // `preparing` doubles as the buffering flag rather than having a
             // separate field: to the user both states are "we asked to play but
@@ -204,7 +214,6 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         }
 
         override fun onReady() {
-            startPositionPolling()
             playerReadyForSeek = true
             tryInitialSeek()
             _playbackState.update {
@@ -472,14 +481,10 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     fun play() {
         AudioPlaybackCoordinator.acquire(this)
         player.play()
-        _playbackState.update { it.copy(isPlaying = true) }
-        startPositionPolling()
     }
 
     fun pause() {
         player.pause()
-        positionJob?.cancel()
-        _playbackState.update { it.copy(isPlaying = false) }
     }
 
     fun seekTo(positionMs: Long) {
