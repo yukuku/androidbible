@@ -188,8 +188,8 @@ public class InternalDb {
                 final int kind = cursor.getInt(col_kind);
 
                 int mapOffset = Ari.toVerse(ari) - 1;
-                if (mapOffset >= bookmarkCountMap.length) {
-                    AppLog.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
+                if (mapOffset < 0 || mapOffset >= bookmarkCountMap.length) {
+                    AppLog.e(TAG, "mapOffset out of bounds " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
                     continue;
                 }
 

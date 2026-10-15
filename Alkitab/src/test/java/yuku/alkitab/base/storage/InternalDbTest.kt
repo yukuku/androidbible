@@ -64,6 +64,56 @@ class InternalDbTest {
         helper.close()
     }
 
+    @Test
+    fun `putAttributes skips verse zero markers while retaining valid attributes`() {
+        val now = Date()
+        for (kind in Marker.Kind.values()) {
+            db.insertMarker(Ari.encode(0, 1, 0), kind, Highlights.encode(0x123456), 2, now, now)
+        }
+        db.insertMarker(Ari.encode(0, 1, 1), Marker.Kind.bookmark, "valid", 1, now, now)
+        val bookmarks = IntArray(2)
+        val notes = IntArray(2)
+        val highlights = arrayOfNulls<Highlights.Info>(2)
+
+        db.putAttributes(Ari.encode(0, 1, 0), bookmarks, notes, highlights)
+
+        assertEquals(1, bookmarks[0])
+        assertEquals(1, bookmarks.sum())
+        assertEquals(0, notes.sum())
+        assertTrue(highlights.all { it == null })
+    }
+
+    @Test
+    fun `opening an internal database stamped by a newer build preserves markers`() {
+        val now = Date()
+        val marker = db.insertMarker(Ari.encode(0, 1, 1), Marker.Kind.note, "keep", 1, now, now)
+        val version = helper.writableDatabase.version
+        helper.writableDatabase.version = version + 1
+        helper.close()
+        helper = InternalDbHelper(RuntimeEnvironment.getApplication())
+        db = InternalDb(helper)
+
+        assertEquals("keep", db.getMarkerById(marker._id)!!.caption)
+        assertEquals(version, helper.writableDatabase.version)
+    }
+
+    @Test
+    fun `opening a song database stamped by a newer build preserves stored rows`() {
+        SongDbHelper().use { songs ->
+            songs.writableDatabase.execSQL("INSERT INTO SongBookInfo (name) VALUES ('keep')")
+            val version = songs.writableDatabase.version
+            songs.writableDatabase.version = version + 1
+            songs.close()
+            SongDbHelper().use { reopened ->
+                reopened.readableDatabase.rawQuery("SELECT name FROM SongBookInfo", null).use {
+                    assertTrue(it.moveToFirst())
+                    assertEquals("keep", it.getString(0))
+                }
+                assertEquals(version, reopened.writableDatabase.version)
+            }
+        }
+    }
+
     // region Marker CRUD
 
     @Test

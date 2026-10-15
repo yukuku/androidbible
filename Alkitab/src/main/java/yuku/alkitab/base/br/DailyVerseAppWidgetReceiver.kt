@@ -129,7 +129,7 @@ class DailyVerseAppWidgetReceiver : AppWidgetProvider() {
 
             val svcIntent = Intent(context, DailyVerseAppWidgetService::class.java).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                putExtra(DailyVerseAppWidgetService.EXTRA_direction, appWidgetId)
+                putExtra(DailyVerseAppWidgetService.EXTRA_direction, 1)
                 data = Uri.parse(this.toUri(Intent.URI_INTENT_SCHEME))
             }
             rv.setRemoteAdapter(R.id.lsItems, svcIntent)
