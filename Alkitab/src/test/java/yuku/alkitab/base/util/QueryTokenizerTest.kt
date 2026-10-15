@@ -1,7 +1,9 @@
 package yuku.alkitab.base.util
 
+import java.util.Locale
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
+import yuku.alkitab.io.Utf8Decoder
 
 class QueryTokenizerTest {
     @Test
@@ -21,15 +23,15 @@ class QueryTokenizerTest {
     }
     @Test
     fun `search normalization matches the decoder under Turkish locale`() {
-        val original = java.util.Locale.getDefault()
+        val original = Locale.getDefault()
         try {
-            java.util.Locale.setDefault(java.util.Locale.forLanguageTag("tr"))
+            Locale.setDefault(Locale.forLanguageTag("tr"))
             for (query in listOf("KIRK", "İ", "ΟΣ")) {
-                val haystack = yuku.alkitab.io.Utf8Decoder.toStringLowerCase(query.toByteArray(Charsets.UTF_8))
+                val haystack = Utf8Decoder.toStringLowerCase(query.toByteArray(Charsets.UTF_8))
                 assertArrayEquals(arrayOf(haystack), QueryTokenizer.tokenize(query))
             }
         } finally {
-            java.util.Locale.setDefault(original)
+            Locale.setDefault(original)
         }
     }
 }

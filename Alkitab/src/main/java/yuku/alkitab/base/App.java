@@ -12,6 +12,7 @@ import yuku.alkitab.base.services.AppServices;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitabfeedback.FeedbackSender;
@@ -45,7 +46,7 @@ public class App extends yuku.afw.App {
         super.onCreate();
 
         staticInit();
-        yuku.alkitab.base.util.DownloadMapper.instance.reconcileOnStartup();
+        DownloadMapper.instance.reconcileOnStartup();
     }
 
     /**

@@ -2,10 +2,14 @@ package yuku.alkitab.base.util
 
 import android.app.Application
 import androidx.work.Configuration
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import java.io.File
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -83,8 +87,8 @@ class DownloadMapperTest {
     fun `startup reconciliation cancels orphaned work and preserves tracked files`() {
         val mapper = DownloadMapper.instance
         val manager = WorkManager.getInstance(App.context)
-        val request = androidx.work.OneTimeWorkRequest.Builder(VersionDownloadWorker::class.java)
-            .setInitialDelay(1, java.util.concurrent.TimeUnit.DAYS)
+        val request = OneTimeWorkRequest.Builder(VersionDownloadWorker::class.java)
+            .setInitialDelay(1, TimeUnit.DAYS)
             .addTag(DownloadMapper.WORK_TAG)
             .build()
         manager.enqueue(request).result.get()
@@ -92,7 +96,7 @@ class DownloadMapperTest {
         val id = mapper.seedRowForTest("tracked", activeFile.absolutePath)
         try {
             mapper.reconcilePersistedWork(manager)
-            org.junit.Assert.assertEquals(androidx.work.WorkInfo.State.CANCELLED, manager.getWorkInfoById(request.id).get()!!.state)
+            assertEquals(WorkInfo.State.CANCELLED, manager.getWorkInfoById(request.id).get()!!.state)
             assertFalse(tempFile.exists())
             assertTrue(activeFile.exists())
         } finally {
