@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SyncStats;
 import android.util.Pair;
 import androidx.annotation.NonNull;
+import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import com.google.gson.JsonIOException;
@@ -37,11 +38,12 @@ import yuku.alkitab.base.util.Sqlitil;
 
 /**
  * Handle the transfer of data between a server and an
- * app, using the Android sync adapter framework.
+ * app through the serial WorkManager sync chain.
  */
 public class SyncAdapter extends Worker {
 	static final String TAG = SyncAdapter.class.getSimpleName();
 	public static final String EXTRA_SYNC_SET_NAMES = "syncSetNames";
+	public static final String EXTRA_IS_SYNC_SUCCESSFUL = "isSyncSuccessful";
 	private static final int PARTIAL_SYNC_THRESHOLD = 100;
 
 	final static Stack<String> syncSetsRunning = new Stack<>(); // need guard when accessing this
@@ -146,6 +148,10 @@ public class SyncAdapter extends Worker {
 						syncRp(stats);
 						break;
 				}
+			} catch (RuntimeException e) {
+				AppLog.w(TAG, "Unexpected sync failure for " + syncSetName, e);
+				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_error_unexpected, syncSetName);
+				stats.numIoExceptions++;
 			} finally {
 				synchronized (syncSetsRunning) {
 					final String popped = syncSetsRunning.pop();
@@ -158,15 +164,12 @@ public class SyncAdapter extends Worker {
 			}
 		}
 
-		final boolean hasError = hasError(stats);
-		AppLog.d(TAG, "Sync stats: " + stats + " hasError=" + hasError);
-		if (hasError) {
-			SyncRecorder.log(SyncRecorder.EventKind.worker_result_failed, null);
-			return Result.failure();
-		} else {
-			SyncRecorder.log(SyncRecorder.EventKind.worker_result_succeeded, null);
-			return Result.success();
-		}
+		final boolean isSuccessful = !hasError(stats);
+		AppLog.d(TAG, "Sync stats: " + stats + " isSuccessful=" + isSuccessful);
+		SyncRecorder.log(isSuccessful ? SyncRecorder.EventKind.worker_result_succeeded : SyncRecorder.EventKind.worker_result_failed, null);
+		// Failed WorkManager prerequisites cancel their dependents. Sync errors belong to the attempt,
+		// so completing delivery must allow the next queued request to run.
+		return Result.success(new Data.Builder().putBoolean(EXTRA_IS_SYNC_SUCCESSFUL, isSuccessful).build());
 	}
 
 	private boolean hasError(SyncStats stats) {
@@ -313,7 +316,11 @@ public class SyncAdapter extends Worker {
 
 			if (applyResult != Sync.ApplyAppendDeltaResult.ok) {
 				AppLog.w(TAG, "@@syncMabel append delta result is not ok, but " + applyResult);
-				stats.numIoExceptions++;
+				if (applyResult == Sync.ApplyAppendDeltaResult.unknown_kind) {
+					stats.numParseExceptions++;
+				} else {
+					stats.numIoExceptions++;
+				}
 				return;
 			}
 

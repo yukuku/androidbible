@@ -60,23 +60,29 @@ class SyncApplier(private val db: InternalDb) {
                         Sync.Entity.KIND_MARKER_LABEL -> db.deleteMarker_LabelByGid(o.gid)
                         else -> return Sync.ApplyAppendDeltaResult.unknown_kind
                     }
-                    Sync.Opkind.add, Sync.Opkind.mod -> when (o.kind) {
-                        Sync.Entity.KIND_MARKER -> {
-                            val marker: Marker? = db.getMarkerByGid(o.gid)
-                            val newMarker = Sync_Mabel.updateMarkerWithEntityContent(marker, o.gid, o.content)
-                            db.insertOrUpdateMarker(newMarker)
+                    Sync.Opkind.add, Sync.Opkind.mod -> {
+                        val content = o.content ?: return Sync.ApplyAppendDeltaResult.unknown_kind
+                        when (o.kind) {
+                            Sync.Entity.KIND_MARKER -> {
+                                if (Marker.Kind.fromCode(content.kind ?: return Sync.ApplyAppendDeltaResult.unknown_kind) == null) {
+                                    return Sync.ApplyAppendDeltaResult.unknown_kind
+                                }
+                                val marker: Marker? = db.getMarkerByGid(o.gid)
+                                val newMarker = Sync_Mabel.updateMarkerWithEntityContent(marker, o.gid, content)
+                                db.insertOrUpdateMarker(newMarker)
+                            }
+                            Sync.Entity.KIND_LABEL -> {
+                                val label: Label? = db.getLabelByGid(o.gid)
+                                val newLabel = Sync_Mabel.updateLabelWithEntityContent(label, o.gid, content)
+                                db.insertOrUpdateLabel(newLabel)
+                            }
+                            Sync.Entity.KIND_MARKER_LABEL -> {
+                                val markerLabel: Marker_Label? = db.getMarker_LabelByGid(o.gid)
+                                val newMarkerLabel = Sync_Mabel.updateMarker_LabelWithEntityContent(markerLabel, o.gid, content)
+                                db.insertOrUpdateMarker_Label(newMarkerLabel)
+                            }
+                            else -> return Sync.ApplyAppendDeltaResult.unknown_kind
                         }
-                        Sync.Entity.KIND_LABEL -> {
-                            val label: Label? = db.getLabelByGid(o.gid)
-                            val newLabel = Sync_Mabel.updateLabelWithEntityContent(label, o.gid, o.content)
-                            db.insertOrUpdateLabel(newLabel)
-                        }
-                        Sync.Entity.KIND_MARKER_LABEL -> {
-                            val markerLabel: Marker_Label? = db.getMarker_LabelByGid(o.gid)
-                            val newMarkerLabel = Sync_Mabel.updateMarker_LabelWithEntityContent(markerLabel, o.gid, o.content)
-                            db.insertOrUpdateMarker_Label(newMarkerLabel)
-                        }
-                        else -> return Sync.ApplyAppendDeltaResult.unknown_kind
                     }
                 }
             }

@@ -93,6 +93,7 @@ object History {
     /**
      * Entries sorted from the newest to the oldest
      */
+    @Synchronized
     fun listAllEntries(): List<Entry> {
         return ArrayList(entries)
     }

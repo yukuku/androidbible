@@ -9,8 +9,9 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -198,7 +199,6 @@ public class Sync {
     }
 
     private static final ArrayMap<String, AtomicInteger> syncUpdatesOngoingCounters = new ArrayMap<>();
-    private static final ConcurrentLinkedQueue<String> syncSetNameQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Notify that we need to sync with server.
@@ -211,11 +211,12 @@ public class Sync {
             return;
         }
 
+        final Set<String> requestedSets = new LinkedHashSet<>();
         for (final String syncSetName : syncSetNames) {
             final AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
             if (counter != null && counter.get() != 0) {
                 AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
-                return;
+                continue;
             }
 
             { // check if preferences prevent syncing
@@ -226,29 +227,10 @@ public class Sync {
 
             SyncRecorder.log(SyncRecorder.EventKind.sync_needed_notified, syncSetName);
 
-            // check if we can omit queueing sync request for this sync set name.
-            synchronized (syncSetNameQueue) {
-                if (syncSetNameQueue.contains(syncSetName)) {
-                    AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
-                    continue;
-                }
-                syncSetNameQueue.add(syncSetName);
-            }
+            requestedSets.add(syncSetName);
         }
 
-        final List<String> extraSyncSetNames = new ArrayList<>();
-        synchronized (syncSetNameQueue) {
-            while (true) {
-                final String extraSyncSetName = syncSetNameQueue.poll();
-                if (extraSyncSetName == null) {
-                    break;
-                }
-                extraSyncSetNames.add(extraSyncSetName);
-            }
-        }
-
-        // request sync.
-        SyncKotlin.syncNow(false, extraSyncSetNames.toArray(new String[0]));
+        SyncKotlin.syncNow(false, requestedSets.toArray(new String[0]));
     }
 
     /**
