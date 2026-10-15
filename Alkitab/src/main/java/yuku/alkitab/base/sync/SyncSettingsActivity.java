@@ -104,7 +104,7 @@ public class SyncSettingsActivity extends BaseActivity {
 					getString(R.string.sync_logout_warning),
 					getString(R.string.ok),
 					() -> {
-						SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null);
+						SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null, "accountName", syncAccountName);
 
 						Preferences.withTransaction(() -> {
 							Preferences.remove(getString(R.string.pref_syncAccountName_key));
@@ -118,7 +118,7 @@ public class SyncSettingsActivity extends BaseActivity {
 
 						SyncRecorder.removeAllLastSuccessTimes();
 
-						SyncRecorder.log(SyncRecorder.EventKind.logout_post, null);
+						SyncRecorder.log(SyncRecorder.EventKind.logout_post, null, "accountName", syncAccountName);
 
 						FirebaseCrashlytics.getInstance().setUserId("");
 
@@ -138,7 +138,7 @@ public class SyncSettingsActivity extends BaseActivity {
 					final SyncLoginActivity.Result result = SyncLoginActivity.obtainResult(data);
 
 					// Success!
-					SyncRecorder.log(SyncRecorder.EventKind.login_success_pre, null);
+					SyncRecorder.log(SyncRecorder.EventKind.login_success_pre, null, "accountName", result.accountName);
 
 					Preferences.withTransaction(() -> {
 						Preferences.setString(R.string.pref_syncAccountName_key, result.accountName);
@@ -146,7 +146,7 @@ public class SyncSettingsActivity extends BaseActivity {
 						Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
 					});
 
-					SyncRecorder.log(SyncRecorder.EventKind.login_success_post, null);
+					SyncRecorder.log(SyncRecorder.EventKind.login_success_post, null, "accountName", result.accountName);
 
 					// force sync immediately after login
 					SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);

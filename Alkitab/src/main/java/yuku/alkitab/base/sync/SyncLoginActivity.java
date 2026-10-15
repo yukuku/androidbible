@@ -19,14 +19,12 @@ import androidx.core.util.PatternsCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.Locale;
-import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.compose.sync.SyncActionResultCallback;
 import yuku.alkitab.base.compose.sync.SyncLoginCallbacks;
 import yuku.alkitab.base.compose.sync.SyncLoginComposeHost;
 import yuku.alkitab.base.settings.ExperimentalFlags;
-import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper;
@@ -227,7 +225,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         Background.run(() -> {
             try {
                 AppLog.d(TAG, "Sending form to server for login...");
-                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
+                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
 
                 final Sync.LoginResponseJson response = Sync.login(email, password);
 
@@ -236,7 +234,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
                 completeAuth(email, response.simpleToken, false, callback);
             } catch (Sync.NotOkException e) {
                 AppLog.d(TAG, "Login failed");
-                SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
+                SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
 
                 runOnUiThread(() -> callback.onResult(false, getString(R.string.sync_login_failed_with_reason, e.getMessage())));
             }
@@ -252,7 +250,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         Background.run(() -> {
             try {
                 AppLog.d(TAG, "Sending form to server for creating new account...");
-                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
+                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
 
                 final Sync.LoginResponseJson response = Sync.register(form);
 
@@ -261,7 +259,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
                 completeAuth(email, response.simpleToken, true, callback);
             } catch (Sync.NotOkException e) {
                 AppLog.d(TAG, "Register failed");
-                SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
+                SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
 
                 runOnUiThread(() -> callback.onResult(false, getString(R.string.sync_register_failed_with_reason, e.getMessage())));
             }
@@ -334,7 +332,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         startThreadWithProgressDialog(getString(R.string.sync_progress_register), () -> {
             try {
                 AppLog.d(TAG, "Sending form to server for creating new account...");
-                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
+                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
 
                 final Sync.LoginResponseJson response = Sync.register(form);
 
@@ -343,7 +341,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
                 gotSimpleToken(email, response.simpleToken, true);
             } catch (Sync.NotOkException e) {
                 AppLog.d(TAG, "Register failed");
-                SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
+                SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
 
                 runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_register_failed_with_reason, e.getMessage())));
             }
@@ -354,7 +352,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         startThreadWithProgressDialog(getString(R.string.sync_progress_login), () -> {
             try {
                 AppLog.d(TAG, "Sending form to server for login...");
-                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
+                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
 
                 final Sync.LoginResponseJson response = Sync.login(email, password);
 
@@ -363,7 +361,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
                 gotSimpleToken(email, response.simpleToken, false);
             } catch (Sync.NotOkException e) {
                 AppLog.d(TAG, "Login failed");
-                SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
+                SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
 
                 runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(
                     this,
@@ -474,7 +472,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         if (registration_id != null) {
             final boolean ok = Sync.sendFcmRegistrationId(simpleToken, registration_id);
             if (!ok) {
-                SyncRecorder.log(SyncRecorder.EventKind.login_fcm_sending_failed, null);
+                SyncRecorder.log(SyncRecorder.EventKind.login_fcm_sending_failed, null, "accountName", accountName);
 
                 if (isRegister) {
                     return getString(R.string.sync_registered_but_no_gcm);
@@ -484,7 +482,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
             }
         } else {
             // if not, ignore. Later eventually we will have it.
-            SyncRecorder.log(SyncRecorder.EventKind.login_fcm_not_possessed_yet, null);
+            SyncRecorder.log(SyncRecorder.EventKind.login_fcm_not_possessed_yet, null, "accountName", accountName);
         }
 
         return null;

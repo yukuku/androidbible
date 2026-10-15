@@ -316,7 +316,7 @@ public class SyncAdapter extends Worker {
 		AppLog.d(TAG, "@@syncMabel step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
 			final String response_s = execute(call, syncSetName);
             stage("parse", syncSetName);
@@ -424,7 +424,7 @@ public class SyncAdapter extends Worker {
 		AppLog.d(TAG, "@@syncHistory step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
 			final String response_s = execute(call, syncSetName);
             stage("parse", syncSetName);
@@ -520,7 +520,7 @@ public class SyncAdapter extends Worker {
 		AppLog.d(TAG, "@@syncPins step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
 			final String response_s = execute(call, syncSetName);
             stage("parse", syncSetName);
@@ -618,7 +618,7 @@ public class SyncAdapter extends Worker {
 		AppLog.d(TAG, "@@syncRp step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
 			final long startTime = System.currentTimeMillis();
 			final String response_s = execute(call, syncSetName);
             stage("parse", syncSetName);

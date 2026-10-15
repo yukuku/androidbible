@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken
 import yuku.alkitab.base.App
 import yuku.alkitab.base.model.SyncLog
 import yuku.alkitab.base.model.SyncShadow
+import yuku.alkitab.base.sync.SyncDiagnostics
 import yuku.alkitab.base.sync.SyncRecorder
 import yuku.alkitab.base.util.Sqlitil
 
@@ -138,16 +139,17 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
         val cv = ContentValues(4).apply {
             put(Table.SyncLog.createTime.name, createTime)
             put(Table.SyncLog.kind.name, kind.code)
-            put(Table.SyncLog.syncSetName.name, syncSetName)
-            put(Table.SyncLog.params.name, params)
+            put(Table.SyncLog.syncSetName.name, SyncDiagnostics.safeSet(syncSetName))
+            put(Table.SyncLog.params.name, params?.takeIf {
+                it.length <= SyncDiagnostics.MAX_PARAM_BYTES && it.toByteArray(Charsets.UTF_8).size <= SyncDiagnostics.MAX_PARAM_BYTES
+            })
         }
         helper.writableDatabase.apply {
             beginTransaction()
             try {
                 insertOrThrow(Table.SyncLog.tableName(), null, cv)
-                execSQL("UPDATE SyncLog SET syncSetName = 'unknown' WHERE syncSetName NOT IN ('mabel', 'history', 'pins', 'rp')")
-                execSQL("UPDATE SyncLog SET params = NULL WHERE length(CAST(params AS BLOB)) > 4096")
-                execSQL("DELETE FROM SyncLog WHERE _id NOT IN (SELECT _id FROM SyncLog ORDER BY _id DESC LIMIT 500)")
+                execSQL("DELETE FROM SyncLog WHERE _id <= " +
+                    "(SELECT _id FROM SyncLog ORDER BY _id DESC LIMIT 1 OFFSET ${SyncDiagnostics.MAX_ROWS})")
                 setTransactionSuccessful()
             } finally {
                 endTransaction()
@@ -161,19 +163,19 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
             Table.SyncLog.tableName(),
             arrayOf(
                 Table.SyncLog.createTime.name, Table.SyncLog.kind.name,
-                "substr(syncSetName, 1, 32)", "CASE WHEN length(CAST(params AS BLOB)) <= 4096 THEN params ELSE NULL END",
+                "substr(syncSetName, 1, 32)", "CASE WHEN length(CAST(params AS BLOB)) <= ${SyncDiagnostics.MAX_PARAM_BYTES} THEN params ELSE NULL END",
             ),
             null, null, null, null,
-            "_id desc", maxrows.coerceIn(0, 500).toString(),
+            "_id desc", maxrows.coerceIn(0, SyncDiagnostics.MAX_ROWS).toString(),
         ).use { c ->
             while (c.moveToNext()) {
                 res += SyncLog().apply {
                     createTime = Sqlitil.toDate(c.getInt(0))
                     kind_code = c.getInt(1)
-                    syncSetName = yuku.alkitab.base.sync.SyncDiagnostics.safeSet(c.getString(2))
+                    syncSetName = SyncDiagnostics.safeSet(c.getString(2))
                     val paramsS = c.getString(3)
                     params = try {
-                        yuku.alkitab.base.sync.SyncDiagnostics.safeParams(
+                        SyncDiagnostics.safeParams(
                             if (paramsS == null) null else App.getDefaultGson().fromJson<Map<String, Any>>(paramsS, SYNC_LOG_PARAMS_TYPE)
                         )
                     } catch (_: RuntimeException) {

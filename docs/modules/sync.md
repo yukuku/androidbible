@@ -102,16 +102,21 @@ Useful interpretations:
 - `apply_result` values such as `dirty_entities` or `dirty_sync_account` identify
   existing conflict/account-change handling; they do not mean completion.
 
-Only allowlisted metadata is recorded. Account names, email, passwords, tokens,
-headers, URLs, request/response bodies, notes and other user content are omitted.
+Only allowlisted metadata is recorded. Account email is retained in authentication
+and account events and is included when the log is copied. `serverPrefix` retains
+the server origin (scheme, host and port), with URL credentials, paths, queries
+and fragments omitted. Passwords, tokens, headers, request/response bodies, notes
+and other user content are omitted.
 Exception messages are omitted entirely because even ordinary I/O and JSON
 messages can contain credentials or user content. Legacy log parameters are also
 filtered when displayed or copied. Raw FCM tokens and sync responses are not
 sent to logcat by these sync paths.
 
 Storage retains at most 500 diagnostic rows after each insert, with bounded
-metadata fields. Oversized legacy parameter blobs are removed on insertion and
-excluded on reading. Only diagnostic log rows are pruned; sync shadows and user
+metadata fields. Incoming set names and parameter size are checked before insertion.
+A primary-key range deletion enforces retention in the same transaction as insertion.
+Legacy rows are filtered on reading and age out through retention; individual log
+writes do not rewrite them. Only diagnostic log rows are pruned; sync shadows and user
 data are untouched. If diagnostic storage fails, up to 50 events remain in
 memory and can be copied during that process lifetime.
 

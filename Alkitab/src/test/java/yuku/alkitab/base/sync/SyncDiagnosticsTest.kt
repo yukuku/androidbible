@@ -11,7 +11,7 @@ class SyncDiagnosticsTest {
         val secret = "person@example.org token=secret https://user:password@host/path?token=secret private note"
         val safe = SyncDiagnostics.safeParams(mapOf("email" to secret, "password" to secret,
             "simpleToken" to secret, "Authorization" to secret, "message" to secret,
-            "serverPrefix" to secret, "payload" to secret, "stage" to secret, "duration_ms" to secret))
+            "payload" to secret, "stage" to secret, "duration_ms" to secret))
         assertTrue(safe.isEmpty())
         assertEquals("unknown", SyncDiagnostics.safeSet(secret))
     }
@@ -42,4 +42,19 @@ class SyncDiagnosticsTest {
         assertEquals("HTTP_CLIENT", SyncDiagnostics.httpCategory(429))
         assertEquals("HTTP_OK", SyncDiagnostics.httpCategory(200))
     }
+    @Test
+    fun `account email remains available in copied diagnostic metadata`() {
+        assertEquals(mapOf("email" to "person@example.org", "accountName" to "person@example.org"),
+            SyncDiagnostics.safeParams(mapOf("email" to "person@example.org", "accountName" to "person@example.org")))
+    }
+
+    @Test
+    fun `server prefix keeps the origin without URL credentials or user data`() {
+        val params = SyncDiagnostics.safeParams(mapOf("serverPrefix" to
+            "https://person%40example.org:password@example.org:8443/private-note?token=secret#fragment"))
+        assertEquals(mapOf("serverPrefix" to "https://example.org:8443"), params)
+        assertEquals("https://api.alkitab.app", SyncDiagnostics.safeServerPrefix("https://api.alkitab.app/"))
+        assertEquals("[invalid URL]", SyncDiagnostics.safeServerPrefix("invalid URL secret"))
+    }
+
 }

@@ -63,6 +63,12 @@ class SyncRecordingTest {
 
     private fun delivered(isSuccessful: Boolean) = ListenableWorker.Result.success(
         Data.Builder().putBoolean(SyncAdapter.EXTRA_IS_SYNC_SUCCESSFUL, isSuccessful).build())
+    private fun insertLegacy(params: String, set: String? = null) {
+        helper.writableDatabase.execSQL(
+            "INSERT INTO SyncLog(createTime, kind, syncSetName, params) VALUES (?, ?, ?, ?)",
+            arrayOf<Any?>(1, SyncRecorder.EventKind.login_failed.code, set, params))
+    }
+
     private fun rows() = db.listLatestSyncLog(500)
     private fun recorded(kind: SyncRecorder.EventKind) = rows().any { it.kind_code == kind.code }
 
@@ -96,7 +102,7 @@ class SyncRecordingTest {
         assertEquals("apply", row.params["stage"])
         assertEquals("android.database.sqlite.SQLiteException", row.params["causes"])
         SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", "person@example.org", "message", "private note", "duration_ms", 12)
-        assertEquals(mapOf("duration_ms" to 12L), rows().first().params)
+        assertEquals(mapOf("email" to "person@example.org", "duration_ms" to 12L), rows().first().params)
     }
 
     @Test
@@ -104,16 +110,17 @@ class SyncRecordingTest {
         repeat(510) { SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", it) }
         val rows = rows()
         assertEquals(500, rows.size)
+        assertEquals(500L, android.database.DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
         assertEquals(509L, rows.first().params["attempt"])
         assertEquals(10L, rows.last().params["attempt"])
     }
 
     @Test
-    fun `legacy sensitive and malformed parameters cannot escape through log reads`() {
-        db.insertSyncLog(1, SyncRecorder.EventKind.login_failed, "person@example.org", """{"email":"person@example.org","message":"private note"}""")
-        assertTrue(rows().first().params.isEmpty())
+    fun `legacy payload text is filtered while account email is retained`() {
+        insertLegacy("""{"email":"person@example.org","message":"private note"}""", "person@example.org")
+        assertEquals(mapOf("email" to "person@example.org"), rows().first().params)
         assertEquals("unknown", rows().first().syncSetName)
-        db.insertSyncLog(2, SyncRecorder.EventKind.login_failed, null, "invalid JSON")
+        insertLegacy("invalid JSON")
         assertTrue(rows().first().params.isEmpty())
     }
 
@@ -168,20 +175,54 @@ class SyncRecordingTest {
     }
 
     @Test
-    fun `oversized legacy log blobs are pruned without touching sync data`() {
+    fun `oversized new log parameters are discarded before insertion`() {
         db.insertSyncLog(1, SyncRecorder.EventKind.login_failed, "x".repeat(5000), "x".repeat(5000))
         helper.readableDatabase.rawQuery("SELECT params, syncSetName FROM SyncLog", null).use {
             assertTrue(it.moveToFirst())
             assertTrue(it.isNull(0))
             assertEquals("unknown", it.getString(1))
         }
+        db.insertSyncLog(2, SyncRecorder.EventKind.login_failed, "mabel", "é".repeat(2049))
+        helper.readableDatabase.rawQuery("SELECT params FROM SyncLog ORDER BY _id DESC LIMIT 1", null).use {
+            assertTrue(it.moveToFirst())
+            assertTrue(it.isNull(0))
+        }
     }
+
     @Test
     fun `empty scheduling requests are observable without initializing WorkManager`() {
         SyncKotlin.syncNow(false, emptyArray())
         assertEquals("empty_request", rows().first().params["reason"])
         assertTrue(recorded(SyncRecorder.EventKind.schedule_requested))
         assertFalse(recorded(SyncRecorder.EventKind.diagnostic_error))
+    }
+
+    @Test
+    fun `logging a new event does not rewrite legacy rows`() {
+        val legacyParams = "x".repeat(5000)
+        insertLegacy(legacyParams, "legacy set")
+        SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, "mabel", "stage", "gather")
+        helper.readableDatabase.rawQuery("SELECT params, syncSetName FROM SyncLog ORDER BY _id LIMIT 1", null).use {
+            assertTrue(it.moveToFirst())
+            assertEquals(legacyParams, it.getString(0))
+            assertEquals("legacy set", it.getString(1))
+        }
+        assertTrue(rows().last().params.isEmpty())
+        assertEquals("unknown", rows().last().syncSetName)
+    }
+
+    @Test
+    fun `retention follows insertion order even when row IDs have gaps`() {
+        repeat(520) {
+            helper.writableDatabase.execSQL(
+                "INSERT INTO SyncLog(_id, createTime, kind, params) VALUES (?, 1, ?, ?)",
+                arrayOf<Any>((it + 1) * 10, SyncRecorder.EventKind.diagnostic_stage.code, "{\"attempt\":$it}"))
+        }
+        SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", 520)
+        assertEquals(500, rows().size)
+        assertEquals(500L, android.database.DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
+        assertEquals(520L, rows().first().params["attempt"])
+        assertEquals(21L, rows().last().params["attempt"])
     }
 
 }

@@ -2,10 +2,12 @@ package yuku.alkitab.base.sync
 
 import java.util.Collections
 import java.util.IdentityHashMap
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 /** Values from servers, exceptions and accounts are untrusted, even in legacy log rows. */
 object SyncDiagnostics {
     const val MAX_ROWS = 500
+    const val MAX_PARAM_BYTES = 4096
     const val MAX_FIELDS = 16
     private val numericKeys = setOf("base_revno", "client_delta_operations_size", "client_entities_size",
         "client_delta_operations_size_original", "client_delta_operations_size_chopped", "duration_ms",
@@ -27,7 +29,11 @@ object SyncDiagnostics {
         input?.entries?.take(MAX_FIELDS)?.forEach { (key, value) ->
             val safe: Any? = when {
                 key in numericKeys && value is Number -> value.toLong()
-                key in setOf("forced", "network_required", "is_new_registration_id", "custom_server", "is_sync_successful") && value is Boolean -> value
+                key in setOf("forced", "network_required", "is_new_registration_id", "is_sync_successful") && value is Boolean -> value
+                key in setOf("email", "accountName") && value is String && value.length <= 320 &&
+                    value.count { it == '@' } == 1 && !value.contains("://") &&
+                    value.none { it.isWhitespace() || it.isISOControl() } -> value
+                key == "serverPrefix" && value is String -> safeServerPrefix(value)
                 key == "stage" && value in stages -> value
                 key == "category" && value in categories -> value
                 key == "reason" && value in setOf("not_logged_in", "updates_ongoing", "unknown_set", "empty_response", "empty_request") -> value
@@ -41,6 +47,14 @@ object SyncDiagnostics {
             if (safe != null) result[key] = safe
         }
         return result
+    }
+
+    @JvmStatic
+    fun safeServerPrefix(value: String): String {
+        if (value.length > MAX_PARAM_BYTES) return "[invalid URL]"
+        val url = value.toHttpUrlOrNull() ?: return "[invalid URL]"
+        return okhttp3.HttpUrl.Builder().scheme(url.scheme).host(url.host).port(url.port)
+            .build().toString().removeSuffix("/")
     }
 
     @JvmStatic
