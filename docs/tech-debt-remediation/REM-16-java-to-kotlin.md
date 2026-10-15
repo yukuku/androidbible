@@ -15,7 +15,7 @@
 | 2 | ~~`TargetDecoder.java`~~ | ~~Low~~ | ✅ ported to `TargetDecoder.kt` (2026-05-13). `object` with `@JvmStatic decode()`; returns non-nullable `IntArrayList` (empty on error) to preserve call sites. |
 | 3 | ~~`Jumper.java`~~ | ~~Low~~ | ✅ ported to `Jumper.kt` on 2026-05-12; behavior preserved, JumperTest + full unit suite pass |
 | 4 | ~~`QueryTokenizer.java`~~ | ~~Low~~ | ✅ ported to `QueryTokenizer.kt` (2026-05-13). `object` with `@JvmStatic` on all public methods; `tokenize()` accepts `String?` for backwards-compatible null handling. |
-| 5 | ~~`DevotionDownloader.java`~~ | ~~Low~~ | ✅ ported to `DevotionDownloader.kt` (2026-05-13). Regular Kotlin class with `@Synchronized`/`@Volatile` annotations, `::downloadLoop` method reference. |
+| 5 | ~~`DevotionDownloader.java`~~ | ~~Low~~ | ✅ ported to `DevotionDownloader.kt` (2026-05-13). Coroutine-based scheduling, source/date deduplication, and observable state are verified as of 2026-10-15; see REM-15 step 15b. |
 | 6 | ~~`Provider.java`~~ | ~~Medium~~ | ✅ ported to `Provider.kt` (2026-05-13). `open class` (needed for test anonymous subclass); `companion object` for constants and static `uriMatcher`; `when` replaces `switch`. |
 | 7 | ~~`SongBookUtil.java`~~ | ~~Medium~~ | ✅ ported to `SongBookUtil.kt` (2026-05-13). `object` with nested interfaces/classes; `@JvmStatic` on all public methods; `@JvmField` on `SongBookInfo` fields. |
 | 8 | ~~`VerseRenderer.java`~~ | ~~Medium~~ | ✅ ported ([REM-26](REM-26-verserenderer-kotlin.md)) |

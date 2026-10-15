@@ -5,16 +5,16 @@
 **BRICE:** B=2 R=3 I=5 C=5 E=5 → **4.0**
 **Phase:** 1 — Quick Wins & Safety Fixes
 
-**Completed in:** `758793f5` (2026-04-20)
+**Completed:** 2026-04-20. Current implementation reviewed on 2026-10-15.
 
-**What was done:**
-1. ✅ Replaced `extends Thread` with a single-thread `ExecutorService` (`Executors.newSingleThreadExecutor()`)
-2. ✅ Replaced `queue_.wait()/notify()` with `LinkedBlockingDeque.take()` — blocking take provides natural backpressure
-3. ✅ Added `shutdown()` method that sets a `volatile boolean shutdown_` flag and calls `executor_.shutdownNow()`; the download loop checks the flag and propagates `InterruptedException` by re-interrupting and breaking out
-4. ✅ Hardcoded `SystemClock.sleep(50)` removed
-5. ✅ HTTP response handling now goes through `Connections.downloadString(url)`, which handles stream cleanup internally
+**Current behavior:**
+1. `DevotionDownloader` runs a coroutine scope with foreground and prefetch slots; it does not poll or sleep while idle.
+2. Requests deduplicate by `Key(name, date)`. Selection promotes queued work and cancels obsolete foreground transfers.
+3. `shutdown()` cancels requests, clears queued work, and cancels the scope.
+4. `DevotionDownloadBackend` handles cancellable OkHttp calls, cached articles, and persistence, with response cleanup through `use`.
+5. `DevotionActivity` observes the downloader's `changes` StateFlow while started. `DevotionDownloaderTest`, `DevotionDownloadBackendTest`, and `DevotionActivityTest` cover the associated behavior.
 
-**Remaining:** The broadcast at the end of `downloadLoop` previously used `App.getLbm()` (LocalBroadcastManager); that was migrated to the `AppEvents` `SharedFlow` bus in [REM-03](REM-03-localbroadcastmanager.md).
+**Remaining:** None for this task or the devotion-download portion of [REM-15](REM-15-coroutines.md).
 
 ---
 

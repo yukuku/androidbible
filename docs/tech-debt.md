@@ -1,6 +1,6 @@
 # Tech Debt, Improvements & Critiques
 
-Status last verified against the code on 2026-07-15. Refer to code by symbol name, not line number, and don't record library version numbers — both rot quickly (see Documentation Conventions in AGENTS.md).
+Summary reconciled with the implementation, test sources, and remediation records on 2026-10-15. This is a documentation review, not a fresh runtime audit of every issue. Refer to code by symbol name, not line number, and don't record library version numbers; both rot quickly (see Documentation Conventions in AGENTS.md).
 
 ## TD-01: IsiActivity Mega Class
 
@@ -21,23 +21,27 @@ Still inline in the activity:
 
 **Impact:** Any change to one concern risks breaking unrelated functionality. Testing individual behaviors requires instantiating the entire Activity. REM-09 (ViewModel) is the planned next step.
 
+### Compose migration scope
+
+Compose is the default for navigation, verse lists (including verse dialogs), the reader toolbar, song content, and sync login, with experimental legacy alternatives. The search toolbar and several picker/audio/feedback surfaces also use Compose. REM-22 records adoption; REM-45 tracks the remaining reader shell. The split container, gestures, drawer, and View-based selection toolbar still need separate consideration. Interop itself is supported; maintaining duplicate implementations is the ongoing cost.
+
 ---
 
-## TD-02: InternalDb — Raw SQL & Manual Statement Caching
+## TD-02: InternalDb: Raw SQL and Manual Storage Plumbing
 
 **File:** `Alkitab/src/main/java/yuku/alkitab/base/storage/InternalDb.java`
 
 **Status:** Significantly improved. Per-table DAOs (`MarkerDao`, `LabelDao`, `VersionDao`, `DevotionDao`, `ReadingPlanDao`, `ProgressMarkDao`, `PerVersionDao`, `Marker_LabelDao`, `SyncShadowDao`) and `SyncApplier` were extracted, cutting `InternalDb.java` to roughly half its former size. The remaining issues below are the parts not covered by that refactor.
 
-### Raw SQL string concatenation (~10 instances remain)
-Examples in `listMarkersForLabel`, `getLabelById`, and the reordering helpers:
+### Raw SQL string concatenation
+Examples remain in `InternalDb.listMarkers` and the reordering helpers. `getLabelById` delegates to `LabelDao.getById`:
 ```java
 c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker +
   " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " +
   Db.TABLE_Marker + "." + Db.Marker.gid + " not in (select distinct " +
   Db.Marker_Label.marker_gid + " from " + Db.TABLE_Marker_Label + ")", ...);
 ```
-These are unreadable, fragile, and impossible to verify at compile time.
+These queries lack compile-time verification, and changes to table/column names or joins require manual review.
 
 ### ~~Manual compiled statement caching~~ ✅ FIXED
 The problematic `private SQLiteStatement stmt_countMarkersForBookChapter` field and null-check pattern have been removed. `MarkerDao.countForAriRange` now uses `compileStatement(...).use { }` so the statement is closed deterministically. `LabelDao.getMaxOrdering` uses the same pattern. No cross-request caching, no invalidation concerns.
@@ -60,22 +64,13 @@ The `TODO this is only called together with putAttributes(), make it private` co
 
 ---
 
-## TD-03: Deprecated API Usage
+## TD-03: Legacy Event and UI Dispatch Patterns
 
 ### ~~LocalBroadcastManager~~ ✅ removed in REM-03
 All `App.getLbm().sendBroadcast` / `registerReceiver` usages migrated to Kotlin `SharedFlow`-based buses in `yuku.alkitab.base.events.AppEvents`. The `androidx.localbroadcastmanager` dependency and `App.getLbm()` helper are gone.
 
-### Handler(Looper.getMainLooper()) for thread switching
-- `VerseRenderer.kt` `reportInvalidSpecialTag` — creates Handler to show Toast
-- `util/Foreground.java` — static main-thread Handler for lifecycle tracking
-
-Should use `Dispatchers.Main` with coroutines or `lifecycleScope`. (The former `DownloadService.java` instance was deleted along with PRDownloader in REM-19.)
-
-### Static Toast caching (VerseRenderer.kt `invalidSpecialTagToast`)
-```kotlin
-private var invalidSpecialTagToast: Toast? = null
-```
-Object-scope UI reference can leak Activity context. Should create Toast inline or use `Snackbar`.
+### Main-thread dispatch and toast reuse
+`VerseRenderer.reportInvalidSpecialTag` posts through `Handler(Looper.getMainLooper())` and reuses `invalidSpecialTagToast`. The Toast is created with `App.context`, so this reference does not retain an Activity context. `util/Foreground.java` also uses a static main-thread Handler for lifecycle tracking. Explicit-looper Handler usage is supported; any migration to `Dispatchers.Main` or lifecycle scopes belongs to the broader threading work in REM-15 rather than an API-deprecation or Activity-leak fix.
 
 ---
 
@@ -96,19 +91,19 @@ Object-scope UI reference can leak Activity context. Should create Toast inline 
 ## TD-06: Threading & Concurrency Issues
 
 ### ~~DevotionDownloader infinite loop~~ ✅ FIXED (REM-05)
-`DevotionDownloader` (now Kotlin) uses `Executors.newSingleThreadExecutor()` with a `LinkedBlockingDeque.take()` loop, a `volatile` shutdown flag, and a `shutdown()` method calling `executor_.shutdownNow()`. The hardcoded `SystemClock.sleep(50)` is gone; `InterruptedException` is handled by re-interrupting and breaking.
+`DevotionDownloader` uses a coroutine scope with separate foreground and prefetch slots, a queue keyed by source/date, and observable `StateFlow` changes. `shutdown()` cancels active requests and the scope. `DevotionDownloadBackend` owns cancellable OkHttp requests and cache/persistence handling. Downloader, backend, and activity behavior have dedicated tests. The devotion portion of REM-15 and the request-deduplication item in REM-41 are complete.
 
 ### Sync lock complexity (Sync.java, `syncUpdatesOngoingCounters` / `syncSetNameQueue`)
 Multiple `synchronized` blocks/methods on different objects around a `ConcurrentLinkedQueue`. The mixed locking granularity is hard to reason about and risks subtle races with nested synchronization.
 
 ### Coroutine adoption is partial
-Coroutines are now used in ~16 files (the Bible-audio subsystem, `VersionDownloadWorker`, `DownloadMapper`, `AppEvents` flows, Compose Goto screen, `IsiActivity` collectors, song audio), but the sync module, `InternalDb`/DAO layer, search, and devotion downloads still use raw `Thread`, `Handler`, and executors. REM-15 tracks the remaining module-by-module migration.
+Coroutines are used in Bible audio, version downloads, `AppEvents`, Compose navigation, reader collectors, song audio, and devotion downloads. Sync, the Bible database layer, search debouncing, and synchronous chapter loading still have migration work. REM-15 tracks the remaining module-by-module scope; coroutines in one part of a subsystem do not imply that all its blocking work is lifecycle-aware.
 
 ---
 
-## TD-07: No ViewModel / Architecture Components
+## TD-07: Reader State Without a ViewModel
 
-Activities directly hold all state as fields. `IsiActivity` maintains:
+`GotoViewModel` manages the Compose navigation screen, but `IsiActivity` still owns reader state directly:
 - Active Bible versions (`activeSplit0`, `activeSplit1`)
 - Selected verses and selection mode
 - Navigation history
@@ -162,15 +157,15 @@ The `superscriptDigits` array now has an inline comment naming the Unicode code 
 
 ## TD-11: Mixed Java/Kotlin
 
-`Alkitab/src/main` is currently ~107 Java files vs ~182 Kotlin files. Of the core files originally flagged here, most have been ported (REM-16): `SearchEngine`, `DevotionDownloader`, `Provider`, `Highlights`, `Jumper`, `TargetDecoder`, `QueryTokenizer`, `SongBookUtil`, and `VerseRenderer` are all Kotlin now.
+Most of the core files originally flagged here have been ported (REM-16): `SearchEngine`, `DevotionDownloader`, `Provider`, `Highlights`, `Jumper`, `TargetDecoder`, `QueryTokenizer`, `SongBookUtil`, and `VerseRenderer` are Kotlin. Additional utility and decoder conversions are recorded in REM-16. Browse the source tree for the current language split rather than maintaining file counts here.
 
-Still Java, with no clear migration plan:
+Remaining Java includes:
 - `InternalDb.java` — plus `InternalDbHelper` and several activities
 - `Sync.java`
 - `SyncAdapter.java`
 - All devotion article parsers (`DevotionArticle.java`, `ArticleFromSabda`, `ArticleMeidA`, `ArticleMorningEveningEnglish`, `ArticleRenunganHarian`, `ArticleRoc`, `ArticleSantapanHarian`)
 
-The mixed codebase means the remaining Java code can't use Kotlin features (extension functions, coroutines, sealed classes, null safety).
+REM-16 explicitly tracks `InternalDb` and `Sync` as the two remaining files from its original list. Other Java files are outside that list. Conversion should follow concrete maintenance or coroutine-integration needs, with characterization tests for risky code.
 
 ---
 
@@ -191,7 +186,9 @@ The mixed codebase means the remaining Java code can't use Kotlin features (exte
 
 Unit tests under `Alkitab/src/test` (plus a few in other modules, e.g. `AlkitabYes2`, `AlkitabIntegration`) now cover storage/DAOs, sync, reader/rendering, Bible audio, search/util, songs, and the content provider — grown from a near-empty baseline through REM-18 and the audio/Room/portable-songs work. Browse `Alkitab/src/test` directly for the current file list rather than relying on an enumeration here, which drifts out of date as tests are added, renamed, or moved.
 
-**Still not tested:** YES2 reader/writer round-trip, devotion downloading (the DAO is tested, the downloader is not), reading-plan progress logic, widget update flow.
+**Additional coverage already present:** `Yes2RoundTripTest` and `SnappyStreamRoundTripTest` cover YES2 reader/writer and compression round-trips. `DevotionDownloaderTest`, `DevotionDownloadBackendTest`, and `DevotionActivityTest` cover prioritization, deduplication, cancellation, retry, cache behavior, and UI state. `ReadingPlanDaoTest` covers progress storage; `ReadingPlanCurrentReadingTest` covers selected-day passage activation.
+
+**Remaining gaps:** ASCII-encoded YES2 search regression coverage (REM-36), concurrent decoding and locale-consistent search (REM-39), invalid/revised reading-plan progress bounds (REM-41), and the widget update flow. Existing round-trip and DAO tests do not cover those behaviors.
 
 ---
 
@@ -221,13 +218,13 @@ A Kotlin `object` singleton that was the central service locator for the entire 
 - The UI-dimensions recompute entry point is `recalculate()` on `UiDimensionsProvider`.
 
 ### Remaining debt
-- `S` still exists as the implementation behind the interfaces; ~8–10 files still import `S` directly (~25 call sites). New code should use `App.services.*`.
+- `S` still exists as the implementation behind the interfaces. Direct imports remain in legacy navigation fragments, note/patch-text activities, `VersionDialogHelper`, and the dimensions-provider type. New service access should use `App.services.*`.
 - `S.db` / `S.songDb` are still lazy singletons requiring `App.context` — implicit initialization-order dependency remains.
-- `CalculatedDimensions` is still a bag of 18 mutable fields, replaced atomically by `recalculate()` with no observer mechanism — consumers must re-read `applied()` manually.
+- `CalculatedDimensions` still exposes mutable fields. Its holder uses Compose snapshot state (`mutableStateOf`), so composables reading `applied()` can observe replacement by `recalculate()`. View consumers still need an explicit refresh; the provider interface exposes no general subscription API.
 - No DI framework; `AppServices` is a hand-rolled container (step 24e, Hilt, is deferred). Test doubles are possible via the interfaces (`AppServicesTest` demonstrates this), but most call sites still resolve through the global `App.services`.
 
 ---
 
 ## Known Bugs & Open Fixes
 
-All specific bugs — both the ones fixed to date and the open ones surfaced by the 2026-07 code audit — are tracked as remediation tasks (REM-33 … REM-44) in [tech-debt-remediation.md](tech-debt-remediation.md), each with a full failure description, fix steps, and a BRICE score. Notable open items include data-transfer import safety (REM-33), the YES2 ASCII search decoder (REM-36), song-book update `dataFormatVersion` handling (REM-35), Bible-audio playback state (REM-37), last-write-wins sync conflicts (REM-43), and the version cache eviction policy (REM-42).
+Audit findings and follow-up work are tracked in [tech-debt-remediation.md](tech-debt-remediation.md), including REM-33 through REM-48. Open items include import safety (REM-33), sync delivery/races (REM-34), ASCII search decoding (REM-36), the remaining audio-state and highlight-color issues (REM-37), reader lifecycle (REM-38), defensive guards (REM-41), sync conflicts (REM-43), and resource leaks (REM-46/47). Song-book update handling (REM-35) is complete as of 2026-07-20. REM-37's split-version notification wiring and REM-41's devotion request deduplication are also complete; their other steps remain open.
