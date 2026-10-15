@@ -9,7 +9,6 @@ the Bible reader:
 | [Opening verses](opening-verses.md) | An app that opens Bible passages in a dialog or the main reader |
 | [Song books](songs.md) | Song and hymn collections, with lyrics and optional musical information |
 | [Reading plans (RPA)](reading-plans.md) | Daily reading schedules that users can download |
-| [Extensions](extensions.md) | An app that receives the verses selected in the reader |
 
 These are the guides linked from the [developer page](https://alkitab.app/developer).
 These guides are maintained in this repository. Propose corrections through

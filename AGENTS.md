@@ -167,7 +167,7 @@ Bible-version downloads run inside `VersionDownloadWorker` (a `CoroutineWorker`)
 
 ### Key Singletons and Entry Points
 
-- **`App.java`** — Application class, extends `yuku.afw.App`. Initializes Firebase, FCM registration, preference defaults, extension receivers. Holds the eagerly-initialized `App.services` (`AppServices` container) introduced by REM-24.
+- **`App.java`**: Application class, extends `yuku.afw.App`. Initializes Firebase, FCM registration, and preference defaults. Holds the eagerly-initialized `App.services` (`AppServices` container) introduced by REM-24.
 - **`S.kt`** — Legacy service locator. Holds lazy references to `InternalDb`, `SongDb`, active Bible version state, and calculated UI dimensions. New code should depend on the narrower `StorageProvider` / `VersionManager` / `UiDimensionsProvider` interfaces via `App.services.*`; existing `S.foo` call sites are being migrated incrementally (REM-24).
 - **`IsiActivity.kt`** (at `yuku/alkitab/base/IsiActivity.kt`) — Main Bible reader activity. Verse display, navigation history, and volume-button navigation still live here; gesture handling, the action-mode callback, and split-view management have been extracted into `ReaderGestureHandler` (REM-06), `VerseActionModeController` (REM-07), and `SplitViewManager` (REM-08) respectively.
 

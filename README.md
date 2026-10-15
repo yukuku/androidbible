@@ -62,9 +62,8 @@ Bible for Android is not only open-source, but also designed in a flexible manne
 - Create and make publicly available your favorite Song Book
 - Create and publish a Reading Plan
 - Open specific verses from your app
-- Make your own app that gives further insight regarding specific verses callable by Alkitab / Quick Bible
 
-The inter-app API lives in the `AlkitabIntegration` module. See the [content and integration guides](docs/developer/README.md) for authoring formats, opening verses, and writing extensions. The `extensions/example-imagesharer` project contains historical examples; the [extension guide](docs/developer/extensions.md) includes an updated file-sharing example for current Android apps.
+The inter-app API lives in the `AlkitabIntegration` module. See the [content and integration guides](docs/developer/README.md) for authoring formats and opening verses.
 
 Developer Documentation
 -----------------------

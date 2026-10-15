@@ -31,7 +31,6 @@ import org.robolectric.annotation.Config
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.config.AppConfig
 import yuku.alkitab.base.util.AlkitabGptIntegration
-import yuku.alkitab.base.util.ExtensionManager
 import yuku.alkitab.base.util.ShareUrl
 import yuku.alkitab.base.verses.VersesDataModel
 import yuku.alkitab.debug.R
@@ -105,11 +104,9 @@ class VerseActionModeControllerTest {
 
         // Static / object collaborators.
         mockkStatic(AppConfig::class)
-        mockkObject(ExtensionManager)
         mockkStatic(Preferences::class)
 
         every { AppConfig.get() } returns newAppConfig(menuGuide = true, menuCommentary = true, menuDictionary = true)
-        every { ExtensionManager.getExtensions() } returns emptyList()
         every { Preferences.getBoolean(any<String>(), any<Boolean>()) } returns false
         every { Preferences.getBoolean(any<Int>(), any<Int>()) } returns false
 
@@ -314,28 +311,6 @@ class VerseActionModeControllerTest {
         controller.onPrepareActionMode(mode, menu)
 
         assertFalse(menu.findItem(R.id.menuDictionary).isVisible)
-    }
-
-    @Test
-    fun `onPrepareActionMode omits an extension that does not support multiple verses when the user has selected more than one`() {
-        val singleExt = mockk<ExtensionManager.Info>(relaxed = true) {
-            every { supportsMultipleVerses } returns false
-            every { label } returns "SingleOnly"
-        }
-        val multiExt = mockk<ExtensionManager.Info>(relaxed = true) {
-            every { supportsMultipleVerses } returns true
-            every { label } returns "Multi"
-        }
-        every { ExtensionManager.getExtensions() } returns listOf(singleExt, multiExt)
-        every { host.selectedVersesSplit0_1 } returns ints(1, 2)
-
-        val menu = inflateMenu()
-        controller.onCreateActionMode(mode, menu)
-        controller.onPrepareActionMode(mode, menu)
-
-        val labels = (0 until menu.size()).map { menu.getItem(it).title?.toString() }
-        assertFalse("SingleOnly extension must be hidden on multi-select", labels.contains("SingleOnly"))
-        assertTrue("Multi-capable extension must still be shown", labels.contains("Multi"))
     }
 
     // ----- onActionItemClicked: routing -----

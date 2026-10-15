@@ -12,7 +12,6 @@ import yuku.alkitab.base.services.AppServices;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Fcm;
 import yuku.alkitab.base.sync.Sync;
-import yuku.alkitab.base.util.ExtensionManager;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitabfeedback.FeedbackSender;
@@ -83,9 +82,6 @@ public class App extends yuku.afw.App {
                 Sync.retryPendingFcmRegistrationIfNeeded(fcmRegistrationId);
             }
         }
-
-        // Make sure extensions are up-to-date
-        ExtensionManager.registerReceivers(context);
 
         // make sure launcher do not open other variants of the app
         Launcher.setAppPackageName(context.getPackageName());
