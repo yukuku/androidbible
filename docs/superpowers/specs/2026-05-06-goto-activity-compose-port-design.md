@@ -314,9 +314,9 @@ No Compose UI tests in this PR — the legacy screen has zero tests, so no cover
   - BRICE I bumped from 1 → 2 (no longer greenfield).
   - Next candidate ports listed (matches the existing REM-22 plan): `AboutActivity` (Kotlin, View-based), `HelpActivity` (Java, WebView).
 
-### `docs/tech-debt.md`
+### `docs/tech-debt-remediation/REM-22-jetpack-compose.md`
 
-- Add a note under TD-12 that `androidx.percentlayout` is now used by fewer files (the most complex consumer, `fragment_goto_dialer.xml`, is gone). Once the remaining consumers are Compose'd, the dependency can be dropped.
+- Track the `androidx.percentlayout` dependency cleanup alongside the Goto Compose port in REM-22.
 
 ## Out of scope
 

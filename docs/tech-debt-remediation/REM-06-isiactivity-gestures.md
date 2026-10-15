@@ -1,6 +1,5 @@
 # REM-06: Extract IsiActivity Gesture Handling ✅ COMPLETED
 
-**Addresses:** TD-01 (gesture cluster)
 **Module:** Main reader
 **BRICE:** B=4 R=3 I=3 C=3 E=4 → **3.4**
 **Phase:** 2 — Architecture Improvements

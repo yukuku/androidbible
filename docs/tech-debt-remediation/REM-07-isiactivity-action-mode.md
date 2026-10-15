@@ -1,6 +1,5 @@
 # REM-07: Extract IsiActivity Action Mode ✅ COMPLETED
 
-**Addresses:** TD-01 (action mode cluster)
 **Module:** Main reader
 **BRICE:** B=4 R=3 I=3 C=3 E=4 → **3.4**
 **Phase:** 2 — Architecture Improvements

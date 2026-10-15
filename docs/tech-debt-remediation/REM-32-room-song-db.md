@@ -1,6 +1,5 @@
 # REM-32: Migrate SongDb to Room ✅ COMPLETED (2026-05-15)
 
-**Addresses:** TD-02 follow-through — takes the hand-rolled `SQLiteOpenHelper` for the Songs subsystem (`SongDbHelper`) onto Room.
 **Module:** Storage — Songs subsystem
 **BRICE:** B=3 R=3 I=2 C=3 E=5 → **3.2**
 **Phase:** 2 — Architecture Improvements
@@ -8,6 +7,8 @@
 **Outcome.** `SongDb` (the separate SQLite file managed by `SongDbHelper`) is now Room-backed by a brand-new [`SongRoomDatabase`](../../Alkitab/src/main/java/yuku/alkitab/base/storage/room/SongRoomDatabase.kt) at `@Database(version = 1)`, living in its own SQLite file `AlkitabSongRoomDb`. The Songs subsystem lives in its own database for the same reasons the legacy split existed — Songs is a self-contained module (see `docs/modules/songs.md`) that shares no rows, foreign keys, or transactions with Bible-reading tables.
 
 `SongRoomDatabase` is the only Room database in production: `SongDbHelper` is a rollback safety net for the Songs subsystem, while `InternalDbHelper` is the **active** source of truth for every Bible-related table.
+
+Remaining Bible SQL and storage-plumbing work is tracked separately in [REM-49](REM-49-bible-storage-plumbing.md).
 
 **Shipped:**
 - **Entities:** `SongInfoEntity.kt` (`song_info` — nullable `bookName`/`code`/`title`/`title_original`/`data`, non-null `ordering`/`dataFormatVersion`/`updateTime`, indexes on `(bookName, code)` and `(bookName, ordering)` mirroring `SongDbHelper.setupTableSongInfo`). `SongBookInfoEntity.kt` (`song_book_info` — every column nullable except `_id`, non-unique index on `name`). `SongInfoEntity` overrides `equals`/`hashCode` to use content-equality on `data` so the round-trip BLOB assertion in `SongDbTest` is reliable.

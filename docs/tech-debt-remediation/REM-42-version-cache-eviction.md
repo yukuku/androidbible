@@ -1,6 +1,5 @@
 # REM-42: Bounded Eviction for the Version Cache
 
-**Addresses:** TD-02 (adjacent) — version loading
 **Module:** Versions (`MVersionDb`, `VersionImpl`)
 **BRICE:** B=2 R=1 I=3 C=3 E=3 → **2.4**
 **Phase:** 4 — Long-term / Minor

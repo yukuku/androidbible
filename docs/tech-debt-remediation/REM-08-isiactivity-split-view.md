@@ -1,6 +1,5 @@
 # REM-08: Extract IsiActivity Split View Manager ✅ COMPLETED
 
-**Addresses:** TD-01 (split view cluster)
 **Module:** Main reader
 **BRICE:** B=3 R=2 I=3 C=4 E=4 → **3.2**
 **Phase:** 2 — Architecture Improvements

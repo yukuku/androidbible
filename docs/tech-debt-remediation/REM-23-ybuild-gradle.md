@@ -1,6 +1,5 @@
 # ~~REM-23: Port ybuild.sh to Gradle~~ ✅ COMPLETED (2026-04-16)
 
-**Addresses:** TD-14
 **Module:** Build
 **BRICE:** B=4 R=3 I=3 C=4 E=5 → **3.8**
 **Phase:** 2 — Architecture Improvements

@@ -1,6 +1,8 @@
-# Tech Debt Remediation Plan
+# Tech Debt Backlog
 
-This document is an index over the prioritized remediation plan for each tech debt item identified in [tech-debt.md](tech-debt.md). Each task has its own file under [`tech-debt-remediation/`](tech-debt-remediation/), scoped to a specific module or subsystem and evaluated using the BRICE framework.
+This is the single index for technical debt and remediation work. Each REM record under [`tech-debt-remediation/`](tech-debt-remediation/) owns its problem description, current status, completed work, and remaining steps. REM records can be open, partial, or complete; keep related findings in the same record and link to other REMs for distinct work. Existing IDs remain stable.
+
+Scored work uses the BRICE framework below. Unscored items remain visible in their own section until their scope and priority are assessed. Refer to code by symbol name and dependency versions through `gradle/libs.versions.toml`.
 
 Summary reconciled with the implementation, test sources, and task records on 2026-10-15. A check mark means the stated scope is complete; partial tasks retain their remaining steps in the linked record. This documentation review does not replace runtime validation of open findings.
 
@@ -75,6 +77,13 @@ Summary reconciled with the implementation, test sources, and task records on 20
 - [REM-44: Make the Daily-Verse Widget's Version Fallback Explicit](tech-debt-remediation/REM-44-widget-version-fallback.md) — **2.6** (2026-07 audit)
 - [REM-42: Bounded Eviction for the Version Cache](tech-debt-remediation/REM-42-version-cache-eviction.md) — **2.4** (2026-07 audit)
 - [REM-43: Surface or Resolve Cross-Device Sync Conflicts](tech-debt-remediation/REM-43-sync-conflict-handling.md) — **2.4** (long-standing last-write-wins limitation)
+
+## Open Work Awaiting Prioritization
+
+- [REM-49: Simplify Bible Database SQL and Storage Plumbing](tech-debt-remediation/REM-49-bible-storage-plumbing.md): handwritten queries, duplicate reordering logic, and large SyncShadow chunk reads. Existing DAO and statement-lifetime fixes are recorded in the same item.
+- [REM-50: Centralize Sync API Calls and Failure Handling](tech-debt-remediation/REM-50-sync-api-boundary.md): endpoint construction, error classification, and transient data-sync retries. Queue delivery remains in REM-34; conflicts remain in REM-43.
+- [REM-51: Make Preference Types and Cache Invalidation Explicit](tech-debt-remediation/REM-51-preferences-architecture.md): typed keys/defaults and cache ownership. Hold/unhold safety is complete in REM-02; the editor race remains in REM-34.
+- [REM-52: Review the FancyShowCaseView Dependency](tech-debt-remediation/REM-52-showcase-dependency.md): evaluate maintenance, Android compatibility, and tip anchoring alongside reader UI work.
 
 ---
 
