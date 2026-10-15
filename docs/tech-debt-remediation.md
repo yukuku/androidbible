@@ -55,8 +55,8 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 ### From the REM-16 Kotlin conversion (2026-09)
 
-- [REM-46: Stop Debouncer From Leaking a Thread per Instance](tech-debt-remediation/REM-46-debouncer-thread-leak.md) **3.6** (one idle thread leaked per debouncer per Search or Marker List visit)
-- [REM-47: Close the Header File in YesReaderFactory on Read Failure](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md) **3.6** (file descriptor leak when the header read throws)
+- [REM-46: Stop Debouncer From Leaking a Thread per Instance](tech-debt-remediation/REM-46-debouncer-thread-leak.md) ✅ **3.6** (completed 2026-10-15; coroutine delay and shared IO threads)
+- [REM-47: Close the Header File in YesReaderFactory on Read Failure](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md) ✅ **3.6** (completed 2026-10-15; scoped header reads close on failure)
 - [REM-48: Harden OldVerseTextDecoder.Ascii](tech-debt-remediation/REM-48-old-ascii-decoder.md) **3.0** (4,000-byte verse limit, inconsistent non-ASCII decoding, input mutation)
 
 ## Phase 3: Modernization (BRICE 2.5–3.0)
@@ -102,8 +102,8 @@ Summary reconciled with the implementation, test sources, and task records on 20
 | [REM-35](tech-debt-remediation/REM-35-songbook-update-dfv.md)           | ~~Fix song book update dataFormatVersion~~ ✅                        | **3.8** | 1     |
 | [REM-36](tech-debt-remediation/REM-36-yes2-ascii-decoder.md)            | ~~Fix YES2 ASCII search decoder~~ ✅                                | **3.8** | 1     |
 | [REM-37](tech-debt-remediation/REM-37-bible-audio-state.md)             | Bible audio state + appearance (split wiring complete)              | **3.8** | 2     |
-| [REM-46](tech-debt-remediation/REM-46-debouncer-thread-leak.md)         | Stop Debouncer thread leak (2026-09 Kotlin conversion)               | **3.6** | 2     |
-| [REM-47](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md)    | Close YesReaderFactory header file (2026-09 Kotlin conversion)       | **3.6** | 2     |
+| [REM-46](tech-debt-remediation/REM-46-debouncer-thread-leak.md)         | ~~Stop Debouncer thread leak~~ ✅                                    | **3.6** | 2     |
+| [REM-47](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md)    | ~~Close YesReaderFactory header file~~ ✅                            | **3.6** | 2     |
 | [REM-06](tech-debt-remediation/REM-06-isiactivity-gestures.md)          | ~~Extract IsiActivity gestures~~ ✅                                   | **3.4** | 2     |
 | [REM-07](tech-debt-remediation/REM-07-isiactivity-action-mode.md)       | ~~Extract IsiActivity action mode~~ ✅                                | **3.4** | 2     |
 | [REM-09](tech-debt-remediation/REM-09-isiactivity-viewmodel.md)         | Introduce ViewModel                                                  | **3.4** | 2     |
@@ -150,7 +150,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 ### 2026-09 Kotlin conversion follow-up (suggested)
 
-**Sprint 10 (a few days):** REM-47 (one-line `use {}` fix), REM-46 (Debouncer thread leak), REM-48 (YES1 ASCII decoder)
+**Sprint 10 (a few days):** REM-47 and REM-46 complete (2026-10-15); REM-48 (YES1 ASCII decoder) remains.
 
 ### Partial work completed as of 2026-10-15
 

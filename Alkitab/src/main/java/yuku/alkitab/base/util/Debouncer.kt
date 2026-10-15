@@ -3,10 +3,13 @@ package yuku.alkitab.base.util
 import android.os.Handler
 import android.os.Message
 import java.lang.ref.WeakReference
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay as coroutineDelay
+import kotlinx.coroutines.launch
 
 /**
  * Delays processing of a payload, and if another payload is submitted
@@ -19,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 abstract class Debouncer<RequestType, ResultType>(private val defaultDelay: Long) {
     private val handler = DebounceHandler(this)
-    private val sched: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+    private val dispatcher = Dispatchers.IO.limitedParallelism(1)
 
     private val serial = AtomicInteger()
 
@@ -53,14 +56,15 @@ abstract class Debouncer<RequestType, ResultType>(private val defaultDelay: Long
     fun submit(payload: RequestType, delay: Long) {
         val id = serial.incrementAndGet()
 
-        sched.schedule(Runnable {
+        scope.launch(dispatcher) {
+            coroutineDelay(delay)
             // check if this is still needed
-            if (isOutdated(1, id, serial.get())) return@Runnable
+            if (isOutdated(1, id, serial.get())) return@launch
 
             val result = process(payload)
 
             // check again if this is still needed
-            if (isOutdated(2, id, serial.get())) return@Runnable
+            if (isOutdated(2, id, serial.get())) return@launch
 
             // we are okay, deliver result in main thread
             val msg = Message.obtain()
@@ -69,7 +73,7 @@ abstract class Debouncer<RequestType, ResultType>(private val defaultDelay: Long
             msg.obj = result
 
             handler.sendMessage(msg)
-        }, delay, TimeUnit.MILLISECONDS)
+        }
     }
 
     /**
@@ -86,6 +90,9 @@ abstract class Debouncer<RequestType, ResultType>(private val defaultDelay: Long
 
     companion object {
         private val TAG: String = Debouncer::class.java.simpleName
+        private val scope = CoroutineScope(SupervisorJob() + CoroutineExceptionHandler { _, error ->
+            AppLog.e(TAG, "Debouncer processing failed", error)
+        })
 
         const val MSG_ON_RESULT = 1
 
