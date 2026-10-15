@@ -23,7 +23,7 @@ public interface Yes2VerseTextDecoder {
 					for (int j = 0; j < verse_len; j++) {
 						byte b = verseBuf[j];
 						if (b <= (byte)'Z' && b >= (byte)'A') {
-							verseBuf[i] |= 0x20;
+							verseBuf[j] |= 0x20;
 						}
 					}
 				}
