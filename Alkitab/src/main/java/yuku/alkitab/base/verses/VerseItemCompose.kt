@@ -1,17 +1,18 @@
 package yuku.alkitab.base.verses
 
 import android.annotation.SuppressLint
+import android.content.ClipData
 import android.content.ClipDescription
-import android.widget.Toast
 import android.content.Context
 import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.accessibility.AccessibilityEvent
-import androidx.compose.animation.core.LinearEasing
+import android.widget.Toast
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -68,8 +69,8 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.withTimeoutOrNull
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
-import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.settings.ExperimentalFlags
+import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.util.safeQuery
@@ -83,15 +84,7 @@ import yuku.alkitab.model.SingleChapterVerses
 import yuku.alkitab.model.Version
 import yuku.alkitab.util.Ari
 
-/**
- * Inputs to a single verse row that don't change between recompositions.
- * Held in `mutableStateOf` so [VerseItemComposeView.bind] triggers a
- * recomposition with the new values.
- *
- * Properties that DO change in place — `checked`, `collapsed`,
- * `audioHighlightColor`, `attentionStart`, `dragHover` — live directly on the
- * view so callers can poke them without rebuilding the whole state.
- */
+/** Row inputs; selection, collapse and overlays are supplied separately. */
 data class VerseItemComposeState(
     val render: VerseRendererCompose.Result,
     val fontSizeDp: Float,
@@ -130,7 +123,7 @@ data class AttributeState(
 
 private const val TAG = "VerseItemCompose"
 
-private const val ATTENTION_DURATION_MS = 2000f
+internal const val ATTENTION_DURATION_MS = 2000L
 private const val AUDIO_HIGHLIGHT_FLASH_ALPHA = 0.60f
 private const val AUDIO_HIGHLIGHT_STEADY_ALPHA = 0.20f
 private const val AUDIO_HIGHLIGHT_FLASH_MS = 500
@@ -207,9 +200,7 @@ class VerseItemComposeView @JvmOverloads constructor(
             true
         }
         DragEvent.ACTION_DROP -> {
-            // Refuse the drop if the payload is missing or non-numeric instead
-            // of throwing NumberFormatException out of `Integer.parseInt`.
-            val presetId = event.clipData?.getItemAt(0)?.text?.toString()?.toIntOrNull()
+            val presetId = progressMarkPresetId(event.clipData)
             if (presetId == null) {
                 false
             } else {
@@ -234,6 +225,12 @@ class VerseItemComposeView @JvmOverloads constructor(
         val s = state ?: return ""
         return verseItemContentDescription(context, s)
     }
+}
+
+internal fun progressMarkPresetId(clipData: ClipData?): Int? {
+    if (clipData == null || clipData.itemCount == 0) return null
+    return clipData.getItemAt(0).text?.toString()?.toIntOrNull()
+        ?.takeIf { it in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT }
 }
 
 /**
@@ -416,11 +413,6 @@ fun buildVerseItemComposeState(
     val verseNumberFontSizeDp = applied.fontSize2dp * 0.7f * textSizeMult
     val attributeScale = attributeViewScale(applied.fontSize2dp * ui.textSizeMult)
 
-    /*
-     * Dictionary mode is activated on either of these conditions:
-     * 1. user manually activate dictionary mode after selecting verses
-     * 2. automatic lookup is on and this verse is selected (checked)
-     */
     val render = if (ari in ui.dictionaryModeAris ||
         checked && Preferences.getBoolean(context.getString(R.string.pref_autoDictionaryAnalyze_key), context.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))
     ) {
@@ -717,45 +709,57 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
     val rubies = state.render.rubies
-    val textMeasurer = rememberTextMeasurer()
-    val density = LocalDensity.current
-    val rubyStyle = remember(textStyle, state.fontSizeDp) {
-        textStyle.copy(
-            fontSize = (state.fontSizeDp * RUBY_FONT_SIZE_RATIO).sp,
-            lineHeight = TextUnit.Unspecified,
-            fontWeight = FontWeight.Normal,
+    val isRubyDebug = !LocalInspectionMode.current && ExperimentalFlags.debugRubyGeometry()
+    val textModifier = Modifier
+        .fillMaxWidth()
+        .inlineLinkTapDetector(
+            layoutResultProvider = { textLayoutResult },
+            inlineLinks = state.render.inlineLinks,
+            onClick = state.onInlineLinkClick,
+            onMiss = state.onClick,
         )
-    }
-    BoxWithConstraints(modifier = modifier) {
-        val availableWidthPx = constraints.maxWidth
-        val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx) {
-            widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx)
-        }
-        BasicText(
-            text = displayText,
-            style = textStyle,
-            modifier = Modifier
-                .fillMaxWidth()
-                .inlineLinkTapDetector(
-                    layoutResultProvider = { textLayoutResult },
-                    inlineLinks = state.render.inlineLinks,
-                    onClick = state.onInlineLinkClick,
-                    onMiss = state.onClick,
+    Box(modifier = modifier) {
+        if (rubies.isEmpty() && !isRubyDebug) {
+            BasicText(
+                text = state.render.text,
+                style = textStyle,
+                modifier = textModifier,
+                onTextLayout = { textLayoutResult = it },
+            )
+        } else {
+            val textMeasurer = rememberTextMeasurer()
+            val density = LocalDensity.current
+            val rubyStyle = remember(textStyle, state.fontSizeDp) {
+                textStyle.copy(
+                    fontSize = (state.fontSizeDp * RUBY_FONT_SIZE_RATIO).sp,
+                    lineHeight = TextUnit.Unspecified,
+                    fontWeight = FontWeight.Normal,
                 )
-                .rubyOverlay(
-                    rubies = rubies,
-                    layoutResultProvider = { textLayoutResult },
-                    textMeasurer = textMeasurer,
-                    rubyStyle = rubyStyle,
-                    textColor = textColor,
-                    baseAscentPx = lineMetrics.baseAscentPx,
-                    gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
-                    debugAri = state.attribute.ari,
-                    debugSource = state.render.sourceText,
-                    debug = !LocalInspectionMode.current && ExperimentalFlags.debugRubyGeometry(),
-                ),
-            onTextLayout = { textLayoutResult = it },
-        )
+            }
+            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                val availableWidthPx = constraints.maxWidth
+                val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx) {
+                    widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx)
+                }
+                BasicText(
+                    text = displayText,
+                    style = textStyle,
+                    modifier = textModifier.rubyOverlay(
+                        rubies = rubies,
+                        layoutResultProvider = { textLayoutResult },
+                        textMeasurer = textMeasurer,
+                        rubyStyle = rubyStyle,
+                        textColor = textColor,
+                        baseAscentPx = lineMetrics.baseAscentPx,
+                        gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
+                        debugAri = state.attribute.ari,
+                        debugSource = state.render.sourceText,
+                        debug = isRubyDebug,
+                    ),
+                    onTextLayout = { textLayoutResult = it },
+                )
+            }
+        }
 
         val gutter = state.render.gutterVerseNumber
         if (gutter != null) {
@@ -955,11 +959,7 @@ private fun Modifier.checkedOverlay(checked: Boolean): Modifier {
 
 @Composable
 private fun Modifier.audioHighlightOverlay(audioHighlightColor: Int): Modifier {
-    // Snap to 60% the moment a verse is highlighted, then decay to 20% over
-    // 0.3 s so verse changes (driven by playback or scrubbing) read as a clear
-    // pulse rather than a constant glow. The color's alpha channel is ignored
-    // — the animation drives opacity end-to-end. Clearing the color removes the
-    // overlay immediately (matches the controller's prev-row clear pattern).
+    // Playback changes pulse before settling; animation owns the color's alpha.
     if (audioHighlightColor == 0) return this
     val alpha = remember { Animatable(AUDIO_HIGHLIGHT_FLASH_ALPHA) }
     LaunchedEffect(audioHighlightColor) {
@@ -980,11 +980,9 @@ private fun Modifier.audioHighlightOverlay(audioHighlightColor: Int): Modifier {
 @Composable
 private fun Modifier.attentionOverlay(attentionStart: Long, onDone: () -> Unit): Modifier {
     if (attentionStart == 0L) return this
-    // `attentionStart` is wall-clock millis. `withFrameMillis` provides
-    // monotonic uptime, which can't be subtracted from wall-clock — so we
-    // use it purely for frame pacing and read `System.currentTimeMillis()`
-    // inside the lambda for the actual elapsed-time measurement.
+    // Frame timestamps are monotonic; attentionStart uses wall-clock time.
     val now = remember(attentionStart) { mutableLongStateOf(System.currentTimeMillis()) }
+    val colorRgb = selectedVerseBackgroundColor()
     LaunchedEffect(attentionStart) {
         while (true) {
             withFrameMillis { now.longValue = System.currentTimeMillis() }
@@ -997,7 +995,6 @@ private fun Modifier.attentionOverlay(attentionStart: Long, onDone: () -> Unit):
     return drawBehind {
         val elapsed = now.longValue - attentionStart
         if (elapsed >= ATTENTION_DURATION_MS) return@drawBehind
-        val colorRgb = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
         val alpha = (0.4f * 255f * (1f - elapsed.toFloat() / ATTENTION_DURATION_MS)).toInt().coerceIn(0, 255)
         val tinted = ColorUtils.setAlphaComponent(colorRgb, alpha)
         drawRect(color = Color(tinted))
@@ -1020,13 +1017,8 @@ private fun Modifier.dragHoverOverlay(dragHover: Boolean): Modifier {
 }
 
 /**
- * Tap detector with a 24dp "easy-hit" radius: each tap walks every inline-link
- * range, computes the link's bounding rect via the [TextLayoutResult], and
- * picks the nearest link whose squared distance from the tap is within (24dp)².
- * Lets users hit small footnote/xref markers without pixel-precise aim.
- *
- * A tap near no link runs [onMiss]: this detector consumes every tap that
- * reaches the text, so the row's own tap handler never sees one.
+ * Expands small link targets by 24dp. Misses must invoke [onMiss] because this
+ * detector consumes the tap before the row's handler can receive it.
  */
 private fun Modifier.inlineLinkTapDetector(
     layoutResultProvider: () -> TextLayoutResult?,
@@ -1066,28 +1058,10 @@ private fun Modifier.inlineLinkTapDetector(
     }
 }
 
-/**
- * Produces 1–3 bounding rectangles for a substring: single line → one rect;
- * multi-line → tail of the first line + head of the last line + the middle
- * block (when the line gap is > 1).
- */
-private fun boundingRectsFor(layout: TextLayoutResult, start: Int, end: Int): List<Rect> {
-    val lineStart = layout.getLineForOffset(start)
-    val lineEnd = layout.getLineForOffset(end)
-    val xStart = layout.getHorizontalPosition(start, usePrimaryDirection = true)
-    val xEnd = layout.getHorizontalPosition(end, usePrimaryDirection = true)
-    return if (lineStart == lineEnd) {
-        listOf(Rect(xStart, layout.getLineTop(lineStart), xEnd, layout.getLineBottom(lineStart)))
-    } else {
-        val width = layout.size.width.toFloat()
-        val out = mutableListOf<Rect>()
-        out += Rect(xStart, layout.getLineTop(lineStart), width, layout.getLineBottom(lineStart))
-        out += Rect(0f, layout.getLineTop(lineEnd), xEnd, layout.getLineBottom(lineEnd))
-        if (lineEnd - lineStart > 1) {
-            out += Rect(0f, layout.getLineBottom(lineStart), width, layout.getLineTop(lineEnd))
-        }
-        out
-    }
+internal fun boundingRectsFor(layout: TextLayoutResult, start: Int, end: Int): List<Rect> {
+    // Glyph boxes respect bidi runs and the exclusive end at a line wrap.
+    return (start.coerceAtLeast(0) until end.coerceAtMost(layout.layoutInput.text.length))
+        .map { layout.getBoundingBox(it) }
 }
 
 private fun squaredDistanceFromRect(offset: Offset, rect: Rect): Int {

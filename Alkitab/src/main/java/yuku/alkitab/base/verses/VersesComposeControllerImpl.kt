@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -56,7 +57,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
@@ -142,22 +142,14 @@ class VersesComposeView @JvmOverloads constructor(
     }
 }
 
-/**
- * [VersesController] implementation backed by a Compose [LazyColumn] instead
- * of a RecyclerView. Selected by default; the RecyclerView-based
- * [VersesControllerImpl] is the opt-out behind the Verse (legacy views)
- * experimental setting.
- *
- * The full controller contract is honored so `IsiActivity`, the split-view
- * manager, gestures, and audio playback drive both implementations
- * identically.
- */
+/** [LazyColumn] controller used unless the Verse (legacy views) setting is enabled. */
 class VersesComposeControllerImpl(
     private val composeHost: VersesComposeView,
     override val name: String,
     versesDataModel: VersesDataModel = VersesDataModel.EMPTY,
     versesUiModel: VersesUiModel = VersesUiModel.EMPTY,
     versesListeners: VersesListeners = VersesListeners.EMPTY,
+    private val currentTimeMillis: () -> Long = System::currentTimeMillis,
 ) : VersesController {
 
     private class DataWithVersion(val vn: Int, val data: VersesDataModel)
@@ -190,7 +182,6 @@ class VersesComposeControllerImpl(
     private var paddingBottomPx by mutableIntStateOf(0)
 
     private var emptyMessageState by mutableStateOf<CharSequence?>(null)
-    // Default color until setEmptyMessage supplies one.
     private var emptyMessageColorState by mutableIntStateOf(0xff000000.toInt())
     private var scrollbarThumbState by mutableStateOf<Drawable?>(null)
 
@@ -629,8 +620,13 @@ class VersesComposeControllerImpl(
         val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
         if (pos == -1) return
 
-        attentionState = AttentionUi(System.currentTimeMillis(), attentionState.verses_1 + verse_1)
+        val now = currentTimeMillis()
+        val activeVerses = if (now - attentionState.start < ATTENTION_DURATION_MS) attentionState.verses_1 else emptySet()
+        attentionState = AttentionUi(now, activeVerses + verse_1)
     }
+
+    internal fun attentionStartForVerse(verse_1: Int): Long =
+        attentionState.let { if (verse_1 in it.verses_1) it.start else 0L }
 
     override fun setAudioHighlight(verse_1: Int, color: Int) {
         // Called every 100ms during playback, so bail out when nothing changed
@@ -763,6 +759,14 @@ class VersesComposeControllerImpl(
         val ui = uiState
         val listeners = listenersState
 
+        val attention = attentionState
+        LaunchedEffect(attention) {
+            if (attention.start != 0L) {
+                delay((ATTENTION_DURATION_MS - (currentTimeMillis() - attention.start)).coerceAtLeast(0L))
+                if (attentionState == attention) attentionState = AttentionUi.NONE
+            }
+        }
+
         SideEffect {
             renderedDataVersion.intValue = dataW.vn
         }
@@ -868,11 +872,10 @@ class VersesComposeControllerImpl(
         val verse_1 = index + 1
         val checked = position in checkedPositionsState
         val context = LocalContext.current
-        // Read here to subscribe the row to preference changes, and keyed on
-        // below so the state is rebuilt at the new font size.
+        // Subscribe the row to font and appearance changes.
         val applied = App.services.uiDimensions.applied()
 
-        val state = remember(data, ui, listeners, position, checked, applied) {
+        val state = remember(context, data, ui, listeners, position, checked, applied) {
             buildVerseItemComposeState(
                 context = context,
                 data = data,
@@ -888,12 +891,12 @@ class VersesComposeControllerImpl(
 
         val collapsed = data.verses_.getVerse(index).isEmpty() && !state.attribute.isShowingSomething
 
-        val attention = attentionState
-        val attentionStart = if (attention.start != 0L && verse_1 in attention.verses_1) attention.start else 0L
+        val attentionStart = attentionStartForVerse(verse_1)
         val audioColor = if (verse_1 == audioHighlightVerse1) audioHighlightColorState else 0
 
         val dragHover = remember { mutableStateOf(false) }
-        val dropTarget = remember(state) {
+        val onPinDropped by rememberUpdatedState(state.onPinDropped)
+        val dropTarget = remember {
             object : DragAndDropTarget {
                 override fun onEntered(event: DragAndDropEvent) {
                     dragHover.value = true
@@ -908,11 +911,8 @@ class VersesComposeControllerImpl(
                 }
 
                 override fun onDrop(event: DragAndDropEvent): Boolean {
-                    // Refuse the drop if the payload is missing or non-numeric.
-                    val presetId = event.toAndroidDragEvent().clipData
-                        ?.getItemAt(0)?.text?.toString()?.toIntOrNull()
-                        ?: return false
-                    state.onPinDropped(presetId)
+                    val presetId = progressMarkPresetId(event.toAndroidDragEvent().clipData) ?: return false
+                    onPinDropped(presetId)
                     return true
                 }
             }
@@ -968,10 +968,6 @@ private fun itemKey(data: VersesDataModel, position: Int): Long {
     }
 }
 
-/**
- * Compose port of the pericope header row: centered bold title, then the
- * optional parallels line with tappable references.
- */
 @Composable
 internal fun PericopeHeaderComposeItem(
     data: VersesDataModel,
@@ -989,7 +985,6 @@ internal fun PericopeHeaderComposeItem(
     }
 
     CompositionLocalProvider(LocalDensity provides unscaledDensity) {
-        // turn off top padding if the position == 0 OR before this is also a pericope title
         val paddingTopPx = if (position == 0 || data.getItemViewType(position - 1) == ItemType.pericope) {
             0
         } else {
@@ -1125,7 +1120,6 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendParallelCompo
             return false
         }
 
-        // look for the end
         val targetEndPos = parallel.indexOf(' ', 1)
         if (targetEndPos == -1) {
             return false
@@ -1146,7 +1140,6 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendParallelCompo
     }
 
     if (!linked()) {
-        // fallback if the above code fails
         withLink(LinkAnnotation.Clickable("parallel", parallelLinkStyles) { parallelListener(ReferenceParallelClickData(parallel)) }) {
             append(parallel)
         }
