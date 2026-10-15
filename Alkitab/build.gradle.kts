@@ -264,7 +264,6 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            proguardFiles("proguard/FlowLayout.pro", "proguard/ImportedDesktopVerseUtil.pro", "proguard/KpriModel.pro", "proguard/AlkitabFeedback.pro", "proguard/Afw.pro", "proguard/BiblePlus.pro")
             signingConfig = signingConfigs.getByName("release")
         }
     }
