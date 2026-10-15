@@ -1281,7 +1281,7 @@ git commit -m "REM-22: port GotoActivity + 3 fragments to Compose + Material 3"
 
 **Files:**
 - Modify: `docs/tech-debt-remediation.md`
-- Modify: `docs/tech-debt.md`
+- Modify: `docs/tech-debt-remediation/REM-22-jetpack-compose.md`
 
 - [ ] **Step 1: Bump REM-22 status**
 
@@ -1291,15 +1291,15 @@ In `docs/tech-debt-remediation.md`, find the REM-22 section and:
 - Bump BRICE I from 1 → 2 (no longer greenfield).
 - List next candidate ports: `AboutActivity`, `HelpActivity`.
 
-- [ ] **Step 2: Note percentlayout under TD-12**
+- [ ] **Step 2: Track percentlayout cleanup in REM-22**
 
-In `docs/tech-debt.md`, under TD-12, add a sentence: "After the GotoActivity Compose port (REM-22), `androidx.percentlayout` is used by fewer files; once the remaining consumers are Composed, the dependency can be dropped."
+Record the remaining `androidx.percentlayout` cleanup alongside the Goto Compose port in `docs/tech-debt-remediation/REM-22-jetpack-compose.md`.
 
 - [ ] **Step 3: Commit doc updates**
 
 ```bash
-git add docs/tech-debt-remediation.md docs/tech-debt.md
-git commit -m "docs: REM-22 first screen ported; note percentlayout shrinkage under TD-12"
+git add docs/tech-debt-remediation.md docs/tech-debt-remediation/REM-22-jetpack-compose.md
+git commit -m "docs: record REM-22 Compose port and percentlayout cleanup"
 ```
 
 ---

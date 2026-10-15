@@ -1,6 +1,5 @@
 # REM-05: Refactor DevotionDownloader threading ✅ COMPLETED
 
-**Addresses:** TD-06 (DevotionDownloader)
 **Module:** Devotions
 **BRICE:** B=2 R=3 I=5 C=5 E=5 → **4.0**
 **Phase:** 1 — Quick Wins & Safety Fixes

@@ -1,6 +1,5 @@
 # ~~REM-26: Port VerseRenderer to Kotlin~~ ✅ COMPLETED (2026-04-20)
 
-**Addresses:** TD-10 (leftover Unicode-constants comment), TD-11 (one of the listed Java files)
 **Module:** Main reader (verse rendering)
 **BRICE:** B=3 R=2 I=4 C=5 E=5 → **3.8**
 **Phase:** 3 — Modernization
@@ -9,7 +8,7 @@
 
 The previously-documented private helpers (`renderVerseNumber`, `processFormattingCodes`, `applyHighlight`, `bindToTextViews`, `applyParaStyle`, `simpleRender`, `processSpecialTag`, `reportInvalidSpecialTag`, `createLeadingMarginSpan`) are now genuinely `private` — Kotlin lets us tighten visibility from Java's package-private default. No public API changes; the only caller-visible adjustment is `FormattedTextResult.result` becoming a typed nullable `CharSequence?` (matching the actual Java semantics), which surfaced one previously-implicit `!!` in `MarkerListActivity`.
 
-The undocumented Unicode constants flagged in TD-10 (the `superscriptDigits` array and `XREF_MARK`) now have inline comments naming the code points and what they're used for.
+The `superscriptDigits` array documents the Unicode superscript code points, and `XREF_MARK` documents U+203B REFERENCE MARK and its purpose.
 
 Behavior preservation enforced by the same 39 Robolectric characterization tests (`VerseRendererTest.kt`) plus 274 other Alkitab tests — all 313 pass on both `testPlainDebugUnitTest` and `testPlainReleaseUnitTest`. `VerseRendererJavaHelper.kt` deleted.
 

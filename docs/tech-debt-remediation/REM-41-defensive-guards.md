@@ -14,7 +14,7 @@
 4. Override `InternalDbHelper.onDowngrade` as a no-op (schema is append-only across releases; `onUpgrade` logic keys off the stored version, and a downgrade-crash-loop is strictly worse than running older code against a newer-stamped schema). Do the same for `SongDbHelper` if applicable.
 5. Move the RPB footer check before `reader.close()` in `ReadingPlanManager.readVersion1`.
 6. ✅ **Complete:** `DevotionDownloader` keys pending and active requests by `Key(name, date)` through `workByKey`, independent of `DevotionArticle` equality. `DevotionDownloaderTest` covers queued/in-flight deduplication and distinct sources sharing a date.
-7. Tests: verse-0 marker via `InternalDbTest`; out-of-range plan progress; widget direction extra (unit-testable via `DailyVerseData.getAris`).
+7. Tests: verse-0 marker via `InternalDbTest`; out-of-range plan progress; widget direction extra (unit-testable via `DailyVerseData.getAris`). Cover the widget receiver/service/data update flow as well as the direction value, including persisted navigation state and unavailable selected versions. The explicit fallback UX is tracked in [REM-44](REM-44-widget-version-fallback.md).
 
 **Difficulty:** Easy (each item ≤ 1 hour; ~1 day total with tests).
 

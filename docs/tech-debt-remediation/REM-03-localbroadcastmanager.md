@@ -1,6 +1,5 @@
 # ~~REM-03: Replace LocalBroadcastManager~~ ✅ COMPLETED (2026-04-22)
 
-**Addresses:** TD-03 (LocalBroadcastManager)
 **Module:** Cross-cutting
 **BRICE:** B=3 R=3 I=3 C=4 E=5 → **3.8**
 **Phase:** 1 — Quick Wins & Safety Fixes

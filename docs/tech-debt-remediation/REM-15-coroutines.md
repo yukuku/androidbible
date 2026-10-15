@@ -1,11 +1,12 @@
 # REM-15: Introduce Kotlin Coroutines
 
-**Addresses:** TD-06 (threading)
 **Module:** Cross-cutting
 **BRICE:** B=4 R=2 I=2 C=3 E=5 → **3.2**
 **Phase:** 3 — Modernization
 
 **Status:** Partial, reviewed on 2026-10-15. Version downloads, app-event flows, audio, Compose navigation, reader collectors, and devotion downloads use coroutines. Step 15b is complete; sync, search, and synchronous chapter-loading work remain. Dependencies are declared in the Gradle build and version catalog.
+
+**Other dispatch scope:** `VerseRenderer.reportInvalidSpecialTag` posts to `Handler(Looper.getMainLooper())` and caches `invalidSpecialTagToast`, created with `App.context`; the cached Toast does not retain an Activity context. `util/Foreground.java` uses a main-thread Handler for lifecycle tracking. Explicit-looper Handlers are supported; migrate these only where coroutine or lifecycle ownership improves the behavior. Sync queue races are tracked in [REM-34](REM-34-sync-delivery.md), and leaking search debouncer threads are tracked in [REM-46](REM-46-debouncer-thread-leak.md).
 
 **Steps — incremental by module:**
 

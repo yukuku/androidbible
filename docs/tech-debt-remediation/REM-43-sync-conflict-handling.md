@@ -1,6 +1,5 @@
 # REM-43: Surface or Resolve Cross-Device Sync Conflicts
 
-**Addresses:** TD-08 (adjacent) — sync protocol
 **Module:** Sync (`SyncAdapter.patchNoConflict`, `SyncShadow`)
 **BRICE:** B=3 R=3 I=1 C=2 E=3 → **2.4**
 **Phase:** 4 — Long-term / Major Refactors

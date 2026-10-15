@@ -1,6 +1,5 @@
 # REM-24: Refactor S.kt Service Locator — Steps 24a–24d complete 2026-05-12
 
-**Addresses:** TD-15
 **Module:** Cross-cutting (50 files)
 **BRICE:** B=4 R=2 I=2 C=3 E=5 → **3.2**
 **Phase:** 2 — Architecture Improvements

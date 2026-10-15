@@ -1,6 +1,5 @@
 # ~~REM-14: Replace material-dialogs with Material 3~~ ✅ COMPLETED
 
-**Addresses:** TD-12
 **Module:** Cross-cutting UI
 **BRICE:** B=2 R=3 I=3 C=4 E=5 → **3.4**
 **Phase:** 2 — Architecture Improvements

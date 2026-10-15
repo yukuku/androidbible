@@ -1,6 +1,5 @@
 # ~~REM-17: Migrate Build to Kotlin DSL & Version Catalogs~~ ✅ COMPLETED (2026-04-20)
 
-**Addresses:** TD-12 (build system)
 **Module:** Build
 **BRICE:** B=2 R=1 I=3 C=4 E=5 → **3.0**
 **Phase:** 3 — Modernization

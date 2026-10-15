@@ -1,6 +1,5 @@
 # REM-21: Migrate Song Storage from Parcelable to JSON
 
-**Addresses:** TD-04 (long-term part)
 **Module:** Songs
 **BRICE:** B=3 R=3 I=1 C=2 E=5 → **2.8**
 **Phase:** 4 — Long-term / Major Refactors
