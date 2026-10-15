@@ -174,8 +174,8 @@ class Yes2RoundTripTest {
             shortName = "Genesis",
             abbreviation = "Gen",
             chapters = listOf(
-                listOf("In the beginning", "And the earth was without form", "And God said let there be light"),
-                listOf("Thus the heavens were finished", "And on the seventh day"),
+                listOf("In the kitchen", "The dough rested in a bowl", "The baker added a pinch of salt"),
+                listOf("The loaves came out golden", "Everyone shared the warm bread"),
             ),
         )
 
@@ -198,14 +198,14 @@ class Yes2RoundTripTest {
 
         val chapter1 = reader.loadVerseText(loaded, 1, false, false)!!
         assertEquals(3, chapter1.verseCount)
-        assertEquals("In the beginning", chapter1.getVerse(0))
-        assertEquals("And the earth was without form", chapter1.getVerse(1))
-        assertEquals("And God said let there be light", chapter1.getVerse(2))
+        assertEquals("In the kitchen", chapter1.getVerse(0))
+        assertEquals("The dough rested in a bowl", chapter1.getVerse(1))
+        assertEquals("The baker added a pinch of salt", chapter1.getVerse(2))
 
         val chapter2 = reader.loadVerseText(loaded, 2, false, false)!!
         assertEquals(2, chapter2.verseCount)
-        assertEquals("Thus the heavens were finished", chapter2.getVerse(0))
-        assertEquals("And on the seventh day", chapter2.getVerse(1))
+        assertEquals("The loaves came out golden", chapter2.getVerse(0))
+        assertEquals("Everyone shared the warm bread", chapter2.getVerse(1))
     }
 
     @Test
@@ -271,9 +271,9 @@ class Yes2RoundTripTest {
             shortName = "Kejadian",
             chapters = listOf(
                 listOf(
-                    "Pada mulanya Allah menciptakan langit dan bumi.",
-                    "Ἐν ἀρχῇ ἦν ὁ Λόγος",
-                    "בְּרֵאשִׁית בָּרָא אֱלֹהִים",
+                    "Juru masak menyiapkan nasi dan sayuran.",
+                    "Ο μάγειρας ψήνει ψωμί.",
+                    "הַטַּבָּח אוֹפֶה לֶחֶם.",
                     "café naïve résumé €",
                 ),
             ),
@@ -284,9 +284,9 @@ class Yes2RoundTripTest {
         val loaded = reader.loadBooks()!![0]
         val chapter1 = reader.loadVerseText(loaded, 1, false, false)!!
         assertEquals(4, chapter1.verseCount)
-        assertEquals("Pada mulanya Allah menciptakan langit dan bumi.", chapter1.getVerse(0))
-        assertEquals("Ἐν ἀρχῇ ἦν ὁ Λόγος", chapter1.getVerse(1))
-        assertEquals("בְּרֵאשִׁית בָּרָא אֱלֹהִים", chapter1.getVerse(2))
+        assertEquals("Juru masak menyiapkan nasi dan sayuran.", chapter1.getVerse(0))
+        assertEquals("Ο μάγειρας ψήνει ψωμί.", chapter1.getVerse(1))
+        assertEquals("הַטַּבָּח אוֹפֶה לֶחֶם.", chapter1.getVerse(2))
         assertEquals("café naïve résumé €", chapter1.getVerse(3))
         assertEquals("id", reader.locale)
     }
@@ -338,7 +338,7 @@ class Yes2RoundTripTest {
 
     private fun assertAsciiRoundTrip(textEncoding: Int) {
         val original = listOf(
-            "In the BEGINNING, God CREATED!",
+            "In the KITCHEN, Mia BAKED!",
             "[AZ] @Z 0123: MixedCase TEXT.",
             "already lowercase",
             "",
@@ -346,7 +346,7 @@ class Yes2RoundTripTest {
             "@AZ[\\]^_`az{|}~",
         )
         val lowercased = listOf(
-            "in the beginning, god created!",
+            "in the kitchen, mia baked!",
             "[az] @z 0123: mixedcase text.",
             "already lowercase",
             "",
