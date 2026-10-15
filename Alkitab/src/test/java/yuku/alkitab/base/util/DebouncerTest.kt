@@ -1,5 +1,6 @@
 package yuku.alkitab.base.util
 
+import android.os.Handler
 import android.os.Looper
 import java.util.Collections
 import java.util.concurrent.CountDownLatch
@@ -14,9 +15,12 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.LooperMode
+import org.robolectric.util.ReflectionHelpers
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
+@LooperMode(LooperMode.Mode.PAUSED)
 class DebouncerTest {
     private class RecordingDebouncer(
         defaultDelay: Long,
@@ -34,7 +38,7 @@ class DebouncerTest {
         override fun process(payload: String): String {
             processThread = Thread.currentThread()
             processStarted.countDown()
-            processGate?.await(5, TimeUnit.SECONDS)
+            if (processGate != null) assertTrue(processGate.await(10, TimeUnit.SECONDS))
             processed.add(payload)
             allProcessed.countDown()
             return payload.uppercase()
@@ -48,15 +52,18 @@ class DebouncerTest {
 
     private fun awaitProcessingThenRunMainLooper(debouncer: RecordingDebouncer) {
         assertTrue(debouncer.allProcessed.await(5, TimeUnit.SECONDS))
-        awaitMainLooperMessage()
+        awaitMainLooperMessage(debouncer)
         shadowOf(Looper.getMainLooper()).idle()
     }
 
-    private fun awaitMainLooperMessage() {
-        val deadline = System.currentTimeMillis() + 5000
-        while (shadowOf(Looper.getMainLooper()).isIdle && System.currentTimeMillis() < deadline) {
+    private fun awaitMainLooperMessage(debouncer: Debouncer<*, *>) {
+        // A process latch can fire before its result is posted, while unrelated handlers already have queued messages.
+        val handler = ReflectionHelpers.getField<Handler>(debouncer, "handler")
+        val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10)
+        while (!handler.hasMessages(Debouncer.MSG_ON_RESULT) && System.nanoTime() < deadline) {
             Thread.sleep(5)
         }
+        assertTrue("The debouncer did not enqueue its result", handler.hasMessages(Debouncer.MSG_ON_RESULT))
     }
 
     @Test
@@ -128,7 +135,7 @@ class DebouncerTest {
         }
 
         assertTrue(secondStarted.await(5, TimeUnit.SECONDS))
-        awaitMainLooperMessage()
+        awaitMainLooperMessage(debouncer)
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(listOf("second"), results)
     }
@@ -157,7 +164,7 @@ class DebouncerTest {
         assertTrue(failed.await(5, TimeUnit.SECONDS))
         debouncer.submit("recover")
         assertTrue(recovered.await(5, TimeUnit.SECONDS))
-        awaitMainLooperMessage()
+        awaitMainLooperMessage(debouncer)
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(listOf("recover"), results)
     }
@@ -208,7 +215,7 @@ class DebouncerTest {
 
         debouncer.submit("a")
         assertTrue(debouncer.allProcessed.await(5, TimeUnit.SECONDS))
-        awaitMainLooperMessage()
+        awaitMainLooperMessage(debouncer)
         debouncer.submit("b", 60_000)
         shadowOf(Looper.getMainLooper()).idle()
 
