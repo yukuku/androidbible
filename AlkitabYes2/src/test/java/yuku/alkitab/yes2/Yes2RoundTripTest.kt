@@ -41,6 +41,7 @@ class Yes2RoundTripTest {
     )
 
     private fun writeYes(
+        textEncoding: Int,
         books: List<TestBook>,
         versionShortName: String = "TST",
         versionLongName: String = "Test Bible",
@@ -58,7 +59,7 @@ class Yes2RoundTripTest {
             this.locale = locale
             book_count = books.size
             hasPericopes = if (pericopeData != null) 1 else 0
-            textEncoding = 2 // utf-8
+            this.textEncoding = textEncoding
         }
 
         val booksInfo = BooksInfoSection().apply {
@@ -173,12 +174,12 @@ class Yes2RoundTripTest {
             shortName = "Genesis",
             abbreviation = "Gen",
             chapters = listOf(
-                listOf("In the beginning", "And the earth was without form", "And God said let there be light"),
-                listOf("Thus the heavens were finished", "And on the seventh day"),
+                listOf("In the kitchen", "The dough rested in a bowl", "The baker added a pinch of salt"),
+                listOf("The loaves came out golden", "Everyone shared the warm bread"),
             ),
         )
 
-        val file = writeYes(books = listOf(book))
+        val file = writeYes(textEncoding = 2, books = listOf(book))
         val reader = openReader(file)
 
         assertEquals("en", reader.locale)
@@ -197,14 +198,14 @@ class Yes2RoundTripTest {
 
         val chapter1 = reader.loadVerseText(loaded, 1, false, false)!!
         assertEquals(3, chapter1.verseCount)
-        assertEquals("In the beginning", chapter1.getVerse(0))
-        assertEquals("And the earth was without form", chapter1.getVerse(1))
-        assertEquals("And God said let there be light", chapter1.getVerse(2))
+        assertEquals("In the kitchen", chapter1.getVerse(0))
+        assertEquals("The dough rested in a bowl", chapter1.getVerse(1))
+        assertEquals("The baker added a pinch of salt", chapter1.getVerse(2))
 
         val chapter2 = reader.loadVerseText(loaded, 2, false, false)!!
         assertEquals(2, chapter2.verseCount)
-        assertEquals("Thus the heavens were finished", chapter2.getVerse(0))
-        assertEquals("And on the seventh day", chapter2.getVerse(1))
+        assertEquals("The loaves came out golden", chapter2.getVerse(0))
+        assertEquals("Everyone shared the warm bread", chapter2.getVerse(1))
     }
 
     @Test
@@ -235,7 +236,7 @@ class Yes2RoundTripTest {
             ),
         )
 
-        val file = writeYes(books = books)
+        val file = writeYes(textEncoding = 2, books = books)
         val reader = openReader(file)
         val loadedBooks = reader.loadBooks()!!
         assertEquals(3, loadedBooks.size)
@@ -270,22 +271,22 @@ class Yes2RoundTripTest {
             shortName = "Kejadian",
             chapters = listOf(
                 listOf(
-                    "Pada mulanya Allah menciptakan langit dan bumi.",
-                    "Ἐν ἀρχῇ ἦν ὁ Λόγος",
-                    "בְּרֵאשִׁית בָּרָא אֱלֹהִים",
+                    "Juru masak menyiapkan nasi dan sayuran.",
+                    "Ο μάγειρας ψήνει ψωμί.",
+                    "הַטַּבָּח אוֹפֶה לֶחֶם.",
                     "café naïve résumé €",
                 ),
             ),
         )
 
-        val file = writeYes(books = listOf(book), locale = "id")
+        val file = writeYes(textEncoding = 2, books = listOf(book), locale = "id")
         val reader = openReader(file)
         val loaded = reader.loadBooks()!![0]
         val chapter1 = reader.loadVerseText(loaded, 1, false, false)!!
         assertEquals(4, chapter1.verseCount)
-        assertEquals("Pada mulanya Allah menciptakan langit dan bumi.", chapter1.getVerse(0))
-        assertEquals("Ἐν ἀρχῇ ἦν ὁ Λόγος", chapter1.getVerse(1))
-        assertEquals("בְּרֵאשִׁית בָּרָא אֱלֹהִים", chapter1.getVerse(2))
+        assertEquals("Juru masak menyiapkan nasi dan sayuran.", chapter1.getVerse(0))
+        assertEquals("Ο μάγειρας ψήνει ψωμί.", chapter1.getVerse(1))
+        assertEquals("הַטַּבָּח אוֹפֶה לֶחֶם.", chapter1.getVerse(2))
         assertEquals("café naïve résumé €", chapter1.getVerse(3))
         assertEquals("id", reader.locale)
     }
@@ -298,7 +299,7 @@ class Yes2RoundTripTest {
             chapters = listOf(listOf("alpha", "beta", "gamma")),
         )
 
-        val file = writeYes(books = listOf(book))
+        val file = writeYes(textEncoding = 2, books = listOf(book))
         val reader = openReader(file)
         val loaded = reader.loadBooks()!![0]
 
@@ -315,7 +316,7 @@ class Yes2RoundTripTest {
             chapters = listOf(listOf("MixedCase TEXT", "Another Case")),
         )
 
-        val file = writeYes(books = listOf(book))
+        val file = writeYes(textEncoding = 2, books = listOf(book))
         val reader = openReader(file)
         val loaded = reader.loadBooks()!![0]
 
@@ -326,6 +327,56 @@ class Yes2RoundTripTest {
     }
 
     @Test
+    fun `ASCII encoded versions preserve display text and lowercase search text`() {
+        assertAsciiRoundTrip(1)
+    }
+
+    @Test
+    fun `unknown encodings fall back to ASCII for display and search text`() {
+        assertAsciiRoundTrip(99)
+    }
+
+    private fun assertAsciiRoundTrip(textEncoding: Int) {
+        val original = listOf(
+            "In the KITCHEN, Mia BAKED!",
+            "[AZ] @Z 0123: MixedCase TEXT.",
+            "already lowercase",
+            "",
+            "Z",
+            "@AZ[\\]^_`az{|}~",
+        )
+        val lowercased = listOf(
+            "in the kitchen, mia baked!",
+            "[az] @z 0123: mixedcase text.",
+            "already lowercase",
+            "",
+            "z",
+            "@az[\\]^_`az{|}~",
+        )
+        val book = TestBook(
+            bookId = 0,
+            shortName = "Gen",
+            chapters = listOf(original),
+        )
+
+        for (compressed in listOf(false, true)) {
+            val reader = openReader(writeYes(textEncoding = textEncoding, books = listOf(book), compressed = compressed))
+            val loaded = reader.loadBooks()!![0]
+            for (lowercase in listOf(false, true, false)) {
+                val expected = if (lowercase) lowercased else original
+                val verses = reader.loadVerseText(loaded, 1, false, lowercase)!!
+                assertEquals(expected.size, verses.verseCount)
+                for ((index, text) in expected.withIndex()) {
+                    assertEquals(text, verses.getVerse(index))
+                }
+                val joined = reader.loadVerseText(loaded, 1, true, lowercase)!!
+                assertEquals(1, joined.verseCount)
+                assertEquals(expected.joinToString("\n", postfix = "\n"), joined.getVerse(0))
+            }
+        }
+    }
+
+    @Test
     fun `loadVerseText returns null for out-of-range chapter`() {
         val book = TestBook(
             bookId = 0,
@@ -333,7 +384,7 @@ class Yes2RoundTripTest {
             chapters = listOf(listOf("only verse")),
         )
 
-        val file = writeYes(books = listOf(book))
+        val file = writeYes(textEncoding = 2, books = listOf(book))
         val reader = openReader(file)
         val loaded = reader.loadBooks()!![0]
 
@@ -370,7 +421,7 @@ class Yes2RoundTripTest {
             )
         }
 
-        val file = writeYes(books = listOf(book), pericopeData = pericopeData)
+        val file = writeYes(textEncoding = 2, books = listOf(book), pericopeData = pericopeData)
         val reader = openReader(file)
 
         val aris = IntArrayList()
@@ -408,7 +459,7 @@ class Yes2RoundTripTest {
             )
         }
 
-        val file = writeYes(books = listOf(book), pericopeData = pericopeData)
+        val file = writeYes(textEncoding = 2, books = listOf(book), pericopeData = pericopeData)
         val reader = openReader(file)
 
         val aris = IntArrayList()
@@ -426,7 +477,7 @@ class Yes2RoundTripTest {
             chapters = listOf(listOf("v1")),
         )
 
-        val file = writeYes(books = listOf(book), pericopeData = null)
+        val file = writeYes(textEncoding = 2, books = listOf(book), pericopeData = null)
         val reader = openReader(file)
 
         val aris = IntArrayList()
@@ -447,7 +498,7 @@ class Yes2RoundTripTest {
             ),
         )
 
-        val file = writeYes(books = listOf(book), compressed = true)
+        val file = writeYes(textEncoding = 2, books = listOf(book), compressed = true)
         val reader = openReader(file)
         val loaded = reader.loadBooks()!![0]
 
@@ -473,8 +524,8 @@ class Yes2RoundTripTest {
             chapters = listOf((1..20).map { repeated }),
         )
 
-        val uncompressed = writeYes(books = listOf(book), compressed = false)
-        val compressed = writeYes(books = listOf(book), compressed = true)
+        val uncompressed = writeYes(textEncoding = 2, books = listOf(book), compressed = false)
+        val compressed = writeYes(textEncoding = 2, books = listOf(book), compressed = true)
 
         assertTrue(
             "expected compressed size ${compressed.length()} < uncompressed ${uncompressed.length()}",
@@ -501,7 +552,7 @@ class Yes2RoundTripTest {
             shortName = "Gen",
             chapters = listOf(listOf("v1")),
         )
-        val file = writeYes(books = listOf(book))
+        val file = writeYes(textEncoding = 2, books = listOf(book))
         val reader = openReader(file)
         // Trigger header/section-index load and then request absent sections.
         assertNotNull(reader.loadBooks())
