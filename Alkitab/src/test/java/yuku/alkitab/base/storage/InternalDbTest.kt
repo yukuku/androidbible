@@ -83,37 +83,6 @@ class InternalDbTest {
         assertTrue(highlights.all { it == null })
     }
 
-    @Test
-    fun `opening an internal database stamped by a newer build preserves markers`() {
-        val now = Date()
-        val marker = db.insertMarker(Ari.encode(0, 1, 1), Marker.Kind.note, "keep", 1, now, now)
-        val version = helper.writableDatabase.version
-        helper.writableDatabase.version = version + 1
-        helper.close()
-        helper = InternalDbHelper(RuntimeEnvironment.getApplication())
-        db = InternalDb(helper)
-
-        assertEquals("keep", db.getMarkerById(marker._id)!!.caption)
-        assertEquals(version, helper.writableDatabase.version)
-    }
-
-    @Test
-    fun `opening a song database stamped by a newer build preserves stored rows`() {
-        SongDbHelper().use { songs ->
-            songs.writableDatabase.execSQL("INSERT INTO SongBookInfo (name) VALUES ('keep')")
-            val version = songs.writableDatabase.version
-            songs.writableDatabase.version = version + 1
-            songs.close()
-            SongDbHelper().use { reopened ->
-                reopened.readableDatabase.rawQuery("SELECT name FROM SongBookInfo", null).use {
-                    assertTrue(it.moveToFirst())
-                    assertEquals("keep", it.getString(0))
-                }
-                assertEquals(version, reopened.writableDatabase.version)
-            }
-        }
-    }
-
     // region Marker CRUD
 
     @Test

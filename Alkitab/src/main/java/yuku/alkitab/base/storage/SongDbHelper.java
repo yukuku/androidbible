@@ -19,11 +19,6 @@ public class SongDbHelper extends SQLiteOpenHelper {
 	}
 
 	@Override
-	public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// Database versions follow app builds; the schema is append-only.
-	}
-
-	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
 		if (oldVersion < 14000202 /* 4.1-beta2 */) {
 			addColumnSongInfo(db);

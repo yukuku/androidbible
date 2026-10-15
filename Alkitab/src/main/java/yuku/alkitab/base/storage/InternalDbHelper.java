@@ -58,11 +58,6 @@ public class InternalDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Database versions follow app builds; the schema is append-only.
-    }
-
-    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         AppLog.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion);
 

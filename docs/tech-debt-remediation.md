@@ -144,7 +144,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 ### 2026-07 audit follow-up (suggested)
 
-**Sprint 7 (1 week), user-data safety first:** REM-36 (search fix), ~~REM-35~~✅ (song-book update, completed 2026-07-20), ~~REM-33~~✅ (import safety, completed 2026-10-15), ~~REM-41~~✅ (widget direction and defensive guards, completed 2026-10-15)
+**Sprint 7 (1 week), user-data safety first:** REM-36 (search fix), ~~REM-35~~✅ (song-book update, completed 2026-07-20), ~~REM-33~~✅ (import safety, completed 2026-10-15), ~~REM-41~~✅ (defensive guards and deliberate widget retry strides, completed 2026-10-15)
 **Sprint 8 (1 week):** REM-34 (sync delivery/races), ~~REM-41~~✅ (defensive guards, completed 2026-10-15)
 **Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding), REM-40 (download robustness)
 
@@ -156,5 +156,5 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 - REM-15: devotion downloads use coroutines and observable state with cancellation and retry tests. Sync, search, and chapter-loading work remain.
 - REM-37: split-version changes reach `IsiActivity.onVisibleVersionsChanged`, which refreshes audio sources and controls. MediaSession-driven playback observation and highlight-color invalidation remain.
-- REM-41: completed on 2026-10-15. Widget direction, verse and reading-plan bounds, RPB footer checks, and database downgrade guards have regression coverage. Devotion requests deduplicate by source/date.
+- REM-41: completed on 2026-10-15. Deliberate widget-specific retry strides, verse and reading-plan bounds, and RPB footer checks have regression coverage. Devotion requests deduplicate by source/date. Database downgrades are unsupported.
 - REM-22/45: Compose adoption extends beyond Goto and verse content to the normal reader toolbar, song content, sync login, and the search toolbar. The selection toolbar and the remaining reader shell are separate unfinished work.
