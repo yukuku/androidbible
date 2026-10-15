@@ -33,7 +33,7 @@ jobs:
       - name: Unit tests
         run: |
           set -o pipefail
-          ./gradlew :ImportedDesktopVerseUtil:testDebugUnitTest testPlainDebugUnitTest testPlainReleaseUnitTest 2>&1 | tail -60
+          ./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest 2>&1 | tail -60
 
       - name: Build with Gradle
         run: ./gradlew assemblePlainDebug bundlePlainDebug

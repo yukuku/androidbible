@@ -90,7 +90,7 @@ holds the sources for the bundled plans (`bibleplan_*.txt`, `blueletter_*`,
   no `.iml` of its own; its sources are compiled as part of `common-jvm`.
 - `common-jvm` is the module that pulls those sources together with the app's
   own library modules, adding `AlkitabIo`, `AlkitabModel`, `AlkitabYes2`,
-  `BintexReader`, `BintexWriter`, and `Snappy` as source folders. The
+  `Bintex` and `Snappy` as source folders. The
   converters therefore write `.yes` files using the same code the app reads
   them with.
 - `fakeandroid` supplies stubs for the Android classes those library modules

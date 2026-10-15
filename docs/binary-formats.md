@@ -258,8 +258,8 @@ Writer automatically picks the smallest element size that fits all values.
 
 ### Files
 
-- `BintexReader/` module — `BintexReader.java`
-- `BintexWriter/` module — `BintexWriter.java`
+- `Bintex/` module: `BintexReader.java`
+- `Bintex/` module: `BintexWriter.java`
 
 ## RPB: Reading Plan Format
 
@@ -298,4 +298,4 @@ NDK is required to build this module (`jni/Android.mk` and `jni/Application.mk`)
 
 ## PDB — PalmBible+ Format (Import Only)
 
-Legacy format from PalmBible+ for Palm OS. The `BiblePlus` module reads PDB files and converts them to YES2 format during import. Converted files are saved as `pdb-{name}.yes`.
+Legacy format from PalmBible+ for Palm OS. The `BiblePlus` reader inside `:Alkitab` reads PDB files and converts them to YES2 format during import. Converted files are saved as `pdb-{name}.yes`.

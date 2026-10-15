@@ -33,6 +33,6 @@ java {
 
 dependencies {
     implementation(project(":AlkitabModel"))
-    implementation(project(":BintexReader"))
+    implementation(project(":Bintex"))
     testImplementation(libs.junit)
 }

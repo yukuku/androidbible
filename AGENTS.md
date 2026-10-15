@@ -154,12 +154,17 @@ The project is a multi-module Gradle build. The main app module is **`:Alkitab`*
 | `AlkitabIo` | `BibleReader` interface, UTF-8 decoding, gzip stream handling |
 | `AlkitabYes2` | YES2 binary Bible format reader/writer with Snappy compression |
 | `AlkitabIntegration` | Inter-app communication API (intent-based verse lookup) |
+| `Bintex` | Binary serialization format used by YES2 and reading plans |
+| `Snappy` | JNI Snappy compression (native C++ via NDK) |
+
+The following components live inside `:Alkitab`, with their original Java/Kotlin packages:
+
+| Component | Purpose |
+|-----------|---------|
 | `AlkitabFeedback` | User feedback module |
 | `BiblePlus` | PalmBible+ PDB format reader |
 | `KpriModel` | Song/hymn data model (`Song`, `Verse`, `Lyric`) |
-| `BintexReader` / `BintexWriter` | Binary serialization format used by YES2 and reading plans |
 | `Afw` | Base Android framework (preferences wrapper, adapter base, app context) |
-| `Snappy` | JNI Snappy compression (native C++ via NDK) |
 | `FlowLayout` | Flow layout widget |
 | `ImportedDesktopVerseUtil` | Desktop verse reference finder/parser |
 

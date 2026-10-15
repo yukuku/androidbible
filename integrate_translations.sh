@@ -6,7 +6,6 @@ fi
 set -e
 
 DST="Alkitab/src/main/res/"
-DST_FEEDBACK="AlkitabFeedback/src/main/res/"
 SRC="$1"
 
 if [ ! -e "$DST" ] ; then
@@ -43,7 +42,7 @@ for ((i=0; i<${#PAIRS[@]}; i+=2)) ; do
 	done
 
 	for f in alkitabfeedback_strings.xml ; do
-		cp "$SRCSUBDIR/$f" "$DSTSUBDIR_FEEDBACK/$f"
+		cp "$SRCSUBDIR/$f" "$DSTSUBDIR/$f"
 	done
 
 done

@@ -21,20 +21,18 @@ App.services.uiDimensions.applied() → CalculatedDimensions
 Alkitab (main app)
 ├── AlkitabModel (data models: Ari, Version, Book, MVersion)
 ├── AlkitabIo (BibleReader interface, I/O utilities)
-│   └── AlkitabModel
+│   ├── AlkitabModel
+│   └── Bintex
 ├── AlkitabYes2 (YES2 format reader/writer)
 │   ├── AlkitabIo
 │   ├── AlkitabModel
-│   ├── BintexReader / BintexWriter
+│   ├── Bintex
 │   └── Snappy (native JNI compression)
 ├── AlkitabIntegration (inter-app API)
-├── AlkitabFeedback
-├── BiblePlus (PDB format reader)
-├── KpriModel (song data model)
-├── FlowLayout
-├── Afw (base framework: Preferences, EasyAdapter, App context)
-└── ImportedDesktopVerseUtil (verse reference parser)
+└── Bintex (binary serialization reader/writer)
 ```
+
+The app module also contains the feedback wizard (`AlkitabFeedback`), PDB reader (`BiblePlus`), legacy song models (`KpriModel`), `FlowLayout`, base framework helpers (`Afw`: Preferences, EasyAdapter, App context), and verse reference parser (`ImportedDesktopVerseUtil`). These retain their original source packages.
 
 HTTP file downloads (Bible versions) run inside `VersionDownloadWorker` (`CoroutineWorker`) using OkHttp; the previous `PrDownloaderFixed` module was deleted in REM-19, and the `AmbilWarna` color-picker module was deleted in REM-20.
 
