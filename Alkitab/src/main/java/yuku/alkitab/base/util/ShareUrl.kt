@@ -1,8 +1,10 @@
 package yuku.alkitab.base.util
 
-import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.annotation.Keep
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.JsonParseException
 import java.io.IOException
@@ -21,7 +23,7 @@ import yuku.alkitab.util.IntArrayList
 
 object ShareUrl {
     fun make(
-        activity: Activity,
+        activity: ComponentActivity,
         immediatelyCancel: Boolean,
         verseText: String,
         ari_bc: Int,
@@ -69,7 +71,18 @@ object ShareUrl {
                 callback.onFinally()
             }
             .create()
+        val observer = object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                done.set(true)
+                call.cancel()
+                dialog.dismiss()
+                owner.lifecycle.removeObserver(this)
+            }
+        }
+        activity.lifecycle.addObserver(observer)
         dialog.setOnDismissListener {
+            activity.lifecycle.removeObserver(observer)
+            call.cancel()
             if (done.getAndSet(true)) return@setOnDismissListener
             callback.onUserCancel()
             callback.onFinally()
@@ -84,32 +97,31 @@ object ShareUrl {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                if (done.getAndSet(true)) return
-                val body = response.body
-                if (body == null) {
-                    onComplete { callback.onError(IOException("empty response body")) }
-                } else {
-                    try {
-                        val obj = App.getDefaultGson().fromJson(body.charStream(), ShareUrlResponseJson::class.java)
-                        if (obj.success) {
-                            onComplete { callback.onSuccess(obj.share_url) }
-                        } else {
-                            onComplete { callback.onError(Exception(obj.message)) }
+                response.use {
+                    if (done.getAndSet(true)) return
+                    val body = response.body
+                    if (body == null) {
+                        onComplete { callback.onError(IOException("empty response body")) }
+                    } else {
+                        try {
+                            val obj = App.getDefaultGson().fromJson(body.charStream(), ShareUrlResponseJson::class.java)
+                            if (obj.success) {
+                                onComplete { callback.onSuccess(obj.share_url) }
+                            } else {
+                                onComplete { callback.onError(Exception(obj.message)) }
+                            }
+                        } catch (e: JsonParseException) {
+                            onComplete { callback.onError(e) }
                         }
-                    } catch (e: JsonParseException) {
-                        onComplete { callback.onError(e) }
                     }
                 }
             }
 
             fun onComplete(todo: Runnable) {
                 activity.runOnUiThread {
-                    if (activity.isFinishing) return@runOnUiThread
+                    dialog.dismiss()
+                    if (activity.isFinishing || activity.isDestroyed) return@runOnUiThread
                     todo.run()
-                    try {
-                        dialog.dismiss()
-                    } catch (ignored: Exception) {
-                    }
                     callback.onFinally()
                 }
             }
