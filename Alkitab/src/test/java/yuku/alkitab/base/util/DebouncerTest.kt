@@ -5,6 +5,7 @@ import java.util.Collections
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
@@ -89,6 +90,47 @@ class DebouncerTest {
             gate.countDown()
             awaitProcessingThenRunMainLooper(blocked)
         }
+    }
+
+    @Test
+    fun `one instance processes serially while another instance makes progress`() {
+        val firstStarted = CountDownLatch(1)
+        val releaseFirst = CountDownLatch(1)
+        val secondStarted = CountDownLatch(1)
+        val results = mutableListOf<String>()
+        val debouncer = object : Debouncer<String, String>(0) {
+            override fun process(payload: String): String {
+                if (payload == "first") {
+                    firstStarted.countDown()
+                    assertTrue(releaseFirst.await(5, TimeUnit.SECONDS))
+                } else {
+                    secondStarted.countDown()
+                }
+                return payload
+            }
+
+            override fun onResult(result: String) {
+                results.add(result)
+            }
+        }
+        val independent = RecordingDebouncer(0, 1, null)
+
+        try {
+            debouncer.submit("first")
+            assertTrue(firstStarted.await(5, TimeUnit.SECONDS))
+            debouncer.submit("second")
+            independent.submit("independent")
+            awaitProcessingThenRunMainLooper(independent)
+            assertEquals(listOf("INDEPENDENT"), independent.results)
+            assertFalse(secondStarted.await(200, TimeUnit.MILLISECONDS))
+        } finally {
+            releaseFirst.countDown()
+        }
+
+        assertTrue(secondStarted.await(5, TimeUnit.SECONDS))
+        awaitMainLooperMessage()
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(listOf("second"), results)
     }
 
     @Test
