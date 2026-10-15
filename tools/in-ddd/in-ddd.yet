@@ -1,7 +1,7 @@
 info	locale	in
 info	shortName	DDD
 info	longName	Dummy Debug Data
-info	description	Synthetic rendering gallery: formatting, Unicode, ruby annotations, footnotes, references, and attribute wrapping in the first six chapters of the first book.
+info	description	Synthetic rendering gallery: ruby annotations, notes, references, attribute wrapping, formatting, and Unicode in chapters 3 through 8 of the first book.
 book_name	1	FirstBookWithName 1	BWN
 book_name	2	Book_1 2	Abbr 2
 book_name	3	Book_1 3	Abbr 3
@@ -68,62 +68,62 @@ book_name	63	Book_1 63
 book_name	64	Book_1 64
 book_name	65	Book_1 65
 book_name	66	Book_1 66
-verse	1	1	1	DDD rendering gallery. First book: chapter 1 formatting; 2 scripts and empty verses; 3 ruby types; 4 notes and references; 5 ruby layout; 6 attribute wrapping.
-verse	1	1	2	@@Welcome to the @9androidbible@7 sample! Open these references: @<x1@>@/ @<x2@>@/. These are synthetic examples, not a Bible translation.
-verse	1	1	3	@@@0Flush paragraph: the first and following lines share their starting edge.
-verse	1	1	4	@@@0A long flush paragraph shows where ordinary words wrap when the font is enlarged or the reading pane becomes narrow. Continue reading to compare the first line with all of the following lines.
-verse	1	1	5	@@@^First-line paragraph indentation.
-verse	1	1	6	@@@^A long indented paragraph starts farther in than its continuation lines. Enlarge the font or use split view to compare the starting position of the first line with the rest of this paragraph.
-verse	1	1	7	@@An inline opening.@^A new indented paragraph.@0A flush paragraph.
-verse	1	1	8	@@An opening sentence with enough words to wrap on a narrow screen before the next paragraph starts.@^An indented paragraph with enough words to wrap again, making the gutter and indentation easy to compare.
-verse	1	1	9	@@@0Indent zero.@1Indent one.@2Indent two.@3Indent three.@4Indent four.@0Back to zero.
-verse	1	1	10	@@Plain text with the formatting prefix but no styles.
-verse	1	1	11	@@Normal, @9italic@7, @6red@5, @6@9red italic@7 red again@5, normal again.
-verse	1	1	12	@@Hard line breaks: A@8B@8C@8D
-verse	1	1	13	@@@1Poetry level one@8Another line at level one@2Level two@8Another line at level two@3Level three@8Another line at level three
-verse	1	1	14	@@@1Short poetry line at level one.
-verse	1	1	15	@@@1A long poetry line at level one repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
-verse	1	1	16	@@@2Short poetry line at level two.
-verse	1	1	17	@@@2A long poetry line at level two repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
-verse	1	1	18	@@@3A long poetry line at level three leaves a smaller area for words and wraps naturally as the reader changes the text size.
-verse	1	1	19	@@@4A long poetry line at level four tests the deepest supported indentation in a narrow reading pane.
+verse	1	1	1	Normal text
+verse	1	1	2	@@@8@8@8Congratulations, you managed to build the @9androidbible@5 project!@8@8Tap here: @<x1@>@/ or here: @<x2@>@/@8@8@8
+verse	1	1	3	@@@01:1:3 indent 0
+verse	1	1	4	@@@01:1:4 indent 0 with looooooooooong text laba laba bala bala laba laba 
+verse	1	1	5	@@@^1:1:5 para start
+verse	1	1	6	@@@^1:1:6 para start with looooooooooooong text laba laba bala bala laba laba bala bala laba laba
+verse	1	1	7	@@1:1:7 no-para@^para start
+verse	1	1	8	@@1:1:8 no-para with looooooooooooooooooooooong text laba laba bala bala laba laba@^para start with long text laba laba bala bala laba laba
+verse	1	1	9	@@@01:1:9 Indent 0@1Indent 1@2Indent 2@3Indent 3@4Indent 4
+verse	1	1	10	@@1:1:10 Normal text with format marker
+verse	1	1	11	@@1:1:11 character formatting @9abcde@7 @6fghij@5 @9abcde@7 @6fghij@5 @9abcde@7 @6fghij@5
+verse	1	1	12	@@1:1:12 A@8B@8C@8D
+verse	1	1	13	@@@11:1:13 A@8B@8C@8D@2A@8B@8C@8D@3A@8B@8C@8D
+verse	1	1	14	@@@11:1:14 indent 1
+verse	1	1	15	@@@11:1:15 indent 1 with long text laba laba bala bala laba laba 
+verse	1	1	16	@@@21:1:16 indent 2
+verse	1	1	17	@@@21:1:17 indent 2 with long text laba laba bala bala laba laba 
+verse	1	1	18	1:1:18
+verse	1	1	19	1:1:19
 verse	1	1	20	1:1:20 For index testing:
 verse	1	1	21	1:1:21 aa bb cccc ddd xyz
 verse	1	1	22	1:1:22 AA BB CCCC DDD XYZ
 verse	1	1	23	1:1:23 "Quote" "Text in quotation"
 verse	1	1	24	1:1:24 a,b,c,d,e f.g.h.i.j
 verse	1	1	25	1:1:25 and-he-does-it-again
-verse	1	1	26	@@@8Leading hard break, then text.
-verse	1	1	27	@@Text, then a trailing hard break.@8
-verse	1	1	28	@@Two intentional blank lines follow.@8@8@8Text resumes.
-verse	1	1	29	@@@6Red spans a line break@8and continues here@5 before normal text.
-verse	1	1	30	@@@9Italic spans a paragraph@^and continues here@7 before normal text.
-verse	1	1	31	@@@6Red @9and italic@5 italic only@7 normal. @9Italic @6and red@7 red only@5 normal.
-verse	1	2	1	This is a placeholder translation for testing. For real Bible data, see https://alkitab.app/developer. This chapter keeps empty verses and exercises Unicode scripts.
-verse	1	2	2	@@1:2:2 After this comes an empty verse. @<x1@>@/
+verse	1	1	26	1:1:26
+verse	1	1	27	1:1:27
+verse	1	1	28	1:1:28
+verse	1	1	29	1:1:29
+verse	1	1	30	1:1:30
+verse	1	1	31	1:1:31
+verse	1	2	1	This is a placeholder translation for testing. If you want to build the app with a real Bible translation, please see https://alkitab.app/developer for instructions.
+verse	1	2	2	1:2:2 --- After this comes an empty verse ---
 verse	1	2	3	
-verse	1	2	4	1:2:4 After this come two empty verses.
+verse	1	2	4	1:2:4 And after this 2 empty verses
 verse	1	2	5	
 verse	1	2	6	
-verse	1	2	7	@@1:2:7 Text resumes after empty verses. @<x1@>@/
-verse	1	2	8	Latin diacritics: café, naïve, Ångström, déjà vu, São Paulo, Ḥesed.
-verse	1	2	9	@@Composed and combining accents: café / café; Å / Å; ḗ / ḗ. @<x1@>@/
-verse	1	2	10	Punctuation: “double quotes”, ‘single quotes’, «guillemets», (parentheses), [brackets], ellipsis…
+verse	1	2	7	1:2:7
+verse	1	2	8	1:2:8
+verse	1	2	9	1:2:9
+verse	1	2	10	1:2:10
 verse	1	2	11	You found me!!! Congratulations, again.
-verse	1	2	12	日本語の文章です。句読点と括弧「ことば」を含み、狭い画面でも自然に折り返して表示します。
-verse	1	2	13	中文示例：起初，光照在黑暗里。这一段没有单词之间的空格，用来观察自动换行与标点。
-verse	1	2	14	한국어 예문입니다. 여러 단어와 문장 부호를 함께 표시하고 줄바꿈을 확인합니다.
-verse	1	2	15	Ἐν ἀρχῇ ἦν ὁ λόγος. Ελληνικά με τόνους και πνεύματα.
-verse	1	2	16	בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ׃
-verse	1	2	17	فِي الْبَدْءِ كَانَتِ الْكَلِمَةُ، وَهَذَا نَصٌّ طَوِيلٌ لِاخْتِبَارِ الْقِرَاءَةِ مِنَ الْيَمِينِ إِلَى الْيَسَارِ.
-verse	1	2	18	English before שלום and العربية, then English after; numbers 123 and ٤٥٦.
-verse	1	2	19	שלום 123 (ABC) עולם. מילים נוספות לבדיקת שורות מעורבות עם English באמצע המשפט.
-verse	1	2	20	हिन्दी: आरम्भ में वचन था। বাংলা: আলো অন্ধকারে জ্বলে।
-verse	1	2	21	ภาษาไทยไม่มีช่องว่างระหว่างคำเสมอไป ใช้ข้อความนี้ทดสอบการตัดบรรทัดในหน้าจอแคบ
-verse	1	2	22	Emoji and graphemes: 🌿 🕊️ 👩🏽‍💻 👨‍👩‍👧‍👦 🇮🇩. Select and copy without splitting a character.
-verse	1	2	23	Nonbreaking spaces keep these pairs together: 1 Samuel, New York. Narrow no-break: 10 000.
-verse	1	2	24	@@Long token: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ. @<x1@>@/
-verse	1	2	25	@@@^Mixed paragraph: English, 日本語, Ελληνικά, שָׁלוֹם, سَلَام.@^שלום עם English ומספרים 123.@0Return to a flush paragraph.
+verse	1	2	12	1:2:12
+verse	1	2	13	1:2:13
+verse	1	2	14	1:2:14
+verse	1	2	15	1:2:15
+verse	1	2	16	1:2:16
+verse	1	2	17	1:2:17
+verse	1	2	18	1:2:18
+verse	1	2	19	1:2:19
+verse	1	2	20	1:2:20
+verse	1	2	21	1:2:21
+verse	1	2	22	1:2:22
+verse	1	2	23	1:2:23
+verse	1	2	24	1:2:24
+verse	1	2	25	1:2:25
 verse	1	3	1	@@Ruby readings sit above their base text. This chapter demonstrates every supported kind; chapter 5 explores spacing and wrapping. @<x1@>@/ @<x2@>@/
 verse	1	3	2	@@Generic ruby: @<r=reading@>base@/.
 verse	1	3	3	@@Furigana: @<rf=かみ@>神@/は@<rf=あい@>愛@/です。
@@ -228,52 +228,52 @@ verse	1	6	19	@@العربية مع @<rt=salām@>سَلَام@/. هذا نص طو
 verse	1	6	20	@@Links around wrapping points: @<f1@>@/ A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. Middle reference @<x1@>@/ A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. Final note @<f2@>@/.
 verse	1	6	21	@@@^@6@9Styled ruby @<rg=light@>φῶς@/@7@5 beside a note @<f1@>@/. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. @1Poetry follows with @<rf=ひかり@>光@/ and a reference @<x1@>@/. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
 verse	1	6	22	Check selection, copying, search snippets, dark theme, large fonts, hidden verse numbers, and split view using these examples. Bookmarks, highlights, notes, and progress pins are your own saved data; this sample does not create them.
-verse	1	7	1	1:7:1
-verse	1	7	2	1:7:2
-verse	1	7	3	1:7:3
-verse	1	7	4	1:7:4
-verse	1	7	5	1:7:5
-verse	1	7	6	1:7:6
-verse	1	7	7	1:7:7
-verse	1	7	8	1:7:8
-verse	1	7	9	1:7:9
-verse	1	7	10	1:7:10
-verse	1	7	11	1:7:11
-verse	1	7	12	1:7:12
-verse	1	7	13	1:7:13
-verse	1	7	14	1:7:14
-verse	1	7	15	1:7:15
-verse	1	7	16	1:7:16
-verse	1	7	17	1:7:17
-verse	1	7	18	1:7:18
-verse	1	7	19	1:7:19
-verse	1	7	20	1:7:20
-verse	1	7	21	1:7:21
-verse	1	7	22	1:7:22
-verse	1	7	23	1:7:23
-verse	1	7	24	1:7:24
-verse	1	8	1	1:8:1
-verse	1	8	2	1:8:2
-verse	1	8	3	1:8:3
-verse	1	8	4	1:8:4
-verse	1	8	5	1:8:5
-verse	1	8	6	1:8:6
-verse	1	8	7	1:8:7
-verse	1	8	8	1:8:8
-verse	1	8	9	1:8:9
-verse	1	8	10	1:8:10
-verse	1	8	11	1:8:11
-verse	1	8	12	1:8:12
-verse	1	8	13	1:8:13
-verse	1	8	14	1:8:14
-verse	1	8	15	1:8:15
-verse	1	8	16	1:8:16
-verse	1	8	17	1:8:17
-verse	1	8	18	1:8:18
-verse	1	8	19	1:8:19
-verse	1	8	20	1:8:20
-verse	1	8	21	1:8:21
-verse	1	8	22	1:8:22
+verse	1	7	1	Formatting gallery. Ruby types are in chapter 3, links in 4, ruby layout in 5, attribute wrapping in 6, and Unicode scripts in 8.
+verse	1	7	2	@@@0Flush paragraph: the first and following lines share their starting edge.
+verse	1	7	3	@@@0A long flush paragraph shows where ordinary words wrap when the font is enlarged or the reading pane becomes narrow. Continue reading to compare the first line with all of the following lines.
+verse	1	7	4	@@@^First-line paragraph indentation.
+verse	1	7	5	@@@^A long indented paragraph starts farther in than its continuation lines. Enlarge the font or use split view to compare the starting position of the first line with the rest of this paragraph.
+verse	1	7	6	@@An inline opening.@^A new indented paragraph.@0A flush paragraph.
+verse	1	7	7	@@An opening sentence with enough words to wrap on a narrow screen before the next paragraph starts.@^An indented paragraph with enough words to wrap again, making the gutter and indentation easy to compare.
+verse	1	7	8	@@@0Indent zero.@1Indent one.@2Indent two.@3Indent three.@4Indent four.@0Back to zero.
+verse	1	7	9	@@Plain text with the formatting prefix but no styles.
+verse	1	7	10	@@Normal, @9italic@7, @6red@5, @6@9red italic@7 red again@5, normal again.
+verse	1	7	11	@@Hard line breaks: A@8B@8C@8D
+verse	1	7	12	@@@1Poetry level one@8Another line at level one@2Level two@8Another line at level two@3Level three@8Another line at level three
+verse	1	7	13	@@@1Short poetry line at level one.
+verse	1	7	14	@@@1A long poetry line at level one repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
+verse	1	7	15	@@@2Short poetry line at level two.
+verse	1	7	16	@@@2A long poetry line at level two repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
+verse	1	7	17	@@@3A long poetry line at level three leaves a smaller area for words and wraps naturally as the reader changes the text size.
+verse	1	7	18	@@@4A long poetry line at level four tests the deepest supported indentation in a narrow reading pane.
+verse	1	7	19	@@@8Leading hard break, then text.
+verse	1	7	20	@@Text, then a trailing hard break.@8
+verse	1	7	21	@@Two intentional blank lines follow.@8@8@8Text resumes.
+verse	1	7	22	@@@6Red spans a line break@8and continues here@5 before normal text.
+verse	1	7	23	@@@9Italic spans a paragraph@^and continues here@7 before normal text.
+verse	1	7	24	@@@6Red @9and italic@5 italic only@7 normal. @9Italic @6and red@7 red only@5 normal.
+verse	1	8	1	Unicode gallery. Compare these scripts in a narrow pane, with larger text, and when selecting or copying.
+verse	1	8	2	Latin diacritics: café, naïve, Ångström, déjà vu, São Paulo, Ḥesed.
+verse	1	8	3	@@Composed and combining accents: café / café; Å / Å; ḗ / ḗ.
+verse	1	8	4	Punctuation: “double quotes”, ‘single quotes’, «guillemets», (parentheses), [brackets], ellipsis…
+verse	1	8	5	日本語の文章です。句読点と括弧「ことば」を含み、狭い画面でも自然に折り返して表示します。
+verse	1	8	6	中文示例：起初，光照在黑暗里。这一段没有单词之间的空格，用来观察自动换行与标点。
+verse	1	8	7	한국어 예문입니다. 여러 단어와 문장 부호를 함께 표시하고 줄바꿈을 확인합니다.
+verse	1	8	8	Ἐν ἀρχῇ ἦν ὁ λόγος. Ελληνικά με τόνους και πνεύματα.
+verse	1	8	9	בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ׃
+verse	1	8	10	فِي الْبَدْءِ كَانَتِ الْكَلِمَةُ، وَهَذَا نَصٌّ طَوِيلٌ لِاخْتِبَارِ الْقِرَاءَةِ مِنَ الْيَمِينِ إِلَى الْيَسَارِ.
+verse	1	8	11	English before שלום and العربية, then English after; numbers 123 and ٤٥٦.
+verse	1	8	12	שלום 123 (ABC) עולם. מילים נוספות לבדיקת שורות מעורבות עם English באמצע המשפט.
+verse	1	8	13	हिन्दी: आरम्भ में वचन था। বাংলা: আলো অন্ধকারে জ্বলে।
+verse	1	8	14	ภาษาไทยไม่มีช่องว่างระหว่างคำเสมอไป ใช้ข้อความนี้ทดสอบการตัดบรรทัดในหน้าจอแคบ
+verse	1	8	15	Emoji and graphemes: 🌿 🕊️ 👩🏽‍💻 👨‍👩‍👧‍👦 🇮🇩. Select and copy without splitting a character.
+verse	1	8	16	Nonbreaking spaces keep these pairs together: 1 Samuel, New York. Narrow no-break: 10 000.
+verse	1	8	17	@@Long token: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.
+verse	1	8	18	@@@^Mixed paragraph: English, 日本語, Ελληνικά, שָׁלוֹם, سَلَام.@^שלום עם English ומספרים 123.@0Return to a flush paragraph.
+verse	1	8	19	Supplementary letters: 𐐀 𐐁 𐐨 𐐩. Search and copy should preserve complete characters.
+verse	1	8	20	Supplementary CJK characters: 𠮷野家、𠀀。Compare their fallback font with 日本語 and 中文.
+verse	1	8	21	@@English first.@8שלום לכולם.@8العربية في سطر جديد.@8日本語の行。
+verse	1	8	22	For empty-verse and search fixtures, visit chapters 1 and 2. For readings above these scripts, visit chapters 3 and 5.
 verse	1	9	1	1:9:1
 verse	1	9	2	1:9:2
 verse	1	9	3	1:9:3
@@ -31385,13 +31385,8 @@ verse	66	22	18	66:22:18
 verse	66	22	19	66:22:19
 verse	66	22	20	66:22:20
 verse	66	22	21	66:22:21
-pericope	1	1	1	Formatting gallery and chapter guide
-pericope	1	1	3	Paragraphs, indentation, and styles
-pericope	1	1	20	Search token fixtures
-pericope	1	1	26	Breaks and style boundaries
-pericope	1	2	1	Empty verses and Unicode
-pericope	1	2	8	Accents and punctuation
-pericope	1	2	12	Scripts, direction, and graphemes
+pericope	1	1	1	P1:1:1
+pericope	1	2	8	P1:2:8
 pericope	1	3	1	Ruby: annotation types
 pericope	1	3	11	Ruby: characters, words, and phrases
 pericope	1	3	16	Ruby: direction and Unicode
@@ -31410,8 +31405,12 @@ pericope	1	6	1	Text flowing around end-side attributes
 pericope	1	6	6	Paragraph and poetry flow
 pericope	1	6	14	Styles, ruby, and bidirectional flow
 pericope	1	6	20	Links, selection, and reader settings
-pericope	1	7	1	P1:7:1
-pericope	1	8	1	P1:8:1
+pericope	1	7	1	Formatting gallery and chapter guide
+pericope	1	7	10	Character styles and poetry
+pericope	1	7	19	Breaks and style boundaries
+pericope	1	8	1	Unicode, punctuation, and graphemes
+pericope	1	8	5	Scripts and text direction
+pericope	1	8	15	Emoji, spacing, and supplementary characters
 pericope	1	9	1	P1:9:1
 pericope	1	9	18	P1:9:18
 pericope	1	10	1	P1:10:1
@@ -31849,7 +31848,7 @@ footnote	1	4	14	8	Gallery note 8 for chapter 4, verse 14. Compare @9italic@7 and
 footnote	1	4	14	9	Gallery note 9 for chapter 4, verse 14. Compare @9italic@7 and @6red text@5. Open @<to:Gen.3.3@>the furigana example@/ or @<ta:1538-1540@>the short-to-long wrapping examples@/.
 footnote	1	4	14	10	Gallery note 10 for chapter 4, verse 14. Compare @9italic@7 and @6red text@5. Open @<to:Gen.3.3@>the furigana example@/ or @<ta:1538-1540@>the short-to-long wrapping examples@/.
 footnote	1	4	18	1	@0A longer note with @9italic@7 and @6red text@5.@^A second paragraph explains how related passages can be reached: @<to:Gen.3.1@>ruby guide@/ and @<ta:1537-1541,1552@>wrapping examples@/.@1An indented closing line.
-footnote	1	4	20	1	Unicode note: café / café; 日本語; Ελληνικά; שָׁלוֹם; سَلَام; 👩🏽‍💻. Reference: @<to:Gen.2.12@>script examples@/.
+footnote	1	4	20	1	Unicode note: café / café; 日本語; Ελληνικά; שָׁלוֹם; سَلَام; 👩🏽‍💻. Reference: @<to:Gen.8.5@>script examples@/.
 footnote	1	4	21	1	Gallery note 1 for chapter 4, verse 21. Compare @9italic@7 and @6red text@5. Open @<to:Gen.3.3@>the furigana example@/ or @<ta:1538-1540@>the short-to-long wrapping examples@/.
 footnote	1	4	22	1	Gallery note 1 for chapter 4, verse 22. Compare @9italic@7 and @6red text@5. Open @<to:Gen.3.3@>the furigana example@/ or @<ta:1538-1540@>the short-to-long wrapping examples@/.
 footnote	1	4	23	1	Gallery note 1 for chapter 4, verse 23. Compare @9italic@7 and @6red text@5. Open @<to:Gen.3.3@>the furigana example@/ or @<ta:1538-1540@>the short-to-long wrapping examples@/.
@@ -31859,12 +31858,6 @@ footnote	1	5	32	1	Gallery note 1 for chapter 5, verse 32. Compare @9italic@7 and
 footnote	1	6	20	1	Gallery note 1 for chapter 6, verse 20. Compare @9italic@7 and @6red text@5. Open @<to:Gen.3.3@>the furigana example@/ or @<ta:1538-1540@>the short-to-long wrapping examples@/.
 footnote	1	6	20	2	Gallery note 2 for chapter 6, verse 20. Compare @9italic@7 and @6red text@5. Open @<to:Gen.3.3@>the furigana example@/ or @<ta:1538-1540@>the short-to-long wrapping examples@/.
 footnote	1	6	21	1	Gallery note 1 for chapter 6, verse 21. Compare @9italic@7 and @6red text@5. Open @<to:Gen.3.3@>the furigana example@/ or @<ta:1538-1540@>the short-to-long wrapping examples@/.
-xref	1	1	2	1	@<to:Gen.2.1@>Scripts and empty verses@/; @<to:Gen.2.11@>Navigation destination@/.
-xref	1	1	2	2	@<to:Gen.3.1@>Ruby types@/; @<to:Gen.5.1@>Ruby layout@/; @<to:Gen.6.1@>Attribute wrapping@/.
-xref	1	2	2	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
-xref	1	2	7	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
-xref	1	2	9	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
-xref	1	2	24	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
 xref	1	3	1	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
 xref	1	3	1	2	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
 xref	1	4	3	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
@@ -31888,3 +31881,9 @@ xref	1	4	26	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-154
 xref	1	5	32	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
 xref	1	6	20	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
 xref	1	6	21	1	@<to:Gen.3.3@>Furigana@/; @<to:Gen.5.3@>wide ruby@/; @<ta:1540-1541,1552@>long rows and ruby flow@/.
+xref	1	1	2	1	Tap @9here@7!!! -> @<to:Gen.2.1@>Dest 1@/ and @<to:Gen.2.11@>Dest 2@/
+xref	1	1	2	2	Tap here!!! -> @<to:Gen.3.1@>@9Dest@7 3@/
+xref	1	2	2	1	2:2-3: @<ta:70667@>Book. 20:11@/; @<ta:3736580,3736586@>Book. 4:4, 10@/
+xref	1	2	7	1	2:7: @<ta:2953005@>Book. 15:45@/
+xref	1	2	9	1	2:9: @<ta:4260359,4265474,4265486@>Book. 2:7, 22:2, 14@/
+xref	1	2	24	1	2:24: @<ta:2560773@>Book. 19:5@/; @<ta:2624007-2624008@>Book. 10:7-8@/; @<ta:2950672@>Book. 6:16@/; @<ta:3147039@>Book. 5:31@/

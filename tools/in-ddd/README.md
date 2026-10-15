@@ -1,17 +1,13 @@
 # DDD rendering gallery
 
 `in-ddd.yet` is the source for the synthetic Bible bundled with the `plain`
-build. Open **FirstBookWithName 1**, chapters 1 through 6. These examples are
-rendering fixtures, not a Bible translation. The other chapters and books retain
+build. Open **FirstBookWithName 1**, chapters 3 through 8. These examples are
+rendering fixtures, not a Bible translation. Chapters 1 and 2 retain their
+original text, headings, and references. The other chapters and books retain
 their navigation fixtures, including the second book's 255 chapters.
 
 | First-book location | Coverage |
 | --- | --- |
-| 1:1–19 | Guide, plain and formatted text, flush and first-line paragraphs, all four poetry indent levels, italic, red, and overlapping styles |
-| 1:20–25 | Search fixtures: case, quotes, punctuation, and hyphenation |
-| 1:26–31 | Leading/trailing breaks, blank lines, styles across breaks and paragraphs |
-| 2:1–11 | Single and consecutive empty verses, navigation destination, accents and combining marks |
-| 2:12–25 | Japanese, Chinese, Korean, Greek, Hebrew, Arabic, Indic and Thai text; mixed direction, emoji sequences, nonbreaking spaces, long tokens |
 | 3:1–10 | Generic ruby, furigana, pinyin, Strong's identifiers, gloss, morphology, transliteration, lemma, and unknown-kind fallback |
 | 3:11–24 | Character, word, and phrase readings; Latin and RTL bases; combining marks and emoji; leading, trailing, standalone, and adjacent runs |
 | 4:1–16 | Footnotes and cross-references at different positions, adjacent markers, ten footnotes, ruby, styles, indentation, and paragraphs |
@@ -20,6 +16,9 @@ their navigation fixtures, including the second book's 255 chapters.
 | 5:13–24 | Ruby with red/italic styles, styled substrings, all paragraph/poetry levels, plain lines, hard breaks, and blank lines |
 | 5:25–32 | Empty-base anchors, empty readings, grapheme clusters, dense CJK and Hebrew annotation, and combined styles and links |
 | 6:1–22 | Short and long rows, paragraph/poetry flow, hard breaks, red/italic text, ruby, RTL, links, and selection around end-side attributes |
+| 7:1–18 | Guide, plain and formatted text, flush and first-line paragraphs, all four poetry indent levels, italic, red, and overlapping styles |
+| 7:19–24 | Leading/trailing breaks, blank lines, styles across breaks and paragraphs |
+| 8:1–22 | Accents, punctuation, Japanese, Chinese, Korean, Greek, Hebrew, Arabic, Indic and Thai text; mixed direction, emoji, nonbreaking spaces, long tokens, and supplementary characters |
 
 ## Try the gallery
 

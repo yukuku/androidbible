@@ -1,59 +1,59 @@
-DDD rendering gallery. First book: chapter 1 formatting; 2 scripts and empty verses; 3 ruby types; 4 notes and references; 5 ruby layout; 6 attribute wrapping.
-@@Welcome to the @9androidbible@7 sample! Open these references: @<x1@>@/ @<x2@>@/. These are synthetic examples, not a Bible translation.
-@@@0Flush paragraph: the first and following lines share their starting edge.
-@@@0A long flush paragraph shows where ordinary words wrap when the font is enlarged or the reading pane becomes narrow. Continue reading to compare the first line with all of the following lines.
-@@@^First-line paragraph indentation.
-@@@^A long indented paragraph starts farther in than its continuation lines. Enlarge the font or use split view to compare the starting position of the first line with the rest of this paragraph.
-@@An inline opening.@^A new indented paragraph.@0A flush paragraph.
-@@An opening sentence with enough words to wrap on a narrow screen before the next paragraph starts.@^An indented paragraph with enough words to wrap again, making the gutter and indentation easy to compare.
-@@@0Indent zero.@1Indent one.@2Indent two.@3Indent three.@4Indent four.@0Back to zero.
-@@Plain text with the formatting prefix but no styles.
-@@Normal, @9italic@7, @6red@5, @6@9red italic@7 red again@5, normal again.
-@@Hard line breaks: A@8B@8C@8D
-@@@1Poetry level one@8Another line at level one@2Level two@8Another line at level two@3Level three@8Another line at level three
-@@@1Short poetry line at level one.
-@@@1A long poetry line at level one repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
-@@@2Short poetry line at level two.
-@@@2A long poetry line at level two repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
-@@@3A long poetry line at level three leaves a smaller area for words and wraps naturally as the reader changes the text size.
-@@@4A long poetry line at level four tests the deepest supported indentation in a narrow reading pane.
+Normal text
+@@@8@8@8Congratulations, you managed to build the @9androidbible@5 project!@8@8Tap here: @<x1@>@/ or here: @<x2@>@/@8@8@8
+@@@01:1:3 indent 0
+@@@01:1:4 indent 0 with looooooooooong text laba laba bala bala laba laba 
+@@@^1:1:5 para start
+@@@^1:1:6 para start with looooooooooooong text laba laba bala bala laba laba bala bala laba laba
+@@1:1:7 no-para@^para start
+@@1:1:8 no-para with looooooooooooooooooooooong text laba laba bala bala laba laba@^para start with long text laba laba bala bala laba laba
+@@@01:1:9 Indent 0@1Indent 1@2Indent 2@3Indent 3@4Indent 4
+@@1:1:10 Normal text with format marker
+@@1:1:11 character formatting @9abcde@7 @6fghij@5 @9abcde@7 @6fghij@5 @9abcde@7 @6fghij@5
+@@1:1:12 A@8B@8C@8D
+@@@11:1:13 A@8B@8C@8D@2A@8B@8C@8D@3A@8B@8C@8D
+@@@11:1:14 indent 1
+@@@11:1:15 indent 1 with long text laba laba bala bala laba laba 
+@@@21:1:16 indent 2
+@@@21:1:17 indent 2 with long text laba laba bala bala laba laba 
+1:1:18
+1:1:19
 1:1:20 For index testing:
 1:1:21 aa bb cccc ddd xyz
 1:1:22 AA BB CCCC DDD XYZ
 1:1:23 "Quote" "Text in quotation"
 1:1:24 a,b,c,d,e f.g.h.i.j
 1:1:25 and-he-does-it-again
-@@@8Leading hard break, then text.
-@@Text, then a trailing hard break.@8
-@@Two intentional blank lines follow.@8@8@8Text resumes.
-@@@6Red spans a line break@8and continues here@5 before normal text.
-@@@9Italic spans a paragraph@^and continues here@7 before normal text.
-@@@6Red @9and italic@5 italic only@7 normal. @9Italic @6and red@7 red only@5 normal.
-This is a placeholder translation for testing. For real Bible data, see https://alkitab.app/developer. This chapter keeps empty verses and exercises Unicode scripts.
-@@1:2:2 After this comes an empty verse. @<x1@>@/
+1:1:26
+1:1:27
+1:1:28
+1:1:29
+1:1:30
+1:1:31
+This is a placeholder translation for testing. If you want to build the app with a real Bible translation, please see https://alkitab.app/developer for instructions.
+1:2:2 --- After this comes an empty verse ---
 
-1:2:4 After this come two empty verses.
+1:2:4 And after this 2 empty verses
 
 
-@@1:2:7 Text resumes after empty verses. @<x1@>@/
-Latin diacritics: café, naïve, Ångström, déjà vu, São Paulo, Ḥesed.
-@@Composed and combining accents: café / café; Å / Å; ḗ / ḗ. @<x1@>@/
-Punctuation: “double quotes”, ‘single quotes’, «guillemets», (parentheses), [brackets], ellipsis…
+1:2:7
+1:2:8
+1:2:9
+1:2:10
 You found me!!! Congratulations, again.
-日本語の文章です。句読点と括弧「ことば」を含み、狭い画面でも自然に折り返して表示します。
-中文示例：起初，光照在黑暗里。这一段没有单词之间的空格，用来观察自动换行与标点。
-한국어 예문입니다. 여러 단어와 문장 부호를 함께 표시하고 줄바꿈을 확인합니다.
-Ἐν ἀρχῇ ἦν ὁ λόγος. Ελληνικά με τόνους και πνεύματα.
-בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ׃
-فِي الْبَدْءِ كَانَتِ الْكَلِمَةُ، وَهَذَا نَصٌّ طَوِيلٌ لِاخْتِبَارِ الْقِرَاءَةِ مِنَ الْيَمِينِ إِلَى الْيَسَارِ.
-English before שלום and العربية, then English after; numbers 123 and ٤٥٦.
-שלום 123 (ABC) עולם. מילים נוספות לבדיקת שורות מעורבות עם English באמצע המשפט.
-हिन्दी: आरम्भ में वचन था। বাংলা: আলো অন্ধকারে জ্বলে।
-ภาษาไทยไม่มีช่องว่างระหว่างคำเสมอไป ใช้ข้อความนี้ทดสอบการตัดบรรทัดในหน้าจอแคบ
-Emoji and graphemes: 🌿 🕊️ 👩🏽‍💻 👨‍👩‍👧‍👦 🇮🇩. Select and copy without splitting a character.
-Nonbreaking spaces keep these pairs together: 1 Samuel, New York. Narrow no-break: 10 000.
-@@Long token: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ. @<x1@>@/
-@@@^Mixed paragraph: English, 日本語, Ελληνικά, שָׁלוֹם, سَلَام.@^שלום עם English ומספרים 123.@0Return to a flush paragraph.
+1:2:12
+1:2:13
+1:2:14
+1:2:15
+1:2:16
+1:2:17
+1:2:18
+1:2:19
+1:2:20
+1:2:21
+1:2:22
+1:2:23
+1:2:24
+1:2:25
 @@Ruby readings sit above their base text. This chapter demonstrates every supported kind; chapter 5 explores spacing and wrapping. @<x1@>@/ @<x2@>@/
 @@Generic ruby: @<r=reading@>base@/.
 @@Furigana: @<rf=かみ@>神@/は@<rf=あい@>愛@/です。
@@ -158,52 +158,52 @@ Longer row. A bowl of steaming noodles arrived at the table, topped with a soft 
 @@Links around wrapping points: @<f1@>@/ A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. Middle reference @<x1@>@/ A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. Final note @<f2@>@/.
 @@@^@6@9Styled ruby @<rg=light@>φῶς@/@7@5 beside a note @<f1@>@/. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. @1Poetry follows with @<rf=ひかり@>光@/ and a reference @<x1@>@/. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
 Check selection, copying, search snippets, dark theme, large fonts, hidden verse numbers, and split view using these examples. Bookmarks, highlights, notes, and progress pins are your own saved data; this sample does not create them.
-1:7:1
-1:7:2
-1:7:3
-1:7:4
-1:7:5
-1:7:6
-1:7:7
-1:7:8
-1:7:9
-1:7:10
-1:7:11
-1:7:12
-1:7:13
-1:7:14
-1:7:15
-1:7:16
-1:7:17
-1:7:18
-1:7:19
-1:7:20
-1:7:21
-1:7:22
-1:7:23
-1:7:24
-1:8:1
-1:8:2
-1:8:3
-1:8:4
-1:8:5
-1:8:6
-1:8:7
-1:8:8
-1:8:9
-1:8:10
-1:8:11
-1:8:12
-1:8:13
-1:8:14
-1:8:15
-1:8:16
-1:8:17
-1:8:18
-1:8:19
-1:8:20
-1:8:21
-1:8:22
+Formatting gallery. Ruby types are in chapter 3, links in 4, ruby layout in 5, attribute wrapping in 6, and Unicode scripts in 8.
+@@@0Flush paragraph: the first and following lines share their starting edge.
+@@@0A long flush paragraph shows where ordinary words wrap when the font is enlarged or the reading pane becomes narrow. Continue reading to compare the first line with all of the following lines.
+@@@^First-line paragraph indentation.
+@@@^A long indented paragraph starts farther in than its continuation lines. Enlarge the font or use split view to compare the starting position of the first line with the rest of this paragraph.
+@@An inline opening.@^A new indented paragraph.@0A flush paragraph.
+@@An opening sentence with enough words to wrap on a narrow screen before the next paragraph starts.@^An indented paragraph with enough words to wrap again, making the gutter and indentation easy to compare.
+@@@0Indent zero.@1Indent one.@2Indent two.@3Indent three.@4Indent four.@0Back to zero.
+@@Plain text with the formatting prefix but no styles.
+@@Normal, @9italic@7, @6red@5, @6@9red italic@7 red again@5, normal again.
+@@Hard line breaks: A@8B@8C@8D
+@@@1Poetry level one@8Another line at level one@2Level two@8Another line at level two@3Level three@8Another line at level three
+@@@1Short poetry line at level one.
+@@@1A long poetry line at level one repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
+@@@2Short poetry line at level two.
+@@@2A long poetry line at level two repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
+@@@3A long poetry line at level three leaves a smaller area for words and wraps naturally as the reader changes the text size.
+@@@4A long poetry line at level four tests the deepest supported indentation in a narrow reading pane.
+@@@8Leading hard break, then text.
+@@Text, then a trailing hard break.@8
+@@Two intentional blank lines follow.@8@8@8Text resumes.
+@@@6Red spans a line break@8and continues here@5 before normal text.
+@@@9Italic spans a paragraph@^and continues here@7 before normal text.
+@@@6Red @9and italic@5 italic only@7 normal. @9Italic @6and red@7 red only@5 normal.
+Unicode gallery. Compare these scripts in a narrow pane, with larger text, and when selecting or copying.
+Latin diacritics: café, naïve, Ångström, déjà vu, São Paulo, Ḥesed.
+@@Composed and combining accents: café / café; Å / Å; ḗ / ḗ.
+Punctuation: “double quotes”, ‘single quotes’, «guillemets», (parentheses), [brackets], ellipsis…
+日本語の文章です。句読点と括弧「ことば」を含み、狭い画面でも自然に折り返して表示します。
+中文示例：起初，光照在黑暗里。这一段没有单词之间的空格，用来观察自动换行与标点。
+한국어 예문입니다. 여러 단어와 문장 부호를 함께 표시하고 줄바꿈을 확인합니다.
+Ἐν ἀρχῇ ἦν ὁ λόγος. Ελληνικά με τόνους και πνεύματα.
+בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ׃
+فِي الْبَدْءِ كَانَتِ الْكَلِمَةُ، وَهَذَا نَصٌّ طَوِيلٌ لِاخْتِبَارِ الْقِرَاءَةِ مِنَ الْيَمِينِ إِلَى الْيَسَارِ.
+English before שלום and العربية, then English after; numbers 123 and ٤٥٦.
+שלום 123 (ABC) עולם. מילים נוספות לבדיקת שורות מעורבות עם English באמצע המשפט.
+हिन्दी: आरम्भ में वचन था। বাংলা: আলো অন্ধকারে জ্বলে।
+ภาษาไทยไม่มีช่องว่างระหว่างคำเสมอไป ใช้ข้อความนี้ทดสอบการตัดบรรทัดในหน้าจอแคบ
+Emoji and graphemes: 🌿 🕊️ 👩🏽‍💻 👨‍👩‍👧‍👦 🇮🇩. Select and copy without splitting a character.
+Nonbreaking spaces keep these pairs together: 1 Samuel, New York. Narrow no-break: 10 000.
+@@Long token: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.
+@@@^Mixed paragraph: English, 日本語, Ελληνικά, שָׁלוֹם, سَلَام.@^שלום עם English ומספרים 123.@0Return to a flush paragraph.
+Supplementary letters: 𐐀 𐐁 𐐨 𐐩. Search and copy should preserve complete characters.
+Supplementary CJK characters: 𠮷野家、𠀀。Compare their fallback font with 日本語 and 中文.
+@@English first.@8שלום לכולם.@8العربية في سطر جديد.@8日本語の行。
+For empty-verse and search fixtures, visit chapters 1 and 2. For readings above these scripts, visit chapters 3 and 5.
 1:9:1
 1:9:2
 1:9:3

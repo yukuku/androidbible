@@ -67,7 +67,7 @@ class BuiltInGalleryTest {
         val entries = source.filter { it[0] == "footnote" || it[0] == "xref" }
             .associateBy { it.take(5) }
         val referenced = mutableSetOf<List<String>>()
-        for (row in source.filter { it[0] == "verse" && it[1] == "1" && it[2].toInt() <= 6 }) {
+        for (row in source.filter { it[0] == "verse" && it[1] == "1" && it[2].toInt() in 3..8 }) {
             val ari = Ari.encode(0, row[2].toInt(), row[3].toInt())
             for (match in Regex("@<([fx])(\\d+)@>").findAll(row[4])) {
                 val kind = if (match.groupValues[1] == "f") "footnote" else "xref"
@@ -79,12 +79,12 @@ class BuiltInGalleryTest {
                 referenced.add(key)
             }
         }
-        assertEquals(entries.keys.filter { it[1] == "1" && it[2].toInt() <= 6 }.toSet(), referenced)
+        assertEquals(entries.keys.filter { it[1] == "1" && it[2].toInt() in 3..8 }.toSet(), referenced)
     }
 
     @Test
     fun `gallery headings and parallel references survive conversion`() {
-        for (chapter in 1..6) {
+        for (chapter in 1..8) {
             val expected = source.filter { it[0] == "pericope" && it[1] == "1" && it[2] == chapter.toString() }
             val aris = IntArrayList()
             val blocks = mutableListOf<PericopeBlock>()
@@ -107,7 +107,7 @@ class BuiltInGalleryTest {
         val addresses = source.filter { it[0] == "verse" }
             .map { Ari.encode(it[1].toInt() - 1, it[2].toInt(), it[3].toInt()) }.toSet()
         val targets = source.filter {
-            it[0] in listOf("footnote", "xref") && it[1] == "1" && it[2].toInt() <= 6
+            it[0] in listOf("footnote", "xref") && it[1] == "1" && it[2].toInt() in 3..8
         }.flatMap { row -> Regex("@<t([^@]+)@>").findAll(row[5]).map { it.groupValues[1] }.toList() } +
             source.filter { it[0] == "parallel" && it[1].startsWith('@') }
                 .map { it[1].substringAfter('@').substringBefore(' ') }
@@ -124,7 +124,7 @@ class BuiltInGalleryTest {
     @Test
     fun `gallery ruby and link markup parses with verse numbers shown and hidden`() {
         val kinds = mutableSetOf<Char?>()
-        for (row in source.filter { it[0] == "verse" && it[1] == "1" && it[2].toInt() <= 6 }) {
+        for (row in source.filter { it[0] == "verse" && it[1] == "1" && it[2].toInt() in 3..8 }) {
             val ari = Ari.encode(0, row[2].toInt(), row[3].toInt())
             val expectedReadings = Regex("@<r[a-z]?=([^@]+)@>").findAll(row[4]).map { it.groupValues[1] }.toList()
             val expectedLinks = Regex("@<[fx]\\d+@>").findAll(row[4]).count()
