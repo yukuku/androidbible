@@ -90,18 +90,7 @@ public class VersionDownloadCompleteReceiver {
 		Background.run(() -> {
 			try {
 				final String downloadedFilePath = DownloadMapper.instance.getDownloadedFilePath(id);
-				final FileInputStream fis = new FileInputStream(downloadedFilePath);
-				final OptionalGzipInputStream ogis = new OptionalGzipInputStream(fis);
-				final AtomicFile af = new AtomicFile(destFile);
-				final FileOutputStream fos = af.startWrite();
-				final byte[] buf = new byte[4096];
-				while (true) {
-					final int read = ogis.read(buf);
-					if (read < 0) break;
-					fos.write(buf, 0, read);
-				}
-				af.finishWrite(fos);
-				ogis.close();
+				finalizeDownload(new File(downloadedFilePath), destFile);
 
 			} catch (IOException e) {
 				AppLog.e(TAG, "I/O error when saving downloaded version", e);
@@ -158,4 +147,23 @@ public class VersionDownloadCompleteReceiver {
 			AppEvents.emitVersionListReload();
 		});
 	}
+	static void finalizeDownload(File source, File destination) throws IOException {
+		final AtomicFile af = new AtomicFile(destination);
+		final FileOutputStream fos = af.startWrite();
+		try {
+			try (FileInputStream fis = new FileInputStream(source);
+				 OptionalGzipInputStream ogis = new OptionalGzipInputStream(fis)) {
+				final byte[] buf = new byte[4096];
+				int read;
+				while ((read = ogis.read(buf)) != -1) {
+					fos.write(buf, 0, read);
+				}
+			}
+			af.finishWrite(fos);
+		} catch (IOException | RuntimeException | Error e) {
+			af.failWrite(fos);
+			throw e;
+		}
+	}
+
 }

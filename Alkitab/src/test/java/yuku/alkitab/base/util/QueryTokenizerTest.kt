@@ -19,4 +19,17 @@ class QueryTokenizerTest {
         assertArrayEquals(arrayOf("+a b"), QueryTokenizer.tokenize("\u201da b\u201d"))
         assertArrayEquals(arrayOf("x", "+ab", "+cd"), QueryTokenizer.tokenize("x \u201dab\u201d \u201dcd\u201c"))
     }
+    @Test
+    fun `search normalization matches the decoder under Turkish locale`() {
+        val original = java.util.Locale.getDefault()
+        try {
+            java.util.Locale.setDefault(java.util.Locale.forLanguageTag("tr"))
+            for (query in listOf("KIRK", "İ", "ΟΣ")) {
+                val haystack = yuku.alkitab.io.Utf8Decoder.toStringLowerCase(query.toByteArray(Charsets.UTF_8))
+                assertArrayEquals(arrayOf(haystack), QueryTokenizer.tokenize(query))
+            }
+        } finally {
+            java.util.Locale.setDefault(original)
+        }
+    }
 }

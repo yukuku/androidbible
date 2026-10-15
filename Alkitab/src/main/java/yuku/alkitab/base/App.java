@@ -45,6 +45,7 @@ public class App extends yuku.afw.App {
         super.onCreate();
 
         staticInit();
+        yuku.alkitab.base.util.DownloadMapper.instance.reconcileOnStartup();
     }
 
     /**

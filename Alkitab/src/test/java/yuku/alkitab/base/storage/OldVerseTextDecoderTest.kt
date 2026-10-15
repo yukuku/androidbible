@@ -55,13 +55,25 @@ class OldVerseTextDecoderTest {
     }
 
     @Test
-    fun `Ascii separateIntoVerses sign-extends bytes above 0x7F, so only ASCII input decodes correctly`() {
-        assertArrayEquals(arrayOf("￩"), OldVerseTextDecoder.Ascii().separateIntoVerses(bytes(0xe9, 0x0a), false))
+    fun `Ascii separateIntoVerses decodes Latin-1 consistently`() {
+        assertArrayEquals(arrayOf("é"), OldVerseTextDecoder.Ascii().separateIntoVerses(bytes(0xe9, 0x0a), false))
     }
 
     @Test
     fun `Ascii makeIntoSingleString maps each byte to the char with the same value`() {
         assertEquals("Aé\n", OldVerseTextDecoder.Ascii().makeIntoSingleString(bytes(0x41, 0xe9, 0x0a), false))
         assertEquals("abÉ", OldVerseTextDecoder.Ascii().makeIntoSingleString(bytes(0x41, 0x42, 0xc9), true))
+    }
+    @Test
+    fun `Ascii handles long verses without mutating the input`() {
+        val verse = "A".repeat(12000) + "Éé"
+        val input = "$verse\n".toByteArray(Charsets.ISO_8859_1)
+        val original = input.copyOf()
+        val decoder = OldVerseTextDecoder.Ascii()
+        assertArrayEquals(arrayOf(verse), decoder.separateIntoVerses(input, false))
+        assertArrayEquals(arrayOf("a".repeat(12000) + "Éé"), decoder.separateIntoVerses(input, true))
+        assertArrayEquals(original, input)
+        assertEquals("a".repeat(12000) + "Éé\n", decoder.makeIntoSingleString(input, true))
+        assertArrayEquals(original, input)
     }
 }

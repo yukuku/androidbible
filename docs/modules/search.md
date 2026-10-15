@@ -77,3 +77,11 @@ Recent searches are stored as JSON in preferences (`Prefkey.searchHistory`), bou
 ## Result Display
 
 Results show verse reference and text with keyword highlighting. `TextColorUtil` adapts highlight colors to the current theme's background brightness. Users can select results to navigate to that verse in `IsiActivity`.
+
+### Case normalization
+
+Bible search normalizes queries and UTF-8 verse text with locale-independent,
+character-by-character `Character.toLowerCase`. This keeps matching stable when
+the device language changes and avoids context-sensitive or expanding string
+lowercase mappings that differ from the text decoders. Legacy YES1 ASCII text
+uses ISO-8859-1 decoding and folds only ASCII A through Z.

@@ -17,19 +17,6 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import yuku.afw.App
 
-/**
- * Lifecycle tests for [DownloadMapper], focused on the post-download cleanup
- * contract.
- *
- * Background: [VersionDownloadWorker] writes to a temp file whose name is
- * derived deterministically from the `downloadKey`. The worker always
- * starts from byte 0 (no Range-based resume), so leftover bytes in cache
- * are never trusted — but cleaning them up after the receiver consumes
- * them keeps the cache from accumulating dead files.
- *
- * [DownloadMapper.consumeAndRemove] is the receiver-side hook that does
- * that cleanup once the download has been finalized.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
 class DownloadMapperTest {
@@ -82,20 +69,34 @@ class DownloadMapperTest {
     }
 
     @Test
-    fun `remove drops the row without touching the temp file`() {
+    fun `remove drops the row and deletes the temp file`() {
         val mapper = DownloadMapper.instance
         val key = "version:preset_name:test-remove-${System.nanoTime()}"
 
         val id = mapper.seedRowForTest(key, tempFile.absolutePath)
         mapper.remove(id)
 
-        // `remove` is the cancel/failure path. It doesn't delete the temp
-        // file: cleanup is the next worker's job (the worker always starts
-        // from byte 0 and discards any pre-existing destFile).
-        assertTrue(
-            "remove must not touch the temp file",
-            tempFile.exists(),
-        )
+        assertFalse(tempFile.exists())
         assertNull("row must be removed from the in-memory map", mapper.getDownloadedFilePath(id))
+    }
+    @Test
+    fun `startup reconciliation cancels orphaned work and preserves tracked files`() {
+        val mapper = DownloadMapper.instance
+        val manager = WorkManager.getInstance(App.context)
+        val request = androidx.work.OneTimeWorkRequest.Builder(VersionDownloadWorker::class.java)
+            .setInitialDelay(1, java.util.concurrent.TimeUnit.DAYS)
+            .addTag(DownloadMapper.WORK_TAG)
+            .build()
+        manager.enqueue(request).result.get()
+        val activeFile = File(tempFile.parentFile, "tracked.tmp").apply { writeText("active") }
+        val id = mapper.seedRowForTest("tracked", activeFile.absolutePath)
+        try {
+            mapper.reconcilePersistedWork(manager)
+            org.junit.Assert.assertEquals(androidx.work.WorkInfo.State.CANCELLED, manager.getWorkInfoById(request.id).get()!!.state)
+            assertFalse(tempFile.exists())
+            assertTrue(activeFile.exists())
+        } finally {
+            mapper.consumeAndRemove(id)
+        }
     }
 }
