@@ -224,8 +224,7 @@ Detailed documentation for each major app feature:
 - [Binary Formats](docs/binary-formats.md) — YES2, Bintex, RPB file format specs
 - [Storage & Database](docs/storage.md) — SQLite schema, preferences, file storage
 - [Backend Communication](docs/backend-communication.md) — API endpoints, download flows
-- [Tech Debt & Improvements](docs/tech-debt.md) — Known issues with specific file/line references, potential bugs, deprecated APIs
-- [Tech Debt Remediation Plan](docs/tech-debt-remediation.md) — Prioritized remediation tasks with BRICE evaluation, steps, difficulty, and suggested sprint plan
+- [Tech Debt Backlog](docs/tech-debt-remediation.md): the single index for open, partial, and completed REM records, with problem descriptions, priorities, and next steps
 
 ## Code Conventions
 
@@ -262,7 +261,7 @@ Detailed documentation for each major app feature:
 
 ## Documentation Conventions
 
-- **Do not include SHAs, commit hashes, line numbers, line counts, or library version numbers** in long-lived docs (`docs/tech-debt.md`, `docs/tech-debt-remediation.md`, this `AGENTS.md`, etc.). They rot on rebase/squash-merge, refactors, and dependency bumps, and are fragile to maintain. Refer to code by symbol name (class/method), and point at `gradle/libs.versions.toml` instead of naming dependency versions. When recording that a step is done, describe what shipped (file paths, test counts, scope) and use an absolute date — never a SHA. (Older entries in these docs may still reference SHAs; leave them alone unless explicitly asked to clean up.)
+- **Do not include SHAs, commit hashes, line numbers, line counts, or library version numbers** in long-lived docs (`docs/tech-debt-remediation.md`, its per-item REM records, this `AGENTS.md`, etc.). They rot on rebase/squash-merge, refactors, and dependency bumps, and are fragile to maintain. Refer to code by symbol name (class/method), and point at `gradle/libs.versions.toml` instead of naming dependency versions. When recording that a step is done, describe what shipped (file paths, test counts, scope) and use an absolute date, never a SHA. (Older entries in these docs may still reference SHAs; leave them alone unless explicitly asked to clean up.)
 
 ## Important Caveats
 

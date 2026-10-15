@@ -1,6 +1,5 @@
 # REM-12: Replace DragSortListView with ItemTouchHelper ✅ COMPLETED
 
-**Addresses:** TD-12
 **Module:** Markers (label management)
 **BRICE:** B=2 R=2 I=4 C=4 E=5 → **3.4**
 **Phase:** 2 — Architecture Improvements

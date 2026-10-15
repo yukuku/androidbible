@@ -1,6 +1,5 @@
 # ~~REM-19: Replace PRDownloaderFixed with WorkManager Downloads~~ ✅ COMPLETED (2026-05-13)
 
-**Addresses:** TD-12
 **Module:** Downloads
 **BRICE:** B=2 R=2 I=2 C=3 E=5 → **2.8**
 **Phase:** 3 — Modernization
