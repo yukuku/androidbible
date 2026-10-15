@@ -1,6 +1,7 @@
 package yuku.alkitab.base.verses
 
 import android.app.Activity
+import android.content.ClipData
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
@@ -13,13 +14,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.BroadcastFrameClock
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.createFontFamilyResolver
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.sp
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -213,6 +223,51 @@ class VerseItemComposeInteractionTest {
         assertEquals(1, recorder.verseClicks)
     }
 
+    private fun measureText(text: String, width: Int = ROW_WIDTH_PX): TextLayoutResult = TextMeasurer(
+        defaultFontFamilyResolver = createFontFamilyResolver(ApplicationProvider.getApplicationContext()),
+        defaultDensity = Density(1f),
+        defaultLayoutDirection = LayoutDirection.Ltr,
+    ).measure(
+        text = AnnotatedString(text),
+        style = TextStyle(fontSize = 17.sp),
+        constraints = Constraints(maxWidth = width),
+    )
+
+    @Test
+    fun `a link ending at a line wrap has no hit target on the next line`() {
+        val layout = measureText("MMMMMMMMMMMMMMMMMMMM", width = 80)
+        assertTrue(layout.lineCount > 1)
+        val end = layout.getLineEnd(0)
+        val rects = boundingRectsFor(layout, 0, end)
+
+        assertTrue(rects.isNotEmpty())
+        assertTrue(rects.all { it.bottom <= layout.getLineBottom(0) })
+        assertTrue(rects.all { it.width > 0f })
+    }
+
+    @Test
+    fun `right to left links have non inverted hit targets`() {
+        val text = "שלום"
+        val layout = measureText(text)
+        val rects = boundingRectsFor(layout, 0, text.length)
+
+        assertTrue(rects.isNotEmpty())
+        assertTrue(rects.all { it.width > 0f && it.height > 0f })
+        assertTrue(rects.any { it.contains(layout.getBoundingBox(0).center) })
+        assertTrue(rects.any { it.contains(layout.getBoundingBox(text.lastIndex).center) })
+    }
+
+    @Test
+    fun `pin drops accept only valid preset ids`() {
+        assertNull(progressMarkPresetId(null))
+        for (payload in listOf("", "bad", "-1", AttributeView.PROGRESS_MARK_TOTAL_COUNT.toString())) {
+            assertNull(progressMarkPresetId(ClipData.newPlainText("pin", payload)))
+        }
+        for (presetId in 0 until AttributeView.PROGRESS_MARK_TOTAL_COUNT) {
+            assertEquals(presetId, progressMarkPresetId(ClipData.newPlainText("pin", presetId.toString())))
+        }
+    }
+
     @Test
     fun `rebinding an attached verse row renders its new text and routes taps to its new callback`() {
         val first = TapRecorder()
@@ -230,6 +285,29 @@ class VerseItemComposeInteractionTest {
         assertEquals(1, second.verseClicks)
         assertEquals("the rebound row must not call the first callback", 1, first.verseClicks)
         assertTrue(second.linkClicks.isEmpty())
+    }
+
+    @Test
+    fun `rebinding between plain and ruby text updates row height and tap routing`() {
+        val plain = TapRecorder()
+        val view = composeRow("@@word", plain)
+        val plainHeight = view.measuredHeight
+        assertTrue(plainHeight > 0)
+
+        val ruby = TapRecorder()
+        view.bind(buildState("@@@<r=reading@>word@/", ruby))
+        layoutRow(view)
+        assertTrue("ruby needs a band above the base text", view.measuredHeight > plainHeight)
+        tap(view, 10f, view.measuredHeight - 6f)
+        assertEquals(1, ruby.verseClicks)
+        assertEquals(0, plain.verseClicks)
+
+        view.bind(buildState("@@word", plain))
+        layoutRow(view)
+        assertEquals(plainHeight, view.measuredHeight)
+        tap(view, 10f, view.measuredHeight - 6f)
+        assertEquals(1, plain.verseClicks)
+        assertEquals(1, ruby.verseClicks)
     }
 
     private fun resolveTypeface(typeface: Typeface?, bold: Boolean): Typeface {

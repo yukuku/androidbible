@@ -175,7 +175,7 @@ data class VersesDataModel(
      * @return verse_1 or 0 if doesn't make sense
      */
     fun getVerse_1FromPosition(position: Int): Int {
-        if (position < 0) return 0
+        if (position < 0 || itemPointer_.isEmpty()) return 0
 
         val pos = position.coerceAtMost(itemPointer_.size - 1)
 

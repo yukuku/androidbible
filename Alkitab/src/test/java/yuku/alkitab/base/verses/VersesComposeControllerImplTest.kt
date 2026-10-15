@@ -153,6 +153,37 @@ class VersesComposeControllerImplTest {
     }
 
     @Test
+    fun `navigation and selection queries tolerate a chapter becoming empty`() {
+        val controller = VersesComposeControllerImpl(view, "test", versesDataModel = dataModel(10))
+        controller.checkVerses(IntArrayList().apply { add(3) }, callSelectedVersesListener = false)
+        controller.versesDataModel = VersesDataModel.EMPTY
+
+        assertEquals(0, controller.getCheckedVerses_1().size())
+        assertEquals(0, controller.getVerse_1BasedOnScroll())
+        assertEquals(0, (controller.pageUp() as VersesController.PressResult.Consumed).targetVerse_1)
+        assertEquals(0, (controller.pageDown() as VersesController.PressResult.Consumed).targetVerse_1)
+        assertEquals(0, (controller.verseUp() as VersesController.PressResult.Consumed).targetVerse_1)
+        assertEquals(0, (controller.verseDown() as VersesController.PressResult.Consumed).targetVerse_1)
+    }
+
+    @Test
+    fun `attention batches nearby requests without reviving expired verses`() {
+        var now = 1_000L
+        val controller = VersesComposeControllerImpl(view, "test", versesDataModel = dataModel(10), currentTimeMillis = { now })
+        controller.callAttentionForVerse(2)
+        controller.callAttentionForVerse(3)
+        assertTrue(controller.attentionStartForVerse(2) != 0L)
+        assertEquals(controller.attentionStartForVerse(2), controller.attentionStartForVerse(3))
+
+        now += ATTENTION_DURATION_MS + 1
+        controller.callAttentionForVerse(4)
+
+        assertEquals(0L, controller.attentionStartForVerse(2))
+        assertEquals(0L, controller.attentionStartForVerse(3))
+        assertTrue(controller.attentionStartForVerse(4) != 0L)
+    }
+
+    @Test
     fun `verseDown and verseUp stay within chapter bounds`() {
         val controller = VersesComposeControllerImpl(view, "test")
         controller.versesDataModel = dataModel(3)
