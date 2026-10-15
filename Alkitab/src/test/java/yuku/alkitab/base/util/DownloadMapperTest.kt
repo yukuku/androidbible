@@ -5,8 +5,9 @@ import androidx.work.Configuration
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import androidx.work.testing.SynchronousExecutor
+import androidx.work.testing.WorkManagerTestInitHelper
 import java.io.File
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -31,16 +32,11 @@ class DownloadMapperTest {
         val app = RuntimeEnvironment.getApplication()
         App.context = app
 
-        // `DownloadMapper.remove()` calls into WorkManager. The production app
-        // initialises WorkManager via its `Configuration.Provider`; in tests we
-        // bring up a minimal instance so the cancel call doesn't blow up.
-        if (!WorkManager.isInitialized()) {
-            val config = Configuration.Builder()
-                .setExecutor(Executors.newSingleThreadExecutor())
-                .setTaskExecutor(Executors.newSingleThreadExecutor())
-                .build()
-            WorkManager.initialize(app, config)
-        }
+        WorkManagerTestInitHelper.initializeTestWorkManager(app,
+            Configuration.Builder()
+                .setExecutor(SynchronousExecutor())
+                .setTaskExecutor(SynchronousExecutor())
+                .build())
 
         val dir = File(app.cacheDir, "DownloadMapper-tmp").apply { mkdirs() }
         tempFile = File(dir, "DownloadMapper-test-${System.nanoTime()}.tmp")
@@ -51,6 +47,7 @@ class DownloadMapperTest {
     @After
     fun tearDown() {
         tempFile.delete()
+        WorkManagerTestInitHelper.closeWorkDatabase()
     }
 
     @Test
