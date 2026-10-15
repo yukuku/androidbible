@@ -59,7 +59,7 @@ class DebouncerTest {
     }
 
     @Test
-    fun `multiple debouncer instances reuse one worker thread and deliver independent results`() {
+    fun `multiple debouncer instances deliver independent results`() {
         val debouncers = List(12) { RecordingDebouncer(0, 1, null) }
 
         debouncers.forEachIndexed { index, debouncer ->
@@ -67,11 +67,57 @@ class DebouncerTest {
             awaitProcessingThenRunMainLooper(debouncer)
         }
 
-        val worker = debouncers.first().processThread
         debouncers.forEachIndexed { index, debouncer ->
-            assertSame(worker, debouncer.processThread)
             assertEquals(listOf(index.toString()), debouncer.results)
         }
+    }
+
+    @Test
+    fun `a blocked debouncer does not delay another instance`() {
+        val gate = CountDownLatch(1)
+        val blocked = RecordingDebouncer(0, 1, gate)
+        val independent = RecordingDebouncer(0, 1, null)
+
+        try {
+            blocked.submit("blocked")
+            assertTrue(blocked.processStarted.await(5, TimeUnit.SECONDS))
+            independent.submit("independent")
+            awaitProcessingThenRunMainLooper(independent)
+            assertEquals(listOf("INDEPENDENT"), independent.results)
+            assertEquals(emptyList<String>(), blocked.processed)
+        } finally {
+            gate.countDown()
+            awaitProcessingThenRunMainLooper(blocked)
+        }
+    }
+
+    @Test
+    fun `a failed process does not prevent later submissions from completing`() {
+        val failed = CountDownLatch(1)
+        val recovered = CountDownLatch(1)
+        val results = mutableListOf<String>()
+        val debouncer = object : Debouncer<String, String>(0) {
+            override fun process(payload: String): String {
+                if (payload == "fail") {
+                    failed.countDown()
+                    throw IllegalStateException("Expected test failure")
+                }
+                recovered.countDown()
+                return payload
+            }
+
+            override fun onResult(result: String) {
+                results.add(result)
+            }
+        }
+
+        debouncer.submit("fail")
+        assertTrue(failed.await(5, TimeUnit.SECONDS))
+        debouncer.submit("recover")
+        assertTrue(recovered.await(5, TimeUnit.SECONDS))
+        awaitMainLooperMessage()
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(listOf("recover"), results)
     }
 
     @Test

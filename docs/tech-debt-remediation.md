@@ -55,7 +55,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 ### From the REM-16 Kotlin conversion (2026-09)
 
-- [REM-46: Stop Debouncer From Leaking a Thread per Instance](tech-debt-remediation/REM-46-debouncer-thread-leak.md) ✅ **3.6** (completed 2026-10-15; shared scheduled executor)
+- [REM-46: Stop Debouncer From Leaking a Thread per Instance](tech-debt-remediation/REM-46-debouncer-thread-leak.md) ✅ **3.6** (completed 2026-10-15; coroutine delay and shared IO threads)
 - [REM-47: Close the Header File in YesReaderFactory on Read Failure](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md) ✅ **3.6** (completed 2026-10-15; scoped header reads close on failure)
 - [REM-48: Harden OldVerseTextDecoder.Ascii](tech-debt-remediation/REM-48-old-ascii-decoder.md) **3.0** (4,000-byte verse limit, inconsistent non-ASCII decoding, input mutation)
 
