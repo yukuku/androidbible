@@ -8,11 +8,14 @@ object InternalDbTxWrapper {
     fun transact(internal: InternalDb, action: (TxHandle) -> Unit) {
         val db = internal.helper.writableDatabase
         db.beginTransactionNonExclusive()
-        var committed = false
-        action { committed = true }
-        if (committed) {
-            db.setTransactionSuccessful()
+        try {
+            var isCommitted = false
+            action { isCommitted = true }
+            if (isCommitted) {
+                db.setTransactionSuccessful()
+            }
+        } finally {
+            db.endTransaction()
         }
-        db.endTransaction()
     }
 }

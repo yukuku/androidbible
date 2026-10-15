@@ -24,7 +24,10 @@ class ReadWriteStorageImpl : ReadonlyStorageImpl(), ReadWriteStorageInterface {
     }
 
     override fun replaceHistory(entries: List<History.Entry>) {
-        History.replaceAllEntries(entries)
+        synchronized(History) {
+            History.replaceAllEntries(entries)
+            History.save()
+        }
     }
 
     /**

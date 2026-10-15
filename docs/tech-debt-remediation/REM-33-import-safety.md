@@ -5,20 +5,16 @@
 **BRICE:** B=4 R=4 I=4 C=4 E=3 → **3.8**
 **Phase:** 1 — Quick Wins & Safety Fixes (2026-07 audit)
 
-**Status:** Not started.
+**Status:** Done (2026-10-15).
 
-**Steps:**
-1. Wrap `InternalDbTxWrapper.transact`'s action in `try/finally { db.endTransaction() }` (mirror `SyncApplier`). Add a regression test that throws mid-import and asserts the DB is writable afterwards and no partial rows were committed.
-2. Make `ImportProcess.history()` transactional-in-effect:
-   - During a simulation run (`actualRun=false`), do not touch the live `History` singleton at all (dry-run against a copy, or defer `replaceAllEntries` until the commit callback).
-   - On an actual run, call `History.save()` inside the commit path so a process kill can't drop the imported history, and so the sync notification fires deterministically.
-3. Implement the missing gid validation for `Marker_Label` rows (skip or fail rows whose marker/label gid isn't present in the file or the DB) — the TODO comment already marks the spot.
-4. Decide whether export should include progress for deleted reading plans (sync preserves it; export currently drops it). Aligning export with sync semantics is a one-line change in `ReadonlyStorageImpl.rpps()`.
-5. Extend `ImportProcess` tests with: invalid `kind` enum row, dangling `Marker_Label` gid, simulation-then-cancel leaves history untouched.
+**Implemented:**
+1. `InternalDbTxWrapper.transact` always ends its transaction in `finally`. Exceptions roll back writes, including exceptions after the action requests a commit.
+2. `ImportProcess` stages history entries and replaces them only after a successful actual database import. Simulation and database failures leave live and saved history untouched. `ReadWriteStorageImpl.replaceHistory` replaces and saves history under the same lock, using `History.save` to persist and notify sync immediately.
+3. Invalid marker kinds and dangling `Marker_Label` gids reject the whole import. References may resolve against the local database or entities anywhere in the incoming file.
+4. `ReadonlyStorageImpl.rpps` includes progress for deleted plans. Their unavailable start time is exported as `0`, preserving the numeric JSON format. Plans with no completed readings are also retained.
+5. `ImportProcessTest` exercises real SQLite rollback and subsequent writes, history preview/cancel, failed and successful imports, empty and deselected history, marker-label validation with forward and database references, and deleted-plan progress export/import.
 
-**Failure modes today:** a *canceled* import simulation permanently replaces reading history on all synced devices; a *failed* import leaves an open write transaction (app-wide DB writes block, ANR) while telling the user everything was rolled back.
-
-**Difficulty:** Easy-Medium (~1 day including tests).
+**Reproduction:** Preview a backup containing different history, then cancel and save history: the preview must not replace local entries. Import a valid marker followed by an invalid marker kind: no imported rows may remain and subsequent database writes must succeed. Import an assignment with a missing marker or label: reject it without committing other rows.
 
 ---
 
