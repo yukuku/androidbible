@@ -5,7 +5,6 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import yuku.alkitab.base.App
@@ -21,6 +20,8 @@ object SyncKotlin {
         forced: Boolean,
         syncSetNames: Array<String> = SyncShadow.ALL_SYNC_SET_NAMES,
     ) {
+        if (syncSetNames.isEmpty()) return
+
         val builder = OneTimeWorkRequestBuilder<SyncAdapter>()
         builder.setInputData(
             workDataOf(
@@ -39,14 +40,10 @@ object SyncKotlin {
 
         val workManager = WorkManager.getInstance(App.context)
 
-        if (workManager.getWorkInfosForUniqueWork(UNIQUE_WORK_NAME).get().firstOrNull()?.state == WorkInfo.State.RUNNING) {
-            SyncRecorder.log(SyncRecorder.EventKind.worker_is_currently_running, null)
-        } else {
-            workManager.enqueueUniqueWork(
-                uniqueWorkName = UNIQUE_WORK_NAME,
-                existingWorkPolicy = ExistingWorkPolicy.REPLACE,
-                request = request,
-            )
-        }
+        workManager.enqueueUniqueWork(
+            uniqueWorkName = UNIQUE_WORK_NAME,
+            existingWorkPolicy = ExistingWorkPolicy.APPEND_OR_REPLACE,
+            request = request,
+        )
     }
 }

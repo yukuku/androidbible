@@ -15,7 +15,7 @@
 3. Evaluate an incremental typed wrapper or DataStore/proto migration. Account for synchronous Java callers, startup, backup/restore, and existing transaction semantics before choosing a storage change.
 4. Verify existing-install migration, default values, type mismatches, and refresh behavior.
 
-The transaction cleanup fix is recorded in [REM-02](REM-02-preferences-hold-unhold.md). The editor concurrency race belongs to [REM-34](REM-34-sync-delivery.md) and should be fixed independently of a broader preference-storage migration.
+The transaction cleanup fix is recorded in [REM-02](REM-02-preferences-hold-unhold.md). The editor concurrency race is fixed by [REM-34](REM-34-sync-delivery.md), independently of a broader preference-storage migration.
 
 ---
 

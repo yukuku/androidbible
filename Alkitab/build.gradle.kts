@@ -600,6 +600,7 @@ dependencies {
     implementation(libs.fastscroll)
 
     // Tests
+    testImplementation(libs.androidx.work.testing)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.robolectric)

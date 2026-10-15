@@ -33,7 +33,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 - [REM-33: Make Data-Transfer Import Safe](tech-debt-remediation/REM-33-import-safety.md) ✅ **3.8** (completed 2026-10-15; safe previews, transaction cleanup, reference validation, deleted-plan progress backups)
 - [REM-35: Fix "Update Song Book" dataFormatVersion Handling](tech-debt-remediation/REM-35-songbook-update-dfv.md) ✅ **3.8** (completed 2026-07-20; mixed-version books are replaced by book name and stored as current JSON)
 - [REM-36: Fix YES2 ASCII Search Decoder](tech-debt-remediation/REM-36-yes2-ascii-decoder.md) — **3.8** (one-character fix; search broken for ASCII-encoded versions)
-- [REM-34: Fix Sync Request Delivery and Shared-State Races](tech-debt-remediation/REM-34-sync-delivery.md) — **3.4** (dropped sync requests, shared-state races)
+- [REM-34: Fix Sync Request Delivery and Shared-State Races](tech-debt-remediation/REM-34-sync-delivery.md) ✅ **3.4** (completed 2026-10-15; persisted delivery, shared-state guards)
 
 ## Phase 2: Architecture Improvements (BRICE 3.0–3.9)
 
@@ -81,8 +81,8 @@ Summary reconciled with the implementation, test sources, and task records on 20
 ## Open Work Awaiting Prioritization
 
 - [REM-49: Simplify Bible Database SQL and Storage Plumbing](tech-debt-remediation/REM-49-bible-storage-plumbing.md): handwritten queries, duplicate reordering logic, and large SyncShadow chunk reads. Existing DAO and statement-lifetime fixes are recorded in the same item.
-- [REM-50: Centralize Sync API Calls and Failure Handling](tech-debt-remediation/REM-50-sync-api-boundary.md): endpoint construction, error classification, and transient data-sync retries. Queue delivery remains in REM-34; conflicts remain in REM-43.
-- [REM-51: Make Preference Types and Cache Invalidation Explicit](tech-debt-remediation/REM-51-preferences-architecture.md): typed keys/defaults and cache ownership. Hold/unhold safety is complete in REM-02; the editor race remains in REM-34.
+- [REM-50: Centralize Sync API Calls and Failure Handling](tech-debt-remediation/REM-50-sync-api-boundary.md): endpoint construction, error classification, and transient data-sync retries. Queue delivery is complete in REM-34; conflicts remain in REM-43.
+- [REM-51: Make Preference Types and Cache Invalidation Explicit](tech-debt-remediation/REM-51-preferences-architecture.md): typed keys/defaults and cache ownership. Hold/unhold safety is complete in REM-02; editor synchronization is complete in REM-34.
 - [REM-52: Review the FancyShowCaseView Dependency](tech-debt-remediation/REM-52-showcase-dependency.md): evaluate maintenance, Android compatibility, and tip anchoring alongside reader UI work.
 
 ---
@@ -110,7 +110,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 | [REM-12](tech-debt-remediation/REM-12-itemtouchhelper.md)               | ~~Replace DragSortListView~~ ✅                                       | **3.4** | 2     |
 | [REM-14](tech-debt-remediation/REM-14-material-dialogs.md)              | ~~Replace material-dialogs~~ ✅                                       | **3.4** | 2     |
 | [REM-18](tech-debt-remediation/REM-18-test-coverage.md)                 | ~~Add test coverage~~ ✅                                              | **3.4** | 2     |
-| [REM-34](tech-debt-remediation/REM-34-sync-delivery.md)                 | Fix sync delivery + shared-state races (2026-07 audit)               | **3.4** | 1     |
+| [REM-34](tech-debt-remediation/REM-34-sync-delivery.md)                 | ~~Fix sync delivery + shared-state races~~ ✅                         | **3.4** | 1     |
 | [REM-38](tech-debt-remediation/REM-38-reader-lifecycle.md)              | Reader lifecycle fixes (2026-07 audit)                               | **3.4** | 2     |
 | [REM-39](tech-debt-remediation/REM-39-text-decoding.md)                 | Text decoding correctness (2026-07 audit)                            | **3.4** | 2     |
 | [REM-40](tech-debt-remediation/REM-40-download-robustness.md)           | Version download robustness (2026-07 audit)                          | **3.4** | 2     |

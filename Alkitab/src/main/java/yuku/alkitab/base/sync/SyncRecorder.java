@@ -46,6 +46,7 @@ public class SyncRecorder {
 		sync_to_server_post_response_ok(103, OK),
 		sync_to_server_post_error_syntax(110, ERROR),
 		sync_to_server_post_error_io(111, ERROR),
+		sync_adapter_error_unexpected(112, ERROR),
 		sync_to_server_not_success(120, ERROR),
 		sync_to_server_error_append_delta_null(121, ERROR),
 		sync_to_server_got_success_data(122, INFO),

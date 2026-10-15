@@ -19,11 +19,11 @@ public class Preferences {
 	private static int held = 0;
 	private static final WeakHashMap<SharedPreferences.OnSharedPreferenceChangeListener, Void> observers = new WeakHashMap<>();
 
-	public static void invalidate() {
+	public static synchronized void invalidate() {
 		dirty = true;
 	}
 
-	private static SharedPreferences.Editor getEditor(SharedPreferences pref) {
+	private static synchronized SharedPreferences.Editor getEditor(SharedPreferences pref) {
 		if (currentEditor == null) {
 			currentEditor = pref.edit();
 		}
@@ -105,7 +105,7 @@ public class Preferences {
 		setInt(key.toString(), val);
 	}
 
-	public static void setInt(String key, int val) {
+	public static synchronized void setInt(String key, int val) {
 		SharedPreferences pref = read();
 		getEditor(pref).putInt(key, val);
 		commitIfNotHeld();
@@ -115,7 +115,7 @@ public class Preferences {
 		setFloat(key.toString(), val);
 	}
 
-	public static void setFloat(String key, float val) {
+	public static synchronized void setFloat(String key, float val) {
 		SharedPreferences pref = read();
 		getEditor(pref).putFloat(key, val);
 		commitIfNotHeld();
@@ -125,7 +125,7 @@ public class Preferences {
 		setLong(key.toString(), val);
 	}
 
-	public static void setLong(String key, long val) {
+	public static synchronized void setLong(String key, long val) {
 		SharedPreferences pref = read();
 		getEditor(pref).putLong(key, val);
 		commitIfNotHeld();
@@ -135,7 +135,7 @@ public class Preferences {
 		setString(key.toString(), val);
 	}
 
-	public static void setString(String key, String val) {
+	public static synchronized void setString(String key, String val) {
 		SharedPreferences pref = read();
 		getEditor(pref).putString(key, val);
 		commitIfNotHeld();
@@ -151,7 +151,7 @@ public class Preferences {
 		setBoolean(key.toString(), val);
 	}
 
-	public static void setBoolean(String key, boolean val) {
+	public static synchronized void setBoolean(String key, boolean val) {
 		SharedPreferences pref = read();
 		getEditor(pref).putBoolean(key, val);
 		commitIfNotHeld();
@@ -171,7 +171,7 @@ public class Preferences {
 		remove(key.toString());
 	}
 
-	public static void remove(String key) {
+	public static synchronized void remove(String key) {
 		SharedPreferences pref = read();
 		getEditor(pref).remove(key);
 		commitIfNotHeld();

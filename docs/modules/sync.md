@@ -17,6 +17,12 @@ Cloud sync enables sharing bookmarks, notes, highlights, reading progress, and h
 - `Alkitab/src/main/java/yuku/alkitab/base/sync/SyncRecorder.java` — Sync event logging
 - `Alkitab/src/main/java/yuku/alkitab/base/sync/SyncKotlin.kt` — Kotlin wrapper for scheduling
 
+## Request delivery
+
+`Sync.notifySyncNeeded` filters disabled sets and sets whose local updates are caused by sync. It retains the remaining names in a mixed request. `SyncKotlin.syncNow` persists each nonempty request in the unique WorkManager `sync` chain with `APPEND_OR_REPLACE`. Work executes serially; a request received during an active attempt runs after it, including requests for the same set.
+
+Normal requests require network connectivity. Forced requests omit that constraint but remain ordered behind earlier work. Sync errors are recorded in the sync log and in the worker's `isSyncSuccessful` output. The delivery worker returns success after a handled attempt failure so WorkManager does not cancel queued dependents. Unexpected runtime exceptions are isolated per set. This delivery policy does not add automatic network retries.
+
 ## Protocol
 
 ### Endpoint
