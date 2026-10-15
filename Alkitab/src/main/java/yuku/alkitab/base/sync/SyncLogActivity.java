@@ -27,8 +27,15 @@ import yuku.alkitab.debug.R;
 public class SyncLogActivity extends BaseActivity {
 	ListView lsLog;
 	LogAdapter adapter;
+    private final android.os.Handler refreshHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable refresh = new Runnable() {
+        @Override public void run() {
+            adapter.load();
+            refreshHandler.postDelayed(this, 2000);
+        }
+    };
 
-	static final ThreadLocal<SimpleDateFormat> dateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US));
+	static final ThreadLocal<SimpleDateFormat> dateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.US));
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -44,13 +51,47 @@ public class SyncLogActivity extends BaseActivity {
 
 		lsLog = findViewById(R.id.lsLog);
 		lsLog.setAdapter(adapter = new LogAdapter());
+        SyncKotlin.observeWork(this);
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		adapter.load();
+        refresh.run();
 	}
+
+    @Override
+    protected void onStop() {
+        refreshHandler.removeCallbacks(refresh);
+        super.onStop();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final android.view.Menu menu) {
+        menu.add(0, 1, 0, R.string.bl_selection_copy);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final android.view.MenuItem item) {
+        if (item.getItemId() == 1) {
+            adapter.load();
+            final StringBuilder text = new StringBuilder("Sync diagnostics (newest first; up to 500 stored events)\n");
+            text.append("App ").append(App.getVersionName()).append(" (").append(App.getVersionCode())
+                .append("); Android ").append(android.os.Build.VERSION.SDK_INT).append("\n");
+            if (!SyncRecorder.fallbackLogs().isEmpty()) text.append("Diagnostic storage unavailable; some events are memory-only.\n");
+            for (final SyncLog log : adapter.logs) {
+                text.append(dateFormat.get().format(log.createTime)).append(" ");
+                final SyncRecorder.EventKind kind = SyncRecorder.EventKind.fromCode(log.kind_code);
+                text.append(log.kind_code).append(" ").append(kind == null ? "unknown" : kind.name())
+                    .append(" ").append(log.syncSetName == null ? "" : SyncDiagnostics.safeSet(log.syncSetName))
+                    .append("\n").append(SyncDiagnostics.safeParams(log.params)).append("\n\n");
+            }
+            yuku.alkitab.base.util.ClipboardUtil.copyToClipboard(text);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 	public static Intent createIntent() {
 		return new Intent(App.context, SyncLogActivity.class);
@@ -61,7 +102,14 @@ public class SyncLogActivity extends BaseActivity {
 		final float density = getResources().getDisplayMetrics().density;
 
 		void load() {
-			logs = App.services.storage.getDb().listLatestSyncLog(500);
+			try {
+                logs = new java.util.ArrayList<>(App.services.storage.getDb().listLatestSyncLog(SyncDiagnostics.MAX_ROWS));
+            } catch (RuntimeException error) {
+                SyncRecorder.error("gather", null, error);
+                logs = new java.util.ArrayList<>();
+            }
+            logs.addAll(SyncRecorder.fallbackLogs());
+            logs.sort((left, right) -> right.createTime.compareTo(left.createTime));
 			notifyDataSetChanged();
 		}
 
@@ -85,19 +133,19 @@ public class SyncLogActivity extends BaseActivity {
 					sb.append(String.valueOf(log.kind_code));
 					sb.setSpan(new BackgroundColorSpan(0xff222222), sb_len, sb.length(), 0);
 				} else {
-					sb.append(kind.toString());
+					sb.append(String.valueOf(kind.code)).append(" ").append(kind.toString());
 					sb.setSpan(new BackgroundColorSpan(kind.backgroundColor), sb_len, sb.length(), 0);
 				}
 
 				if (log.syncSetName != null) {
 					sb.append(" ");
-					sb.append(log.syncSetName);
+					sb.append(SyncDiagnostics.safeSet(log.syncSetName));
 				}
 			}
 
 			if (log.params != null) {
 				final int sb_len0 = sb.length();
-				for (final Map.Entry<String, Object> entry : log.params.entrySet()) {
+				for (final Map.Entry<String, Object> entry : SyncDiagnostics.safeParams(log.params).entrySet()) {
 					sb.append("\n");
 					final int sb_len = sb.length();
 					sb.append(entry.getKey());

@@ -110,7 +110,7 @@ public class Fcm {
                     // Require the user to click a button again, or perform exponential back-off.
                     final Exception ex = task.getException();
                     if (ex != null) {
-                        AppLog.e(TAG, "Error :" + ex.getMessage(), ex);
+                        SyncRecorder.error("fcm", null, ex);
                     }
                     return;
                 }
@@ -120,7 +120,7 @@ public class Fcm {
                 if (result == null) return;
 
                 final String registrationId = result.getToken();
-                AppLog.i(TAG, "Device registered, registration ID=" + registrationId);
+                AppLog.i(TAG, "Device registered for FCM");
 
                 // You should send the registration ID to your server over HTTP
                 while (true) {

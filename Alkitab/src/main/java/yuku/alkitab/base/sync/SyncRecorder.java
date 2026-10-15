@@ -22,6 +22,13 @@ public class SyncRecorder {
 	static final int ERROR = 0xff993333;
 
 	public enum EventKind {
+		diagnostic_stage(1, INFO),
+		diagnostic_error(2, ERROR),
+		schedule_requested(3, INFO),
+		schedule_accepted(4, INFO),
+		sync_skipped(5, INFO),
+		worker_stopped(6, ERROR),
+		http_response(7, INFO),
 		login_attempt(10, INFO),
 		register_attempt(11, INFO),
 		login_failed(12, ERROR),
@@ -81,26 +88,46 @@ public class SyncRecorder {
 		}
 	}
 
-	static final HashMap<String, Object> reusedMap = new HashMap<>();
+    private static final java.util.ArrayDeque<yuku.alkitab.base.model.SyncLog> fallback = new java.util.ArrayDeque<>();
 
-	public static void log(@NonNull final EventKind kind, @Nullable final String syncSetName, final Object... kvpairs) {
-		final String params;
-		if (kvpairs.length == 0) {
-			params = null;
-		} else {
-			synchronized (reusedMap) {
-				reusedMap.clear();
-				for (int i = 0; i < kvpairs.length; i += 2) {
-					final String k = kvpairs[i].toString();
-					final Object v = kvpairs[i + 1];
-					reusedMap.put(k, v);
-				}
-				params = App.getDefaultGson().toJson(reusedMap);
-			}
-		}
+    public static void log(@NonNull final EventKind kind, @Nullable final String syncSetName, final Object... kvpairs) {
+        final java.util.Map<String, Object> values = new java.util.LinkedHashMap<>();
+        for (int i = 0; i + 1 < kvpairs.length && values.size() < SyncDiagnostics.MAX_FIELDS; i += 2) {
+            if (kvpairs[i] instanceof String) values.put((String) kvpairs[i], kvpairs[i + 1]);
+        }
+        final java.util.Map<String, Object> safe = SyncDiagnostics.safeParams(values);
+        final String set = SyncDiagnostics.safeSet(syncSetName);
+        final int time = Sqlitil.nowDateTime();
+        try {
+            App.services.storage.getDb().insertSyncLog(time, kind, set, App.getDefaultGson().toJson(safe));
+        } catch (RuntimeException error) {
+            // A database failure must neither break sync nor hide its diagnostics.
+            final yuku.alkitab.base.model.SyncLog row = new yuku.alkitab.base.model.SyncLog();
+            row.createTime = Sqlitil.toDate(time);
+            row.kind_code = kind.code;
+            row.syncSetName = set;
+            row.params = safe;
+            synchronized (SyncRecorder.class) {
+                if (fallback.size() >= 50) fallback.removeFirst();
+                fallback.addLast(row);
+            }
+            android.util.Log.w("SyncRecorder", "Diagnostic storage unavailable: " + SyncDiagnostics.causes(error));
+        }
+    }
 
-		App.services.storage.getDb().insertSyncLog(Sqlitil.nowDateTime(), kind, syncSetName, params);
-	}
+    public static synchronized java.util.List<yuku.alkitab.base.model.SyncLog> fallbackLogs() {
+        return new java.util.ArrayList<>(fallback);
+    }
+
+    public static void error(final String stage, final String set, final Throwable error) {
+        log(EventKind.diagnostic_error, set, "stage", stage, "category", SyncDiagnostics.category(error), "causes", SyncDiagnostics.causes(error));
+    }
+
+    public static void environment(final EventKind kind, final String workId) {
+        log(kind, null, "work_id", workId, "app_version", App.getVersionName(),
+            "version_code", App.getVersionCode(), "android", android.os.Build.VERSION.RELEASE,
+            "sdk", android.os.Build.VERSION.SDK_INT);
+    }
 
 	@Keep
 	static class LastSyncInfoEntryJson {

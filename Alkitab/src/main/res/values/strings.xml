@@ -560,4 +560,5 @@
     <string name="devotion_download_failed">Could not download this devotion. Check your connection and try again.</string>
     <string name="devotion_unavailable">This devotion is not available from the server yet.</string>
     <string name="devotion_retry">Retry</string>
+    <string name="sync_diagnostics_requested">Sync requested. Open View log for progress and diagnostic details.</string>
 </resources>

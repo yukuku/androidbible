@@ -141,7 +141,18 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
             put(Table.SyncLog.syncSetName.name, syncSetName)
             put(Table.SyncLog.params.name, params)
         }
-        helper.writableDatabase.insert(Table.SyncLog.tableName(), null, cv)
+        helper.writableDatabase.apply {
+            beginTransaction()
+            try {
+                insertOrThrow(Table.SyncLog.tableName(), null, cv)
+                execSQL("UPDATE SyncLog SET syncSetName = 'unknown' WHERE syncSetName NOT IN ('mabel', 'history', 'pins', 'rp')")
+                execSQL("UPDATE SyncLog SET params = NULL WHERE length(CAST(params AS BLOB)) > 4096")
+                execSQL("DELETE FROM SyncLog WHERE _id NOT IN (SELECT _id FROM SyncLog ORDER BY _id DESC LIMIT 500)")
+                setTransactionSuccessful()
+            } finally {
+                endTransaction()
+            }
+        }
     }
 
     fun listLatest(maxrows: Int): List<SyncLog> {
@@ -150,18 +161,24 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
             Table.SyncLog.tableName(),
             arrayOf(
                 Table.SyncLog.createTime.name, Table.SyncLog.kind.name,
-                Table.SyncLog.syncSetName.name, Table.SyncLog.params.name,
+                "substr(syncSetName, 1, 32)", "CASE WHEN length(CAST(params AS BLOB)) <= 4096 THEN params ELSE NULL END",
             ),
             null, null, null, null,
-            Table.SyncLog.createTime.name + " desc", maxrows.toString(),
+            "_id desc", maxrows.coerceIn(0, 500).toString(),
         ).use { c ->
             while (c.moveToNext()) {
                 res += SyncLog().apply {
                     createTime = Sqlitil.toDate(c.getInt(0))
                     kind_code = c.getInt(1)
-                    syncSetName = c.getString(2)
+                    syncSetName = yuku.alkitab.base.sync.SyncDiagnostics.safeSet(c.getString(2))
                     val paramsS = c.getString(3)
-                    params = if (paramsS == null) null else App.getDefaultGson().fromJson(paramsS, SYNC_LOG_PARAMS_TYPE)
+                    params = try {
+                        yuku.alkitab.base.sync.SyncDiagnostics.safeParams(
+                            if (paramsS == null) null else App.getDefaultGson().fromJson<Map<String, Any>>(paramsS, SYNC_LOG_PARAMS_TYPE)
+                        )
+                    } catch (_: RuntimeException) {
+                        emptyMap()
+                    }
                 }
             }
         }

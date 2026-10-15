@@ -67,3 +67,62 @@ Simple token-based auth stored in `Prefkey.sync_simpleToken`. Login flow is hand
 
 - **SyncShadow** — stores the last-synced state of each entity for conflict detection
 - **SyncLog** — audit log of sync operations for debugging (viewable in `SyncLogActivity`)
+
+## Support diagnostics
+
+In Sync settings, press **Sync Now**, then **View log**. The log refreshes while
+open. Use its **Copy** menu item to paste the log into a support message, or take
+a screenshot. Copy uses the normal app clipboard utility; nothing is uploaded
+automatically. Menu labels follow the in-app language; technical details are English.
+
+The log includes timestamps with timezone offsets, event codes, app version,
+Android release/API level, worker IDs, attempts, scheduling state, per-set stages,
+HTTP status, exception categories and bounded cause class chains. No-work events
+identify missing login, disabled sets, ongoing updates, unknown sets,
+empty scheduling requests, or empty worker input.
+
+Useful interpretations:
+
+- `schedule_requested` without `schedule_accepted`: inspect a `schedule` error.
+- `schedule_accepted` means WorkManager accepted the request, not that sync ran.
+  `ENQUEUED` or `BLOCKED` can mean it is waiting on earlier work in the serial
+  chain, Android scheduling, or network constraints. Automatic requests require
+  a connected network; forced requests retain their unconstrained network policy.
+- WorkManager `SUCCEEDED` means delivery completed. Check `is_sync_successful`
+  and `worker_result_failed` to determine whether the sync attempt succeeded.
+  Handled failures keep the delivery chain moving to subsequent requests.
+- `worker_stopped` or `CANCELLED`: Android/WorkManager stopped the work. This is
+  observational; diagnostics do not change cancellation or retry behavior.
+- `DNS`, `TIMEOUT`, `TLS`, `CONNECTION`: check connectivity and try another network.
+- HTTP 401/403 (`AUTH`): authentication was rejected. Check the signed-in account.
+  HTTP 429 or 5xx: retain the status and timestamp for support.
+- `JSON` at `parse`: the response could not be decoded. `DATABASE` at `gather` or
+  `apply`: local storage failed. Send the event and cause classes to support;
+  do not clear application data as a diagnostic step.
+- `apply_result` values such as `dirty_entities` or `dirty_sync_account` identify
+  existing conflict/account-change handling; they do not mean completion.
+
+Only allowlisted metadata is recorded. Account names, email, passwords, tokens,
+headers, URLs, request/response bodies, notes and other user content are omitted.
+Exception messages are omitted entirely because even ordinary I/O and JSON
+messages can contain credentials or user content. Legacy log parameters are also
+filtered when displayed or copied. Raw FCM tokens and sync responses are not
+sent to logcat by these sync paths.
+
+Storage retains at most 500 diagnostic rows after each insert, with bounded
+metadata fields. Oversized legacy parameter blobs are removed on insertion and
+excluded on reading. Only diagnostic log rows are pruned; sync shadows and user
+data are untouched. If diagnostic storage fails, up to 50 events remain in
+memory and can be copied during that process lifetime.
+
+WorkManager state snapshots are captured while Sync settings or View log is open.
+A process kill or failure before worker construction may leave only scheduling
+state, without a cause. The serial delivery chain, expedited-work configuration,
+retry policy and data conflict semantics are unchanged.
+
+The reports involving Alkitab 4.11.x on Android 10/11, including the Sync Now
+no-reaction report on Android 10 / One UI 2.1, are reproduction leads. Diagnostics
+on the current develop architecture do not establish or fix that historical
+root cause. Device checks should include offline Sync Now, queued sync,
+all sets disabled, background restrictions, an authentication rejection,
+and copy/screenshot review on Android 10/11 and a newer Android device.

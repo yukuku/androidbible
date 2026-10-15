@@ -11,7 +11,7 @@ class FcmMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        AppLog.d(TAG, "@@onReceive from: ${remoteMessage.from}")
+        AppLog.d(TAG, "FCM message received")
 
         val intent = Intent(this, FcmIntentService::class.java)
 
@@ -26,7 +26,7 @@ class FcmMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        AppLog.d(TAG, "Refreshed token: $token")
+        AppLog.d(TAG, "FCM token refreshed")
 
         Sync.notifyNewFcmRegistrationId(token)
     }

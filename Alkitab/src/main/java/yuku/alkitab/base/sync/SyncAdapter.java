@@ -12,7 +12,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,6 +40,32 @@ import yuku.alkitab.base.util.Sqlitil;
  * app through the serial WorkManager sync chain.
  */
 public class SyncAdapter extends Worker {
+    private String stage = "worker";
+
+    private void stage(final String value, final String set) {
+        stage = value;
+        SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, set, "stage", value, "work_id", getId().toString());
+    }
+
+    @Override
+    public void onStopped() {
+        SyncRecorder.log(SyncRecorder.EventKind.worker_stopped, null, "work_id", getId().toString());
+        super.onStopped();
+    }
+
+    String execute(final Call call, final String set) throws IOException {
+        stage("http", set);
+        try (okhttp3.Response response = call.execute()) {
+            SyncRecorder.log(SyncRecorder.EventKind.http_response, set, "http_status", response.code(),
+                "category", SyncDiagnostics.httpCategory(response.code()));
+            if (response.body() == null) {
+                SyncRecorder.log(SyncRecorder.EventKind.sync_skipped, set, "reason", "empty_response");
+                throw new IOException();
+            }
+            return response.body().string();
+        }
+    }
+
 	static final String TAG = SyncAdapter.class.getSimpleName();
 	public static final String EXTRA_SYNC_SET_NAMES = "syncSetNames";
 	public static final String EXTRA_IS_SYNC_SUCCESSFUL = "isSyncSuccessful";
@@ -108,9 +133,10 @@ public class SyncAdapter extends Worker {
 	@NonNull
 	@Override
 	public Result doWork() {
+        SyncRecorder.environment(SyncRecorder.EventKind.sync_adapter_on_perform, getId().toString());
+        SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "stage", "worker", "attempt", getRunAttemptCount());
 		final String[] syncSetNames = workerParams.getInputData().getStringArray(EXTRA_SYNC_SET_NAMES);
 
-		AppLog.d(TAG, "@@doWork syncSetNames:" + Arrays.toString(syncSetNames));
 		if (syncSetNames == null || syncSetNames.length == 0) {
 			SyncRecorder.log(SyncRecorder.EventKind.worker_result_succeeded_no_work_needed, null);
 			return Result.success();
@@ -134,6 +160,7 @@ public class SyncAdapter extends Worker {
 					continue;
 				}
 
+                stage("prerequisites", syncSetName);
 				switch (syncSetName) {
 					case SyncShadow.SYNC_SET_MABEL:
 						syncMabel(stats);
@@ -147,9 +174,11 @@ public class SyncAdapter extends Worker {
 					case SyncShadow.SYNC_SET_RP:
 						syncRp(stats);
 						break;
+                    default:
+                        SyncRecorder.log(SyncRecorder.EventKind.sync_skipped, null, "reason", "unknown_set");
 				}
 			} catch (RuntimeException e) {
-				AppLog.w(TAG, "Unexpected sync failure for " + syncSetName, e);
+				SyncRecorder.error(stage, syncSetName, e);
 				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_error_unexpected, syncSetName);
 				stats.numIoExceptions++;
 			} finally {
@@ -166,7 +195,9 @@ public class SyncAdapter extends Worker {
 
 		final boolean isSuccessful = !hasError(stats);
 		AppLog.d(TAG, "Sync stats: " + stats + " isSuccessful=" + isSuccessful);
-		SyncRecorder.log(isSuccessful ? SyncRecorder.EventKind.worker_result_succeeded : SyncRecorder.EventKind.worker_result_failed, null);
+		SyncRecorder.log(isSuccessful ? SyncRecorder.EventKind.worker_result_succeeded : SyncRecorder.EventKind.worker_result_failed, null,
+            "work_id", getId().toString(), "is_sync_successful", isSuccessful, "io_errors", stats.numIoExceptions,
+            "parse_errors", stats.numParseExceptions, "auth_errors", stats.numAuthExceptions);
 		// Failed WorkManager prerequisites cancel their dependents. Sync errors belong to the attempt,
 		// so completing delivery must allow the next queued request to run.
 		return Result.success(new Data.Builder().putBoolean(EXTRA_IS_SYNC_SUCCESSFUL, isSuccessful).build());
@@ -254,6 +285,7 @@ public class SyncAdapter extends Worker {
 		}
 
 		AppLog.d(TAG, "@@syncMabel step 10: gathering client state");
+		stage("gather", syncSetName);
 		final Sync.GetClientStateResult<Sync_Mabel.Content> pair = Sync_Mabel.getClientStateAndCurrentEntities();
 		final Sync.ClientState<Sync_Mabel.Content> clientState = pair.clientState;
 		final List<Sync.Entity<Sync_Mabel.Content>> shadowEntities = pair.shadowEntities;
@@ -263,8 +295,8 @@ public class SyncAdapter extends Worker {
 
 		final boolean isPartial = chopClientState(clientState, syncSetName);
 
+		stage("serialize", syncSetName);
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
-		AppLog.d(TAG, "@@syncMabel step 20: building http request. Server prefix: " + serverPrefix);
 		final RequestBody requestBody = new MultipartBody.Builder()
 			.setType(MultipartBody.FORM)
 			.addFormDataPart("simpleToken", simpleToken)
@@ -284,16 +316,15 @@ public class SyncAdapter extends Worker {
 		AppLog.d(TAG, "@@syncMabel step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
 			final long startTime = System.currentTimeMillis();
-			final String response_s = call.execute().body().string();
-			AppLog.d(TAG, "@@syncMabel server response string: " + response_s);
+			final String response_s = execute(call, syncSetName);
+            stage("parse", syncSetName);
 			final Sync.SyncResponseJson<Sync_Mabel.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Mabel.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
-			if (!response.success) {
-				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
-				AppLog.d(TAG, "@@syncMabel server response is not success. Message: " + response.message);
+			if (response == null || !response.success) {
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "stage", "http");
 				stats.numIoExceptions++;
 				return;
 			}
@@ -310,6 +341,7 @@ public class SyncAdapter extends Worker {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
+			stage("apply", syncSetName);
 			final Sync.ApplyAppendDeltaResult applyResult = App.services.storage.getDb().syncApplier.applyMabelAppendDelta(final_revno, shadowEntities, clientState, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
@@ -337,16 +369,18 @@ public class SyncAdapter extends Worker {
 			AppEvents.emitMarkersReload();
 			AppEvents.emitMarkerListReload();
 
-			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
+			stage("complete", syncSetName);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
-			AppLog.w(TAG, "@@syncMabel exception when parsing json from server", e);
+			AppLog.w(TAG, "@@syncMabel exception when parsing json from server");
+			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
-			AppLog.w(TAG, "@@syncMabel exception when executing http call", e);
+			AppLog.w(TAG, "@@syncMabel exception when executing http call");
+			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			stats.numIoExceptions++;
 		}
@@ -363,14 +397,15 @@ public class SyncAdapter extends Worker {
 		}
 
 		AppLog.d(TAG, "@@syncHistory step 10: gathering client state");
+		stage("gather", syncSetName);
 		final Pair<Sync.ClientState<Sync_History.Content>, List<Sync.Entity<Sync_History.Content>>> pair = Sync_History.getClientStateAndCurrentEntities();
 		final Sync.ClientState<Sync_History.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_History.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
 
+		stage("serialize", syncSetName);
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
-		AppLog.d(TAG, "@@syncHistory step 20: building http request. Server prefix: " + serverPrefix);
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
@@ -389,16 +424,15 @@ public class SyncAdapter extends Worker {
 		AppLog.d(TAG, "@@syncHistory step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
 			final long startTime = System.currentTimeMillis();
-			final String response_s = call.execute().body().string();
-			AppLog.d(TAG, "@@syncHistory server response string: " + response_s);
+			final String response_s = execute(call, syncSetName);
+            stage("parse", syncSetName);
 			final Sync.SyncResponseJson<Sync_History.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_History.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
-			if (!response.success) {
-				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
-				AppLog.d(TAG, "@@syncHistory server response is not success. Message: " + response.message);
+			if (response == null || !response.success) {
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "stage", "http");
 				stats.numIoExceptions++;
 				return;
 			}
@@ -415,6 +449,7 @@ public class SyncAdapter extends Worker {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
+			stage("apply", syncSetName);
 			final Sync.ApplyAppendDeltaResult applyResult = HistorySyncUtil.applyHistoryAppendDelta(History.INSTANCE, final_revno, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
@@ -430,16 +465,18 @@ public class SyncAdapter extends Worker {
 			// success! Tell our world.
 			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", stats.numInserts, "update_count", stats.numUpdates, "delete_count", stats.numDeletes);
 
-			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
+			stage("complete", syncSetName);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
-			AppLog.w(TAG, "@@syncHistory exception when parsing json from server", e);
+			AppLog.w(TAG, "@@syncHistory exception when parsing json from server");
+			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
-			AppLog.w(TAG, "@@syncHistory exception when executing http call", e);
+			AppLog.w(TAG, "@@syncHistory exception when executing http call");
+			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			stats.numIoExceptions++;
 		}
@@ -456,14 +493,15 @@ public class SyncAdapter extends Worker {
 		}
 
 		AppLog.d(TAG, "@@syncPins step 10: gathering client state");
+		stage("gather", syncSetName);
 		final Pair<Sync.ClientState<Sync_Pins.Content>, List<Sync.Entity<Sync_Pins.Content>>> pair = Sync_Pins.getClientStateAndCurrentEntities();
 		final Sync.ClientState<Sync_Pins.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_Pins.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
 
+		stage("serialize", syncSetName);
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
-		AppLog.d(TAG, "@@syncPins step 20: building http request. Server prefix: " + serverPrefix);
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
@@ -482,16 +520,15 @@ public class SyncAdapter extends Worker {
 		AppLog.d(TAG, "@@syncPins step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
 			final long startTime = System.currentTimeMillis();
-			final String response_s = call.execute().body().string();
-			AppLog.d(TAG, "@@syncPins server response string: " + response_s);
+			final String response_s = execute(call, syncSetName);
+            stage("parse", syncSetName);
 			final Sync.SyncResponseJson<Sync_Pins.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Pins.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
-			if (!response.success) {
-				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
-				AppLog.d(TAG, "@@syncPins server response is not success. Message: " + response.message);
+			if (response == null || !response.success) {
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "stage", "http");
 				stats.numIoExceptions++;
 				return;
 			}
@@ -508,6 +545,7 @@ public class SyncAdapter extends Worker {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
+			stage("apply", syncSetName);
 			final Sync.ApplyAppendDeltaResult applyResult = App.services.storage.getDb().syncApplier.applyPinsAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
@@ -525,16 +563,18 @@ public class SyncAdapter extends Worker {
 
 			AppEvents.emitAttributeMapChanged();
 
-			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
+			stage("complete", syncSetName);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
-			AppLog.w(TAG, "@@syncPins exception when parsing json from server", e);
+			AppLog.w(TAG, "@@syncPins exception when parsing json from server");
+			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
-			AppLog.w(TAG, "@@syncPins exception when executing http call", e);
+			AppLog.w(TAG, "@@syncPins exception when executing http call");
+			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			stats.numIoExceptions++;
 		}
@@ -551,14 +591,15 @@ public class SyncAdapter extends Worker {
 		}
 
 		AppLog.d(TAG, "@@syncRp step 10: gathering client state");
+		stage("gather", syncSetName);
 		final Pair<Sync.ClientState<Sync_Rp.Content>, List<Sync.Entity<Sync_Rp.Content>>> pair = Sync_Rp.getClientStateAndCurrentEntities();
 		final Sync.ClientState<Sync_Rp.Content> clientState = pair.first;
 		final List<Sync.Entity<Sync_Rp.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
 
+		stage("serialize", syncSetName);
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
-		AppLog.d(TAG, "@@syncRp step 20: building http request. Server prefix: " + serverPrefix);
 		final RequestBody requestBody = new FormBody.Builder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", syncSetName)
@@ -577,16 +618,15 @@ public class SyncAdapter extends Worker {
 		AppLog.d(TAG, "@@syncRp step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible for the current data to be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "serverPrefix", Sync.getEffectiveServerPrefix());
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName, "custom_server", Preferences.getString(Prefkey.sync_server_prefix) != null);
 			final long startTime = System.currentTimeMillis();
-			final String response_s = call.execute().body().string();
-			AppLog.d(TAG, "@@syncRp server response string: " + response_s);
+			final String response_s = execute(call, syncSetName);
+            stage("parse", syncSetName);
 			final Sync.SyncResponseJson<Sync_Rp.Content> response = App.getDefaultGson().fromJson(response_s, new TypeToken<Sync.SyncResponseJson<Sync_Rp.Content>>() {}.getType());
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
-			if (!response.success) {
-				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
-				AppLog.d(TAG, "@@syncRp server response is not success. Message: " + response.message);
+			if (response == null || !response.success) {
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "stage", "http");
 				stats.numIoExceptions++;
 				return;
 			}
@@ -603,6 +643,7 @@ public class SyncAdapter extends Worker {
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
+			stage("apply", syncSetName);
 			final Sync.ApplyAppendDeltaResult applyResult = App.services.storage.getDb().syncApplier.applyRpAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 
 			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
@@ -620,16 +661,18 @@ public class SyncAdapter extends Worker {
 
 			AppEvents.emitReadingPlanProgressChanged();
 
-			AppLog.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
+			stage("complete", syncSetName);
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
-			AppLog.w(TAG, "@@syncRp exception when parsing json from server", e);
+			AppLog.w(TAG, "@@syncRp exception when parsing json from server");
+			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
-			AppLog.w(TAG, "@@syncRp exception when executing http call", e);
+			AppLog.w(TAG, "@@syncRp exception when executing http call");
+			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			stats.numIoExceptions++;
 		}
