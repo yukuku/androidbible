@@ -50,7 +50,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 - [REM-37: Bible Audio: MediaSession State & Split-View Wiring](tech-debt-remediation/REM-37-bible-audio-state.md): **3.8** (partial; split-version wiring complete, playback observation and appearance invalidation remain)
 - [REM-38: Reader Lifecycle Fixes](tech-debt-remediation/REM-38-reader-lifecycle.md) — **3.4** (2026-07 audit)
 - [REM-39: Text Decoding Correctness](tech-debt-remediation/REM-39-text-decoding.md) — **3.4** (2026-07 audit)
-- [REM-41: Defensive Data Guards](tech-debt-remediation/REM-41-defensive-guards.md): **3.4** (partial; devotion request deduplication complete, other guards remain)
+- [REM-41: Defensive Data Guards](tech-debt-remediation/REM-41-defensive-guards.md): ✅ Complete on 2026-10-15
 - [REM-40: Version Download Robustness](tech-debt-remediation/REM-40-download-robustness.md) — **3.4** (2026-07 audit)
 
 ### From the REM-16 Kotlin conversion (2026-09)
@@ -114,7 +114,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 | [REM-38](tech-debt-remediation/REM-38-reader-lifecycle.md)              | Reader lifecycle fixes (2026-07 audit)                               | **3.4** | 2     |
 | [REM-39](tech-debt-remediation/REM-39-text-decoding.md)                 | Text decoding correctness (2026-07 audit)                            | **3.4** | 2     |
 | [REM-40](tech-debt-remediation/REM-40-download-robustness.md)           | Version download robustness (2026-07 audit)                          | **3.4** | 2     |
-| [REM-41](tech-debt-remediation/REM-41-defensive-guards.md)              | Defensive data guards (devotion deduplication complete)             | **3.4** | 2     |
+| [REM-41](tech-debt-remediation/REM-41-defensive-guards.md)              | ~~Defensive data guards~~ ✅             | **3.4** | 2     |
 | [REM-25](tech-debt-remediation/REM-25-verserenderer-decompose.md)       | ~~Decompose VerseRenderer.render~~ ✅                                 | **3.4** | 3     |
 | [REM-24](tech-debt-remediation/REM-24-s-service-locator.md)             | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅         | **3.2** | 2     |
 | [REM-08](tech-debt-remediation/REM-08-isiactivity-split-view.md)        | ~~Extract split view manager~~ ✅                                     | **3.2** | 2     |
@@ -144,8 +144,8 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 ### 2026-07 audit follow-up (suggested)
 
-**Sprint 7 (1 week), user-data safety first:** ~~REM-36~~✅ (search fix, completed 2026-10-15), ~~REM-35~~✅ (song-book update, completed 2026-07-20), ~~REM-33~~✅ (import safety, completed 2026-10-15), plus the REM-41 widget direction fix
-**Sprint 8 (1 week):** REM-34 (sync delivery/races), rest of REM-41 (defensive guards)
+**Sprint 7 (1 week), user-data safety first:** ~~REM-36~~✅ (search fix, completed 2026-10-15), ~~REM-35~~✅ (song-book update, completed 2026-07-20), ~~REM-33~~✅ (import safety, completed 2026-10-15), ~~REM-41~~✅ (defensive guards and deliberate widget retry strides, completed 2026-10-15)
+**Sprint 8 (1 week):** REM-34 (sync delivery/races), ~~REM-41~~✅ (defensive guards, completed 2026-10-15)
 **Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding), REM-40 (download robustness)
 
 ### 2026-09 Kotlin conversion follow-up (suggested)
@@ -156,5 +156,5 @@ Summary reconciled with the implementation, test sources, and task records on 20
 
 - REM-15: devotion downloads use coroutines and observable state with cancellation and retry tests. Sync, search, and chapter-loading work remain.
 - REM-37: split-version changes reach `IsiActivity.onVisibleVersionsChanged`, which refreshes audio sources and controls. MediaSession-driven playback observation and highlight-color invalidation remain.
-- REM-41: devotion requests deduplicate by source/date, covered by `DevotionDownloaderTest`. Widget, verse bounds, reading-plan bounds/footer, and downgrade guards remain.
+- REM-41: completed on 2026-10-15. Deliberate widget-specific retry strides, verse and reading-plan bounds, and RPB footer checks have regression coverage. Devotion requests deduplicate by source/date. Database downgrades are unsupported.
 - REM-22/45: Compose adoption extends beyond Goto and verse content to the normal reader toolbar, song content, sync login, and the search toolbar. The selection toolbar and the remaining reader shell are separate unfinished work.

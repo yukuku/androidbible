@@ -41,7 +41,7 @@ object VerseAttributeLoader {
             }
 
             val mapOffset = Ari.toVerse(ari) - 1
-            if (mapOffset >= progressMarkBitsMap.size) {
+            if (mapOffset !in progressMarkBitsMap.indices) {
                 AppLog.e(TAG, "(for progressMarkBitsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari))
             } else {
                 progressMarkBitsMap[mapOffset] = progressMarkBitsMap[mapOffset] or (1 shl progressMark.preset_id + AttributeView.PROGRESS_MARK_BITS_START)
@@ -61,7 +61,7 @@ object VerseAttributeLoader {
                 if (aris != null) {
                     for (ari in aris) {
                         val mapOffset = Ari.toVerse(ari) - 1
-                        if (mapOffset >= hasMapsMap.size) {
+                        if (mapOffset !in hasMapsMap.indices) {
                             AppLog.e(TAG, "(for hasMapsMap:) mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari))
                         } else {
                             hasMapsMap[mapOffset] = true

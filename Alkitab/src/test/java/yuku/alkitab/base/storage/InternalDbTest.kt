@@ -64,6 +64,25 @@ class InternalDbTest {
         helper.close()
     }
 
+    @Test
+    fun `putAttributes skips verse zero markers while retaining valid attributes`() {
+        val now = Date()
+        for (kind in Marker.Kind.values()) {
+            db.insertMarker(Ari.encode(0, 1, 0), kind, Highlights.encode(0x123456), 2, now, now)
+        }
+        db.insertMarker(Ari.encode(0, 1, 1), Marker.Kind.bookmark, "valid", 1, now, now)
+        val bookmarks = IntArray(2)
+        val notes = IntArray(2)
+        val highlights = arrayOfNulls<Highlights.Info>(2)
+
+        db.putAttributes(Ari.encode(0, 1, 0), bookmarks, notes, highlights)
+
+        assertEquals(1, bookmarks[0])
+        assertEquals(1, bookmarks.sum())
+        assertEquals(0, notes.sum())
+        assertTrue(highlights.all { it == null })
+    }
+
     // region Marker CRUD
 
     @Test
