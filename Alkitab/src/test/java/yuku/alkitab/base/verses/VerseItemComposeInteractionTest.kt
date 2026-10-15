@@ -46,6 +46,8 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import yuku.afw.App as AfwApp
 import yuku.alkitab.base.S
+import yuku.alkitab.base.storage.InternalReader
+import yuku.alkitab.base.storage.OldVerseTextDecoder
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRendererCompose
@@ -387,6 +389,24 @@ class VerseItemComposeInteractionTest {
         }
 
         assertEquals(listOf(VerseInlineLinkSpan.Type.footnote to (Ari.encode(1, 2, 1) shl 8 or 1)), recorder.linkClicks)
+    }
+
+    @Test
+    fun `bundled ruby gallery renders with end-side attributes`() {
+        val reader = InternalReader("ddd", "in", "DDD", "Dummy Debug Data", OldVerseTextDecoder.Utf8())
+        val book = reader.loadBooks().first()
+        val samples = listOf(3 to 3, 3 to 4, 3 to 16, 5 to 16, 5 to 29, 6 to 16, 6 to 17, 6 to 18)
+        for ((chapter, verse) in samples) {
+            val text = reader.loadVerseText(book, chapter, false, false).getVerse(verse - 1)
+            val view = composeRow(text, TapRecorder()) {
+                it.copy(attribute = it.attribute.copy(bookmarkCount = 1, noteCount = 1))
+            }
+            val bitmap = drawRow(view)
+            assertTrue("Visible content for $chapter:$verse", hasInk(bitmap, 0, bitmap.width, 0))
+            val file = File("build/snapshots/ddd-$chapter-$verse.png")
+            file.parentFile!!.mkdirs()
+            file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        }
     }
 
     @Test
