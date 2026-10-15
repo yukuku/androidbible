@@ -5,7 +5,9 @@
 **BRICE:** B=2 R=2 I=5 C=5 E=4 → **3.6**
 **Phase:** 2 (Architecture Improvements)
 
-**Status:** Not started.
+**Status:** Completed (2026-10-15).
+
+The header RandomAccessFile is scoped with use and read with readFully, so success and read failures both close it. Header tests cover every truncated header length, including an empty file.
 
 **Problem:** `YesReaderFactory.createYesReader` opens a `RandomAccessFile` to read the 8-byte header and closes it only after `read` returns. If `read` throws an `IOException`, the catch block logs and returns null without closing the file, so a file descriptor leaks for every failed open. The return value of `read` is also ignored. A file shorter than 8 bytes leaves the rest of the header zeroed, which the magic-byte or version check then rejects, so that part is harmless today but only by accident.
 

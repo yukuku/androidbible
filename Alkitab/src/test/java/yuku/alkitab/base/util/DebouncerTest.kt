@@ -19,8 +19,8 @@ import org.robolectric.annotation.Config
 class DebouncerTest {
     private class RecordingDebouncer(
         defaultDelay: Long,
-        expectedProcessCount: Int = 1,
-        private val processGate: CountDownLatch? = null,
+        expectedProcessCount: Int,
+        private val processGate: CountDownLatch?,
     ) : Debouncer<String, String>(defaultDelay) {
         val processed: MutableList<String> = Collections.synchronizedList(mutableListOf())
         val allProcessed = CountDownLatch(expectedProcessCount)
@@ -59,8 +59,24 @@ class DebouncerTest {
     }
 
     @Test
+    fun `multiple debouncer instances reuse one worker thread and deliver independent results`() {
+        val debouncers = List(12) { RecordingDebouncer(0, 1, null) }
+
+        debouncers.forEachIndexed { index, debouncer ->
+            debouncer.submit(index.toString())
+            awaitProcessingThenRunMainLooper(debouncer)
+        }
+
+        val worker = debouncers.first().processThread
+        debouncers.forEachIndexed { index, debouncer ->
+            assertSame(worker, debouncer.processThread)
+            assertEquals(listOf(index.toString()), debouncer.results)
+        }
+    }
+
+    @Test
     fun `a submitted payload is processed off the main thread and its result delivered on the main thread`() {
-        val debouncer = RecordingDebouncer(0)
+        val debouncer = RecordingDebouncer(0, 1, null)
 
         debouncer.submit("a")
         awaitProcessingThenRunMainLooper(debouncer)
@@ -73,7 +89,7 @@ class DebouncerTest {
 
     @Test
     fun `a payload superseded before its delay elapses is never processed`() {
-        val debouncer = RecordingDebouncer(100)
+        val debouncer = RecordingDebouncer(100, 1, null)
 
         debouncer.submit("a")
         debouncer.submit("b")
@@ -100,7 +116,7 @@ class DebouncerTest {
 
     @Test
     fun `a result superseded before the main thread handles it is dropped`() {
-        val debouncer = RecordingDebouncer(0)
+        val debouncer = RecordingDebouncer(0, 1, null)
 
         debouncer.submit("a")
         assertTrue(debouncer.allProcessed.await(5, TimeUnit.SECONDS))

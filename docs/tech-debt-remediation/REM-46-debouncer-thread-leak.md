@@ -5,7 +5,9 @@
 **BRICE:** B=3 R=3 I=4 C=4 E=4 → **3.6**
 **Phase:** 2 (Architecture Improvements)
 
-**Status:** Not started.
+**Status:** Completed (2026-10-15).
+
+All Debouncer instances share one scheduled executor. Per-instance serial counters still suppress superseded work and results. A regression test verifies that multiple instances reuse the same worker and deliver independent results.
 
 **Problem:** Every `Debouncer` instance creates its own `Executors.newSingleThreadScheduledExecutor()`, and nothing ever shuts it down. The executor's single core thread never times out, and the running worker keeps its pool reachable, so once a payload has been submitted the thread stays alive, idle, until the process dies. `SearchActivity` holds two debouncers (`suggester` and `searcher`) and `MarkerListActivity` holds one (`filter`), all created per activity instance. Every visit to those screens that submits something therefore leaves one or two idle threads behind. The threads do not retain the activity, because the task queue is empty once the tasks have run, so the cost is threads and their stacks rather than activity memory.
 

@@ -57,7 +57,9 @@ class YesReaderFactoryTest {
     @Test
     fun `a file shorter than the header returns null`() {
         val f = File(tmp.root, "short.yes")
-        f.writeBytes(ByteArray(magic.size) { magic[it].toByte() })
-        assertNull(YesReaderFactory.createYesReader(f.absolutePath))
+        for (length in 0..magic.size) {
+            f.writeBytes(ByteArray(length) { magic[it].toByte() })
+            assertNull(YesReaderFactory.createYesReader(f.absolutePath))
+        }
     }
 }

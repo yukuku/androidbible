@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 abstract class Debouncer<RequestType, ResultType>(private val defaultDelay: Long) {
     private val handler = DebounceHandler(this)
-    private val sched: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
     private val serial = AtomicInteger()
 
@@ -85,6 +84,7 @@ abstract class Debouncer<RequestType, ResultType>(private val defaultDelay: Long
     abstract fun onResult(result: ResultType)
 
     companion object {
+        private val sched: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
         private val TAG: String = Debouncer::class.java.simpleName
 
         const val MSG_ON_RESULT = 1
