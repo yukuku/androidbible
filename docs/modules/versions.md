@@ -47,7 +47,7 @@ For downloads from the preset catalog:
 For local imports (`.yes` / `.pdb`):
 1. User selects a `.yes` or `.pdb` file (via file manager or intent)
 2. `VersionFileImporter` detects format and handles gzip decompression
-3. PDB files are converted to YES2 via the `BiblePlus` module, saved as `pdb-{name}.yes`
+3. PDB files are converted to YES2 via the `BiblePlus` reader inside `:Alkitab`, saved as `pdb-{name}.yes`
 4. YES2 files are copied to app storage
 5. A row is inserted into the `version` table
 6. Import size limit: 100MB

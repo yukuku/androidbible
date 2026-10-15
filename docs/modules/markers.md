@@ -61,4 +61,4 @@ MarkerListActivity supports sorting by:
 
 ## Verse Link Detection
 
-`NoteActivity` uses `DesktopVerseFinder` from the `ImportedDesktopVerseUtil` module to detect verse references in note text and convert them to clickable links that navigate to the referenced verse.
+`NoteActivity` uses `DesktopVerseFinder` in the app’s `yuku.alkitabconverter.util` package to detect verse references in note text and convert them to clickable links that navigate to the referenced verse.

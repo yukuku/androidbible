@@ -182,8 +182,8 @@ val proprietaryDir: String? = providers.environmentVariable("ALKITAB_PROPRIETARY
 val sabdaFlavorName = "sabda_alkitab"
 val sabdaSigningConfigName = "releaseSabda"
 
-// Server endpoints. These are specific to this app, so they live here and in
-// AlkitabFeedback, not in a build-wide block.
+// Server endpoints. These are specific to this app, including feedback,
+// so they live here, not in a build-wide block.
 val serverHost = "https://api.alkitab.app"
 val ribkaFunctionsHost = "https://us-central1-pulau-ribka.cloudfunctions.net/"
 val ribkaFunctionsHostDebug = "http://10.0.3.2:5001/pulau-ribka/us-central1/"
@@ -310,6 +310,8 @@ android {
                 // Robolectric renders the Compose verse row with native graphics,
                 // which needs more than Gradle's default test-worker heap.
                 it.maxHeapSize = "2g"
+                it.systemProperty("user.language", "en")
+                it.systemProperty("user.country", "US")
             }
         }
     }
@@ -547,18 +549,11 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":AlkitabFeedback"))
     implementation(project(":AlkitabIntegration"))
     implementation(project(":AlkitabIo"))
     implementation(project(":AlkitabModel"))
     implementation(project(":AlkitabYes2"))
-    implementation(project(":BiblePlus"))
-    implementation(project(":KpriModel"))
-    implementation(project(":BintexReader"))
-    implementation(project(":BintexWriter"))
-    implementation(project(":Afw"))
-    implementation(project(":FlowLayout"))
-    implementation(project(":ImportedDesktopVerseUtil"))
+    implementation(project(":Bintex"))
 
     // Compose — single BOM-managed Compose surface (audio-bible bottom sheet + GotoActivity).
     val composeBom = platform(libs.androidx.compose.bom)
@@ -584,6 +579,7 @@ dependencies {
     implementation(libs.androidx.percentlayout)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.viewpager)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.work.runtime.ktx)
 

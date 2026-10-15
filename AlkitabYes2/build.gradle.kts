@@ -30,11 +30,9 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":Afw"))
     implementation(project(":AlkitabIo"))
     implementation(project(":AlkitabModel"))
-    implementation(project(":BintexReader"))
-    implementation(project(":BintexWriter"))
+    implementation(project(":Bintex"))
     implementation(project(":Snappy"))
     testImplementation(libs.junit)
 }

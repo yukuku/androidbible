@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="BintexReader" />
+    <orderEntry type="module" module-name="common-jvm" />
     <orderEntry type="module" module-name="AlkitabConverter" />
   </component>
 </module>

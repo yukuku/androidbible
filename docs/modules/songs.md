@@ -14,7 +14,7 @@ The songs module provides hymn/worship song browsing, searching, and audio playb
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongFilter.kt` — Search/filter with regex and tokenized queries
 - `Alkitab/src/main/java/yuku/alkitab/songs/SongInfo.kt` — Lightweight song record (bookName, code, title, title_original)
 - `Alkitab/src/main/java/yuku/alkitab/songs/newdoc/` — Portable-song document model, JSON (de)serialization, legacy decoder/converter, and renderers (REM-21)
-- `KpriModel/` — Legacy song data model (`Song`, `Verse`, `Lyric`, `VerseKind`) — retained only as the on-device decoder's target type
+- `Alkitab/src/main/java/yuku/kpri/model/` — Legacy song data model (`Song`, `Verse`, `Lyric`, `VerseKind`) — retained only as the on-device decoder's target type
 
 ## Data Model
 

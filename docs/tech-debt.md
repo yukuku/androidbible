@@ -128,7 +128,7 @@ Error handling is uniform — all failures produce `NotOkException` with no dist
 
 ## TD-09: Preferences Architecture
 
-**File:** `Afw/src/main/java/yuku/afw/storage/Preferences.java`
+**File:** `Alkitab/src/main/java/yuku/afw/storage/Preferences.java`
 
 ### ~~Manual hold/unhold transaction~~ FIXED
 **Fixed in REM-02** (2026-04-10/11):

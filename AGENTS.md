@@ -46,7 +46,7 @@ Read-only analysis and advice do not require a PR.
 ./gradlew testPlainDebugUnitTest --tests "yuku.alkitab.base.util.QueryTokenizerTest.testQuotedPhrases"
 ```
 
-**Requirements**: JDK 21 (Zulu recommended), Android SDK with compile SDK 36, NDK 28.2.13676358.
+**Requirements**: JDK 21 and the Android SDK/NDK versions in `gradle/libs.versions.toml`. The NDK is required for Snappy.
 
 **Versioning**: `versionName` comes from `version.properties` (`versionBase` +
 `betaNumber`) combined with a stage: `dev` by default (`5.0.0-dev.<commits
@@ -63,82 +63,9 @@ The `plain` flavor is the open-source development build and works out of the box
 
 With those set, build with a plain `./gradlew assembleYuku_alkitabRelease` (or any other production flavor).
 
-### Building in the Claude Code sandbox (one-time setup)
+### Environment setup
 
-The Claude Code VM does not ship with the Android SDK — you must provision it yourself before running Gradle, and do not rely on GitHub Actions for verification. Its preinstalled JDK is version 21, matching the `jvmToolchain(21)` used across modules; run `java -version` first, and skip step 1 below if it already reports 21. Prefer `plainDebug` since it needs no proprietary overlay or signing secrets.
-
-Install paths used below (pick any, but keep them consistent):
-
-- JDK 21 (only if not already preinstalled): `/home/user/tools/zulu21.52.203-ca-jdk21.0.12.1-linux_x64`
-- Android SDK: `/home/user/android-sdk`
-
-**Disk footprint:** expect ~5 GB across all of these combined (less if the preinstalled JDK 21 is used directly) — NDK r28c alone is ~2 GB unpacked, the rest of the SDK is ~1 GB, and `~/.gradle` grows to ~2 GB after the first build. Check free space before starting.
-
-**Environment.** Every step below needs the same env vars. Write them once and source them each time — point `JAVA_HOME` at the preinstalled JDK (`dirname $(dirname $(readlink -f $(which java)))`) unless you installed Zulu JDK 21 yourself in step 1, in which case use that path instead:
-
-```bash
-cat > /home/user/tools/android-env.sh <<'EOF'
-export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$(which java)")")")"
-export ANDROID_HOME=/home/user/android-sdk
-export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
-unset JAVA_TOOL_OPTIONS  # strip the sandbox's -Dhttp.proxyHost that would poison Gradle downloads
-EOF
-```
-
-Then `source /home/user/tools/android-env.sh` at the start of any shell that runs `sdkmanager` or Gradle.
-
-1. **Install Zulu JDK 21** — only needed if `java -version` did not already report 21 (e.g. the sandbox image changed):
-
-   ```bash
-   mkdir -p /home/user/tools && cd /home/user/tools
-   curl -fsSL -o zulu21.tar.gz \
-     https://cdn.azul.com/zulu/bin/zulu21.52.203-ca-jdk21.0.12.1-linux_x64.tar.gz
-   echo "068872f682e4157896649c242a13660b33ece808f395095a00fbbd3de8b4bbca  zulu21.tar.gz" | sha256sum -c -
-   tar xzf zulu21.tar.gz && rm zulu21.tar.gz
-   ```
-
-   Then edit `android-env.sh` to point `JAVA_HOME` at `/home/user/tools/zulu21.52.203-ca-jdk21.0.12.1-linux_x64` instead of the `which java` lookup, and re-source it.
-
-2. **Trust the sandbox egress CA in the JDK truststore.** Outbound HTTPS in the Claude Code sandbox goes through an Anthropic TLS-inspection proxy (`sandbox-egress-production TLS Inspection CA`). `curl` trusts it via `/etc/ssl/certs`, but the JDK keeps its own `cacerts`, so `sdkmanager` and Gradle will fail with `PKIX path building failed` until you import the system CAs. This applies to the preinstalled JDK too, not just a freshly downloaded one:
-
-   ```bash
-   source /home/user/tools/android-env.sh
-   for crt in /usr/local/share/ca-certificates/*.crt; do
-     "$JAVA_HOME/bin/keytool" -importcert -noprompt -trustcacerts \
-       -keystore "$JAVA_HOME/lib/security/cacerts" -storepass changeit \
-       -alias "$(basename "$crt" .crt)" -file "$crt"
-   done
-   ```
-
-3. **Install the Android SDK command-line tools**, then use `sdkmanager` to fetch the exact packages Gradle expects (`compileSdk 36`, `build-tools 36.0.0`, `ndk 28.2.13676358` — the NDK is required because the `Snappy` module has JNI C++; note that `sdkmanager` resolves that NDK coordinate to `android-ndk-r28c` on disk, which is expected):
-
-   ```bash
-   mkdir -p /home/user/android-sdk/cmdline-tools && cd /home/user/android-sdk/cmdline-tools
-   curl -fsSL -o cmdline-tools.zip \
-     https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
-   echo "7ec965280a073311c339e571cd5de778b9975026cfcbe79f2b1cdcb1e15317ee  cmdline-tools.zip" | sha256sum -c -
-   unzip -q cmdline-tools.zip && mv cmdline-tools latest && rm cmdline-tools.zip
-
-   source /home/user/tools/android-env.sh
-   yes | sdkmanager --licenses > /dev/null  # silent; prints thousands of "y\n" lines otherwise
-   sdkmanager "platform-tools" "platforms;android-36" \
-              "build-tools;36.0.0" "ndk;28.2.13676358"
-   ```
-
-4. **Write `local.properties`** so Gradle skips its own SDK discovery:
-
-   ```bash
-   echo "sdk.dir=/home/user/android-sdk" > local.properties
-   ```
-
-5. **Build.**
-
-   ```bash
-   source /home/user/tools/android-env.sh
-   ./gradlew assemblePlainDebug
-   ```
-
-   Expect ~3 minutes cold (Gradle downloads its pinned wrapper distribution and dependencies into `~/.gradle`). The APK lands at `Alkitab/build/outputs/apk/plain/debug/Alkitab-<code>-<version>-<hash>-yuku.alkitab.debug-dev.apk`.
+Use the installed JDK and Android SDK when available. Check `java -version`, and read SDK/NDK requirements from `gradle/libs.versions.toml`. Set `ANDROID_HOME` or `sdk.dir` in the untracked `local.properties` file. For a VM without these tools, see [Build Environment Setup](docs/build-environment.md).
 
 Code changes should be verified with a local `./gradlew assemblePlainDebug` (and relevant `testPlainDebugUnitTest` invocations) before committing — do not treat the GitHub Actions run as the first build.
 
@@ -154,16 +81,25 @@ The project is a multi-module Gradle build. The main app module is **`:Alkitab`*
 | `AlkitabIo` | `BibleReader` interface, UTF-8 decoding, gzip stream handling |
 | `AlkitabYes2` | YES2 binary Bible format reader/writer with Snappy compression |
 | `AlkitabIntegration` | Inter-app communication API (intent-based verse lookup) |
-| `AlkitabFeedback` | User feedback module |
-| `BiblePlus` | PalmBible+ PDB format reader |
-| `KpriModel` | Song/hymn data model (`Song`, `Verse`, `Lyric`) |
-| `BintexReader` / `BintexWriter` | Binary serialization format used by YES2 and reading plans |
-| `Afw` | Base Android framework (preferences wrapper, adapter base, app context) |
+| `Bintex` | Binary serialization format used by YES2 and reading plans |
 | `Snappy` | JNI Snappy compression (native C++ via NDK) |
-| `FlowLayout` | Flow layout widget |
-| `ImportedDesktopVerseUtil` | Desktop verse reference finder/parser |
 
-Bible-version downloads run inside `VersionDownloadWorker` (a `CoroutineWorker`) using the shared OkHttp client; the previous `PrDownloaderFixed` module was deleted in REM-19.
+App implementation code lives under `Alkitab/src/main/java/`:
+
+| Package | Purpose |
+|---------|---------|
+| `com.example.android.wizardpager`, `yuku.alkitabfeedback` | Feedback wizard and submission |
+| `com.compactbyte.android.bible`, `com.compactbyte.bibleplus.reader` | PalmBible+ PDB import |
+| `yuku.kpri.model` | Legacy song decoding models; preserve class names for stored data compatibility |
+| `yuku.afw` | Application context, preferences, and adapter helpers |
+| `yuku.devoxx.flowlayout` | Flow layout widget |
+| `yuku.alkitabconverter.util` | Verse reference finder and parser |
+
+Desktop converters share the `AlkitabModel`, `AlkitabIo`, `AlkitabYes2`, `Bintex`, and `Snappy` source directories through `tools/common-jvm/common-jvm.iml`. Keep those source roots synchronized when moving shared code; see [Tools](docs/tools.md).
+
+Parser tests and their golden fixture belong to the app test suite. See [parser compatibility tests](Alkitab/src/test/desktop-verse-parser.md) for the baseline contract and targeted test commands. App shrinker rules live in `Alkitab/proguard-rules.pro`.
+
+Bible-version downloads run inside `VersionDownloadWorker` (a `CoroutineWorker`) using the shared OkHttp client.
 
 ### Key Singletons and Entry Points
 
@@ -265,7 +201,7 @@ Custom binary format for Bible text files (`.yes`):
 
 ## Module Documentation
 
-Detailed documentation for each major feature module:
+Detailed documentation for each major app feature:
 
 - [Songs](docs/modules/songs.md) — Song book browsing, search, audio (MP3/MIDI) playback
 - [Reading Plans](docs/modules/reading-plans.md) — RPB binary format, daily progress tracking
@@ -331,7 +267,7 @@ Detailed documentation for each major feature module:
 ## Important Caveats
 
 - `IsiActivity.kt` is still large, but no longer monolithic: gesture handling, the action-mode callback, and split-view management were extracted (REM-06/07/08) into `ReaderGestureHandler`, `VerseActionModeController`, and `SplitViewManager` under `widget/`. Bible reading, navigation history, and volume-button handling are still inline; changes here require careful testing.
-- `KpriModel.Song` (`Parcelable`, acknowledged as a bad design decision in the code) is retained only as the on-device legacy decoder's target type. REM-32 migrated the storage *engine* to Room; REM-21 (app-side done 2026-07-13) swapped the payload to JSON (`yuku.alkitab.songs.newdoc.SongDocument`) on top of that, with legacy Parcelable rows converted lazily on first read — see `docs/modules/songs.md` and `docs/features/portable-songs/design.md`. Backend redirect branching and `kidung-data` authoring support are separate repos and out of scope for this app.
+- `yuku.kpri.model.Song` is the legacy song decoder’s target type. Song storage uses Room with JSON `SongDocument` payloads; legacy Parcelable rows are converted lazily on first read. Preserve stored class-name compatibility. See `docs/modules/songs.md` and `docs/features/portable-songs/design.md`. Backend redirects and `kidung-data` authoring belong to separate repositories.
 - The `Snappy` module has native C++ code — NDK must be installed for builds.
 - A placeholder `Alkitab/google-services.json` is checked in so `plainDebug` works out of the box; Firebase features won't actually function with it. For production flavors, the real `google-services.json` is sourced from `$ALKITAB_PROPRIETARY_DIR/google-services.json` at build time and copied into the gitignored `Alkitab/src/<flavor>/google-services.json` (where the GMS plugin's source-set lookup finds it).
 - The internal Bible version data is split per flavor: the placeholder `ddd_*` files live under `Alkitab/src/plain/assets/internal/` (used by the `plain` open-source build only). Production flavors get their `tb_*`/`kjv_*` files copied from the proprietary overlay into `build/generated/proprietaryAssets/<flavor>/internal/` at build time.
