@@ -309,7 +309,7 @@ android {
             all {
                 // Robolectric renders the Compose verse row with native graphics,
                 // which needs more than Gradle's default test-worker heap.
-                it.maxHeapSize = "2g"
+                it.maxHeapSize = "4g"
                 it.systemProperty("user.language", "en")
                 it.systemProperty("user.country", "US")
             }

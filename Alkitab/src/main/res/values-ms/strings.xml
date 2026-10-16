@@ -351,6 +351,7 @@
     <string name="sync_sync_set_pref_summary_never">Tidak disegerak lagi</string>
     <string name="sync_sync_set_pref_summary_syncing">Menyegerak sekarang&#8230;</string>
     <string name="sync_log_activity_title">Log penyegerakan</string>
+    <string name="sync_diagnostics_requested">Sync diminta. Buka %1$s untuk melihat kemajuan dan butiran diagnostik.</string>
     <string name="sync_status_activity_title">Segerakkan Status</string>
     <string name="sync_login_activity_title">Log masuk atau membuat akaun</string>
     <string name="sync_login_change_password_menu_item">Ubah kata laluan</string>

@@ -352,6 +352,7 @@
     <string name="sync_sync_set_pref_summary_never">ยังไมได้ซิงค์</string>
     <string name="sync_sync_set_pref_summary_syncing">กำลังซิงค์&#8230;</string>
     <string name="sync_log_activity_title">ล็อกการซิงค์</string>
+    <string name="sync_diagnostics_requested">ส่งคำขอซิงค์แล้ว เปิด %1$s เพื่อดูความคืบหน้าและรายละเอียดการวินิจฉัย</string>
     <string name="sync_status_activity_title">สถานะการซิงค์</string>
     <string name="sync_login_activity_title">เข้าสู่ระบบหรือลงบัญชี</string>
     <string name="sync_login_change_password_menu_item">เปลี่ยนรหัสผ่าน</string>

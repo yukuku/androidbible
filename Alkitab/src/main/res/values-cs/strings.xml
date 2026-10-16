@@ -353,6 +353,7 @@
     <string name="sync_sync_set_pref_summary_never">Nesynchronizováno</string>
     <string name="sync_sync_set_pref_summary_syncing">Probíhá synchronizace&#8230;</string>
     <string name="sync_log_activity_title">Log synchronizace</string>
+    <string name="sync_diagnostics_requested">Synchronizace byla vyžádána. Průběh a diagnostické údaje najdete v nabídce %1$s.</string>
     <string name="sync_status_activity_title">Stav synchronizace</string>
     <string name="sync_login_activity_title">Přihlásit se nebo založit účet</string>
     <string name="sync_login_change_password_menu_item">Změnit heslo</string>

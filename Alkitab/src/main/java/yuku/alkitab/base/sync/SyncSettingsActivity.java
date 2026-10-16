@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
@@ -35,6 +36,7 @@ public class SyncSettingsActivity extends BaseActivity {
 		final ActionBar ab = getSupportActionBar();
 		assert ab != null;
 		ab.setDisplayHomeAsUpEnabled(true);
+        SyncKotlin.observeWork(this);
 	}
 
 	public static class SyncSettingsFragment extends PreferenceFragmentCompat {
@@ -175,6 +177,7 @@ public class SyncSettingsActivity extends BaseActivity {
 		final int itemId = item.getItemId();
 		if (itemId == R.id.menuSyncNow) {
 			SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
+            Toast.makeText(this, getString(R.string.sync_diagnostics_requested, getString(R.string.sync_menu_item_sync_log)), Toast.LENGTH_LONG).show();
 			SyncKotlin.syncNow(true);
 			return true;
 		} else if (itemId == R.id.menuSyncLog) {

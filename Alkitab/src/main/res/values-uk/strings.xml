@@ -353,6 +353,7 @@
     <string name="sync_sync_set_pref_summary_never">Ще не синхронізовано</string>
     <string name="sync_sync_set_pref_summary_syncing">Синхронізація&#8230;</string>
     <string name="sync_log_activity_title">Синхронізувати журнал</string>
+    <string name="sync_diagnostics_requested">Запитано синхронізацію. Відкрийте %1$s, щоб переглянути перебіг і діагностичні відомості.</string>
     <string name="sync_status_activity_title">Статус синхронізації</string>
     <string name="sync_login_activity_title">Увійти в систему або створити обліковий запис</string>
     <string name="sync_login_change_password_menu_item">Змінити пароль</string>

@@ -352,6 +352,7 @@
     <string name="sync_sync_set_pref_summary_never">まだシンクされていません</string>
     <string name="sync_sync_set_pref_summary_syncing">シンク中&#8230;</string>
     <string name="sync_log_activity_title">ログのシンク</string>
+    <string name="sync_diagnostics_requested">同期を要求しました。進行状況と診断の詳細は「%1$s」で確認できます。</string>
     <string name="sync_status_activity_title">同期ステータス</string>
     <string name="sync_login_activity_title">ログインかアカウントの作成</string>
     <string name="sync_login_change_password_menu_item">パスワードの変更</string>

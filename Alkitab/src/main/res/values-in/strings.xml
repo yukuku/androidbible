@@ -365,6 +365,7 @@
     <string name="sync_sync_set_pref_summary_never">Belum pernah sync</string>
     <string name="sync_sync_set_pref_summary_syncing">Sedang sync&#8230;</string>
     <string name="sync_log_activity_title">Log sync</string>
+    <string name="sync_diagnostics_requested">Sync diminta. Buka %1$s untuk melihat progres dan rincian diagnostik.</string>
     <string name="sync_status_activity_title">Status Sync</string>
     <string name="sync_login_activity_title">Login atau buat akun</string>
     <string name="sync_login_change_password_menu_item">Ganti password</string>

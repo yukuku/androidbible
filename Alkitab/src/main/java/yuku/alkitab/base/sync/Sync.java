@@ -208,6 +208,7 @@ public class Sync {
     public static synchronized void notifySyncNeeded(final String... syncSetNames) {
         // if not logged in, do nothing
         if (Preferences.getString(Prefkey.sync_simpleToken) == null) {
+            SyncRecorder.log(SyncRecorder.EventKind.sync_skipped, null, "reason", "not_logged_in");
             return;
         }
 
@@ -215,12 +216,13 @@ public class Sync {
         for (final String syncSetName : syncSetNames) {
             final AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
             if (counter != null && counter.get() != 0) {
-                AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
+                SyncRecorder.log(SyncRecorder.EventKind.sync_skipped, syncSetName, "reason", "updates_ongoing");
                 continue;
             }
 
             { // check if preferences prevent syncing
                 if (!Preferences.getBoolean(prefkeyForSyncSetEnabled(syncSetName), true)) {
+                    SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_set_not_enabled, syncSetName);
                     continue;
                 }
             }
@@ -356,8 +358,8 @@ public class Sync {
             final RegisterFcmClientResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), RegisterFcmClientResponseJson.class);
 
             if (!response.success) {
-                SyncRecorder.log(SyncRecorder.EventKind.fcm_send_not_success, null, "message", response.message);
-                AppLog.w(TAG, "FCM registration id rejected by server: " + response.message);
+                SyncRecorder.log(SyncRecorder.EventKind.fcm_send_not_success, null, "stage", "fcm");
+                AppLog.w(TAG, "FCM registration rejected by server");
                 Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
                 return false;
             }
@@ -369,12 +371,14 @@ public class Sync {
             return true;
 
         } catch (IOException | JsonIOException e) {
+            SyncRecorder.error("fcm", null, e);
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_io, null);
             AppLog.w(TAG, "Failed to send FCM registration id to server", e);
             Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
             return false;
 
         } catch (JsonSyntaxException e) {
+            SyncRecorder.error("fcm", null, e);
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_json, null);
             AppLog.w(TAG, "Server response is not valid JSON", e);
             Preferences.setBoolean(Prefkey.fcm_registration_pending, true);

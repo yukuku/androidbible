@@ -351,6 +351,7 @@
     <string name="sync_sync_set_pref_summary_never">Nog nie gesinchroniseer</string>
     <string name="sync_sync_set_pref_summary_syncing">Sinch nou&#8230;</string>
     <string name="sync_log_activity_title">Sinch log</string>
+    <string name="sync_diagnostics_requested">Sinkronisering aangevra. Maak %1$s oop vir vordering en diagnostiese besonderhede.</string>
     <string name="sync_status_activity_title">Sync Status</string>
     <string name="sync_login_activity_title">Teken aan of skep rekening</string>
     <string name="sync_login_change_password_menu_item">Verander wagwoord</string>
