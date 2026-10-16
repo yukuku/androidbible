@@ -40,6 +40,24 @@ class OldVerseTextDecoderTest {
     }
 
     @Test
+    fun `Utf8 preserves supplementary characters and emoji sequences in both read modes`() {
+        val text = "🌿 🕊️ 👩🏽‍💻 👨‍👩‍👧‍👦 🇮🇩\n@@@<r=𐐀@>𐐁@/\n"
+        val decoder = OldVerseTextDecoder.Utf8()
+        assertEquals(text, decoder.makeIntoSingleString(text.toByteArray(), false))
+        assertArrayEquals(text.dropLast(1).split('\n').toTypedArray(), decoder.separateIntoVerses(text.toByteArray(), false))
+    }
+
+    @Test
+    fun `Utf8 search casing preserves offsets and graphemes without expanding letters`() {
+        val text = "İ ΟΣ 𐐀 👩🏽‍💻 CAFÉ\n"
+        val expected = "i οσ 𐐨 👩🏽‍💻 café\n"
+        val decoder = OldVerseTextDecoder.Utf8()
+        assertEquals(text.length, expected.length)
+        assertEquals(expected, decoder.makeIntoSingleString(text.toByteArray(), true))
+        assertArrayEquals(arrayOf(expected.dropLast(1)), decoder.separateIntoVerses(text.toByteArray(), true))
+    }
+
+    @Test
     fun `Ascii separateIntoVerses splits on newlines`() {
         assertArrayEquals(arrayOf("Ab", "cD", ""), OldVerseTextDecoder.Ascii().separateIntoVerses("Ab\ncD\n\n".toByteArray(), false))
     }

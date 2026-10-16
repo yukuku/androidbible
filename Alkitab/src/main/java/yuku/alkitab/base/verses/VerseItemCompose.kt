@@ -15,11 +15,12 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -42,6 +43,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -59,8 +61,11 @@ import androidx.compose.ui.text.font.Typeface as ComposeTypeface
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
@@ -567,20 +572,23 @@ internal fun VerseItemComposeContent(
                 }
                 .then(rubyGeometryCopyOnHold(state.attribute.ari))
         ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                VerseTextRegion(
-                    state = state,
-                    checked = checked,
-                    lineMetrics = lineMetrics,
-                    modifier = Modifier.weight(1f),
-                )
-                // Extending the attribute column by `rowExtraPaddingPx` makes
-                // the Row's height `max(textHeight, attrHeight + extra)` —
-                // the right shape whether text or attributes dominate the row.
-                AttributeColumn(
-                    attribute = state.attribute,
-                    modifier = Modifier.padding(bottom = with(LocalDensity.current) { lineMetrics.rowExtraPaddingPx.toDp() }),
-                )
+            if (!state.attribute.isShowingSomething) {
+                VerseTextRegion(state, checked, lineMetrics, modifier = Modifier.fillMaxWidth())
+            } else {
+                SubcomposeLayout(modifier = Modifier.fillMaxWidth()) { constraints ->
+                    val attributes = subcompose("attributes") {
+                        AttributeColumn(state.attribute)
+                    }.single().measure(constraints.copy(minWidth = 0, minHeight = 0))
+                    val attributeSize = IntSize(attributes.width, attributes.height)
+                    val text = subcompose("text") {
+                        VerseTextRegion(state, checked, lineMetrics, attributeSize, Modifier.fillMaxWidth())
+                    }.single().measure(constraints.copy(minHeight = 0))
+                    val height = constraints.constrainHeight(maxOf(text.height, attributes.height + lineMetrics.rowExtraPaddingPx))
+                    layout(constraints.maxWidth, height) {
+                        text.placeRelative(0, 0)
+                        attributes.placeRelative(constraints.maxWidth - attributes.width, 0)
+                    }
+                }
             }
         }
     }
@@ -676,7 +684,13 @@ internal fun computeLineMetrics(
  * TextIndent.
  */
 @Composable
-private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, lineMetrics: LineMetrics, modifier: Modifier = Modifier) {
+private fun VerseTextRegion(
+    state: VerseItemComposeState,
+    checked: Boolean,
+    lineMetrics: LineMetrics,
+    attributeSize: IntSize = IntSize.Zero,
+    modifier: Modifier = Modifier,
+) {
     val textColor = if (checked) {
         Color(TextColorUtil.getForCheckedVerse(selectedVerseBackgroundColor()))
     } else {
@@ -706,59 +720,11 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
         )
     }
 
-    var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
-
-    val rubies = state.render.rubies
-    val isRubyDebug = !LocalInspectionMode.current && ExperimentalFlags.debugRubyGeometry()
-    val textModifier = Modifier
-        .fillMaxWidth()
-        .inlineLinkTapDetector(
-            layoutResultProvider = { textLayoutResult },
-            inlineLinks = state.render.inlineLinks,
-            onClick = state.onInlineLinkClick,
-            onMiss = state.onClick,
-        )
     Box(modifier = modifier) {
-        if (rubies.isEmpty() && !isRubyDebug) {
-            BasicText(
-                text = state.render.text,
-                style = textStyle,
-                modifier = textModifier,
-                onTextLayout = { textLayoutResult = it },
-            )
+        if (attributeSize.width == 0) {
+            VerseBodyText(state, state.render, textStyle, lineMetrics, textColor)
         } else {
-            val textMeasurer = rememberTextMeasurer()
-            val density = LocalDensity.current
-            val rubyStyle = remember(textStyle, state.fontSizeDp) {
-                textStyle.copy(
-                    fontSize = (state.fontSizeDp * RUBY_FONT_SIZE_RATIO).sp,
-                    lineHeight = TextUnit.Unspecified,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                val availableWidthPx = constraints.maxWidth
-                val displayText = remember(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx) {
-                    widenRubyBases(state.render.text, rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx)
-                }
-                BasicText(
-                    text = displayText,
-                    style = textStyle,
-                    modifier = textModifier.rubyOverlay(
-                        rubies = rubies,
-                        layoutResultProvider = { textLayoutResult },
-                        textMeasurer = textMeasurer,
-                        rubyStyle = rubyStyle,
-                        textColor = textColor,
-                        baseAscentPx = lineMetrics.baseAscentPx,
-                        gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
-                        debugAri = state.attribute.ari,
-                        debugSource = state.render.sourceText,
-                        debug = isRubyDebug,
-                    ),
-                    onTextLayout = { textLayoutResult = it },
-                )
-            }
+            VerseTextAroundAttributes(state, textStyle, lineMetrics, textColor, attributeSize)
         }
 
         val gutter = state.render.gutterVerseNumber
@@ -775,6 +741,101 @@ private fun VerseTextRegion(state: VerseItemComposeState, checked: Boolean, line
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(top = with(LocalDensity.current) { lineMetrics.gutterTopPaddingPx.toDp() }),
+            )
+        }
+    }
+}
+
+@Composable
+private fun VerseTextAroundAttributes(
+    state: VerseItemComposeState,
+    textStyle: TextStyle,
+    lineMetrics: LineMetrics,
+    textColor: Color,
+    attributeSize: IntSize,
+    modifier: Modifier = Modifier,
+) {
+    val density = LocalDensity.current
+    val textMeasurer = rememberTextMeasurer()
+    val rubyStyle = remember(textStyle, state.fontSizeDp) { rubyTextStyle(textStyle, state.fontSizeDp) }
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val narrowWidth = (constraints.maxWidth - attributeSize.width).coerceAtLeast(0)
+        if (narrowWidth == 0) {
+            VerseBodyText(
+                state, state.render, textStyle, lineMetrics, textColor,
+                modifier = Modifier.padding(top = with(density) { attributeSize.height.toDp() }),
+            )
+        } else {
+            val flow = remember(state.render, textStyle, rubyStyle, textMeasurer, density, narrowWidth, attributeSize.height) {
+                val preparedText = widenRubyBases(state.render.text, state.render.rubies, textStyle, rubyStyle, textMeasurer, density, narrowWidth)
+                val narrowLayout = textMeasurer.measure(preparedText, textStyle, constraints = Constraints(maxWidth = narrowWidth))
+                splitVerseAroundAttributes(state.render, preparedText, narrowLayout, attributeSize.height)
+            }
+            Column {
+                VerseBodyText(
+                    state, flow.first, textStyle, lineMetrics, textColor,
+                    isRubyPrepared = true,
+                    modifier = Modifier.width(with(density) { narrowWidth.toDp() }),
+                )
+                flow.second?.let { remaining ->
+                    VerseBodyText(state, remaining, textStyle, lineMetrics, textColor)
+                }
+            }
+        }
+    }
+}
+
+private fun rubyTextStyle(textStyle: TextStyle, fontSizeDp: Float): TextStyle = textStyle.copy(
+    fontSize = (fontSizeDp * RUBY_FONT_SIZE_RATIO).sp,
+    lineHeight = TextUnit.Unspecified,
+    fontWeight = FontWeight.Normal,
+)
+
+@Composable
+private fun VerseBodyText(
+    state: VerseItemComposeState,
+    render: VerseRendererCompose.Result,
+    textStyle: TextStyle,
+    lineMetrics: LineMetrics,
+    textColor: Color,
+    isRubyPrepared: Boolean = false,
+    modifier: Modifier = Modifier,
+) {
+    var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+    val isRubyDebug = !LocalInspectionMode.current && ExperimentalFlags.debugRubyGeometry()
+    val textModifier = Modifier.fillMaxWidth().inlineLinkTapDetector(
+        layoutResultProvider = { textLayoutResult },
+        inlineLinks = render.inlineLinks,
+        onClick = state.onInlineLinkClick,
+        onMiss = state.onClick,
+    )
+    if (render.rubies.isEmpty() && !isRubyDebug) {
+        BasicText(render.text, modifier.then(textModifier), style = textStyle, onTextLayout = { textLayoutResult = it })
+    } else {
+        val textMeasurer = rememberTextMeasurer()
+        val density = LocalDensity.current
+        val rubyStyle = remember(textStyle, state.fontSizeDp) { rubyTextStyle(textStyle, state.fontSizeDp) }
+        BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+            val availableWidthPx = constraints.maxWidth
+            val displayText = remember(render.text, render.rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx, isRubyPrepared) {
+                if (isRubyPrepared) render.text else widenRubyBases(render.text, render.rubies, textStyle, rubyStyle, textMeasurer, density, availableWidthPx)
+            }
+            BasicText(
+                text = displayText,
+                style = textStyle,
+                modifier = textModifier.rubyOverlay(
+                    rubies = render.rubies,
+                    layoutResultProvider = { textLayoutResult },
+                    textMeasurer = textMeasurer,
+                    rubyStyle = rubyStyle,
+                    textColor = textColor,
+                    baseAscentPx = lineMetrics.baseAscentPx,
+                    gapPx = with(density) { rubyStyle.fontSize.toPx() } * RUBY_GAP_RATIO,
+                    debugAri = state.attribute.ari,
+                    debugSource = render.sourceText,
+                    debug = isRubyDebug,
+                ),
+                onTextLayout = { textLayoutResult = it },
             )
         }
     }

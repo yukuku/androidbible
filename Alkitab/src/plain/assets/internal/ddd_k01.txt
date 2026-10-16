@@ -54,156 +54,156 @@ You found me!!! Congratulations, again.
 1:2:23
 1:2:24
 1:2:25
-@@You need to replace the in_ddd files in @9assets/internal@7 with the actual Bible text.
-1:3:2
-1:3:3
-1:3:4
-1:3:5
-1:3:6
-1:3:7
-1:3:8
-1:3:9
-1:3:10
-1:3:11
-1:3:12
-1:3:13
-1:3:14
-1:3:15
-1:3:16
-1:3:17
-1:3:18
-1:3:19
-1:3:20
-1:3:21
-1:3:22
-1:3:23
-1:3:24
-@@Open me --> @<f1@>@/ <--, or open me --> @<f2@>@/
-@@Links on footnote test --> @<f1@>@/ <--, or this --> @<f2@>@/
-1:4:3
-1:4:4
-1:4:5
-1:4:6
-1:4:7
-1:4:8
-1:4:9
-1:4:10
-1:4:11
-1:4:12
-1:4:13
-1:4:14
-1:4:15
-1:4:16
-1:4:17
-1:4:18
-1:4:19
-1:4:20
-1:4:21
-1:4:22
-1:4:23
-1:4:24
-1:4:25
-1:4:26
-1:5:1
-1:5:2
-1:5:3
-1:5:4
-1:5:5
-1:5:6
-1:5:7
-1:5:8
-1:5:9
-1:5:10
-1:5:11
-1:5:12
-1:5:13
-1:5:14
-1:5:15
-1:5:16
-1:5:17
-1:5:18
-1:5:19
-1:5:20
-1:5:21
-1:5:22
-1:5:23
-1:5:24
-1:5:25
-1:5:26
-1:5:27
-1:5:28
-1:5:29
-1:5:30
-1:5:31
-1:5:32
-1:6:1
-1:6:2
-1:6:3
-1:6:4
-1:6:5
-1:6:6
-1:6:7
-1:6:8
-1:6:9
-1:6:10
-1:6:11
-1:6:12
-1:6:13
-1:6:14
-1:6:15
-1:6:16
-1:6:17
-1:6:18
-1:6:19
-1:6:20
-1:6:21
-1:6:22
-1:7:1
-1:7:2
-1:7:3
-1:7:4
-1:7:5
-1:7:6
-1:7:7
-1:7:8
-1:7:9
-1:7:10
-1:7:11
-1:7:12
-1:7:13
-1:7:14
-1:7:15
-1:7:16
-1:7:17
-1:7:18
-1:7:19
-1:7:20
-1:7:21
-1:7:22
-1:7:23
-1:7:24
-1:8:1
-1:8:2
-1:8:3
-1:8:4
-1:8:5
-1:8:6
-1:8:7
-1:8:8
-1:8:9
-1:8:10
-1:8:11
-1:8:12
-1:8:13
-1:8:14
-1:8:15
-1:8:16
-1:8:17
-1:8:18
-1:8:19
-1:8:20
-1:8:21
-1:8:22
+@@Ruby readings sit above their base text. This chapter demonstrates every supported kind; chapter 5 explores spacing and wrapping. @<x1@>@/ @<x2@>@/
+@@Generic ruby: @<r=reading@>base@/.
+@@Furigana: @<rf=かみ@>神@/は@<rf=あい@>愛@/です。
+@@Pinyin: @<rp=qǐ chū@>起初@/，@<rp=shén@>神@/创造天地。
+@@Strong’s identifiers: @<rs=H430@>אֱלֹהִים@/ and @<rs=G3056@>λόγος@/.
+@@Gloss: @<rg=peace@>שָׁלוֹם@/ and @<rg=word@>λόγος@/.
+@@Morphology: @<rm=N-NSM@>λόγος@/ and @<rm=V-IAI-3S@>ἦν@/.
+@@Transliteration: @<rt=berēʾšît@>בְּרֵאשִׁית@/ and @<rt=logos@>λόγος@/.
+@@Lemma: @<rl=λέγω@>εἶπεν@/ and @<rl=ἀγαπάω@>ἠγάπησεν@/.
+@@Unknown kind falls back to an ordinary reading: @<rz=custom@>extension@/.
+@@Character readings: @<rf=に@>日@/@<rf=ほん@>本@/@<rf=ご@>語@/.
+@@Word reading: @<rf=にほんご@>日本語@/.
+@@Phrase reading: @<r=in the beginning@>ἐν ἀρχῇ@/.
+@@Latin base: @<r=pronunciation@>reading@/ and @<r=AY-men@>amen@/.
+@@Arabic base: @<rt=salām@>سَلَام@/.
+@@שָׁלוֹם @<rt=shalom@>שָׁלוֹם@/ לָכֶם. קריאה מעל מילה בתוך משפט מימין לשמאל.
+@@سَلَامٌ @<rg=peace@>سَلَامٌ@/ لَكُمْ، وَهَذَا مِثَالٌ عَلَى التَّعْلِيقِ فَوْقَ الْكَلِمَةِ.
+@@Diacritics in reading and base: @<r=kā́@>café@/ and @<rp=lǜ sè@>绿色@/.
+@@Emoji base: @<r=dove@>🕊️@/ and @<r=family@>👨‍👩‍👧‍👦@/.
+@@@<rf=ひかり@>光@/ at the beginning of a verse.
+@@At the end of a verse: @<rf=ひかり@>光@/
+@@@<rg=word@>λόγος@/
+@@@<rf=かみ@>神@/@<rf=あい@>愛@/@<rp=guāng@>光@/@<rg=peace@>שלום@/
+@@Mixed annotation kinds: @<rs=G3056@>λόγος@/ @<rm=N-NSM@>λόγος@/ @<rl=λόγος@>λόγου@/ @<rg=word@>λόγος@/. Each run has one reading.
+@@Open the first footnote @<f1@>@/ or the second footnote @<f2@>@/.
+@@Footnotes can contain references @<f1@>@/ and web links @<f2@>@/.
+@@One cross-reference marker: @<x1@>@/.
+@@Two cross-reference markers next to each other: @<x1@>@/@<x2@>@/.
+@@Footnote and cross-reference beside each other: @<f1@>@/@<x1@>@/.
+@@@<f1@>@/ A footnote at the beginning.
+@@A footnote at the very end @<f1@>@/
+@@@9Italic beside a footnote@7@<f1@>@/ and @6red beside a reference@5@<x1@>@/.
+@@@<rf=ことば@>言葉@/@<f1@>@/ followed by ordinary text.
+@@@<rg=word@>λόγος@/@<x1@>@/ followed by another @<rg=light@>φῶς@/.
+@@@6Red text @<rf=ひかり@>光@/@5@<f1@>@/@<x1@>@/.
+@@@1An indented line with a footnote @<f1@>@/@8and a second line with a reference @<x1@>@/.
+@@@^A paragraph with a footnote @<f1@>@/.@^A second paragraph with a reference @<x1@>@/.
+@@Ten footnotes: @<f1@>@/ @<f2@>@/ @<f3@>@/ @<f4@>@/ @<f5@>@/ @<f6@>@/ @<f7@>@/ @<f8@>@/ @<f9@>@/ @<f10@>@/.
+@@@<x1@>@/ A cross-reference at the beginning.
+@@A cross-reference at the very end @<x1@>@/
+This section has parallel references in its heading. Open them and return here to compare navigation with inline markers.
+@@Long note content: @<f1@>@/. The popup contains paragraphs, italic and red text, and multiple targets.
+@@Range and disjoint destinations: @<x1@>@/.
+@@Unicode footnote content: @<f1@>@/.
+@@שלום עם הערת שוליים @<f1@>@/ וקישור נוסף @<x1@>@/ בסוף המשפט.
+@@العربية مع ملاحظة @<f1@>@/ وإحالة @<x1@>@/ في النص.
+@@A longer sentence places a footnote close to a possible wrapping point @<f1@>@/ and continues for several more words before a cross-reference @<x1@>@/ so that tapping can be checked at different widths.
+@@Adjacent runs and links: @<rf=かみ@>神@/@<f1@>@/@<rf=あい@>愛@/@<x1@>@/@<rf=ひかり@>光@/.
+@@Compare reading, footnote, and reference: @<r=reading@>base@/, @<f1@>@/, @<x1@>@/.
+@@Open a reference to the wrapping gallery @<x1@>@/ and add your own bookmarks or notes there.
+Ruby layout gallery. Try large text, a narrow split pane, different fonts, and hidden verse numbers.
+@@Short reading over a long base: @<r=one@>a much longer base phrase@/.
+@@Long reading over a short base: @<r=a deliberately long annotation@>a@/.
+@@Equal-sized runs: @<r=abc@>XYZ@/ @<r=123@>ABC@/.
+@@Adjacent wide readings: @<r=beginning@>a@/@<r=creation@>b@/@<r=illumination@>c@/.
+@@Wide readings with spaces: @<r=beginning@>a@/ @<r=creation@>b@/ @<r=illumination@>c@/.
+@@Punctuation around readings: “@<rg=word@>λόγος@/,” (@<rg=light@>φῶς@/); [@<rf=かみ@>神@/]!
+@@@<r=a long reading at the start@>A@/ starts this line and the text continues.
+@@The final word has @<r=a long reading at the end@>Z@/
+@@@<r=This reading is deliberately much wider than a phone screen to exercise bounded annotation layout at large text sizes@>X@/
+@@@<rf=はじめにことばがあったことばはひかりであった@>初めに言葉があった。言葉は光であった。@/
+@@@<r=a phrase reading@>A long base phrase contains many ordinary words and continues far enough to span several lines when displayed in a narrow reading pane.@/
+@@@6Red base: @<rf=あか@>赤@/ and normal red words.@5
+@@@9Italic base: @<rg=word@>λόγος@/ and more italic words.@7
+@@@6@9Red italic base: @<rg=light@>φῶς@/.@7@5
+@@Styles inside one base: @<r=one reading@>plain @9italic@7 @6red@5 plain@/.
+@@@0Flush paragraph with @<rf=ひかり@>光@/ and enough surrounding words to wrap when shown in a narrow pane.@^Indented paragraph with @<rf=かみ@>神@/.
+@@@^Indented first line with @<rg=peace@>שָׁלוֹם@/ and enough following words to compare the ruby with the verse number gutter and paragraph continuation.
+@@@1Poetry one: @<rf=ひかり@>光@/@8Another line: @<rf=いのち@>命@/
+@@@2Poetry two: @<rp=guāng@>光@/@8Another line: @<rp=ài@>爱@/
+@@@3Poetry three: @<rg=word@>λόγος@/@8Another line: @<rg=light@>φῶς@/
+@@@4Poetry four: @<rt=shalom@>שלום@/@8Another line: @<rt=logos@>λόγος@/
+@@A plain line.@8A line with @<rf=かみ@>神@/.@8A plain line again.
+@@A ruby line: @<rf=ひかり@>光@/.@8@8A blank line separates another @<rf=ひかり@>光@/.
+@@Empty-base anchor: left @<r=anchor@>@/ right.
+@@@<r=leading anchor@>@/Text after a leading empty base.
+@@Text before a trailing empty base.@<r=trailing anchor@>@/
+@@Empty reading leaves ordinary base text: @<r=@>visible base@/.
+@@@<r=が@>が@/ @<r=é@>é@/ @<r=👩🏽‍💻@>coder@/ combine graphemes in readings and bases.
+@@@<rf=かみ@>神@/は@<rf=あい@>愛@/です。@<rf=ひかり@>光@/は@<rf=やみ@>闇@/の中に輝き、@<rf=いのち@>命@/と@<rf=へいわ@>平和@/をもたらします。
+@@בְּרֵאשִׁית @<rt=bara@>בָּרָא@/ @<rs=H430@>אֱלֹהִים@/ אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ׃ @<rg=peace@>שָׁלוֹם@/ לָכֶם.
+@@@^A final combination: @6@<rg=word@>λόγος@/@5, @9@<rf=ひかり@>光@/@7, and a note @<f1@>@/.@1Poetry with @<rp=ài@>爱@/ and a reference @<x1@>@/.
+Attribute wrapping gallery. Add a bookmark, a note, a highlight, or a reading progress pin to these verses. Try them individually and together; lines beneath the end-side icons can use the freed space.
+Short row.
+Medium row with enough words to reach the end-side attributes on a narrow screen.
+Plain long row. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+Longer row. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+@@@^First-line indented row. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+@@@0Flush paragraph. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+@@@1Poetry level one. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+@@@2Poetry level two. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+@@@3Poetry level three. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+@@@4Poetry level four. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+@@Hard breaks near the top.@8A second line.@8A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+@@@^A first paragraph.@^A second paragraph. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. @0A final flush paragraph.
+@@@6Red text. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. @5Normal ending.
+@@@9Italic text. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. @7Normal ending.
+@@Ruby and wrapping: @<r=warm meal@>A bowl of steaming noodles@/ arrived at the table. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. A final @<r=peace@>shalom@/.
+@@@<rf=かみ@>神@/は@<rf=あい@>愛@/です。光は闇の中に輝き、わたしたちは共に歩みます。@<rf=へいわ@>平和@/と@<rf=いのち@>命@/を大切にします。光は闇の中に輝き、わたしたちは共に歩みます。@<rf=へいわ@>平和@/と@<rf=いのち@>命@/を大切にします。光は闇の中に輝き、わたしたちは共に歩みます。@<rf=へいわ@>平和@/と@<rf=いのち@>命@/を大切にします。光は闇の中に輝き、わたしたちは共に歩みます。@<rf=へいわ@>平和@/と@<rf=いのち@>命@/を大切にします。光は闇の中に輝き、わたしたちは共に歩みます。@<rf=へいわ@>平和@/と@<rf=いのち@>命@/を大切にします。
+@@שלום @<rt=shalom@>שָׁלוֹם@/ לָכֶם. זהו משפט ארוך לבדיקת גלישת הטקסט סביב הסימנים שבצד השורה. השורות שמתחת לסימנים יכולות להשתמש בכל הרוחב הזמין. זהו משפט ארוך לבדיקת גלישת הטקסט סביב הסימנים שבצד השורה. השורות שמתחת לסימנים יכולות להשתמש בכל הרוחב הזמין. זהו משפט ארוך לבדיקת גלישת הטקסט סביב הסימנים שבצד השורה. השורות שמתחת לסימנים יכולות להשתמש בכל הרוחב הזמין. זהו משפט ארוך לבדיקת גלישת הטקסט סביב הסימנים שבצד השורה. השורות שמתחת לסימנים יכולות להשתמש בכל הרוחב הזמין.
+@@العربية مع @<rt=salām@>سَلَام@/. هذا نص طويل لاختبار التفاف الكلمات حول العلامات في جانب السطر واستخدام المساحة المتاحة تحتها عند القراءة. هذا نص طويل لاختبار التفاف الكلمات حول العلامات في جانب السطر واستخدام المساحة المتاحة تحتها عند القراءة. هذا نص طويل لاختبار التفاف الكلمات حول العلامات في جانب السطر واستخدام المساحة المتاحة تحتها عند القراءة. هذا نص طويل لاختبار التفاف الكلمات حول العلامات في جانب السطر واستخدام المساحة المتاحة تحتها عند القراءة.
+@@Links around wrapping points: @<f1@>@/ A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. Middle reference @<x1@>@/ A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. Final note @<f2@>@/.
+@@@^@6@9Styled ruby @<rg=light@>φῶς@/@7@5 beside a note @<f1@>@/. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow. @1Poetry follows with @<rf=ひかり@>光@/ and a reference @<x1@>@/. A bowl of steaming noodles arrived at the table, topped with a soft boiled egg, spring onions and a spoonful of chili oil. The broth smelled of ginger, garlic and slowly braised vegetables. We shared stories while the rain tapped against the window, and stayed until the lanterns outside began to glow.
+Check selection, copying, search snippets, dark theme, large fonts, hidden verse numbers, and split view using these examples. Bookmarks, highlights, notes, and progress pins are your own saved data; this sample does not create them.
+Formatting gallery. Ruby types are in chapter 3, links in 4, ruby layout in 5, attribute wrapping in 6, and Unicode scripts in 8.
+@@@0Flush paragraph: the first and following lines share their starting edge.
+@@@0A long flush paragraph shows where ordinary words wrap when the font is enlarged or the reading pane becomes narrow. Continue reading to compare the first line with all of the following lines.
+@@@^First-line paragraph indentation.
+@@@^A long indented paragraph starts farther in than its continuation lines. Enlarge the font or use split view to compare the starting position of the first line with the rest of this paragraph.
+@@An inline opening.@^A new indented paragraph.@0A flush paragraph.
+@@An opening sentence with enough words to wrap on a narrow screen before the next paragraph starts.@^An indented paragraph with enough words to wrap again, making the gutter and indentation easy to compare.
+@@@0Indent zero.@1Indent one.@2Indent two.@3Indent three.@4Indent four.@0Back to zero.
+@@Plain text with the formatting prefix but no styles.
+@@Normal, @9italic@7, @6red@5, @6@9red italic@7 red again@5, normal again.
+@@Hard line breaks: A@8B@8C@8D
+@@@1Poetry level one@8Another line at level one@2Level two@8Another line at level two@3Level three@8Another line at level three
+@@@1Short poetry line at level one.
+@@@1A long poetry line at level one repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
+@@@2Short poetry line at level two.
+@@@2A long poetry line at level two repeats a gentle rhythm so that continuation lines and their hanging indentation can be compared in a narrow reading pane.
+@@@3A long poetry line at level three leaves a smaller area for words and wraps naturally as the reader changes the text size.
+@@@4A long poetry line at level four tests the deepest supported indentation in a narrow reading pane.
+@@@8Leading hard break, then text.
+@@Text, then a trailing hard break.@8
+@@Two intentional blank lines follow.@8@8@8Text resumes.
+@@@6Red spans a line break@8and continues here@5 before normal text.
+@@@9Italic spans a paragraph@^and continues here@7 before normal text.
+@@@6Red @9and italic@5 italic only@7 normal. @9Italic @6and red@7 red only@5 normal.
+Unicode gallery. Compare these scripts in a narrow pane, with larger text, and when selecting or copying.
+Latin diacritics: café, naïve, Ångström, déjà vu, São Paulo, Ḥesed.
+@@Composed and combining accents: café / café; Å / Å; ḗ / ḗ.
+Punctuation: “double quotes”, ‘single quotes’, «guillemets», (parentheses), [brackets], ellipsis…
+日本語の文章です。句読点と括弧「ことば」を含み、狭い画面でも自然に折り返して表示します。
+中文示例：起初，光照在黑暗里。这一段没有单词之间的空格，用来观察自动换行与标点。
+한국어 예문입니다. 여러 단어와 문장 부호를 함께 표시하고 줄바꿈을 확인합니다.
+Ἐν ἀρχῇ ἦν ὁ λόγος. Ελληνικά με τόνους και πνεύματα.
+בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ׃
+فِي الْبَدْءِ كَانَتِ الْكَلِمَةُ، وَهَذَا نَصٌّ طَوِيلٌ لِاخْتِبَارِ الْقِرَاءَةِ مِنَ الْيَمِينِ إِلَى الْيَسَارِ.
+English before שלום and العربية, then English after; numbers 123 and ٤٥٦.
+שלום 123 (ABC) עולם. מילים נוספות לבדיקת שורות מעורבות עם English באמצע המשפט.
+हिन्दी: आरम्भ में वचन था। বাংলা: আলো অন্ধকারে জ্বলে।
+ภาษาไทยไม่มีช่องว่างระหว่างคำเสมอไป ใช้ข้อความนี้ทดสอบการตัดบรรทัดในหน้าจอแคบ
+Emoji and graphemes: 🌿 🕊️ 👩🏽‍💻 👨‍👩‍👧‍👦 🇮🇩. Select and copy without splitting a character.
+Nonbreaking spaces keep these pairs together: 1 Samuel, New York. Narrow no-break: 10 000.
+@@Long token: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.
+@@@^Mixed paragraph: English, 日本語, Ελληνικά, שָׁלוֹם, سَلَام.@^שלום עם English ומספרים 123.@0Return to a flush paragraph.
+Supplementary letters: 𐐀 𐐁 𐐨 𐐩. Search and copy should preserve complete characters.
+Supplementary CJK characters: 𠮷野家、𠀀。Compare their fallback font with 日本語 and 中文.
+@@English first.@8שלום לכולם.@8العربية في سطر جديد.@8日本語の行。
+For empty-verse and search fixtures, visit chapters 1 and 2. For readings above these scripts, visit chapters 3 and 5.
 1:9:1
 1:9:2
 1:9:3
