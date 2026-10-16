@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Chưa đồng bộ</string>
     <string name="sync_sync_set_pref_summary_syncing">Đang đồng bộ&#8230;</string>
     <string name="sync_log_activity_title">Nhật ký đồng bộ</string>
+    <string name="sync_diagnostics_requested">Đã yêu cầu đồng bộ. Mở %1$s để xem tiến trình và thông tin chẩn đoán.</string>
     <string name="sync_status_activity_title">Trạng thái đồng bộ</string>
     <string name="sync_login_activity_title">Đăng nhập hoặc Tạo tài khoản</string>
     <string name="sync_login_change_password_menu_item">Đổi mật khẩu</string>

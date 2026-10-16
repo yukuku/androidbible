@@ -93,7 +93,6 @@ class BottomToolbarLayoutTest {
             R.layout.activity_search_book_filter,
             R.layout.activity_settings,
             R.layout.activity_song_view_content,
-            R.layout.activity_sync_log,
             R.layout.activity_sync_login,
             R.layout.activity_versions,
             R.layout.ribka_activity_report,

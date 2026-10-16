@@ -10,7 +10,6 @@ private const val TAG = "FcmMessagingService"
 class FcmMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         AppLog.d(TAG, "FCM message received")
 
         val intent = Intent(this, FcmIntentService::class.java)

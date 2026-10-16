@@ -75,7 +75,7 @@ class SyncRecordingTest {
             arrayOf<Any?>(1, SyncRecorder.EventKind.login_failed.code, set, params))
     }
 
-    private fun rows() = db.listLatestSyncLog(500)
+    private fun rows() = db.listLatestSyncLog(SyncDiagnostics.MAX_ROWS)
     private fun recorded(kind: SyncRecorder.EventKind) = rows().any { it.kind_code == kind.code }
 
     @Test
@@ -97,7 +97,7 @@ class SyncRecordingTest {
         assertTrue(recorded(SyncRecorder.EventKind.sync_adapter_set_not_enabled))
         assertEquals(delivered(true), worker("private note").doWork())
         assertTrue(rows().any { it.params["reason"] == "unknown_set" })
-        assertFalse(rows().toString().contains("private note"))
+        assertTrue(rows().any { it.syncSetName == "private note" })
     }
 
     @Test
@@ -107,25 +107,33 @@ class SyncRecordingTest {
         assertEquals("DATABASE", row.params["category"])
         assertEquals("apply", row.params["stage"])
         assertEquals("android.database.sqlite.SQLiteException", row.params["causes"])
-        SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", "person@example.org", "message", "private note", "duration_ms", 12)
-        assertEquals(mapOf("email" to "person@example.org", "duration_ms" to 12L), rows().first().params)
+        SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", "person@example.org", "diagnostic_detail", "additional context", "duration_ms", 12)
+        assertEquals(mapOf("email" to "person@example.org", "diagnostic_detail" to "additional context", "duration_ms" to 12.0), rows().first().params)
     }
 
     @Test
-    fun `retention keeps the latest 500 events including equal timestamps`() {
-        repeat(510) { SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", it) }
-        val rows = rows()
-        assertEquals(500, rows.size)
+    fun `retention collects 600 events then prunes to 500 in batches`() {
+        repeat(599) { SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", it) }
+        assertEquals(599L, DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
+        assertEquals(599, rows().size)
+        assertEquals(0.0, rows().last().params["attempt"])
+        SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", 599)
         assertEquals(500L, DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
-        assertEquals(509L, rows.first().params["attempt"])
-        assertEquals(10L, rows.last().params["attempt"])
+        assertEquals(599.0, rows().first().params["attempt"])
+        assertEquals(100.0, rows().last().params["attempt"])
+        repeat(99) { SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", 600 + it) }
+        assertEquals(599L, DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
+        assertEquals(100.0, rows().last().params["attempt"])
+        SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", 699)
+        assertEquals(500L, DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
+        assertEquals(200.0, rows().last().params["attempt"])
     }
 
     @Test
-    fun `legacy payload text is filtered while account email is retained`() {
+    fun `legacy metadata and set names remain unchanged`() {
         insertLegacy("""{"email":"person@example.org","message":"private note"}""", "person@example.org")
-        assertEquals(mapOf("email" to "person@example.org"), rows().first().params)
-        assertEquals("unknown", rows().first().syncSetName)
+        assertEquals(mapOf("email" to "person@example.org", "message" to "private note"), rows().first().params)
+        assertEquals("person@example.org", rows().first().syncSetName)
         insertLegacy("invalid JSON")
         assertTrue(rows().first().params.isEmpty())
     }
@@ -156,7 +164,7 @@ class SyncRecordingTest {
             .header("Authorization", "secret").body("private note".toResponseBody()).build()
         assertEquals("private note", worker().execute(call, "mabel"))
         val row = rows().first()
-        assertEquals(401L, row.params["http_status"])
+        assertEquals(401.0, row.params["http_status"])
         assertEquals("AUTH", row.params["category"])
         assertEquals(2, row.params.size)
     }
@@ -186,7 +194,7 @@ class SyncRecordingTest {
         helper.readableDatabase.rawQuery("SELECT params, syncSetName FROM SyncLog", null).use {
             assertTrue(it.moveToFirst())
             assertTrue(it.isNull(0))
-            assertEquals("unknown", it.getString(1))
+            assertEquals("x".repeat(5000), it.getString(1))
         }
         db.insertSyncLog(2, SyncRecorder.EventKind.login_failed, "mabel", "é".repeat(2049))
         helper.readableDatabase.rawQuery("SELECT params FROM SyncLog ORDER BY _id DESC LIMIT 1", null).use {
@@ -214,21 +222,32 @@ class SyncRecordingTest {
             assertEquals("legacy set", it.getString(1))
         }
         assertTrue(rows().last().params.isEmpty())
-        assertEquals("unknown", rows().last().syncSetName)
+        assertEquals("legacy set", rows().last().syncSetName)
     }
 
     @Test
     fun `retention follows insertion order even when row IDs have gaps`() {
-        repeat(520) {
+        repeat(620) {
             helper.writableDatabase.execSQL(
                 "INSERT INTO SyncLog(_id, createTime, kind, params) VALUES (?, 1, ?, ?)",
                 arrayOf<Any>((it + 1) * 10, SyncRecorder.EventKind.diagnostic_stage.code, "{\"attempt\":$it}"))
         }
-        SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", 520)
+        SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", 620)
         assertEquals(500, rows().size)
         assertEquals(500L, DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
-        assertEquals(520L, rows().first().params["attempt"])
-        assertEquals(21L, rows().last().params["attempt"])
+        assertEquals(620.0, rows().first().params["attempt"])
+        assertEquals(121.0, rows().last().params["attempt"])
     }
 
+    @Test
+    fun `copy export includes legacy metadata event codes and readable numbers`() {
+        insertLegacy("""{"email":"person@example.org","custom_detail":"support context","attempt":2}""", "legacy set")
+        val exported = formatSyncLogExport(rows())
+        assertTrue(exported.contains("12 login_failed legacy set"))
+        assertTrue(exported.contains("email person@example.org"))
+        assertTrue(exported.contains("custom_detail support context"))
+        assertTrue(exported.contains("attempt 2\n"))
+        assertTrue(exported.contains("App "))
+        assertTrue(exported.contains("Android 29"))
+    }
 }

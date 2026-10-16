@@ -351,6 +351,7 @@
     <string name="sync_sync_set_pref_summary_never">Δεν έχει συγχρονιστεί ακόμα</string>
     <string name="sync_sync_set_pref_summary_syncing">Συγχρονισμός τώρα&#8230;</string>
     <string name="sync_log_activity_title">Στοιχεία συγχρονισμού</string>
+    <string name="sync_diagnostics_requested">Ζητήθηκε συγχρονισμός. Ανοίξτε το %1$s για την πρόοδο και διαγνωστικές λεπτομέρειες.</string>
     <string name="sync_status_activity_title">Στάτους συγχρονισμού</string>
     <string name="sync_login_activity_title">Συνδεθείτε ή Δημιουργήσετε Λογαριασμό</string>
     <string name="sync_login_change_password_menu_item">Αλλάξετε κωδικό πρόσβασης</string>

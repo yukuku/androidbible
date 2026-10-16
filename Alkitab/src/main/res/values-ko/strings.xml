@@ -352,6 +352,7 @@
     <string name="sync_sync_set_pref_summary_never">아직 동기화하지 못했습니다.</string>
     <string name="sync_sync_set_pref_summary_syncing">동기화 중...</string>
     <string name="sync_log_activity_title">동기화 로그</string>
+    <string name="sync_diagnostics_requested">동기화를 요청했습니다. 진행 상황과 진단 정보를 보려면 %1$s 항목을 여세요.</string>
     <string name="sync_status_activity_title">동기화 상태</string>
     <string name="sync_login_activity_title">로그인 또는 계정 만들기</string>
     <string name="sync_login_change_password_menu_item">비밀번호 변경</string>

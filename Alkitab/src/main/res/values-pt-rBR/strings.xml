@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Ainda não sincronizado</string>
     <string name="sync_sync_set_pref_summary_syncing">Sincronizando agora&#8230;</string>
     <string name="sync_log_activity_title">Log de sincronizações</string>
+    <string name="sync_diagnostics_requested">Sincronização solicitada. Abra %1$s para ver o progresso e os detalhes de diagnóstico.</string>
     <string name="sync_status_activity_title">Status da sincronização</string>
     <string name="sync_login_activity_title">Login ou crie uma conta</string>
     <string name="sync_login_change_password_menu_item">Alterar senha</string>

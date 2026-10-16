@@ -322,6 +322,7 @@
     <string name="sync_sync_set_pref_summary_never">Még nincs szinkronizálva</string>
     <string name="sync_sync_set_pref_summary_syncing">Szinkronizálás most&#8230;</string>
     <string name="sync_log_activity_title">Szinkronizálási napló</string>
+    <string name="sync_diagnostics_requested">Szinkronizálás kérve. Az állapot és a diagnosztikai részletek a %1$s menüpontban láthatók.</string>
     <string name="sync_status_activity_title">Szinkronizálási állapot</string>
     <string name="sync_login_activity_title">Bejelentkezés vagy Fiók létrehozása</string>
     <string name="sync_login_change_password_menu_item">Jelszó módosítása</string>

@@ -177,7 +177,7 @@ public class SyncSettingsActivity extends BaseActivity {
 		final int itemId = item.getItemId();
 		if (itemId == R.id.menuSyncNow) {
 			SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
-            Toast.makeText(this, R.string.sync_diagnostics_requested, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.sync_diagnostics_requested, getString(R.string.sync_menu_item_sync_log)), Toast.LENGTH_LONG).show();
 			SyncKotlin.syncNow(true);
 			return true;
 		} else if (itemId == R.id.menuSyncLog) {

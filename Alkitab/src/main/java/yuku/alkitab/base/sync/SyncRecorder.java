@@ -103,18 +103,16 @@ public class SyncRecorder {
         for (int i = 0; i + 1 < kvpairs.length && values.size() < SyncDiagnostics.MAX_FIELDS; i += 2) {
             if (kvpairs[i] instanceof String) values.put((String) kvpairs[i], kvpairs[i + 1]);
         }
-        final Map<String, Object> safe = SyncDiagnostics.safeParams(values);
-        final String set = SyncDiagnostics.safeSet(syncSetName);
         final int time = Sqlitil.nowDateTime();
         try {
-            App.services.storage.getDb().insertSyncLog(time, kind, set, App.getDefaultGson().toJson(safe));
+            App.services.storage.getDb().insertSyncLog(time, kind, syncSetName, App.getDefaultGson().toJson(values));
         } catch (RuntimeException error) {
             // A database failure must neither break sync nor hide its diagnostics.
             final SyncLog row = new SyncLog();
             row.createTime = Sqlitil.toDate(time);
             row.kind_code = kind.code;
-            row.syncSetName = set;
-            row.params = safe;
+            row.syncSetName = syncSetName;
+            row.params = values;
             synchronized (SyncRecorder.class) {
                 if (fallback.size() >= 50) fallback.removeFirst();
                 fallback.addLast(row);

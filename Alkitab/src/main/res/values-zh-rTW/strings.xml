@@ -350,6 +350,7 @@
     <string name="sync_sync_set_pref_summary_never">尚未同步</string>
     <string name="sync_sync_set_pref_summary_syncing">正在同步&#8230;</string>
     <string name="sync_log_activity_title">同步紀錄</string>
+    <string name="sync_diagnostics_requested">已要求同步。開啟「%1$s」查看進度與診斷詳情。</string>
     <string name="sync_status_activity_title">同步狀態</string>
     <string name="sync_login_activity_title">登入或建立帳戶</string>
     <string name="sync_login_change_password_menu_item">更改密碼</string>

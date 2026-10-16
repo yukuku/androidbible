@@ -62,6 +62,7 @@ public class FcmIntentService extends JobIntentService {
 			}
 		} catch (Exception e) {
 			SyncRecorder.error("fcm", null, e);
+			AppLog.d(TAG, "Exception processing FCM message", e);
 		}
 	}
 }

@@ -352,6 +352,7 @@
     <string name="sync_sync_set_pref_summary_never">မချိတ်ဆက်ရသေးပါ</string>
     <string name="sync_sync_set_pref_summary_syncing">ယခုချိတ်ဆက်နေသည်&#8230;</string>
     <string name="sync_log_activity_title">ချိတ်ဆက်မှု မှတ်တမ်း</string>
+    <string name="sync_diagnostics_requested">စင့်ခ်လုပ်ရန် တောင်းဆိုထားပါသည်။ လုပ်ဆောင်မှုအခြေအနေနှင့် ပြဿနာစစ်ဆေးချက်အသေးစိတ်ကို ကြည့်ရန် %1$s ကို ဖွင့်ပါ။</string>
     <string name="sync_status_activity_title">ချိတ်ဆက်မှု ဖြစ်ရပ်အခြေအနေ</string>
     <string name="sync_login_activity_title">အကောင့်ထဲ ၀င်ရန် သို့မဟုတ် အကောင့်သစ်ဖွင့်ရန်</string>
     <string name="sync_login_change_password_menu_item">စကားဝှက်ပြောင်းရန်</string>

@@ -6,50 +6,11 @@ import java.util.IdentityHashMap
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-/** Values from servers, exceptions and accounts are untrusted, even in legacy log rows. */
 object SyncDiagnostics {
-    const val MAX_ROWS = 500
+    const val RETAINED_ROWS = 500
+    const val MAX_ROWS = 600
     const val MAX_PARAM_BYTES = 4096
     const val MAX_FIELDS = 16
-    private val numericKeys = setOf("base_revno", "client_delta_operations_size", "client_entities_size",
-        "client_delta_operations_size_original", "client_delta_operations_size_chopped", "duration_ms",
-        "final_revno", "append_delta_operations_size", "insert_count", "update_count", "delete_count",
-        "http_status", "attempt", "sdk", "version_code", "set_count", "io_errors", "parse_errors", "auth_errors")
-    private val stages = setOf("request", "schedule", "worker", "prerequisites", "gather", "serialize",
-        "http", "parse", "apply", "complete", "fcm")
-    private val categories = setOf("DNS", "TIMEOUT", "TLS", "CONNECTION", "IO", "DATABASE", "JSON",
-        "CANCELLED", "UNEXPECTED", "AUTH", "HTTP_CLIENT", "HTTP_SERVER", "HTTP_OK", "HTTP_OTHER")
-
-    @JvmStatic
-    fun safeSet(value: String?): String? = value?.let {
-        if (it in setOf("mabel", "history", "pins", "rp")) it else "unknown"
-    }
-
-    @JvmStatic
-    fun safeParams(input: Map<String, *>?): Map<String, Any> {
-        val result = linkedMapOf<String, Any>()
-        input?.entries?.take(MAX_FIELDS)?.forEach { (key, value) ->
-            val safe: Any? = when {
-                key in numericKeys && value is Number -> value.toLong()
-                key in setOf("forced", "network_required", "is_new_registration_id", "is_sync_successful") && value is Boolean -> value
-                key in setOf("email", "accountName") && value is String && value.length <= 320 &&
-                    value.count { it == '@' } == 1 && !value.contains("://") &&
-                    value.none { it.isWhitespace() || it.isISOControl() } -> value
-                key == "serverPrefix" && value is String -> safeServerPrefix(value)
-                key == "stage" && value in stages -> value
-                key == "category" && value in categories -> value
-                key == "reason" && value in setOf("not_logged_in", "updates_ongoing", "unknown_set", "empty_response", "empty_request") -> value
-                key == "apply_result" && value in setOf("ok", "unknown_kind", "dirty_entities", "dirty_sync_account", "unsupported_operation") -> value
-                key == "state" && value in setOf("ENQUEUED", "RUNNING", "SUCCEEDED", "FAILED", "BLOCKED", "CANCELLED") -> value
-                key == "work_id" && value is String && value.matches(Regex("[0-9a-fA-F-]{36}")) -> value
-                key in setOf("app_version", "android") && value is String && value.length <= 64 && value.matches(Regex("[0-9][0-9A-Za-z._-]*")) -> value
-                key == "causes" && value is String && value.length <= 512 && value.matches(Regex("[A-Za-z0-9_.$ >]+")) -> value
-                else -> null
-            }
-            if (safe != null) result[key] = safe
-        }
-        return result
-    }
 
     @JvmStatic
     fun safeServerPrefix(value: String): String {

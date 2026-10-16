@@ -179,6 +179,7 @@ public class SyncAdapter extends Worker {
                         SyncRecorder.log(SyncRecorder.EventKind.sync_skipped, null, "reason", "unknown_set");
 				}
 			} catch (RuntimeException e) {
+				AppLog.w(TAG, "Unexpected sync failure for " + syncSetName, e);
 				SyncRecorder.error(stage, syncSetName, e);
 				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_error_unexpected, syncSetName);
 				stats.numIoExceptions++;
@@ -374,13 +375,13 @@ public class SyncAdapter extends Worker {
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
-			AppLog.w(TAG, "@@syncMabel exception when parsing json from server");
+			AppLog.w(TAG, "@@syncMabel exception when parsing json from server", e);
 			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
-			AppLog.w(TAG, "@@syncMabel exception when executing http call");
+			AppLog.w(TAG, "@@syncMabel exception when executing http call", e);
 			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			stats.numIoExceptions++;
@@ -470,13 +471,13 @@ public class SyncAdapter extends Worker {
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
-			AppLog.w(TAG, "@@syncHistory exception when parsing json from server");
+			AppLog.w(TAG, "@@syncHistory exception when parsing json from server", e);
 			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
-			AppLog.w(TAG, "@@syncHistory exception when executing http call");
+			AppLog.w(TAG, "@@syncHistory exception when executing http call", e);
 			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			stats.numIoExceptions++;
@@ -568,13 +569,13 @@ public class SyncAdapter extends Worker {
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
-			AppLog.w(TAG, "@@syncPins exception when parsing json from server");
+			AppLog.w(TAG, "@@syncPins exception when parsing json from server", e);
 			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
-			AppLog.w(TAG, "@@syncPins exception when executing http call");
+			AppLog.w(TAG, "@@syncPins exception when executing http call", e);
 			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			stats.numIoExceptions++;
@@ -666,13 +667,13 @@ public class SyncAdapter extends Worker {
 			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			AppEvents.emitSyncSettingsReload();
 		} catch (JsonSyntaxException e) {
-			AppLog.w(TAG, "@@syncRp exception when parsing json from server");
+			AppLog.w(TAG, "@@syncRp exception when parsing json from server", e);
 			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
-			AppLog.w(TAG, "@@syncRp exception when executing http call");
+			AppLog.w(TAG, "@@syncRp exception when executing http call", e);
 			SyncRecorder.error(stage, syncSetName, e);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			stats.numIoExceptions++;

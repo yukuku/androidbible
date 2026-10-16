@@ -401,6 +401,7 @@
 	<string name="sync_sync_set_pref_summary_never">Not synced yet</string>
 	<string name="sync_sync_set_pref_summary_syncing">Syncing now…</string>
 	<string name="sync_log_activity_title">Sync Log</string>
+	<string name="sync_diagnostics_requested">Sync requested. Open %1$s for progress and diagnostic details.</string>
 	<string name="sync_status_activity_title">Sync Status</string>
 
 	<string name="sync_login_activity_title">Login or Create Account</string>
@@ -560,5 +561,4 @@
     <string name="devotion_download_failed">Could not download this devotion. Check your connection and try again.</string>
     <string name="devotion_unavailable">This devotion is not available from the server yet.</string>
     <string name="devotion_retry">Retry</string>
-    <string name="sync_diagnostics_requested">Sync requested. Open View log for progress and diagnostic details.</string>
 </resources>

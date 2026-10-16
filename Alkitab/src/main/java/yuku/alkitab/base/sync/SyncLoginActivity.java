@@ -225,7 +225,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         Background.run(() -> {
             try {
                 AppLog.d(TAG, "Sending form to server for login...");
-                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", SyncDiagnostics.safeServerPrefix(Sync.getEffectiveServerPrefix()), "email", email);
 
                 final Sync.LoginResponseJson response = Sync.login(email, password);
 
@@ -233,7 +233,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
                 completeAuth(email, response.simpleToken, false, callback);
             } catch (Sync.NotOkException e) {
-                AppLog.d(TAG, "Login failed");
+                AppLog.d(TAG, "Login failed", e);
                 SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
 
                 runOnUiThread(() -> callback.onResult(false, getString(R.string.sync_login_failed_with_reason, e.getMessage())));
@@ -250,7 +250,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         Background.run(() -> {
             try {
                 AppLog.d(TAG, "Sending form to server for creating new account...");
-                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", SyncDiagnostics.safeServerPrefix(Sync.getEffectiveServerPrefix()), "email", email);
 
                 final Sync.LoginResponseJson response = Sync.register(form);
 
@@ -258,7 +258,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
                 completeAuth(email, response.simpleToken, true, callback);
             } catch (Sync.NotOkException e) {
-                AppLog.d(TAG, "Register failed");
+                AppLog.d(TAG, "Register failed", e);
                 SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
 
                 runOnUiThread(() -> callback.onResult(false, getString(R.string.sync_register_failed_with_reason, e.getMessage())));
@@ -276,7 +276,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
                 runOnUiThread(() -> callback.onResult(true, getString(R.string.sync_login_form_forgot_password_success)));
             } catch (Sync.NotOkException e) {
-                AppLog.d(TAG, "Forgot password failed");
+                AppLog.d(TAG, "Forgot password failed", e);
 
                 runOnUiThread(() -> callback.onResult(false, e.getMessage()));
             }
@@ -293,7 +293,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
                 runOnUiThread(() -> callback.onResult(true, getString(R.string.sync_login_form_change_password_success)));
             } catch (Sync.NotOkException e) {
-                AppLog.d(TAG, "Change password failed");
+                AppLog.d(TAG, "Change password failed", e);
 
                 runOnUiThread(() -> callback.onResult(false, e.getMessage()));
             }
@@ -332,7 +332,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         startThreadWithProgressDialog(getString(R.string.sync_progress_register), () -> {
             try {
                 AppLog.d(TAG, "Sending form to server for creating new account...");
-                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+                SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", SyncDiagnostics.safeServerPrefix(Sync.getEffectiveServerPrefix()), "email", email);
 
                 final Sync.LoginResponseJson response = Sync.register(form);
 
@@ -340,7 +340,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
                 gotSimpleToken(email, response.simpleToken, true);
             } catch (Sync.NotOkException e) {
-                AppLog.d(TAG, "Register failed");
+                AppLog.d(TAG, "Register failed", e);
                 SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
 
                 runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_register_failed_with_reason, e.getMessage())));
@@ -352,7 +352,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
         startThreadWithProgressDialog(getString(R.string.sync_progress_login), () -> {
             try {
                 AppLog.d(TAG, "Sending form to server for login...");
-                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+                SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", SyncDiagnostics.safeServerPrefix(Sync.getEffectiveServerPrefix()), "email", email);
 
                 final Sync.LoginResponseJson response = Sync.login(email, password);
 
@@ -360,7 +360,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
                 gotSimpleToken(email, response.simpleToken, false);
             } catch (Sync.NotOkException e) {
-                AppLog.d(TAG, "Login failed");
+                AppLog.d(TAG, "Login failed", e);
                 SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "causes", SyncDiagnostics.causes(e), "category", SyncDiagnostics.category(e));
 
                 runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(
@@ -380,7 +380,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
 
                 runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, getString(R.string.sync_login_form_forgot_password_success)));
             } catch (Sync.NotOkException e) {
-                AppLog.d(TAG, "Forgot password failed");
+                AppLog.d(TAG, "Forgot password failed", e);
 
                 runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, e.getMessage()));
             }
@@ -399,7 +399,7 @@ public class SyncLoginActivity extends BaseActivity implements SyncLoginCallback
                         .setOnDismissListener(dialog -> finish())
                 );
             } catch (Sync.NotOkException e) {
-                AppLog.d(TAG, "Change password failed");
+                AppLog.d(TAG, "Change password failed", e);
 
                 runOnUiThread(() -> MaterialDialogJavaHelper.showOkDialog(this, e.getMessage()));
             }

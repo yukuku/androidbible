@@ -373,14 +373,14 @@ public class Sync {
         } catch (IOException | JsonIOException e) {
             SyncRecorder.error("fcm", null, e);
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_io, null);
-            AppLog.w(TAG, "Failed to send FCM registration id to server");
+            AppLog.w(TAG, "Failed to send FCM registration id to server", e);
             Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
             return false;
 
         } catch (JsonSyntaxException e) {
             SyncRecorder.error("fcm", null, e);
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_json, null);
-            AppLog.w(TAG, "Server response is not valid JSON");
+            AppLog.w(TAG, "Server response is not valid JSON", e);
             Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
             return false;
         }

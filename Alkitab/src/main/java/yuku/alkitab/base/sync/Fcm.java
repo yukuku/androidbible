@@ -111,6 +111,7 @@ public class Fcm {
                     final Exception ex = task.getException();
                     if (ex != null) {
                         SyncRecorder.error("fcm", null, ex);
+                        AppLog.e(TAG, "Error :" + ex.getMessage(), ex);
                     }
                     return;
                 }
