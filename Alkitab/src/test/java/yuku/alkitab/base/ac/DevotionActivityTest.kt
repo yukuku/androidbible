@@ -135,10 +135,10 @@ class DevotionActivityTest {
         idle()
         val initialSize = activity.lContent.textSize
         val content = activity.lContent.text
-        pinch(1.5f)
-        assertEquals(initialSize * 1.5f, activity.lContent.textSize, 0.01f)
-        pinch(1.2f)
-        assertEquals(initialSize * 1.8f, activity.lContent.textSize, 0.01f)
+        pinch(1.235f)
+        assertEquals(initialSize * 1.235f, activity.lContent.textSize, 0.01f)
+        pinch(1.125f)
+        assertEquals(initialSize * 1.389375f, activity.lContent.textSize, 0.01f)
         pinch(3f)
         assertEquals(initialSize * 2f, activity.lContent.textSize, 0.01f)
         pinch(0.1f)

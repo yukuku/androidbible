@@ -51,22 +51,22 @@ import yuku.alkitab.util.Ari
 import yuku.alkitabintegration.display.Launcher
 
 open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.Listener {
-    private var textZoomPercent = 100
+    private var textScale = 1f
     private val rootListener = object : TwofingerLinearLayout.OnefingerListener() {
-        private var gestureZoomPercent = 100
+        private var gestureTextScale = 1f
         private var gestureTextSize = 0f
 
         override fun onOnefingerLeft() = bNext_click()
         override fun onOnefingerRight() = bPrev_click()
 
         override fun onTwofingerStart() {
-            gestureZoomPercent = textZoomPercent
+            gestureTextScale = textScale
             gestureTextSize = lContent.textSize
         }
 
         override fun onTwofingerScale(scale: Float) {
-            textZoomPercent = (gestureZoomPercent * scale).toInt().coerceIn(50, 200)
-            lContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, gestureTextSize * textZoomPercent / gestureZoomPercent)
+            textScale = (gestureTextScale * scale).coerceIn(0.5f, 2f)
+            lContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, gestureTextSize * textScale / gestureTextScale)
         }
     }
 
@@ -207,7 +207,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         // text formats
         lContent.setTextColor(applied.fontColor)
         lContent.setTypeface(applied.fontFace, applied.fontBold)
-        lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * textZoomPercent / 100f)
+        lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * textScale)
         lContent.setLineSpacing(0f, applied.lineSpacingMult)
         val padding: Rect = SettingsActivity.getPaddingBasedOnPreferences()
         lContent.setPadding(padding.left, padding.top, padding.right, padding.bottom)
