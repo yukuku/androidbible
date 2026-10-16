@@ -1,6 +1,7 @@
 package yuku.alkitab.base.sync
 
 import android.app.Application
+import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteException
 import androidx.work.Data
 import androidx.work.ListenableWorker
@@ -8,6 +9,11 @@ import androidx.work.WorkerParameters
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
+import java.util.UUID
+import okhttp3.Call
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.*
@@ -17,6 +23,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import yuku.afw.App as AfwApp
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.services.AppServices
@@ -24,7 +31,6 @@ import yuku.alkitab.base.services.StorageProvider
 import yuku.alkitab.base.storage.InternalDb
 import yuku.alkitab.base.storage.InternalDbHelper
 import yuku.alkitab.base.storage.Prefkey
-import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [29])
@@ -36,7 +42,7 @@ class SyncRecordingTest {
     @Before
     fun setUp() {
         val app = RuntimeEnvironment.getApplication()
-        yuku.afw.App.context = app
+        AfwApp.context = app
         Preferences.invalidate()
         helper = InternalDbHelper(app)
         db = InternalDb(helper)
@@ -110,7 +116,7 @@ class SyncRecordingTest {
         repeat(510) { SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", it) }
         val rows = rows()
         assertEquals(500, rows.size)
-        assertEquals(500L, android.database.DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
+        assertEquals(500L, DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
         assertEquals(509L, rows.first().params["attempt"])
         assertEquals(10L, rows.last().params["attempt"])
     }
@@ -143,10 +149,10 @@ class SyncRecordingTest {
 
     @Test
     fun `HTTP authentication status is recorded without headers or response content`() {
-        val call = mockk<okhttp3.Call>()
-        every { call.execute() } returns okhttp3.Response.Builder()
-            .request(okhttp3.Request.Builder().url("https://example.org/?token=secret").build())
-            .protocol(okhttp3.Protocol.HTTP_1_1).code(401).message("private message")
+        val call = mockk<Call>()
+        every { call.execute() } returns Response.Builder()
+            .request(Request.Builder().url("https://example.org/?token=secret").build())
+            .protocol(Protocol.HTTP_1_1).code(401).message("private message")
             .header("Authorization", "secret").body("private note".toResponseBody()).build()
         assertEquals("private note", worker().execute(call, "mabel"))
         val row = rows().first()
@@ -220,7 +226,7 @@ class SyncRecordingTest {
         }
         SyncRecorder.log(SyncRecorder.EventKind.diagnostic_stage, null, "attempt", 520)
         assertEquals(500, rows().size)
-        assertEquals(500L, android.database.DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
+        assertEquals(500L, DatabaseUtils.queryNumEntries(helper.readableDatabase, "SyncLog"))
         assertEquals(520L, rows().first().params["attempt"])
         assertEquals(21L, rows().last().params["attempt"])
     }

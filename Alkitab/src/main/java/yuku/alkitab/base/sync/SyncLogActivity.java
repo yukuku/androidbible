@@ -2,12 +2,17 @@ package yuku.alkitab.base.sync;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -15,6 +20,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -22,12 +28,13 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.SyncLog;
+import yuku.alkitab.base.util.ClipboardUtil;
 import yuku.alkitab.debug.R;
 
 public class SyncLogActivity extends BaseActivity {
 	ListView lsLog;
 	LogAdapter adapter;
-    private final android.os.Handler refreshHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Handler refreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable refresh = new Runnable() {
         @Override public void run() {
             adapter.load();
@@ -67,18 +74,18 @@ public class SyncLogActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(final android.view.Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         menu.add(0, 1, 0, R.string.bl_selection_copy);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(final android.view.MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == 1) {
             adapter.load();
             final StringBuilder text = new StringBuilder("Sync diagnostics (newest first; up to 500 stored events)\n");
             text.append("App ").append(App.getVersionName()).append(" (").append(App.getVersionCode())
-                .append("); Android ").append(android.os.Build.VERSION.SDK_INT).append("\n");
+                .append("); Android ").append(Build.VERSION.SDK_INT).append("\n");
             if (!SyncRecorder.fallbackLogs().isEmpty()) text.append("Diagnostic storage unavailable; some events are memory-only.\n");
             for (final SyncLog log : adapter.logs) {
                 text.append(dateFormat.get().format(log.createTime)).append(" ");
@@ -87,7 +94,7 @@ public class SyncLogActivity extends BaseActivity {
                     .append(" ").append(log.syncSetName == null ? "" : SyncDiagnostics.safeSet(log.syncSetName))
                     .append("\n").append(SyncDiagnostics.safeParams(log.params)).append("\n\n");
             }
-            yuku.alkitab.base.util.ClipboardUtil.copyToClipboard(text);
+            ClipboardUtil.copyToClipboard(text);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -103,10 +110,10 @@ public class SyncLogActivity extends BaseActivity {
 
 		void load() {
 			try {
-                logs = new java.util.ArrayList<>(App.services.storage.getDb().listLatestSyncLog(SyncDiagnostics.MAX_ROWS));
+                logs = new ArrayList<>(App.services.storage.getDb().listLatestSyncLog(SyncDiagnostics.MAX_ROWS));
             } catch (RuntimeException error) {
                 SyncRecorder.error("gather", null, error);
-                logs = new java.util.ArrayList<>();
+                logs = new ArrayList<>();
             }
             logs.addAll(SyncRecorder.fallbackLogs());
             logs.sort((left, right) -> right.createTime.compareTo(left.createTime));

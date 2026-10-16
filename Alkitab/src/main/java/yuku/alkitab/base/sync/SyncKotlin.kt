@@ -1,5 +1,7 @@
 package yuku.alkitab.base.sync
 
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -60,7 +62,7 @@ object SyncKotlin {
                 } catch (error: Exception) {
                     SyncRecorder.error("schedule", null, error)
                 }
-            }, androidx.core.content.ContextCompat.getMainExecutor(App.context))
+            }, ContextCompat.getMainExecutor(App.context))
         } catch (error: Exception) {
             SyncRecorder.error("schedule", null, error)
             if (error is InterruptedException) Thread.currentThread().interrupt()
@@ -68,7 +70,7 @@ object SyncKotlin {
     }
 
     @JvmStatic
-    fun observeWork(owner: androidx.lifecycle.LifecycleOwner) {
+    fun observeWork(owner: LifecycleOwner) {
         try {
             WorkManager.getInstance(App.context).getWorkInfosForUniqueWorkLiveData(UNIQUE_WORK_NAME)
                 .observe(owner) { infos ->

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
@@ -176,7 +177,7 @@ public class SyncSettingsActivity extends BaseActivity {
 		final int itemId = item.getItemId();
 		if (itemId == R.id.menuSyncNow) {
 			SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
-            android.widget.Toast.makeText(this, R.string.sync_diagnostics_requested, android.widget.Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.sync_diagnostics_requested, Toast.LENGTH_LONG).show();
 			SyncKotlin.syncNow(true);
 			return true;
 		} else if (itemId == R.id.menuSyncLog) {

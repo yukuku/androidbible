@@ -1,7 +1,9 @@
 package yuku.alkitab.base.sync
 
+import java.io.IOException
 import java.util.Collections
 import java.util.IdentityHashMap
+import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 /** Values from servers, exceptions and accounts are untrusted, even in legacy log rows. */
@@ -53,7 +55,7 @@ object SyncDiagnostics {
     fun safeServerPrefix(value: String): String {
         if (value.length > MAX_PARAM_BYTES) return "[invalid URL]"
         val url = value.toHttpUrlOrNull() ?: return "[invalid URL]"
-        return okhttp3.HttpUrl.Builder().scheme(url.scheme).host(url.host).port(url.port)
+        return HttpUrl.Builder().scheme(url.scheme).host(url.host).port(url.port)
             .build().toString().removeSuffix("/")
     }
 
@@ -83,7 +85,7 @@ object SyncDiagnostics {
                 name.contains("Json") -> return "JSON"
                 name.contains("Interrupted") || name.contains("Cancellation") -> return "CANCELLED"
             }
-            if (current?.cause == null) return if (current is java.io.IOException) "IO" else "UNEXPECTED"
+            if (current?.cause == null) return if (current is IOException) "IO" else "UNEXPECTED"
             current = current?.cause
         }
         return "UNEXPECTED"

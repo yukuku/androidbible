@@ -23,6 +23,7 @@ import okhttp3.FormBody;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.connection.Connections;
@@ -55,7 +56,7 @@ public class SyncAdapter extends Worker {
 
     String execute(final Call call, final String set) throws IOException {
         stage("http", set);
-        try (okhttp3.Response response = call.execute()) {
+        try (Response response = call.execute()) {
             SyncRecorder.log(SyncRecorder.EventKind.http_response, set, "http_status", response.code(),
                 "category", SyncDiagnostics.httpCategory(response.code()));
             if (response.body() == null) {
