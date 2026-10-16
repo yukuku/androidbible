@@ -51,9 +51,23 @@ import yuku.alkitab.util.Ari
 import yuku.alkitabintegration.display.Launcher
 
 open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.Listener {
+    private var textScale = 1f
     private val rootListener = object : TwofingerLinearLayout.OnefingerListener() {
+        private var gestureTextScale = 1f
+        private var gestureTextSize = 0f
+
         override fun onOnefingerLeft() = bNext_click()
         override fun onOnefingerRight() = bPrev_click()
+
+        override fun onTwofingerStart() {
+            gestureTextScale = textScale
+            gestureTextSize = lContent.textSize
+        }
+
+        override fun onTwofingerScale(scale: Float) {
+            textScale = (gestureTextScale * scale).coerceIn(0.5f, 2f)
+            lContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, gestureTextSize * textScale / gestureTextScale)
+        }
     }
 
     override fun bPrev_click() {
@@ -165,7 +179,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         downloadProgress = findViewById(R.id.downloadProgress)
         bRetry.setOnClickListener { bReload_click() }
         applyScrollPastBottomInset(scrollContent)
-        root.setTwofingerEnabled(false)
+        root.setTwofingerEnabled(true)
         root.setListener(rootListener)
 
         val storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.sourceName))
@@ -193,7 +207,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         // text formats
         lContent.setTextColor(applied.fontColor)
         lContent.setTypeface(applied.fontFace, applied.fontBold)
-        lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp)
+        lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * textScale)
         lContent.setLineSpacing(0f, applied.lineSpacingMult)
         val padding: Rect = SettingsActivity.getPaddingBasedOnPreferences()
         lContent.setPadding(padding.left, padding.top, padding.right, padding.bottom)
