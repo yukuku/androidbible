@@ -31,7 +31,7 @@ Each widget instance stores its own preferences:
 - Background transparency (alpha)
 - Whether to show the app icon
 
-The configuration screen uses Compose for the toolbar, version list, appearance controls, and action buttons, with the app’s existing colors and toolbar-position preference. Unsaved appearance and version edits survive activity recreation.
+The configuration screen uses Material 3 cards for Bible versions and appearance controls, with the app’s existing colors and toolbar-position preference. The form scrolls as one unit while Cancel and OK remain visible. Transparency is labeled from a solid background at 0% to fully transparent at 100%; sliders have no tick or endpoint dots. Unsaved appearance and version edits survive activity recreation.
 
 Settings are persisted in SharedPreferences keyed by widget ID. Launchers that support widget reconfiguration can reopen the setup screen with the saved settings selected. Saving appearance changes preserves verse navigation; canceling leaves the widget unchanged.
 

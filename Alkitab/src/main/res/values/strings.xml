@@ -563,4 +563,8 @@
     <string name="devotion_retry">Retry</string>
     <string name="dv_preview_reference">Psalm 119:105</string>
     <string name="dv_preview_verse">Thy word is a lamp unto my feet, and a light unto my path.</string>
+    <string name="dv_section_version">Bible version</string>
+    <string name="dv_section_appearance">Appearance</string>
+    <string name="dv_option_transparency">Transparency</string>
+    <string name="dv_transparency_explanation">0%: solid background · 100%: fully transparent</string>
 </resources>
