@@ -7,11 +7,15 @@ import io.mockk.clearMocks
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.audio.AudioBarController
@@ -100,6 +104,60 @@ class IsiActivityIntentTest {
             adapter.onBindViewHolder(holder, 0)
             assertEquals(-1, holder.bindingAdapterPosition)
             holder.itemView.performClick()
+        } finally {
+            controller.destroy()
+            History.replaceAllEntries(original)
+        }
+    }
+
+    @Test
+    @Config(application = App::class)
+    fun `a new verse intent navigates the existing reader and records the destination`() {
+        val original = History.listAllEntries()
+        val controller = Robolectric.buildActivity(IsiActivity::class.java,
+            Intent("yuku.alkitab.action.VIEW").putExtra("ari", 0x000101)).create()
+        try {
+            val activity = controller.get()
+            activity.lsSplit0 = mockk(relaxed = true)
+            activity.lsSplit1 = mockk(relaxed = true)
+            val intent = Intent("yuku.alkitab.action.VIEW").putExtra("ari", 0x000203)
+            controller.newIntent(intent)
+
+            assertSame(intent, activity.intent)
+            assertEquals(0, activity.activeSplit0.book.bookId)
+            assertEquals(2, activity.chapter_1)
+            verify { activity.lsSplit0.scrollToVerse(3) }
+            assertTrue(History.listAllEntries().any { it.ari == 0x000203 })
+            assertNull(Shadows.shadowOf(activity).nextStartedActivity)
+
+            val history = History.listAllEntries()
+            controller.newIntent(Intent("yuku.alkitab.action.VIEW"))
+            assertEquals(2, activity.chapter_1)
+            assertEquals(history, History.listAllEntries())
+        } finally {
+            controller.destroy()
+            History.replaceAllEntries(original)
+        }
+    }
+
+    @Test
+    @Config(application = App::class)
+    fun `reused reader respects verse selection for an incoming lid intent`() {
+        val original = History.listAllEntries()
+        val controller = Robolectric.buildActivity(IsiActivity::class.java).create()
+        try {
+            val activity = controller.get()
+            activity.lsSplit0 = mockk(relaxed = true)
+            activity.lsSplit1 = mockk(relaxed = true)
+            controller.newIntent(Intent("yuku.alkitab.action.VIEW").putExtra("lid", 32)
+                .putExtra("selectVerse", true).putExtra("selectVerseCount", 2))
+
+            assertEquals(2, activity.chapter_1)
+            verify { activity.lsSplit0.scrollToVerse(1) }
+            verify { activity.lsSplit0.callAttentionForVerse(1) }
+            verify { activity.lsSplit0.callAttentionForVerse(2) }
+            verify { activity.lsSplit1.callAttentionForVerse(1) }
+            verify { activity.lsSplit1.callAttentionForVerse(2) }
         } finally {
             controller.destroy()
             History.replaceAllEntries(original)

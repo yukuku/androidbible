@@ -103,12 +103,12 @@ class DailyVerseAppWidgetReceiver : AppWidgetProvider() {
                     })
                 }
                 "open_app" -> {
-                    context.startActivity(Launcher.getBaseViewIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    context.startActivity(Launcher.getBaseViewIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP))
                 }
                 "open_verse" -> {
                     val viewVerseIntent = Launcher.getBaseViewIntent()
                         .putExtra("ari", bundle.getInt("ari"))
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     context.startActivity(viewVerseIntent)
                 }
             }
