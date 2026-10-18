@@ -73,4 +73,42 @@ class DailyVerseDataTest {
             assertEquals(state.click, DailyVerseData.loadSavedState(12345).click)
         }
     }
+
+    @Test
+    fun `an unset version uses the internal Bible and survives a settings round trip`() {
+        val state = DailyVerseData.SavedState().apply {
+            textSize = 18f
+            backgroundAlpha = 102
+            click = 7
+        }
+        DailyVerseData.saveSavedState(54321, state)
+        val loaded = DailyVerseData.loadSavedState(54321)
+        assertNull(loaded.versionId)
+        assertEquals(7, loaded.click)
+        assertSame(VersionImpl.getInternalVersion(), DailyVerseData.getVersion(loaded.versionId))
+        DailyVerseData.saveSavedState(54321, null)
+    }
+
+    @Test
+    fun `a null saved state deletes the settings and restores preference defaults`() {
+        DailyVerseData.saveSavedState(54321, DailyVerseData.SavedState().apply {
+            versionId = "internal"
+            darkText = true
+            hideAppIcon = true
+            transparentBackground = true
+            textSize = 24f
+            backgroundAlpha = 102
+            click = 7
+        })
+        DailyVerseData.saveSavedState(54321, null)
+        val loaded = DailyVerseData.loadSavedState(54321)
+        assertNull(loaded.versionId)
+        assertFalse(loaded.darkText)
+        assertFalse(loaded.hideAppIcon)
+        assertFalse(loaded.transparentBackground)
+        assertEquals(14f, loaded.textSize, 0f)
+        assertEquals(255, loaded.backgroundAlpha)
+        assertEquals(0, loaded.click)
+    }
+
 }

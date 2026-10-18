@@ -103,6 +103,8 @@ class DailyVerseFactoryTest {
         assertEquals(1, factory.count)
         factory.getViewAt(0)
         factory.getViewAt(0)
+        factory.getViewAt(1)
+        verify { anyConstructed<RemoteViews>().setTextViewText(R.id.text1, "") }
         verify(exactly = 1) { DailyVerseData.getAris(any(), any(), any(), any()) }
         verify(exactly = 0) { DailyVerseData.saveSavedState(any(), any()) }
         verify(exactly = 0) { anyConstructed<RemoteViews>().setOnClickFillInIntent(R.id.tReference, any()) }

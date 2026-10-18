@@ -138,15 +138,14 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	RemoteViews getVerseViewAt(final int position) {
 		final RemoteViews row = new RemoteViews(App.context.getPackageName(), R.layout.appwidget_daily_verse_item_verse);
-		assert aris != null;
-		final boolean showVerseNumber = aris.length > 1;
 
 		// prevent crash: sometimes position is out of range for the aris array.
-		if (position < 0 || position >= aris.length) {
+		if (aris == null || position < 0 || position >= aris.length) {
 			row.setTextViewText(R.id.text1, "");
 			row.setOnClickFillInIntent(R.id.text1, new Intent());
 
 		} else {
+			final boolean showVerseNumber = aris.length > 1;
 			final int ari = aris[position];
 			row.setTextViewText(R.id.text1, getText(version, ari, showVerseNumber));
 			row.setTextColor(R.id.text1, savedState.darkText ? Color.BLACK : Color.WHITE);
