@@ -889,6 +889,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         lsSplit1.callAttentionForVerse(verse_1)
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val destination = extractIntent(intent) ?: return
+        jumpToAri(destination.ari, callAttention = false)
+        if (destination.selectVerse && activeSplit0.book.bookId == Ari.toBook(destination.ari) && chapter_1 == Ari.toChapter(destination.ari)) {
+            for (i in 0 until destination.selectVerseCount) {
+                callAttentionForVerseToBothSplits(Ari.toVerse(destination.ari) + i)
+            }
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(INSTANCE_STATE_ari, Ari.encode(activeSplit0.book.bookId, chapter_1, getVerse_1BasedOnScrolls()))
