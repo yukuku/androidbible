@@ -76,8 +76,8 @@ class DailyVerseConfigurationTest {
         val controller = buildController().setup()
         val activity = controller.get()
         try {
-            assertEquals(DailyVerseConfiguration("internal", 22, true, 12, true, true), activity.configuration)
-            activity.configuration = activity.configuration.copy(isTransparent = false, textSize = 24)
+            assertEquals(DailyVerseConfiguration("internal", 22, 12, true, true), activity.configuration)
+            activity.configuration = activity.configuration.copy(transparency = 0, textSize = 24)
             activity.saveConfiguration()
             val saved = DailyVerseData.loadSavedState(42)
             assertEquals("internal", saved.versionId)
@@ -121,6 +121,38 @@ class DailyVerseConfigurationTest {
             assertFalse(controller.get().isFinishing)
         } finally {
             controller.pause().stop().destroy()
+        }
+    }
+
+    @Test
+    fun `an opaque legacy widget opens at zero even with a stored transparent alpha`() {
+        DailyVerseData.saveSavedState(42, DailyVerseData.loadSavedState(42).apply {
+            transparentBackground = false
+            backgroundAlpha = 0
+        })
+        val controller = buildController().setup()
+        try {
+            assertEquals(0, controller.get().configuration.transparency)
+            assertFalse(controller.get().configuration.isTransparent)
+        } finally {
+            controller.pause().stop().destroy()
+        }
+    }
+
+    @Test
+    fun `slider alone saves opaque partial and fully transparent backgrounds`() {
+        for ((progress, alpha) in listOf(0 to 255, 10 to 127, 20 to 0)) {
+            val controller = buildController().setup()
+            try {
+                controller.get().configuration = controller.get().configuration.copy(transparency = progress)
+                controller.get().saveConfiguration()
+                val saved = DailyVerseData.loadSavedState(42)
+                assertEquals(progress > 0, saved.transparentBackground)
+                assertEquals(alpha, saved.backgroundAlpha)
+                assertEquals(37, saved.click)
+            } finally {
+                controller.pause().stop().destroy()
+            }
         }
     }
 

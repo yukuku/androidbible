@@ -19,11 +19,12 @@ import yuku.alkitab.base.model.MVersion
 internal data class DailyVerseConfiguration(
     val versionId: String? = null,
     val textSize: Int = 16,
-    val isTransparent: Boolean = false,
-    val transparency: Int = 20,
+    val transparency: Int = 0,
     val isDarkText: Boolean = false,
     val isIconHidden: Boolean = false,
-)
+) {
+    val isTransparent: Boolean get() = transparency > 0
+}
 
 class DailyVerseAppWidgetConfigurationActivity : BaseActivity() {
     internal var configuration by mutableStateOf(DailyVerseConfiguration())
@@ -43,8 +44,7 @@ class DailyVerseAppWidgetConfigurationActivity : BaseActivity() {
             DailyVerseConfiguration(
                 savedInstanceState.getString("selectedVersionId"),
                 savedInstanceState.getInt("textSize", 16),
-                savedInstanceState.getBoolean("transparent"),
-                savedInstanceState.getInt("transparency", 20),
+                if (savedInstanceState.getBoolean("transparent")) savedInstanceState.getInt("transparency", 0) else 0,
                 savedInstanceState.getBoolean("darkText"),
                 savedInstanceState.getBoolean("hideIcon"),
             )
@@ -52,12 +52,12 @@ class DailyVerseAppWidgetConfigurationActivity : BaseActivity() {
             DailyVerseConfiguration(
                 saved.versionId,
                 Math.round(saved.textSize).coerceIn(8, 28),
-                saved.transparentBackground,
-                Math.round((255 - saved.backgroundAlpha) * 20f / 255f).coerceIn(0, 20),
+                if (saved.transparentBackground) Math.round((255 - saved.backgroundAlpha) * 20f / 255f).coerceIn(0, 20) else 0,
                 saved.transparentBackground && saved.darkText,
                 saved.hideAppIcon,
             )
         } else DailyVerseConfiguration()
+        configuration = configuration.copy(isDarkText = configuration.isTransparent && configuration.isDarkText)
         versions = App.services.versions.getAvailableVersions()
         AppEvents.observe(this, AppEvents.versionListReload) {
             versions = App.services.versions.getAvailableVersions()

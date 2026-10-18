@@ -434,4 +434,9 @@
     <string name="rp_menuDownload">Laai leesplan af</string>
     <string name="sn_audio_disclaimer_message">Let asseblief daarop dat alle oudio in hierdie toep nie noodwendig van die uitgewer van die lied of die liedboek afkomstig is nie.</string>
     <string name="sn_error_rendering_lyrics">Fout met die vertoon van lirieke. Tik asseblief die menuknoppie en kies \"Dateer liedboek op\".</string>
+    <string name="dv_section_version">Bybelvertaling</string>
+    <string name="dv_section_appearance">Voorkoms</string>
+    <string name="dv_option_transparency">Deursigtigheid</string>
+    <string name="dv_transparency_solid">Ondeursigtige agtergrond</string>
+    <string name="dv_transparency_clear">Heeltemal deursigtig</string>
 </resources>

@@ -524,5 +524,6 @@
     <string name="dv_section_version">Versi Alkitab</string>
     <string name="dv_section_appearance">Tampilan</string>
     <string name="dv_option_transparency">Transparansi</string>
-    <string name="dv_transparency_explanation">0%: latar belakang solid · 100%: sepenuhnya transparan</string>
+    <string name="dv_transparency_solid">Latar belakang solid</string>
+    <string name="dv_transparency_clear">Sepenuhnya transparan</string>
 </resources>

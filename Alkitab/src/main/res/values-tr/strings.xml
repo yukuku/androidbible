@@ -434,4 +434,9 @@
     <string name="menu_audio">Ses</string>
     <string name="sn_audio_disclaimer_message">Lütfen bu uygulamada sunulan tüm seslerin şarkının veya şarkı kitabının yayıncısından gelmiyor olabileceğini unutmayın.</string>
     <string name="sn_error_rendering_lyrics">Şarkı sözleri görüntülenirken hata oluştu. Lütfen menü düğmesine dokunun ve \"Şarkı kitabını güncelle\" seçeneğini seçin.</string>
+    <string name="dv_section_version">Kutsal Kitap çevirisi</string>
+    <string name="dv_section_appearance">Görünüm</string>
+    <string name="dv_option_transparency">Saydamlık</string>
+    <string name="dv_transparency_solid">Opak arka plan</string>
+    <string name="dv_transparency_clear">Tamamen saydam</string>
 </resources>

@@ -434,4 +434,9 @@
     <string name="pref_verseNumberIsShown_title">Mostrar números dos versículos</string>
     <string name="sn_audio_disclaimer_message">Tenha em atenção que todo o áudio disponibilizado nesta aplicação não provém necessariamente do editor da canção ou do livro de canções.</string>
     <string name="sn_error_rendering_lyrics">Erro ao apresentar a letra. Toque no botão de menu e selecione \"Atualizar o livro de canções\".</string>
+    <string name="dv_section_version">Versão da Bíblia</string>
+    <string name="dv_section_appearance">Aspeto</string>
+    <string name="dv_option_transparency">Transparência</string>
+    <string name="dv_transparency_solid">Fundo opaco</string>
+    <string name="dv_transparency_clear">Totalmente transparente</string>
 </resources>

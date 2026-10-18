@@ -36,7 +36,7 @@ import yuku.alkitab.debug.R
 @Config(sdk = [34], application = android.app.Application::class, qualifiers = "w360dp-h640dp-mdpi")
 class DailyVerseConfigurationScreenTest {
     @Test
-    fun `Compose controls select a version and clear dark text when transparency is disabled in either toolbar position`() {
+    fun `Compose controls select a version and clear dark text at zero transparency in either toolbar position`() {
         for ((isBottom, height) in listOf(false to 640, true to 640, false to 320, true to 320)) {
             val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
             val activity = controller.get()
@@ -46,7 +46,7 @@ class DailyVerseConfigurationScreenTest {
             val view = ComposeView(activity)
             val clock = BroadcastFrameClock()
             view.setParentCompositionContext(frame.createLifecycleAwareWindowRecomposer(Handler(Looper.getMainLooper()).asCoroutineDispatcher() + clock))
-            val state = mutableStateOf(DailyVerseConfiguration(isTransparent = true, isDarkText = true))
+            val state = mutableStateOf(DailyVerseConfiguration(transparency = 12, isDarkText = true))
             var isSaved = false
             view.setContent {
                 BibleAppTheme {
@@ -82,7 +82,17 @@ class DailyVerseConfigurationScreenTest {
                 click("Internal Bible")
                 assertEquals("internal", state.value.versionId)
                 assertFalse(node(activity.getString(R.string.ok)).config.contains(SemanticsProperties.Disabled))
-                click(activity.getString(R.string.dv_option_transparent_background))
+                fun setTransparency(progress: Float) {
+                    val slider = (view.getChildAt(0) as RootForTest).semanticsOwner
+                        .getAllSemanticsNodes(mergingEnabled = true).single {
+                            it.config.getOrNull(SemanticsProperties.ContentDescription)?.contains(activity.getString(R.string.dv_option_transparency)) == true
+                        }
+                    assertTrue(slider.config[SemanticsActions.SetProgress].action!!.invoke(progress))
+                    settle()
+                }
+                setTransparency(20f)
+                assertEquals(20, state.value.transparency)
+                setTransparency(0f)
                 assertFalse(state.value.isTransparent)
                 assertFalse(state.value.isDarkText)
                 assertTrue(node(activity.getString(R.string.dv_option_dark_text)).config.contains(SemanticsProperties.Disabled))

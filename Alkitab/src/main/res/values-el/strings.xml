@@ -434,4 +434,9 @@
     <string name="rp_menuDownload">Λήψη πλάνου ανάγνωσης</string>
     <string name="sn_audio_disclaimer_message">Παρακαλούμε λάβετε υπόψη ότι όλος ο ήχος που παρέχεται σε αυτήν την εφαρμογή δεν προέρχεται απαραίτητα από τον εκδότη του ύμνου ή του βιβλίου ύμνων.</string>
     <string name="sn_error_rendering_lyrics">Σφάλμα κατά την εμφάνιση των στίχων. Παρακαλώ πατήστε το κουμπί μενού και επιλέξτε \"Ενημέρωση του υμνολογίου\".</string>
+    <string name="dv_section_version">Μετάφραση της Βίβλου</string>
+    <string name="dv_section_appearance">Εμφάνιση</string>
+    <string name="dv_option_transparency">Διαφάνεια</string>
+    <string name="dv_transparency_solid">Αδιαφανές φόντο</string>
+    <string name="dv_transparency_clear">Πλήρως διαφανές</string>
 </resources>

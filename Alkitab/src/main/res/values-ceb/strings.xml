@@ -434,4 +434,9 @@
     <string name="rp_menuDownload">I-download ang plano sa pagbasa</string>
     <string name="sn_audio_disclaimer_message">Palihug timan-i nga ang tanang audio nga anaa niining app kay dili kinahanglan gikan sa magmamantala sa kanta o sa librong kanta.</string>
     <string name="sn_error_rendering_lyrics">Sayop sa pagpakita sa lyrics. Palihug pinduta ang menu button ug pilia ang \"I-update ang libro na kanta\".</string>
+    <string name="dv_section_version">Bersiyon sa Bibliya</string>
+    <string name="dv_section_appearance">Panagway</string>
+    <string name="dv_option_transparency">Pagkatin-aw</string>
+    <string name="dv_transparency_solid">Dili makita ang luyo</string>
+    <string name="dv_transparency_clear">Hingpit nga makita ang luyo</string>
 </resources>

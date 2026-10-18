@@ -434,4 +434,9 @@
     <string name="menu_audio">Âm thanh</string>
     <string name="sn_audio_disclaimer_message">Xin lưu ý rằng tất cả âm thanh cung cấp trong ứng dụng này không nhất thiết bắt nguồn từ nhà xuất bản của bài hát hoặc sách bài hát.</string>
     <string name="sn_error_rendering_lyrics">Lỗi khi hiển thị lời bài hát. Vui lòng nhấn nút menu và chọn \"Nâng cấp sách bài hát\".</string>
+    <string name="dv_section_version">Bản dịch Kinh Thánh</string>
+    <string name="dv_section_appearance">Giao diện</string>
+    <string name="dv_option_transparency">Độ trong suốt</string>
+    <string name="dv_transparency_solid">Nền không trong suốt</string>
+    <string name="dv_transparency_clear">Hoàn toàn trong suốt</string>
 </resources>

@@ -566,5 +566,6 @@
     <string name="dv_section_version">Bible version</string>
     <string name="dv_section_appearance">Appearance</string>
     <string name="dv_option_transparency">Transparency</string>
-    <string name="dv_transparency_explanation">0%: solid background · 100%: fully transparent</string>
+    <string name="dv_transparency_solid">Solid background</string>
+    <string name="dv_transparency_clear">Fully transparent</string>
 </resources>

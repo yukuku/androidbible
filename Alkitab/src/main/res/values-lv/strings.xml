@@ -434,4 +434,9 @@
     <string name="rp_menuDownload">Lejupielādēt lasīšanas plānu</string>
     <string name="sn_audio_disclaimer_message">Lūdzu ņemiet vērā, ka viss šajā aplikācijā pieejamais audio ne vienmēr ir dziesmas vai dziesmu grāmatas izdevēja avots.</string>
     <string name="sn_error_rendering_lyrics">Kļūda attēlojot dziesmu vārdus. Lūdzu nospiediet izvēlnes pogu un izvēlieties \"Atjaunot dziesmu grāmatu\".</string>
+    <string name="dv_section_version">Bībeles tulkojums</string>
+    <string name="dv_section_appearance">Izskats</string>
+    <string name="dv_option_transparency">Caurspīdīgums</string>
+    <string name="dv_transparency_solid">Necaurspīdīgs fons</string>
+    <string name="dv_transparency_clear">Pilnīgi caurspīdīgs</string>
 </resources>

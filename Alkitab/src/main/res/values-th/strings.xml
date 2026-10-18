@@ -434,4 +434,9 @@
     <string name="pref_verseNumberIsShown_title">แสดงหมายเลขข้อ</string>
     <string name="sn_audio_disclaimer_message">โปรดทราบว่าเสียงทั้งหมดที่มีในแอปนี้ไม่จำเป็นต้องมาจากผู้จัดพิมพ์เพลงหรือหนังสือเพลง</string>
     <string name="sn_error_rendering_lyrics">เกิดผิดพลาดในการแสดงเนื้อเพลง กรุณากดปุ่มเมนูแล้วเลือก \"อัปเดตหนังสือเพลง\"</string>
+    <string name="dv_section_version">ฉบับแปลพระคัมภีร์</string>
+    <string name="dv_section_appearance">รูปลักษณ์</string>
+    <string name="dv_option_transparency">ความโปร่งใส</string>
+    <string name="dv_transparency_solid">พื้นหลังทึบ</string>
+    <string name="dv_transparency_clear">โปร่งใสทั้งหมด</string>
 </resources>

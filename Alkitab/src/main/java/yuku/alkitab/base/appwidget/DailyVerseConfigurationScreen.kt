@@ -84,16 +84,12 @@ internal fun DailyVerseConfigurationScreen(
                             Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         ) { onChange(configuration.copy(textSize = it + 8)) }
                         HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-                        ConfigurationCheckbox(stringResource(R.string.dv_option_transparent_background), configuration.isTransparent, onChange = {
-                            onChange(configuration.copy(isTransparent = it, isDarkText = it && configuration.isDarkText))
-                        })
-                        if (configuration.isTransparent) {
-                            ConfigurationSlider(
-                                configuration.transparency, "${configuration.transparency * 5}%", stringResource(R.string.dv_option_transparency),
-                                Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                supportingText = stringResource(R.string.dv_transparency_explanation),
-                            ) { onChange(configuration.copy(transparency = it)) }
-                        }
+                        ConfigurationSlider(
+                            configuration.transparency, "${configuration.transparency * 5}%", stringResource(R.string.dv_option_transparency),
+                            Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            startLabel = stringResource(R.string.dv_transparency_solid),
+                            endLabel = stringResource(R.string.dv_transparency_clear),
+                        ) { onChange(configuration.copy(transparency = it, isDarkText = it > 0 && configuration.isDarkText)) }
                         ConfigurationCheckbox(stringResource(R.string.dv_option_dark_text), configuration.isDarkText, configuration.isTransparent, onChange = {
                             onChange(configuration.copy(isDarkText = it))
                         })
@@ -121,7 +117,8 @@ private fun ConfigurationSlider(
     value: String,
     label: String,
     modifier: Modifier = Modifier,
-    supportingText: String? = null,
+    startLabel: String? = null,
+    endLabel: String? = null,
     onChange: (Int) -> Unit,
 ) {
     Column(modifier.fillMaxWidth()) {
@@ -135,8 +132,11 @@ private fun ConfigurationSlider(
             track = { SliderDefaults.Track(sliderState = it, modifier = Modifier.height(4.dp), drawStopIndicator = null) },
             modifier = Modifier.fillMaxWidth().semantics { contentDescription = label },
         )
-        if (supportingText != null) {
-            Text(supportingText, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (startLabel != null && endLabel != null) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(startLabel, Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(endLabel, Modifier.weight(1f), textAlign = TextAlign.End, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
     }
 }

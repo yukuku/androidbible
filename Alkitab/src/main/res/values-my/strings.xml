@@ -434,4 +434,9 @@
     <string name="pref_verseNumberIsShown_title">ကျမ်းပိုဒ်နံပါတ်များ ပြရန်</string>
     <string name="sn_audio_disclaimer_message">ဤအက်ပလီကေးရှင်းတွင် ပါဝင်သည့် အသံအားလုံးသည် တေးသီချင်း သို့မဟုတ် တေးသီချင်းစာအုပ်၏ ထုတ်ဝေသူထံမှ ဖြစ်ရမည်ဟု မဆိုလိုကြောင်း သတိပြုပါ။</string>
     <string name="sn_error_rendering_lyrics">သီချင်းစာသားများ ပြသရာတွင် ချို့ယွင်းချက်ရှိသည်။ ကျေးဇူးပြု၍ မီနူးခလုတ်ကို တို့ပြီး \"သီချင်းစာအုပ်ကို အဆင့်မြှင့်တင်ရန်\" ကို ရွေးချယ်ပါ။</string>
+    <string name="dv_section_version">သမ္မာကျမ်းစာဘာသာပြန်မူ</string>
+    <string name="dv_section_appearance">အသွင်အပြင်</string>
+    <string name="dv_option_transparency">ဖောက်ထွင်းမြင်ရမှု</string>
+    <string name="dv_transparency_solid">နောက်ခံအပြည့်</string>
+    <string name="dv_transparency_clear">အပြည့်အဝ ဖောက်ထွင်းမြင်ရ</string>
 </resources>

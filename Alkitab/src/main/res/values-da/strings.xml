@@ -434,4 +434,9 @@
     <string name="rp_menuDownload">Nedtag en læseplan</string>
     <string name="sn_audio_disclaimer_message">Bemærk venligst, at al lyd i denne app ikke nødvendigvis stammer fra udgiveren af sangen eller sangbogen.</string>
     <string name="sn_error_rendering_lyrics">Fejl ved visning af lyrik. Tryk venligst på menuknappen og vælg \"Opdater sangbog\".</string>
+    <string name="dv_section_version">Bibeloversættelse</string>
+    <string name="dv_section_appearance">Udseende</string>
+    <string name="dv_option_transparency">Gennemsigtighed</string>
+    <string name="dv_transparency_solid">Uigennemsigtig baggrund</string>
+    <string name="dv_transparency_clear">Helt gennemsigtig</string>
 </resources>

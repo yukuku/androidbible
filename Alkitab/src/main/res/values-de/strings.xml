@@ -434,4 +434,9 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Bitte beachten Sie, dass alle in dieser App bereitgestellten Audiodateien nicht unbedingt vom Herausgeber des Liedes oder des Liederbuchs stammen.</string>
     <string name="sn_error_rendering_lyrics">Fehler beim Anzeigen der Liedtexte. Bitte tippen Sie auf die Menüschaltfläche und wählen Sie \"Liederbuch aktualisieren\".</string>
+    <string name="dv_section_version">Bibelübersetzung</string>
+    <string name="dv_section_appearance">Darstellung</string>
+    <string name="dv_option_transparency">Transparenz</string>
+    <string name="dv_transparency_solid">Undurchsichtiger Hintergrund</string>
+    <string name="dv_transparency_clear">Vollständig transparent</string>
 </resources>

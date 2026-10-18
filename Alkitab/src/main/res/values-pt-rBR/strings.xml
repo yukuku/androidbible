@@ -434,4 +434,9 @@
     <string name="menu_audio">Áudio</string>
     <string name="sn_audio_disclaimer_message">Observe que todo áudio disponível neste aplicativo não é necessariamente originário da editora da canção ou do hinário.</string>
     <string name="sn_error_rendering_lyrics">Erro ao exibir a letra. Por favor, toque no botão de menu e selecione \"Atualize hinário\".</string>
+    <string name="dv_section_version">Versão da Bíblia</string>
+    <string name="dv_section_appearance">Aparência</string>
+    <string name="dv_option_transparency">Transparência</string>
+    <string name="dv_transparency_solid">Fundo opaco</string>
+    <string name="dv_transparency_clear">Totalmente transparente</string>
 </resources>

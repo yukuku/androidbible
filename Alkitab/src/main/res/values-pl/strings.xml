@@ -434,4 +434,9 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Prosimy pamiętać, że całe audio dostępne w tej aplikacji niekoniecznie pochodzi od wydawcy pieśni lub śpiewnika.</string>
     <string name="sn_error_rendering_lyrics">Błąd podczas wyświetlania tekstu. Naciśnij przycisk menu i wybierz \"Aktualizuj śpiewnik\".</string>
+    <string name="dv_section_version">Przekład Biblii</string>
+    <string name="dv_section_appearance">Wygląd</string>
+    <string name="dv_option_transparency">Przezroczystość</string>
+    <string name="dv_transparency_solid">Nieprzezroczyste tło</string>
+    <string name="dv_transparency_clear">Całkowicie przezroczyste</string>
 </resources>

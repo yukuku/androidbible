@@ -434,4 +434,9 @@
     <string name="rp_menuDownload">Muat turun pelan bacaan</string>
     <string name="sn_audio_disclaimer_message">Harap maklum bahawa semua audio yang disediakan dalam aplikasi ini tidak semestinya berasal daripada penerbit lagu atau buku lagu.</string>
     <string name="sn_error_rendering_lyrics">Ralat semasa memaparkan lirik. Sila ketik butang menu dan pilih \"Kemaskini buku lagu\".</string>
+    <string name="dv_section_version">Versi Bible</string>
+    <string name="dv_section_appearance">Rupa</string>
+    <string name="dv_option_transparency">Ketelusan</string>
+    <string name="dv_transparency_solid">Latar belakang legap</string>
+    <string name="dv_transparency_clear">Telus sepenuhnya</string>
 </resources>
