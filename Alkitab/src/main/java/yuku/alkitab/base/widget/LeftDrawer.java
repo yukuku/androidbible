@@ -14,10 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -41,7 +39,7 @@ import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.CurrentReading;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.songs.SongBookUtil;
+import yuku.alkitab.songs.SongSelectionControls;
 import yuku.alkitab.songs.SongViewActivity;
 
 public abstract class LeftDrawer extends NestedScrollView {
@@ -604,28 +602,20 @@ public abstract class LeftDrawer extends NestedScrollView {
 	}
 
 	public static class ReadingPlan extends LeftDrawer {
-		public interface Listener {
-			void bRestart_click();
-		}
-
 		public interface Handle {
 			void setDescription(CharSequence description);
 		}
 
 		NestedScrollView scrollDescription;
 		TextView tDescription;
-		View bRestart;
 
-		Listener listener;
 		Handle handle = new Handle() {
 			@Override
 			public void setDescription(final CharSequence description) {
 				if (description == null) {
-					bRestart.setVisibility(GONE);
 					scrollDescription.setVisibility(GONE);
 					tDescription.setText("");
 				} else {
-					bRestart.setVisibility(VISIBLE);
 					scrollDescription.setVisibility(VISIBLE);
 					tDescription.setText(description);
 				}
@@ -646,9 +636,6 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			scrollDescription = findViewById(R.id.scrollDescription);
 			tDescription = findViewById(R.id.tDescription);
-			bRestart = findViewById(R.id.bRestart);
-
-			bRestart.setOnClickListener(v -> listener.bRestart_click());
 		}
 
 		@Override
@@ -656,8 +643,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 			closeDrawer();
 		}
 
-		public <T extends Activity & Listener> void configure(T listener, DrawerLayout drawerLayout) {
-			this.listener = listener;
+		public void configure(DrawerLayout drawerLayout) {
 			this.drawerLayout = drawerLayout;
 		}
 	}
@@ -686,111 +672,25 @@ public abstract class LeftDrawer extends NestedScrollView {
 		}
 
 		Listener listener;
-		Handle handle = new Handle() {
-			@Override
-			public void setOkButtonEnabled(boolean enabled) {
-				bOk.setEnabled(enabled);
-			}
-
-			@Override
-			public void setAButtonEnabled(boolean enabled) {
-				bDigitA.setEnabled(enabled);
-			}
-
-			@Override
-			public void setBButtonEnabled(boolean enabled) {
-				bDigitB.setEnabled(enabled);
-			}
-
-			@Override
-			public void setCButtonEnabled(boolean enabled) {
-				bDigitC.setEnabled(enabled);
-			}
-
-			@Override
-			public void setBookName(final CharSequence bookName) {
-				bChangeBook.setText(bookName);
-			}
-
-			@Override
-			public void setCode(final String code) {
-				bChangeCode.setText(code);
-			}
-
-		};
+		private SongSelectionControls controls;
 
 		public Songs(final Context context, final AttributeSet attrs) {
 			super(context, attrs);
 		}
 
-		TextView bChangeBook;
-		TextView bChangeCode;
-
-		Button bOk;
-		Button bDigitA;
-		Button bDigitB;
-		Button bDigitC;
-
 		public Handle getHandle() {
-			return handle;
+			return controls;
 		}
 
 		@Override
 		protected void onFinishInflate() {
 			super.onFinishInflate();
-
-			bChangeBook = findViewById(R.id.bChangeBook);
-			bChangeCode = findViewById(R.id.bChangeCode);
-
-			bOk = findViewById(R.id.bOk);
-			bDigitA = findViewById(R.id.bDigitA);
-			bDigitB = findViewById(R.id.bDigitB);
-			bDigitC = findViewById(R.id.bDigitC);
-
-			bChangeBook.setOnClickListener(v -> {
-				final PopupMenu popupChangeBook = SongBookUtil.getSongBookPopupMenu(activity, false, true, bChangeBook);
-				popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener(new SongBookUtil.DefaultOnSongBookSelectedListener() {
-					@Override
-					public void onSongBookSelected(final String name) {
-						listener.songBookSelected(name);
-					}
-
-					@Override
-					public void onMoreSelected() {
-						listener.moreSelected();
-					}
-				}));
-
-				popupChangeBook.show();
+			controls = new SongSelectionControls(activity, this, new Listener() {
+				@Override public void songKeypadButton_click(View v) { listener.songKeypadButton_click(v); }
+				@Override public void songBookSelected(String name) { listener.songBookSelected(name); }
+				@Override public void moreSelected() { listener.moreSelected(); }
 			});
-
-			// all buttons
-			for (int buttonId : new int[]{
-				R.id.bDigit0,
-				R.id.bDigit1,
-				R.id.bDigit2,
-				R.id.bDigit3,
-				R.id.bDigit4,
-				R.id.bDigit5,
-				R.id.bDigit6,
-				R.id.bDigit7,
-				R.id.bDigit8,
-				R.id.bDigit9,
-				R.id.bDigitA,
-				R.id.bDigitB,
-				R.id.bDigitC,
-				R.id.bOk,
-				R.id.bBackspace,
-			}) {
-				findViewById(buttonId).setOnClickListener(button_click);
-			}
 		}
-
-		final OnClickListener button_click = v -> {
-			if (listener != null) {
-				listener.songKeypadButton_click(v);
-			}
-		};
 
 		@Override
 		void bSongs_click() {

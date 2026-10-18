@@ -12,5 +12,9 @@
 		android:id="@+id/menuDelete"
 		android:icon="@drawable/ic_baseline_delete_outline_24_white"
 		android:title="@string/rp_menuDelete"
-		app:showAsAction="always" />
+		app:showAsAction="never" />
+    <item
+        android:id="@+id/menuRestart"
+        android:title="@string/rp_menuRestart"
+        app:showAsAction="never" />
 </menu>

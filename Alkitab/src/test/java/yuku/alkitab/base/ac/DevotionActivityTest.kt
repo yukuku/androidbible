@@ -513,6 +513,47 @@ class DevotionActivityTest {
         saveScreenshot(strip, "$theme-overview.png")
     }
 
+    @Test
+    fun `Indonesian app language uses full weekday and abbreviated month even on an English device`() {
+        Preferences.setString(activity.getString(R.string.pref_language_key), "in")
+        activity.currentDate = format.parse("20261018")!!
+        activity.display()
+        assertEquals("Minggu, 18 Okt 2026", activity.supportActionBar!!.subtitle.toString())
+        activity.currentDate = format.parse("20261004")!!
+        activity.display()
+        assertEquals("Minggu, 4 Okt 2026", activity.supportActionBar!!.subtitle.toString())
+    }
+
+    @Test
+    fun `English app language keeps the existing device date format`() {
+        activity.currentDate = format.parse("20261018")!!
+        activity.display()
+        assertEquals(activity.getString(R.string.hari_minggu) + ", " + android.text.format.DateFormat.getDateFormat(activity).format(activity.currentDate),
+            activity.supportActionBar!!.subtitle.toString())
+    }
+
+    @Test
+    fun `day navigation follows calendar dates across daylight saving changes`() {
+        val originalZone = java.util.TimeZone.getDefault()
+        try {
+            java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/New_York"))
+            val calendar = java.util.Calendar.getInstance().apply {
+                clear()
+                set(2026, java.util.Calendar.NOVEMBER, 1, 0, 30)
+            }
+            activity.currentDate = calendar.time
+            activity.bNext_click()
+            calendar.time = activity.currentDate
+            assertEquals(2, calendar.get(java.util.Calendar.DAY_OF_MONTH))
+            assertEquals(0, calendar.get(java.util.Calendar.HOUR_OF_DAY))
+            activity.bPrev_click()
+            calendar.time = activity.currentDate
+            assertEquals(1, calendar.get(java.util.Calendar.DAY_OF_MONTH))
+        } finally {
+            java.util.TimeZone.setDefault(originalZone)
+        }
+    }
+
     private fun saveScreenshot(bitmap: Bitmap, name: String) {
         val directory = File(System.getProperty("user.dir"), "build/snapshots/devotions")
         check(directory.isDirectory || directory.mkdirs())
