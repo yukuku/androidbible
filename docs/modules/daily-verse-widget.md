@@ -20,6 +20,15 @@ Uses a predefined verse list from `R.raw.daily_verses_bt`:
 3. Verify verse exists in the selected Bible version
 4. Falls back to internal version if the selected version can't load the verse
 
+## Maintaining the Verse Collection
+
+The editable list is `tools/AlkitabConverter/file/daily_verses_bt.csv`.
+Each row contains the decimal ARI, verse count, and a human-readable reference.
+`DailyVerseProses` reads the first two fields and writes `daily_verses_bt.bt` when
+run with `tools/` as the working directory. Copy that output to
+`Alkitab/src/main/res/raw-v1/daily_verses_bt.bt` and keep both binary files in sync.
+Entries contain a starting ARI followed by consecutive verses in the same chapter.
+
 ## Configuration
 
 Each widget instance stores its own preferences:
