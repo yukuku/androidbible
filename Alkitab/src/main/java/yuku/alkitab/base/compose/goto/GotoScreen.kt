@@ -65,9 +65,11 @@ fun GotoScreen(
     val pagerState = rememberPagerState(initialPage = initialPage, pageCount = { 3 })
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+    val isDirectTabActive = !pagerState.isScrollInProgress &&
+        pagerState.settledPage == GotoTab.DIRECT.ordinal1Based - 1
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage != GotoTab.DIRECT.ordinal1Based - 1) focusManager.clearFocus()
+    LaunchedEffect(isDirectTabActive) {
+        if (!isDirectTabActive) focusManager.clearFocus()
     }
 
     var menuOpen by remember { mutableStateOf(false) }
@@ -141,7 +143,7 @@ fun GotoScreen(
                     initialBookId,
                     initialChapter_1,
                     initialVerse_1,
-                    isActive = (pagerState.currentPage == 1),
+                    isActive = isDirectTabActive,
                     onGotoFinished = onGotoFinished,
                 )
                 2 -> GridTab(askForVerse = askForVerse, viewModel = viewModel, onGotoFinished = onGotoFinished)
