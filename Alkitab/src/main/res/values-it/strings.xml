@@ -440,4 +440,6 @@
     <string name="dv_option_transparency">Trasparenza</string>
     <string name="dv_transparency_solid">Sfondo opaco</string>
     <string name="dv_transparency_clear">Completamente trasparente</string>
+    <string name="dv_preview_reference">Salmi 119:105</string>
+    <string name="dv_preview_verse">La tua parola è una lampada al mio piè ed una luce sul mio sentiero.</string>
 </resources>

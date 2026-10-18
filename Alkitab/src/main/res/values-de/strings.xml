@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Transparenz</string>
     <string name="dv_transparency_solid">Undurchsichtiger Hintergrund</string>
     <string name="dv_transparency_clear">Vollständig transparent</string>
+    <string name="dv_preview_reference">Psalm 119:105</string>
+    <string name="dv_preview_verse">Dein Wort ist Leuchte meinem Fuße und Licht für meinen Pfad.</string>
 </resources>

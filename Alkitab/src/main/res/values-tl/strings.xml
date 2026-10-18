@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Transparency</string>
     <string name="dv_transparency_solid">Hindi naaaninag ang likuran</string>
     <string name="dv_transparency_clear">Ganap na naaaninag ang likuran</string>
+    <string name="dv_preview_reference">Mga Awit 119:105</string>
+    <string name="dv_preview_verse">Ang salita mo\'y ilawan sa aking mga paa, at liwanag sa aking landas.</string>
 </resources>

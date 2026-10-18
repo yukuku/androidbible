@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Caurspīdīgums</string>
     <string name="dv_transparency_solid">Necaurspīdīgs fons</string>
     <string name="dv_transparency_clear">Pilnīgi caurspīdīgs</string>
+    <string name="dv_preview_reference">Psalmi 119:105</string>
+    <string name="dv_preview_verse">Tavs vārds ir manu kāju spīdeklis un gaišums uz maniem ceļiem.</string>
 </resources>

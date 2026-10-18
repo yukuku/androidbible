@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Прозрачность</string>
     <string name="dv_transparency_solid">Непрозрачный фон</string>
     <string name="dv_transparency_clear">Полностью прозрачный</string>
+    <string name="dv_preview_reference">Псалом 118:105</string>
+    <string name="dv_preview_verse">Слово Твое - светильник ноге моей и свет стезе моей.</string>
 </resources>

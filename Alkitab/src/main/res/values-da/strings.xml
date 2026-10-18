@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Gennemsigtighed</string>
     <string name="dv_transparency_solid">Uigennemsigtig baggrund</string>
     <string name="dv_transparency_clear">Helt gennemsigtig</string>
+    <string name="dv_preview_reference">Salme 119:105</string>
+    <string name="dv_preview_verse">Dit Ord er en Lygte for min Fod, et Lys paa min Sti.</string>
 </resources>

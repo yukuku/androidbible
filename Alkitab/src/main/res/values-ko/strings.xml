@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">투명도</string>
     <string name="dv_transparency_solid">불투명한 배경</string>
     <string name="dv_transparency_clear">완전히 투명</string>
+    <string name="dv_preview_reference">시편 119:105</string>
+    <string name="dv_preview_verse">주의 말씀은 내 발에 등이요 내 길에 빛이니이다</string>
 </resources>

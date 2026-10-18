@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Pagkatin-aw</string>
     <string name="dv_transparency_solid">Dili makita ang luyo</string>
     <string name="dv_transparency_clear">Hingpit nga makita ang luyo</string>
+    <string name="dv_preview_reference">Salmo 119:105</string>
+    <string name="dv_preview_verse">Ang imong pulong maoy lamparahan sa akong mga tiil, Ug kahayag sa akong alagianan.</string>
 </resources>
