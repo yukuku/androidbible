@@ -170,7 +170,11 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         toolbar.setOnClickListener {
             DevotionSelectionSheet.show(this, currentKind, currentDate) { kind, date ->
                 currentDate = date
-                cbKind_itemSelected(kind)
+                if (kind != currentKind) {
+                    cbKind_itemSelected(kind)
+                } else {
+                    display()
+                }
             }
         }
         setupEdgeToEdgeDisplayWithoutBottomInset(toolbar)
