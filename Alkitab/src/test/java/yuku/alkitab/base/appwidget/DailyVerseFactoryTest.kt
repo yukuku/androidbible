@@ -100,7 +100,7 @@ class DailyVerseFactoryTest {
         every { DailyVerseData.getAris(7, state, version, 1) } returns null
         val factory = DailyVerseFactory(Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 7))
         factory.onCreate()
-        assertEquals(1, factory.count)
+        assertEquals(1, factory.getCount())
         factory.getViewAt(0)
         factory.getViewAt(0)
         factory.getViewAt(1)
