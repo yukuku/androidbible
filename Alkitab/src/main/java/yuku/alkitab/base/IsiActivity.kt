@@ -43,6 +43,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toUri
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
@@ -510,6 +511,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         AppLog.d(TAG, "@@onCreate start")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
