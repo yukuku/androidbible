@@ -40,3 +40,11 @@ On Android 12 and newer, the widget declares a 4 × 2 cell target size and a lay
 ## Navigation
 
 Users can tap previous/next to cycle through verses. Each tap increments a `clickCount` stored per widget, which changes the seed and selects a different verse.
+
+## Localized launcher preview
+
+The static launcher preview uses Psalm 119:105 in each selectable UI language, including Malay. Each locale supplies both `dv_preview_reference` and `dv_preview_verse`; these samples do not affect live verse selection or the configured Bible version. The launcher resolves the static preview using its resource locale, which may differ from the app’s language preference.
+
+The retrieved Russian and Ukrainian editions number this passage as Psalm 118:105, so their preview references follow that numbering. Portuguese and Brazilian Portuguese use the same Almeida text. Section headings and layout-only whitespace are omitted; spelling and verse wording are retained. [Preview source records](daily-verse-preview-sources.json) identify the editions, source URLs, original text, display text, and available license metadata. Retrieval does not establish redistribution rights; publisher-specific reuse terms still apply.
+
+Malay is selectable as “Bahasa Melayu” (`ms`). It is already included in Gradle’s `androidResources.localeFilters`, the translation import script, and the `ms-MY` mapping in `ConfigurationWrapper`.

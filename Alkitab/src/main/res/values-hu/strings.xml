@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Átlátszóság</string>
     <string name="dv_transparency_solid">Átlátszatlan háttér</string>
     <string name="dv_transparency_clear">Teljesen átlátszó</string>
+    <string name="dv_preview_reference">Zsoltárok 119:105</string>
+    <string name="dv_preview_verse">Az én lábamnak szövétneke a te igéd, és ösvényemnek világossága.</string>
 </resources>

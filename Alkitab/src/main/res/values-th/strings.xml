@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">ความโปร่งใส</string>
     <string name="dv_transparency_solid">พื้นหลังทึบ</string>
     <string name="dv_transparency_clear">โปร่งใสทั้งหมด</string>
+    <string name="dv_preview_reference">สดุดี 119:105</string>
+    <string name="dv_preview_verse">พระวจนะของพระองค์เป็นโคมสำหรับเท้าของข้าพระองค์ และเป็นความสว่างแก่วิถีของข้าพระองค์</string>
 </resources>

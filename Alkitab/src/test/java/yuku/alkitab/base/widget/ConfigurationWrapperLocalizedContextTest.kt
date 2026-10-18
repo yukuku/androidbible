@@ -6,6 +6,7 @@ import java.util.Locale
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -107,6 +108,22 @@ class ConfigurationWrapperLocalizedContextTest {
 
         assertEquals("Tema warna", Localized.string(R.string.text_appearance_color_theme))
         assertEquals("Download more fonts…", AfwApp.context.getString(R.string.get_more_fonts))
+    }
+
+    @Test
+    fun `Malay selection resolves Malaysian locale and the localized widget preview on an English device`() {
+        val values = AfwApp.context.resources.getStringArray(R.array.pref_language_values)
+        val labels = AfwApp.context.resources.getStringArray(R.array.pref_language_labels)
+        val index = values.indexOf("ms")
+        assertTrue(index >= 0)
+        assertEquals("Bahasa Melayu", labels[index])
+        Preferences.setString(R.string.pref_language_key, values[index])
+
+        val localized = ConfigurationWrapper.localizedContext(AfwApp.context)
+
+        assertEquals("ms-MY", localized.resources.configuration.locales[0].toLanguageTag())
+        assertEquals("Mazmur 119:105", localized.getString(R.string.dv_preview_reference))
+        assertEquals("Firman-Mu lampu bagi kakiku dan cahaya bagi jalanku.", localized.getString(R.string.dv_preview_verse))
     }
 
 }

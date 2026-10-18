@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Ketelusan</string>
     <string name="dv_transparency_solid">Latar belakang legap</string>
     <string name="dv_transparency_clear">Telus sepenuhnya</string>
+    <string name="dv_preview_reference">Mazmur 119:105</string>
+    <string name="dv_preview_verse">Firman-Mu lampu bagi kakiku dan cahaya bagi jalanku.</string>
 </resources>

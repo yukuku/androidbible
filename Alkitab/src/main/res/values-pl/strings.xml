@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Przezroczystość</string>
     <string name="dv_transparency_solid">Nieprzezroczyste tło</string>
     <string name="dv_transparency_clear">Całkowicie przezroczyste</string>
+    <string name="dv_preview_reference">Psalm 119:105</string>
+    <string name="dv_preview_verse">Twoje słowo jest pochodnią dla moich nóg i światłością na mojej ścieżce.</string>
 </resources>

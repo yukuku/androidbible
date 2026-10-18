@@ -439,4 +439,6 @@
     <string name="dv_option_transparency">Transparantie</string>
     <string name="dv_transparency_solid">Ondoorzichtige achtergrond</string>
     <string name="dv_transparency_clear">Volledig transparant</string>
+    <string name="dv_preview_reference">Psalm 119:105</string>
+    <string name="dv_preview_verse">Uw woord is een lamp voor mijn voet, en een licht voor mijn pad.</string>
 </resources>
