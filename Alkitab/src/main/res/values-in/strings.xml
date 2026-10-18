@@ -519,6 +519,13 @@
     <string name="devotion_download_failed">Gagal mengunduh renungan. Periksa koneksi Anda dan coba lagi.</string>
     <string name="devotion_unavailable">Renungan ini belum tersedia di server.</string>
     <string name="devotion_retry">Coba lagi</string>
+    <string name="dv_preview_reference">Mazmur 119:105</string>
+    <string name="dv_preview_verse">Firman-Mu itu pelita bagi kakiku dan terang bagi jalanku.</string>
+    <string name="dv_section_version">Versi Alkitab</string>
+    <string name="dv_section_appearance">Tampilan</string>
+    <string name="dv_option_transparency">Transparansi</string>
+    <string name="dv_transparency_solid">Tidak transparan</string>
+    <string name="dv_transparency_clear">Sepenuhnya transparan</string>
     <string name="devotion_select">Pilih renungan dan tanggal</string>
     <string name="song_select">Pilih lagu</string>
 </resources>

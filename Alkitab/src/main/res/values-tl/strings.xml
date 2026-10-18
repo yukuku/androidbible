@@ -434,4 +434,9 @@
     <string name="rp_menuDownload">Mag-download ng plano ng pagbabasa</string>
     <string name="sn_audio_disclaimer_message">Pakitandaan na ang lahat ng audio na ibinibigay sa app na ito ay hindi kinakailangang nagmula sa naglathala ng kanta o ng aklat ng kanta.</string>
     <string name="sn_error_rendering_lyrics">May error sa pagpapakita ng lyrics. Pakiusap tapikin ang menu button at piliin ang \"I-update ang aklat/libro ng kanta\".</string>
+    <string name="dv_section_version">Salin ng Bibliya</string>
+    <string name="dv_section_appearance">Hitsura</string>
+    <string name="dv_option_transparency">Transparency</string>
+    <string name="dv_transparency_solid">Hindi naaaninag ang likuran</string>
+    <string name="dv_transparency_clear">Ganap na naaaninag ang likuran</string>
 </resources>

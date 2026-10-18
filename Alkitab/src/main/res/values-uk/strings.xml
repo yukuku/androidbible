@@ -435,4 +435,9 @@
     <string name="pref_verseNumberIsShown_title">Показувати номери віршів</string>
     <string name="sn_audio_disclaimer_message">Зверніть увагу, що все аудіо, надане в цьому додатку, не обов\'язково походить від видавця пісні або пісняра.</string>
     <string name="sn_error_rendering_lyrics">Помилка відображення текстів пісень. Будь ласка, натисніть кнопку меню та виберіть \"Оновити книгу пісень\".</string>
+    <string name="dv_section_version">Переклад Біблії</string>
+    <string name="dv_section_appearance">Вигляд</string>
+    <string name="dv_option_transparency">Прозорість</string>
+    <string name="dv_transparency_solid">Непрозоре тло</string>
+    <string name="dv_transparency_clear">Повністю прозоре</string>
 </resources>

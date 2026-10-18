@@ -434,4 +434,9 @@
     <string name="menu_audio">音频</string>
     <string name="sn_audio_disclaimer_message">请注意，本应用中提供的所有音频不一定来自歌曲或歌本的出版方。</string>
     <string name="sn_error_rendering_lyrics">显示歌词时出错。请点击菜单按钮并选择\"更新歌书\"。</string>
+    <string name="dv_section_version">圣经译本</string>
+    <string name="dv_section_appearance">外观</string>
+    <string name="dv_option_transparency">透明度</string>
+    <string name="dv_transparency_solid">不透明背景</string>
+    <string name="dv_transparency_clear">完全透明</string>
 </resources>

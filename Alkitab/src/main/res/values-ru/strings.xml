@@ -434,4 +434,9 @@
     <string name="menu_audio">Аудио</string>
     <string name="sn_audio_disclaimer_message">Обратите внимание, что всё аудио в этом приложении не обязательно происходит от издателя песни или книги песен.</string>
     <string name="sn_error_rendering_lyrics">Ошибка при отображении текста песни. Пожалуйста, нажмите кнопку меню и выберите \"Обновить песенник\".</string>
+    <string name="dv_section_version">Перевод Библии</string>
+    <string name="dv_section_appearance">Оформление</string>
+    <string name="dv_option_transparency">Прозрачность</string>
+    <string name="dv_transparency_solid">Непрозрачный фон</string>
+    <string name="dv_transparency_clear">Полностью прозрачный</string>
 </resources>

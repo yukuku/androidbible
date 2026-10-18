@@ -434,4 +434,9 @@
     <string name="pref_verseNumberIsShown_title">Zobrazovat čísla veršů</string>
     <string name="sn_audio_disclaimer_message">Upozorňujeme, že veškerý zvuk dostupný v této aplikaci nemusí nutně pocházet od vydavatele písně nebo zpěvníku.</string>
     <string name="sn_error_rendering_lyrics">Chyba při vykreslování textu písně. Klepněte prosím na tlačítko nabídky a vyberte \"Aktualizovat knihu\".</string>
+    <string name="dv_section_version">Překlad Bible</string>
+    <string name="dv_section_appearance">Vzhled</string>
+    <string name="dv_option_transparency">Průhlednost</string>
+    <string name="dv_transparency_solid">Neprůhledné pozadí</string>
+    <string name="dv_transparency_clear">Zcela průhledné</string>
 </resources>

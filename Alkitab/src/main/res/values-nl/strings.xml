@@ -434,4 +434,9 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Houd er rekening mee dat alle audio in deze app niet noodzakelijkerwijs afkomstig is van de uitgever van het lied of het liedboek.</string>
     <string name="sn_error_rendering_lyrics">Fout bij het weergeven van de liedtekst. Tik op de menuknop en selecteer \"Liedboek bijwerken\".</string>
+    <string name="dv_section_version">Bijbelvertaling</string>
+    <string name="dv_section_appearance">Weergave</string>
+    <string name="dv_option_transparency">Transparantie</string>
+    <string name="dv_transparency_solid">Ondoorzichtige achtergrond</string>
+    <string name="dv_transparency_clear">Volledig transparant</string>
 </resources>

@@ -435,4 +435,9 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Si prega di notare che tutto l\'audio fornito in questa app non proviene necessariamente dall\'editore del canto o del libro dei canti.</string>
     <string name="sn_error_rendering_lyrics">Errore nella visualizzazione dei testi. Premi il pulsante del menu e seleziona \"Aggiorna il libro dei canti\".</string>
+    <string name="dv_section_version">Versione della Bibbia</string>
+    <string name="dv_section_appearance">Aspetto</string>
+    <string name="dv_option_transparency">Trasparenza</string>
+    <string name="dv_transparency_solid">Sfondo opaco</string>
+    <string name="dv_transparency_clear">Completamente trasparente</string>
 </resources>

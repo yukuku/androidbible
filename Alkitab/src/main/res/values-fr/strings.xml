@@ -434,4 +434,9 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Veuillez noter que tous les fichiers audio fournis dans cette application ne proviennent pas nécessairement de l\'éditeur du chant ou du recueil de chants.</string>
     <string name="sn_error_rendering_lyrics">Erreur lors de l\'affichage des paroles. Veuillez appuyer sur le bouton de menu et sélectionner \"Mettre à jour du recueil de chants\".</string>
+    <string name="dv_section_version">Version de la Bible</string>
+    <string name="dv_section_appearance">Apparence</string>
+    <string name="dv_option_transparency">Transparence</string>
+    <string name="dv_transparency_solid">Arrière-plan opaque</string>
+    <string name="dv_transparency_clear">Entièrement transparent</string>
 </resources>

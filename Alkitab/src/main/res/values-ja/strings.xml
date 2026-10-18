@@ -434,4 +434,9 @@
     <string name="pref_verseNumberIsShown_title">節番号を表示</string>
     <string name="sn_audio_disclaimer_message">このアプリで提供されるすべてのオーディオは、必ずしも聖歌や聖歌集の発行元によるものとは限りませんのでご注意ください。</string>
     <string name="sn_error_rendering_lyrics">歌詞の表示中にエラーが発生しました。メニューボタンをタップして「聖歌集をアップデートする」を選択してください。</string>
+    <string name="dv_section_version">聖書の訳</string>
+    <string name="dv_section_appearance">表示設定</string>
+    <string name="dv_option_transparency">透明度</string>
+    <string name="dv_transparency_solid">不透明な背景</string>
+    <string name="dv_transparency_clear">完全に透明</string>
 </resources>

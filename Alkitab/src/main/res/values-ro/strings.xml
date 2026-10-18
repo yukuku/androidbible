@@ -434,4 +434,9 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Vă rugăm să rețineți că tot conținutul audio oferit în această aplicație nu provine neapărat de la editorul cântecului sau al cărții de cântece.</string>
     <string name="sn_error_rendering_lyrics">Eroare la afișarea versurilor. Vă rugăm să apăsați butonul de meniu și să selectați \"Actualizare cântece\".</string>
+    <string name="dv_section_version">Versiunea Bibliei</string>
+    <string name="dv_section_appearance">Aspect</string>
+    <string name="dv_option_transparency">Transparență</string>
+    <string name="dv_transparency_solid">Fundal opac</string>
+    <string name="dv_transparency_clear">Complet transparent</string>
 </resources>

@@ -434,4 +434,9 @@
     <string name="version_download_add_from_local">Helyi tárhelyről</string>
     <string name="version_download_add_from_url_prompt_yes_only">.yes FÁJL URL</string>
     <string name="version_download_saving_io_error">I/O hiba a letöltött verzió mentésekor</string>
+    <string name="dv_section_version">Bibliafordítás</string>
+    <string name="dv_section_appearance">Megjelenés</string>
+    <string name="dv_option_transparency">Átlátszóság</string>
+    <string name="dv_transparency_solid">Átlátszatlan háttér</string>
+    <string name="dv_transparency_clear">Teljesen átlátszó</string>
 </resources>
