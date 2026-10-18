@@ -43,6 +43,8 @@ import yuku.alkitab.base.compose.toolbar.ToolbarScaffold
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.debug.R
 
+private val GotoToolbarHeight = 64.dp
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GotoScreen(
@@ -84,7 +86,7 @@ fun GotoScreen(
                 tonalElevation = 0.dp,
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(64.dp),
+                    modifier = Modifier.fillMaxWidth().height(GotoToolbarHeight),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(onClick = onUp) {
@@ -107,6 +109,7 @@ fun GotoScreen(
                                 Tab(
                                     selected = pagerState.currentPage == idx,
                                     onClick = { scope.launch { pagerState.animateScrollToPage(idx) } },
+                                    modifier = Modifier.height(GotoToolbarHeight),
                                     text = { Text(stringResource(resId)) },
                                 )
                             }
