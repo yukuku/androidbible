@@ -526,4 +526,6 @@
     <string name="dv_option_transparency">Transparansi</string>
     <string name="dv_transparency_solid">Tidak transparan</string>
     <string name="dv_transparency_clear">Sepenuhnya transparan</string>
+    <string name="devotion_select">Pilih renungan dan tanggal</string>
+    <string name="song_select">Pilih lagu</string>
 </resources>

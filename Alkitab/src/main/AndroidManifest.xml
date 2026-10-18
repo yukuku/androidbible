@@ -49,6 +49,7 @@
 
 		<activity
 			android:name="yuku.alkitab.base.IsiActivity"
+			android:theme="@style/Theme.Alkitab.Starting"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

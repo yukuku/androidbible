@@ -57,7 +57,7 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 
-public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
+public class ReadingPlanActivity extends BaseLeftDrawerActivity {
     static final String TAG = ReadingPlanActivity.class.getSimpleName();
 
     private static final int REQCODE_openList = 1;
@@ -103,7 +103,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
         drawerLayout = findViewById(R.id.drawerLayout);
         leftDrawer = findViewById(R.id.left_drawer);
-        leftDrawer.configure(this, drawerLayout);
+        leftDrawer.configure(drawerLayout);
         applySafeAreaPadding(leftDrawer);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -272,6 +272,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
     public boolean onPrepareOptionsMenu(final Menu menu) {
         final boolean anyReadingPlan = !downloadedReadingPlanInfos.isEmpty();
         menu.findItem(R.id.menuDelete).setVisible(anyReadingPlan);
+        menu.findItem(R.id.menuRestart).setVisible(anyReadingPlan);
 
         if (!anyReadingPlan) {
             leftDrawer.getHandle().setDescription(null);
@@ -289,6 +290,9 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
         } else if (itemId == R.id.menuDownload) {
             openDownloadReadingPlanPage();
+            return true;
+        } else if (itemId == R.id.menuRestart) {
+            restartReadingPlan();
             return true;
         } else if (itemId == R.id.menuDelete) {
             deleteReadingPlan();
@@ -498,8 +502,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
         bToday.setText(getReadingDateHeader(dayNumber));
     }
 
-    @Override
-    public void bRestart_click() {
+    private void restartReadingPlan() {
         MaterialDialogJavaHelper.showOkDialog(
             this,
             getString(R.string.rp_restart_desc),
@@ -701,14 +704,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
                 bReference.setText(App.services.versions.activeVersion().referenceRange(todayReadings[position * 2], todayReadings[position * 2 + 1]));
 
-                bReference.setOnClickListener(v -> {
-                    final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
-                    if (position < todayReadingsSize) {
-                        goToIsiActivity(dayNumber, position);
-                    } else if (position > todayReadingsSize) {
-                        goToIsiActivity(position - todayReadingsSize - 1, 0);
-                    }
-                });
+                bReference.setOnClickListener(v -> goToIsiActivity(dayNumber, position));
+                checkbox.setContentDescription(bReference.getText());
                 checkbox.setOnCheckedChangeListener(null);
                 checkbox.setChecked(readMarks[position]);
 
@@ -749,6 +746,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
                     tComment.setTextColor(ResourcesCompat.getColor(getResources(), R.color.escape, getTheme()));
                 }
 
+                tDetail.setText(showDetails ? R.string.rp_hideDetails : R.string.rp_showDetails);
                 tDetail.setOnClickListener(v -> {
                     showDetails = !showDetails;
                     if (showDetails) {
@@ -772,10 +770,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
                 int[] ariRanges = readingPlan.dailyVerses[day];
                 final int checkbox_count = ariRanges.length / 2;
 
-                { // remove extra checkboxes
+                { // remove extra passage rows
                     for (int i = layout.getChildCount() - 1; i >= 0; i--) {
                         final View view = layout.getChildAt(i);
-                        if (view instanceof CheckBox && view.getTag() != null) {
+                        if (view.getTag() instanceof Integer) {
                             Integer tag = (Integer) view.getTag();
                             if (tag >= checkbox_count) layout.removeViewAt(i);
                         }
@@ -788,16 +786,24 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
                 for (int i = 0; i < checkbox_count; i++) {
                     final int sequence = i;
 
-                    CheckBox checkBox = layout.findViewWithTag(i);
-                    if (checkBox == null) {
-                        checkBox = (CheckBox) getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading_checkbox, layout, false);
-                        checkBox.setTag(i);
-                        layout.addView(checkBox);
+                    View row = layout.findViewWithTag(i);
+                    if (row == null) {
+                        row = getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading, layout, false);
+                        row.setTag(i);
+                        layout.addView(row);
                     }
-
+                    Button reference = row.findViewById(R.id.bReference);
+                    CheckBox checkBox = row.findViewById(R.id.checkbox);
+                    String referenceText = App.services.versions.activeVersion().referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]);
+                    reference.setText(referenceText);
+                    reference.setOnClickListener(v -> goToIsiActivity(day, sequence));
+                    reference.setOnLongClickListener(v -> {
+                        one_reading_longClick(day, sequence);
+                        return true;
+                    });
+                    checkBox.setContentDescription(referenceText);
                     checkBox.setOnCheckedChangeListener(null);
                     checkBox.setChecked(readMarks[sequence]);
-                    checkBox.setText(App.services.versions.activeVersion().referenceRange(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
                     checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                         ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.name, day, sequence, isChecked);
                         loadReadingPlanProgress();

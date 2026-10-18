@@ -568,4 +568,6 @@
     <string name="dv_option_transparency">Transparency</string>
     <string name="dv_transparency_solid">Solid background</string>
     <string name="dv_transparency_clear">Fully transparent</string>
+    <string name="devotion_select">Select devotion and date</string>
+    <string name="song_select">Select song</string>
 </resources>
