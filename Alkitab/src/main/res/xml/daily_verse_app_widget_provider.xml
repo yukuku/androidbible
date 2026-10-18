@@ -4,6 +4,10 @@
 	android:minWidth="250dp"
 	android:minResizeHeight="40dp"
 	android:minResizeWidth="180dp"
+	android:targetCellWidth="4"
+	android:targetCellHeight="2"
+	android:previewLayout="@layout/appwidget_daily_verse_preview"
 	android:previewImage="@drawable/daily_verse_app_widget_preview"
 	android:resizeMode="vertical|horizontal"
+	android:widgetFeatures="reconfigurable"
 	android:widgetCategory="keyguard|home_screen" />

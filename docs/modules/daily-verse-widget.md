@@ -29,7 +29,9 @@ Each widget instance stores its own preferences:
 - Background transparency (alpha)
 - Whether to show the app icon
 
-Settings are persisted in SharedPreferences keyed by widget ID.
+Settings are persisted in SharedPreferences keyed by widget ID. Launchers that support widget reconfiguration can reopen the setup screen with the saved settings selected. Saving appearance changes preserves verse navigation; canceling leaves the widget unchanged.
+
+On Android 12 and newer, the widget declares a 4 × 2 cell target size and a layout-based preview. Older launchers can use the preview image and minimum dimensions.
 
 ## Navigation
 

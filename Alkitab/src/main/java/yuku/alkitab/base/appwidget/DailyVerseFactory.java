@@ -1,6 +1,5 @@
 package yuku.alkitab.base.appwidget;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,20 +18,17 @@ import yuku.alkitab.base.widget.Localized;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
-import yuku.alkitabintegration.display.Launcher;
 
 public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory {
 	static final String TAG = DailyVerseFactory.class.getSimpleName();
 
 	private final int appWidgetId;
-	private final int direction;
 	private DailyVerseData.SavedState savedState;
 	private Version version;
 	@Nullable private int[] aris;
 
 	public DailyVerseFactory(final Intent intent) {
 		this.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-		this.direction = intent.getIntExtra(DailyVerseAppWidgetService.EXTRA_direction, 0);
 	}
 
 	private static SpannableStringBuilder getText(Version version, int ari, boolean showVerseNumber) {
@@ -93,9 +89,6 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 	RemoteViews getHeaderView() {
 		final RemoteViews rv = new RemoteViews(App.context.getPackageName(), R.layout.appwidget_daily_verse_item_header);
 
-		// get saved state
-		final DailyVerseData.SavedState savedState = DailyVerseData.loadSavedState(appWidgetId);
-
 		if (savedState.darkText) {
 			rv.setTextColor(R.id.tReference, Color.BLACK);
 			rv.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
@@ -132,13 +125,10 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 		rv.setFloat(R.id.tReference, "setTextSize", savedState.textSize);
 
-		final Version version = DailyVerseData.getVersion(savedState.versionId);
-		final int[] aris = DailyVerseData.getAris(appWidgetId, savedState, version, direction);
 		if (aris != null) {
 			rv.setTextViewText(R.id.tReference, version.referenceWithVerseCount(aris[0], aris.length));
 
-			final Intent viewVerseIntent = Launcher.openAppAtBibleLocation(aris[0]);
-			rv.setOnClickPendingIntent(R.id.tReference, PendingIntent.getActivity(App.context, appWidgetId + 10000, viewVerseIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
+			rv.setOnClickFillInIntent(R.id.tReference, new Intent().putExtra("app_widget_action", "open_verse").putExtra("ari", aris[0]));
 		} else {
 			rv.setTextViewText(R.id.tReference, Localized.string(R.string.generic_verse_not_available_in_this_version));
 		}

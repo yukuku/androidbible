@@ -561,4 +561,6 @@
     <string name="devotion_download_failed">Could not download this devotion. Check your connection and try again.</string>
     <string name="devotion_unavailable">This devotion is not available from the server yet.</string>
     <string name="devotion_retry">Retry</string>
+    <string name="dv_preview_reference">Psalm 119:105</string>
+    <string name="dv_preview_verse">Thy word is a lamp unto my feet, and a light unto my path.</string>
 </resources>

@@ -110,24 +110,23 @@ public abstract class DailyVerseData {
 		return r.nextInt(size);
 	}
 
-	private static IntArrayList listAllDailyVerses() {
+	private static synchronized IntArrayList listAllDailyVerses() {
 		if (dailyVerses == null) {
-			dailyVerses = new IntArrayList();
-			try {
-				InputStream is = App.context.getResources().openRawResource(R.raw.daily_verses_bt);
-				BintexReader br = new BintexReader(is);
+			final IntArrayList loadedVerses = new IntArrayList();
+			try (InputStream is = App.context.getResources().openRawResource(R.raw.daily_verses_bt);
+				 BintexReader br = new BintexReader(is)) {
 				while (true) {
 					int ari = br.readInt();
 					if (ari == -1) {
 						break;
 					}
 					final int verseCount = br.readUint8();
-					dailyVerses.add(ari << 8 | verseCount);
+					loadedVerses.add(ari << 8 | verseCount);
 				}
-				br.close();
 			} catch (IOException e) {
 				throw new RuntimeException("Error reading daily verses", e);
 			}
+			dailyVerses = loadedVerses;
 		}
 		return dailyVerses;
 	}
@@ -145,10 +144,12 @@ public abstract class DailyVerseData {
 		for (final MVersionDb mvDb : yuku.alkitab.base.App.services.storage.getDb().listAllVersions()) {
 			if (mvDb.getVersionId().equals(versionId)) {
 				if (mvDb.hasDataFile()) {
-					return mvDb.getVersion();
-				} else {
-					break;
+					final Version version = mvDb.getVersion();
+					if (version != null) {
+						return version;
+					}
 				}
+				break;
 			}
 		}
 

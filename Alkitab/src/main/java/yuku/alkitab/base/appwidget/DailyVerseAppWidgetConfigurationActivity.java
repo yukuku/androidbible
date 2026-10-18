@@ -25,7 +25,10 @@ import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.debug.R;
 
 public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
+    private static final String STATE_VERSION_ID = "selectedVersionId";
+
     VersionAdapter adapter;
+    private String selectedVersionId;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     int selectedVersionPosition = -1;
@@ -78,16 +81,20 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
             return;
         }
 
+        final DailyVerseData.SavedState widgetState = DailyVerseData.loadSavedState(mAppWidgetId);
+        selectedVersionId = savedInstanceState != null ? savedInstanceState.getString(STATE_VERSION_ID) : widgetState.versionId;
+
         adapter = new VersionAdapter();
         adapter.reload();
         lsVersionsAppWidget.setAdapter(adapter);
         lsVersionsAppWidget.setOnItemClickListener((parent, view, position, id) -> {
             selectedVersionPosition = position;
+            selectedVersionId = adapter.versions.get(position).getVersionId();
             bOk.setEnabled(true);
             adapter.notifyDataSetChanged();
         });
 
-        bOk.setEnabled(false);
+        bOk.setEnabled(selectedVersionPosition >= 0);
         bOk.setOnClickListener(bOk_click);
         bCancel.setOnClickListener(v -> finish());
 
@@ -131,9 +138,23 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
         });
         sbTransparent_progressChanged(sbTransparent.getProgress());
 
+        if (widgetState.versionId != null) {
+            cTransparentBackground.setChecked(widgetState.transparentBackground);
+            cDarkText.setChecked(widgetState.darkText);
+            cHideAppIcon.setChecked(widgetState.hideAppIcon);
+            sbTextSize.setProgress(Math.round(widgetState.textSize - 8f));
+            sbTransparent.setProgress(Math.round((255 - widgetState.backgroundAlpha) * 20f / 255f));
+        }
+
         AppEvents.observe(this, AppEvents.versionListReload, () -> {
             if (adapter != null) adapter.reload();
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_VERSION_ID, selectedVersionId);
     }
 
     void sbTextSize_progressChanged(final int progress) {
@@ -162,14 +183,13 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
         final Context context = DailyVerseAppWidgetConfigurationActivity.this;
         final String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
 
-        final DailyVerseData.SavedState savedState = new DailyVerseData.SavedState();
+        final DailyVerseData.SavedState savedState = DailyVerseData.loadSavedState(mAppWidgetId);
         savedState.versionId = versionId;
         savedState.transparentBackground = cTransparentBackground.isChecked();
         savedState.backgroundAlpha = cTransparentBackground.isChecked() ? progressToActualAlpha(sbTransparent.getProgress()) : 255;
         savedState.darkText = cDarkText.isChecked();
         savedState.hideAppIcon = cHideAppIcon.isChecked();
         savedState.textSize = progressToActualTextSize(sbTextSize.getProgress());
-        savedState.click = 0;
         DailyVerseData.saveSavedState(mAppWidgetId, savedState);
 
         DailyVerseAppWidgetReceiver.buildUpdate(context, mAppWidgetId);
@@ -189,6 +209,14 @@ public class DailyVerseAppWidgetConfigurationActivity extends BaseActivity {
 
         void reload() {
             versions = App.services.versions.getAvailableVersions();
+            selectedVersionPosition = -1;
+            for (int i = 0; i < versions.size(); i++) {
+                if (versions.get(i).getVersionId().equals(selectedVersionId)) {
+                    selectedVersionPosition = i;
+                    break;
+                }
+            }
+            findViewById(R.id.bOk).setEnabled(selectedVersionPosition >= 0);
             notifyDataSetChanged();
         }
 
