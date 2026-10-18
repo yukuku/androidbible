@@ -4,11 +4,6 @@ import android.app.Application
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.ListView
-import android.widget.SeekBar
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -29,7 +24,6 @@ import yuku.alkitab.base.model.MVersionDb
 import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.services.AppServices
 import yuku.alkitab.base.services.VersionManager
-import yuku.alkitab.debug.R
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [34])
@@ -82,16 +76,9 @@ class DailyVerseConfigurationTest {
         val controller = buildController().setup()
         val activity = controller.get()
         try {
-            assertEquals(0, activity.selectedVersionPosition)
-            assertTrue(activity.findViewById<Button>(R.id.bOk).isEnabled)
-            assertEquals(14, activity.findViewById<SeekBar>(R.id.sbTextSize).progress)
-            assertEquals(12, activity.findViewById<SeekBar>(R.id.sbTransparent).progress)
-            assertTrue(activity.findViewById<CheckBox>(R.id.cTransparentBackground).isChecked)
-            assertTrue(activity.findViewById<CheckBox>(R.id.cDarkText).isChecked)
-            assertTrue(activity.findViewById<CheckBox>(R.id.cHideAppIcon).isChecked)
-            activity.findViewById<CheckBox>(R.id.cTransparentBackground).isChecked = false
-            activity.findViewById<SeekBar>(R.id.sbTextSize).progress = 16
-            activity.findViewById<Button>(R.id.bOk).performClick()
+            assertEquals(DailyVerseConfiguration("internal", 22, true, 12, true, true), activity.configuration)
+            activity.configuration = activity.configuration.copy(isTransparent = false, textSize = 24)
+            activity.saveConfiguration()
             val saved = DailyVerseData.loadSavedState(42)
             assertEquals("internal", saved.versionId)
             assertEquals(24f, saved.textSize, 0f)
@@ -110,15 +97,12 @@ class DailyVerseConfigurationTest {
         val controller = buildController().setup()
         val activity = controller.get()
         val state = Bundle()
-        activity.findViewById<ListView>(R.id.lsVersionsAppWidget).performItemClick(View(activity), 1, 1)
-        activity.findViewById<SeekBar>(R.id.sbTextSize).progress = 20
+        activity.configuration = activity.configuration.copy(versionId = "file//test/other.yes", textSize = 28, transparency = 3, isIconHidden = false)
         controller.saveInstanceState(state).pause().stop().destroy()
         val restored = buildController().create(state).start().restoreInstanceState(state).resume()
         try {
-            assertEquals(1, restored.get().selectedVersionPosition)
-            assertTrue(restored.get().findViewById<Button>(R.id.bOk).isEnabled)
-            assertEquals(20, restored.get().findViewById<SeekBar>(R.id.sbTextSize).progress)
-            restored.get().findViewById<Button>(R.id.bCancel).performClick()
+            assertEquals(activity.configuration, restored.get().configuration)
+            restored.get().finish()
             val saved = DailyVerseData.loadSavedState(42)
             assertEquals(22f, saved.textSize, 0f)
             assertTrue(saved.transparentBackground)
@@ -127,4 +111,17 @@ class DailyVerseConfigurationTest {
             restored.pause().stop().destroy()
         }
     }
+    @Test
+    fun `saving an unavailable version does not change widget settings`() {
+        val controller = buildController().setup()
+        try {
+            controller.get().configuration = controller.get().configuration.copy(versionId = "missing")
+            controller.get().saveConfiguration()
+            assertEquals("internal", DailyVerseData.loadSavedState(42).versionId)
+            assertFalse(controller.get().isFinishing)
+        } finally {
+            controller.pause().stop().destroy()
+        }
+    }
+
 }

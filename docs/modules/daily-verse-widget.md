@@ -9,8 +9,10 @@ A home screen app widget displaying daily Bible verses in a stack/card view. Con
 - `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseAppWidgetService.kt`: RemoteViewsService
 - `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseFactory.kt`: RemoteViewsFactory implementation
 - `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseData.kt`: Widget settings and verse selection
-- `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseAppWidgetConfigurationActivity.kt`: Widget setup UI
+- `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseAppWidgetConfigurationActivity.kt`: Widget setup lifecycle and saved configuration
 - `Alkitab/src/main/java/yuku/alkitab/base/br/DailyVerseAppWidgetReceiver.kt` — Broadcast receiver for widget updates
+
+- `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseConfigurationScreen.kt`: Compose configuration UI
 
 ## Verse Selection Algorithm
 
@@ -28,6 +30,8 @@ Each widget instance stores its own preferences:
 - Text color
 - Background transparency (alpha)
 - Whether to show the app icon
+
+The configuration screen uses Compose for the toolbar, version list, appearance controls, and action buttons, with the app’s existing colors and toolbar-position preference. Unsaved appearance and version edits survive activity recreation.
 
 Settings are persisted in SharedPreferences keyed by widget ID. Launchers that support widget reconfiguration can reopen the setup screen with the saved settings selected. Saving appearance changes preserves verse navigation; canceling leaves the widget unchanged.
 
