@@ -18,18 +18,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebViewClient
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
@@ -51,7 +39,6 @@ import yuku.alkitab.base.ac.AlertDialogActivity
 import yuku.alkitab.base.ac.HelpActivity
 import yuku.alkitab.base.ac.PatchTextActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
-import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.settings.ExperimentalFlags
@@ -98,7 +85,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     // state for the keypad
     private var state_originalCode: String? = null
     private var state_tempCode = ""
-    private var selectionControls: SongSelectionControls? = null
+    private var selectionControls: LeftDrawer.Songs.Handle? = null
     private var dismissSelection: (() -> Unit)? = null
     private val keypadHandle: LeftDrawer.Songs.Handle get() = selectionControls ?: leftDrawer.handle
 
@@ -702,25 +689,22 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     private fun showSelectionSheet() {
-        ComposeBottomSheetHost.show(this) { dismiss ->
-            DisposableEffect(Unit) {
+        SongSelectionSheet.show(
+            activity = this,
+            onReady = { controls, dismiss ->
+                selectionControls = controls
                 dismissSelection = dismiss
-                onDispose {
-                    selectionControls = null
-                    dismissSelection = null
-                }
-            }
-            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
-                Text(stringResource(R.string.song_select), style = MaterialTheme.typography.titleLarge)
-                AndroidView(modifier = Modifier.fillMaxWidth(), factory = { context ->
-                    layoutInflater.inflate(R.layout.song_selection_controls, android.widget.FrameLayout(context), false).also { view ->
-                        selectionControls = SongSelectionControls(this@SongViewActivity, view, this@SongViewActivity)
-                        keypadHandle.setBookName(SongBookUtil.escapeSongBookName(currentBookName))
-                        resetKeypad()
-                    }
-                })
-            }
-        }
+                controls.setBookName(SongBookUtil.escapeSongBookName(currentBookName))
+                resetKeypad()
+            },
+            onDisposed = {
+                selectionControls = null
+                dismissSelection = null
+            },
+            onKey = ::songKeypadButtonClick,
+            onBookSelected = ::songBookSelected,
+            onMoreSelected = ::moreSelected,
+        )
     }
 
     private fun resetKeypad() {
@@ -896,13 +880,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
     }
 
-    private val keypadViewToNumConverter by lazy {
+    private val keypadIdToNumConverter by lazy {
         val numIds = intArrayOf(R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4, R.id.bDigit5, R.id.bDigit6, R.id.bDigit7, R.id.bDigit8, R.id.bDigit9)
         val alphaIds = intArrayOf(R.id.bDigitA, R.id.bDigitB, R.id.bDigitC) // num = 10, 11, 12
 
-        fun(v: View): Int {
-            val id = v.id
-
+        fun(id: Int): Int {
             for (i in numIds.indices) if (id == numIds[i]) return i
             for (i in alphaIds.indices) if (id == alphaIds[i]) return 10 + i // special code for alpha
             if (id == R.id.bBackspace) return 20 // special code for the backspace
@@ -911,7 +893,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
     }
 
-    override fun songKeypadButton_click(v: View) {
+    override fun songKeypadButton_click(v: View) = songKeypadButtonClick(v.id)
+
+    private fun songKeypadButtonClick(id: Int) {
         val currentBookName = currentBookName ?: return
 
         val handle = keypadHandle
@@ -925,7 +909,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             handle.setCButtonEnabled(state_tempCode.length <= 3 && App.services.storage.songDb.songExists(currentBookName, state_tempCode + "C"))
         }
 
-        when (val num = keypadViewToNumConverter(v)) {
+        when (val num = keypadIdToNumConverter(id)) {
             in 0..9 -> { // digits
                 if (state_tempCode.length >= 4) state_tempCode = "" // can't be more than 4 digits
 

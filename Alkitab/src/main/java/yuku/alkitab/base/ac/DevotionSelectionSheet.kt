@@ -48,7 +48,7 @@ object DevotionSelectionSheet {
         initialDate: Date,
         onSelected: (DevotionActivity.DevotionKind, Date) -> Unit,
     ) {
-        ComposeBottomSheetHost.show(activity) { _ ->
+        ComposeBottomSheetHost.show(activity, dimBackground = false) { _ ->
             var kind by remember { mutableStateOf(initialKind) }
             var date by remember { mutableStateOf(initialDate.time) }
             var expanded by remember { mutableStateOf(false) }
