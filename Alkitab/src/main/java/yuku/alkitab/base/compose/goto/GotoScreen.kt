@@ -110,7 +110,10 @@ fun GotoScreen(
                             titles.forEachIndexed { idx, resId ->
                                 Tab(
                                     selected = pagerState.currentPage == idx,
-                                    onClick = { scope.launch { pagerState.animateScrollToPage(idx) } },
+                                    onClick = {
+                                        if (idx != pagerState.currentPage) focusManager.clearFocus()
+                                        scope.launch { pagerState.scrollToPage(idx) }
+                                    },
                                     modifier = Modifier.height(GotoToolbarHeight),
                                     text = { Text(stringResource(resId)) },
                                 )

@@ -2,6 +2,8 @@ package yuku.alkitab.base.compose.goto
 
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -14,11 +16,13 @@ import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getAllSemanticsNodes
 import androidx.compose.ui.semantics.getOrNull
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import org.junit.Assert.assertEquals
@@ -51,11 +55,30 @@ class GotoScreenNavigationTest {
         for ((initial, destination) in listOf(GotoTab.DIALER to GotoTab.GRID, GotoTab.GRID to GotoTab.DIALER)) {
             withScreen(initial) { screen ->
                 screen.tapTab(destination)
+                screen.advanceFrames(3)
+                screen.assertSelected(destination)
                 screen.advanceFrames(90) {
                     assertFalse("the intermediate text field must not take focus", screen.isInputFocused())
                 }
                 screen.assertSelected(destination)
             }
+        }
+    }
+
+    @Test
+    fun `quick tab taps keep the last requested page selected`() {
+        withScreen(GotoTab.DIALER) { screen ->
+            screen.tapTab(GotoTab.DIRECT)
+            screen.advanceFrames(3)
+            screen.tapTab(GotoTab.DIALER)
+            screen.advanceFrames(3)
+            screen.tapTab(GotoTab.GRID)
+            screen.advanceFrames(3)
+            screen.assertSelected(GotoTab.GRID)
+            screen.advanceFrames(90) {
+                assertFalse(screen.isInputFocused())
+            }
+            screen.assertSelected(GotoTab.GRID)
         }
     }
 
@@ -68,6 +91,27 @@ class GotoScreenNavigationTest {
             assertTrue("the selected direct tab must focus its input", screen.isInputFocused())
 
             screen.tapTab(GotoTab.GRID)
+            screen.advanceFrames(90)
+            screen.assertSelected(GotoTab.GRID)
+            assertFalse(screen.isInputFocused())
+        }
+    }
+
+    @Test
+    fun `keyboard resize during tab switching does not change the requested destination`() {
+        withScreen(GotoTab.DIRECT) { screen ->
+            screen.advanceFrames(10)
+            screen.setKeyboardHeight(280)
+            screen.advanceFrames(3)
+            screen.tapTab(GotoTab.DIALER)
+            screen.advanceFrames(3)
+            screen.tapTab(GotoTab.GRID)
+            screen.setKeyboardHeight(0)
+            screen.advanceFrames(3)
+            screen.assertSelected(GotoTab.GRID)
+            screen.setKeyboardHeight(280)
+            screen.advanceFrames(3)
+            screen.setKeyboardHeight(0)
             screen.advanceFrames(90)
             screen.assertSelected(GotoTab.GRID)
             assertFalse(screen.isInputFocused())
@@ -149,7 +193,22 @@ class GotoScreenNavigationTest {
         }
 
         fun tapTab(tab: GotoTab) {
-            assertTrue(tab(tab).config[SemanticsActions.OnClick].action!!.invoke())
+            val center = tab(tab).boundsInRoot.center
+            val downTime = SystemClock.uptimeMillis()
+            for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
+                val event = MotionEvent.obtain(downTime, downTime + 16, action, center.x, center.y, 0)
+                assertTrue("the tab touch must be handled", view.dispatchTouchEvent(event))
+                event.recycle()
+            }
+        }
+
+        fun setKeyboardHeight(height: Int) {
+            val insets = WindowInsetsCompat.Builder()
+                .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(0, 24, 0, 24))
+                .setInsets(WindowInsetsCompat.Type.ime(), Insets.of(0, 0, 0, height))
+                .setVisible(WindowInsetsCompat.Type.ime(), height > 0)
+                .build()
+            ViewCompat.dispatchApplyWindowInsets(view, insets)
         }
 
         fun assertSelected(tab: GotoTab) {
