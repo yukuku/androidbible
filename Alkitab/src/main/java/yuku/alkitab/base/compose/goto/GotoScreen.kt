@@ -109,7 +109,7 @@ fun GotoScreen(
                                 Tab(
                                     selected = pagerState.currentPage == idx,
                                     onClick = { scope.launch { pagerState.animateScrollToPage(idx) } },
-                                    modifier = Modifier.height(48.dp),
+                                    modifier = Modifier.height(GotoToolbarHeight),
                                     text = { Text(stringResource(resId)) },
                                 )
                             }
