@@ -6,7 +6,7 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical"
 	android:paddingEnd="0dp"
-	android:paddingStart="@dimen/padding_medium">
+	android:paddingStart="0dp">
 
 	<TextView
 		android:id="@android:id/text1"
@@ -16,6 +16,7 @@
 		android:gravity="bottom"
 		android:minHeight="48dp"
 		android:paddingBottom="4dp"
+        android:paddingStart="@dimen/padding_medium"
 		android:textColor="#898989"
 		android:textSize="12sp"
 		tools:text="Dayname, 13 February 2015" />

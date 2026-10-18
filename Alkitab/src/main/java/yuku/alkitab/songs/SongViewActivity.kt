@@ -18,6 +18,18 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebViewClient
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
@@ -39,6 +51,7 @@ import yuku.alkitab.base.ac.AlertDialogActivity
 import yuku.alkitab.base.ac.HelpActivity
 import yuku.alkitab.base.ac.PatchTextActivity
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity
+import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.dialog.VersesDialog
 import yuku.alkitab.base.settings.ExperimentalFlags
@@ -85,6 +98,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     // state for the keypad
     private var state_originalCode: String? = null
     private var state_tempCode = ""
+    private var selectionControls: SongSelectionControls? = null
+    private var dismissSelection: (() -> Unit)? = null
+    private val keypadHandle: LeftDrawer.Songs.Handle get() = selectionControls ?: leftDrawer.handle
 
     // cache of song codes for each book
     private var cache_codes = mutableMapOf<String /* bookName */, MutableList<String> /* ordered codes */>()
@@ -243,13 +259,15 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        androidx.appcompat.widget.TooltipCompat.setTooltipText(toolbar, getString(R.string.song_select))
+        toolbar.setOnClickListener { showSelectionSheet() }
         setupEdgeToEdgeDisplayWithoutBottomInset(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerOpened(drawerView: View) {
-                drawer_opened()
+                resetKeypad()
             }
         })
 
@@ -631,9 +649,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         if (doc == null) return
 
-        val handle = leftDrawer.handle
-        handle.setBookName(SongBookUtil.escapeSongBookName(bookName))
-        handle.setCode(doc.code)
+        selectionControls?.setBookName(SongBookUtil.escapeSongBookName(bookName))
+        selectionControls?.setCode(doc.code)
+        leftDrawer.handle.setBookName(SongBookUtil.escapeSongBookName(bookName))
+        leftDrawer.handle.setCode(doc.code)
 
         val copyright = SongBookUtil.getCopyright(bookName)
         val patchTextLinkLabel = if (bookName?.startsWith("_") == true) null else getString(R.string.patch_text_open_link)
@@ -670,6 +689,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             append(SongBookUtil.escapeSongBookName(bookName))
             append(" ")
             append(song.code)
+            append(" ▾")
 
             val progress = mediaState.progress
             if (progress != null) {
@@ -681,10 +701,32 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
     }
 
-    fun drawer_opened() {
+    private fun showSelectionSheet() {
+        ComposeBottomSheetHost.show(this) { dismiss ->
+            DisposableEffect(Unit) {
+                dismissSelection = dismiss
+                onDispose {
+                    selectionControls = null
+                    dismissSelection = null
+                }
+            }
+            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
+                Text(stringResource(R.string.song_select), style = MaterialTheme.typography.titleLarge)
+                AndroidView(modifier = Modifier.fillMaxWidth(), factory = { context ->
+                    layoutInflater.inflate(R.layout.song_selection_controls, android.widget.FrameLayout(context), false).also { view ->
+                        selectionControls = SongSelectionControls(this@SongViewActivity, view, this@SongViewActivity)
+                        keypadHandle.setBookName(SongBookUtil.escapeSongBookName(currentBookName))
+                        resetKeypad()
+                    }
+                })
+            }
+        }
+    }
+
+    private fun resetKeypad() {
         if (currentBookName == null) return
 
-        val handle = leftDrawer.handle
+        val handle = keypadHandle
         handle.setOkButtonEnabled(false)
         handle.setAButtonEnabled(false)
         handle.setBButtonEnabled(false)
@@ -872,7 +914,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     override fun songKeypadButton_click(v: View) {
         val currentBookName = currentBookName ?: return
 
-        val handle = leftDrawer.handle
+        val handle = keypadHandle
 
         fun updateHandle() {
             handle.setCode(state_tempCode)
@@ -925,6 +967,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     handle.setCode(state_originalCode) // revert
                 }
                 leftDrawer.closeDrawer()
+                dismissSelection?.invoke()
             }
         }
     }
@@ -936,10 +979,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             displaySong(name, song)
         }
 
-        state_tempCode = ""
+        resetKeypad()
     }
 
     override fun moreSelected() {
+        dismissSelection?.invoke()
         openDownloadSongBookPage()
     }
 

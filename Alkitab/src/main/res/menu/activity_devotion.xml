@@ -6,12 +6,12 @@
 		android:id="@+id/menuCopy"
 		android:icon="@drawable/ic_baseline_content_copy_24_white"
 		android:title="@string/salin_renungan"
-		app:showAsAction="ifRoom" />
+		app:showAsAction="never" />
 
 	<item
 		android:id="@+id/menuShare"
 		android:icon="@drawable/ic_menu_share"
 		android:title="@string/menuShare"
-		app:showAsAction="ifRoom" />
+		app:showAsAction="never" />
 
 </menu>
