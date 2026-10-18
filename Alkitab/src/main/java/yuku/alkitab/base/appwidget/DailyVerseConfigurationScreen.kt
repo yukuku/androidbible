@@ -104,12 +104,14 @@ internal fun DailyVerseConfigurationScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfigurationSlider(progress: Int, value: String, label: String, modifier: Modifier = Modifier, onChange: (Int) -> Unit) {
     Row(modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically) {
         Slider(
             value = progress.toFloat(), onValueChange = { onChange(it.roundToInt()) },
             valueRange = 0f..20f,
+            track = { SliderDefaults.Track(sliderState = it, drawStopIndicator = null) },
             modifier = Modifier.weight(1f).semantics { contentDescription = label },
         )
         Text(value, Modifier.widthIn(min = 64.dp), textAlign = TextAlign.End, fontSize = 16.sp)
