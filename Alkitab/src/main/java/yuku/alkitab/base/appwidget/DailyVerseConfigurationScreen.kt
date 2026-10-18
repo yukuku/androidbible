@@ -67,7 +67,7 @@ internal fun DailyVerseConfigurationScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(version.longName, Modifier.weight(1f), fontSize = 16.sp)
-                        RadioButton(isSelected, onClick = null)
+                        RadioButton(isSelected, onClick = null, modifier = Modifier.size(48.dp))
                     }
                     HorizontalDivider(thickness = 0.5.dp)
                 }
@@ -109,7 +109,7 @@ private fun ConfigurationSlider(progress: Int, value: String, label: String, mod
     Row(modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically) {
         Slider(
             value = progress.toFloat(), onValueChange = { onChange(it.roundToInt()) },
-            valueRange = 0f..20f, steps = 19,
+            valueRange = 0f..20f,
             modifier = Modifier.weight(1f).semantics { contentDescription = label },
         )
         Text(value, Modifier.widthIn(min = 64.dp), textAlign = TextAlign.End, fontSize = 16.sp)
@@ -122,7 +122,8 @@ private fun ConfigurationCheckbox(label: String, isChecked: Boolean, isEnabled: 
         modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(isChecked, enabled = isEnabled, role = Role.Checkbox, onValueChange = onChange),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Checkbox(isChecked, onCheckedChange = null, enabled = isEnabled)
+        Checkbox(isChecked, onCheckedChange = null, enabled = isEnabled, modifier = Modifier.size(48.dp))
+        Spacer(Modifier.width(8.dp))
         Text(label, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = if (isEnabled) 1f else 0.38f))
     }
 }
