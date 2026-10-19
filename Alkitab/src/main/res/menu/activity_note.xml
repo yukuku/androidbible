@@ -18,4 +18,9 @@
 		android:icon="@drawable/ic_action_ok"
 		android:title="@string/note_actionbar_ok"
 		app:showAsAction="always|withText" />
+	<item
+		android:id="@+id/menuDisplay"
+		android:icon="@drawable/ic_drawer_display"
+		android:title="@string/menuDisplay"
+		app:showAsAction="ifRoom" />
 </menu>
