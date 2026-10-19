@@ -1,5 +1,6 @@
 package yuku.alkitab.songs
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +45,7 @@ class SongComposeFragment : BaseFragment(), SongTextZoomable {
                     baseFontSizeDp = applied.fontSize2dp,
                     lineSpacingMult = applied.lineSpacingMult,
                     typeface = applied.fontFace,
+                    isBold = applied.fontBold == Typeface.BOLD,
                     zoomPercent = zoomPercentState.intValue,
                 )
 

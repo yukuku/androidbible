@@ -171,6 +171,8 @@
 			</LinearLayout>
 		</LinearLayout>
 
+		<include layout="@layout/left_drawer_display" />
+
 		<include
 			layout="@layout/left_drawer_footer"
 			android:layout_width="match_parent"

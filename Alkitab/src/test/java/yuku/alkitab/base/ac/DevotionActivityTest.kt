@@ -11,7 +11,9 @@ import android.os.Looper
 import android.preference.PreferenceManager
 import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import io.mockk.every
 import io.mockk.mockk
@@ -93,7 +95,10 @@ class DevotionActivityTest {
             fontSize2dp = 18f
             lineSpacingMult = 1f
         }
-        val ui = mockk<UiDimensionsProvider> { every { applied() } returns dimensions }
+        val ui = mockk<UiDimensionsProvider> {
+            every { applied() } returns dimensions
+            every { recalculate() } returns Unit
+        }
         App.services = AppServices(storage, mockk(), ui)
         testDownloader = DevotionDownloader({ key, _ ->
             requests.add(key)
@@ -128,6 +133,26 @@ class DevotionActivityTest {
         testDownloader.shutdown()
         App.services = originalServices
         helper.close()
+    }
+
+    @Test fun `display drawer item opens an inline panel and back dismisses it without leaving the article`() {
+        val overlay = activity.findViewById<FrameLayout>(R.id.textAppearanceOverlay)
+        val initialChildCount = overlay.childCount
+        val content = activity.lContent.text
+        activity.findViewById<View>(R.id.bDisplay).performClick()
+        assertEquals(initialChildCount + 1, overlay.childCount)
+        assertTrue(overlay.getChildAt(initialChildCount) is ComposeView)
+        assertSame(content, activity.lContent.text)
+
+        activity.onBackPressedDispatcher.onBackPressed()
+        assertEquals(initialChildCount, overlay.childCount)
+        assertFalse(activity.isFinishing)
+        assertSame(content, activity.lContent.text)
+
+        activity.findViewById<View>(R.id.bDisplay).performClick()
+        assertEquals(initialChildCount + 1, overlay.childCount)
+        activity.findViewById<View>(R.id.bDisplay).performClick()
+        assertEquals(initialChildCount, overlay.childCount)
     }
 
     @Test fun `pinches resize the article cumulatively within the song zoom limits`() {

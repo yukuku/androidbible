@@ -21,23 +21,30 @@
 
 	</androidx.appcompat.widget.Toolbar>
 
-	<yuku.alkitab.base.widget.TwofingerLinearLayout
-		android:id="@+id/root"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent" />
-
 	<FrameLayout
-		android:id="@+id/no_song_data_container"
+		android:id="@+id/textAppearanceOverlay"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:visibility="gone">
+		android:layout_height="0dp"
+		android:layout_weight="1">
 
-		<Button
-			android:id="@+id/bDownload"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:text="@string/sn_download_song_books" />
+		<yuku.alkitab.base.widget.TwofingerLinearLayout
+			android:id="@+id/root"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
+
+		<FrameLayout
+			android:id="@+id/no_song_data_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:visibility="gone">
+
+			<Button
+				android:id="@+id/bDownload"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:text="@string/sn_download_song_books" />
+		</FrameLayout>
+
 	</FrameLayout>
-
 </LinearLayout>
