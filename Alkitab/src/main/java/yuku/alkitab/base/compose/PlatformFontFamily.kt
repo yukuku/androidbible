@@ -2,6 +2,7 @@ package yuku.alkitab.base.compose
 
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Build
 import androidx.compose.ui.text.font.AndroidFont
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontLoadingStrategy
@@ -14,10 +15,12 @@ import androidx.compose.ui.text.font.FontWeight
 internal fun composeFontFamilyFor(typeface: Typeface?): FontFamily {
     val base = typeface ?: Typeface.DEFAULT
     return FontFamily(
-        PlatformTypefaceFont(base, FontWeight.Normal, FontStyle.Normal),
-        PlatformTypefaceFont(base, FontWeight.Bold, FontStyle.Normal),
-        PlatformTypefaceFont(base, FontWeight.Normal, FontStyle.Italic),
-        PlatformTypefaceFont(base, FontWeight.Bold, FontStyle.Italic),
+        (100..900 step 100).flatMap { weight ->
+            listOf(
+                PlatformTypefaceFont(base, FontWeight(weight), FontStyle.Normal),
+                PlatformTypefaceFont(base, FontWeight(weight), FontStyle.Italic),
+            )
+        }
     )
 }
 
@@ -30,8 +33,13 @@ private data class PlatformTypefaceFont(
 private object PlatformTypefaceLoader : AndroidFont.TypefaceLoader {
     override fun loadBlocking(context: Context, font: AndroidFont): Typeface {
         font as PlatformTypefaceFont
-        val androidStyle = (if (font.weight == FontWeight.Bold) Typeface.BOLD else Typeface.NORMAL) or
-            (if (font.style == FontStyle.Italic) Typeface.ITALIC else Typeface.NORMAL)
+        val isItalic = font.style == FontStyle.Italic
+        // Normal/bold follow TextView.setTypeface; other weights need the numeric API.
+        if (Build.VERSION.SDK_INT >= 28 && font.weight != FontWeight.Normal && font.weight != FontWeight.Bold) {
+            return Typeface.create(font.base, font.weight.weight, isItalic)
+        }
+        val androidStyle = (if (font.weight >= FontWeight.SemiBold) Typeface.BOLD else Typeface.NORMAL) or
+            (if (isItalic) Typeface.ITALIC else Typeface.NORMAL)
         return Typeface.create(font.base, androidStyle)
     }
 

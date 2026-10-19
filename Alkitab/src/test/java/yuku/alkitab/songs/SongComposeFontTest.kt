@@ -35,9 +35,13 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import yuku.afw.App as AfwApp
 import yuku.alkitab.songs.newdoc.Line
+import yuku.alkitab.songs.newdoc.LyricBlock
 import yuku.alkitab.songs.newdoc.PBlock
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.Span
+import yuku.alkitab.songs.newdoc.Verse
+import yuku.alkitab.songs.newdoc.VerseKind
+import yuku.alkitab.songs.newdoc.VerseLine
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = AfwApp::class, sdk = [34], qualifiers = "w400dp-h800dp-mdpi")
@@ -74,6 +78,18 @@ class SongComposeFontTest {
     }
 
     @Test
+    fun `song verse numbers retain a light face from the selected platform family`() {
+        val resolver = createFontFamilyResolver(context)
+        for (face in listOf(Typeface.SANS_SERIF, Typeface.SERIF, Typeface.MONOSPACE)) {
+            val style = songStyle(face)
+            for (fontStyle in listOf(FontStyle.Normal, FontStyle.Italic)) {
+                val resolved = resolver.resolve(style.bodyFontFamily, FontWeight.Light, fontStyle).value as Typeface
+                assertEquals(Typeface.create(face, 300, fontStyle == FontStyle.Italic), resolved)
+            }
+        }
+    }
+
+    @Test
     fun `song screenshots preserve the selected family and global bold with inline styles`() {
         val output = File("build/snapshots/song-fonts").apply { mkdirs() }
         val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
@@ -85,12 +101,14 @@ class SongComposeFontTest {
         val recomposer = frame.createLifecycleAwareWindowRecomposer(Handler(Looper.getMainLooper()).asCoroutineDispatcher() + frameClock)
         val doc = SongDocument("1", blocks = listOf(
             PBlock(role = "title", content = Line.Plain("Font sample")),
-            PBlock(content = Line.Styled(listOf(
-                Span("Plain words, "),
-                Span("bold words, ", listOf("b")),
-                Span("italic words, ", listOf("i")),
-                Span("bold italic words.", listOf("b", "i")),
-            ))),
+            LyricBlock(verses = listOf(Verse(VerseKind.NORMAL, lines = listOf(
+                VerseLine.Simple(Line.Styled(listOf(
+                    Span("Plain words, "),
+                    Span("bold words, ", listOf("b")),
+                    Span("italic words, ", listOf("i")),
+                    Span("bold italic words.", listOf("b", "i")),
+                ))),
+            )))),
         ))
         val options = listOf("Roboto" to Typeface.SANS_SERIF, "Droid Serif" to Typeface.SERIF, "Droid Mono" to Typeface.MONOSPACE)
         val comparison = Bitmap.createBitmap(820, 3 * 280, Bitmap.Config.ARGB_8888)
