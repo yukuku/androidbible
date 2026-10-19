@@ -262,10 +262,7 @@ class Yes2RoundTripTest {
     }
 
     @Test
-    fun `round-trips UTF-8 text without corruption for BMP code points`() {
-        // Yes2VerseTextDecoder uses Utf8Decoder which is documented as "intentionally incomplete"
-        // and only supports code points up to U+FFFF (no 4-byte UTF-8 sequences / supplementary plane),
-        // so the verses here stay inside the BMP.
+    fun `round-trips UTF-8 text including supplementary code points`() {
         val book = TestBook(
             bookId = 0,
             shortName = "Kejadian",
@@ -275,6 +272,7 @@ class Yes2RoundTripTest {
                     "Ο μάγειρας ψήνει ψωμί.",
                     "הַטַּבָּח אוֹפֶה לֶחֶם.",
                     "café naïve résumé €",
+                    "𐐀 👩🏽‍💻 𠮷",
                 ),
             ),
         )
@@ -283,11 +281,18 @@ class Yes2RoundTripTest {
         val reader = openReader(file)
         val loaded = reader.loadBooks()!![0]
         val chapter1 = reader.loadVerseText(loaded, 1, false, false)!!
-        assertEquals(4, chapter1.verseCount)
+        assertEquals(5, chapter1.verseCount)
         assertEquals("Juru masak menyiapkan nasi dan sayuran.", chapter1.getVerse(0))
         assertEquals("Ο μάγειρας ψήνει ψωμί.", chapter1.getVerse(1))
         assertEquals("הַטַּבָּח אוֹפֶה לֶחֶם.", chapter1.getVerse(2))
         assertEquals("café naïve résumé €", chapter1.getVerse(3))
+        assertEquals("𐐀 👩🏽‍💻 𠮷", chapter1.getVerse(4))
+        assertEquals("𐐨 👩🏽‍💻 𠮷", reader.loadVerseText(loaded, 1, false, true)!!.getVerse(4))
+        for (isLowercased in listOf(false, true)) {
+            val verses = reader.loadVerseText(loaded, 1, false, isLowercased)!!
+            val expected = (0 until verses.verseCount).joinToString("\n", postfix = "\n") { verses.getVerse(it) }
+            assertEquals(expected, reader.loadVerseText(loaded, 1, true, isLowercased)!!.getVerse(0))
+        }
         assertEquals("id", reader.locale)
     }
 
