@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.util.SparseIntArray
 import android.view.AbsSavedState
 import android.view.ViewGroup
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
@@ -840,9 +841,11 @@ class VersesComposeControllerImpl(
                             backgroundColor = App.services.uiDimensions.applied().backgroundColor,
                             startInsetPx = (if (LocalLayoutDirection.current == LayoutDirection.Rtl) paddingRightPx else paddingLeftPx).toFloat(),
                         ) {
-                            when (data.getItemViewType(position)) {
-                                ItemType.verseText -> VerseRow(data, ui, listeners, position)
-                                ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
+                            Box(Modifier.animateContentSize(animationSpec = tween(durationMillis = 250))) {
+                                when (data.getItemViewType(position)) {
+                                    ItemType.verseText -> VerseRow(data, ui, listeners, position)
+                                    ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
+                                }
                             }
                         }
                     }
