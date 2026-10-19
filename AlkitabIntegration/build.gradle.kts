@@ -22,7 +22,8 @@ android {
     }
     namespace = "yuku.alkitabintegration"
     lint {
-        abortOnError = false
+        abortOnError = true
+        fatal += setOf("NewApi", "InlinedApi")
     }
 }
 

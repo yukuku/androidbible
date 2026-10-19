@@ -19,7 +19,7 @@ import yuku.afw.App
 import yuku.alkitab.debug.R
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = App::class, sdk = [34], qualifiers = "w360dp-h640dp-mdpi")
+@Config(application = App::class, sdk = [26, 27, 34], qualifiers = "w360dp-h640dp-mdpi")
 class ReaderToolbarLayoutTest {
     @Test
     fun `selection floats without moving fullscreen content and stays docked otherwise`() {

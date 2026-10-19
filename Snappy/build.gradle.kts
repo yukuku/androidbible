@@ -20,7 +20,8 @@ android {
         }
     }
     lint {
-        abortOnError = false
+        abortOnError = true
+        fatal += setOf("NewApi", "InlinedApi")
     }
 
     // We have to specify the ndk version twice, in here and in the main app module

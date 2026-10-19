@@ -20,8 +20,8 @@
 package name.fraser.neil.plaintext;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1433,7 +1433,7 @@ public class diff_match_patch {
     for (Diff aDiff : diffs) {
       switch (aDiff.operation) {
       case INSERT:
-        text.append("+").append(URLEncoder.encode(aDiff.text, StandardCharsets.UTF_8)
+        text.append("+").append(encodeUtf8(aDiff.text)
                                           .replace('+', ' ')).append("\t");
         break;
       case DELETE:
@@ -1479,7 +1479,7 @@ public class diff_match_patch {
         // decode would change all "+" to " "
         param = param.replace("+", "%2B");
         try {
-          param = URLDecoder.decode(param, StandardCharsets.UTF_8);
+          param = decodeUtf8(param);
         } catch (IllegalArgumentException e) {
           // Malformed URI sequence.
           throw new IllegalArgumentException(
@@ -2263,7 +2263,7 @@ public class diff_match_patch {
         line = text.getFirst().substring(1);
         line = line.replace("+", "%2B");  // decode would change all "+" to " "
         try {
-          line = URLDecoder.decode(line, StandardCharsets.UTF_8);
+          line = decodeUtf8(line);
         } catch (IllegalArgumentException e) {
           // Malformed URI sequence.
           throw new IllegalArgumentException(
@@ -2421,10 +2421,26 @@ public class diff_match_patch {
           text.append(' ');
           break;
         }
-        text.append(URLEncoder.encode(aDiff.text, StandardCharsets.UTF_8).replace('+', ' '))
+        text.append(encodeUtf8(aDiff.text).replace('+', ' '))
             .append("\n");
       }
       return unescapeForEncodeUriCompatability(text.toString());
+    }
+  }
+
+  private static String encodeUtf8(String text) {
+    try {
+      return URLEncoder.encode(text, StandardCharsets.UTF_8.name());
+    } catch (UnsupportedEncodingException e) {
+      throw new AssertionError(e);
+    }
+  }
+
+  private static String decodeUtf8(String text) {
+    try {
+      return URLDecoder.decode(text, StandardCharsets.UTF_8.name());
+    } catch (UnsupportedEncodingException e) {
+      throw new AssertionError(e);
     }
   }
 

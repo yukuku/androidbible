@@ -125,7 +125,7 @@ class VerseActionModeControllerTest {
     fun `reader toolbar shows the reference and selection count and updates split actions`() {
         activity.setTheme(R.style.Theme_Alkitab)
         val toolbar = Toolbar(activity)
-        val toolbarMode = ReaderSelectionActionMode(toolbar, controller)
+        val toolbarMode = ReaderSelectionActionMode(toolbar, activity.menuInflater, controller)
         assertTrue(toolbarMode.start())
         toolbarMode.invalidate()
         assertEquals("Gen 1", toolbar.title.toString())

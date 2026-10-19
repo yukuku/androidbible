@@ -102,9 +102,17 @@ Two consequences worth knowing:
 ./gradlew testPlainDebugUnitTest --tests "fully.qualified.TestClass"
 ./gradlew testPlainDebugUnitTest --tests "*.TestClass.testMethod"
 
-# Lint
+# Lint (also required by every APK and AAB build)
 ./gradlew lintPlainDebug
 ```
+
+Android lint errors abort the build in every module, and the app includes its
+library dependencies in the analysis. `NewApi` and `InlinedApi` are fatal and
+check compatibility against the minimum SDK in `gradle/libs.versions.toml`. Every app
+variant's `assemble` and `bundle` task depends on that variant's lint task,
+including debug builds and production releases. Unsupported calls must use a
+compatible API or a runtime SDK guard. No lint baseline is configured. Missing
+translations remain errors and must be supplied for the supported languages.
 
 ## CI/CD
 

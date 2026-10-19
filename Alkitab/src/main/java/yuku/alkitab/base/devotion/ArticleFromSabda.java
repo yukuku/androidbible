@@ -34,7 +34,7 @@ public abstract class ArticleFromSabda extends DevotionArticle {
 		if (!(o instanceof ArticleFromSabda x)) return false;
 		if (this == o) return true;
 
-        return x.date.equals(date) && x.getKind().equals(getKind());
+		return x.date.equals(date) && x.getKind().equals(getKind());
 	}
 
 	@Override

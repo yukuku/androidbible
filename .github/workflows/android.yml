@@ -36,7 +36,9 @@ jobs:
           ./gradlew testPlainDebugUnitTest testPlainReleaseUnitTest 2>&1 | tail -60
 
       - name: Build with Gradle
-        run: ./gradlew assemblePlainDebug bundlePlainDebug
+        run: |
+          set -o pipefail
+          ./gradlew assemblePlainDebug bundlePlainDebug 2>&1 | tail -60
 
   # Publishes each PR's signed release APKs (all production flavors) to a
   # Cloudflare Worker (static assets) and comments workers.dev download

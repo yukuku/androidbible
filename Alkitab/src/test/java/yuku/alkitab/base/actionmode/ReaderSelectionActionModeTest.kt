@@ -29,7 +29,7 @@ class ReaderSelectionActionModeTest {
         var clicked = 0
         var prepared = 0
         var destroyed = 0
-        val mode = ReaderSelectionActionMode(toolbar, object : ActionMode.Callback {
+        val mode = ReaderSelectionActionMode(toolbar, activity.menuInflater, object : ActionMode.Callback {
             override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
                 mode.menuInflater.inflate(R.menu.context_isi, menu)
                 return true

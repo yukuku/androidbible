@@ -307,12 +307,12 @@ class TextAppearancePanel(
                     )
 
                     if (uiSplitVersionId != null) {
-                        val ctx = LocalContext.current
+                        val template = stringResource(R.string.text_appearance_text_size_for_version)
                         val versionName = uiSplitVersionLongName ?: ""
                         // The string uses a `^1` template placeholder, not a printf arg.
-                        val perVersionLabel = remember(versionName) {
+                        val perVersionLabel = remember(template, versionName) {
                             android.text.TextUtils.expandTemplate(
-                                ctx.getText(R.string.text_appearance_text_size_for_version),
+                                template,
                                 versionName,
                             ).toString()
                         }

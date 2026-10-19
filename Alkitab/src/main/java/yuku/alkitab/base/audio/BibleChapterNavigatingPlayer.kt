@@ -1,7 +1,9 @@
 package yuku.alkitab.base.audio
 
+import androidx.annotation.OptIn
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 
 /**
  * [ForwardingPlayer] wrapper that re-purposes the standard "skip to next/
@@ -32,6 +34,7 @@ import androidx.media3.common.Player
  *
  * Threading: same constraint as the inner [Player], main thread only.
  */
+@OptIn(UnstableApi::class)
 class BibleChapterNavigatingPlayer(
     inner: Player,
     private val onSeekToNextChapter: () -> Unit,

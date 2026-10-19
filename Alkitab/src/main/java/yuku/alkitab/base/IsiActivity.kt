@@ -438,7 +438,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             }
 
             if (actionMode == null) {
-                val mode = ReaderSelectionActionMode(findViewById(R.id.selectionToolbar), actionModeController)
+                val mode = ReaderSelectionActionMode(findViewById(R.id.selectionToolbar), menuInflater, actionModeController)
                 if (mode.start()) {
                     actionMode = mode
                     selectionBackCallback.isEnabled = true
@@ -1561,7 +1561,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         // A ComposeView consumes insets by default, which would stop the dispatch from ever
         // reaching the sibling views listed after it (bottom toolbar, floater, left drawer).
-        root.requireViewById<ComposeView>(R.id.audio_bar).consumeWindowInsets = false
+        ViewCompat.requireViewById<ComposeView>(root, R.id.audio_bar).consumeWindowInsets = false
 
         val tv = TypedValue()
         theme.resolveAttribute(androidx.appcompat.R.attr.actionBarSize, tv, true)
@@ -1602,7 +1602,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val toolbarCoversTop = toolbarHost.isVisible && !isBottomToolbarOnText()
             val topEdgeCovered = toolbarCoversTop
             val topInset = if (topEdgeCovered) 0 else insets.top
-            val bottomEdgeCovered = (toolbarHost.isVisible && isBottomToolbarOnText()) || root.requireViewById<View>(R.id.audio_bar).height > 0
+            val bottomEdgeCovered = (toolbarHost.isVisible && isBottomToolbarOnText()) || ViewCompat.requireViewById<View>(root, R.id.audio_bar).height > 0
             val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
             val stackedSplit = splitHandleButton.isVisible && splitRoot.orientation == LinearLayout.VERTICAL
             lsSplit0.setViewVerticalInsets(topInset, if (stackedSplit) 0 else bottomInset)
@@ -1618,7 +1618,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             windowInsets
         }
 
-        root.requireViewById<View>(R.id.audio_bar).addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+        ViewCompat.requireViewById<View>(root, R.id.audio_bar).addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
             if (bottom - top != oldBottom - oldTop) {
                 ViewCompat.requestApplyInsets(nontoolbar)
             }

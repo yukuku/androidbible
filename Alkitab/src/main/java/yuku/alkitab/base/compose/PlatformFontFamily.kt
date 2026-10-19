@@ -38,8 +38,11 @@ private object PlatformTypefaceLoader : AndroidFont.TypefaceLoader {
         if (Build.VERSION.SDK_INT >= 28 && font.weight != FontWeight.Normal && font.weight != FontWeight.Bold) {
             return Typeface.create(font.base, font.weight.weight, isItalic)
         }
-        val androidStyle = (if (font.weight >= FontWeight.SemiBold) Typeface.BOLD else Typeface.NORMAL) or
-            (if (isItalic) Typeface.ITALIC else Typeface.NORMAL)
+        val androidStyle = if (font.weight >= FontWeight.SemiBold) {
+            if (isItalic) Typeface.BOLD_ITALIC else Typeface.BOLD
+        } else {
+            if (isItalic) Typeface.ITALIC else Typeface.NORMAL
+        }
         return Typeface.create(font.base, androidStyle)
     }
 
