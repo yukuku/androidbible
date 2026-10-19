@@ -13,7 +13,17 @@ This file provides guidance to coding agents when working with code in this repo
 
 **`develop` is the main integration branch — base all work on `develop` and target every PR at `develop`, never `master`.** The repo follows git-flow: `master` only receives merges from `release/*` branches when a version ships.
 
-## Complete implementation tasks with a pull request
+## Task completion and communication
+
+### Explain agent-made choices in the final response
+
+At the end of a task, explain the consequential choices you made that the user did not explicitly specify. Do this by default, without waiting for the user to ask. Distinguish the user’s requirements from your assumptions and decisions, and briefly explain why you chose them and what they mean for the resulting behavior.
+
+Focus on choices the user would reasonably want to review, such as how you interpreted loose requirements, UI placement and interactions, defaults, persistence, scope, and tradeoffs. Scale the detail to the ambiguity and impact of the task. Do not bury these choices in a list of changed files or a chronological work log, and do not enumerate routine implementation details. If there were no consequential choices beyond the request, do not invent any.
+
+Include the outcome, relevant validation, and remaining limitations alongside these decisions. This reporting requirement does not create an additional approval step for work already authorized.
+
+### Complete implementation tasks with a pull request
 
 Unless the user explicitly requests otherwise, finish every implementation task by committing the changes, pushing a task branch to `yukuku/androidbible`, and opening a pull request targeting `develop`. This is part of completing the task, including requests phrased as building a feature or fixing a bug; do not ask for separate permission to create the PR.
 
