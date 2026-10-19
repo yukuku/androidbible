@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Полностью прозрачный</string>
     <string name="dv_preview_reference">Псалом 118:105</string>
     <string name="dv_preview_verse">Слово Твое - светильник ноге моей и свет стезе моей.</string>
+    <string name="search_goto_reference">Переход к: ^1</string>
 </resources>

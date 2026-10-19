@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Tamamen saydam</string>
     <string name="dv_preview_reference">Mezmurlar 119:105</string>
     <string name="dv_preview_verse">Sözün adımlarım için çıra, Yolum için ışıktır.</string>
+    <string name="search_goto_reference">Atla: ^1</string>
 </resources>

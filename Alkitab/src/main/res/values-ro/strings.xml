@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Complet transparent</string>
     <string name="dv_preview_reference">Psalmii 119:105</string>
     <string name="dv_preview_verse">Cuvântul Tău este o candelă pentru picioarele mele şi o lumină pe cărarea mea.</string>
+    <string name="search_goto_reference">Mergi la: ^1</string>
 </resources>

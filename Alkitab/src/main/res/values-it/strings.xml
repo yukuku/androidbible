@@ -442,4 +442,5 @@
     <string name="dv_transparency_clear">Completamente trasparente</string>
     <string name="dv_preview_reference">Salmi 119:105</string>
     <string name="dv_preview_verse">La tua parola è una lampada al mio piè ed una luce sul mio sentiero.</string>
+    <string name="search_goto_reference">Vai a: ^1</string>
 </resources>

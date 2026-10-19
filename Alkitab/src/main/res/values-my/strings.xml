@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">အပြည့်အဝ ဖောက်ထွင်းမြင်ရ</string>
     <string name="dv_preview_reference">ဆာလံ 119:105</string>
     <string name="dv_preview_verse">နှုတ်ကပတ်တော်သည် အကျွန်ုပ်ခြေရှေ့မှာ မီးခွက်ဖြစ်၍၊ အကျွန်ုပ်လမ်းခရီးကို လင်းစေပါ၏။</string>
+    <string name="search_goto_reference">ခုန်ကူးရန်: ^1</string>
 </resources>

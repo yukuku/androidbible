@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Volledig transparant</string>
     <string name="dv_preview_reference">Psalm 119:105</string>
     <string name="dv_preview_verse">Uw woord is een lamp voor mijn voet, en een licht voor mijn pad.</string>
+    <string name="search_goto_reference">Ga naar: ^1</string>
 </resources>
