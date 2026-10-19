@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!-- Strings specific for RIBKA (Reporting of in-ayt errors) -->
 <resources>
-    <string name="ribka_title">Koreksi AYT</string>
-    <string name="ribka_menu_report">Koreksi AYT</string>
-    <string name="ribka_sending_progress">Mengirim laporan…</string>
-    <string name="ribka_send_error">Gagal mengirim laporan. Periksa koneksi internet Anda.</string>
-    <string name="ribka_send_success">Laporan terkirim. Buka email Anda dan klik tautan untuk mengonfirmasi laporan.</string>
-    <string name="ribka_send_failure">Laporan gagal dikirim: ^1</string>
-    <string name="ribka_category_typo">Kesalahan ejaan atau tanda baca</string>
-    <string name="ribka_category_word">Pemilihan kata (diksi)</string>
-    <string name="ribka_category_sentence">Penyusunan kalimat</string>
-    <string name="ribka_category_content">Konten (Isu teologis atau doktrinal)</string>
-    <string name="ribka_category_others">Lain-lain</string>
-    <string name="ribka_category_error">Jenis koreksi belum dipilih.</string>
-    <string name="ribka_suggestion_intro">Petunjuk: Editlah <b>hanya</b> bagian ayat yang menurut Anda perlu dikoreksi atau disempurnakan.</string>
-    <string name="ribka_suggestion_hint">Perbaikan/usulan Anda</string>
-    <string name="ribka_suggestion_error">Harap lakukan perbaikan yang Anda inginkan</string>
-    <string name="ribka_remarks_hint">Alasan/keterangan (opsional)</string>
+    <string name="ribka_title">AYT corrections</string>
+    <string name="ribka_menu_report">AYT corrections</string>
+    <string name="ribka_sending_progress">Sending report…</string>
+    <string name="ribka_send_error">Could not send the report. Check your internet connection.</string>
+    <string name="ribka_send_success">Report sent. Open your email and click the link to confirm the report.</string>
+    <string name="ribka_send_failure">Could not send the report: ^1</string>
+    <string name="ribka_category_typo">Spelling or punctuation error</string>
+    <string name="ribka_category_word">Word choice</string>
+    <string name="ribka_category_sentence">Sentence structure</string>
+    <string name="ribka_category_content">Content (theological or doctrinal issue)</string>
+    <string name="ribka_category_others">Other</string>
+    <string name="ribka_category_error">Select a correction type.</string>
+    <string name="ribka_suggestion_intro">Instructions: Edit <b>only</b> the part of the verse that you think needs correction or improvement.</string>
+    <string name="ribka_suggestion_hint">Your correction or suggestion</string>
+    <string name="ribka_suggestion_error">Enter your suggested correction</string>
+    <string name="ribka_remarks_hint">Reason or remarks (optional)</string>
     <string name="ribka_email_hint">Email</string>
-    <string name="ribka_email_error">Harap isi email dengan benar</string>
-    <string name="ribka_submit_button">Kirim</string>
+    <string name="ribka_email_error">Enter a valid email address</string>
+    <string name="ribka_submit_button">Send</string>
 </resources>

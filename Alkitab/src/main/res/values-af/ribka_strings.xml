@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT regstellings</string>
+    <string name="ribka_menu_report">AYT regstellings</string>
+    <string name="ribka_sending_progress">Stuur tans verslag …</string>
+    <string name="ribka_send_error">Kon nie die verslag stuur nie. Gaan jou internetverbinding na.</string>
+    <string name="ribka_send_success">Verslag gestuur. Maak jou e-pos oop en klik op die skakel om die verslag te bevestig.</string>
+    <string name="ribka_send_failure">Kon nie die verslag stuur nie: ^1</string>
+    <string name="ribka_category_typo">Spel- of leestekenfout</string>
+    <string name="ribka_category_word">Woordkeuse</string>
+    <string name="ribka_category_sentence">Sinstruktuur</string>
+    <string name="ribka_category_content">Inhoud (teologiese of leerstellige kwessie)</string>
+    <string name="ribka_category_others">Ander</string>
+    <string name="ribka_category_error">Kies \'n regstelling tipe.</string>
+    <string name="ribka_suggestion_hint">Jou regstelling of voorstel</string>
+    <string name="ribka_suggestion_error">Voer jou voorgestelde regstelling in</string>
+    <string name="ribka_remarks_hint">Rede of opmerkings (opsioneel)</string>
+    <string name="ribka_email_hint">E-pos</string>
+    <string name="ribka_email_error">Voer \'n geldige e-posadres in</string>
+    <string name="ribka_submit_button">Stuur</string>
+    <string name="ribka_suggestion_intro">Instruksies: Wysig <b>slegs</b> die deel van die vers wat jy dink regstelling of verbetering benodig.</string>
+</resources>

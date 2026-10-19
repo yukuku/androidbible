@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Dayakan versi yang mungkin terhad</string>
     <string name="pref_selectedVerseBgColor_title">Latar belakang ayat terpilih</string>
     <string name="pref_forceFontScale_title">Saiz teks UI</string>
+    <string name="pref_data_transfer">Pemindahan data</string>
+    <string name="pref_data_transfer_export_title">Eksport data</string>
+    <string name="pref_data_transfer_import_title">Import data</string>
+    <string name="pref_experimental">Ciri eksperimen</string>
+    <string name="pref_experimental_warning">Mungkin tidak stabil. Lumpuhkan jika anda menghadapi masalah.</string>
+    <string name="pref_debugRubyGeometry_title">Nyahpepijat geometri delima</string>
+    <string name="pref_debugRubyGeometry_summary">Lukis kotak di sekeliling setiap baris, teks asas dan teks sebutan ruby pada skrin. Tulis ukuran pada log sistem dengan tag RubyGeom. Ketik ayat untuk menyalin ukurannya ke papan keratan. Hanya untuk menyahpepijat peletakan teks ruby; pastikan pilihan ini dilumpuhkan.</string>
+    <string name="pref_useLegacyVerseItem_title">Ayat (pandangan warisan)</string>
+    <string name="pref_useLegacyVerseItem_summary">Tunjukkan teks Bible dengan senarai ayat berasaskan paparan warisan dan bukannya yang berasaskan Jetpack Compose sepenuhnya. Berkuat kuasa apabila skrin pembaca dibuka semula.</string>
+    <string name="pref_useLegacyGoto_title">Navigasi (pandangan lama)</string>
+    <string name="pref_useLegacyGoto_summary">Tunjukkan skrin Navigasi berasaskan tab lama dan bukannya skrin Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Bar alat pembaca (pandangan lama)</string>
+    <string name="pref_useLegacyToolbar_summary">Lukis bar alat skrin bacaan dengan paparan lama dan bukannya Jetpack Compose. Berkuat kuasa selepas skrin bacaan dibuka semula.</string>
+    <string name="pref_useLegacySong_title">Lirik lagu (pandangan lama)</string>
+    <string name="pref_useLegacySong_summary">Paparkan lirik lagu dengan WebView (HTML/CSS) warisan dan bukannya asli dengan Jetpack Compose. Buka lagu untuk melihat perubahan.</string>
+    <string name="pref_useLegacySyncLogin_title">Log masuk penyegerakan (pandangan lama)</string>
+    <string name="pref_useLegacySyncLogin_summary">Tunjukkan skrin log masuk penyegerakan lama dan bukannya Jetpack Compose, yang mempunyai togol tunjukkan/sembunyikan kata laluan dan medan pengesahan kata laluan sebaris.</string>
 </resources>

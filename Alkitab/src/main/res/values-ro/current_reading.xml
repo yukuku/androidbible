@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Afișajul citirii curente</string>
+    <string name="current_reading_display_off">Dezactivat</string>
+    <string name="current_reading_display_line">Linie subțire lângă text</string>
+    <string name="current_reading_completed">Această lectură este finalizată</string>
+</resources>

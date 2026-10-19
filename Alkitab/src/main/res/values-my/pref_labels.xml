@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">ကန့်သတ်ထားသည့် ဗားရှင်များကို ဖွင့်နိုင်ရန်</string>
     <string name="pref_selectedVerseBgColor_title">ရွေးချယ်ထားသည့် ကျမ်းပိုဒ်၏ နောက်ခံ</string>
     <string name="pref_forceFontScale_title">UI စာသားအရွယ်အစား</string>
+    <string name="pref_data_transfer">ဒေတာလွှဲပြောင်းခြင်း။</string>
+    <string name="pref_data_transfer_export_title">ဒေတာကို ထုတ်ယူပါ။</string>
+    <string name="pref_data_transfer_import_title">ဒေတာတင်သွင်းခြင်း။</string>
+    <string name="pref_experimental">သမ္ဘာရအင်္ဂါရပ်</string>
+    <string name="pref_experimental_warning">မတည်မငြိမ်ဖြစ်နိုင်သည်။ ပြဿနာများကို ထိမှန်လျှင် ပိတ်ပါ။</string>
+    <string name="pref_debugRubyGeometry_title">ပတ္တမြားဂျီသြမေတြီ အမှားအယွင်း</string>
+    <string name="pref_debugRubyGeometry_summary">စခရင်ပေါ်ရှိ စာကြောင်းတစ်ခုစီ၊ အခြေခံစာသားနှင့် ruby အသံထွက်စာသားများကို အကွက်များဆွဲပါ။ တဂ် RubyGeom ဖြင့် စနစ်မှတ်တမ်းတွင် တိုင်းတာမှုများကို ရေးပါ။ ၎င်း၏တိုင်းတာမှုများကို ကလစ်ဘုတ်သို့ ကူးယူရန် စာပိုဒ်တစ်ပိုဒ်ကို နှိပ်ပါ။ အမှားရှာပြင်ခြင်းအတွက် ruby စာသားနေရာချထားခြင်းအတွက်သာ; ဤရွေးချယ်မှုကို ပိတ်ထားပါ။</string>
+    <string name="pref_useLegacyVerseItem_title">အခန်းငယ် (အမွေအနှစ်အမြင်များ)</string>
+    <string name="pref_useLegacyVerseItem_summary">အပြည့်အ၀ Jetpack Compose ကိုအခြေခံသည့်အစား အမွေအနှစ်ကြည့်ရှုမှုအခြေခံအခန်းငယ်စာရင်းဖြင့် သမ္မာကျမ်းစာကိုပြသပါ။ စာဖတ်သူမျက်နှာပြင်ကို ပြန်ဖွင့်သောအခါတွင် အကျိုးသက်ရောက်မှုရှိသည် ။</string>
+    <string name="pref_useLegacyGoto_title">လမ်းညွှန်မှု (အမွေအနှစ်အမြင်များ)</string>
+    <string name="pref_useLegacyGoto_summary">Jetpack Compose တစ်ခုအစား အမွေအနှစ် တဘ်အခြေခံ လမ်းညွှန်မှု မျက်နှာပြင်ကို ပြပါ။</string>
+    <string name="pref_useLegacyToolbar_title">Reader toolbar (အမွေအနှစ်အမြင်များ)</string>
+    <string name="pref_useLegacyToolbar_summary">Jetpack Compose အစား အမွေအနှစ်မြင်ကွင်းဖြင့် ဖတ်ရန်စခရင် ကိရိယာဘားကို ဆွဲပါ။ စာဖတ်စခရင်ကို ပြန်ဖွင့်ပြီးနောက် အကျိုးသက်ရောက်မှုရှိသည်</string>
+    <string name="pref_useLegacySong_title">သီချင်းစာသား (အမွေအနှစ်အမြင်များ)</string>
+    <string name="pref_useLegacySong_summary">မူရင်းအတိုင်း Jetpack Compose အစား WebView (HTML/CSS) ဖြင့် သီချင်းစာသားကို ပြန်ဆိုပါ။ အပြောင်းအလဲကိုကြည့်ရန် သီချင်းတစ်ပုဒ်ကိုဖွင့်ပါ။</string>
+    <string name="pref_useLegacySyncLogin_title">စင့်ခ်ဝင်ရောက်မှု (အမွေအနှစ်အမြင်များ)</string>
+    <string name="pref_useLegacySyncLogin_summary">စကားဝှက်ခလုတ်ကို ပြရန်/ဝှက်ခြင်းနှင့် အတွင်းလိုင်းအတည်ပြု-စကားဝှက်အကွက်ပါရှိသော Jetpack Compose တစ်ခုအစား အမွေအနှစ် စင့်ခ်ဝင်ခြင်းမျက်နှာပြင်ကို ပြသပါ။</string>
 </resources>

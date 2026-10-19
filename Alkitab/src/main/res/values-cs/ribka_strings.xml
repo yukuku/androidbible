@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT oprav</string>
+    <string name="ribka_menu_report">AYT oprav</string>
+    <string name="ribka_sending_progress">Odesílání hlášení…</string>
+    <string name="ribka_send_error">Zprávu nelze odeslat. Zkontrolujte připojení k internetu.</string>
+    <string name="ribka_send_success">Zpráva odeslána. Otevřete svůj e-mail a kliknutím na odkaz potvrďte zprávu.</string>
+    <string name="ribka_send_failure">Hlášení nelze odeslat: ^1</string>
+    <string name="ribka_category_typo">Chyba v pravopisu nebo interpunkci</string>
+    <string name="ribka_category_word">Výběr slov</string>
+    <string name="ribka_category_sentence">Struktura věty</string>
+    <string name="ribka_category_content">Obsah (teologický nebo doktrinální problém)</string>
+    <string name="ribka_category_others">Jiné</string>
+    <string name="ribka_category_error">Vyberte typ opravy.</string>
+    <string name="ribka_suggestion_hint">Vaše oprava nebo návrh</string>
+    <string name="ribka_suggestion_error">Zadejte navrhovanou opravu</string>
+    <string name="ribka_remarks_hint">Důvod nebo poznámky (volitelné)</string>
+    <string name="ribka_email_hint">E-mail</string>
+    <string name="ribka_email_error">Zadejte platnou e-mailovou adresu</string>
+    <string name="ribka_submit_button">Odeslat</string>
+    <string name="ribka_suggestion_intro">Pokyny: Upravte <b>pouze</b> tu část verše, která podle vás potřebuje opravu nebo vylepšení.</string>
+</resources>

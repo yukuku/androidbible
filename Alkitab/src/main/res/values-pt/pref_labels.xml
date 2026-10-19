@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Ativar versões possivelmente restritas</string>
     <string name="pref_selectedVerseBgColor_title">Selecionar os versículos de base</string>
     <string name="pref_forceFontScale_title">Tamanho do texto da interface do usuário</string>
+    <string name="pref_data_transfer">Transferência de dados</string>
+    <string name="pref_data_transfer_export_title">Exportar dados</string>
+    <string name="pref_data_transfer_import_title">Importar dados</string>
+    <string name="pref_experimental">Recursos experimentais</string>
+    <string name="pref_experimental_warning">Pode ser instável. Desative se encontrar problemas.</string>
+    <string name="pref_debugRubyGeometry_title">Depurar geometria Ruby</string>
+    <string name="pref_debugRubyGeometry_summary">Desenhe caixas à volta de cada linha, texto base e texto de pronúncia ruby no ecrã. Grave as medições no registo do sistema com a etiqueta RubyGeom. Toque num versículo para copiar as suas medidas para a área de transferência. Apenas para depuração de posicionamento de texto ruby; mantenha esta opção desativada.</string>
+    <string name="pref_useLegacyVerseItem_title">Verso (visualizações legadas)</string>
+    <string name="pref_useLegacyVerseItem_summary">Mostrar o texto da Bíblia com a lista de versículos baseada na visualização legada em vez da lista totalmente baseada em Jetpack Compose. Entra em vigor quando o ecrã do leitor é reaberto.</string>
+    <string name="pref_useLegacyGoto_title">Navegação (vistas legadas)</string>
+    <string name="pref_useLegacyGoto_summary">Mostrar o ecrã de navegação baseada em separadores herdada em vez do ecrã Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Barra de ferramentas do leitor (vistas legadas)</string>
+    <string name="pref_useLegacyToolbar_summary">Desenhe a barra de ferramentas do ecrã de leitura com a vista legada em vez de Jetpack Compose. Entra em vigor após a reabertura do ecrã de leitura.</string>
+    <string name="pref_useLegacySong_title">Letras de canções (visualizações legadas)</string>
+    <string name="pref_useLegacySong_summary">Renderize as letras das canções com o legado WebView (HTML/CSS) em vez de nativamente com Jetpack Compose. Abra uma música para ver a mudança.</string>
+    <string name="pref_useLegacySyncLogin_title">Sincronizar login (vistas legadas)</string>
+    <string name="pref_useLegacySyncLogin_summary">Mostrar o ecrã de início de sessão de sincronização herdado em vez do Jetpack Compose, que tem um interruptor de mostrar/ocultar palavra-passe e um campo de confirmação de palavra-passe incorporado.</string>
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Hiển thị kết quả đọc hiện tại</string>
+    <string name="current_reading_display_off">Tắt</string>
+    <string name="current_reading_display_line">Dòng mỏng bên cạnh văn bản</string>
+    <string name="current_reading_completed">Bài đọc này đã hoàn thành</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Affichage de la lecture actuelle</string>
+    <string name="current_reading_display_off">Désactivé</string>
+    <string name="current_reading_display_line">Ligne fine à côté du texte</string>
+    <string name="current_reading_completed">Cette lecture est terminée</string>
+</resources>

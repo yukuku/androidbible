@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT แก้ไขแล้ว</string>
+    <string name="ribka_menu_report">AYT แก้ไขแล้ว</string>
+    <string name="ribka_sending_progress">กำลังส่งรายงาน…</string>
+    <string name="ribka_send_error">ไม่สามารถส่งรายงานได้ ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
+    <string name="ribka_send_success">ส่งรายงานแล้ว เปิดอีเมลของคุณและคลิกลิงก์เพื่อยืนยันรายงาน</string>
+    <string name="ribka_send_failure">ไม่สามารถส่งรายงาน: ^1</string>
+    <string name="ribka_category_typo">Spelling or punctuation error</string>
+    <string name="ribka_category_word">การเลือกคำ</string>
+    <string name="ribka_category_sentence">Sentence structure</string>
+    <string name="ribka_category_content">เนื้อหา (ประเด็นด้านเทววิทยาหรือหลักคำสอน)</string>
+    <string name="ribka_category_others">อื่นๆ</string>
+    <string name="ribka_category_error">Select a correction type.</string>
+    <string name="ribka_suggestion_hint">Your correction or suggestion</string>
+    <string name="ribka_suggestion_error">Enter your suggested correction</string>
+    <string name="ribka_remarks_hint">Reason or remarks (optional)</string>
+    <string name="ribka_email_hint">อีเมล</string>
+    <string name="ribka_email_error">Enter a valid email address</string>
+    <string name="ribka_submit_button">ส่ง</string>
+    <string name="ribka_suggestion_intro">คำแนะนำ: แก้ไข<b>เฉพาะ</b>ส่วนของข้อที่คุณคิดว่าจำเป็นต้องแก้ไขหรือปรับปรุง</string>
+</resources>

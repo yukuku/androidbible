@@ -23,4 +23,24 @@
     <string name="pref_showHiddenVersion_title">Az esetlegesen korlátozott verziók engedélyezése</string>
     <string name="pref_selectedVerseBgColor_title">A kiválasztott vers háttere</string>
     <string name="pref_forceFontScale_title">Felhasználói felület szövegének mérete</string>
+    <string name="pref_data_transfer">Adatátvitel</string>
+    <string name="pref_copyWithVersionName_summary">Említse meg a Biblia változatának kezdőbetűit</string>
+    <string name="pref_copyWithShareUrl_summary">A megosztási oldal hivatkozásának hozzáfűzése a másolt vagy megosztott szöveg végéhez</string>
+    <string name="pref_autoDictionaryAnalyze_summary">Keressen szótári szavakat a kiválasztott verseknél</string>
+    <string name="pref_data_transfer_export_title">Adatok exportálása</string>
+    <string name="pref_data_transfer_import_title">Adatok importálása</string>
+    <string name="pref_experimental">Kísérleti jellemzők</string>
+    <string name="pref_experimental_warning">Instabil lehet. Tiltsa le, ha problémákat tapasztal.</string>
+    <string name="pref_debugRubyGeometry_title">Ruby geometria hibakeresése</string>
+    <string name="pref_debugRubyGeometry_summary">Rajzoljon kereteket minden sor, alapszöveg és ruby kiejtési szöveg köré a képernyőn. Írja be a méréseket a rendszernaplóba a RubyGeom címkével. Koppintson egy versre a méreteinek a vágólapra másolásához. Csak a ruby szövegelhelyezés hibakereséséhez; tartsa letiltva ezt az opciót.</string>
+    <string name="pref_useLegacyVerseItem_title">Vers (örökölt nézetek)</string>
+    <string name="pref_useLegacyVerseItem_summary">Mutasd meg a Biblia szövegét az örökölt nézetalapú verslistával a teljesen Jetpack Compose-alapú helyett. Az olvasó képernyőjének újranyitásakor lép életbe.</string>
+    <string name="pref_useLegacyGoto_title">Navigáció (régi nézetek)</string>
+    <string name="pref_useLegacyGoto_summary">A régi lap alapú navigációs képernyő megjelenítése a Jetpack Compose helyett.</string>
+    <string name="pref_useLegacyToolbar_title">Olvasó eszköztár (régi nézetek)</string>
+    <string name="pref_useLegacyToolbar_summary">Rajzolja meg az olvasási képernyő eszköztárát a régi nézettel a Jetpack Compose helyett. Az olvasóképernyő újbóli megnyitása után lép életbe.</string>
+    <string name="pref_useLegacySong_title">Dalszövegek (örökölt megtekintések)</string>
+    <string name="pref_useLegacySong_summary">A dalszövegeket az örökölt WebView (HTML/CSS) segítségével jelenítse meg a natív Jetpack Compose helyett. Nyisson meg egy dalt a változás megtekintéséhez.</string>
+    <string name="pref_useLegacySyncLogin_title">Bejelentkezés szinkronizálása (régi nézetek)</string>
+    <string name="pref_useLegacySyncLogin_summary">A régi szinkronizálási bejelentkezési képernyő megjelenítése a Jetpack Compose helyett, amely rendelkezik a jelszó megjelenítése/elrejtése kapcsolóval és egy soron belüli megerősítési jelszó mezővel.</string>
 </resources>

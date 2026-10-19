@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Bibelübersetzungen mit Copyright aktivieren</string>
     <string name="pref_selectedVerseBgColor_title">Vershintergrund-Farbe festlegen</string>
     <string name="pref_forceFontScale_title">Textgröße der Benutzeroberfläche</string>
+    <string name="pref_data_transfer">Datenübertragung</string>
+    <string name="pref_data_transfer_export_title">Daten exportieren</string>
+    <string name="pref_data_transfer_import_title">Daten importieren</string>
+    <string name="pref_experimental">Experimentelle Funktionen</string>
+    <string name="pref_experimental_warning">Möglicherweise instabil. Deaktivieren Sie die Funktion, wenn Sie auf Probleme stoßen.</string>
+    <string name="pref_debugRubyGeometry_title">Ruby-Geometrie debuggen</string>
+    <string name="pref_debugRubyGeometry_summary">Zeichnen Sie Kästchen um jede Zeile, jeden Basistext und jeden ruby-Aussprachetext auf dem Bildschirm. Schreiben Sie die Messungen mit dem Tag RubyGeom in das Systemprotokoll. Tippen Sie auf einen Vers, um dessen Maße in die Zwischenablage zu kopieren. Nur zum Debuggen der Platzierung von Ruby-Text; lassen Sie diese Option deaktiviert.</string>
+    <string name="pref_useLegacyVerseItem_title">Vers (alte Ansichten)</string>
+    <string name="pref_useLegacyVerseItem_summary">Zeigt den Bibeltext mit der alten, auf der Ansicht basierenden Versliste anstelle der vollständig auf Jetpack Compose basierenden Liste an. Wird wirksam, wenn der Reader-Bildschirm erneut geöffnet wird.</string>
+    <string name="pref_useLegacyGoto_title">Navigation (alte Ansichten)</string>
+    <string name="pref_useLegacyGoto_summary">Zeigt den alten tab-basierten Navigationsbildschirm anstelle des Jetpack Compose-Bildschirms an.</string>
+    <string name="pref_useLegacyToolbar_title">Reader-Symbolleiste (alte Ansichten)</string>
+    <string name="pref_useLegacyToolbar_summary">Zeichnen Sie die Symbolleiste des Lesebildschirms mit der alten Ansicht anstelle von Jetpack Compose. Wird wirksam, nachdem der Lesebildschirm erneut geöffnet wird.</string>
+    <string name="pref_useLegacySong_title">Songtexte (alte Ansichten)</string>
+    <string name="pref_useLegacySong_summary">Rendern Sie Songtexte mit dem alten WebView (HTML/CSS) statt nativ mit Jetpack Compose. Öffnen Sie einen Song, um die Änderung zu sehen.</string>
+    <string name="pref_useLegacySyncLogin_title">Anmeldung synchronisieren (alte Ansichten)</string>
+    <string name="pref_useLegacySyncLogin_summary">Zeigt den Legacy-Synchronisierungs-Anmeldebildschirm anstelle des Jetpack Compose-Bildschirms an, der über einen Umschalter zum Ein-/Ausblenden des Passworts und ein Inline-Bestätigungsfeld für das Passwort verfügt.</string>
 </resources>

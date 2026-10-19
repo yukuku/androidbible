@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT labojumi</string>
+    <string name="ribka_menu_report">AYT labojumi</string>
+    <string name="ribka_sending_progress">Notiek ziņojuma sūtīšana…</string>
+    <string name="ribka_send_error">Nevarēja nosūtīt ziņojumu. Pārbaudiet interneta savienojumu.</string>
+    <string name="ribka_send_success">Ziņojums nosūtīts. Atveriet savu e-pastu un noklikšķiniet uz saites, lai apstiprinātu ziņojumu.</string>
+    <string name="ribka_send_failure">Nevarēja nosūtīt ziņojumu: ^1</string>
+    <string name="ribka_category_typo">Pareizrakstības vai pieturzīmju kļūda</string>
+    <string name="ribka_category_word">Vārdu izvēle</string>
+    <string name="ribka_category_sentence">Teikuma uzbūve</string>
+    <string name="ribka_category_content">Saturs (teoloģisks vai doktrināls jautājums)</string>
+    <string name="ribka_category_others">Cits</string>
+    <string name="ribka_category_error">Izvēlieties labojuma veidu.</string>
+    <string name="ribka_suggestion_hint">Jūsu labojums vai ieteikums</string>
+    <string name="ribka_suggestion_error">Ievadiet savu ieteikto labojumu</string>
+    <string name="ribka_remarks_hint">Iemesls vai piezīmes (pēc izvēles)</string>
+    <string name="ribka_email_hint">E-pasts</string>
+    <string name="ribka_email_error">Ievadiet derīgu e-pasta adresi</string>
+    <string name="ribka_submit_button">Sūtīt</string>
+    <string name="ribka_suggestion_intro">Norādījumi: rediģējiet <b>tikai</b> to panta daļu, kas, jūsuprāt, ir jālabo vai jāuzlabo.</string>
+</resources>

@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Abilita possibili versioni ristrette</string>
     <string name="pref_selectedVerseBgColor_title">Background del versetto selezionato</string>
     <string name="pref_forceFontScale_title">Dimensione UI text</string>
+    <string name="pref_data_transfer">Trasferimento dati</string>
+    <string name="pref_data_transfer_export_title">Esporta dati</string>
+    <string name="pref_data_transfer_import_title">Importa dati</string>
+    <string name="pref_experimental">Funzionalità sperimentali</string>
+    <string name="pref_experimental_warning">Potrebbe essere instabile. Disabilita se riscontri problemi.</string>
+    <string name="pref_debugRubyGeometry_title">Debug della geometria del rubino</string>
+    <string name="pref_debugRubyGeometry_summary">Disegna riquadri attorno a ciascuna riga, testo di base e testo della pronuncia ruby sullo schermo. Scrivere le misure nel log di sistema con il tag RubyGeom. Tocca un versetto per copiarne le misurazioni negli appunti. Solo per il debug del posizionamento del testo ruby; mantenere questa opzione disabilitata.</string>
+    <string name="pref_useLegacyVerseItem_title">Versetto (visualizzazioni legacy)</string>
+    <string name="pref_useLegacyVerseItem_summary">Mostra il testo biblico con l\'elenco di versetti basato sulla visualizzazione legacy invece di quello completamente basato su Jetpack Compose. Ha effetto alla riapertura dello schermo del lettore.</string>
+    <string name="pref_useLegacyGoto_title">Navigazione (visualizzazioni precedenti)</string>
+    <string name="pref_useLegacyGoto_summary">Mostra la schermata di navigazione precedente basata su schede invece di quella Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Barra degli strumenti di Reader (viste precedenti)</string>
+    <string name="pref_useLegacyToolbar_summary">Disegna la barra degli strumenti della schermata di lettura con la vista legacy invece di Jetpack Compose. Ha effetto dopo la riapertura della schermata di lettura.</string>
+    <string name="pref_useLegacySong_title">Testi delle canzoni (visualizzazioni precedenti)</string>
+    <string name="pref_useLegacySong_summary">Visualizza i testi delle canzoni con l\'eredità WebView (HTML/CSS) anziché in modo nativo con Jetpack Compose. Apri una canzone per vedere il cambiamento.</string>
+    <string name="pref_useLegacySyncLogin_title">Sincronizza accesso (viste precedenti)</string>
+    <string name="pref_useLegacySyncLogin_summary">Mostra la schermata di accesso alla sincronizzazione legacy invece di quella Jetpack Compose, che ha un interruttore mostra/nascondi password e un campo di conferma password in linea.</string>
 </resources>

@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">อนุญาตให้บรรจุเวอร์ชั่นที่อาจจะถูกจำกัดอยู่</string>
     <string name="pref_selectedVerseBgColor_title">สีพื้นหลังของข้อที่ถูกเลือก</string>
     <string name="pref_forceFontScale_title">ขนาดตัวอักษรบน UI</string>
+    <string name="pref_data_transfer">การถ่ายโอนข้อมูล</string>
+    <string name="pref_data_transfer_export_title">ส่งออกข้อมูล</string>
+    <string name="pref_data_transfer_import_title">นำเข้าข้อมูล</string>
+    <string name="pref_experimental">คุณสมบัติทดลอง</string>
+    <string name="pref_experimental_warning">อาจไม่เสถียร ปิดการใช้งานหากคุณพบปัญหา</string>
+    <string name="pref_debugRubyGeometry_title">แก้ไขข้อบกพร่องเรขาคณิตทับทิม</string>
+    <string name="pref_debugRubyGeometry_summary">วาดกล่องรอบๆ แต่ละบรรทัด ข้อความพื้นฐาน และข้อความการออกเสียง ruby บนหน้าจอ เขียนการวัดลงในบันทึกของระบบด้วยแท็ก RubyGeom แตะข้อเพื่อคัดลอกการวัดไปยังคลิปบอร์ด สำหรับการดีบักตำแหน่งข้อความ ruby เท่านั้น ปิดการใช้งานตัวเลือกนี้</string>
+    <string name="pref_useLegacyVerseItem_title">กลอน (มุมมองดั้งเดิม)</string>
+    <string name="pref_useLegacyVerseItem_summary">แสดงข้อความในพระคัมภีร์ด้วยรายการข้อพระคัมภีร์ตามมุมมองแบบเดิม แทนที่จะเป็นรายการข้อพระคัมภีร์ตาม Jetpack Compose แบบเต็ม มีผลเมื่อเปิดหน้าจอเครื่องอ่านอีกครั้ง</string>
+    <string name="pref_useLegacyGoto_title">การนำทาง (มุมมองดั้งเดิม)</string>
+    <string name="pref_useLegacyGoto_summary">แสดงหน้าจอการนำทางตามแท็บแบบเดิมแทนที่จะเป็น Jetpack Compose</string>
+    <string name="pref_useLegacyToolbar_title">แถบเครื่องมือ Reader (มุมมองแบบเดิม)</string>
+    <string name="pref_useLegacyToolbar_summary">วาดแถบเครื่องมือหน้าจอการอ่านด้วยมุมมองเดิมแทน Jetpack Compose มีผลหลังจากเปิดหน้าจอการอ่านอีกครั้ง</string>
+    <string name="pref_useLegacySong_title">เนื้อเพลง (มุมมองดั้งเดิม)</string>
+    <string name="pref_useLegacySong_summary">เรนเดอร์เนื้อเพลงด้วย WebView ดั้งเดิม (HTML/CSS) แทนเนทีฟด้วย Jetpack Compose เปิดเพลงเพื่อดูการเปลี่ยนแปลง</string>
+    <string name="pref_useLegacySyncLogin_title">ซิงค์การเข้าสู่ระบบ (มุมมองแบบเดิม)</string>
+    <string name="pref_useLegacySyncLogin_summary">แสดงหน้าจอการเข้าสู่ระบบการซิงค์แบบเดิมแทน Jetpack Compose ซึ่งมีการสลับแสดง/ซ่อนรหัสผ่านและช่องยืนยันรหัสผ่านแบบอินไลน์</string>
 </resources>

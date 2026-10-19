@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Дозволити версії розповсюдження яких можливо обмежено</string>
     <string name="pref_selectedVerseBgColor_title">Виберіть фон для вірша</string>
     <string name="pref_forceFontScale_title">Розмір тексту інтерфейсу користувача</string>
+    <string name="pref_data_transfer">Передача даних</string>
+    <string name="pref_data_transfer_export_title">Експорт даних</string>
+    <string name="pref_data_transfer_import_title">Імпорт даних</string>
+    <string name="pref_experimental">Експериментальні особливості</string>
+    <string name="pref_experimental_warning">Може бути нестабільним. Вимкніть, якщо виникнуть проблеми.</string>
+    <string name="pref_debugRubyGeometry_title">Налагодження рубінової геометрії</string>
+    <string name="pref_debugRubyGeometry_summary">Намалюйте рамки навколо кожного рядка, основного тексту та тексту вимови ruby на екрані. Запишіть вимірювання в системний журнал з тегом RubyGeom. Торкніться вірша, щоб скопіювати його розміри в буфер обміну. Лише для налагодження розміщення тексту ruby; залишити цю опцію вимкненою.</string>
+    <string name="pref_useLegacyVerseItem_title">Вірш (застарілі перегляди)</string>
+    <string name="pref_useLegacyVerseItem_summary">Показати текст Біблії зі списком віршів, заснованим на перегляді спадщини, замість повністю заснованого на Jetpack Compose. Набирає чинності після повторного відкриття екрана читача.</string>
+    <string name="pref_useLegacyGoto_title">Навігація (застарілі перегляди)</string>
+    <string name="pref_useLegacyGoto_summary">Показати застарілий екран навігації на основі вкладок замість Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Панель інструментів Reader (застарілі перегляди)</string>
+    <string name="pref_useLegacyToolbar_summary">Намалюйте панель інструментів екрана для читання зі старим видом замість Jetpack Compose. Набуває чинності після повторного відкриття екрана читання.</string>
+    <string name="pref_useLegacySong_title">Тексти пісень (успадковані перегляди)</string>
+    <string name="pref_useLegacySong_summary">Візуалізуйте текст пісень із застарілим WebView (HTML/CSS) замість оригінального Jetpack Compose. Відкрийте пісню, щоб побачити зміни.</string>
+    <string name="pref_useLegacySyncLogin_title">Синхронізація входу (застарілі перегляди)</string>
+    <string name="pref_useLegacySyncLogin_summary">Показати застарілий екран входу в систему синхронізації замість Jetpack Compose, який має перемикач «Показати/сховати пароль» і вбудоване поле підтвердження пароля.</string>
 </resources>

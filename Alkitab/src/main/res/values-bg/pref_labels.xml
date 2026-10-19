@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Разрешете използването на версии с ограничено разпространение</string>
     <string name="pref_selectedVerseBgColor_title">Изберете фон за стиха</string>
     <string name="pref_forceFontScale_title">UI размер на текста</string>
+    <string name="pref_data_transfer">Трансфер на данни</string>
+    <string name="pref_data_transfer_export_title">Експортиране на данни</string>
+    <string name="pref_data_transfer_import_title">Импортиране на данни</string>
+    <string name="pref_experimental">Експериментални функции</string>
+    <string name="pref_experimental_warning">Може да е нестабилен. Деактивирайте, ако срещнете проблеми.</string>
+    <string name="pref_debugRubyGeometry_title">Отстраняване на грешки в геометрията на ruby</string>
+    <string name="pref_debugRubyGeometry_summary">Начертайте полета около всеки ред, основен текст и ruby текст за произношение на екрана. Запишете измерванията в системния журнал с етикет RubyGeom. Докоснете стих, за да копирате неговите измервания в клипборда. Само за отстраняване на грешки ruby разположение на текст; оставете тази опция деактивирана.</string>
+    <string name="pref_useLegacyVerseItem_title">Стих (наследени изгледи)</string>
+    <string name="pref_useLegacyVerseItem_summary">Показване на библейския текст със списък със стихове, базиран на наследство, вместо изцяло базиран на Jetpack Compose. Влиза в сила, когато екранът на четеца се отвори отново.</string>
+    <string name="pref_useLegacyGoto_title">Навигация (наследени изгледи)</string>
+    <string name="pref_useLegacyGoto_summary">Показване на наследения екран за навигация, базиран на раздели, вместо този Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Лента с инструменти на Reader (наследени изгледи)</string>
+    <string name="pref_useLegacyToolbar_summary">Начертайте лентата с инструменти на екрана за четене с наследения изглед вместо Jetpack Compose. Влиза в сила след повторно отваряне на екрана за четене.</string>
+    <string name="pref_useLegacySong_title">Текстове на песни (наследени изгледи)</string>
+    <string name="pref_useLegacySong_summary">Рендирайте текстове на песни с наследеното WebView (HTML/CSS) вместо естествено с Jetpack Compose. Отворете песен, за да видите промяната.</string>
+    <string name="pref_useLegacySyncLogin_title">Синхронизиране на влизане (наследени изгледи)</string>
+    <string name="pref_useLegacySyncLogin_summary">Показване на наследения екран за влизане при синхронизиране вместо този Jetpack Compose, който има превключвател за показване/скриване на парола и вградено поле за потвърждение на парола.</string>
 </resources>

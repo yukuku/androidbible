@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Huidige leesvertoning</string>
+    <string name="current_reading_display_off">Af</string>
+    <string name="current_reading_display_line">Dun lyn langs die teks</string>
+    <string name="current_reading_completed">Hierdie lesing is voltooi</string>
+</resources>

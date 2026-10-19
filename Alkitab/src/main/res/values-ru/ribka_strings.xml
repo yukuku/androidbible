@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT исправления</string>
+    <string name="ribka_menu_report">AYT исправления</string>
+    <string name="ribka_sending_progress">Отправка отчета…</string>
+    <string name="ribka_send_error">Не удалось отправить отчет. Проверьте подключение к Интернету.</string>
+    <string name="ribka_send_success">Отчет отправлен. Откройте электронное письмо и нажмите ссылку, чтобы подтвердить отчет.</string>
+    <string name="ribka_send_failure">Не удалось отправить отчет: ^1</string>
+    <string name="ribka_category_typo">Орфографическая или пунктуационная ошибка</string>
+    <string name="ribka_category_word">Выбор слова</string>
+    <string name="ribka_category_sentence">Структура предложения</string>
+    <string name="ribka_category_content">Содержание (теологический или доктринальный вопрос)</string>
+    <string name="ribka_category_others">Другое</string>
+    <string name="ribka_category_error">Выберите тип коррекции.</string>
+    <string name="ribka_suggestion_hint">Ваше исправление или предложение</string>
+    <string name="ribka_suggestion_error">Введите предлагаемое исправление.</string>
+    <string name="ribka_remarks_hint">Причина или замечания (необязательно)</string>
+    <string name="ribka_email_hint">Электронная почта</string>
+    <string name="ribka_email_error">Введите действительный адрес электронной почты</string>
+    <string name="ribka_submit_button">Отправить</string>
+    <string name="ribka_suggestion_intro">Инструкции: Редактируйте <b>только</b> ту часть стиха, которая, по вашему мнению, нуждается в исправлении или улучшении.</string>
+</resources>

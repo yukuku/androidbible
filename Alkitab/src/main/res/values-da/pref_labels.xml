@@ -27,4 +27,21 @@
     <string name="pref_showHiddenVersion_title">Aktiver muligt restriktive versioner</string>
     <string name="pref_selectedVerseBgColor_title">Valgt versbaggrund</string>
     <string name="pref_forceFontScale_title">BF tekststørrelse</string>
+    <string name="pref_data_transfer">Dataoverførsel</string>
+    <string name="pref_data_transfer_export_title">Eksporter data</string>
+    <string name="pref_data_transfer_import_title">Importer data</string>
+    <string name="pref_experimental">Eksperimentelle funktioner</string>
+    <string name="pref_experimental_warning">Kan være ustabil. Deaktiver, hvis du støder på problemer.</string>
+    <string name="pref_debugRubyGeometry_title">Debug rubingeometri</string>
+    <string name="pref_debugRubyGeometry_summary">Tegn kasser rundt om hver linje, basistekst og ruby udtaletekst på skærmen. Skriv målingerne til systemloggen med tagget RubyGeom. Tryk på et vers for at kopiere dets mål til udklipsholderen. Kun til fejlretning af ruby tekstplacering; hold denne indstilling deaktiveret.</string>
+    <string name="pref_useLegacyVerseItem_title">Vers (ældre visninger)</string>
+    <string name="pref_useLegacyVerseItem_summary">Vis bibelteksten med den gamle visningsbaserede versliste i stedet for den fuldt Jetpack Compose-baserede. Træder i kraft, når læseskærmen genåbnes.</string>
+    <string name="pref_useLegacyGoto_title">Navigation (ældre visninger)</string>
+    <string name="pref_useLegacyGoto_summary">Vis den ældre fanebaserede navigationsskærm i stedet for den Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Læserværktøjslinje (ældre visninger)</string>
+    <string name="pref_useLegacyToolbar_summary">Tegn læseskærmens værktøjslinje med den gamle visning i stedet for Jetpack Compose. Træder i kraft efter at læseskærmen genåbnes.</string>
+    <string name="pref_useLegacySong_title">Sangtekster (ældre visninger)</string>
+    <string name="pref_useLegacySong_summary">Gengiv sangtekster med den gamle WebView (HTML/CSS) i stedet for indbygget med Jetpack Compose. Åbn en sang for at se ændringen.</string>
+    <string name="pref_useLegacySyncLogin_title">Synkroniser login (ældre visninger)</string>
+    <string name="pref_useLegacySyncLogin_summary">Vis den ældre login-skærm for synkronisering i stedet for den Jetpack Compose, som har en vis/skjul adgangskode og et indlejret bekræftelses-adgangskodefelt.</string>
 </resources>

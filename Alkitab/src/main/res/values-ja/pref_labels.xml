@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">制限された聖書版も使用可能にする</string>
     <string name="pref_selectedVerseBgColor_title">ハイライトの色を選ぶ</string>
     <string name="pref_forceFontScale_title">UI 文字の大きさ</string>
+    <string name="pref_data_transfer">データ転送</string>
+    <string name="pref_data_transfer_export_title">データのエクスポート</string>
+    <string name="pref_data_transfer_import_title">データのインポート</string>
+    <string name="pref_experimental">実験的な機能</string>
+    <string name="pref_experimental_warning">不安定になる可能性があります。問題が発生した場合は無効にします。</string>
+    <string name="pref_debugRubyGeometry_title">Ruby ジオメトリをデバッグする</string>
+    <string name="pref_debugRubyGeometry_summary">画面上の各行、基本テキスト、および ruby 発音テキストの周囲にボックスを描画します。タグ RubyGeom を使用して測定値をシステム ログに書き込みます。聖句をタップして、その測定値をクリップボードにコピーします。 ruby テキスト配置のデバッグのみ。このオプションは無効のままにしてください。</string>
+    <string name="pref_useLegacyVerseItem_title">聖句 (レガシービュー)</string>
+    <string name="pref_useLegacyVerseItem_summary">完全に Jetpack Compose ベースの聖句リストではなく、従来のビューベースの聖句リストを使用して聖書本文を表示します。リーダー画面を再度開いたときに有効になります。</string>
+    <string name="pref_useLegacyGoto_title">ナビゲーション (従来のビュー)</string>
+    <string name="pref_useLegacyGoto_summary">Jetpack Compose の代わりに従来のタブベースのナビゲーション画面を表示します。</string>
+    <string name="pref_useLegacyToolbar_title">リーダー ツールバー (従来のビュー)</string>
+    <string name="pref_useLegacyToolbar_summary">Jetpack Compose の代わりに従来のビューを使用して閲覧画面ツールバーを描画します。読み取り画面を再度開いた後に有効になります。</string>
+    <string name="pref_useLegacySong_title">の歌詞 (レガシービュー)</string>
+    <string name="pref_useLegacySong_summary">ネイティブの Jetpack Compose ではなく、従来の WebView (HTML/CSS) を使用して曲の歌詞をレンダリングします。曲を開いて変化を確認します。</string>
+    <string name="pref_useLegacySyncLogin_title">同期ログイン (従来のビュー)</string>
+    <string name="pref_useLegacySyncLogin_summary">Jetpack Compose の代わりに従来の同期ログイン画面を表示します。このログイン画面には、パスワードの表示/非表示の切り替えとインラインのパスワード確認フィールドがあります。</string>
 </resources>

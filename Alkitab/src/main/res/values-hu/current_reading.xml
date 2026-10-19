@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Aktuális kijelzés</string>
+    <string name="current_reading_display_off">Ki</string>
+    <string name="current_reading_display_line">Vékony vonal a szöveg mellett</string>
+    <string name="current_reading_completed">Ez az olvasás befejeződött</string>
+</resources>

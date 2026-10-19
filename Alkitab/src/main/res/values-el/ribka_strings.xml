@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT διορθώσεις</string>
+    <string name="ribka_menu_report">AYT διορθώσεις</string>
+    <string name="ribka_sending_progress">Αποστολή αναφοράς…</string>
+    <string name="ribka_send_error">Δεν ήταν δυνατή η αποστολή της αναφοράς. Ελέγξτε τη σύνδεσή σας στο διαδίκτυο.</string>
+    <string name="ribka_send_success">Η αναφορά στάλθηκε. Ανοίξτε το email σας και κάντε κλικ στον σύνδεσμο για να επιβεβαιώσετε την αναφορά.</string>
+    <string name="ribka_send_failure">Δεν ήταν δυνατή η αποστολή της αναφοράς: ^1</string>
+    <string name="ribka_category_typo">Σφάλμα ορθογραφίας ή στίξης</string>
+    <string name="ribka_category_word">Επιλογή λέξεων</string>
+    <string name="ribka_category_sentence">Δομή πρότασης</string>
+    <string name="ribka_category_content">Περιεχόμενο (θεολογικό ή δογματικό ζήτημα)</string>
+    <string name="ribka_category_others">Άλλο</string>
+    <string name="ribka_category_error">Επιλέξτε έναν τύπο διόρθωσης.</string>
+    <string name="ribka_suggestion_hint">Η διόρθωση ή η πρότασή σας</string>
+    <string name="ribka_suggestion_error">Εισαγάγετε την προτεινόμενη διόρθωση</string>
+    <string name="ribka_remarks_hint">Αιτία ή παρατηρήσεις (προαιρετικά)</string>
+    <string name="ribka_email_hint">Email</string>
+    <string name="ribka_email_error">Εισαγάγετε μια έγκυρη διεύθυνση email</string>
+    <string name="ribka_submit_button">Αποστολή</string>
+    <string name="ribka_suggestion_intro">Οδηγίες: Επεξεργαστείτε <b>μόνο</b> το μέρος του στίχου που πιστεύετε ότι χρειάζεται διόρθωση ή βελτίωση.</string>
+</resources>

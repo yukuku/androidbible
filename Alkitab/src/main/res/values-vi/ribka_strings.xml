@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT sửa</string>
+    <string name="ribka_menu_report">AYT sửa</string>
+    <string name="ribka_sending_progress">Đang gửi báo cáo…</string>
+    <string name="ribka_send_error">Không thể gửi báo cáo. Kiểm tra kết nối internet của bạn.</string>
+    <string name="ribka_send_success">Đã gửi báo cáo. Mở email của bạn và nhấp vào liên kết để xác nhận báo cáo.</string>
+    <string name="ribka_send_failure">Không thể gửi báo cáo: ^1</string>
+    <string name="ribka_category_typo">Lỗi chính tả hoặc dấu câu</string>
+    <string name="ribka_category_word">Lựa chọn từ</string>
+    <string name="ribka_category_sentence">Cấu trúc câu</string>
+    <string name="ribka_category_content">Nội dung (vấn đề thần học hoặc giáo lý)</string>
+    <string name="ribka_category_others">Khác</string>
+    <string name="ribka_category_error">Chọn loại hiệu chỉnh.</string>
+    <string name="ribka_suggestion_hint">Sự đính chính hoặc đề xuất của bạn</string>
+    <string name="ribka_suggestion_error">Nhập nội dung chỉnh sửa được đề xuất của bạn</string>
+    <string name="ribka_remarks_hint">Lý do hoặc nhận xét (tùy chọn)</string>
+    <string name="ribka_email_hint">Email</string>
+    <string name="ribka_email_error">Nhập địa chỉ email hợp lệ</string>
+    <string name="ribka_submit_button">Gửi</string>
+    <string name="ribka_suggestion_intro">Hướng dẫn: <b>chỉ</b> chỉnh sửa phần câu mà bạn cho rằng cần chỉnh sửa hoặc cải thiện.</string>
+</resources>

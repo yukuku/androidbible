@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Autoriser des versions éventuellement limitées</string>
     <string name="pref_selectedVerseBgColor_title">L\'arriere plan pour le verset sélectionné</string>
     <string name="pref_forceFontScale_title">Taille du texte de l\'IU</string>
+    <string name="pref_data_transfer">Transfert de données</string>
+    <string name="pref_data_transfer_export_title">Exporter des données</string>
+    <string name="pref_data_transfer_import_title">Importer des données</string>
+    <string name="pref_experimental">Fonctionnalités expérimentales</string>
+    <string name="pref_experimental_warning">Peut être instable. Désactivez si vous rencontrez des problèmes.</string>
+    <string name="pref_debugRubyGeometry_title">Déboguer la géométrie du rubis</string>
+    <string name="pref_debugRubyGeometry_summary">Dessinez des cases autour de chaque ligne, du texte de base et du texte de prononciation ruby à l\'écran. Écrivez les mesures dans le journal système avec la balise RubyGeom. Appuyez sur un verset pour copier ses mesures dans le presse-papiers. Pour le débogage du placement de texte ruby uniquement ; gardez cette option désactivée.</string>
+    <string name="pref_useLegacyVerseItem_title">Verset (vues héritées)</string>
+    <string name="pref_useLegacyVerseItem_summary">Affichez le texte de la Bible avec la liste de versets basée sur la vue héritée au lieu de celle entièrement basée sur Jetpack Compose. Prend effet à la réouverture de l’écran du lecteur.</string>
+    <string name="pref_useLegacyGoto_title">Navigation (anciennes vues)</string>
+    <string name="pref_useLegacyGoto_summary">Afficher l\'ancien écran de navigation basé sur des onglets au lieu de celui Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Barre d\'outils du lecteur (anciennes vues)</string>
+    <string name="pref_useLegacyToolbar_summary">Dessinez la barre d\'outils de l\'écran de lecture avec la vue héritée au lieu de Jetpack Compose. Prend effet après la réouverture de l’écran de lecture.</string>
+    <string name="pref_useLegacySong_title">Paroles de chansons (anciennes vues)</string>
+    <string name="pref_useLegacySong_summary">Rendu des paroles de chansons avec l\'ancien WebView (HTML/CSS) au lieu de natif avec Jetpack Compose. Ouvrez une chanson pour voir le changement.</string>
+    <string name="pref_useLegacySyncLogin_title">Connexion synchronisée (anciennes vues)</string>
+    <string name="pref_useLegacySyncLogin_summary">Afficher l\'écran de connexion de synchronisation hérité au lieu de celui Jetpack Compose, qui comporte une bascule d\'affichage/masquage du mot de passe et un champ de confirmation du mot de passe en ligne.</string>
 </resources>

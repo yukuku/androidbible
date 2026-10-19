@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Povolit omezené verze</string>
     <string name="pref_selectedVerseBgColor_title">Vyberte pozadí veršů</string>
     <string name="pref_forceFontScale_title">Velikost textu v rozhraní</string>
+    <string name="pref_data_transfer">Přenos dat</string>
+    <string name="pref_data_transfer_export_title">Exportujte data</string>
+    <string name="pref_data_transfer_import_title">Importujte data</string>
+    <string name="pref_experimental">Experimentální funkce</string>
+    <string name="pref_experimental_warning">Může být nestabilní. Zakázat, pokud narazíte na problémy.</string>
+    <string name="pref_debugRubyGeometry_title">Ladění rubínové geometrie</string>
+    <string name="pref_debugRubyGeometry_summary">Nakreslete rámečky kolem každého řádku, základního textu a textu výslovnosti ruby na obrazovce. Zapište měření do systémového protokolu s tagem RubyGeom. Klepnutím na verš zkopírujete jeho míry do schránky. Pouze pro ladění umístění textu ruby; ponechte tuto možnost deaktivovanou.</string>
+    <string name="pref_useLegacyVerseItem_title">Verse (starší zobrazení)</string>
+    <string name="pref_useLegacyVerseItem_summary">Zobrazte text Bible se starším seznamem veršů založeným na zobrazení namísto seznamu plně založeného na Jetpack Compose. Použije se při opětovném otevření obrazovky čtečky.</string>
+    <string name="pref_useLegacyGoto_title">Navigace (starší zobrazení)</string>
+    <string name="pref_useLegacyGoto_summary">Zobrazit starší navigační obrazovku založenou na kartách namísto obrazovky Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Panel nástrojů Reader (starší zobrazení)</string>
+    <string name="pref_useLegacyToolbar_summary">Nakreslete panel nástrojů obrazovky čtení se starším zobrazením namísto Jetpack Compose. Vstoupí v platnost po opětovném otevření obrazovky čtení.</string>
+    <string name="pref_useLegacySong_title">Texty písní (starší zobrazení)</string>
+    <string name="pref_useLegacySong_summary">Vykreslujte texty písní pomocí starší verze WebView (HTML/CSS) namísto nativně pomocí Jetpack Compose. Otevřete skladbu a uvidíte změnu.</string>
+    <string name="pref_useLegacySyncLogin_title">Synchronizovat přihlášení (starší zobrazení)</string>
+    <string name="pref_useLegacySyncLogin_summary">Zobrazit starší přihlašovací obrazovku synchronizace namísto obrazovky Jetpack Compose, která má přepínač zobrazit/skrýt heslo a vložené pole pro potvrzení hesla.</string>
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Показ поточного показання</string>
+    <string name="current_reading_display_off">Вимк</string>
+    <string name="current_reading_display_line">Тонка лінія біля тексту</string>
+    <string name="current_reading_completed">Це читання завершено</string>
+</resources>

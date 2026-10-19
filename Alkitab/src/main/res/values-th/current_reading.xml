@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">การแสดงการอ่านปัจจุบัน</string>
+    <string name="current_reading_display_off">ปิด</string>
+    <string name="current_reading_display_line">เส้นบางๆ ข้างข้อความ</string>
+    <string name="current_reading_completed">การอ่านนี้เสร็จสิ้นแล้ว</string>
+</resources>

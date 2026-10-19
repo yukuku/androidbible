@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Activați eventuale versiuni cu acces restricționat</string>
     <string name="pref_selectedVerseBgColor_title">Selectează fundal verset</string>
     <string name="pref_forceFontScale_title">Dimensiunea textului UI</string>
+    <string name="pref_data_transfer">Transfer de date</string>
+    <string name="pref_data_transfer_export_title">Exportați datele</string>
+    <string name="pref_data_transfer_import_title">Importă date</string>
+    <string name="pref_experimental">Caracteristici experimentale</string>
+    <string name="pref_experimental_warning">Poate fi instabil. Dezactivați dacă întâlniți probleme.</string>
+    <string name="pref_debugRubyGeometry_title">Depanați geometria rubin</string>
+    <string name="pref_debugRubyGeometry_summary">Desenați casete în jurul fiecărei linii, text de bază și text de pronunție ruby pe ecran. Scrieți măsurătorile în jurnalul de sistem cu eticheta RubyGeom. Atingeți un vers pentru a-i copia măsurătorile în clipboard. Numai pentru depanarea ruby plasare text; păstrați această opțiune dezactivată.</string>
+    <string name="pref_useLegacyVerseItem_title">Vers (vizionări vechi)</string>
+    <string name="pref_useLegacyVerseItem_summary">Afișați textul Bibliei cu lista de versete moștenită bazată pe vizualizare în loc de cea bazată pe Jetpack Compose în întregime. Are efect când ecranul cititorului este redeschis.</string>
+    <string name="pref_useLegacyGoto_title">Navigare (vizionări vechi)</string>
+    <string name="pref_useLegacyGoto_summary">Afișați vechiul ecran de navigare bazat pe file în loc de cel Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Bara de instrumente Reader (vizionări vechi)</string>
+    <string name="pref_useLegacyToolbar_summary">Desenați bara de instrumente a ecranului de citire cu vizualizarea moștenită în loc de Jetpack Compose. Are efect după redeschiderea ecranului de citire.</string>
+    <string name="pref_useLegacySong_title">Versurile cântecului (vizionări vechi)</string>
+    <string name="pref_useLegacySong_summary">Redați versurile cântecului cu moștenirea WebView (HTML/CSS) în loc de nativ cu Jetpack Compose. Deschide o melodie pentru a vedea schimbarea.</string>
+    <string name="pref_useLegacySyncLogin_title">Sincronizare autentificare (vizionări vechi)</string>
+    <string name="pref_useLegacySyncLogin_summary">Afișați ecranul de conectare pentru sincronizare vechi în loc de cel Jetpack Compose, care are o comutare pentru afișare/ascundere a parolei și un câmp de confirmare a parolei.</string>
 </resources>

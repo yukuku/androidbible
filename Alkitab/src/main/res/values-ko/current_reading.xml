@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">현재 판독값 표시</string>
+    <string name="current_reading_display_off">끄기</string>
+    <string name="current_reading_display_line">텍스트 옆에 가는 선</string>
+    <string name="current_reading_completed">이 읽기가 완료되었습니다.</string>
+</resources>

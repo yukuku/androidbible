@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT pagwawasto</string>
+    <string name="ribka_menu_report">AYT pagwawasto</string>
+    <string name="ribka_sending_progress">Nagpapadala ng ulat…</string>
+    <string name="ribka_send_error">Hindi maipadala ang ulat. Suriin ang iyong koneksyon sa internet.</string>
+    <string name="ribka_send_success">Ipinadala ang ulat. Buksan ang iyong email at i-click ang link upang kumpirmahin ang ulat.</string>
+    <string name="ribka_send_failure">Hindi maipadala ang ulat: ^1</string>
+    <string name="ribka_category_typo">Error sa spelling o bantas</string>
+    <string name="ribka_category_word">Pagpili ng salita</string>
+    <string name="ribka_category_sentence">Kayarian ng pangungusap</string>
+    <string name="ribka_category_content">Nilalaman (theological o doctrinal issue)</string>
+    <string name="ribka_category_others">Iba pa</string>
+    <string name="ribka_category_error">Pumili ng uri ng pagwawasto.</string>
+    <string name="ribka_suggestion_hint">Ang iyong pagwawasto o mungkahi</string>
+    <string name="ribka_suggestion_error">Ilagay ang iyong iminungkahing pagwawasto</string>
+    <string name="ribka_remarks_hint">Dahilan o komento (opsyonal)</string>
+    <string name="ribka_email_hint">Email</string>
+    <string name="ribka_email_error">Maglagay ng wastong email address</string>
+    <string name="ribka_submit_button">Ipadala</string>
+    <string name="ribka_suggestion_intro">Mga Tagubilin: I-edit <b>lamang</b> ang bahagi ng talata na sa tingin mo ay nangangailangan ng pagwawasto o pagpapahusay.</string>
+</resources>

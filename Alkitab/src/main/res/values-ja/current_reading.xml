@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">現在値表示</string>
+    <string name="current_reading_display_off">オフ</string>
+    <string name="current_reading_display_line">テキストの横の細い線</string>
+    <string name="current_reading_completed">この読み取りは完了しました</string>
+</resources>

@@ -29,6 +29,6 @@
 	<!-- Light Blue 800 -->
 	<integer name="pref_selectedVerseBgColor_default">0xff0277BD</integer>
 
-	<string name="pref_forceFontScale_default">off</string>
+	<string name="pref_forceFontScale_default" translatable="false">off</string>
 
 </resources>
