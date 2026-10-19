@@ -28,14 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.Typeface
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -44,12 +39,37 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.compose.colorpicker.ColorPickerDialog
 import yuku.alkitab.base.storage.Prefkey
-import yuku.alkitab.base.util.FormattedVerseText
 import yuku.alkitab.base.util.Highlights
+import yuku.alkitab.base.verses.AttributeState
+import yuku.alkitab.base.verses.VerseItemComposeContent
+import yuku.alkitab.base.verses.VerseItemComposeState
+import yuku.alkitab.base.verses.VersesController
+import yuku.alkitab.base.widget.VerseRendererCompose
 import yuku.alkitab.debug.R
 import yuku.alkitab.util.Ari
 
 object HighlightStyleSheet {
+    private data class Sample(val ari: Int, val reference: String, val rawText: String)
+
+    internal fun renderPreview(
+        ari: Int,
+        rawText: String,
+        isVerseNumberShown: Boolean,
+        highlight: Int,
+        background: Int,
+        amount: Float,
+    ): VerseRendererCompose.Result {
+        val rendered = VerseRendererCompose.render(isVerseNumberShown, ari, rawText)
+        val text = AnnotatedString.Builder(rendered.text).apply {
+            addStyle(
+                SpanStyle(background = Color(Highlights.blendOver(highlight, background, amount))),
+                rendered.startPosAfterVerseNumber,
+                rendered.text.length,
+            )
+        }.toAnnotatedString()
+        return rendered.copy(text = text)
+    }
+
     fun show(activity: Activity, onSave: (Float) -> Unit) {
         ComposeBottomSheetHost.show(activity) { dismiss ->
             Content(activity, onSave = { onSave(it); dismiss() }, onDismiss = dismiss)
@@ -66,14 +86,14 @@ object HighlightStyleSheet {
         var foreground by rememberSaveable { mutableIntStateOf(applied.fontColor) }
         var highlight by rememberSaveable { mutableIntStateOf(0xffffff00.toInt()) }
         val version = remember { App.services.versions.activeVersion() }
-        val samples by produceState<List<Pair<String, String>>?>(null, version) {
+        val samples by produceState<List<Sample>?>(null, version) {
             value = withContext(Dispatchers.IO) {
                 val book = version.getBook(Preferences.getInt(Prefkey.lastBookId, 0)) ?: version.firstBook
                 val chapter = Preferences.getInt(Prefkey.lastChapter, 1).coerceIn(1, book.chapter_count)
                 (1..minOf(3, book.verse_counts[chapter - 1])).mapNotNull { verse ->
                     val ari = Ari.encode(book.bookId, chapter, verse)
-                    val text = FormattedVerseText.removeSpecialCodes(version.loadVerseText(ari))
-                    if (text.isNullOrBlank()) null else version.reference(ari) to text
+                    val text = version.loadVerseText(ari)
+                    if (text.isNullOrBlank()) null else Sample(ari, version.reference(ari), text)
                 }
             }
         }
@@ -107,18 +127,36 @@ object HighlightStyleSheet {
                 when {
                     samples == null -> Text(stringResource(R.string.highlight_style_loading), color = Color(foreground))
                     samples!!.isEmpty() -> Text(stringResource(R.string.highlight_style_no_verses), color = Color(foreground))
-                    else -> samples!!.forEach { (reference, text) ->
-                        Text(
-                            text = buildAnnotatedString {
-                                append("$reference\n")
-                                withStyle(SpanStyle(background = Color(Highlights.blendOver(highlight, background, amount)))) {
-                                    append(text)
-                                }
-                            },
-                            color = Color(foreground),
-                            fontFamily = applied.fontFace?.let { FontFamily(Typeface(it)) },
-                            fontWeight = if (applied.fontBold == android.graphics.Typeface.BOLD) FontWeight.Bold else FontWeight.Normal,
-                            fontSize = applied.fontSize2dp.sp,
+                    else -> samples!!.forEach { sample ->
+                        Text(sample.reference, color = Color(foreground), style = MaterialTheme.typography.labelMedium)
+                        val isVerseNumberShown = remember {
+                            Preferences.getBoolean(R.string.pref_verseNumberIsShown_key, R.bool.pref_verseNumberIsShown_default)
+                        }
+                        val rendered = remember(sample, isVerseNumberShown, highlight, background, amount, applied) {
+                            renderPreview(sample.ari, sample.rawText, isVerseNumberShown, highlight, background, amount)
+                        }
+                        val state = VerseItemComposeState(
+                            render = rendered,
+                            fontSizeDp = applied.fontSize2dp,
+                            verseNumberFontSizeDp = applied.fontSize2dp * 0.7f,
+                            fontColor = foreground,
+                            verseNumberColor = applied.verseNumberColor,
+                            lineSpacingMult = applied.lineSpacingMult,
+                            typeface = applied.fontFace,
+                            fontBold = applied.fontBold,
+                            attribute = AttributeState(
+                                bookmarkCount = 0, noteCount = 0, progressMarkBits = 0,
+                                hasMaps = false, scale = 1f, version = null, versionId = null,
+                                ari = sample.ari,
+                                attributeListener = remember { object : VersesController.AttributeListener() {} },
+                                progressMarkCaptions = emptyList(),
+                            ),
+                            onClick = {}, onInlineLinkClick = { _, _ -> }, onPinDropped = {},
+                        )
+                        VerseItemComposeContent(
+                            state = state, checked = false, collapsed = false,
+                            audioHighlightColor = 0, attentionStart = 0L, dragHover = false,
+                            onAttentionDone = {},
                         )
                     }
                 }
