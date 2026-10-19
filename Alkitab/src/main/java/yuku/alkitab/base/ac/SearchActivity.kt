@@ -60,6 +60,7 @@ import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.SearchEngineQuery
 import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.util.VersionDialogHelper
+import yuku.alkitab.base.util.searchReferenceAri
 import yuku.alkitab.base.verses.VerseTextSlot
 import yuku.alkitab.base.verses.renderVerseText
 import yuku.alkitab.base.verses.withSearchHilite
@@ -72,8 +73,10 @@ import yuku.alkitabintegration.display.Launcher
 private const val EXTRA_openedBookId = "openedBookId"
 private const val REQCODE_bookFilter = 1
 private const val ID_CLEAR_HISTORY = -1L
+private const val ID_GOTO = -2L
 private const val COLINDEX_ID = 0
 private const val COLINDEX_QUERY_STRING = 1
+private const val COLINDEX_ARI = 2
 private const val TAG = "SearchActivity"
 
 class SearchActivity : BaseActivity() {
@@ -183,7 +186,11 @@ class SearchActivity : BaseActivity() {
         override fun bindView(view: View, context: Context, cursor: Cursor) {
             val text1 = view.findViewById<TextView>(android.R.id.text1)
             val _id = cursor.getLong(COLINDEX_ID)
-            val text = if (_id == -1L) {
+            val text = if (_id == ID_GOTO) {
+                val reference = SpannableStringBuilder(cursor.getString(COLINDEX_QUERY_STRING))
+                reference.setSpan(ForegroundColorSpan(ResourcesCompat.getColor(resources, R.color.accent, theme)), 0, reference.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                TextUtils.expandTemplate(getText(R.string.search_goto_reference), reference)
+            } else if (_id == ID_CLEAR_HISTORY) {
                 val sb = SpannableStringBuilder(getString(R.string.search_clear_history))
                 sb.setSpan(ForegroundColorSpan(ResourcesCompat.getColor(resources, R.color.escape, theme)), 0, sb.length, 0)
                 sb
@@ -209,18 +216,24 @@ class SearchActivity : BaseActivity() {
         }
 
         private fun filter() {
-            val mc = MatrixCursor(arrayOf("_id", "query_string") /* Can be any string, but this must correspond to COLINDEX_ID and COLINDEX_QUERY_STRING */)
+            val mc = MatrixCursor(arrayOf("_id", "query_string", "ari"))
+            val referenceAri = searchReferenceAri(query_string.orEmpty(), searchInVersion.consecutiveBooks)
+            if (referenceAri != null) {
+                mc.addRow(arrayOf(ID_GOTO, searchInVersion.reference(referenceAri), referenceAri))
+            }
+            var isHistoryVisible = false
             for (i in entries.indices) {
                 val entry = entries[i]
                 val query_string = query_string
                 if (query_string.isNullOrEmpty() || entry.query_string.lowercase(Locale.getDefault()).startsWith(query_string.lowercase(Locale.getDefault()))) {
-                    mc.addRow(arrayOf<Any>(i.toLong(), entry.query_string))
+                    mc.addRow(arrayOf<Any>(i.toLong(), entry.query_string, 0))
+                    isHistoryVisible = true
                 }
             }
 
-            // add last item to clear search history only if there is something else
-            if (mc.count > 0) {
-                mc.addRow(arrayOf<Any>(ID_CLEAR_HISTORY, ""))
+            // Show the clear action only when a history entry is visible.
+            if (isHistoryVisible) {
+                mc.addRow(arrayOf<Any>(ID_CLEAR_HISTORY, "", 0))
             }
 
             // sometimes this is called from bg. So we need to make sure this is run on UI thread.
@@ -273,7 +286,17 @@ class SearchActivity : BaseActivity() {
                     val ok = c.moveToPosition(position)
                     if (!ok) return false
                     val _id = c.getLong(COLINDEX_ID)
-                    if (_id == ID_CLEAR_HISTORY) {
+                    if (_id == ID_GOTO) {
+                        val ari = c.getInt(COLINDEX_ARI)
+                        val intent = if (Ari.toVerse(ari) == 0) {
+                            Launcher.openAppAtBibleLocation(ari)
+                        } else {
+                            Launcher.openAppAtBibleLocationWithVerseSelected(ari)
+                        }
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        startActivity(intent)
+                        finish()
+                    } else if (_id == ID_CLEAR_HISTORY) {
                         saveSearchHistory(null)
                         searchHistoryAdapter.setData(loadSearchHistory())
                     } else {
@@ -371,6 +394,7 @@ class SearchActivity : BaseActivity() {
     private fun displaySearchInVersion() {
         val versionInitials = searchInVersion.initials
         this.versionInitials = versionInitials
+        searchHistoryAdapter.setQuery(searchView.query.toString())
         searchView.queryHint = getString(R.string.search_in_version_short_name_placeholder, versionInitials)
 
         @Suppress("NotifyDataSetChanged")

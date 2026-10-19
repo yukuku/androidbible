@@ -528,4 +528,5 @@
     <string name="dv_transparency_clear">Sepenuhnya transparan</string>
     <string name="devotion_select">Pilih renungan dan tanggal</string>
     <string name="song_select">Pilih lagu</string>
+    <string name="search_goto_reference">Ke: ^1</string>
 </resources>
