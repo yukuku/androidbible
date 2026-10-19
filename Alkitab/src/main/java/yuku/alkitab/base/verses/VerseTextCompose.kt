@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.sp
 import yuku.alkitab.base.App
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.base.util.SearchEngine

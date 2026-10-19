@@ -76,9 +76,9 @@ import yuku.afw.storage.Preferences
 import yuku.alkitab.base.ac.ColorSettingsActivity
 import yuku.alkitab.base.ac.FontManagerActivity
 import yuku.alkitab.base.compose.BibleAppTheme
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.FontManager
-import yuku.alkitab.base.verses.composeFontFamilyFor
 import yuku.alkitab.debug.R
 
 /**

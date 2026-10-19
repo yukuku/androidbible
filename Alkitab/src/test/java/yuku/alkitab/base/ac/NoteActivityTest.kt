@@ -27,6 +27,7 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.S
 import yuku.alkitab.base.services.AppServices
 import yuku.alkitab.base.storage.Prefkey
+import yuku.alkitab.base.util.FontManager
 import yuku.alkitab.debug.R
 
 @RunWith(RobolectricTestRunner::class)
@@ -42,12 +43,14 @@ class NoteActivityTest {
 
     private lateinit var controller: ActivityController<TestActivity>
     private lateinit var originalServices: AppServices
+    private var originalFontName: String? = null
     private val activity get() = controller.get()
 
     @Before
     fun setUp() {
         yuku.afw.App.context = RuntimeEnvironment.getApplication()
         Preferences.invalidate()
+        originalFontName = Preferences.getString(Prefkey.jenisHuruf)
         Preferences.setString(R.string.pref_language_key, "en")
         Preferences.setBoolean(Prefkey.boldHuruf, false)
         originalServices = App.services
@@ -63,6 +66,7 @@ class NoteActivityTest {
     fun tearDown() {
         controller.pause().stop().destroy()
         App.services = originalServices
+        Preferences.setString(Prefkey.jenisHuruf, originalFontName)
         Preferences.setBoolean(Prefkey.boldHuruf, false)
         S.recalculate()
     }
@@ -93,18 +97,22 @@ class NoteActivityTest {
     }
 
     @Test
-    fun `returning from appearance settings updates both text modes without changing the draft or selection`() {
+    fun `returning from appearance settings applies every font and bold setting to both modes without changing the draft or selection`() {
         activity.tCaption.setText("Keep this draft")
         activity.tCaption.setSelection(5)
-        for (isBold in listOf(true, false)) {
-            controller.pause().stop()
-            Preferences.setBoolean(Prefkey.boldHuruf, isBold)
-            controller.start().resume()
-            val expectedStyle = if (isBold) Typeface.BOLD else Typeface.NORMAL
-            assertEquals(expectedStyle, activity.tCaption.typeface.style)
-            assertEquals(expectedStyle, activity.tCaptionReadOnly.typeface.style)
-            assertEquals("Keep this draft", activity.tCaption.text.toString())
-            assertEquals(5, activity.tCaption.selectionStart)
+        for (fontName in listOf("DEFAULT", "SERIF", "MONOSPACE")) {
+            for (isBold in listOf(true, false)) {
+                controller.pause().stop()
+                Preferences.setString(Prefkey.jenisHuruf, fontName)
+                Preferences.setBoolean(Prefkey.boldHuruf, isBold)
+                controller.start().resume()
+                val expectedStyle = if (isBold) Typeface.BOLD else Typeface.NORMAL
+                val expectedTypeface = Typeface.create(FontManager.typeface(fontName), expectedStyle)
+                assertEquals(expectedTypeface, activity.tCaption.typeface)
+                assertEquals(expectedTypeface, activity.tCaptionReadOnly.typeface)
+                assertEquals("Keep this draft", activity.tCaption.text.toString())
+                assertEquals(5, activity.tCaption.selectionStart)
+            }
         }
     }
 }

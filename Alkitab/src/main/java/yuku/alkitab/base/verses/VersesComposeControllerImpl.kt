@@ -82,6 +82,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.App
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesDataModel.ItemType

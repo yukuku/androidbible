@@ -46,6 +46,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import yuku.afw.App as AfwApp
 import yuku.alkitab.base.S
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.storage.InternalReader
 import yuku.alkitab.base.storage.OldVerseTextDecoder
 import yuku.alkitab.base.widget.AttributeView
