@@ -68,7 +68,7 @@ object VerseRenderer {
     //   @@        start a verse containing paragraphs or formatting
     //   @0..@4    start a paragraph with indent 0..4
     //   @^        start-of-paragraph marker (first-line indent + hanging rest indent)
-    //   @6 / @5   start / end of red-letter text
+    //   @6 / @5   start / end of red text (Jesus' words)
     //   @9 / @7   start / end of italic
     //   @8        put a blank line to the next verse
     //   @< ... @> special tag (e.g. footnote, cross-reference); not visible for unsupported tags
