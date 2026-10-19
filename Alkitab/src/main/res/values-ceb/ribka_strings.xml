@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT nga mga pagtul-id</string>
+    <string name="ribka_menu_report">AYT nga mga pagtul-id</string>
+    <string name="ribka_sending_progress">Nagpadala og report…</string>
+    <string name="ribka_send_error">Dili makapadala sa taho. Susiha ang imong koneksyon sa internet.</string>
+    <string name="ribka_send_success">Gipadala ang taho. Ablihi ang imong email ug i-klik ang link aron makumpirma ang taho.</string>
+    <string name="ribka_send_failure">Dili mapadala ang taho: ^1</string>
+    <string name="ribka_category_typo">Sayop sa spelling o punctuation</string>
+    <string name="ribka_category_word">Pagpili sa pulong</string>
+    <string name="ribka_category_sentence">Istruktura sa mga pulong</string>
+    <string name="ribka_category_content">Kontento (teolohikal o doktrinal nga isyu)</string>
+    <string name="ribka_category_others">Uban pa</string>
+    <string name="ribka_category_error">Pagpili ug matang sa pagtul-id.</string>
+    <string name="ribka_suggestion_hint">Ang imong pagtul-id o sugyot</string>
+    <string name="ribka_suggestion_error">Isulod ang imong gisugyot nga pagtul-id</string>
+    <string name="ribka_remarks_hint">Rason o komento (opsyonal)</string>
+    <string name="ribka_email_hint">Email</string>
+    <string name="ribka_email_error">Pagsulod ug balido nga email address</string>
+    <string name="ribka_submit_button">Ipadala</string>
+    <string name="ribka_suggestion_intro">Mga Instruksyon: I-edit <b>lamang</b> ang bahin sa bersikulo nga sa imong hunahuna nagkinahanglan og pagtul-id o pagpauswag.</string>
+</resources>

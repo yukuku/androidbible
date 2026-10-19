@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT pembetulan</string>
+    <string name="ribka_menu_report">AYT pembetulan</string>
+    <string name="ribka_sending_progress">Menghantar laporan…</string>
+    <string name="ribka_send_error">Tidak dapat menghantar laporan. Semak sambungan internet anda.</string>
+    <string name="ribka_send_success">Laporan dihantar. Buka e-mel anda dan klik pautan untuk mengesahkan laporan.</string>
+    <string name="ribka_send_failure">Tidak dapat menghantar laporan: ^1</string>
+    <string name="ribka_category_typo">Ralat ejaan atau tanda baca</string>
+    <string name="ribka_category_word">Pilihan perkataan</string>
+    <string name="ribka_category_sentence">Struktur ayat</string>
+    <string name="ribka_category_content">Kandungan (isu teologi atau doktrin)</string>
+    <string name="ribka_category_others">Lain-lain</string>
+    <string name="ribka_category_error">Pilih jenis pembetulan.</string>
+    <string name="ribka_suggestion_hint">Pembetulan atau cadangan anda</string>
+    <string name="ribka_suggestion_error">Masukkan pembetulan cadangan anda</string>
+    <string name="ribka_remarks_hint">Alasan atau teguran (pilihan)</string>
+    <string name="ribka_email_hint">E-mel</string>
+    <string name="ribka_email_error">Masukkan alamat e-mel yang sah</string>
+    <string name="ribka_submit_button">Hantar</string>
+    <string name="ribka_suggestion_intro">Arahan: Edit <b>hanya</b> bahagian ayat yang anda fikir memerlukan pembetulan atau penambahbaikan.</string>
+</resources>

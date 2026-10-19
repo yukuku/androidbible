@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">当前读数显示</string>
+    <string name="current_reading_display_off">关闭</string>
+    <string name="current_reading_display_line">文本旁边的细线</string>
+    <string name="current_reading_completed">本次阅读完毕</string>
+</resources>

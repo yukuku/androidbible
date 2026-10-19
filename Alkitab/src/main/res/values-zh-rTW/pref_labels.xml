@@ -27,4 +27,21 @@
     <string name="pref_showHiddenVersion_title">啟動可能受限的版本</string>
     <string name="pref_selectedVerseBgColor_title">已選取的經節背景</string>
     <string name="pref_forceFontScale_title">UI 文字大小</string>
+    <string name="pref_data_transfer">資料傳輸</string>
+    <string name="pref_data_transfer_export_title">匯出數據</string>
+    <string name="pref_data_transfer_import_title">導入數據</string>
+    <string name="pref_experimental">實驗特性</string>
+    <string name="pref_experimental_warning">可能不穩定。如果遇到問題請停用。</string>
+    <string name="pref_debugRubyGeometry_title">調試 ruby​​ 幾何</string>
+    <string name="pref_debugRubyGeometry_summary">在螢幕上的每行、基本文字和 ruby 發音文字周圍繪製方框。使用標籤 RubyGeom 將測量結果寫入系統日誌。點擊一節經文將其測量值複製到剪貼簿。僅用於偵錯 ruby 文字放置；保持此選項停用。</string>
+    <string name="pref_useLegacyVerseItem_title">詩句（遺留視圖）</string>
+    <string name="pref_useLegacyVerseItem_summary">使用舊版基於視圖的經文清單顯示聖經文本，而不是完全基於 Jetpack Compose 的經文清單。重新開啟閱讀器畫面後生效。</string>
+    <string name="pref_useLegacyGoto_title">導航（舊視圖）</string>
+    <string name="pref_useLegacyGoto_summary">顯示傳統的基於選項卡的導航螢幕，而不是 Jetpack Compose 螢幕。</string>
+    <string name="pref_useLegacyToolbar_title">閱讀器工具列（舊視圖）</string>
+    <string name="pref_useLegacyToolbar_summary">使用舊視圖而不是 Jetpack Compose 繪製閱讀畫面工具列。重新開啟閱讀畫面後生效。</string>
+    <string name="pref_useLegacySong_title">歌詞（遺留視圖）</string>
+    <string name="pref_useLegacySong_summary">使用舊版 WebView (HTML/CSS) 渲染歌詞，而不是使用 Jetpack Compose 原生渲染歌詞。打開一首歌即可查看變化。</string>
+    <string name="pref_useLegacySyncLogin_title">同步登入（舊視圖）</string>
+    <string name="pref_useLegacySyncLogin_summary">顯示舊版同步登入畫面，而不是 Jetpack Compose 螢幕，後者俱有顯示/隱藏密碼切換和內聯確認密碼欄位。</string>
 </resources>

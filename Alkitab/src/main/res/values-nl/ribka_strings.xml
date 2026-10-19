@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT correcties</string>
+    <string name="ribka_menu_report">AYT correcties</string>
+    <string name="ribka_sending_progress">Rapport verzenden…</string>
+    <string name="ribka_send_error">Kan het rapport niet verzenden. Controleer uw internetverbinding.</string>
+    <string name="ribka_send_success">Rapport verzonden. Open uw e-mail en klik op de link om de melding te bevestigen.</string>
+    <string name="ribka_send_failure">Kon het rapport niet verzenden: ^1</string>
+    <string name="ribka_category_typo">Spelling- of interpunctiefout</string>
+    <string name="ribka_category_word">Woordkeuze</string>
+    <string name="ribka_category_sentence">Zinsstructuur</string>
+    <string name="ribka_category_content">Inhoud (theologische of leerstellige kwestie)</string>
+    <string name="ribka_category_others">Anders</string>
+    <string name="ribka_category_error">Selecteer een correctietype.</string>
+    <string name="ribka_suggestion_hint">Uw correctie of suggestie</string>
+    <string name="ribka_suggestion_error">Voer uw voorgestelde correctie in</string>
+    <string name="ribka_remarks_hint">Reden of opmerkingen (optioneel)</string>
+    <string name="ribka_email_hint">E-mail</string>
+    <string name="ribka_email_error">Voer een geldig e-mailadres in</string>
+    <string name="ribka_submit_button">Verzenden</string>
+    <string name="ribka_suggestion_intro">Instructies: bewerk <b>alleen</b> het deel van het vers waarvan u denkt dat correctie of verbetering nodig is.</string>
+</resources>

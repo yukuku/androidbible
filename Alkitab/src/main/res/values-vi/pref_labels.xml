@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Hiển thị các bản ẩn</string>
     <string name="pref_selectedVerseBgColor_title">Chọn màu nền câu</string>
     <string name="pref_forceFontScale_title">Cỡ chữ</string>
+    <string name="pref_data_transfer">Truyền dữ liệu</string>
+    <string name="pref_data_transfer_export_title">Xuất dữ liệu</string>
+    <string name="pref_data_transfer_import_title">Nhập dữ liệu</string>
+    <string name="pref_experimental">Tính năng thử nghiệm</string>
+    <string name="pref_experimental_warning">Có thể không ổn định. Vô hiệu hóa nếu bạn gặp vấn đề.</string>
+    <string name="pref_debugRubyGeometry_title">Gỡ lỗi hình học ruby</string>
+    <string name="pref_debugRubyGeometry_summary">Vẽ các hộp xung quanh mỗi dòng, văn bản cơ sở và văn bản phát âm ruby trên màn hình. Ghi số đo vào nhật ký hệ thống bằng thẻ RubyGeom. Nhấn vào một câu để sao chép số đo của nó vào bảng nhớ tạm. Chỉ để gỡ lỗi vị trí văn bản ruby; giữ tùy chọn này bị vô hiệu hóa.</string>
+    <string name="pref_useLegacyVerseItem_title">Câu thơ (lượt xem kế thừa)</string>
+    <string name="pref_useLegacyVerseItem_summary">Hiển thị văn bản Kinh Thánh với danh sách câu dựa trên chế độ xem cũ thay vì danh sách hoàn toàn dựa trên Jetpack Compose. Có hiệu lực khi màn hình đầu đọc được mở lại.</string>
+    <string name="pref_useLegacyGoto_title">Điều hướng (chế độ xem cũ)</string>
+    <string name="pref_useLegacyGoto_summary">Hiển thị màn hình Điều hướng dựa trên tab cũ thay vì màn hình Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Thanh công cụ trình đọc (chế độ xem cũ)</string>
+    <string name="pref_useLegacyToolbar_summary">Vẽ thanh công cụ của màn hình đọc bằng chế độ xem cũ thay vì Jetpack Compose. Có hiệu lực sau khi màn hình đọc được mở lại.</string>
+    <string name="pref_useLegacySong_title">Lời bài hát (lượt xem cũ)</string>
+    <string name="pref_useLegacySong_summary">Kết xuất lời bài hát với WebView (HTML/CSS) cũ thay vì nguyên gốc bằng Jetpack Compose. Mở một bài hát để xem sự thay đổi.</string>
+    <string name="pref_useLegacySyncLogin_title">Đồng bộ hóa đăng nhập (chế độ xem cũ)</string>
+    <string name="pref_useLegacySyncLogin_summary">Hiển thị màn hình đăng nhập đồng bộ hóa cũ thay vì màn hình Jetpack Compose, màn hình này có nút chuyển đổi hiển thị/ẩn mật khẩu và trường xác nhận mật khẩu nội tuyến.</string>
 </resources>

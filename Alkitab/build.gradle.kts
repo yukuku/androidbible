@@ -268,7 +268,9 @@ android {
         }
     }
     lint {
-        abortOnError = false
+        abortOnError = true
+        fatal += setOf("NewApi", "InlinedApi")
+        checkDependencies = true
     }
 
     flavorDimensions += "playStoreApplicationId"
@@ -427,6 +429,11 @@ androidComponents {
     }
 
     onVariants(selector().all()) { variant ->
+        val variantTaskSuffix = variant.name.replaceFirstChar { it.uppercaseChar() }
+        tasks.matching { it.name == "assemble$variantTaskSuffix" || it.name == "bundle$variantTaskSuffix" }.configureEach {
+            dependsOn("lint$variantTaskSuffix")
+        }
+
         // Custom APK output filename, mirroring the legacy ybuild.sh naming:
         //   Alkitab-<versionCode>-<versionName>-<gitHash>-<applicationId>-<BUILD_DIST>.apk
         // BUILD_DIST defaults to "dev" so local builds get a recognisable name.

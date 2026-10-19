@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT ပြင်ဆင်ချက်များ</string>
+    <string name="ribka_menu_report">AYT ပြင်ဆင်ချက်များ</string>
+    <string name="ribka_sending_progress">အစီရင်ခံစာ ပို့နေသည်…</string>
+    <string name="ribka_send_error">အစီရင်ခံစာ မပို့နိုင်ပါ။ သင်၏အင်တာနက်ချိတ်ဆက်မှုကိုစစ်ဆေးပါ။</string>
+    <string name="ribka_send_success">အစီရင်ခံချက် ပေးပို့ခဲ့သည်။ သင့်အီးမေးလ်ကိုဖွင့်ပြီး အစီရင်ခံစာကိုအတည်ပြုရန် လင့်ခ်ကိုနှိပ်ပါ။</string>
+    <string name="ribka_send_failure">အစီရင်ခံစာကို မပို့နိုင်ခဲ့ပါ- ^1</string>
+    <string name="ribka_category_typo">စာလုံးပေါင်း သို့မဟုတ် သတ်ပုံအမှား</string>
+    <string name="ribka_category_word">စကားလုံးရွေးချယ်မှု</string>
+    <string name="ribka_category_sentence">ဝါကျဖွဲ့စည်းပုံ</string>
+    <string name="ribka_category_content">အကြောင်းအရာ (ဓမ္မပညာ သို့မဟုတ် အယူဝါဒဆိုင်ရာ ပြဿနာ)</string>
+    <string name="ribka_category_others">အခြား</string>
+    <string name="ribka_category_error">အမှားပြင်ဆင်ခြင်း အမျိုးအစားကို ရွေးပါ။</string>
+    <string name="ribka_suggestion_hint">သင်၏ အမှားပြင်ဆင်ချက် သို့မဟုတ် အကြံပြုချက်</string>
+    <string name="ribka_suggestion_error">သင့်အကြံပြုထားသော အမှားပြင်ဆင်ချက်ကို ထည့်သွင်းပါ။</string>
+    <string name="ribka_remarks_hint">အကြောင်းပြချက် သို့မဟုတ် မှတ်ချက်များ (ချန်လှပ်ထားနိုင်သည်)</string>
+    <string name="ribka_email_hint">အီးမေးလ်</string>
+    <string name="ribka_email_error">တရားဝင်အီးမေးလ်လိပ်စာကို ထည့်ပါ။</string>
+    <string name="ribka_submit_button">ပေးပို့ပါ။</string>
+    <string name="ribka_suggestion_intro">လမ်းညွှန်ချက်များ- ပြုပြင်ရန် သို့မဟုတ် တိုးတက်မှု လိုအပ်သည်ဟု သင်ထင်သော ကျမ်းပိုဒ်၏ <b>သာ</b>ကို တည်းဖြတ်ပါ။</string>
+</resources>

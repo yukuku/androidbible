@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Nuværende aflæsningsvisning</string>
+    <string name="current_reading_display_off">Fra</string>
+    <string name="current_reading_display_line">Tynd streg ved siden af teksten</string>
+    <string name="current_reading_completed">Denne læsning er afsluttet</string>
+</resources>

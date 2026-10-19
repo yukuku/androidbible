@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Visualizzazione della lettura corrente</string>
+    <string name="current_reading_display_off">Disattivato</string>
+    <string name="current_reading_display_line">Linea sottile accanto al testo</string>
+    <string name="current_reading_completed">Questa lettura è completata</string>
+</resources>

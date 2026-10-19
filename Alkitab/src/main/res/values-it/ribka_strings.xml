@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT correzioni</string>
+    <string name="ribka_menu_report">AYT correzioni</string>
+    <string name="ribka_sending_progress">Invio rapporto…</string>
+    <string name="ribka_send_error">Impossibile inviare il rapporto. Controlla la tua connessione Internet.</string>
+    <string name="ribka_send_success">Rapporto inviato. Apri la tua email e fai clic sul collegamento per confermare il rapporto.</string>
+    <string name="ribka_send_failure">Impossibile inviare il rapporto: ^1</string>
+    <string name="ribka_category_typo">Errore di ortografia o punteggiatura</string>
+    <string name="ribka_category_word">Scelta della parola</string>
+    <string name="ribka_category_sentence">Struttura della frase</string>
+    <string name="ribka_category_content">Contenuto (questione teologica o dottrinale)</string>
+    <string name="ribka_category_others">Altro</string>
+    <string name="ribka_category_error">Selezionare un tipo di correzione.</string>
+    <string name="ribka_suggestion_hint">La tua correzione o suggerimento</string>
+    <string name="ribka_suggestion_error">Inserisci la correzione suggerita</string>
+    <string name="ribka_remarks_hint">Motivo o osservazioni (facoltativo)</string>
+    <string name="ribka_email_hint">E-mail</string>
+    <string name="ribka_email_error">Inserisci un indirizzo email valido</string>
+    <string name="ribka_submit_button">Invia</string>
+    <string name="ribka_suggestion_intro">Istruzioni: modifica <b>solo</b> la parte del versetto che ritieni necessiti di correzione o miglioramento.</string>
+</resources>

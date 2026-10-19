@@ -27,4 +27,21 @@
     <string name="pref_showHiddenVersion_title">Aktiveer moontlik beperkte/geslote weergawes</string>
     <string name="pref_selectedVerseBgColor_title">Gekose vers agtergrond</string>
     <string name="pref_forceFontScale_title">UI Teks grootte</string>
+    <string name="pref_data_transfer">Data-oordrag</string>
+    <string name="pref_data_transfer_export_title">Voer data uit</string>
+    <string name="pref_data_transfer_import_title">Voer data in</string>
+    <string name="pref_experimental">Eksperimentele kenmerke</string>
+    <string name="pref_experimental_warning">Kan onstabiel wees. Deaktiveer as jy probleme ondervind.</string>
+    <string name="pref_debugRubyGeometry_title">Ontfout robyn meetkunde</string>
+    <string name="pref_debugRubyGeometry_summary">Teken bokse om elke reël, basisteks en ruby uitspraakteks op die skerm. Skryf die metings na die stelsellogboek met die merker RubyGeom. Tik \'n vers om sy afmetings na die knipbord te kopieer. Slegs vir ontfouting van ruby teksplasing; hou hierdie opsie gedeaktiveer.</string>
+    <string name="pref_useLegacyVerseItem_title">Vers (nalatenskap sienings)</string>
+    <string name="pref_useLegacyVerseItem_summary">Wys die Bybelteks met die erfenis-aansig-gebaseerde verselys in plaas van die volledig Jetpack Compose-gebaseerde een. Tree in werking wanneer die leserskerm weer oopgemaak word.</string>
+    <string name="pref_useLegacyGoto_title">Navigasie (verouderde aansigte)</string>
+    <string name="pref_useLegacyGoto_summary">Wys die verouderde oortjie-gebaseerde navigasieskerm in plaas van die Jetpack Compose een.</string>
+    <string name="pref_useLegacyToolbar_title">Leser-nutsbalk (erfenisaansigte)</string>
+    <string name="pref_useLegacyToolbar_summary">Teken die leesskermnutsbalk met die verouderde aansig in plaas van Jetpack Compose. Tree in werking nadat die leesskerm weer oopgemaak is.</string>
+    <string name="pref_useLegacySong_title">Liedjie lirieke (nalatenskap kyke)</string>
+    <string name="pref_useLegacySong_summary">Gee liedjie lirieke met die nalatenskap WebView (HTML/CSS) in plaas van oorspronklik met Jetpack Compose. Maak \'n liedjie oop om die verandering te sien.</string>
+    <string name="pref_useLegacySyncLogin_title">Sinkroniseer aanmelding (verouderde aansigte)</string>
+    <string name="pref_useLegacySyncLogin_summary">Wys die verouderde sinchronisasie-aanmeldskerm in plaas van die Jetpack Compose een, wat \'n wys/versteek wagwoordwissel en \'n inlyn bevestig-wagwoord-veld het.</string>
 </resources>

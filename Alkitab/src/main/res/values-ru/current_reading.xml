@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Отображение текущих показаний</string>
+    <string name="current_reading_display_off">Выкл.</string>
+    <string name="current_reading_display_line">Тонкая линия рядом с текстом</string>
+    <string name="current_reading_completed">Чтение завершено</string>
+</resources>

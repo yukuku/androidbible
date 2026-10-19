@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Paganahin ang posibleng limitadong mga bersyon</string>
     <string name="pref_selectedVerseBgColor_title">Napiling background ng taludtod</string>
     <string name="pref_forceFontScale_title">UI laki ng teksto</string>
+    <string name="pref_data_transfer">Paglipat ng data</string>
+    <string name="pref_data_transfer_export_title">I-export ang data</string>
+    <string name="pref_data_transfer_import_title">Mag-import ng data</string>
+    <string name="pref_experimental">Mga pang-eksperimentong tampok</string>
+    <string name="pref_experimental_warning">Maaaring hindi matatag. I-disable kung may mga isyu ka.</string>
+    <string name="pref_debugRubyGeometry_title">I-debug ang ruby ​​geometry</string>
+    <string name="pref_debugRubyGeometry_summary">Gumuhit ng mga kahon sa paligid ng bawat linya, base na text, at ruby text ng pagbigkas sa screen. Isulat ang mga sukat sa log ng system na may tag na RubyGeom. I-tap ang isang taludtod para kopyahin ang mga sukat nito sa clipboard. Para sa pag-debug ng ruby text placement lamang; panatilihing naka-disable ang opsyong ito.</string>
+    <string name="pref_useLegacyVerseItem_title">Talata (mga legacy view)</string>
+    <string name="pref_useLegacyVerseItem_summary">Ipakita ang teksto ng Bibliya na may legacy na view-based na listahan ng talata sa halip na ang ganap na Jetpack Compose-based. Magkakabisa kapag muling binuksan ang screen ng reader.</string>
+    <string name="pref_useLegacyGoto_title">Navigation (mga legacy view)</string>
+    <string name="pref_useLegacyGoto_summary">Ipakita ang legacy na tab-based na Navigation screen sa halip na ang Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Toolbar ng mambabasa (mga legacy view)</string>
+    <string name="pref_useLegacyToolbar_summary">Iguhit ang reading screen toolbar gamit ang legacy view sa halip na Jetpack Compose. Magkakabisa pagkatapos mabuksan muli ang screen ng pagbabasa.</string>
+    <string name="pref_useLegacySong_title">Lyrics ng kanta (mga legacy view)</string>
+    <string name="pref_useLegacySong_summary">I-render ang lyrics ng kanta na may legacy na WebView (HTML/CSS) sa halip na native na may Jetpack Compose. Magbukas ng kanta para makita ang pagbabago.</string>
+    <string name="pref_useLegacySyncLogin_title">I-sync ang pag-login (mga legacy na view)</string>
+    <string name="pref_useLegacySyncLogin_summary">Ipakita ang legacy sync login screen sa halip na ang Jetpack Compose isa, na mayroong show/hide password toggle at inline confirm-password field.</string>
 </resources>

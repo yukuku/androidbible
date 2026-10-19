@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Schakel mogelijk beperkte versies in</string>
     <string name="pref_selectedVerseBgColor_title">Selecteer de achtergrond van het vers</string>
     <string name="pref_forceFontScale_title">App tekstgrootte</string>
+    <string name="pref_data_transfer">Gegevensoverdracht</string>
+    <string name="pref_data_transfer_export_title">Gegevens exporteren</string>
+    <string name="pref_data_transfer_import_title">Gegevens importeren</string>
+    <string name="pref_experimental">Experimentele functies</string>
+    <string name="pref_experimental_warning">Mogelijk onstabiel. Schakel uit als u problemen ondervindt.</string>
+    <string name="pref_debugRubyGeometry_title">Debug de robijngeometrie</string>
+    <string name="pref_debugRubyGeometry_summary">Teken kaders rond elke regel, basistekst en ruby uitspraaktekst op het scherm. Schrijf de metingen naar het systeemlogboek met de tag RubyGeom. Tik op een vers om de afmetingen ervan naar het klembord te kopiëren. Alleen voor het debuggen van ruby tekstplaatsing; houd deze optie uitgeschakeld.</string>
+    <string name="pref_useLegacyVerseItem_title">Vers (verouderde weergaven)</string>
+    <string name="pref_useLegacyVerseItem_summary">Toon de Bijbeltekst met de oude op weergaven gebaseerde verslijst in plaats van de volledig op Jetpack Compose gebaseerde lijst. Wordt van kracht zodra het lezerscherm opnieuw wordt geopend.</string>
+    <string name="pref_useLegacyGoto_title">Navigatie (verouderde weergaven)</string>
+    <string name="pref_useLegacyGoto_summary">Toon het oude, op tabbladen gebaseerde navigatiescherm in plaats van het Jetpack Compose-scherm.</string>
+    <string name="pref_useLegacyToolbar_title">Lezerwerkbalk (verouderde weergaven)</string>
+    <string name="pref_useLegacyToolbar_summary">Teken de werkbalk van het leesscherm met de oude weergave in plaats van Jetpack Compose. Treedt in werking nadat het leesscherm opnieuw is geopend.</string>
+    <string name="pref_useLegacySong_title">Songteksten (verouderde weergaven)</string>
+    <string name="pref_useLegacySong_summary">Geef songteksten weer met de oude WebView (HTML/CSS) in plaats van native met Jetpack Compose. Open een nummer om de verandering te zien.</string>
+    <string name="pref_useLegacySyncLogin_title">Inloggen synchroniseren (verouderde weergaven)</string>
+    <string name="pref_useLegacySyncLogin_summary">Toon het oude inlogscherm voor synchronisatie in plaats van het scherm Jetpack Compose, dat een schakelaar voor het tonen/verbergen van wachtwoorden en een inline veld voor het bevestigen van het wachtwoord heeft.</string>
 </resources>

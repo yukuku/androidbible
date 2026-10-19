@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT rettelser</string>
+    <string name="ribka_menu_report">AYT rettelser</string>
+    <string name="ribka_sending_progress">Sender rapport…</string>
+    <string name="ribka_send_error">Kunne ikke sende rapporten. Tjek din internetforbindelse.</string>
+    <string name="ribka_send_success">Rapport sendt. Åbn din e-mail, og klik på linket for at bekræfte rapporten.</string>
+    <string name="ribka_send_failure">Kunne ikke sende rapporten: ^1</string>
+    <string name="ribka_category_typo">Stave- eller tegnsætningsfejl</string>
+    <string name="ribka_category_word">Ordvalg</string>
+    <string name="ribka_category_sentence">Sætningsstruktur</string>
+    <string name="ribka_category_content">Indhold (teologisk eller doktrinært spørgsmål)</string>
+    <string name="ribka_category_others">Andet</string>
+    <string name="ribka_category_error">Vælg en korrektionstype.</string>
+    <string name="ribka_suggestion_hint">Din rettelse eller forslag</string>
+    <string name="ribka_suggestion_error">Indtast din foreslåede rettelse</string>
+    <string name="ribka_remarks_hint">Årsag eller bemærkninger (valgfrit)</string>
+    <string name="ribka_email_hint">E-mail</string>
+    <string name="ribka_email_error">Indtast en gyldig e-mailadresse</string>
+    <string name="ribka_submit_button">Send</string>
+    <string name="ribka_suggestion_intro">Instruktioner: Rediger <b>kun</b> den del af verset, som du mener skal rettes eller forbedres.</string>
+</resources>

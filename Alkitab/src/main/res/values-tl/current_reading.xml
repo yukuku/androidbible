@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Kasalukuyang display ng pagbabasa</string>
+    <string name="current_reading_display_off">Naka-off</string>
+    <string name="current_reading_display_line">Manipis na linya sa tabi ng teksto</string>
+    <string name="current_reading_completed">Nakumpleto na ang pagbasang ito</string>
+</resources>

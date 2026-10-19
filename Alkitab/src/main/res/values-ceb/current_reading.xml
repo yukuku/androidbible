@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Kasamtangang display sa pagbasa</string>
+    <string name="current_reading_display_off">Wala</string>
+    <string name="current_reading_display_line">Nipis nga linya tapad sa teksto</string>
+    <string name="current_reading_completed">Kini nga pagbasa nahuman na</string>
+</resources>

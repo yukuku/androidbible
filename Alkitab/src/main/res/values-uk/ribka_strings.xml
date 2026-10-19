@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT виправлень</string>
+    <string name="ribka_menu_report">AYT виправлень</string>
+    <string name="ribka_sending_progress">Надсилання звіту…</string>
+    <string name="ribka_send_error">Не вдалося надіслати звіт. Перевірте підключення до Інтернету.</string>
+    <string name="ribka_send_success">Звіт надіслано. Відкрийте свою електронну пошту та натисніть посилання, щоб підтвердити звіт.</string>
+    <string name="ribka_send_failure">Не вдалося надіслати звіт: ^1</string>
+    <string name="ribka_category_typo">Орфографічна або пунктуаційна помилка</string>
+    <string name="ribka_category_word">Вибір слів</string>
+    <string name="ribka_category_sentence">Структура речення</string>
+    <string name="ribka_category_content">Зміст (богословське або доктринальне питання)</string>
+    <string name="ribka_category_others">Інше</string>
+    <string name="ribka_category_error">Виберіть тип корекції.</string>
+    <string name="ribka_suggestion_hint">Ваше виправлення чи пропозиція</string>
+    <string name="ribka_suggestion_error">Введіть запропоноване виправлення</string>
+    <string name="ribka_remarks_hint">Причина або зауваження (необов\'язково)</string>
+    <string name="ribka_email_hint">Електронна пошта</string>
+    <string name="ribka_email_error">Введіть дійсну адресу електронної пошти</string>
+    <string name="ribka_submit_button">Надіслати</string>
+    <string name="ribka_suggestion_intro">Інструкції: редагуйте <b>тільки</b> ту частину вірша, яка, на вашу думку, потребує виправлення чи покращення.</string>
+</resources>

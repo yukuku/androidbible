@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT 更正</string>
+    <string name="ribka_menu_report">AYT 更正</string>
+    <string name="ribka_sending_progress">正在发送报告…</string>
+    <string name="ribka_send_error">无法发送报告。检查您的互联网连接。</string>
+    <string name="ribka_send_success">报告已发送。打开您的电子邮件并单击链接以确认报告。</string>
+    <string name="ribka_send_failure">无法发送报告：^1</string>
+    <string name="ribka_category_typo">拼写或标点错误</string>
+    <string name="ribka_category_word">单词选择</string>
+    <string name="ribka_category_sentence">句子结构</string>
+    <string name="ribka_category_content">内容（神学或教义问题）</string>
+    <string name="ribka_category_others">其他</string>
+    <string name="ribka_category_error">选择修正类型。</string>
+    <string name="ribka_suggestion_hint">您的更正或建议</string>
+    <string name="ribka_suggestion_error">输入您建议的更正</string>
+    <string name="ribka_remarks_hint">原因或备注（可选）</string>
+    <string name="ribka_email_hint">电子邮件</string>
+    <string name="ribka_email_error">输入有效的电子邮件地址</string>
+    <string name="ribka_submit_button">发送</string>
+    <string name="ribka_suggestion_intro">说明：<b>仅</b>编辑您认为需要更正或改进的经文部分。</string>
+</resources>

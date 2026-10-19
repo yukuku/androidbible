@@ -84,7 +84,7 @@ public class SyncSettingsActivity extends BaseActivity {
 							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_never));
 						} else {
 							final Date date = Sqlitil.toDate(time);
-							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), 	App.services.storage.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName)));
+							pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), 	Integer.toString(App.services.storage.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName))));
 						}
 					}
 				} else {

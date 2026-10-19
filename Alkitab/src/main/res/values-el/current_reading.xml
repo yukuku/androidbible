@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Τρέχουσα ένδειξη ανάγνωσης</string>
+    <string name="current_reading_display_off">Απενεργοποίηση</string>
+    <string name="current_reading_display_line">Λεπτή γραμμή δίπλα στο κείμενο</string>
+    <string name="current_reading_completed">Αυτή η ανάγνωση ολοκληρώθηκε</string>
+</resources>

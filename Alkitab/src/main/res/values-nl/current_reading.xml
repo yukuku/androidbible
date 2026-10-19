@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Weergave huidige meetwaarde</string>
+    <string name="current_reading_display_off">Uit</string>
+    <string name="current_reading_display_line">Dunne lijn naast de tekst</string>
+    <string name="current_reading_completed">Deze lezing is voltooid</string>
+</resources>

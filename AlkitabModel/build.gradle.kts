@@ -21,7 +21,8 @@ android {
     }
     namespace = "yuku.alkitab.model"
     lint {
-        abortOnError = false
+        abortOnError = true
+        fatal += setOf("NewApi", "InlinedApi")
     }
 }
 

@@ -4,11 +4,11 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.view.ActionMode
-import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.widget.Toolbar
 
 class ReaderSelectionActionMode(
     private val toolbar: Toolbar,
+    private val inflater: MenuInflater,
     private val callback: Callback,
 ) : ActionMode() {
     private var isFinished = false
@@ -36,7 +36,7 @@ class ReaderSelectionActionMode(
     }
 
     override fun getMenu(): Menu = toolbar.menu
-    override fun getMenuInflater(): MenuInflater = SupportMenuInflater(toolbar.context)
+    override fun getMenuInflater(): MenuInflater = inflater
     override fun getTitle(): CharSequence? = toolbar.title
     override fun setTitle(title: CharSequence?) { toolbar.title = title }
     override fun setTitle(resId: Int) { toolbar.setTitle(resId) }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT düzeltmeler</string>
+    <string name="ribka_menu_report">AYT düzeltmeler</string>
+    <string name="ribka_sending_progress">Rapor gönderiliyor…</string>
+    <string name="ribka_send_error">Rapor gönderilemedi. İnternet bağlantınızı kontrol edin.</string>
+    <string name="ribka_send_success">Rapor gönderildi. E-postanızı açın ve raporu onaylamak için bağlantıya tıklayın.</string>
+    <string name="ribka_send_failure">Rapor gönderilemedi: ^1</string>
+    <string name="ribka_category_typo">Yazım veya noktalama hatası</string>
+    <string name="ribka_category_word">Kelime seçimi</string>
+    <string name="ribka_category_sentence">Cümle yapısı</string>
+    <string name="ribka_category_content">İçerik (teolojik veya doktrinsel konu)</string>
+    <string name="ribka_category_others">Diğer</string>
+    <string name="ribka_category_error">Bir düzeltme türü seçin.</string>
+    <string name="ribka_suggestion_hint">Düzeltmeniz veya öneriniz</string>
+    <string name="ribka_suggestion_error">Önerilen düzeltmenizi girin</string>
+    <string name="ribka_remarks_hint">Sebep veya açıklamalar (isteğe bağlı)</string>
+    <string name="ribka_email_hint">E-posta</string>
+    <string name="ribka_email_error">Geçerli bir e-posta adresi girin</string>
+    <string name="ribka_submit_button">Gönder</string>
+    <string name="ribka_suggestion_intro">Talimatlar: Ayetin <b>yalnızca</b> düzeltilmesi veya iyileştirilmesi gerektiğini düşündüğünüz kısmını düzenleyin.</string>
+</resources>

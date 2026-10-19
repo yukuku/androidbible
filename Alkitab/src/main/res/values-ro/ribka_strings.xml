@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT corecții</string>
+    <string name="ribka_menu_report">AYT corecții</string>
+    <string name="ribka_sending_progress">Se trimite raportul…</string>
+    <string name="ribka_send_error">Nu s-a putut trimite raportul. Verificați-vă conexiunea la internet.</string>
+    <string name="ribka_send_success">Raport trimis. Deschideți e-mailul și faceți clic pe link pentru a confirma raportul.</string>
+    <string name="ribka_send_failure">Nu s-a putut trimite raportul: ^1</string>
+    <string name="ribka_category_typo">Eroare de ortografie sau de punctuație</string>
+    <string name="ribka_category_word">Alegere cuvânt</string>
+    <string name="ribka_category_sentence">Structura propoziției</string>
+    <string name="ribka_category_content">Conținut (problema teologică sau doctrinară)</string>
+    <string name="ribka_category_others">Altele</string>
+    <string name="ribka_category_error">Selectați un tip de corecție.</string>
+    <string name="ribka_suggestion_intro">Instrucțiuni: Editați <b>numai</b> partea din verset care credeți că trebuie corectată sau îmbunătățită.</string>
+    <string name="ribka_suggestion_hint">Corecția sau sugestia dvs</string>
+    <string name="ribka_suggestion_error">Introduceți corecția sugerată</string>
+    <string name="ribka_remarks_hint">Motiv sau observații (opțional)</string>
+    <string name="ribka_email_hint">E-mail</string>
+    <string name="ribka_email_error">Introdu o adresă de e-mail validă</string>
+    <string name="ribka_submit_button">Trimite</string>
+</resources>

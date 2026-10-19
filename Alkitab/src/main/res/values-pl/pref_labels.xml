@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Uaktywnia wersje, z możliwymi ograniczeniami</string>
     <string name="pref_selectedVerseBgColor_title">Kolor tła dla zaznaczonego tekstu</string>
     <string name="pref_forceFontScale_title">Rozmiar tekstu w interfejsie</string>
+    <string name="pref_data_transfer">Transfer danych</string>
+    <string name="pref_data_transfer_export_title">Eksportuj dane</string>
+    <string name="pref_data_transfer_import_title">Importuj dane</string>
+    <string name="pref_experimental">Funkcje eksperymentalne</string>
+    <string name="pref_experimental_warning">Może działać niestabilnie. Wyłącz, jeśli napotkasz problemy.</string>
+    <string name="pref_debugRubyGeometry_title">Debuguj geometrię Ruby</string>
+    <string name="pref_debugRubyGeometry_summary">Narysuj ramki wokół każdej linii, tekstu podstawowego i tekstu wymowy ruby na ekranie. Zapisz pomiary w dzienniku systemowym ze znacznikiem RubyGeom. Kliknij werset, aby skopiować jego wymiary do schowka. Tylko do debugowania rozmieszczenia tekstu ruby; pozostaw tę opcję wyłączoną.</string>
+    <string name="pref_useLegacyVerseItem_title">Werset (starsze poglądy)</string>
+    <string name="pref_useLegacyVerseItem_summary">Pokaż tekst Biblii ze starszą listą wersetów opartą na widoku zamiast listy opartej w całości na Jetpack Compose. Działa po ponownym otwarciu ekranu czytnika.</string>
+    <string name="pref_useLegacyGoto_title">Nawigacja (starsze widoki)</string>
+    <string name="pref_useLegacyGoto_summary">Wyświetl starszy ekran nawigacji oparty na kartach zamiast ekranu Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Pasek narzędzi czytnika (starsze widoki)</string>
+    <string name="pref_useLegacyToolbar_summary">Narysuj pasek narzędzi ekranu czytania w starszym widoku zamiast Jetpack Compose. Obowiązuje po ponownym otwarciu ekranu odczytu.</string>
+    <string name="pref_useLegacySong_title">Teksty piosenek (starsze widoki)</string>
+    <string name="pref_useLegacySong_summary">Renderuj teksty piosenek ze starszą wersją WebView (HTML/CSS) zamiast natywnie z Jetpack Compose. Otwórz utwór, aby zobaczyć zmianę.</string>
+    <string name="pref_useLegacySyncLogin_title">Synchronizuj logowanie (starsze widoki)</string>
+    <string name="pref_useLegacySyncLogin_summary">Wyświetl starszy ekran logowania do synchronizacji zamiast ekranu Jetpack Compose, który ma przełącznik pokaż/ukryj hasło i wbudowane pole potwierdzenia hasła.</string>
 </resources>

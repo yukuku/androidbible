@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Muhtemelen kısıtlanmış sürümlere izin ver</string>
     <string name="pref_selectedVerseBgColor_title">Ayet arkaplanı seçildi</string>
     <string name="pref_forceFontScale_title">UI yazı boyutu</string>
+    <string name="pref_data_transfer">Veri aktarımı</string>
+    <string name="pref_data_transfer_export_title">Verileri dışa aktar</string>
+    <string name="pref_data_transfer_import_title">Verileri içe aktar</string>
+    <string name="pref_experimental">Deneysel özellikler</string>
+    <string name="pref_experimental_warning">Kararsız olabilir. Sorunlarla karşılaşırsanız devre dışı bırakın.</string>
+    <string name="pref_debugRubyGeometry_title">Ruby geometrisinde hata ayıklama</string>
+    <string name="pref_debugRubyGeometry_summary">Ekrandaki her satırın, temel metnin ve ruby telaffuz metninin etrafına kutular çizin. Ölçümleri RubyGeom etiketiyle sistem günlüğüne yazın. Ölçülerini panoya kopyalamak için bir ayete dokunun. Yalnızca ruby metin yerleşiminde hata ayıklamak için; bu seçeneği devre dışı bırakın.</string>
+    <string name="pref_useLegacyVerseItem_title">Ayet (eski görünümler)</string>
+    <string name="pref_useLegacyVerseItem_summary">Kutsal Kitap metnini tamamen Jetpack Compose tabanlı liste yerine eski görünüm tabanlı ayet listesiyle gösterin. Okuyucu ekranı yeniden açıldığında etkili olur.</string>
+    <string name="pref_useLegacyGoto_title">Gezinme (eski görünümler)</string>
+    <string name="pref_useLegacyGoto_summary">Jetpack Compose yerine eski sekme tabanlı Navigasyon ekranını göster.</string>
+    <string name="pref_useLegacyToolbar_title">Okuyucu araç çubuğu (eski görünümler)</string>
+    <string name="pref_useLegacyToolbar_summary">Okuma ekranı araç çubuğunu Jetpack Compose yerine eski görünümle çizin. Okuma ekranı yeniden açıldıktan sonra geçerli olur.</string>
+    <string name="pref_useLegacySong_title">Şarkı sözleri (eski görüntülemeler)</string>
+    <string name="pref_useLegacySong_summary">Şarkı sözlerini yerel olarak Jetpack Compose yerine eski WebView (HTML/CSS) ile işleyin. Değişikliği görmek için bir şarkı açın.</string>
+    <string name="pref_useLegacySyncLogin_title">Senkronizasyon girişi (eski görünümler)</string>
+    <string name="pref_useLegacySyncLogin_summary">Parolayı göster/gizle seçeneği ve satır içi parola onaylama alanı bulunan Jetpack Compose ekranı yerine eski senkronizasyon oturum açma ekranını göster.</string>
 </resources>

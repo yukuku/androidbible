@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT корекции</string>
+    <string name="ribka_menu_report">AYT корекции</string>
+    <string name="ribka_sending_progress">Изпращане на отчет…</string>
+    <string name="ribka_send_error">Отчетът не можа да бъде изпратен. Проверете вашата интернет връзка.</string>
+    <string name="ribka_send_success">Докладът е изпратен. Отворете имейла си и щракнете върху връзката, за да потвърдите отчета.</string>
+    <string name="ribka_send_failure">Отчетът не можа да бъде изпратен: ^1</string>
+    <string name="ribka_category_typo">Правописна или пунктуационна грешка</string>
+    <string name="ribka_category_word">Избор на дума</string>
+    <string name="ribka_category_sentence">Структура на изречението</string>
+    <string name="ribka_category_content">Съдържание (теологичен или доктринален въпрос)</string>
+    <string name="ribka_category_others">Друго</string>
+    <string name="ribka_category_error">Изберете тип корекция.</string>
+    <string name="ribka_suggestion_hint">Вашата корекция или предложение</string>
+    <string name="ribka_suggestion_error">Въведете предложената от вас корекция</string>
+    <string name="ribka_remarks_hint">Причина или забележки (по избор)</string>
+    <string name="ribka_email_hint">Имейл</string>
+    <string name="ribka_email_error">Въведете валиден имейл адрес</string>
+    <string name="ribka_submit_button">Изпрати</string>
+    <string name="ribka_suggestion_intro">Инструкции: Редактирайте <b>само</b> частта от стиха, която смятате, че има нужда от корекция или подобрение.</string>
+</resources>

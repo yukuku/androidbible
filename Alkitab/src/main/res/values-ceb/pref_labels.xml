@@ -27,4 +27,21 @@
     <string name="pref_showHiddenVersion_title">Makahimo og posibilidad na gipugngan ang mga bersyon</string>
     <string name="pref_selectedVerseBgColor_title">Napiling background sa bersikulo</string>
     <string name="pref_forceFontScale_title">UI gidak-on sa teksto</string>
+    <string name="pref_data_transfer">Pagbalhin sa datos</string>
+    <string name="pref_data_transfer_export_title">I-export ang datos</string>
+    <string name="pref_data_transfer_import_title">Import data</string>
+    <string name="pref_experimental">Eksperimento nga mga bahin</string>
+    <string name="pref_experimental_warning">Mahimong dili lig-on. I-disable kung naigo ka sa mga isyu.</string>
+    <string name="pref_debugRubyGeometry_title">Debug ruby geometry</string>
+    <string name="pref_debugRubyGeometry_summary">Pagdrowing og mga kahon palibot sa matag linya, base nga teksto, ug ruby nga teksto sa paglitok sa screen. Isulat ang mga sukod sa system log nga adunay tag RubyGeom. Pag-tap sa usa ka bersikulo aron kopyahon ang mga sukod niini sa clipboard. Alang sa pag-debug sa ruby nga pagbutang sa teksto lamang; ipadayon kini nga opsyon nga dili ma-disable.</string>
+    <string name="pref_useLegacyVerseItem_title">Bersikulo (panulundon nga pagtan-aw)</string>
+    <string name="pref_useLegacyVerseItem_summary">Ipakita ang teksto sa Bibliya nga adunay lista sa bersikulo nga gibase sa panulundon nga panglantaw imbes nga ang bug-os nga Jetpack Compose nga gibase. Moepekto kung ang screen sa magbabasa giablihan pag-usab.</string>
+    <string name="pref_useLegacyGoto_title">Nabigasyon (panan-aw sa panulundon)</string>
+    <string name="pref_useLegacyGoto_summary">Ipakita ang legacy tab-based Navigation screen imbes nga ang Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Toolbar sa magbabasa (panan-aw sa panulundon)</string>
+    <string name="pref_useLegacyToolbar_summary">Idrowing ang reading screen toolbar gamit ang legacy view imbes nga Jetpack Compose. Moepekto human maablihan pag-usab ang screen sa pagbasa.</string>
+    <string name="pref_useLegacySong_title">Mga liriko sa kanta (panan-aw sa panulundon)</string>
+    <string name="pref_useLegacySong_summary">I-render ang liriko sa kanta nga adunay kabilin nga WebView (HTML/CSS) imbes nga lumad nga adunay Jetpack Compose. Ablihi ang usa ka kanta aron makita ang pagbag-o.</string>
+    <string name="pref_useLegacySyncLogin_title">Pag-sync sa pag-login (panan-aw sa panulundon)</string>
+    <string name="pref_useLegacySyncLogin_summary">Ipakita ang legacy sync login screen imbes ang Jetpack Compose nga usa, nga adunay show/hide password toggle ug inline confirm-password field.</string>
 </resources>

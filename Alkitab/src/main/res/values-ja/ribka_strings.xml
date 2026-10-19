@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT の修正</string>
+    <string name="ribka_menu_report">AYT の修正</string>
+    <string name="ribka_sending_progress">レポートを送信中…</string>
+    <string name="ribka_send_error">レポートを送信できませんでした。インターネット接続を確認してください。</string>
+    <string name="ribka_send_success">レポートが送信されました。電子メールを開き、リンクをクリックしてレポートを確認します。</string>
+    <string name="ribka_send_failure">レポートを送信できませんでした: ^1</string>
+    <string name="ribka_category_typo">スペルまたは句読点の誤り</string>
+    <string name="ribka_category_word">言葉の選択</string>
+    <string name="ribka_category_sentence">文の構造</string>
+    <string name="ribka_category_content">コンテンツ (神学的または教義上の問題)</string>
+    <string name="ribka_category_others">その他</string>
+    <string name="ribka_category_error">補正の種類を選択します。</string>
+    <string name="ribka_suggestion_hint">あなたの修正または提案</string>
+    <string name="ribka_suggestion_error">修正案を入力してください</string>
+    <string name="ribka_remarks_hint">理由または備考 (任意)</string>
+    <string name="ribka_email_hint">メール</string>
+    <string name="ribka_email_error">有効な電子メール アドレスを入力してください</string>
+    <string name="ribka_submit_button">送信</string>
+    <string name="ribka_suggestion_intro">修正や改善が必要と思われる聖句の部分<b>のみ</b>を編集してください。</string>
+</resources>

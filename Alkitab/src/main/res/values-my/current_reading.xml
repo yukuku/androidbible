@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">လက်ရှိဖတ်နေသည့် မျက်နှာပြင်</string>
+    <string name="current_reading_display_off">ပိတ်</string>
+    <string name="current_reading_display_line">စာသားဘေးရှိ မျဉ်းပါးပါး</string>
+    <string name="current_reading_completed">ဤစာဖတ်ခြင်း ပြီးပါပြီ။</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Zobrazení aktuální hodnoty</string>
+    <string name="current_reading_display_off">Vypnuto</string>
+    <string name="current_reading_display_line">Tenká čára vedle textu</string>
+    <string name="current_reading_completed">Toto čtení je dokončeno</string>
+</resources>

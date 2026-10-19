@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT 수정</string>
+    <string name="ribka_menu_report">AYT 수정</string>
+    <string name="ribka_sending_progress">보고서를 보내는 중…</string>
+    <string name="ribka_send_error">보고서를 보낼 수 없습니다. 인터넷 연결을 확인하세요.</string>
+    <string name="ribka_send_success">보고서가 전송되었습니다. 이메일을 열고 링크를 클릭하여 보고서를 확인하세요.</string>
+    <string name="ribka_send_failure">보고서를 보낼 수 없습니다: ^1</string>
+    <string name="ribka_category_typo">철자 또는 구두점 오류</string>
+    <string name="ribka_category_word">단어 선택</string>
+    <string name="ribka_category_sentence">문장 구조</string>
+    <string name="ribka_category_content">내용(신학적 또는 교리적 문제)</string>
+    <string name="ribka_category_others">기타</string>
+    <string name="ribka_category_error">보정 유형을 선택합니다.</string>
+    <string name="ribka_suggestion_hint">귀하의 정정 또는 제안</string>
+    <string name="ribka_suggestion_error">제안된 수정 사항을 입력하세요.</string>
+    <string name="ribka_remarks_hint">사유 또는 비고(선택사항)</string>
+    <string name="ribka_email_hint">이메일</string>
+    <string name="ribka_email_error">유효한 이메일 주소를 입력하세요</string>
+    <string name="ribka_submit_button">보내기</string>
+    <string name="ribka_suggestion_intro">수정이나 개선이 필요하다고 생각되는 구절의 부분<b>만</b> 편집하세요.</string>
+</resources>

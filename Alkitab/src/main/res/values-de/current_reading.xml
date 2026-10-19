@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Aktuelle Messwertanzeige</string>
+    <string name="current_reading_display_off">Aus</string>
+    <string name="current_reading_display_line">Dünne Linie neben dem Text</string>
+    <string name="current_reading_completed">Diese Lesung ist abgeschlossen</string>
+</resources>

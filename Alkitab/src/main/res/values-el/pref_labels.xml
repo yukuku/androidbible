@@ -26,4 +26,21 @@
     <string name="pref_showHiddenVersion_title">Ενεργοποιήστε πιθανές εκδόσεις που έχουν απαγορευτεί</string>
     <string name="pref_selectedVerseBgColor_title">Επιλογή νοήματος στίχου</string>
     <string name="pref_forceFontScale_title">Μέγεθος κειμένου UI</string>
+    <string name="pref_data_transfer">Μεταφορά δεδομένων</string>
+    <string name="pref_data_transfer_export_title">Εξαγωγή δεδομένων</string>
+    <string name="pref_data_transfer_import_title">Εισαγωγή δεδομένων</string>
+    <string name="pref_experimental">Πειραματικά χαρακτηριστικά</string>
+    <string name="pref_experimental_warning">Μπορεί να είναι ασταθής. Απενεργοποιήστε εάν αντιμετωπίσετε προβλήματα.</string>
+    <string name="pref_debugRubyGeometry_title">Εντοπισμός σφαλμάτων της ρουμπινιάς γεωμετρίας</string>
+    <string name="pref_debugRubyGeometry_summary">Σχεδιάστε πλαίσια γύρω από κάθε γραμμή, βασικό κείμενο και κείμενο προφοράς ruby στην οθόνη. Γράψτε τις μετρήσεις στο αρχείο καταγραφής συστήματος με την ετικέτα RubyGeom. Πατήστε έναν στίχο για να αντιγράψετε τις μετρήσεις του στο πρόχειρο. Μόνο για εντοπισμό σφαλμάτων ruby τοποθέτησης κειμένου. κρατήστε αυτή την επιλογή απενεργοποιημένη.</string>
+    <string name="pref_useLegacyVerseItem_title">Στίχος (προβολές παλαιού τύπου)</string>
+    <string name="pref_useLegacyVerseItem_summary">Εμφάνιση του κειμένου της Αγίας Γραφής με τη λίστα στίχων που βασίζεται σε προβολές παλαιού τύπου αντί για τη λίστα που βασίζεται πλήρως σε Jetpack Compose. Εφαρμόζεται όταν ανοίξει ξανά η οθόνη του προγράμματος ανάγνωσης.</string>
+    <string name="pref_useLegacyGoto_title">Πλοήγηση (προβολές παλαιού τύπου)</string>
+    <string name="pref_useLegacyGoto_summary">Εμφάνιση της οθόνης πλοήγησης που βασίζεται σε καρτέλες παλαιού τύπου αντί της Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Γραμμή εργαλείων αναγνώστη (προβολές παλαιού τύπου)</string>
+    <string name="pref_useLegacyToolbar_summary">Σχεδιάστε τη γραμμή εργαλείων της οθόνης ανάγνωσης με την προβολή παλαιού τύπου αντί για Jetpack Compose. Εφαρμόζεται μετά το άνοιγμα της οθόνης ανάγνωσης.</string>
+    <string name="pref_useLegacySong_title">Στίχοι τραγουδιού (προβολές παλαιού τύπου)</string>
+    <string name="pref_useLegacySong_summary">Αποδώστε τους στίχους τραγουδιού με το παλαιού τύπου WebView (HTML/CSS) αντί για εγγενή με Jetpack Compose. Ανοίξτε ένα τραγούδι για να δείτε την αλλαγή.</string>
+    <string name="pref_useLegacySyncLogin_title">Συγχρονισμός σύνδεσης (προβολές παλαιού τύπου)</string>
+    <string name="pref_useLegacySyncLogin_summary">Εμφάνιση της οθόνης σύνδεσης συγχρονισμού παλαιού τύπου αντί για την Jetpack Compose, η οποία διαθέτει εναλλαγή κωδικού πρόσβασης εμφάνισης/απόκρυψης και ενσωματωμένο πεδίο επιβεβαίωσης-κωδικού πρόσβασης.</string>
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Pašreizējā rādījuma displejs</string>
+    <string name="current_reading_display_off">Izslēgts</string>
+    <string name="current_reading_display_line">Plāna līnija blakus tekstam</string>
+    <string name="current_reading_completed">Šis lasījums ir pabeigts</string>
+</resources>

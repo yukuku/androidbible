@@ -38,8 +38,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -67,7 +67,7 @@ fun DirectTab(
     isActive: Boolean,
     onGotoFinished: OnGotoFinished,
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     val inInspection = LocalInspectionMode.current
     val books = remember(inInspection) {
         if (inInspection) previewDirectBooks() else App.services.versions.activeVersion().consecutiveBooks
@@ -101,7 +101,7 @@ fun DirectTab(
             App.services.versions.activeVersion().reference(initialBookId, initialChapter_1, initialVerse_1)
         }
     }
-    val prompt = TextUtils.expandTemplate(context.getText(R.string.jump_to_prompt), sample)
+    val prompt = TextUtils.expandTemplate(resources.getText(R.string.jump_to_prompt), sample)
         .toAnnotatedString()
 
     fun submit() {

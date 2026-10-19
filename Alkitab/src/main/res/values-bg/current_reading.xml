@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_currentReadingDisplay_title">Показване на текущо показание</string>
+    <string name="current_reading_display_off">Изкл</string>
+    <string name="current_reading_display_line">Тънка линия до текста</string>
+    <string name="current_reading_completed">Това четене е завършено</string>
+</resources>

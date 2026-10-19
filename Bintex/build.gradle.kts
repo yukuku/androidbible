@@ -20,7 +20,8 @@ android {
     }
     namespace = "yuku.bintex.reader"
     lint {
-        abortOnError = false
+        abortOnError = true
+        fatal += setOf("NewApi", "InlinedApi")
     }
 }
 

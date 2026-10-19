@@ -27,4 +27,21 @@
     <string name="pref_showHiddenVersion_title">Ieslēgt iespējams ierobežotas versijas</string>
     <string name="pref_selectedVerseBgColor_title">Izvēlētā panta fons</string>
     <string name="pref_forceFontScale_title">Lietotājinterfeisa teksta izmēts</string>
+    <string name="pref_data_transfer">Datu pārsūtīšana</string>
+    <string name="pref_data_transfer_export_title">Eksportēt datus</string>
+    <string name="pref_data_transfer_import_title">Importēt datus</string>
+    <string name="pref_experimental">Eksperimentālās iespējas</string>
+    <string name="pref_experimental_warning">Var būt nestabils. Atspējojiet, ja rodas problēmas.</string>
+    <string name="pref_debugRubyGeometry_title">Rubīna ģeometrijas atkļūdošana</string>
+    <string name="pref_debugRubyGeometry_summary">Uzzīmējiet lodziņus ap katru rindiņu, pamattekstu un ruby izrunas tekstu ekrānā. Ierakstiet mērījumus sistēmas žurnālā ar tagu RubyGeom. Pieskarieties pantam, lai kopētu tā mērījumus starpliktuvē. Tikai ruby teksta izvietojuma atkļūdošanai; paturiet šo opciju atspējotu.</string>
+    <string name="pref_useLegacyVerseItem_title">Pants (mantotie skati)</string>
+    <string name="pref_useLegacyVerseItem_summary">Parādiet Bībeles tekstu ar mantojumu, kas balstīts uz skatījumu, nevis pilnībā uz Jetpack Compose balstītu pantu sarakstu. Stājas spēkā, kad lasītāja ekrāns tiek atkārtoti atvērts.</string>
+    <string name="pref_useLegacyGoto_title">Navigācija (mantotie skati)</string>
+    <string name="pref_useLegacyGoto_summary">Rādīt mantoto cilnes navigācijas ekrānu, nevis Jetpack Compose.</string>
+    <string name="pref_useLegacyToolbar_title">Lasītāja rīkjosla (mantotie skati)</string>
+    <string name="pref_useLegacyToolbar_summary">Zīmējiet lasīšanas ekrāna rīkjoslu, izmantojot mantoto skatu, nevis Jetpack Compose. Stājas spēkā pēc lasīšanas ekrāna atkārtotas atvēršanas.</string>
+    <string name="pref_useLegacySong_title">Dziesmu vārdi (mantotie skatījumi)</string>
+    <string name="pref_useLegacySong_summary">Renderējiet dziesmu vārdus ar mantoto WebView (HTML/CSS), nevis native ar Jetpack Compose. Atveriet dziesmu, lai redzētu izmaiņas.</string>
+    <string name="pref_useLegacySyncLogin_title">Sinhronizēt pieteikšanos (mantotie skati)</string>
+    <string name="pref_useLegacySyncLogin_summary">Rādīt mantoto sinhronizācijas pieteikšanās ekrānu, nevis ekrānu Jetpack Compose, kuram ir slēdža rādīšana/slēpšana parolei un iekļauts apstiprinājuma paroles lauks.</string>
 </resources>

@@ -37,14 +37,14 @@ public class AttributeView extends View {
 
 	static {
 		bookmarkCountPaint = new Paint();
-        bookmarkCountPaint.setTypeface(Typeface.DEFAULT_BOLD);
-        bookmarkCountPaint.setColor(0xff000000);
-        bookmarkCountPaint.setAntiAlias(true);
-        bookmarkCountPaint.setTextAlign(Paint.Align.CENTER);
+		bookmarkCountPaint.setTypeface(Typeface.DEFAULT_BOLD);
+		bookmarkCountPaint.setColor(0xff000000);
+		bookmarkCountPaint.setAntiAlias(true);
+		bookmarkCountPaint.setTextAlign(Paint.Align.CENTER);
 
-        noteCountPaint = new Paint(bookmarkCountPaint);
+		noteCountPaint = new Paint(bookmarkCountPaint);
 		noteCountPaint.setShadowLayer(density * 4, 0, 0, 0xffffffff);
-    }
+	}
 
 	int bookmark_count;
 	int note_count;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT javítások</string>
+    <string name="ribka_menu_report">AYT javítások</string>
+    <string name="ribka_sending_progress">Jelentés küldése…</string>
+    <string name="ribka_send_error">Nem sikerült elküldeni a jelentést. Ellenőrizze az internetkapcsolatot.</string>
+    <string name="ribka_send_success">Jelentés elküldve. Nyissa meg e-mailjét, és kattintson a hivatkozásra a jelentés megerősítéséhez.</string>
+    <string name="ribka_send_failure">Nem sikerült elküldeni a jelentést: ^1</string>
+    <string name="ribka_category_typo">Helyesírási vagy központozási hiba</string>
+    <string name="ribka_category_word">Szóválasztás</string>
+    <string name="ribka_category_sentence">Mondatszerkezet</string>
+    <string name="ribka_category_content">Tartalom (teológiai vagy doktrinális kérdés)</string>
+    <string name="ribka_category_others">Egyéb</string>
+    <string name="ribka_category_error">Válassza ki a korrekció típusát.</string>
+    <string name="ribka_suggestion_hint">Az Ön helyesbítése vagy javaslata</string>
+    <string name="ribka_suggestion_error">Adja meg a javasolt javítást</string>
+    <string name="ribka_remarks_hint">Ok vagy megjegyzés (nem kötelező)</string>
+    <string name="ribka_email_hint">E-mail</string>
+    <string name="ribka_email_error">Adjon meg egy érvényes e-mail címet</string>
+    <string name="ribka_submit_button">Küldés</string>
+    <string name="ribka_suggestion_intro">Utasítások: Szerkessze <b>csak</b> a versnek azt a részét, amelyről úgy gondolja, hogy javításra vagy javításra szorul.</string>
+</resources>

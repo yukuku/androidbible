@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ribka_title">AYT 更正</string>
+    <string name="ribka_menu_report">AYT 更正</string>
+    <string name="ribka_sending_progress">正在發送報告…</string>
+    <string name="ribka_send_error">無法傳送報告。檢查您的網路連線。</string>
+    <string name="ribka_send_success">報告已發送。打開您的電子郵件並點擊連結以確認報告。</string>
+    <string name="ribka_send_failure">無法傳送報告：^1</string>
+    <string name="ribka_category_typo">拼字或標點錯誤</string>
+    <string name="ribka_category_word">單字選擇</string>
+    <string name="ribka_category_sentence">句子結構</string>
+    <string name="ribka_category_content">內容（神學或教義問題）</string>
+    <string name="ribka_category_others">其他</string>
+    <string name="ribka_category_error">選擇修正類型。</string>
+    <string name="ribka_suggestion_hint">您的更正或建議</string>
+    <string name="ribka_suggestion_error">輸入您建議的更正</string>
+    <string name="ribka_remarks_hint">原因或備註（可選）</string>
+    <string name="ribka_email_hint">電子郵件</string>
+    <string name="ribka_email_error">輸入有效的電子郵件地址</string>
+    <string name="ribka_submit_button">寄</string>
+    <string name="ribka_suggestion_intro">說明：<b>僅</b>編輯您認為需要更正或改進的經文部分。</string>
+</resources>
