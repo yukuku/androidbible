@@ -6,16 +6,21 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.BroadcastFrameClock
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.createFontFamilyResolver
 import androidx.test.core.app.ApplicationProvider
 import java.io.File
+import kotlinx.coroutines.android.asCoroutineDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -39,6 +44,8 @@ import yuku.alkitab.util.Ari
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class VerseFontFamilyTest {
     private lateinit var context: Context
+    private val frameClock = BroadcastFrameClock()
+    private var frameTimeNanos = 0L
 
     @Before
     fun setUp() {
@@ -71,6 +78,10 @@ class VerseFontFamilyTest {
         val activity = controller.get().apply { setTheme(androidx.appcompat.R.style.Theme_AppCompat) }
         val frame = FrameLayout(activity)
         activity.setContentView(frame)
+        // Compose caches its main dispatcher across Robolectric tests, so each fixture
+        // needs its own dispatcher and frame clock to render deterministically.
+        val dispatcher = Handler(Looper.getMainLooper()).asCoroutineDispatcher()
+        val recomposer = frame.createLifecycleAwareWindowRecomposer(dispatcher + frameClock)
         val previousDimensions = S.applied()
         val dims = S.CalculatedDimensions().apply {
             fontSize2dp = 20f
@@ -106,6 +117,7 @@ class VerseFontFamilyTest {
                     val left = draw(legacy)
                     frame.removeView(legacy)
                     val compose = VerseItemComposeView(activity)
+                    compose.setParentCompositionContext(recomposer)
                     frame.addView(compose)
                     idle()
                     compose.bind(buildVerseItemComposeState(
@@ -123,7 +135,7 @@ class VerseFontFamilyTest {
                     val right = draw(compose)
                     frame.removeView(compose)
                     idle()
-                    assertTrue("Compose must draw visible text", pixels(right).any { it != Color.WHITE })
+                    assertTrue("$label (bold=$isBold) must draw visible text", pixels(right).any { it != Color.WHITE })
                     rows += left to right
                 }
                 regularPixels += pixels(rows[0].second)
@@ -193,5 +205,11 @@ class VerseFontFamilyTest {
         bitmap.getPixels(it, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
     }
 
-    private fun idle() = Shadows.shadowOf(Looper.getMainLooper()).idle()
+    private fun idle() {
+        Snapshot.sendApplyNotifications()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        frameTimeNanos += 16_000_000L
+        frameClock.sendFrame(frameTimeNanos)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+    }
 }
