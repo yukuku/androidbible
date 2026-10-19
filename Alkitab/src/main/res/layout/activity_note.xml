@@ -12,41 +12,48 @@
 		android:layout_height="?attr/actionBarSize"
 		android:background="?attr/colorPrimary" />
 
-	<ViewFlipper
-		android:id="@+id/viewFlipper"
+	<FrameLayout
+		android:id="@+id/textAppearanceOverlay"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="0dp"
+		android:layout_weight="1">
 
-		<androidx.core.widget.NestedScrollView
+		<ViewFlipper
+			android:id="@+id/viewFlipper"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent">
 
-			<yuku.alkitab.base.widget.FixedTextView
-				android:id="@+id/tCaptionReadOnly"
+			<androidx.core.widget.NestedScrollView
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
+				android:layout_height="match_parent">
+
+				<yuku.alkitab.base.widget.FixedTextView
+					android:id="@+id/tCaptionReadOnly"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="@null"
+					android:gravity="top"
+					android:paddingStart="16dp"
+					android:paddingEnd="16dp"
+					android:paddingTop="16dp"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textIsSelectable="true" />
+
+			</androidx.core.widget.NestedScrollView>
+
+			<EditText
+				android:id="@+id/tCaption"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:background="@null"
 				android:gravity="top"
+				android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
 				android:paddingStart="16dp"
 				android:paddingEnd="16dp"
 				android:paddingTop="16dp"
 				android:textAppearance="?android:textAppearanceMedium"
-				android:textIsSelectable="true" />
-
-		</androidx.core.widget.NestedScrollView>
-
-		<EditText
-			android:id="@+id/tCaption"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="@null"
-			android:gravity="top"
-			android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
-			android:paddingStart="16dp"
-			android:paddingEnd="16dp"
-			android:paddingTop="16dp"
-			android:textAppearance="?android:textAppearanceMedium"
-			tools:ignore="LabelFor" />
-	</ViewFlipper>
+				tools:ignore="LabelFor" />
+		</ViewFlipper>
+	</FrameLayout>
 
 </LinearLayout>

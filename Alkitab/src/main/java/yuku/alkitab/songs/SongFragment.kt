@@ -22,6 +22,13 @@ import yuku.alkitab.songs.newdoc.SongDocumentRenderer
 class SongFragment : BaseFragment(), SongTextZoomable {
     private lateinit var webview: WebView
     private var bottomInsetDp = 0
+    private var pendingScrollY: Int? = null
+
+    fun refreshAppearance(values: Bundle) {
+        customVars.putAll(values)
+        pendingScrollY = pendingScrollY ?: webview.scrollY
+        renderSong(doc)
+    }
 
     private val args by lazy { requireArguments() }
     private val doc: SongDocument by lazy { SongDocumentJson.decode(args.getString(ARG_songJson)!!) }
@@ -83,6 +90,8 @@ class SongFragment : BaseFragment(), SongTextZoomable {
         override fun onPageFinished(view: WebView, url: String?) {
             super.onPageFinished(view, url)
             applyBottomInset()
+            pendingScrollY?.let { webview.scrollTo(0, it) }
+            pendingScrollY = null
         }
 
         var pendingResize = false

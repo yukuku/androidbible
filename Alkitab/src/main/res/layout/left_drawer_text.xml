@@ -164,19 +164,7 @@
 			android:layout_height="1dp"
 			android:background="#33ffffff" />
 
-		<Button
-			android:id="@+id/bDisplay"
-			style="?buttonBarButtonStyle"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:drawablePadding="16dp"
-			android:drawableStart="@drawable/ic_drawer_display"
-			android:fontFamily="sans-serif-regular"
-			android:gravity="start|center_vertical"
-			android:text="@string/menuDisplay"
-			android:textAllCaps="false"
-			android:textColor="#fff"
-			android:textSize="16sp" />
+		<include layout="@layout/left_drawer_display" />
 
 		<androidx.appcompat.widget.SwitchCompat
 			android:id="@+id/cFullScreen"
