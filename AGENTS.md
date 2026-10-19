@@ -169,7 +169,7 @@ The legacy `SongInfo` / `SongBookInfo` tables are still created in `SongDb` as a
 Verse text uses inline formatting codes (processed by `VerseRenderer` and `FormattedTextRenderer`):
 - `@@` — marks verse as formatted
 - `@0`–`@4`, `@^` — paragraph indentation levels
-- `@6`/`@5` — red letter (Jesus' words) start/end
+- `@6`/`@5`: red text start/end
 - `@9`/`@7` — italic start/end
 - `@8` — line break
 - `@<tag@>...@/` — special inline elements (cross-references, footnotes, and `@<r=reading@>base@/` ruby, rendered by the Compose pipeline only; see `docs/features/ruby/design.md`)
@@ -227,6 +227,8 @@ Detailed documentation for each major app feature:
 - [Tech Debt Backlog](docs/tech-debt-remediation.md): the single index for open, partial, and completed REM records, with problem descriptions, priorities, and next steps
 
 ## Code Conventions
+
+- Use neutral, everyday wording for synthetic code examples, test fixtures, and test names. Avoid religious names in these examples. Describe formatting in code comments as red text or red-letter formatting.
 
 - **IMPORTANT. Never write change-narrating comments.** Code comments must describe the code as it is *now*, not the history of how it got there. Do not reference past revisions, removed approaches, or the act of editing: no "previously", "used to", "formerly", "earlier iterations", "an earlier version", "we changed/renamed/moved this from…", "now uses…", "no longer…", and the like. Git history is the record of *change*; the code and its comments describe the *present*. When explaining why the current design was chosen over an alternative is genuinely useful, state it as present-tense rationale about the alternative ("the cluster is centered with Spacers because a weighted slot would clip the label"), not as a story about what the code used to do. This applies to all comments, KDoc/Javadoc, and commit-adjacent code. Keep the narrative of change out of the source. The same rule applies to milestone labels: do not tag comments with the sprint or task that produced the code ("(M3)", "Out of scope for M4"), because they date instantly and mean nothing to a later reader.
 - **IMPORTANT. Never use em dashes to join clauses in comments or docs.** The "—" character (U+2014) is hard to read in running prose. Write two plain sentences instead, or use a comma, colon, semicolon, or parentheses, whichever reads most naturally. This applies to code comments, KDoc/Javadoc, Markdown docs, commit messages, and PR descriptions. (Existing prose in older files may still contain them; leave it alone unless you are already editing that comment or were asked to sweep the file.)

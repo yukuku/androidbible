@@ -73,7 +73,7 @@ class WordListDictionaryProvider : ContentProvider() {
  * Visual matrix of verse text colors: every reading theme, selection color, highlight color
  * and selection state, each rendered through both the legacy [VerseItem] and the Compose
  * [VerseItemComposeView] bind paths exactly as the reader does it. Every verse carries
- * words of Jesus and dictionary-linked words so their colors can be checked in the same row.
+ * red text and dictionary-linked words so their colors can be checked in the same row.
  *
  * Per-block PNGs (one per theme and selection color), per-theme contact sheets and an
  * `index.html` land in `Alkitab/build/snapshots/verse-text-color/`. Nothing is pixel-compared:
@@ -214,7 +214,7 @@ class VerseTextColorSnapshotTest {
             <p>Each block is one reading theme and one selection color. Rows go from no highlight through every
             highlight color, first not selected, then selected with a full highlight, then selected with a partial
             highlight. The left column is the legacy VerseItem, the right the Compose VerseItemComposeView. Every verse
-            has words of Jesus (red text when not selected) and dictionary-linked words (underlined: "body", "love").</p>
+            has red text (when not selected) and dictionary-linked words (underlined: "body", "love").</p>
             <p>The label above each row gives the text color used on the highlight band and its contrast ratio against
             what the band actually paints, then the color used on the rest of the verse and its contrast against the
             selection overlay (or the page when not selected).</p>
@@ -241,7 +241,7 @@ class VerseTextColorSnapshotTest {
 
                 html.append("<h2>${theme.name}</h2>\n")
                 html.append(
-                    "<pre>page #%06x   text #%06x   words of Jesus #%06x   verse number #%06x</pre>\n".format(
+                    "<pre>page #%06x   text #%06x   red text #%06x   verse number #%06x</pre>\n".format(
                         theme.background and 0xffffff, theme.fontColor and 0xffffff, theme.fontRedColor and 0xffffff, theme.verseNumberColor and 0xffffff,
                     )
                 )
@@ -422,7 +422,7 @@ class VerseTextColorSnapshotTest {
         }
         canvas.drawText(theme.name, SHEET_GUTTER_PX.toFloat(), 22f, title)
         canvas.drawText(
-            "page #%06x   text #%06x   words of Jesus #%06x   verse number #%06x".format(
+            "page #%06x   text #%06x   red text #%06x   verse number #%06x".format(
                 theme.background and 0xffffff, theme.fontColor and 0xffffff, theme.fontRedColor and 0xffffff, theme.verseNumberColor and 0xffffff,
             ),
             SHEET_GUTTER_PX.toFloat(),

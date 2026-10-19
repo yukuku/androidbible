@@ -108,7 +108,7 @@ public class Proses2 {
 					as.text = as.text.replace("bahwa@6Anak Manusia", "bahwa @6Anak Manusia");
 				}
 				
-				// patch for words of Jesus after colon, there must be a space after the colon
+				// patch for red text after colon, there must be a space after the colon
 				if (as.text.contains(":@6")) {
 					as.text = as.text.replace(":@6", ": @6");
 				}
