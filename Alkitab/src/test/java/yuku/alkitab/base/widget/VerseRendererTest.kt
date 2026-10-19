@@ -487,6 +487,33 @@ class VerseRendererTest {
 
     // endregion
 
+    @Test
+    fun `both renderers respect the applied highlight adjustment for full and partial highlights`() {
+        val text = "Hello world"
+        for (amount in listOf(0f, 0.5f, 1f)) {
+            dims.highlightColorAdjustment = amount
+            for (isPartial in listOf(false, true)) {
+                val info = Highlights.Info().apply {
+                    colorRgb = 0xff0000
+                    if (isPartial) partial = Highlights.Info.Partial().apply {
+                        hashCode = Highlights.hashCode(text)
+                        startOffset = 1
+                        endOffset = 4
+                    }
+                }
+                val expected = Highlights.blendOver(info.colorRgb, BACKGROUND, amount)
+                val legacy = renderToSb(text = text, verseNumberText = "1", highlight = info)
+                val band = legacy.getSpans(0, legacy.length, BackgroundColorSpan::class.java).single()
+                assertEquals(expected, band.backgroundColor)
+                val composed = VerseRendererCompose.render(true, ARI, text, "1", info).text
+                val composeBand = composed.spanStyles.single { it.item.background != androidx.compose.ui.graphics.Color.Unspecified }
+                assertEquals(androidx.compose.ui.graphics.Color(expected), composeBand.item.background)
+                assertEquals(legacy.getSpanStart(band), composeBand.start)
+                assertEquals(legacy.getSpanEnd(band), composeBand.end)
+            }
+        }
+    }
+
     // region highlights
 
     @Test

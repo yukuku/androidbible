@@ -28,6 +28,8 @@ enum class Prefkey {
     /** Line spacing multiplier in proportional (float)  */
     lineSpacingMult,
 
+    highlightColorAdjustment,
+
     /** Last backup date  */
     lastBackupDate,
 

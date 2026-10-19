@@ -528,4 +528,19 @@
     <string name="dv_transparency_clear">Sepenuhnya transparan</string>
     <string name="devotion_select">Pilih renungan dan tanggal</string>
     <string name="song_select">Pilih lagu</string>
+    <string name="highlight_style_original">Gunakan warna stabilo asli</string>
+    <string name="highlight_style_customize">Sesuaikan warna stabilo</string>
+    <string name="highlight_style_current">Warna adaptif (bawaan)</string>
+    <string name="highlight_style_custom_value">Kustom: %1$d%% adaptif</string>
+    <string name="highlight_style_adjustment">Penyesuaian warna stabilo</string>
+    <string name="highlight_style_explanation">Pilih seberapa besar warna stabilo menyesuaikan dengan latar belakang halaman.</string>
+    <string name="highlight_style_zero">0 · Asli</string>
+    <string name="highlight_style_one">1 · Adaptif</string>
+    <string name="highlight_style_preview">Pratinjau</string>
+    <string name="highlight_style_preview_only">Warna pratinjau hanya memengaruhi contoh ini.</string>
+    <string name="highlight_style_background">Warna latar belakang pratinjau</string>
+    <string name="highlight_style_text">Warna teks pratinjau</string>
+    <string name="highlight_style_color">Warna stabilo pratinjau</string>
+    <string name="highlight_style_loading">Memuat ayat…</string>
+    <string name="highlight_style_no_verses">Tidak ada ayat untuk pratinjau ini.</string>
 </resources>

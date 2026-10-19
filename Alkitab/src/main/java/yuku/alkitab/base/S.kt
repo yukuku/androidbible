@@ -18,6 +18,7 @@ import yuku.alkitab.base.storage.SongDb
 import yuku.alkitab.base.storage.SongDbHelper
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.FontManager
+import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
 
@@ -39,6 +40,9 @@ object S {
 
         @JvmField
         var lineSpacingMult = 0f
+
+        @JvmField
+        var highlightColorAdjustment = 1f
 
         @JvmField
         var fontBold = 0
@@ -184,6 +188,9 @@ object S {
     fun calculateDimensionsFromPreferences(): CalculatedDimensions {
         val res = CalculatedDimensions()
         val resources = App.context.resources
+        res.highlightColorAdjustment = Highlights.normalizeAdjustment(
+            Preferences.getFloat(Prefkey.highlightColorAdjustment, 1f),
+        )
 
         //# configure font size
         run { res.fontSize2dp = Preferences.getFloat(Prefkey.ukuranHuruf2, resources.getInteger(R.integer.pref_ukuranHuruf2_default).toFloat()) }

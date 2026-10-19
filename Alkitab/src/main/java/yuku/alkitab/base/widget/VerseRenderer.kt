@@ -243,7 +243,7 @@ object VerseRenderer {
         if (highlightInfo == null) return
 
         val applied = App.services.uiDimensions.applied()
-        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor)
+        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor, applied.highlightColorAdjustment)
 
         val start: Int
         val end: Int
