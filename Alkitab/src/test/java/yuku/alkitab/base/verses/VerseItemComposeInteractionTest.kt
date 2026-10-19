@@ -310,26 +310,24 @@ class VerseItemComposeInteractionTest {
         assertEquals(1, ruby.verseClicks)
     }
 
-    private fun resolveTypeface(typeface: Typeface?, bold: Boolean): Typeface {
-        val family = composeFontFamilyFor(typeface, bold)
+    private fun resolveTypeface(typeface: Typeface?, isBold: Boolean): Typeface {
+        val family = composeFontFamilyFor(typeface)
         val resolver = createFontFamilyResolver(ApplicationProvider.getApplicationContext())
-        val weight = if (bold) FontWeight.Bold else FontWeight.Normal
+        val weight = if (isBold) FontWeight.Bold else FontWeight.Normal
         return resolver.resolve(family, weight).value as Typeface
     }
 
     @Test
     fun `a custom typeface asked for bold resolves to a bold face, so the platform can fake the weight`() {
-        // Not one of the stock singletons, so it maps to a wrapped-typeface
-        // FontFamily, which Compose never synthesises for.
         val custom = Typeface.create("cursive", Typeface.NORMAL)
 
-        assertTrue(resolveTypeface(custom, bold = true).isBold)
-        assertFalse(resolveTypeface(custom, bold = false).isBold)
+        assertTrue(resolveTypeface(custom, isBold = true).isBold)
+        assertFalse(resolveTypeface(custom, isBold = false).isBold)
     }
 
     @Test
-    fun `a stock typeface keeps mapping to its stock family, which resolves bold on its own`() {
-        assertTrue(resolveTypeface(Typeface.SERIF, bold = true).isBold)
-        assertFalse(resolveTypeface(Typeface.SERIF, bold = false).isBold)
+    fun `a stock typeface resolves both normal and bold faces`() {
+        assertTrue(resolveTypeface(Typeface.SERIF, isBold = true).isBold)
+        assertFalse(resolveTypeface(Typeface.SERIF, isBold = false).isBold)
     }
 }
