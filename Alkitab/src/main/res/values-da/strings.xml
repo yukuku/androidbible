@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Helt gennemsigtig</string>
     <string name="dv_preview_reference">Salme 119:105</string>
     <string name="dv_preview_verse">Dit Ord er en Lygte for min Fod, et Lys paa min Sti.</string>
+    <string name="search_goto_reference">Spring til: ^1</string>
 </resources>

@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Entièrement transparent</string>
     <string name="dv_preview_reference">Psaume 119:105</string>
     <string name="dv_preview_verse">Ta parole est une lampe à mes pieds, Et une lumière sur mon sentier.</string>
+    <string name="search_goto_reference">Aller à : ^1</string>
 </resources>

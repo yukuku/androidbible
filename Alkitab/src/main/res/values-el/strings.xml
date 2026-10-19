@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Πλήρως διαφανές</string>
     <string name="dv_preview_reference">Ψαλμοί 119:105</string>
     <string name="dv_preview_verse">Λύχνος εις τους πόδας μου είναι ο λόγος σου και φως εις τας τρίβους μου.</string>
+    <string name="search_goto_reference">Μετάβαση σε: ^1</string>
 </resources>

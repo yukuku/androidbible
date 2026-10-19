@@ -37,7 +37,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.Typeface as ComposeTypeface
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.songs.newdoc.Block
 import yuku.alkitab.songs.newdoc.GapBlock
 import yuku.alkitab.songs.newdoc.Line
@@ -72,6 +72,7 @@ class SongComposeStyle(
     val lineSpacingMult: Float,
     val typeface: Typeface?,
     val zoomPercent: Int,
+    val isBold: Boolean = false,
 ) {
     val baseSizeSp = baseFontSizeDp * zoomPercent / 100f
 
@@ -80,19 +81,14 @@ class SongComposeStyle(
 
     /** The font's natural line height in em, before [lineSpacingMult]. */
     val normalLineHeightEm: Float = Paint().run {
-        typeface = this@SongComposeStyle.typeface ?: Typeface.DEFAULT
+        typeface = Typeface.create(this@SongComposeStyle.typeface, if (isBold) Typeface.BOLD else Typeface.NORMAL)
         textSize = 100f
         val fm = fontMetrics
         (fm.descent - fm.ascent + fm.leading) / 100f
     }
 
-    val bodyFontFamily: FontFamily = when (val tf = typeface) {
-        null, Typeface.DEFAULT -> FontFamily.Default
-        Typeface.SERIF -> FontFamily.Serif
-        Typeface.MONOSPACE -> FontFamily.Monospace
-        Typeface.SANS_SERIF -> FontFamily.SansSerif
-        else -> FontFamily(ComposeTypeface(tf))
-    }
+    val bodyFontFamily: FontFamily = composeFontFamilyFor(typeface)
+    val sansSerifFontFamily: FontFamily = composeFontFamilyFor(Typeface.SANS_SERIF)
 }
 
 private val LINK_STYLE = SpanStyle(textDecoration = TextDecoration.Underline)
@@ -218,7 +214,7 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean) {
     if (uppercase) content = AnnotatedString(content.text.uppercase())
 
     val textStyle = roleTextStyle(style, sizeMult, sansSerif).copy(
-        fontWeight = if (bold) FontWeight.Bold else null,
+        fontWeight = if (bold || style.isBold) FontWeight.Bold else FontWeight.Normal,
         fontStyle = if (italic) FontStyle.Italic else null,
         color = style.bodyColor.copy(alpha = opacity),
         textAlign = textAlign ?: TextAlign.Unspecified,
@@ -426,7 +422,7 @@ private fun NumberedVerse(verse: Verse, number: Int?, style: SongComposeStyle) {
             BasicText(
                 text = AnnotatedString(number.toString()),
                 style = roleTextStyle(style, sizeMult = 1.2f, sansSerif = false).copy(
-                    fontWeight = FontWeight.Light,
+                    fontWeight = if (style.isBold) FontWeight.Bold else FontWeight.Light,
                     color = style.verseNumberColorC,
                 ),
                 modifier = Modifier
@@ -561,13 +557,15 @@ private fun roleSizeMult(role: String?): Float = when (role) {
 private fun roleTextStyle(style: SongComposeStyle, sizeMult: Float, sansSerif: Boolean): TextStyle = TextStyle(
     color = style.bodyColor,
     fontSize = (style.baseSizeSp * sizeMult).sp,
-    fontFamily = if (sansSerif) FontFamily.SansSerif else style.bodyFontFamily,
+    fontWeight = if (style.isBold) FontWeight.Bold else FontWeight.Normal,
+    fontFamily = if (sansSerif) style.sansSerifFontFamily else style.bodyFontFamily,
     platformStyle = PlatformTextStyle(includeFontPadding = false),
 )
 
 private fun lyricLineStyle(style: SongComposeStyle, sizeMult: Float): TextStyle = TextStyle(
     color = style.bodyColor,
     fontSize = (style.baseSizeSp * sizeMult).sp,
+    fontWeight = if (style.isBold) FontWeight.Bold else FontWeight.Normal,
     lineHeight = (style.baseSizeSp * sizeMult * style.normalLineHeightEm * style.lineSpacingMult).sp,
     lineHeightStyle = LineHeightStyle(
         alignment = LineHeightStyle.Alignment.Center,

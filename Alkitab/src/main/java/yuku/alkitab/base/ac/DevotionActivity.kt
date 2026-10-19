@@ -161,6 +161,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
 
         drawerLayout = findViewById(R.id.drawerLayout)
         devotionDrawer = findViewById(R.id.left_drawer)
+        setupTextAppearancePanel(findViewById(R.id.textAppearanceOverlay), ::applyTextAppearance)
         devotionDrawer.configure(this, drawerLayout)
         applySafeAreaPadding(devotionDrawer)
 
@@ -206,6 +207,11 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
 
     override fun onStart() {
         super.onStart()
+        applyTextAppearance()
+    }
+
+    private fun applyTextAppearance() {
+        App.services.uiDimensions.recalculate()
         val applied = App.services.uiDimensions.applied()
 
         // apply background color, and clear window background to prevent overdraw

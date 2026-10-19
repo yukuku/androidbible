@@ -2,6 +2,7 @@ package yuku.alkitab.songs
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -241,6 +242,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         drawerLayout = findViewById(R.id.drawerLayout)
         leftDrawer = findViewById(R.id.left_drawer)
+        setupTextAppearancePanel(findViewById(R.id.textAppearanceOverlay)) {
+            applyTextAppearance()
+            (supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_SONG) as? SongFragment)
+                ?.refreshAppearance(templateCustomVars)
+        }
         leftDrawer.configure(this, drawerLayout)
         applySafeAreaPadding(leftDrawer)
 
@@ -309,13 +315,29 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     override fun onStart() {
         super.onStart()
 
+        applyTextAppearance()
+
+        // show latest viewed song
+        val bookName = Preferences.getString(Prefkey.song_last_bookName, null)
+        val code = Preferences.getString(Prefkey.song_last_code, null)
+
+        if (bookName == null || code == null) {
+            displaySong(null, null, true)
+        } else {
+            displaySong(bookName, App.services.storage.songDb.getSong(bookName, code), true)
+        }
+
+        window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
+    }
+
+    private fun applyTextAppearance() {
+        App.services.uiDimensions.recalculate()
         val applied = App.services.uiDimensions.applied()
 
         // apply background color, and clear window background to prevent overdraw
         window.setBackgroundDrawableResource(android.R.color.transparent)
         findViewById<View>(android.R.id.content).setBackgroundColor(applied.backgroundColor)
 
-        templateCustomVars.clear()
         templateCustomVars.putString("background_color", String.format(Locale.US, "#%06x", applied.backgroundColor and 0xffffff))
         templateCustomVars.putString("text_color", String.format(Locale.US, "#%06x", applied.fontColor and 0xffffff))
         templateCustomVars.putString("verse_number_color", String.format(Locale.US, "#%06x", applied.verseNumberColor and 0xffffff))
@@ -334,18 +356,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             templateCustomVars.putString("custom_font_loader", "")
         }
         templateCustomVars.putString("text_font", fontName)
-
-        // show latest viewed song
-        val bookName = Preferences.getString(Prefkey.song_last_bookName, null)
-        val code = Preferences.getString(Prefkey.song_last_code, null)
-
-        if (bookName == null || code == null) {
-            displaySong(null, null, true)
-        } else {
-            displaySong(bookName, App.services.storage.songDb.getSong(bookName, code), true)
-        }
-
-        window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
+        templateCustomVars.putString("verse_number_weight", if (applied.fontBold == Typeface.BOLD) "bold" else "300")
+        templateCustomVars.putString("text_weight", if (applied.fontBold == Typeface.BOLD) "bold" else "normal")
     }
 
     /**

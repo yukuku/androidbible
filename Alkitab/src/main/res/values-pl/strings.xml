@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Całkowicie przezroczyste</string>
     <string name="dv_preview_reference">Psalm 119:105</string>
     <string name="dv_preview_verse">Twoje słowo jest pochodnią dla moich nóg i światłością na mojej ścieżce.</string>
+    <string name="search_goto_reference">Skocz do: ^1</string>
 </resources>

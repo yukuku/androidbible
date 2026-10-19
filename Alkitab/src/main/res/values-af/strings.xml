@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Heeltemal deursigtig</string>
     <string name="dv_preview_reference">Psalm 119:105</string>
     <string name="dv_preview_verse">U woord is \'n lamp vir my voet en \'n lig vir my pad.</string>
+    <string name="search_goto_reference">Spring na: ^1</string>
 </resources>

@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">โปร่งใสทั้งหมด</string>
     <string name="dv_preview_reference">สดุดี 119:105</string>
     <string name="dv_preview_verse">พระวจนะของพระองค์เป็นโคมสำหรับเท้าของข้าพระองค์ และเป็นความสว่างแก่วิถีของข้าพระองค์</string>
+    <string name="search_goto_reference">ไปยัง: ^1</string>
 </resources>

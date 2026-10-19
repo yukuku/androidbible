@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Zcela průhledné</string>
     <string name="dv_preview_reference">Žalm 119:105</string>
     <string name="dv_preview_verse">Svíce nohám mým jest slovo tvé, a světlo stezce mé.</string>
+    <string name="search_goto_reference">Skoč na: ^1</string>
 </resources>

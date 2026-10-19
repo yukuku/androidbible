@@ -2,6 +2,8 @@ package yuku.alkitab.base.verses
 
 import android.app.Activity
 import android.content.ClipData
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
@@ -25,6 +27,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
 import androidx.test.core.app.ApplicationProvider
+import io.mockk.mockk
+import java.io.File
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -42,9 +46,13 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import yuku.afw.App as AfwApp
 import yuku.alkitab.base.S
+import yuku.alkitab.base.compose.composeFontFamilyFor
+import yuku.alkitab.base.storage.InternalReader
+import yuku.alkitab.base.storage.OldVerseTextDecoder
 import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.base.widget.VerseInlineLinkSpan
 import yuku.alkitab.base.widget.VerseRendererCompose
+import yuku.alkitab.model.Version
 import yuku.alkitab.util.Ari
 
 /**
@@ -136,7 +144,11 @@ class VerseItemComposeInteractionTest {
         )
     }
 
-    private fun composeRow(text: String, recorder: TapRecorder): VerseItemComposeView {
+    private fun composeRow(
+        text: String,
+        recorder: TapRecorder,
+        transform: (VerseItemComposeState) -> VerseItemComposeState = { it },
+    ): VerseItemComposeView {
         val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
         activities += controller
         val activity = controller.get()
@@ -144,7 +156,7 @@ class VerseItemComposeInteractionTest {
 
         val view = VerseItemComposeView(activity)
         attachAndLayout(activity, view)
-        view.bind(buildState(text, recorder))
+        view.bind(transform(buildState(text, recorder)))
         layoutRow(view)
         return view
     }
@@ -310,26 +322,129 @@ class VerseItemComposeInteractionTest {
         assertEquals(1, ruby.verseClicks)
     }
 
-    private fun resolveTypeface(typeface: Typeface?, bold: Boolean): Typeface {
-        val family = composeFontFamilyFor(typeface, bold)
+    private fun drawRow(view: View): Bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888).also {
+        val canvas = Canvas(it)
+        canvas.drawColor(android.graphics.Color.WHITE)
+        view.draw(canvas)
+    }
+
+    private fun hasInk(bitmap: Bitmap, fromX: Int, toX: Int, fromY: Int): Boolean =
+        (fromY until bitmap.height).any { y ->
+            (fromX until toX).any { x -> bitmap.getPixel(x, y) != android.graphics.Color.WHITE }
+        }
+
+    @Test
+    fun `text occupies space below the attribute icon and remains tappable there`() {
+        val recorder = TapRecorder()
+        var bookmarkClicks = 0
+        val version = mockk<Version>()
+        val listener = object : VersesController.AttributeListener() {
+            override fun onBookmarkAttributeClick(version: Version, versionId: String, ari: Int) {
+                bookmarkClicks++
+            }
+        }
+        val view = composeRow("@@" + LONG_BODY.repeat(3), recorder) {
+            it.copy(attribute = it.attribute.copy(bookmarkCount = 1, scale = 3f, version = version, attributeListener = listener))
+        }
+        val icon = AttributeView.renderScaledIcon(view.context, yuku.alkitab.debug.R.drawable.ic_attr_bookmark, 3f)
+        val bitmap = drawRow(view)
+        assertTrue(view.height > icon.height)
+        assertTrue("text should extend into the end-side strip below the icon", hasInk(bitmap, view.width - icon.width, view.width, icon.height))
+
+        tap(view, view.width - icon.width / 2f, icon.height / 2f)
+        assertEquals(1, bookmarkClicks)
+        assertEquals(0, recorder.verseClicks)
+        tap(view, view.width - 5f, view.height - 6f)
+        assertEquals(1, recorder.verseClicks)
+        assertEquals(1, bookmarkClicks)
+
+        val file = File("build/snapshots/verse-attribute-flow.png")
+        file.parentFile!!.mkdirs()
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    @Test
+    fun `text also flows below end-side attributes in a right to left layout`() {
+        val recorder = TapRecorder()
+        val view = composeRow("@@" + "שלום וברכה לכל קוראי הספר הזה ".repeat(20), recorder) {
+            it.copy(attribute = it.attribute.copy(bookmarkCount = 1, scale = 3f))
+        }
+        view.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        layoutRow(view)
+        val icon = AttributeView.renderScaledIcon(view.context, yuku.alkitab.debug.R.drawable.ic_attr_bookmark, 3f)
+        val bitmap = drawRow(view)
+        assertTrue("text should extend below the icon on the left", hasInk(bitmap, 0, icon.width, icon.height))
+        tap(view, 5f, view.height - 6f)
+        assertEquals(1, recorder.verseClicks)
+    }
+
+    @Test
+    fun `footnotes remain tappable after text expands below the attributes`() {
+        val recorder = TapRecorder()
+        val view = composeRow("@@" + LONG_BODY.repeat(3) + "@<f1@>@/", recorder) {
+            it.copy(attribute = it.attribute.copy(bookmarkCount = 1, scale = 3f))
+        }
+        for (x in 5 until view.width step 20) {
+            tap(view, x.toFloat(), view.height - 6f)
+            if (recorder.linkClicks.isNotEmpty()) break
+        }
+
+        assertEquals(listOf(VerseInlineLinkSpan.Type.footnote to (Ari.encode(1, 2, 1) shl 8 or 1)), recorder.linkClicks)
+    }
+
+    @Test
+    fun `bundled ruby gallery renders with end-side attributes`() {
+        val reader = InternalReader("ddd", "in", "DDD", "Dummy Debug Data", OldVerseTextDecoder.Utf8())
+        val book = reader.loadBooks().first()
+        val samples = listOf(3 to 3, 3 to 4, 3 to 16, 5 to 16, 5 to 29, 6 to 16, 6 to 17, 6 to 18)
+        for ((chapter, verse) in samples) {
+            val text = reader.loadVerseText(book, chapter, false, false).getVerse(verse - 1)
+            val view = composeRow(text, TapRecorder()) {
+                it.copy(attribute = it.attribute.copy(bookmarkCount = 1, noteCount = 1))
+            }
+            val bitmap = drawRow(view)
+            assertTrue("Visible content for $chapter:$verse", hasInk(bitmap, 0, bitmap.width, 0))
+            val file = File("build/snapshots/ddd-$chapter-$verse.png")
+            file.parentFile!!.mkdirs()
+            file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        }
+    }
+
+    @Test
+    fun `ruby text fills space below attributes without losing its reading band`() {
+        val recorder = TapRecorder()
+        val view = composeRow("@@" + "In the @<r=H7225@>beginning@/ @<r=H430@>God@/ created the heavens and the earth. ".repeat(8), recorder) {
+            it.copy(attribute = it.attribute.copy(bookmarkCount = 1, scale = 3f))
+        }
+        val icon = AttributeView.renderScaledIcon(view.context, yuku.alkitab.debug.R.drawable.ic_attr_bookmark, 3f)
+        val bitmap = drawRow(view)
+        assertTrue(hasInk(bitmap, view.width - icon.width, view.width, icon.height))
+        tap(view, view.width - 5f, view.height - 6f)
+        assertEquals(1, recorder.verseClicks)
+
+        val file = File("build/snapshots/verse-attribute-flow-ruby.png")
+        file.parentFile!!.mkdirs()
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    private fun resolveTypeface(typeface: Typeface?, isBold: Boolean): Typeface {
+        val family = composeFontFamilyFor(typeface)
         val resolver = createFontFamilyResolver(ApplicationProvider.getApplicationContext())
-        val weight = if (bold) FontWeight.Bold else FontWeight.Normal
+        val weight = if (isBold) FontWeight.Bold else FontWeight.Normal
         return resolver.resolve(family, weight).value as Typeface
     }
 
     @Test
     fun `a custom typeface asked for bold resolves to a bold face, so the platform can fake the weight`() {
-        // Not one of the stock singletons, so it maps to a wrapped-typeface
-        // FontFamily, which Compose never synthesises for.
         val custom = Typeface.create("cursive", Typeface.NORMAL)
 
-        assertTrue(resolveTypeface(custom, bold = true).isBold)
-        assertFalse(resolveTypeface(custom, bold = false).isBold)
+        assertTrue(resolveTypeface(custom, isBold = true).isBold)
+        assertFalse(resolveTypeface(custom, isBold = false).isBold)
     }
 
     @Test
-    fun `a stock typeface keeps mapping to its stock family, which resolves bold on its own`() {
-        assertTrue(resolveTypeface(Typeface.SERIF, bold = true).isBold)
-        assertFalse(resolveTypeface(Typeface.SERIF, bold = false).isBold)
+    fun `a stock typeface resolves both normal and bold faces`() {
+        assertTrue(resolveTypeface(Typeface.SERIF, isBold = true).isBold)
+        assertFalse(resolveTypeface(Typeface.SERIF, isBold = false).isBold)
     }
 }

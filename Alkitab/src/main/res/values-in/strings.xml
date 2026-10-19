@@ -543,4 +543,5 @@
     <string name="highlight_style_color">Warna stabilo pratinjau</string>
     <string name="highlight_style_loading">Memuat ayat…</string>
     <string name="highlight_style_no_verses">Tidak ada ayat untuk pratinjau ini.</string>
+    <string name="search_goto_reference">Loncat ke: ^1</string>
 </resources>

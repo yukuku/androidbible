@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.util.SparseIntArray
 import android.view.AbsSavedState
 import android.view.ViewGroup
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
@@ -81,6 +82,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.App
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesDataModel.ItemType
@@ -840,9 +842,11 @@ class VersesComposeControllerImpl(
                             backgroundColor = App.services.uiDimensions.applied().backgroundColor,
                             startInsetPx = (if (LocalLayoutDirection.current == LayoutDirection.Rtl) paddingRightPx else paddingLeftPx).toFloat(),
                         ) {
-                            when (data.getItemViewType(position)) {
-                                ItemType.verseText -> VerseRow(data, ui, listeners, position)
-                                ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
+                            Box(Modifier.animateContentSize(animationSpec = tween(durationMillis = 250))) {
+                                when (data.getItemViewType(position)) {
+                                    ItemType.verseText -> VerseRow(data, ui, listeners, position)
+                                    ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
+                                }
                             }
                         }
                     }
@@ -992,7 +996,7 @@ internal fun PericopeHeaderComposeItem(
         }
         val paddingBottomPx = applied.pericopeSpacingBottom
 
-        val titleFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace, bold = true) }
+        val titleFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace) }
         val parallelsFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace) }
         val titleSizeDp = applied.fontSize2dp * ui.textSizeMult
         val titleLineMetrics = remember(applied.fontFace, titleSizeDp, applied.lineSpacingMult, unscaledDensity.density) {

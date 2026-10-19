@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">完全に透明</string>
     <string name="dv_preview_reference">詩篇 119:105</string>
     <string name="dv_preview_verse">あなたのみ言葉はわが足のともしび、わが道の光です。</string>
+    <string name="search_goto_reference">移動先：^1</string>
 </resources>

@@ -1,7 +1,6 @@
 package yuku.alkitab.base.widget
 
 import android.app.Activity
-import android.graphics.Typeface as AndroidTypeface
 import android.view.Gravity
 import android.widget.FrameLayout
 import androidx.compose.animation.AnimatedVisibility
@@ -66,7 +65,6 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.Typeface
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -78,6 +76,7 @@ import yuku.afw.storage.Preferences
 import yuku.alkitab.base.ac.ColorSettingsActivity
 import yuku.alkitab.base.ac.FontManagerActivity
 import yuku.alkitab.base.compose.BibleAppTheme
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.FontManager
 import yuku.alkitab.debug.R
@@ -666,9 +665,9 @@ class TextAppearancePanel(
         getMoreFontsLabel: String,
     ): List<FontOption> {
         val options = ArrayList<FontOption>(entries.size + 4)
-        options += FontOption("DEFAULT", "Roboto", FontFamily.SansSerif)
-        options += FontOption("SERIF", "Droid Serif", FontFamily.Serif)
-        options += FontOption("MONOSPACE", "Droid Mono", FontFamily.Monospace)
+        options += FontOption("DEFAULT", "Roboto", composeFontFamilyFor(FontManager.typeface("DEFAULT")))
+        options += FontOption("SERIF", "Droid Serif", composeFontFamilyFor(FontManager.typeface("SERIF")))
+        options += FontOption("MONOSPACE", "Droid Mono", composeFontFamilyFor(FontManager.typeface("MONOSPACE")))
         for (entry in entries) {
             options += FontOption(entry.name, entry.name, familyForCustomFont(entry.name))
         }
@@ -684,15 +683,14 @@ class TextAppearancePanel(
     }
 
     private fun fontFamilyForName(prefName: String?, entries: List<FontManager.FontEntry>): FontFamily? = when (prefName) {
-        null, "DEFAULT" -> FontFamily.SansSerif
-        "SERIF" -> FontFamily.Serif
-        "MONOSPACE" -> FontFamily.Monospace
-        else -> if (entries.any { it.name == prefName }) familyForCustomFont(prefName) else FontFamily.SansSerif
+        null, "DEFAULT" -> composeFontFamilyFor(FontManager.typeface("DEFAULT"))
+        "SERIF" -> composeFontFamilyFor(FontManager.typeface("SERIF"))
+        "MONOSPACE" -> composeFontFamilyFor(FontManager.typeface("MONOSPACE"))
+        else -> if (entries.any { it.name == prefName }) familyForCustomFont(prefName) else composeFontFamilyFor(FontManager.typeface("DEFAULT"))
     }
 
     private fun familyForCustomFont(name: String): FontFamily? = try {
-        val tf: AndroidTypeface? = FontManager.typeface(name)
-        if (tf != null) FontFamily(Typeface(tf)) else null
+        composeFontFamilyFor(FontManager.typeface(name))
     } catch (_: Throwable) {
         null
     }

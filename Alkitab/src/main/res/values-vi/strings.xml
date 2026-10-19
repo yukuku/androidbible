@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Hoàn toàn trong suốt</string>
     <string name="dv_preview_reference">Thi Thiên 119:105</string>
     <string name="dv_preview_verse">Lời Chúa là ngọn đèn cho chơn tôi, Ánh sáng cho đường lối tôi.</string>
+    <string name="search_goto_reference">Đi đến: ^1</string>
 </resources>
