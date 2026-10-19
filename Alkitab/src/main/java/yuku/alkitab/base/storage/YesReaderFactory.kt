@@ -21,9 +21,9 @@ object YesReaderFactory {
         try {
             val header = ByteArray(8)
 
-            val f = RandomAccessFile(filename, "r")
-            f.read(header)
-            f.close()
+            RandomAccessFile(filename, "r").use { file ->
+                file.readFully(header)
+            }
 
             if (!header.copyOfRange(0, MAGIC.size).contentEquals(MAGIC)) {
                 AppLog.e(TAG, "Yes file '" + filename + "' has not a correct header. Header is: " + header.contentToString())

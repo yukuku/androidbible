@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Pas encore synchronisé</string>
     <string name="sync_sync_set_pref_summary_syncing">Synchroniser maintenant&#8230;</string>
     <string name="sync_log_activity_title">Journal de synchronisation</string>
+    <string name="sync_diagnostics_requested">Synchronisation demandée. Ouvrez %1$s pour voir la progression et les détails du diagnostic.</string>
     <string name="sync_status_activity_title">Statut de la synchronisation</string>
     <string name="sync_login_activity_title">Vous devez vous identifier ou créer un compte</string>
     <string name="sync_login_change_password_menu_item">Changer de mot de passe</string>
@@ -433,4 +434,12 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Veuillez noter que tous les fichiers audio fournis dans cette application ne proviennent pas nécessairement de l\'éditeur du chant ou du recueil de chants.</string>
     <string name="sn_error_rendering_lyrics">Erreur lors de l\'affichage des paroles. Veuillez appuyer sur le bouton de menu et sélectionner \"Mettre à jour du recueil de chants\".</string>
+    <string name="dv_section_version">Version de la Bible</string>
+    <string name="dv_section_appearance">Apparence</string>
+    <string name="dv_option_transparency">Transparence</string>
+    <string name="dv_transparency_solid">Arrière-plan opaque</string>
+    <string name="dv_transparency_clear">Entièrement transparent</string>
+    <string name="dv_preview_reference">Psaume 119:105</string>
+    <string name="dv_preview_verse">Ta parole est une lampe à mes pieds, Et une lumière sur mon sentier.</string>
+    <string name="search_goto_reference">Aller à : ^1</string>
 </resources>

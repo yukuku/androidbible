@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Ainda não sincronizado</string>
     <string name="sync_sync_set_pref_summary_syncing">Sincronizando agora&#8230;</string>
     <string name="sync_log_activity_title">Log de sincronizações</string>
+    <string name="sync_diagnostics_requested">Sincronização solicitada. Abra %1$s para ver o progresso e os detalhes de diagnóstico.</string>
     <string name="sync_status_activity_title">Status da sincronização</string>
     <string name="sync_login_activity_title">Login ou crie uma conta</string>
     <string name="sync_login_change_password_menu_item">Alterar senha</string>
@@ -433,4 +434,12 @@
     <string name="menu_audio">Áudio</string>
     <string name="sn_audio_disclaimer_message">Observe que todo áudio disponível neste aplicativo não é necessariamente originário da editora da canção ou do hinário.</string>
     <string name="sn_error_rendering_lyrics">Erro ao exibir a letra. Por favor, toque no botão de menu e selecione \"Atualize hinário\".</string>
+    <string name="dv_section_version">Versão da Bíblia</string>
+    <string name="dv_section_appearance">Aparência</string>
+    <string name="dv_option_transparency">Transparência</string>
+    <string name="dv_transparency_solid">Fundo opaco</string>
+    <string name="dv_transparency_clear">Totalmente transparente</string>
+    <string name="dv_preview_reference">Salmos 119:105</string>
+    <string name="dv_preview_verse">A tua palavra é uma lampada para os meus pés e uma luz para o meu caminho.</string>
+    <string name="search_goto_reference">Ir para: ^1</string>
 </resources>

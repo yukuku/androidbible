@@ -2,6 +2,7 @@ package yuku.alkitab.songs
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -85,6 +86,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     // state for the keypad
     private var state_originalCode: String? = null
     private var state_tempCode = ""
+    private var selectionControls: LeftDrawer.Songs.Handle? = null
+    private var dismissSelection: (() -> Unit)? = null
+    private val keypadHandle: LeftDrawer.Songs.Handle get() = selectionControls ?: leftDrawer.handle
 
     // cache of song codes for each book
     private var cache_codes = mutableMapOf<String /* bookName */, MutableList<String> /* ordered codes */>()
@@ -238,18 +242,25 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         drawerLayout = findViewById(R.id.drawerLayout)
         leftDrawer = findViewById(R.id.left_drawer)
+        setupTextAppearancePanel(findViewById(R.id.textAppearanceOverlay)) {
+            applyTextAppearance()
+            (supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_SONG) as? SongFragment)
+                ?.refreshAppearance(templateCustomVars)
+        }
         leftDrawer.configure(this, drawerLayout)
         applySafeAreaPadding(leftDrawer)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        androidx.appcompat.widget.TooltipCompat.setTooltipText(toolbar, getString(R.string.song_select))
+        toolbar.setOnClickListener { showSelectionSheet() }
         setupEdgeToEdgeDisplayWithoutBottomInset(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerOpened(drawerView: View) {
-                drawer_opened()
+                resetKeypad()
             }
         })
 
@@ -304,13 +315,29 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     override fun onStart() {
         super.onStart()
 
+        applyTextAppearance()
+
+        // show latest viewed song
+        val bookName = Preferences.getString(Prefkey.song_last_bookName, null)
+        val code = Preferences.getString(Prefkey.song_last_code, null)
+
+        if (bookName == null || code == null) {
+            displaySong(null, null, true)
+        } else {
+            displaySong(bookName, App.services.storage.songDb.getSong(bookName, code), true)
+        }
+
+        window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
+    }
+
+    private fun applyTextAppearance() {
+        App.services.uiDimensions.recalculate()
         val applied = App.services.uiDimensions.applied()
 
         // apply background color, and clear window background to prevent overdraw
         window.setBackgroundDrawableResource(android.R.color.transparent)
         findViewById<View>(android.R.id.content).setBackgroundColor(applied.backgroundColor)
 
-        templateCustomVars.clear()
         templateCustomVars.putString("background_color", String.format(Locale.US, "#%06x", applied.backgroundColor and 0xffffff))
         templateCustomVars.putString("text_color", String.format(Locale.US, "#%06x", applied.fontColor and 0xffffff))
         templateCustomVars.putString("verse_number_color", String.format(Locale.US, "#%06x", applied.verseNumberColor and 0xffffff))
@@ -329,18 +356,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             templateCustomVars.putString("custom_font_loader", "")
         }
         templateCustomVars.putString("text_font", fontName)
-
-        // show latest viewed song
-        val bookName = Preferences.getString(Prefkey.song_last_bookName, null)
-        val code = Preferences.getString(Prefkey.song_last_code, null)
-
-        if (bookName == null || code == null) {
-            displaySong(null, null, true)
-        } else {
-            displaySong(bookName, App.services.storage.songDb.getSong(bookName, code), true)
-        }
-
-        window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
+        templateCustomVars.putString("verse_number_weight", if (applied.fontBold == Typeface.BOLD) "bold" else "300")
+        templateCustomVars.putString("text_weight", if (applied.fontBold == Typeface.BOLD) "bold" else "normal")
     }
 
     /**
@@ -631,9 +648,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         if (doc == null) return
 
-        val handle = leftDrawer.handle
-        handle.setBookName(SongBookUtil.escapeSongBookName(bookName))
-        handle.setCode(doc.code)
+        selectionControls?.setBookName(SongBookUtil.escapeSongBookName(bookName))
+        selectionControls?.setCode(doc.code)
+        leftDrawer.handle.setBookName(SongBookUtil.escapeSongBookName(bookName))
+        leftDrawer.handle.setCode(doc.code)
 
         val copyright = SongBookUtil.getCopyright(bookName)
         val patchTextLinkLabel = if (bookName?.startsWith("_") == true) null else getString(R.string.patch_text_open_link)
@@ -670,6 +688,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             append(SongBookUtil.escapeSongBookName(bookName))
             append(" ")
             append(song.code)
+            append(" ▾")
 
             val progress = mediaState.progress
             if (progress != null) {
@@ -681,10 +700,29 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
     }
 
-    fun drawer_opened() {
+    private fun showSelectionSheet() {
+        SongSelectionSheet.show(
+            activity = this,
+            onReady = { controls, dismiss ->
+                selectionControls = controls
+                dismissSelection = dismiss
+                controls.setBookName(SongBookUtil.escapeSongBookName(currentBookName))
+                resetKeypad()
+            },
+            onDisposed = {
+                selectionControls = null
+                dismissSelection = null
+            },
+            onKey = ::songKeypadButtonClick,
+            onBookSelected = ::songBookSelected,
+            onMoreSelected = ::moreSelected,
+        )
+    }
+
+    private fun resetKeypad() {
         if (currentBookName == null) return
 
-        val handle = leftDrawer.handle
+        val handle = keypadHandle
         handle.setOkButtonEnabled(false)
         handle.setAButtonEnabled(false)
         handle.setBButtonEnabled(false)
@@ -854,13 +892,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
     }
 
-    private val keypadViewToNumConverter by lazy {
+    private val keypadIdToNumConverter by lazy {
         val numIds = intArrayOf(R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4, R.id.bDigit5, R.id.bDigit6, R.id.bDigit7, R.id.bDigit8, R.id.bDigit9)
         val alphaIds = intArrayOf(R.id.bDigitA, R.id.bDigitB, R.id.bDigitC) // num = 10, 11, 12
 
-        fun(v: View): Int {
-            val id = v.id
-
+        fun(id: Int): Int {
             for (i in numIds.indices) if (id == numIds[i]) return i
             for (i in alphaIds.indices) if (id == alphaIds[i]) return 10 + i // special code for alpha
             if (id == R.id.bBackspace) return 20 // special code for the backspace
@@ -869,10 +905,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
     }
 
-    override fun songKeypadButton_click(v: View) {
+    override fun songKeypadButton_click(v: View) = songKeypadButtonClick(v.id)
+
+    private fun songKeypadButtonClick(id: Int) {
         val currentBookName = currentBookName ?: return
 
-        val handle = leftDrawer.handle
+        val handle = keypadHandle
 
         fun updateHandle() {
             handle.setCode(state_tempCode)
@@ -883,7 +921,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             handle.setCButtonEnabled(state_tempCode.length <= 3 && App.services.storage.songDb.songExists(currentBookName, state_tempCode + "C"))
         }
 
-        when (val num = keypadViewToNumConverter(v)) {
+        when (val num = keypadIdToNumConverter(id)) {
             in 0..9 -> { // digits
                 if (state_tempCode.length >= 4) state_tempCode = "" // can't be more than 4 digits
 
@@ -925,6 +963,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     handle.setCode(state_originalCode) // revert
                 }
                 leftDrawer.closeDrawer()
+                dismissSelection?.invoke()
             }
         }
     }
@@ -936,10 +975,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             displaySong(name, song)
         }
 
-        state_tempCode = ""
+        resetKeypad()
     }
 
     override fun moreSelected() {
+        dismissSelection?.invoke()
         openDownloadSongBookPage()
     }
 

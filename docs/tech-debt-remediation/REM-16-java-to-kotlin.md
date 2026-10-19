@@ -1,6 +1,5 @@
 # REM-16: Convert Core Java Files to Kotlin
 
-**Addresses:** TD-11
 **Module:** Various
 **BRICE:** B=3 R=1 I=3 C=3 E=5 → **3.0**
 **Phase:** 3 — Modernization
@@ -23,7 +22,7 @@
 | 10 | `Sync.java` | High | Threading + network, many call sites |
 | 11 | `InternalDb.java` | High | Core database (already roughly halved by the DAO extraction) |
 
-Not on the original list but still Java: `SyncAdapter.java` and the devotion article parsers (`DevotionArticle.java` + the six `Article*.java` implementations).
+Not on the original list but still Java: `InternalDbHelper`, several activities, `SyncAdapter`, and the devotion article parsers (`DevotionArticle`, `ArticleFromSabda`, `ArticleMeidA`, `ArticleMorningEveningEnglish`, `ArticleRenunganHarian`, `ArticleRoc`, and `ArticleSantapanHarian`). Convert these when concrete maintenance or coroutine-integration needs justify it, with characterization tests for risky behavior. Browse the source tree for the current language split rather than maintaining file counts here.
 
 Also ported, beyond the original list (2026-09-23): `Levenshtein`, `AlphanumComparator`, `BookNameSorter`, `PdbBookNumberToBookIdMapping`, `SongFilter`, `Debouncer`, `CurrentReading`, `LidToAri`, `OldVerseTextDecoder`, `VerseTextDecoder` and `YesReaderFactory`. Each port first added characterization tests that pass on the Java code, then kept every Java comment. Problems found along the way and not fixed in the ports are tracked as [REM-46](REM-46-debouncer-thread-leak.md), [REM-47](REM-47-yesreaderfactory-file-leak.md) and [REM-48](REM-48-old-ascii-decoder.md).
 

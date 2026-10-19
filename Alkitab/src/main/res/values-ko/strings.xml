@@ -352,6 +352,7 @@
     <string name="sync_sync_set_pref_summary_never">아직 동기화하지 못했습니다.</string>
     <string name="sync_sync_set_pref_summary_syncing">동기화 중...</string>
     <string name="sync_log_activity_title">동기화 로그</string>
+    <string name="sync_diagnostics_requested">동기화를 요청했습니다. 진행 상황과 진단 정보를 보려면 %1$s 항목을 여세요.</string>
     <string name="sync_status_activity_title">동기화 상태</string>
     <string name="sync_login_activity_title">로그인 또는 계정 만들기</string>
     <string name="sync_login_change_password_menu_item">비밀번호 변경</string>
@@ -433,4 +434,12 @@
     <string name="pref_verseNumberIsShown_title">구절 번호 표시</string>
     <string name="sn_audio_disclaimer_message">이 앱에서 제공되는 모든 오디오가 반드시 찬양 또는 찬양집의 발행자로부터 제공된 것은 아님을 유의하시기 바랍니다.</string>
     <string name="sn_error_rendering_lyrics">가사를 표시하는 중 오류가 발생했습니다. 메뉴 버튼을 누른 후 \"찬양집 업데이트\"를 선택하십시오.</string>
+    <string name="dv_section_version">성경 번역본</string>
+    <string name="dv_section_appearance">화면 설정</string>
+    <string name="dv_option_transparency">투명도</string>
+    <string name="dv_transparency_solid">불투명한 배경</string>
+    <string name="dv_transparency_clear">완전히 투명</string>
+    <string name="dv_preview_reference">시편 119:105</string>
+    <string name="dv_preview_verse">주의 말씀은 내 발에 등이요 내 길에 빛이니이다</string>
+    <string name="search_goto_reference">바로가기: ^1</string>
 </resources>

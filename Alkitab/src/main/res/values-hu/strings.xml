@@ -322,6 +322,7 @@
     <string name="sync_sync_set_pref_summary_never">Még nincs szinkronizálva</string>
     <string name="sync_sync_set_pref_summary_syncing">Szinkronizálás most&#8230;</string>
     <string name="sync_log_activity_title">Szinkronizálási napló</string>
+    <string name="sync_diagnostics_requested">Szinkronizálás kérve. Az állapot és a diagnosztikai részletek a %1$s menüpontban láthatók.</string>
     <string name="sync_status_activity_title">Szinkronizálási állapot</string>
     <string name="sync_login_activity_title">Bejelentkezés vagy Fiók létrehozása</string>
     <string name="sync_login_change_password_menu_item">Jelszó módosítása</string>
@@ -433,4 +434,12 @@
     <string name="version_download_add_from_local">Helyi tárhelyről</string>
     <string name="version_download_add_from_url_prompt_yes_only">.yes FÁJL URL</string>
     <string name="version_download_saving_io_error">I/O hiba a letöltött verzió mentésekor</string>
+    <string name="dv_section_version">Bibliafordítás</string>
+    <string name="dv_section_appearance">Megjelenés</string>
+    <string name="dv_option_transparency">Átlátszóság</string>
+    <string name="dv_transparency_solid">Átlátszatlan háttér</string>
+    <string name="dv_transparency_clear">Teljesen átlátszó</string>
+    <string name="dv_preview_reference">Zsoltárok 119:105</string>
+    <string name="dv_preview_verse">Az én lábamnak szövétneke a te igéd, és ösvényemnek világossága.</string>
+    <string name="search_goto_reference">Ugrás ide: ^1</string>
 </resources>

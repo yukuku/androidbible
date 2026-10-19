@@ -78,7 +78,6 @@ class BottomToolbarLayoutTest {
     fun `bottom toolbars fit below content across secondary screen layouts`() {
         val layouts = listOf(
             R.layout.activity_about,
-            R.layout.activity_daily_verse_configuration,
             R.layout.activity_data_transfer,
             R.layout.activity_devotion_content,
             R.layout.activity_font_manager,
@@ -93,7 +92,6 @@ class BottomToolbarLayoutTest {
             R.layout.activity_search_book_filter,
             R.layout.activity_settings,
             R.layout.activity_song_view_content,
-            R.layout.activity_sync_log,
             R.layout.activity_sync_login,
             R.layout.activity_versions,
             R.layout.ribka_activity_report,

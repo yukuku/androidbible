@@ -5,19 +5,12 @@
 **BRICE:** B=2 R=2 I=4 C=4 E=3 → **3.0**
 **Phase:** 2 (Architecture Improvements)
 
-**Status:** Not started.
+**Status:** Complete (2026-10-15).
 
-**Problem:** The ASCII decoder for YES1 files has three problems:
-1. `separateIntoVerses` copies each verse into a fixed 4,000-char buffer, so a verse longer than 4,000 bytes throws `ArrayIndexOutOfBoundsException` while the chapter loads.
-2. Bytes above 0x7F decode differently in the two methods. `separateIntoVerses` sign-extends each byte, so 0xE9 becomes U+FFE9, while `makeIntoSingleString` decodes ISO-8859-1, so 0xE9 becomes U+00E9. The code carries a warning that only ASCII input is supported, and `OldVerseTextDecoderTest` pins the sign-extension today.
-3. With `lowercased = true`, both methods lowercase the caller's byte array in place instead of a copy.
-
-**Steps:**
-1. Decode each verse with `String(ba, from, length, Charsets.ISO_8859_1)` between newlines, the same way `Utf8.separateIntoVerses` slices the buffer. This removes the fixed buffer and makes both methods agree on Latin-1. Update the sign-extension test to expect U+00E9.
-2. Lowercase a copy of the bytes, or lowercase A to Z in the decoded string, instead of the input array. Check first that `Yes1Reader` does not rely on the mutation.
-3. Add tests: a verse longer than 4,000 bytes, non-ASCII bytes decoding the same in both methods, and the input array unchanged after a lowercased call.
-
-**Difficulty:** Easy.
+**Implementation:**
+- Both YES1 ASCII entry points decode ISO-8859-1 consistently. Verse splitting uses string slices without a fixed-size character buffer.
+- Lowercasing changes only ASCII A through Z in the decoded text and leaves caller-owned bytes untouched. `Yes1Reader` creates a fresh chapter byte array and does not depend on input mutation.
+- Regression coverage preserves newline and empty-verse behavior, verifies Latin-1 decoding, and checks long verses and input immutability for both entry points.
 
 ---
 

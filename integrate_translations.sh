@@ -18,7 +18,7 @@ if [ ! -e "$SRC" ] ; then
 	exit 1
 fi
 
-# Keep this synced with build.gradle resConfigs! Also update pref_language.xml, build.gradle, and ConfigurationWrapper!
+# Keep this synced with Alkitab/build.gradle.kts androidResources.localeFilters, pref_language.xml, and ConfigurationWrapper!
 PAIRS=(af af bg bg ceb ceb cs cs da da de de el el es es-ES fr fr hu hu in id it it ja ja ko ko lv lv ms ms my my nl nl pl pl pt-rBR pt-BR pt pt-PT ro ro ru ru th th tl tl tr tr uk uk vi vi zh-rCN zh-CN zh-rTW zh-TW)
 
 for ((i=0; i<${#PAIRS[@]}; i+=2)) ; do

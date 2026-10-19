@@ -352,6 +352,7 @@
     <string name="sync_sync_set_pref_summary_never">Ainda não sincronizado</string>
     <string name="sync_sync_set_pref_summary_syncing">A sincronizar agora&#8230;</string>
     <string name="sync_log_activity_title">Registo de sincronizações</string>
+    <string name="sync_diagnostics_requested">Sincronização solicitada. Abra %1$s para ver o progresso e os detalhes de diagnóstico.</string>
     <string name="sync_status_activity_title">Estado da sincronização</string>
     <string name="sync_login_activity_title">Inicie a sessão ou crie conta</string>
     <string name="sync_login_change_password_menu_item">Alterar senha</string>
@@ -433,4 +434,12 @@
     <string name="pref_verseNumberIsShown_title">Mostrar números dos versículos</string>
     <string name="sn_audio_disclaimer_message">Tenha em atenção que todo o áudio disponibilizado nesta aplicação não provém necessariamente do editor da canção ou do livro de canções.</string>
     <string name="sn_error_rendering_lyrics">Erro ao apresentar a letra. Toque no botão de menu e selecione \"Atualizar o livro de canções\".</string>
+    <string name="dv_section_version">Versão da Bíblia</string>
+    <string name="dv_section_appearance">Aspeto</string>
+    <string name="dv_option_transparency">Transparência</string>
+    <string name="dv_transparency_solid">Fundo opaco</string>
+    <string name="dv_transparency_clear">Totalmente transparente</string>
+    <string name="dv_preview_reference">Salmos 119:105</string>
+    <string name="dv_preview_verse">A tua palavra é uma lampada para os meus pés e uma luz para o meu caminho.</string>
+    <string name="search_goto_reference">Saltar para: ^1</string>
 </resources>

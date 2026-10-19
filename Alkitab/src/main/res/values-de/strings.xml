@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Noch nicht synchronisiert</string>
     <string name="sync_sync_set_pref_summary_syncing">Synchronisiere&#8230;</string>
     <string name="sync_log_activity_title">Synchronisationsprotokoll</string>
+    <string name="sync_diagnostics_requested">Synchronisierung angefordert. Öffnen Sie %1$s, um den Fortschritt und Diagnosedetails zu sehen.</string>
     <string name="sync_status_activity_title">Synchronisationsstatus</string>
     <string name="sync_login_activity_title">Anmelden oder Konto erstellen</string>
     <string name="sync_login_change_password_menu_item">Passwort ändern</string>
@@ -433,4 +434,12 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Bitte beachten Sie, dass alle in dieser App bereitgestellten Audiodateien nicht unbedingt vom Herausgeber des Liedes oder des Liederbuchs stammen.</string>
     <string name="sn_error_rendering_lyrics">Fehler beim Anzeigen der Liedtexte. Bitte tippen Sie auf die Menüschaltfläche und wählen Sie \"Liederbuch aktualisieren\".</string>
+    <string name="dv_section_version">Bibelübersetzung</string>
+    <string name="dv_section_appearance">Darstellung</string>
+    <string name="dv_option_transparency">Transparenz</string>
+    <string name="dv_transparency_solid">Undurchsichtiger Hintergrund</string>
+    <string name="dv_transparency_clear">Vollständig transparent</string>
+    <string name="dv_preview_reference">Psalm 119:105</string>
+    <string name="dv_preview_verse">Dein Wort ist Leuchte meinem Fuße und Licht für meinen Pfad.</string>
+    <string name="search_goto_reference">Gehe zu: ^1</string>
 </resources>

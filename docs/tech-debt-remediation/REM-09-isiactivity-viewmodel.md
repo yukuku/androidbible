@@ -1,11 +1,12 @@
 # REM-09: Introduce ViewModel for IsiActivity
 
-**Addresses:** TD-07
 **Module:** Main reader
 **BRICE:** B=4 R=3 I=2 C=3 E=5 → **3.4**
 **Phase:** 2 — Architecture Improvements
 
 **Status:** Not started.
+
+**Problem:** `IsiActivity` still owns chapter display, selected-verse listeners with partially duplicated split-pane logic, navigation/back-forward history, volume-button navigation, and many inline callbacks. It also holds the primary version and accesses the secondary version through `SplitViewManager`. State restoration relies on activity fields and saved-instance state, making rotation handling incomplete and isolated behavior tests difficult. `GotoViewModel` covers navigation selection, not the reader itself.
 
 **Steps:**
 1. Create `IsiViewModel : ViewModel()` with:

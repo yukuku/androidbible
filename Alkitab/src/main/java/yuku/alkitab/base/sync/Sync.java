@@ -9,8 +9,9 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -198,7 +199,6 @@ public class Sync {
     }
 
     private static final ArrayMap<String, AtomicInteger> syncUpdatesOngoingCounters = new ArrayMap<>();
-    private static final ConcurrentLinkedQueue<String> syncSetNameQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Notify that we need to sync with server.
@@ -208,47 +208,31 @@ public class Sync {
     public static synchronized void notifySyncNeeded(final String... syncSetNames) {
         // if not logged in, do nothing
         if (Preferences.getString(Prefkey.sync_simpleToken) == null) {
+            SyncRecorder.log(SyncRecorder.EventKind.sync_skipped, null, "reason", "not_logged_in");
             return;
         }
 
+        final Set<String> requestedSets = new LinkedHashSet<>();
         for (final String syncSetName : syncSetNames) {
             final AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
             if (counter != null && counter.get() != 0) {
-                AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
-                return;
+                SyncRecorder.log(SyncRecorder.EventKind.sync_skipped, syncSetName, "reason", "updates_ongoing");
+                continue;
             }
 
             { // check if preferences prevent syncing
                 if (!Preferences.getBoolean(prefkeyForSyncSetEnabled(syncSetName), true)) {
+                    SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_set_not_enabled, syncSetName);
                     continue;
                 }
             }
 
             SyncRecorder.log(SyncRecorder.EventKind.sync_needed_notified, syncSetName);
 
-            // check if we can omit queueing sync request for this sync set name.
-            synchronized (syncSetNameQueue) {
-                if (syncSetNameQueue.contains(syncSetName)) {
-                    AppLog.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
-                    continue;
-                }
-                syncSetNameQueue.add(syncSetName);
-            }
+            requestedSets.add(syncSetName);
         }
 
-        final List<String> extraSyncSetNames = new ArrayList<>();
-        synchronized (syncSetNameQueue) {
-            while (true) {
-                final String extraSyncSetName = syncSetNameQueue.poll();
-                if (extraSyncSetName == null) {
-                    break;
-                }
-                extraSyncSetNames.add(extraSyncSetName);
-            }
-        }
-
-        // request sync.
-        SyncKotlin.syncNow(false, extraSyncSetNames.toArray(new String[0]));
+        SyncKotlin.syncNow(false, requestedSets.toArray(new String[0]));
     }
 
     /**
@@ -374,8 +358,8 @@ public class Sync {
             final RegisterFcmClientResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), RegisterFcmClientResponseJson.class);
 
             if (!response.success) {
-                SyncRecorder.log(SyncRecorder.EventKind.fcm_send_not_success, null, "message", response.message);
-                AppLog.w(TAG, "FCM registration id rejected by server: " + response.message);
+                SyncRecorder.log(SyncRecorder.EventKind.fcm_send_not_success, null, "stage", "fcm");
+                AppLog.w(TAG, "FCM registration rejected by server");
                 Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
                 return false;
             }
@@ -387,12 +371,14 @@ public class Sync {
             return true;
 
         } catch (IOException | JsonIOException e) {
+            SyncRecorder.error("fcm", null, e);
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_io, null);
             AppLog.w(TAG, "Failed to send FCM registration id to server", e);
             Preferences.setBoolean(Prefkey.fcm_registration_pending, true);
             return false;
 
         } catch (JsonSyntaxException e) {
+            SyncRecorder.error("fcm", null, e);
             SyncRecorder.log(SyncRecorder.EventKind.fcm_send_error_json, null);
             AppLog.w(TAG, "Server response is not valid JSON", e);
             Preferences.setBoolean(Prefkey.fcm_registration_pending, true);

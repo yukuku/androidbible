@@ -309,7 +309,7 @@ android {
             all {
                 // Robolectric renders the Compose verse row with native graphics,
                 // which needs more than Gradle's default test-worker heap.
-                it.maxHeapSize = "2g"
+                it.maxHeapSize = "4g"
                 it.systemProperty("user.language", "en")
                 it.systemProperty("user.country", "US")
             }
@@ -575,6 +575,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.percentlayout)
     implementation(libs.androidx.preference.ktx)
@@ -600,6 +601,7 @@ dependencies {
     implementation(libs.fastscroll)
 
     // Tests
+    testImplementation(libs.androidx.work.testing)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.robolectric)

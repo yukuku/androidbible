@@ -96,8 +96,8 @@ MVersion.getVersion()
 - Background work:
   - Sync operations run as a `WorkManager` worker (`SyncAdapter`)
   - Bible-version downloads run as a `CoroutineWorker` (`VersionDownloadWorker`) using OkHttp + Range-based resume; observed via `WorkManager.getWorkInfoByIdFlow` in `DownloadMapper` (REM-19)
-  - `DevotionDownloader` uses a single-thread `ExecutorService` with a `LinkedBlockingDeque` queue and a clean shutdown path (REM-05)
+  - `DevotionDownloader` uses a coroutine scope with foreground/prefetch slots, source/date deduplication, and cancellation on shutdown ([REM-05](tech-debt-remediation/REM-05-devotion-downloader-threading.md))
   - Song-book downloads use raw OkHttp via `Connections.downloadCall(...)`
   - File imports and widget updates
 - Audio playback runs in two foreground `MediaSessionService`s (`BibleAudioService` for Bible chapter audio, `SongAudioService` for hymns), arbitrated to at most one active session by `AudioPlaybackCoordinator` — see `docs/modules/audio-playback.md`
-- Coroutines are used in the migrated paths above (workers, the audio subsystem, gesture-flow collectors, the `AppEvents` `SharedFlow` buses introduced by REM-03) but the codebase still has `Thread` / `Handler` remnants — see `docs/tech-debt.md`
+- Coroutines are used in workers, audio, devotion downloads, and app-event collectors. Remaining threading work is tracked in [REM-15](tech-debt-remediation/REM-15-coroutines.md); sync delivery and shared-state races are tracked in [REM-34](tech-debt-remediation/REM-34-sync-delivery.md).

@@ -100,13 +100,13 @@ public class ReadingPlanManager {
 					counter++;
 				}
 
+				if (reader.readUint8() != 0) {
+					throw new RuntimeException("No footer.");
+				}
+
 				readingPlan.dailyVerses = dailyVerses;
 			} finally {
 				reader.close();
-			}
-
-			if (reader.readUint8() != 0) {
-				throw new RuntimeException("No footer.");
 			}
 
 			return readingPlan;
@@ -155,6 +155,10 @@ public class ReadingPlanManager {
 		for (int i = 0; i < readingCodes.size(); i++) {
 			final int readingCode = readingCodes.get(i);
 			final int sequence = (readingCode & 0x000000ff);
+			if (sequence >= readMarks.length) {
+				AppLog.e(TAG, "Reading sequence out of bounds: " + sequence + " for day " + dayNumber);
+				continue;
+			}
 			readMarks[sequence] = true;
 		}
 	}

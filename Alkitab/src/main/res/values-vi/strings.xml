@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Chưa đồng bộ</string>
     <string name="sync_sync_set_pref_summary_syncing">Đang đồng bộ&#8230;</string>
     <string name="sync_log_activity_title">Nhật ký đồng bộ</string>
+    <string name="sync_diagnostics_requested">Đã yêu cầu đồng bộ. Mở %1$s để xem tiến trình và thông tin chẩn đoán.</string>
     <string name="sync_status_activity_title">Trạng thái đồng bộ</string>
     <string name="sync_login_activity_title">Đăng nhập hoặc Tạo tài khoản</string>
     <string name="sync_login_change_password_menu_item">Đổi mật khẩu</string>
@@ -433,4 +434,12 @@
     <string name="menu_audio">Âm thanh</string>
     <string name="sn_audio_disclaimer_message">Xin lưu ý rằng tất cả âm thanh cung cấp trong ứng dụng này không nhất thiết bắt nguồn từ nhà xuất bản của bài hát hoặc sách bài hát.</string>
     <string name="sn_error_rendering_lyrics">Lỗi khi hiển thị lời bài hát. Vui lòng nhấn nút menu và chọn \"Nâng cấp sách bài hát\".</string>
+    <string name="dv_section_version">Bản dịch Kinh Thánh</string>
+    <string name="dv_section_appearance">Giao diện</string>
+    <string name="dv_option_transparency">Độ trong suốt</string>
+    <string name="dv_transparency_solid">Nền không trong suốt</string>
+    <string name="dv_transparency_clear">Hoàn toàn trong suốt</string>
+    <string name="dv_preview_reference">Thi Thiên 119:105</string>
+    <string name="dv_preview_verse">Lời Chúa là ngọn đèn cho chơn tôi, Ánh sáng cho đường lối tôi.</string>
+    <string name="search_goto_reference">Đi đến: ^1</string>
 </resources>

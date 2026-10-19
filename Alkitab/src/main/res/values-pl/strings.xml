@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Jeszcze nie synchronizowano</string>
     <string name="sync_sync_set_pref_summary_syncing">Synchronizowanie&#8230;</string>
     <string name="sync_log_activity_title">Log synchronizacji</string>
+    <string name="sync_diagnostics_requested">Zażądano synchronizacji. Otwórz %1$s, aby zobaczyć postęp i szczegóły diagnostyczne.</string>
     <string name="sync_status_activity_title">Status synchronizacji</string>
     <string name="sync_login_activity_title">Zaloguj się lub utwórz konto</string>
     <string name="sync_login_change_password_menu_item">Zmień hasło</string>
@@ -433,4 +434,12 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Prosimy pamiętać, że całe audio dostępne w tej aplikacji niekoniecznie pochodzi od wydawcy pieśni lub śpiewnika.</string>
     <string name="sn_error_rendering_lyrics">Błąd podczas wyświetlania tekstu. Naciśnij przycisk menu i wybierz \"Aktualizuj śpiewnik\".</string>
+    <string name="dv_section_version">Przekład Biblii</string>
+    <string name="dv_section_appearance">Wygląd</string>
+    <string name="dv_option_transparency">Przezroczystość</string>
+    <string name="dv_transparency_solid">Nieprzezroczyste tło</string>
+    <string name="dv_transparency_clear">Całkowicie przezroczyste</string>
+    <string name="dv_preview_reference">Psalm 119:105</string>
+    <string name="dv_preview_verse">Twoje słowo jest pochodnią dla moich nóg i światłością na mojej ścieżce.</string>
+    <string name="search_goto_reference">Skocz do: ^1</string>
 </resources>

@@ -365,6 +365,7 @@
     <string name="sync_sync_set_pref_summary_never">Belum pernah sync</string>
     <string name="sync_sync_set_pref_summary_syncing">Sedang sync&#8230;</string>
     <string name="sync_log_activity_title">Log sync</string>
+    <string name="sync_diagnostics_requested">Sync diminta. Buka %1$s untuk melihat progres dan rincian diagnostik.</string>
     <string name="sync_status_activity_title">Status Sync</string>
     <string name="sync_login_activity_title">Login atau buat akun</string>
     <string name="sync_login_change_password_menu_item">Ganti password</string>
@@ -518,4 +519,14 @@
     <string name="devotion_download_failed">Gagal mengunduh renungan. Periksa koneksi Anda dan coba lagi.</string>
     <string name="devotion_unavailable">Renungan ini belum tersedia di server.</string>
     <string name="devotion_retry">Coba lagi</string>
+    <string name="dv_preview_reference">Mazmur 119:105</string>
+    <string name="dv_preview_verse">Firman-Mu itu pelita bagi kakiku dan terang bagi jalanku.</string>
+    <string name="dv_section_version">Versi Alkitab</string>
+    <string name="dv_section_appearance">Tampilan</string>
+    <string name="dv_option_transparency">Transparansi</string>
+    <string name="dv_transparency_solid">Tidak transparan</string>
+    <string name="dv_transparency_clear">Sepenuhnya transparan</string>
+    <string name="devotion_select">Pilih renungan dan tanggal</string>
+    <string name="song_select">Pilih lagu</string>
+    <string name="search_goto_reference">Loncat ke: ^1</string>
 </resources>

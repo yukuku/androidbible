@@ -47,9 +47,10 @@ class ImportProcess(
             log.log("Simulating import")
         }
 
+        var stagedHistory: List<History.Entry>? = null
         storage.transact { handle ->
             if (options.importHistory) {
-                history(root.snapshots.history)
+                stagedHistory = history(root.snapshots.history)
             }
 
             if (options.importMabel) {
@@ -70,13 +71,18 @@ class ImportProcess(
             }
         }
 
+        // History lives outside SQLite and must only change after the database commits.
+        if (options.actualRun) {
+            stagedHistory?.let(storage::replaceHistory)
+        }
+
         log.log("All succeeded")
     }
 
     /**
      * For history, there is no merging done locally, local will be replaced completely.
      */
-    private fun history(history: Snapshot<HistoryEntity>) {
+    private fun history(history: Snapshot<HistoryEntity>): List<History.Entry> {
         val logger = log.logger("History")
         val old = storage.history()
         val new = history.entities.map { entity ->
@@ -84,8 +90,7 @@ class ImportProcess(
         }
         logger("${old.size} entries will be replaced by incoming ${new.size} entries")
 
-        storage.replaceHistory(new)
-        logger("replace succeeded")
+        return new
     }
 
     /**
@@ -106,6 +111,8 @@ class ImportProcess(
         val markerGids = oldMarkers.associateBy { it.gid }
         val labelGids = oldLabels.associateBy { it.gid }
         val markerLabelGids = oldMarkerLabels.associateBy { it.gid }
+        val availableMarkerGids = markerGids.keys + mabel.entities.filterIsInstance<MarkerEntity>().map { it.gid }
+        val availableLabelGids = labelGids.keys + mabel.entities.filterIsInstance<LabelEntity>().map { it.gid }
 
         // do the counting first
         logger("incoming markers will replace ${
@@ -131,7 +138,9 @@ class ImportProcess(
                         // _id will be nonzero if oldMarker is non-null
                         gid = entity.gid
                         ari = entity.content.ari
-                        kind = Marker.Kind.fromCode(entity.content.kind)
+                        kind = requireNotNull(Marker.Kind.fromCode(entity.content.kind)) {
+                            "Marker ${entity.gid} has invalid kind ${entity.content.kind}"
+                        }
                         caption = entity.content.caption
                         verseCount = entity.content.verseCount
                         createTime = Sqlitil.toDate(entity.content.createTime)
@@ -154,7 +163,12 @@ class ImportProcess(
                 }
 
                 is MarkerLabelEntity -> {
-                    // check validity of marker gid and label gid
+                    require(entity.content.marker_gid in availableMarkerGids) {
+                        "Label-assignment ${entity.gid} references missing marker ${entity.content.marker_gid}"
+                    }
+                    require(entity.content.label_gid in availableLabelGids) {
+                        "Label-assignment ${entity.gid} references missing label ${entity.content.label_gid}"
+                    }
                     val oldMarkerLabel = markerLabelGids[entity.gid]
                     if (oldMarkerLabel == null) markerLabelNewCount++ else markerLabelEditCount++
                     val newMarkerLabel = (oldMarkerLabel ?: Marker_Label.createEmptyMarker_Label()).apply {

@@ -1,36 +1,17 @@
 # Daily Verse Widget
 
-## Overview
+The daily verse widget brings Bible passages to the Android home screen. Users can browse verses, open a passage in the app, and choose the Bible version and appearance that suit their home screen.
 
-A home screen app widget displaying daily Bible verses in a stack/card view. Configurable appearance with user-selectable version, text size, colors, and background transparency.
+## Configuration and navigation
 
-## Key Files
+Each widget is configured independently. Supported launchers let users revisit its settings after placement. Saving appearance changes preserves verse navigation; canceling leaves the saved configuration unchanged.
 
-- `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseAppWidgetService.java` — RemoteViewsService
-- `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseFactory.java` — RemoteViewsFactory implementation
-- `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseData.java` — Widget settings and verse selection
-- `Alkitab/src/main/java/yuku/alkitab/base/appwidget/DailyVerseAppWidgetConfigurationActivity.java` — Widget setup UI
-- `Alkitab/src/main/java/yuku/alkitab/base/br/DailyVerseAppWidgetReceiver.kt` — Broadcast receiver for widget updates
+Verse selection draws from a curated collection rather than following Bible order. Different widget instances can show different passages. The widget handles unavailable Bible content so that a missing or unreadable version does not leave it unusable.
 
-## Verse Selection Algorithm
+## Launcher integration and localization
 
-Uses a predefined verse list from `R.raw.daily_verses_bt`:
-1. Generate seed from: `widgetId + year + dayOfYear + clickCount`
-2. Select verse from predefined list using seed
-3. Verify verse exists in the selected Bible version
-4. Falls back to internal version if the selected version can't load the verse
+The launcher controls how the widget is presented, sized, and reconfigured, so available interactions vary across devices and launchers.
 
-## Configuration
+The widget picker shows a localized sample rather than the widget’s current verse. Its language follows the launcher’s resource context, which may differ from the language selected inside the app. Preview samples do not affect live verse selection or the user’s chosen Bible version.
 
-Each widget instance stores its own preferences:
-- Bible version to use
-- Text size
-- Text color
-- Background transparency (alpha)
-- Whether to show the app icon
-
-Settings are persisted in SharedPreferences keyed by widget ID.
-
-## Navigation
-
-Users can tap previous/next to cycle through verses. Each tap increments a `clickCount` stored per widget, which changes the seed and selects a different verse.
+Preview text comes from published Bible translations. The [preview source records](daily-verse-preview-sources.json) document the editions, references, source URLs, and text normalization. Reference numbering can differ between editions, and publisher-specific reuse terms apply.

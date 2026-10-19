@@ -352,6 +352,7 @@
     <string name="sync_sync_set_pref_summary_never">Все още няма синхронизация</string>
     <string name="sync_sync_set_pref_summary_syncing">Синхронизиране&#8230;</string>
     <string name="sync_log_activity_title">Синхронизиране на дневника</string>
+    <string name="sync_diagnostics_requested">Заявена е синхронизация. Отворете %1$s за напредъка и диагностични подробности.</string>
     <string name="sync_status_activity_title">Статус на синхронизация</string>
     <string name="sync_login_activity_title">Влез в системата или създай отчетен запис</string>
     <string name="sync_login_change_password_menu_item">Промяна на паролата</string>
@@ -433,4 +434,12 @@
     <string name="pref_verseNumberIsShown_title">Показвай номерата на стиховете</string>
     <string name="sn_audio_disclaimer_message">Моля, обърнете внимание, че цялото аудио, предоставено в това приложение, не произхожда непременно от издателя на песента или сборника с песни.</string>
     <string name="sn_error_rendering_lyrics">Грешка при показване на текста на песента. Моля, докоснете бутона на менюто и изберете \"Обновяване на сборника с духовни химни\".</string>
+    <string name="dv_section_version">Превод на Библията</string>
+    <string name="dv_section_appearance">Външен вид</string>
+    <string name="dv_option_transparency">Прозрачност</string>
+    <string name="dv_transparency_solid">Непрозрачен фон</string>
+    <string name="dv_transparency_clear">Напълно прозрачен</string>
+    <string name="dv_preview_reference">Псалми 119:105</string>
+    <string name="dv_preview_verse">Твоето слово е светилник на нозете ми и виделина на пътеката ми.</string>
+    <string name="search_goto_reference">Преход към: ^1</string>
 </resources>

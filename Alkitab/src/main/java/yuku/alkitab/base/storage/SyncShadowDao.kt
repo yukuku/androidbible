@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken
 import yuku.alkitab.base.App
 import yuku.alkitab.base.model.SyncLog
 import yuku.alkitab.base.model.SyncShadow
+import yuku.alkitab.base.sync.SyncDiagnostics
 import yuku.alkitab.base.sync.SyncRecorder
 import yuku.alkitab.base.util.Sqlitil
 
@@ -139,9 +140,23 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
             put(Table.SyncLog.createTime.name, createTime)
             put(Table.SyncLog.kind.name, kind.code)
             put(Table.SyncLog.syncSetName.name, syncSetName)
-            put(Table.SyncLog.params.name, params)
+            put(Table.SyncLog.params.name, params?.takeIf {
+                it.length <= SyncDiagnostics.MAX_PARAM_BYTES && it.toByteArray(Charsets.UTF_8).size <= SyncDiagnostics.MAX_PARAM_BYTES
+            })
         }
-        helper.writableDatabase.insert(Table.SyncLog.tableName(), null, cv)
+        helper.writableDatabase.apply {
+            beginTransaction()
+            try {
+                insertOrThrow(Table.SyncLog.tableName(), null, cv)
+                if (DatabaseUtils.queryNumEntries(this, Table.SyncLog.tableName()) >= SyncDiagnostics.MAX_ROWS) {
+                    execSQL("DELETE FROM SyncLog WHERE _id <= " +
+                        "(SELECT _id FROM SyncLog ORDER BY _id DESC LIMIT 1 OFFSET ${SyncDiagnostics.RETAINED_ROWS})")
+                }
+                setTransactionSuccessful()
+            } finally {
+                endTransaction()
+            }
+        }
     }
 
     fun listLatest(maxrows: Int): List<SyncLog> {
@@ -150,10 +165,10 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
             Table.SyncLog.tableName(),
             arrayOf(
                 Table.SyncLog.createTime.name, Table.SyncLog.kind.name,
-                Table.SyncLog.syncSetName.name, Table.SyncLog.params.name,
+                Table.SyncLog.syncSetName.name, "CASE WHEN length(CAST(params AS BLOB)) <= ${SyncDiagnostics.MAX_PARAM_BYTES} THEN params ELSE NULL END",
             ),
             null, null, null, null,
-            Table.SyncLog.createTime.name + " desc", maxrows.toString(),
+            "_id desc", maxrows.coerceIn(0, SyncDiagnostics.MAX_ROWS).toString(),
         ).use { c ->
             while (c.moveToNext()) {
                 res += SyncLog().apply {
@@ -161,7 +176,12 @@ class SyncShadowDao(private val helper: InternalDbHelper) {
                     kind_code = c.getInt(1)
                     syncSetName = c.getString(2)
                     val paramsS = c.getString(3)
-                    params = if (paramsS == null) null else App.getDefaultGson().fromJson(paramsS, SYNC_LOG_PARAMS_TYPE)
+                    params = try {
+                        if (paramsS == null) emptyMap() else
+                            App.getDefaultGson().fromJson<Map<String, Any>>(paramsS, SYNC_LOG_PARAMS_TYPE) ?: emptyMap()
+                    } catch (_: RuntimeException) {
+                        emptyMap()
+                    }
                 }
             }
         }

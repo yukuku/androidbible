@@ -1,13 +1,20 @@
 package yuku.alkitab.base.verses
 
-import android.graphics.Typeface
+import android.graphics.Canvas
 import android.graphics.Rect
+import android.graphics.Typeface
+import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.BroadcastFrameClock
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
 import androidx.test.core.app.ApplicationProvider
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.android.asCoroutineDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -123,14 +130,20 @@ class VersesComposeListCompositionTest {
      * activity of a test sandbox — production recomposition paths are
      * exercised by the sandbox-isolated data-change test below.
      */
-    private fun composeList(verseCount: Int): Harness {
+    private fun composeList(verseCount: Int, frameClock: BroadcastFrameClock? = null): Harness {
         val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
         activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
 
         val view = VersesComposeView(activity)
         val controller = VersesComposeControllerImpl(view, "test")
         controller.versesDataModel = dataModel(verseCount)
-        activity.setContentView(
+        val frame = FrameLayout(activity)
+        activity.setContentView(frame)
+        if (frameClock != null) {
+            val dispatcher = Handler(Looper.getMainLooper()).asCoroutineDispatcher()
+            view.setParentCompositionContext(frame.createLifecycleAwareWindowRecomposer(dispatcher + frameClock))
+        }
+        frame.addView(
             view,
             ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT),
         )
@@ -257,6 +270,49 @@ class VersesComposeListCompositionTest {
         pumpLayout(harness)
 
         assertEquals(50, harness.controller.getVerse_1BasedOnScroll())
+    }
+
+    @Test
+    fun `chapter changes animate verse height in both directions`() {
+        val frameClock = BroadcastFrameClock()
+        val harness = composeList(30, frameClock)
+        var frameTimeNanos = 0L
+        fun advanceFrames(frames: Int = 60) {
+            repeat(frames) {
+                Snapshot.sendApplyNotifications()
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(20, TimeUnit.MILLISECONDS)
+                frameTimeNanos += 20_000_000L
+                frameClock.sendFrame(frameTimeNanos)
+                pumpLayout(harness)
+                // Compose flushes pending LazyColumn remeasurement during drawing.
+                harness.view.draw(Canvas())
+            }
+        }
+        advanceFrames()
+        fun firstHeight() = harness.controller.listState.layoutInfo.visibleItemsInfo.first().size
+        val tallHeight = firstHeight()
+        val shortChapter = VersesDataModel(
+            ari_bc_ = Ari.encode(1, 3, 0),
+            verses_ = FakeVerses(List(30) { "Short verse." }),
+            pericopeBlockCount_ = 0,
+            pericopeAris_ = IntArray(0),
+            pericopeBlocks_ = emptyList(),
+        )
+
+        harness.controller.versesDataModel = shortChapter
+        advanceFrames(5)
+        val shrinkingHeight = firstHeight()
+        advanceFrames()
+        val shortHeight = firstHeight()
+        assertEquals("chapter should recompose", shortChapter.itemCount, harness.controller.listState.layoutInfo.totalItemsCount)
+        assertTrue("verse should shrink over multiple frames: $tallHeight -> $shrinkingHeight -> $shortHeight", shrinkingHeight in (shortHeight + 1) until tallHeight)
+
+        harness.controller.versesDataModel = dataModel(30)
+        advanceFrames(5)
+        val growingHeight = firstHeight()
+        advanceFrames()
+        assertTrue("verse should grow over multiple frames: $shortHeight -> $growingHeight -> ${firstHeight()}", growingHeight in (shortHeight + 1) until tallHeight)
+        assertEquals(tallHeight, firstHeight())
     }
 
     @Test

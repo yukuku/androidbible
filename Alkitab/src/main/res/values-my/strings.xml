@@ -352,6 +352,7 @@
     <string name="sync_sync_set_pref_summary_never">မချိတ်ဆက်ရသေးပါ</string>
     <string name="sync_sync_set_pref_summary_syncing">ယခုချိတ်ဆက်နေသည်&#8230;</string>
     <string name="sync_log_activity_title">ချိတ်ဆက်မှု မှတ်တမ်း</string>
+    <string name="sync_diagnostics_requested">စင့်ခ်လုပ်ရန် တောင်းဆိုထားပါသည်။ လုပ်ဆောင်မှုအခြေအနေနှင့် ပြဿနာစစ်ဆေးချက်အသေးစိတ်ကို ကြည့်ရန် %1$s ကို ဖွင့်ပါ။</string>
     <string name="sync_status_activity_title">ချိတ်ဆက်မှု ဖြစ်ရပ်အခြေအနေ</string>
     <string name="sync_login_activity_title">အကောင့်ထဲ ၀င်ရန် သို့မဟုတ် အကောင့်သစ်ဖွင့်ရန်</string>
     <string name="sync_login_change_password_menu_item">စကားဝှက်ပြောင်းရန်</string>
@@ -433,4 +434,12 @@
     <string name="pref_verseNumberIsShown_title">ကျမ်းပိုဒ်နံပါတ်များ ပြရန်</string>
     <string name="sn_audio_disclaimer_message">ဤအက်ပလီကေးရှင်းတွင် ပါဝင်သည့် အသံအားလုံးသည် တေးသီချင်း သို့မဟုတ် တေးသီချင်းစာအုပ်၏ ထုတ်ဝေသူထံမှ ဖြစ်ရမည်ဟု မဆိုလိုကြောင်း သတိပြုပါ။</string>
     <string name="sn_error_rendering_lyrics">သီချင်းစာသားများ ပြသရာတွင် ချို့ယွင်းချက်ရှိသည်။ ကျေးဇူးပြု၍ မီနူးခလုတ်ကို တို့ပြီး \"သီချင်းစာအုပ်ကို အဆင့်မြှင့်တင်ရန်\" ကို ရွေးချယ်ပါ။</string>
+    <string name="dv_section_version">သမ္မာကျမ်းစာဘာသာပြန်မူ</string>
+    <string name="dv_section_appearance">အသွင်အပြင်</string>
+    <string name="dv_option_transparency">ဖောက်ထွင်းမြင်ရမှု</string>
+    <string name="dv_transparency_solid">နောက်ခံအပြည့်</string>
+    <string name="dv_transparency_clear">အပြည့်အဝ ဖောက်ထွင်းမြင်ရ</string>
+    <string name="dv_preview_reference">ဆာလံ 119:105</string>
+    <string name="dv_preview_verse">နှုတ်ကပတ်တော်သည် အကျွန်ုပ်ခြေရှေ့မှာ မီးခွက်ဖြစ်၍၊ အကျွန်ုပ်လမ်းခရီးကို လင်းစေပါ၏။</string>
+    <string name="search_goto_reference">ခုန်ကူးရန်: ^1</string>
 </resources>

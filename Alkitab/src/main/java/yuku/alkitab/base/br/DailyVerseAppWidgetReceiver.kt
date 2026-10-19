@@ -103,12 +103,12 @@ class DailyVerseAppWidgetReceiver : AppWidgetProvider() {
                     })
                 }
                 "open_app" -> {
-                    context.startActivity(Launcher.getBaseViewIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    context.startActivity(Launcher.getBaseViewIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP))
                 }
                 "open_verse" -> {
                     val viewVerseIntent = Launcher.getBaseViewIntent()
                         .putExtra("ari", bundle.getInt("ari"))
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     context.startActivity(viewVerseIntent)
                 }
             }
@@ -123,13 +123,10 @@ class DailyVerseAppWidgetReceiver : AppWidgetProvider() {
 
             // prepare remote views
             val rv = RemoteViews(context.packageName, R.layout.appwidget_daily_verse_container)
-            if (savedState.transparentBackground) {
-                rv.setInt(R.id.background, "setAlpha", savedState.backgroundAlpha)
-            }
+            rv.setInt(R.id.background, "setAlpha", if (savedState.transparentBackground) savedState.backgroundAlpha else 255)
 
             val svcIntent = Intent(context, DailyVerseAppWidgetService::class.java).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                putExtra(DailyVerseAppWidgetService.EXTRA_direction, appWidgetId)
                 data = Uri.parse(this.toUri(Intent.URI_INTENT_SCHEME))
             }
             rv.setRemoteAdapter(R.id.lsItems, svcIntent)

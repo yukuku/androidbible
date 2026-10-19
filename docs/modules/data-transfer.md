@@ -37,9 +37,13 @@ Uses Kotlinx Serialization for JSON encoding/decoding.
 
 ## Import Process
 
-1. **Simulation mode** (dry run): Parses the file and reports what would change without modifying the database
-2. **Actual import**: Applies changes transactionally with rollback capability
+1. **Simulation mode** (dry run): Parses the file and validates changes inside a rolled-back database transaction. Reading history remains untouched in memory and preferences.
+2. **Actual import**: Commits database changes, then replaces and saves the staged reading history. Exceptions during database import roll back all database writes and leave history untouched.
 3. Per-entity `creator_id` tracking for provenance
+
+Marker kinds must be recognized enum values. Marker-label assignments must reference markers and labels present either in the file or the local database; file ordering does not affect validation. Invalid rows reject the import rather than silently dropping data.
+
+Exports retain completed readings for deleted reading plans, matching sync's preservation of that progress. Since the export format requires a numeric `startTime`, a missing plan's start time is represented as `0`. Import restores its completed readings without requiring the plan to be installed.
 
 ## Storage Interface
 

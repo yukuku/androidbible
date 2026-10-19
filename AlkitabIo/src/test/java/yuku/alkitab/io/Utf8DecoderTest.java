@@ -1,6 +1,7 @@
 package yuku.alkitab.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,8 +40,9 @@ public class Utf8DecoderTest {
         assertEquals("𐐀", Utf8Decoder.toString(input, 1, 4));
         assertEquals("𐐨", Utf8Decoder.toStringLowerCase(input, 1, 4));
         for (int length = 1; length < 4; length++) {
-            assertEquals("\ufffd".repeat(length), Utf8Decoder.toString(input, 1, length));
-            assertEquals("\ufffd".repeat(length), Utf8Decoder.toStringLowerCase(input, 1, length));
+            final int sliceLength = length;
+            assertThrows(IllegalArgumentException.class, () -> Utf8Decoder.toString(input, 1, sliceLength));
+            assertThrows(IllegalArgumentException.class, () -> Utf8Decoder.toStringLowerCase(input, 1, sliceLength));
         }
         assertEquals("", Utf8Decoder.toString(input, input.length, 0));
         assertEquals("", Utf8Decoder.toStringLowerCase(new byte[0]));
@@ -51,7 +53,7 @@ public class Utf8DecoderTest {
         int[][] malformed = {
             {0xc0, 0xaf}, {0xe0, 0x80, 0xaf}, {0xed, 0xa0, 0x80},
             {0xf0, 0x80, 0x80, 0xaf}, {0xf4, 0x90, 0x80, 0x80},
-            {0xf5, 0x80, 0x80, 0x80}, {0xff}, {0xf0, 0x90},
+            {0xf5, 0x80, 0x80, 0x80}, {0xff},
         };
         for (int[] sequence : malformed) {
             byte[] input = new byte[sequence.length + 1];
@@ -90,8 +92,8 @@ public class Utf8DecoderTest {
         output.write(valid, 0, 2);
         writer.writeVarUint(1);
         output.write('A');
-        assertEquals("𐐀\n\ufffd\ufffd\nA\n", decodeVerses(output.toByteArray(), 3, false));
-        assertEquals("𐐨\n\ufffd\ufffd\na\n", decodeVerses(output.toByteArray(), 3, true));
+        assertThrows(IllegalArgumentException.class, () -> decodeVerses(output.toByteArray(), 3, false));
+        assertThrows(IllegalArgumentException.class, () -> decodeVerses(output.toByteArray(), 3, true));
     }
 
     @Test

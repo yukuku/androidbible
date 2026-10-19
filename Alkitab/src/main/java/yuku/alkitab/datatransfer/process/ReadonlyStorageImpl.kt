@@ -44,7 +44,7 @@ open class ReadonlyStorageImpl : ReadonlyStorageInterface {
         // we need to consult ReadingPlan table to know what they are.
         val map: Map<String, Set<Int>> = App.services.storage.db.readingPlanProgressSummaryForSync
         for ((gid, set) in map) {
-            val startTime = startTimes[gid] ?: continue
+            val startTime = startTimes[gid] ?: 0L
 
             res += Rpp(
                 gid = Gid(gid),

@@ -95,8 +95,7 @@ Start with [AGENTS.md](AGENTS.md) (architecture overview, module structure, ARI 
 Design documents for in-flight features are under `docs/features/`.
 
 **Tech debt**
-- [Tech Debt & Known Issues](docs/tech-debt.md) — known problems with file/line references
-- [Tech Debt Remediation Plan](docs/tech-debt-remediation.md) — prioritized fixes with BRICE scores
+- [Tech Debt Backlog](docs/tech-debt-remediation.md): open, partial, and completed REM records with problem descriptions, priorities, and next steps
 
 Release builds
 --------------

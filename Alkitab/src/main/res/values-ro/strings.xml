@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Nesincronizat</string>
     <string name="sync_sync_set_pref_summary_syncing">Sincronizare acum&#8230;</string>
     <string name="sync_log_activity_title">Log sincronizare</string>
+    <string name="sync_diagnostics_requested">Sincronizare solicitată. Deschideți %1$s pentru progres și detalii de diagnosticare.</string>
     <string name="sync_status_activity_title">Statutul Sincronizării</string>
     <string name="sync_login_activity_title">Înregistrare sau creare cont</string>
     <string name="sync_login_change_password_menu_item">Schimbă parola</string>
@@ -433,4 +434,12 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Vă rugăm să rețineți că tot conținutul audio oferit în această aplicație nu provine neapărat de la editorul cântecului sau al cărții de cântece.</string>
     <string name="sn_error_rendering_lyrics">Eroare la afișarea versurilor. Vă rugăm să apăsați butonul de meniu și să selectați \"Actualizare cântece\".</string>
+    <string name="dv_section_version">Versiunea Bibliei</string>
+    <string name="dv_section_appearance">Aspect</string>
+    <string name="dv_option_transparency">Transparență</string>
+    <string name="dv_transparency_solid">Fundal opac</string>
+    <string name="dv_transparency_clear">Complet transparent</string>
+    <string name="dv_preview_reference">Psalmii 119:105</string>
+    <string name="dv_preview_verse">Cuvântul Tău este o candelă pentru picioarele mele şi o lumină pe cărarea mea.</string>
+    <string name="search_goto_reference">Mergi la: ^1</string>
 </resources>

@@ -22,6 +22,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import yuku.afw.storage.Preferences
@@ -42,6 +43,7 @@ import yuku.alkitab.base.util.Background
 import yuku.alkitab.base.util.ClipboardUtil
 import yuku.alkitab.base.util.CurrentReading
 import yuku.alkitab.base.util.ReadingPassage
+import yuku.alkitab.base.widget.ConfigurationWrapper
 import yuku.alkitab.base.widget.CallbackSpan
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.base.widget.MaterialDialogJavaHelper
@@ -51,18 +53,32 @@ import yuku.alkitab.util.Ari
 import yuku.alkitabintegration.display.Launcher
 
 open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.Listener {
+    private var textScale = 1f
     private val rootListener = object : TwofingerLinearLayout.OnefingerListener() {
+        private var gestureTextScale = 1f
+        private var gestureTextSize = 0f
+
         override fun onOnefingerLeft() = bNext_click()
         override fun onOnefingerRight() = bPrev_click()
+
+        override fun onTwofingerStart() {
+            gestureTextScale = textScale
+            gestureTextSize = lContent.textSize
+        }
+
+        override fun onTwofingerScale(scale: Float) {
+            textScale = (gestureTextScale * scale).coerceIn(0.5f, 2f)
+            lContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, gestureTextSize * textScale / gestureTextScale)
+        }
     }
 
     override fun bPrev_click() {
-        currentDate.time -= 3600 * 24 * 1000
+        currentDate = Calendar.getInstance().apply { time = currentDate; add(Calendar.DATE, -1) }.time
         display()
     }
 
     override fun bNext_click() {
-        currentDate.time += 3600 * 24 * 1000
+        currentDate = Calendar.getInstance().apply { time = currentDate; add(Calendar.DATE, 1) }.time
         display()
     }
 
@@ -145,11 +161,23 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
 
         drawerLayout = findViewById(R.id.drawerLayout)
         devotionDrawer = findViewById(R.id.left_drawer)
+        setupTextAppearancePanel(findViewById(R.id.textAppearanceOverlay), ::applyTextAppearance)
         devotionDrawer.configure(this, drawerLayout)
         applySafeAreaPadding(devotionDrawer)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        androidx.appcompat.widget.TooltipCompat.setTooltipText(toolbar, getString(R.string.devotion_select))
+        toolbar.setOnClickListener {
+            DevotionSelectionSheet.show(this, currentKind, currentDate) { kind, date ->
+                currentDate = date
+                if (kind != currentKind) {
+                    cbKind_itemSelected(kind)
+                } else {
+                    display()
+                }
+            }
+        }
         setupEdgeToEdgeDisplayWithoutBottomInset(toolbar)
         checkNotNull(supportActionBar).apply {
             setDisplayHomeAsUpEnabled(true)
@@ -165,7 +193,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         downloadProgress = findViewById(R.id.downloadProgress)
         bRetry.setOnClickListener { bReload_click() }
         applyScrollPastBottomInset(scrollContent)
-        root.setTwofingerEnabled(false)
+        root.setTwofingerEnabled(true)
         root.setListener(rootListener)
 
         val storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.sourceName))
@@ -179,6 +207,11 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
 
     override fun onStart() {
         super.onStart()
+        applyTextAppearance()
+    }
+
+    private fun applyTextAppearance() {
+        App.services.uiDimensions.recalculate()
         val applied = App.services.uiDimensions.applied()
 
         // apply background color, and clear window background to prevent overdraw
@@ -193,7 +226,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         // text formats
         lContent.setTextColor(applied.fontColor)
         lContent.setTypeface(applied.fontFace, applied.fontBold)
-        lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp)
+        lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * textScale)
         lContent.setLineSpacing(0f, applied.lineSpacingMult)
         val padding: Rect = SettingsActivity.getPaddingBasedOnPreferences()
         lContent.setPadding(padding.left, padding.top, padding.right, padding.bottom)
@@ -294,7 +327,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         val dateDisplay = getCurrentDateDisplay()
         // action bar
         supportActionBar?.apply {
-            title = currentKind.title
+            title = "${currentKind.title} ▾"
             subtitle = dateDisplay
         }
         // drawer texts
@@ -304,7 +337,14 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         }
     }
 
-    private fun getCurrentDateDisplay(): String = dayOfWeekName(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate)
+    private fun getCurrentDateDisplay(): String {
+        val locale = ConfigurationWrapper.getLocaleFromPreferences()
+        return if (locale.language == "id" || locale.language == "in") {
+            SimpleDateFormat("EEEE, d MMM yyyy", locale).format(currentDate)
+        } else {
+            dayOfWeekName(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate)
+        }
+    }
 
     @Keep
     class PatchTextExtraInfoJson {
@@ -374,7 +414,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
                     devotionDownloader.addPrefetch(kind.sourceName, date)
                 }
                 // go to the next day
-                today.time += 86400_000L
+                today.time = Calendar.getInstance().apply { time = today; add(Calendar.DATE, 1) }.timeInMillis
             }
         }
 

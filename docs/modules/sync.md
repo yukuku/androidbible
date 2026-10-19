@@ -1,63 +1,43 @@
-# Sync Module
+# Sync
 
-## Overview
+Sync shares bookmarks, notes, highlights, reading progress, and history across
+signed-in devices. Each device exchanges changes with the server over REST;
+Firebase Cloud Messaging prompts other devices to sync when data changes.
 
-Cloud sync enables sharing bookmarks, notes, highlights, reading progress, and history across devices. Uses a delta-based protocol over REST with Firebase Cloud Messaging (FCM) for push notifications.
+## Architecture
 
-## Key Files
+The [sync package](../../Alkitab/src/main/java/yuku/alkitab/base/sync) contains
+account management, scheduling, workers, and the per-data-type sync handlers.
+WorkManager queues requests serially. Local changes are compared with a stored
+shadow of the last synchronized state, and server changes are applied through
+the storage layer. Conflict and concurrent-edit handling belongs to that code;
+this document does not duplicate the protocol or merge rules.
 
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/Sync.java` — Core sync engine with generic delta framework
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/SyncAdapter.java` — WorkManager-based worker executing sync
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/Sync_Mabel.java` — Markers, labels, marker-label sync
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/Sync_Pins.java` — Progress marks sync
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/Sync_Rp.java` — Reading plan progress sync
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/Sync_History.java` — Reading history sync
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/Fcm.java` — FCM token management
-- `Alkitab/src/main/java/yuku/alkitab/base/sv/FcmMessagingService.kt` — FCM message handler
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/SyncRecorder.java` — Sync event logging
-- `Alkitab/src/main/java/yuku/alkitab/base/sync/SyncKotlin.kt` — Kotlin wrapper for scheduling
+Work delivery and sync success are separate: a worker can finish a handled,
+unsuccessful attempt while allowing queued requests to continue. Use the sync
+result in the log to determine whether data synchronized, rather than relying
+only on WorkManager's completion state.
 
-## Protocol
+## Support logs
 
-### Endpoint
-`POST /sync/api/sync`
+In **Sync settings**, press **Sync Now**, then **View log**. The log refreshes
+while open. Use **Copy** to paste it into a support message, or take a screenshot.
+UI labels follow the selected app language; technical diagnostics use English.
+Logs are never uploaded automatically.
 
-### Request
-- `simpleToken` — authentication token
-- `installation_id` — device identifier
-- `fcm_token` — Firebase token for push
-- Per entity type: `base_revno` (last known revision) + `delta` (local changes)
+Events describe scheduling, prerequisites, progress, failures, and completion.
+Timestamps, app/OS details, HTTP status, and exception categories and cause types
+help locate where an attempt stopped. A queued request may still be waiting for
+connectivity, earlier work, or Android scheduling. A process kill may leave no
+final event or explanation.
 
-### Response
-- Per entity type: `append_delta` (server changes since base_revno)
-- New `revno` to use as next base
+Account emails are included. Log fields and set names already on the device are
+trusted and displayed without an allowlist. New diagnostic call sites avoid
+passwords, tokens, payloads, and raw exception messages; server URLs omit
+credentials and request-specific parts. Logcat retains exception stack traces
+for developer debugging and is separate from the copied support log.
 
-### Delta Format
-Each delta entry is an operation tuple: `(kind, gid, content)` where:
-- `kind` = entity type identifier
-- `gid` = globally unique ID
-- `content` = entity data (null for deletions)
-
-Operations: `add`, `mod`, `del`
-
-## Conflict Resolution
-
-The sync uses a shadow table (`SyncShadow`) to track the last-synced state. When applying server deltas:
-1. If the entity hasn't changed locally since last sync → apply server version
-2. If the entity changed locally → server wins (last-write-wins for most fields)
-3. Partial sync threshold: 100 operations per batch
-
-## FCM Integration
-
-When a sync completes on one device, the server sends an FCM message to other registered devices. `FcmMessagingService` receives the push and triggers a sync via `SyncAdapter`.
-
-FCM configuration differs between debug (uses `RIBKA_FUNCTIONS_HOST_DEBUG` at `10.0.3.2:5001`) and release builds.
-
-## Authentication
-
-Simple token-based auth stored in `Prefkey.sync_simpleToken`. Login flow is handled by `SyncLoginActivity`.
-
-## Database Tables
-
-- **SyncShadow** — stores the last-synced state of each entity for conflict detection
-- **SyncLog** — audit log of sync operations for debugging (viewable in `SyncLogActivity`)
+Diagnostic storage is bounded and pruned in batches, without deleting synced
+user data. If storage fails, a small in-memory fallback lasts until the process
+ends. These logs help investigate failures; adding diagnostics alone does not
+establish a root cause or fix a sync bug.

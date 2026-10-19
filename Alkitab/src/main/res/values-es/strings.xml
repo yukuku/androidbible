@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Aún no sincronizado</string>
     <string name="sync_sync_set_pref_summary_syncing">Sincronizando ahora&#8230;</string>
     <string name="sync_log_activity_title">Registro de sincronización</string>
+    <string name="sync_diagnostics_requested">Sincronización solicitada. Abra %1$s para ver el progreso y los detalles de diagnóstico.</string>
     <string name="sync_status_activity_title">Estado de la sincronización</string>
     <string name="sync_login_activity_title">Ingresar o crear cuenta</string>
     <string name="sync_login_change_password_menu_item">Cambiar contraseña</string>
@@ -433,4 +434,12 @@
     <string name="menu_audio">Audio</string>
     <string name="sn_audio_disclaimer_message">Tenga en cuenta que todo el audio disponible en esta aplicación no necesariamente proviene del editor de la canción o del cancionero.</string>
     <string name="sn_error_rendering_lyrics">Error al mostrar la letra. Por favor, pulse el botón de menú y seleccione \"Actualizar cancionero\".</string>
+    <string name="dv_section_version">Versión de la Biblia</string>
+    <string name="dv_section_appearance">Apariencia</string>
+    <string name="dv_option_transparency">Transparencia</string>
+    <string name="dv_transparency_solid">Fondo opaco</string>
+    <string name="dv_transparency_clear">Totalmente transparente</string>
+    <string name="dv_preview_reference">Salmos 119:105</string>
+    <string name="dv_preview_verse">Lámpara es á mis pies tu palabra, y lumbrera á mi camino.</string>
+    <string name="search_goto_reference">Saltar a: ^1</string>
 </resources>

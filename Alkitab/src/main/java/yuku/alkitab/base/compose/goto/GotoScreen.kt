@@ -43,6 +43,8 @@ import yuku.alkitab.base.compose.toolbar.ToolbarScaffold
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.debug.R
 
+private val GotoToolbarHeight = 56.dp
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GotoScreen(
@@ -63,9 +65,11 @@ fun GotoScreen(
     val pagerState = rememberPagerState(initialPage = initialPage, pageCount = { 3 })
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+    val isDirectTabActive = !pagerState.isScrollInProgress &&
+        pagerState.settledPage == GotoTab.DIRECT.ordinal1Based - 1
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage != GotoTab.DIRECT.ordinal1Based - 1) focusManager.clearFocus()
+    LaunchedEffect(isDirectTabActive) {
+        if (!isDirectTabActive) focusManager.clearFocus()
     }
 
     var menuOpen by remember { mutableStateOf(false) }
@@ -84,13 +88,13 @@ fun GotoScreen(
                 tonalElevation = 0.dp,
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(64.dp),
+                    modifier = Modifier.fillMaxWidth().height(GotoToolbarHeight),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(onClick = onUp) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Up")
                     }
-                    Box(modifier = Modifier.weight(1f)) {
+                    Box(modifier = Modifier.weight(1f).align(Alignment.Bottom)) {
                         PrimaryTabRow(
                             selectedTabIndex = pagerState.currentPage,
                             modifier = Modifier.fillMaxWidth(),
@@ -106,7 +110,11 @@ fun GotoScreen(
                             titles.forEachIndexed { idx, resId ->
                                 Tab(
                                     selected = pagerState.currentPage == idx,
-                                    onClick = { scope.launch { pagerState.animateScrollToPage(idx) } },
+                                    onClick = {
+                                        if (idx != pagerState.currentPage) focusManager.clearFocus()
+                                        scope.launch { pagerState.scrollToPage(idx) }
+                                    },
+                                    modifier = Modifier.height(GotoToolbarHeight),
                                     text = { Text(stringResource(resId)) },
                                 )
                             }
@@ -138,7 +146,7 @@ fun GotoScreen(
                     initialBookId,
                     initialChapter_1,
                     initialVerse_1,
-                    isActive = (pagerState.currentPage == 1),
+                    isActive = isDirectTabActive,
                     onGotoFinished = onGotoFinished,
                 )
                 2 -> GridTab(askForVerse = askForVerse, viewModel = viewModel, onGotoFinished = onGotoFinished)

@@ -48,6 +48,14 @@ object Utf8Decoder {
                 continue
             }
 
+            val sequenceLength = when (c0) {
+                in 0xc2..0xdf -> 2
+                in 0xe0..0xef -> 3
+                in 0xf0..0xf4 -> 4
+                else -> 1
+            }
+            if (end - i < sequenceLength) throw IllegalArgumentException("Truncated UTF-8 sequence")
+
             var codePoint: Int
             if (c0 in 0xc2..0xdf && i + 1 < end && isContinuation(input[i + 1])) {
                 // input 2 byte, output 5+6 = 11 bit

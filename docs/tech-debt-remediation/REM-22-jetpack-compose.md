@@ -1,7 +1,6 @@
 # REM-22: Introduce Jetpack Compose for New Screens
 
 **Status:** Ongoing across multiple screens, reviewed on 2026-10-15. Navigation, verse lists/dialogs, the normal reader toolbar, song content, and sync login default to Compose. Experimental settings retain legacy alternatives. The search toolbar and several picker/audio/feedback surfaces also use Compose; their containing screens can still contain Views.
-**Addresses:** General modernization
 **Module:** UI
 **BRICE:** B=3 R=1 I=2 C=2 E=5 → **2.6**
 **Phase:** 4 — Long-term / Major Refactors
@@ -15,6 +14,7 @@
 - `ReaderToolbar` is hosted in a `ComposeView` in `IsiActivity` and selected by default through `ExperimentalFlags.useComposeToolbar()`. Selection actions use a separate View-based `FloatingSelectionToolbar` with `ReaderSelectionActionMode`; that surface is not part of the normal toolbar port.
 - Song content uses `SongComposeFragment` / `SongComposeContent` by default through `ExperimentalFlags.useComposeSong()`. Sync login uses `SyncLoginScreen` through `SyncLoginComposeHost` by default through `ExperimentalFlags.useComposeSyncLogin()`. Both retain legacy alternatives.
 - `SearchActivity` hosts `SearchToolbar` in Compose; its results remain a View-based list with Compose verse snippets. Audio controls and bottom sheets, plus prerelease feedback, also have Compose surfaces.
+- The `androidx.percentlayout` dependency, version-catalog entry, and dialer-only resources were removed on 2026-05-07 as part of the Goto port cleanup.
 
 **Remaining steps:**
 1. Continue with simpler screens where beneficial: `AboutActivity.kt` (Kotlin, View-based with custom animations), `HelpActivity.java` (Java, WebView-based; assess whether its host needs conversion)

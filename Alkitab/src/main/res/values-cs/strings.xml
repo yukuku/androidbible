@@ -353,6 +353,7 @@
     <string name="sync_sync_set_pref_summary_never">Nesynchronizováno</string>
     <string name="sync_sync_set_pref_summary_syncing">Probíhá synchronizace&#8230;</string>
     <string name="sync_log_activity_title">Log synchronizace</string>
+    <string name="sync_diagnostics_requested">Synchronizace byla vyžádána. Průběh a diagnostické údaje najdete v nabídce %1$s.</string>
     <string name="sync_status_activity_title">Stav synchronizace</string>
     <string name="sync_login_activity_title">Přihlásit se nebo založit účet</string>
     <string name="sync_login_change_password_menu_item">Změnit heslo</string>
@@ -433,4 +434,12 @@
     <string name="pref_verseNumberIsShown_title">Zobrazovat čísla veršů</string>
     <string name="sn_audio_disclaimer_message">Upozorňujeme, že veškerý zvuk dostupný v této aplikaci nemusí nutně pocházet od vydavatele písně nebo zpěvníku.</string>
     <string name="sn_error_rendering_lyrics">Chyba při vykreslování textu písně. Klepněte prosím na tlačítko nabídky a vyberte \"Aktualizovat knihu\".</string>
+    <string name="dv_section_version">Překlad Bible</string>
+    <string name="dv_section_appearance">Vzhled</string>
+    <string name="dv_option_transparency">Průhlednost</string>
+    <string name="dv_transparency_solid">Neprůhledné pozadí</string>
+    <string name="dv_transparency_clear">Zcela průhledné</string>
+    <string name="dv_preview_reference">Žalm 119:105</string>
+    <string name="dv_preview_verse">Svíce nohám mým jest slovo tvé, a světlo stezce mé.</string>
+    <string name="search_goto_reference">Skoč na: ^1</string>
 </resources>

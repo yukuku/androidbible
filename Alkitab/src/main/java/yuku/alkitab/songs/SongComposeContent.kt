@@ -72,6 +72,7 @@ class SongComposeStyle(
     val lineSpacingMult: Float,
     val typeface: Typeface?,
     val zoomPercent: Int,
+    val isBold: Boolean = false,
 ) {
     val baseSizeSp = baseFontSizeDp * zoomPercent / 100f
 
@@ -80,7 +81,7 @@ class SongComposeStyle(
 
     /** The font's natural line height in em, before [lineSpacingMult]. */
     val normalLineHeightEm: Float = Paint().run {
-        typeface = this@SongComposeStyle.typeface ?: Typeface.DEFAULT
+        typeface = Typeface.create(this@SongComposeStyle.typeface, if (isBold) Typeface.BOLD else Typeface.NORMAL)
         textSize = 100f
         val fm = fontMetrics
         (fm.descent - fm.ascent + fm.leading) / 100f
@@ -218,7 +219,7 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean) {
     if (uppercase) content = AnnotatedString(content.text.uppercase())
 
     val textStyle = roleTextStyle(style, sizeMult, sansSerif).copy(
-        fontWeight = if (bold) FontWeight.Bold else null,
+        fontWeight = if (bold || style.isBold) FontWeight.Bold else FontWeight.Normal,
         fontStyle = if (italic) FontStyle.Italic else null,
         color = style.bodyColor.copy(alpha = opacity),
         textAlign = textAlign ?: TextAlign.Unspecified,
@@ -426,7 +427,7 @@ private fun NumberedVerse(verse: Verse, number: Int?, style: SongComposeStyle) {
             BasicText(
                 text = AnnotatedString(number.toString()),
                 style = roleTextStyle(style, sizeMult = 1.2f, sansSerif = false).copy(
-                    fontWeight = FontWeight.Light,
+                    fontWeight = if (style.isBold) FontWeight.Bold else FontWeight.Light,
                     color = style.verseNumberColorC,
                 ),
                 modifier = Modifier
@@ -561,6 +562,7 @@ private fun roleSizeMult(role: String?): Float = when (role) {
 private fun roleTextStyle(style: SongComposeStyle, sizeMult: Float, sansSerif: Boolean): TextStyle = TextStyle(
     color = style.bodyColor,
     fontSize = (style.baseSizeSp * sizeMult).sp,
+    fontWeight = if (style.isBold) FontWeight.Bold else FontWeight.Normal,
     fontFamily = if (sansSerif) FontFamily.SansSerif else style.bodyFontFamily,
     platformStyle = PlatformTextStyle(includeFontPadding = false),
 )
@@ -568,6 +570,7 @@ private fun roleTextStyle(style: SongComposeStyle, sizeMult: Float, sansSerif: B
 private fun lyricLineStyle(style: SongComposeStyle, sizeMult: Float): TextStyle = TextStyle(
     color = style.bodyColor,
     fontSize = (style.baseSizeSp * sizeMult).sp,
+    fontWeight = if (style.isBold) FontWeight.Bold else FontWeight.Normal,
     lineHeight = (style.baseSizeSp * sizeMult * style.normalLineHeightEm * style.lineSpacingMult).sp,
     lineHeightStyle = LineHeightStyle(
         alignment = LineHeightStyle.Alignment.Center,

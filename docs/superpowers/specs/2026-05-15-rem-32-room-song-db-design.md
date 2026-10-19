@@ -4,7 +4,7 @@
 **Date:** 2026-05-15
 **BRICE:** B=3 R=3 I=2 C=3 E=5 → **3.2**
 **Phase:** 2 — Architecture Improvements
-**Addresses:** TD-02 follow-through — the last hand-rolled `SQLiteOpenHelper` (`SongDbHelper`) in the app.
+**Related work:** [REM-32](../../tech-debt-remediation/REM-32-room-song-db.md) covers SongDb; [REM-49](../../tech-debt-remediation/REM-49-bible-storage-plumbing.md) covers the remaining Bible database plumbing.
 
 ## Outcome
 

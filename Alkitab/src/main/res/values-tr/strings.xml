@@ -355,6 +355,7 @@
     <string name="sync_sync_set_pref_summary_never">Henüz senkronize edilmedi</string>
     <string name="sync_sync_set_pref_summary_syncing">Şimdi senkronize ediliyor&#8230;</string>
     <string name="sync_log_activity_title">Senkronizasyon günlüğü</string>
+    <string name="sync_diagnostics_requested">Senkronizasyon istendi. İlerlemeyi ve tanılama ayrıntılarını görmek için %1$s öğesini açın.</string>
     <string name="sync_status_activity_title">Senkronizasyon Durumu</string>
     <string name="sync_login_activity_title">Giriş yap ya da Hesap Oluştur</string>
     <string name="sync_login_change_password_menu_item">Şifreyi değiştir</string>
@@ -433,4 +434,12 @@
     <string name="menu_audio">Ses</string>
     <string name="sn_audio_disclaimer_message">Lütfen bu uygulamada sunulan tüm seslerin şarkının veya şarkı kitabının yayıncısından gelmiyor olabileceğini unutmayın.</string>
     <string name="sn_error_rendering_lyrics">Şarkı sözleri görüntülenirken hata oluştu. Lütfen menü düğmesine dokunun ve \"Şarkı kitabını güncelle\" seçeneğini seçin.</string>
+    <string name="dv_section_version">Kutsal Kitap çevirisi</string>
+    <string name="dv_section_appearance">Görünüm</string>
+    <string name="dv_option_transparency">Saydamlık</string>
+    <string name="dv_transparency_solid">Opak arka plan</string>
+    <string name="dv_transparency_clear">Tamamen saydam</string>
+    <string name="dv_preview_reference">Mezmurlar 119:105</string>
+    <string name="dv_preview_verse">Sözün adımlarım için çıra, Yolum için ışıktır.</string>
+    <string name="search_goto_reference">Atla: ^1</string>
 </resources>

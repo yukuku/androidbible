@@ -351,6 +351,7 @@
     <string name="sync_sync_set_pref_summary_never">Δεν έχει συγχρονιστεί ακόμα</string>
     <string name="sync_sync_set_pref_summary_syncing">Συγχρονισμός τώρα&#8230;</string>
     <string name="sync_log_activity_title">Στοιχεία συγχρονισμού</string>
+    <string name="sync_diagnostics_requested">Ζητήθηκε συγχρονισμός. Ανοίξτε το %1$s για την πρόοδο και διαγνωστικές λεπτομέρειες.</string>
     <string name="sync_status_activity_title">Στάτους συγχρονισμού</string>
     <string name="sync_login_activity_title">Συνδεθείτε ή Δημιουργήσετε Λογαριασμό</string>
     <string name="sync_login_change_password_menu_item">Αλλάξετε κωδικό πρόσβασης</string>
@@ -433,4 +434,12 @@
     <string name="rp_menuDownload">Λήψη πλάνου ανάγνωσης</string>
     <string name="sn_audio_disclaimer_message">Παρακαλούμε λάβετε υπόψη ότι όλος ο ήχος που παρέχεται σε αυτήν την εφαρμογή δεν προέρχεται απαραίτητα από τον εκδότη του ύμνου ή του βιβλίου ύμνων.</string>
     <string name="sn_error_rendering_lyrics">Σφάλμα κατά την εμφάνιση των στίχων. Παρακαλώ πατήστε το κουμπί μενού και επιλέξτε \"Ενημέρωση του υμνολογίου\".</string>
+    <string name="dv_section_version">Μετάφραση της Βίβλου</string>
+    <string name="dv_section_appearance">Εμφάνιση</string>
+    <string name="dv_option_transparency">Διαφάνεια</string>
+    <string name="dv_transparency_solid">Αδιαφανές φόντο</string>
+    <string name="dv_transparency_clear">Πλήρως διαφανές</string>
+    <string name="dv_preview_reference">Ψαλμοί 119:105</string>
+    <string name="dv_preview_verse">Λύχνος εις τους πόδας μου είναι ο λόγος σου και φως εις τας τρίβους μου.</string>
+    <string name="search_goto_reference">Μετάβαση σε: ^1</string>
 </resources>

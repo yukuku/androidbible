@@ -1,13 +1,26 @@
 # ~~REM-18: Add Test Coverage for Core Modules~~ ✅ COMPLETED (2026-05-11)
 
-**Addresses:** TD-13
 **Module:** Cross-cutting
 **BRICE:** B=4 R=3 I=2 C=3 E=5 → **3.4**
 **Phase:** 2 — Architecture Improvements
 
 **Outcome:** All six sub-steps shipped — see per-step entries below. Cumulatively this added ~170 unit tests across `HighlightsTest`, the four `Sync*Test` files, `InternalDbTest`, `SearchEngineTest`, `Yes2RoundTripTest` + `SnappyStreamRoundTripTest`, and `ProviderTest`, plus latent-bug fixes in `Highlights.alphaMix`, `Sync_Pins.Content.equals/hashCode`, and a flagged `SnappyInputStream` EOF edge. Robolectric is now a `testImplementation` dependency on `Alkitab`, and test-scope shadows for `android.util.Log` / `FirebaseCrashlytics` / `android.util.Pair` unblock further pure-JUnit work on Android-touching code.
 
-**Steps — prioritized by risk coverage:**
+## Current Coverage and Remaining Gaps
+
+The original core-coverage scope is complete. Tests under `Alkitab/src/test` and the shared-library test directories cover storage/DAOs, sync, reader/rendering, Bible audio, search/utilities, songs, and the content provider. Browse those directories for the current file list.
+
+`Yes2RoundTripTest` and `SnappyStreamRoundTripTest` cover YES2 reader/writer and compression round-trips. `DevotionDownloaderTest`, `DevotionDownloadBackendTest`, and `DevotionActivityTest` cover prioritization, deduplication, cancellation, retry, cache behavior, and UI state. `ReadingPlanDaoTest` covers progress storage, while `ReadingPlanCurrentReadingTest` covers selected-day passage activation.
+
+Remaining coverage belongs with the open behavior it validates:
+
+- ASCII-encoded YES2 search regression coverage: [REM-36](REM-36-yes2-ascii-decoder.md).
+- Concurrent decoding and locale-consistent search: [REM-39](REM-39-text-decoding.md).
+- Invalid/revised reading-plan progress bounds and the widget update flow: [REM-41](REM-41-defensive-guards.md).
+
+The verse-255 marker-boundary fix shipped on 2026-04-16 as part of step 18c. `countMarkersForBookChapter` and `putAttributes` use an inclusive upper bound consistent with highlight lookup; regression tests pin that edge.
+
+**Steps, prioritized by risk coverage:**
 
 **Step 18a: Highlight encoding tests** ✅ COMPLETED
 **Completed in:** `513961b9` / `1ca73821` (2026-04-16)

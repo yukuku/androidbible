@@ -351,6 +351,7 @@
     <string name="sync_sync_set_pref_summary_never">Pagaidām nav sinhronizēts</string>
     <string name="sync_sync_set_pref_summary_syncing">Notiek sinhronizēšana&#8230;</string>
     <string name="sync_log_activity_title">Sinhronizācijas žurnāls</string>
+    <string name="sync_diagnostics_requested">Sinhronizācija pieprasīta. Atveriet %1$s, lai skatītu norisi un diagnostikas informāciju.</string>
     <string name="sync_status_activity_title">Sinhronizēšanas statuss</string>
     <string name="sync_login_activity_title">Pieraksties vai izveido kontu</string>
     <string name="sync_login_change_password_menu_item">Mainīt paroli</string>
@@ -433,4 +434,12 @@
     <string name="rp_menuDownload">Lejupielādēt lasīšanas plānu</string>
     <string name="sn_audio_disclaimer_message">Lūdzu ņemiet vērā, ka viss šajā aplikācijā pieejamais audio ne vienmēr ir dziesmas vai dziesmu grāmatas izdevēja avots.</string>
     <string name="sn_error_rendering_lyrics">Kļūda attēlojot dziesmu vārdus. Lūdzu nospiediet izvēlnes pogu un izvēlieties \"Atjaunot dziesmu grāmatu\".</string>
+    <string name="dv_section_version">Bībeles tulkojums</string>
+    <string name="dv_section_appearance">Izskats</string>
+    <string name="dv_option_transparency">Caurspīdīgums</string>
+    <string name="dv_transparency_solid">Necaurspīdīgs fons</string>
+    <string name="dv_transparency_clear">Pilnīgi caurspīdīgs</string>
+    <string name="dv_preview_reference">Psalmi 119:105</string>
+    <string name="dv_preview_verse">Tavs vārds ir manu kāju spīdeklis un gaišums uz maniem ceļiem.</string>
+    <string name="search_goto_reference">Lēkt uz: ^1</string>
 </resources>

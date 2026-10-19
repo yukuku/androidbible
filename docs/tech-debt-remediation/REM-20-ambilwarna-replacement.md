@@ -1,6 +1,5 @@
 # ~~REM-20: Replace AmbilWarna with Material Color Picker~~ ✅ COMPLETED (2026-05-12)
 
-**Addresses:** TD-12
 **Module:** UI — Color settings
 **BRICE:** B=1 R=1 I=4 C=4 E=5 → **3.0**
 **Phase:** 3 — Modernization
