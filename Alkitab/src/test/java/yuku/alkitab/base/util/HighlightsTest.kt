@@ -19,6 +19,39 @@ import org.junit.Test
  * make those paths runnable without pulling in Robolectric.
  */
 class HighlightsTest {
+    @Test
+    fun `zero adjustment reproduces fixed opacity regardless of background or input alpha`() {
+        for (background in listOf(0xffffff, 0x000000, 0xf5deb3)) {
+            for (color in listOf(0xffff00, 0xff0000, 0x0000ff, 0x00112233, 0xff112233.toInt())) {
+                assertEquals(0xa0000000.toInt() or (color and 0xffffff), Highlights.blendOver(color, background, 0f))
+            }
+        }
+    }
+
+    @Test
+    fun `adjustment interpolates opacity while preserving RGB and the adaptive default`() {
+        for (background in listOf(0xffffff, 0x000000, 0xf5deb3)) {
+            for (color in listOf(0xffff00, 0xff0000, 0x0000ff)) {
+                val adaptive = Highlights.blendOver(color, background)
+                assertEquals(adaptive, Highlights.blendOver(color, background, 1f))
+                val halfway = Highlights.blendOver(color, background, 0.5f)
+                assertEquals((160 + (adaptive ushr 24) + 1) / 2, halfway ushr 24)
+                assertEquals(color, halfway and 0xffffff)
+                // Cache hits must still honor the amount on each call.
+                assertEquals(adaptive, Highlights.blendOver(color, background, 1f))
+                assertEquals(160, Highlights.blendOver(color, background, 0f) ushr 24)
+            }
+        }
+    }
+
+    @Test
+    fun `invalid adjustments are bounded and nonfinite values use the default`() {
+        assertEquals(0f, Highlights.normalizeAdjustment(-1f))
+        assertEquals(1f, Highlights.normalizeAdjustment(2f))
+        assertEquals(1f, Highlights.normalizeAdjustment(Float.NaN))
+        assertEquals(1f, Highlights.normalizeAdjustment(Float.POSITIVE_INFINITY))
+    }
+
 
     // region encode → decode round-trip (full-verse)
 

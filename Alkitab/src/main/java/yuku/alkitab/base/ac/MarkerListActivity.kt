@@ -700,7 +700,7 @@ class MarkerListActivity : BaseActivity() {
                             val verseText = legacyVerseText()
                             val hilited = if (hiliteTokens != null) SearchEngine.hilite(verseText, hiliteTokens, hiliteColor) else SpannableStringBuilder(verseText)
                             if (info != null) {
-                                val span = BackgroundColorSpan(Highlights.blendOver(info.colorRgb, App.services.uiDimensions.applied().backgroundColor))
+                                val span = BackgroundColorSpan(Highlights.blendOver(info.colorRgb, App.services.uiDimensions.applied().backgroundColor, App.services.uiDimensions.applied().highlightColorAdjustment))
                                 if (info.shouldRenderAsPartialForVerseText(verseText)) {
                                     hilited.setSpan(span, info.partial!!.startOffset, info.partial!!.endOffset, 0)
                                 } else {

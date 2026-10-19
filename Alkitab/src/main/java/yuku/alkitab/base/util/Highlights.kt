@@ -102,7 +102,8 @@ object Highlights {
     }
 
     /**
-     * Alpha-premixed highlight color, ready to draw over [backgroundColor].
+     * Highlight color with alpha, ready to draw over [backgroundColor].
+     * [adjustment] interpolates from fixed 160/255 opacity (0) to adaptive opacity (1).
      *
      * The alpha is solved so the highlighted band lands a fixed perceptual distance
      * ([TARGET_DELTA], measured in Oklab) away from the background it is drawn on. A color far
@@ -114,13 +115,17 @@ object Highlights {
      * leave the band invisible.
      */
     @JvmStatic
-    fun blendOver(colorRgb: Int, backgroundColor: Int): Int {
+    fun blendOver(colorRgb: Int, backgroundColor: Int, adjustment: Float = 1f): Int {
         val rgb = colorRgb and 0xffffff
         val bg = backgroundColor and 0xffffff
         if (blendCache.size > 512) blendCache.clear()
         val alpha = blendCache.getOrPut((rgb.toLong() shl 32) or bg.toLong()) { solveAlpha(rgb, bg) }
-        return (alpha shl 24) or rgb
+        val amount = normalizeAdjustment(adjustment)
+        val mixedAlpha = (160 + (alpha - 160) * amount + 0.5f).toInt()
+        return (mixedAlpha shl 24) or rgb
     }
+
+    fun normalizeAdjustment(value: Float): Float = if (value.isFinite()) value.coerceIn(0f, 1f) else 1f
 
     private fun solveAlpha(rgb: Int, bg: Int): Int {
         val srgbDelta = srgbDistance(rgb, bg)
