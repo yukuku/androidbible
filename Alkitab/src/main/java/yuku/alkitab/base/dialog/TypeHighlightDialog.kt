@@ -323,7 +323,7 @@ private fun VerseTextSelectable(
         if (highlightColorRgb == null || highlightRange == null) {
             VisualTransformation.None
         } else {
-            val blended = Color(Highlights.blendOver(highlightColorRgb, backgroundColor))
+            val blended = Color(Highlights.blendOver(highlightColorRgb, backgroundColor, App.services.uiDimensions.applied().highlightColorAdjustment))
             VisualTransformation { text ->
                 val start = minOf(highlightRange.first, highlightRange.second).coerceIn(0, text.length)
                 val end = maxOf(highlightRange.first, highlightRange.second).coerceIn(start, text.length)
@@ -399,7 +399,7 @@ private fun ColorSwatch(
             .height(44.dp)
             .clip(RoundedCornerShape(6.dp))
             .background(Color(backgroundColor))
-            .background(Color(Highlights.blendOver(rgb, backgroundColor)))
+            .background(Color(Highlights.blendOver(rgb, backgroundColor, App.services.uiDimensions.applied().highlightColorAdjustment)))
             .border(
                 width = if (selected) 3.dp else 0.5.dp,
                 color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,

@@ -269,7 +269,7 @@ object VerseRendererCompose {
     private fun applyHighlight(text: AnnotatedString, highlightInfo: Highlights.Info?, startPosAfterVerseNumber: Int, checked: Boolean): AnnotatedString {
         if (highlightInfo == null) return text
         val applied = App.services.uiDimensions.applied()
-        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor)
+        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor, applied.highlightColorAdjustment)
         val textColor = if (checked) {
             val selectedVerseBgColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
             Color(TextColorUtil.getForCheckedVerseHighlight(applied.fontColor, selectedVerseBgColor, applied.backgroundColor, band))

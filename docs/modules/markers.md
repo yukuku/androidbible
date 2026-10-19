@@ -43,7 +43,9 @@ Highlights use a JSON encoding in the `caption` field supporting:
 - Partial highlights (character range within a verse)
 - Hash-based verification to detect when verse text has changed
 
-The `Highlights` utility handles encoding/decoding and color management. `Highlights.alphaMix()` masks the input to 24-bit RGB before OR-ing the fixed alpha, so callers may pass either RGB or pre-tinted ARGB ints and the output alpha is always `0xA0`.
+The `Highlights` utility handles encoding/decoding and color management. `Highlights.blendOver()` masks the input to 24-bit RGB and interpolates opacity between fixed `0xA0` at adjustment 0 and background-adaptive opacity at adjustment 1. The adaptive result is cached independently of the adjustment.
+
+Display settings offers an unchecked-by-default “Use original highlight colors” checkbox and a customizer with a 0–1 slider. The checkbox selects 0 when checked and 1 when cleared. Intermediate values are labeled custom. `Prefkey.highlightColorAdjustment` stores the amount, defaulting to 1; it affects rendering without modifying saved markers. Both verse renderers, marker snippets, and the highlight picker use the applied adjustment. The customizer previews verses from the active Bible version through the reader’s Compose renderer and row layout, preserving the active red-letter and verse-number colors, italics, paragraph formatting, and ruby annotations. Sample background, normal text, and highlight colors can be adjusted independently; changing normal text color preserves the red-letter color. Only confirming the customizer saves the adjustment; preview colors do not change the reading theme.
 
 Color selection in `TypeHighlightDialog` and the label color editor uses the iOS-style Compose color picker at `yuku.alkitab.base.compose.colorpicker.IosColorPicker` / `ColorPickerDialog`, hosted inside a `ModalBottomSheet`.
 

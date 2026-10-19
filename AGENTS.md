@@ -13,7 +13,17 @@ This file provides guidance to coding agents when working with code in this repo
 
 **`develop` is the main integration branch — base all work on `develop` and target every PR at `develop`, never `master`.** The repo follows git-flow: `master` only receives merges from `release/*` branches when a version ships.
 
-## Complete implementation tasks with a pull request
+## Task completion and communication
+
+### Explain agent-made choices in the final response
+
+At the end of a task, explain the consequential choices you made that the user did not explicitly specify. Do this by default, without waiting for the user to ask. Distinguish the user’s requirements from your assumptions and decisions, and briefly explain why you chose them and what they mean for the resulting behavior.
+
+Focus on choices the user would reasonably want to review, such as how you interpreted loose requirements, UI placement and interactions, defaults, persistence, scope, and tradeoffs. Scale the detail to the ambiguity and impact of the task. Do not bury these choices in a list of changed files or a chronological work log, and do not enumerate routine implementation details. If there were no consequential choices beyond the request, do not invent any.
+
+Include the outcome, relevant validation, and remaining limitations alongside these decisions. This reporting requirement does not create an additional approval step for work already authorized.
+
+### Complete implementation tasks with a pull request
 
 Unless the user explicitly requests otherwise, finish every implementation task by committing the changes, pushing a task branch to `yukuku/androidbible`, and opening a pull request targeting `develop`. This is part of completing the task, including requests phrased as building a feature or fixing a bug; do not ask for separate permission to create the PR.
 
@@ -227,6 +237,9 @@ Detailed documentation for each major app feature:
 - [Tech Debt Backlog](docs/tech-debt-remediation.md): the single index for open, partial, and completed REM records, with problem descriptions, priorities, and next steps
 
 ## Code Conventions
+
+- **Do not introduce `!!` in production code.** Handle nullable values explicitly. For nullable observable or delegated state, read a local snapshot and use a null check so Kotlin can smart-cast it.
+- **Separate logical sections of long function bodies with blank lines.** Group related operations and make transitions between setup, state loading, rendering, and callbacks easy to scan.
 
 - **IMPORTANT. Never write change-narrating comments.** Code comments must describe the code as it is *now*, not the history of how it got there. Do not reference past revisions, removed approaches, or the act of editing: no "previously", "used to", "formerly", "earlier iterations", "an earlier version", "we changed/renamed/moved this from…", "now uses…", "no longer…", and the like. Git history is the record of *change*; the code and its comments describe the *present*. When explaining why the current design was chosen over an alternative is genuinely useful, state it as present-tense rationale about the alternative ("the cluster is centered with Spacers because a weighted slot would clip the label"), not as a story about what the code used to do. This applies to all comments, KDoc/Javadoc, and commit-adjacent code. Keep the narrative of change out of the source. The same rule applies to milestone labels: do not tag comments with the sprint or task that produced the code ("(M3)", "Out of scope for M4"), because they date instantly and mean nothing to a later reader.
 - **IMPORTANT. Never use em dashes to join clauses in comments or docs.** The "—" character (U+2014) is hard to read in running prose. Write two plain sentences instead, or use a comma, colon, semicolon, or parentheses, whichever reads most naturally. This applies to code comments, KDoc/Javadoc, Markdown docs, commit messages, and PR descriptions. (Existing prose in older files may still contain them; leave it alone unless you are already editing that comment or were asked to sweep the file.)

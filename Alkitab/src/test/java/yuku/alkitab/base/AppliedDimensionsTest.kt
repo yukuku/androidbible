@@ -2,6 +2,7 @@ package yuku.alkitab.base
 
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.test.core.app.ApplicationProvider
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -10,6 +11,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import yuku.afw.App as AfwApp
+import yuku.afw.storage.Preferences
+import yuku.alkitab.base.storage.Prefkey
 
 /**
  * The verse list composes against [S.applied], so a preference change has to
@@ -22,6 +25,22 @@ class AppliedDimensionsTest {
     @Before
     fun setUp() {
         AfwApp.initWithAppContext(ApplicationProvider.getApplicationContext())
+    }
+
+    @Test
+    fun `highlight adjustment defaults to adaptive and persists custom and original values`() {
+        Preferences.remove(Prefkey.highlightColorAdjustment)
+        try {
+            assertEquals(1f, S.calculateDimensionsFromPreferences().highlightColorAdjustment)
+            for (amount in listOf(0f, 0.37f, 1f)) {
+                Preferences.setFloat(Prefkey.highlightColorAdjustment, amount)
+                S.recalculate()
+                assertEquals(amount, S.applied().highlightColorAdjustment)
+            }
+        } finally {
+            Preferences.remove(Prefkey.highlightColorAdjustment)
+            S.recalculate()
+        }
     }
 
     @Test
