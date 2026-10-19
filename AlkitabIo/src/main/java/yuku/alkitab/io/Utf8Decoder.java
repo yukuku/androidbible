@@ -1,17 +1,10 @@
 package yuku.alkitab.io;
 
+import java.io.IOException;
 import yuku.bintex.BintexReader;
 
-import java.io.IOException;
-
-/**
- * This class is an intentionally incomplete UTF-8 decoder that only supports up to U+FFFF.
- */
 public class Utf8Decoder {
-	public static char[] buf = new char[1000];
-
 	static final ThreadLocal<byte[]> byte_buf_ = ThreadLocal.withInitial(() -> new byte[1000]);
-
 	static final ThreadLocal<char[]> char_buf_ = ThreadLocal.withInitial(() -> new char[8000]);
 
 	public static String toString(byte[] ba) {
@@ -19,42 +12,7 @@ public class Utf8Decoder {
 	}
 
 	public static String toString(byte[] ba, int start, int length) {
-		if (buf.length < ba.length) {
-			buf = new char[ba.length + 1000];
-		}
-
-		int pos = 0;
-
-		try {
-			for (int i = start; i < start + length; i++) {
-				int c0 = ba[i] & 0xff;
-
-				if (c0 < 0x80) {
-					// input 1 byte, output 7 bit
-					buf[pos++] = (char) c0;
-					continue;
-				}
-
-				i++;
-				int c1 = ba[i] & 0xff;
-
-				if (c0 < 0xe0) {
-					// input 2 byte, output 5+6 = 11 bit
-					buf[pos++] = (char) (((c0 & 0x1f) << 6) | (c1 & 0x3f));
-					continue;
-				}
-
-				i++;
-				int c2 = ba[i] & 0xff;
-
-				// input 3 byte, output 4+6+6 = 16 bit
-				buf[pos++] = (char) (((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f));
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// biarin
-		}
-
-		return new String(buf, 0, pos);
+		return decodeString(ba, start, length, false);
 	}
 
 	public static String toStringLowerCase(byte[] ba) {
@@ -62,52 +20,70 @@ public class Utf8Decoder {
 	}
 
 	public static String toStringLowerCase(byte[] ba, int start, int length) {
-		if (buf.length < ba.length) {
-			buf = new char[ba.length + 1000];
+		return decodeString(ba, start, length, true);
+	}
+
+	private static String decodeString(byte[] ba, int start, int length, boolean isLowercased) {
+		if (start < 0 || length < 0 || start > ba.length - length) {
+			throw new IndexOutOfBoundsException();
 		}
+		char[] buffer = char_buf_.get();
+		if (buffer.length < length) {
+			buffer = new char[length + 1000];
+			char_buf_.set(buffer);
+		}
+		int count = decode(ba, start, length, buffer, 0, isLowercased);
+		return new String(buffer, 0, count);
+	}
 
-		int pos = 0;
-
-		try {
-			for (int i = start; i < start + length; i++) {
-				int c0 = ba[i] & 0xff;
-
-				if (c0 < 0x80) {
-					// input 1 byte, output 7 bit
-
-					if (c0 >= 'A' && c0 <= 'Z') {
-						buf[pos++] = (char) (c0 | 0x20);
-					} else {
-						buf[pos++] = (char) c0;
-					}
-
-					continue;
-				}
-
+	private static int decode(byte[] input, int start, int length, char[] output, int pos, boolean isLowercased) {
+		final int end = start + length;
+		for (int i = start; i < end;) {
+			final int c0 = input[i] & 0xff;
+			if (c0 < 0x80) {
+				output[pos++] = (char) (isLowercased && c0 >= 'A' && c0 <= 'Z' ? c0 | 0x20 : c0);
 				i++;
-				int c1 = ba[i] & 0xff;
-
-				if (c0 < 0xe0) {
-					// input 2 byte, output 5+6 = 11 bit
-					final int c = ((c0 & 0x1f) << 6) | (c1 & 0x3f);
-					buf[pos++] = (char) Character.toLowerCase(c);
-					continue;
-				}
-
-				i++;
-				int c2 = ba[i] & 0xff;
-
-				{
-					// input 3 byte, output 4+6+6 = 16 bit
-					final int c = ((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f);
-					buf[pos++] = (char) Character.toLowerCase(c);
-				}
+				continue;
 			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// biarin
-		}
 
-		return new String(buf, 0, pos);
+			int codePoint;
+			if (c0 >= 0xc2 && c0 <= 0xdf && i + 1 < end && isContinuation(input[i + 1])) {
+				codePoint = ((c0 & 0x1f) << 6) | (input[i + 1] & 0x3f);
+				i += 2;
+			} else if (c0 >= 0xe0 && c0 <= 0xef && i + 2 < end
+				&& isContinuation(input[i + 1]) && isContinuation(input[i + 2])
+				&& (c0 != 0xe0 || (input[i + 1] & 0xff) >= 0xa0)
+				&& (c0 != 0xed || (input[i + 1] & 0xff) < 0xa0)) {
+				codePoint = ((c0 & 0x0f) << 12) | ((input[i + 1] & 0x3f) << 6) | (input[i + 2] & 0x3f);
+				i += 3;
+			} else if (c0 >= 0xf0 && c0 <= 0xf4 && i + 3 < end
+				&& isContinuation(input[i + 1]) && isContinuation(input[i + 2]) && isContinuation(input[i + 3])
+				&& (c0 != 0xf0 || (input[i + 1] & 0xff) >= 0x90)
+				&& (c0 != 0xf4 || (input[i + 1] & 0xff) < 0x90)) {
+				codePoint = ((c0 & 0x07) << 18) | ((input[i + 1] & 0x3f) << 12)
+					| ((input[i + 2] & 0x3f) << 6) | (input[i + 3] & 0x3f);
+				i += 4;
+			} else {
+				// Consume only the invalid byte so recovery cannot swallow the next character or verse.
+				output[pos++] = '\ufffd';
+				i++;
+				continue;
+			}
+
+			// Simple code-point casing preserves search offsets without expanding characters.
+			if (isLowercased) codePoint = Character.toLowerCase(codePoint);
+			if (codePoint < 0x10000) {
+				output[pos++] = (char) codePoint;
+			} else {
+				output[pos++] = Character.highSurrogate(codePoint);
+				output[pos++] = Character.lowSurrogate(codePoint);
+			}
+		}
+		return pos;
+	}
+
+	private static boolean isContinuation(byte value) {
+		return (value & 0xc0) == 0x80;
 	}
 
 	public static String toStringFromVersesWithPrependedLengths(BintexReader br, int verse_count, boolean lowercased) throws IOException {
@@ -133,48 +109,7 @@ public class Utf8Decoder {
 
 			br.readRaw(byte_buf, 0, verse_len);
 
-			for (int i = 0; i < verse_len; i++) {
-				int c0 = byte_buf[i] & 0xff;
-
-				if (c0 < 0x80) {
-					// input 1 byte, output 7 bit
-
-					if (lowercased && (c0 >= 'A' && c0 <= 'Z')) {
-						char_buf[char_pos++] = (char) (c0 | 0x20);
-					} else {
-						char_buf[char_pos++] = (char) c0;
-					}
-
-					continue;
-				}
-
-				i++;
-				int c1 = byte_buf[i] & 0xff;
-
-				if (c0 < 0xe0) {
-					// input 2 byte, output 5+6 = 11 bit
-					final int c = (((c0 & 0x1f) << 6) | (c1 & 0x3f));
-					if (!lowercased) {
-						char_buf[char_pos++] = (char) c;
-					} else {
-						char_buf[char_pos++] = (char) Character.toLowerCase(c);
-					}
-					continue;
-				}
-
-				i++;
-				int c2 = byte_buf[i] & 0xff;
-
-				{
-					// input 3 byte, output 4+6+6 = 16 bit
-					final int c = ((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f);
-					if (!lowercased) {
-						char_buf[char_pos++] = (char) c;
-					} else {
-						char_buf[char_pos++] = (char) Character.toLowerCase(c);
-					}
-				}
-			}
+			char_pos = decode(byte_buf, 0, verse_len, char_buf, char_pos, lowercased);
 
 			// verse separator
 			char_buf[char_pos++] = '\n';

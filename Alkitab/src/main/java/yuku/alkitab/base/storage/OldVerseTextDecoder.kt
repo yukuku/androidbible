@@ -1,5 +1,7 @@
 package yuku.alkitab.base.storage
 
+import yuku.alkitab.io.Utf8Decoder
+
 object OldVerseTextDecoder {
     class Ascii : VerseTextDecoder {
         private fun lowercase(ba: ByteArray) {
@@ -48,7 +50,11 @@ object OldVerseTextDecoder {
             var from = 0
             for (pos in ba.indices) {
                 if (ba[pos] == 0x0a.toByte()) {
-                    val single = decode(ba, from, pos - from, lowercased)
+                    val single = if (lowercased) {
+                        Utf8Decoder.toStringLowerCase(ba, from, pos - from)
+                    } else {
+                        Utf8Decoder.toString(ba, from, pos - from)
+                    }
                     versesBuf.add(single)
                     from = pos + 1
                 }
@@ -58,21 +64,6 @@ object OldVerseTextDecoder {
         }
 
         override fun makeIntoSingleString(ba: ByteArray, lowercased: Boolean): String =
-            decode(ba, 0, ba.size, lowercased)
-
-        private fun decode(ba: ByteArray, start: Int, length: Int, isLowercased: Boolean): String {
-            val text = String(ba, start, length, Charsets.UTF_8)
-            if (!isLowercased) return text
-
-            // Search offsets require simple Unicode casing without character expansion.
-            return buildString(text.length) {
-                var offset = 0
-                while (offset < text.length) {
-                    val codePoint = text.codePointAt(offset)
-                    appendCodePoint(Character.toLowerCase(codePoint))
-                    offset += Character.charCount(codePoint)
-                }
-            }
-        }
+            if (lowercased) Utf8Decoder.toStringLowerCase(ba) else Utf8Decoder.toString(ba)
     }
 }
