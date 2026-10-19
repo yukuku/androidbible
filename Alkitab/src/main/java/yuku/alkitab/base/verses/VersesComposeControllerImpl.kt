@@ -995,7 +995,7 @@ internal fun PericopeHeaderComposeItem(
         }
         val paddingBottomPx = applied.pericopeSpacingBottom
 
-        val titleFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace, bold = true) }
+        val titleFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace) }
         val parallelsFontFamily = remember(applied.fontFace) { composeFontFamilyFor(applied.fontFace) }
         val titleSizeDp = applied.fontSize2dp * ui.textSizeMult
         val titleLineMetrics = remember(applied.fontFace, titleSizeDp, applied.lineSpacingMult, unscaledDensity.density) {
