@@ -570,4 +570,5 @@
     <string name="dv_transparency_clear">Fully transparent</string>
     <string name="devotion_select">Select devotion and date</string>
     <string name="song_select">Select song</string>
+    <string name="search_goto_reference">Go to: ^1</string>
 </resources>
