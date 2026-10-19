@@ -368,18 +368,18 @@ class VerseRendererTest {
 
     @Test
     fun `@6 and @5 wrap a ForegroundColorSpan using fontRedColor from the applied dimensions`() {
-        val sb = renderToSb(text = "@@Jesus said @6Verily@5 unto them", verseNumberText = "1", checked = false)
+        val sb = renderToSb(text = "@@Voice said @6Verily@5 unto them", verseNumberText = "1", checked = false)
         val reds = sb.getSpans(0, sb.length, ForegroundColorSpan::class.java)
 
         assertEquals(1, reds.size)
         assertEquals(FONT_RED, reds[0].foregroundColor)
-        // "1  Jesus said " is 14 chars, "Verily" is 6 chars.
+        // "1  Voice said " is 14 chars, "Verily" is 6 chars.
         assertEquals(14, sb.getSpanStart(reds[0]))
         assertEquals(20, sb.getSpanEnd(reds[0]))
     }
 
     @Test
-    fun `checked=true suppresses the red-letter ForegroundColorSpan (so Jesus' words do not look red when the verse is selected)`() {
+    fun `checked=true suppresses the red-letter ForegroundColorSpan (so red-letter text does not look red when the verse is selected)`() {
         val sb = renderToSb(text = "@@a @6Verily@5 b", verseNumberText = "1", checked = true)
         val reds = sb.getSpans(0, sb.length, ForegroundColorSpan::class.java)
 

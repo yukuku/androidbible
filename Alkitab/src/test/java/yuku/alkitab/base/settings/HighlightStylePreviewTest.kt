@@ -36,7 +36,7 @@ class HighlightStylePreviewTest {
 
     @Test
     fun `preview retains active red letter and verse number colors while adjusting only the highlight`() {
-        val raw = "@@@0Normal @6Jesus@5 @9italic@7"
+        val raw = "@@@0Normal @6Voice@5 @9italic@7"
         val original = VerseRendererCompose.render(true, ari, raw)
         for (amount in listOf(0f, 0.5f, 1f)) {
             val preview = HighlightStyleSheet.renderPreview(ari, raw, true, 0x00ff00, 0xff223344.toInt(), amount)
@@ -72,7 +72,7 @@ class HighlightStylePreviewTest {
 
     @Test
     fun `plain verses and hidden verse numbers retain their reader representation`() {
-        for (raw in listOf("Plain verse", "@@@0Normal @6Jesus@5")) {
+        for (raw in listOf("Plain verse", "@@@0Normal @6Voice@5")) {
             val original = VerseRendererCompose.render(false, ari, raw)
             val preview = HighlightStyleSheet.renderPreview(ari, raw, false, 0xffff00, applied.backgroundColor, 0f)
             assertEquals(original.text.text, preview.text.text)

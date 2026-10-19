@@ -110,7 +110,7 @@ class VerseRendererGoldenGen {
             add(caseOf("italic_dangling_close_is_noop", "@@ab@7cd", verseNumberText = "1"))
             add(caseOf("italic_two_runs", "@@a@9b@7c@9d@7e", verseNumberText = "1"))
 
-            add(caseOf("red_balanced", "@@Jesus said @6Verily@5 unto them", verseNumberText = "1"))
+            add(caseOf("red_balanced", "@@Voice said @6Verily@5 unto them", verseNumberText = "1"))
             add(caseOf("red_suppressed_when_checked", "@@a @6Verily@5 b", verseNumberText = "1", checked = true))
             add(caseOf("red_dangling_close_is_noop", "@@a@5b", verseNumberText = "1"))
 

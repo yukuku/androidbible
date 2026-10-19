@@ -250,7 +250,7 @@ class VerseItemSideBySideSnapshotTest {
         // Inline styles
         Case("20-italic", "@@he said, @9thus says the LORD@7 unto you all."),
         Case("21-red-words", "@@@6Truly I say unto you, until heaven and earth pass away.@5"),
-        Case("22-mixed-italic-red", "@@@9narrator:@7 @6and Jesus answered@5 with a parable."),
+        Case("22-mixed-italic-red", "@@@9narrator:@7 @6and voice answered@5 with a parable."),
 
         // Line break + multiple paragraphs
         Case("23-explicit-linebreak", "@@First line.@8Second line after explicit break."),

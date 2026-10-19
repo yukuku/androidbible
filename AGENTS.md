@@ -179,7 +179,7 @@ The legacy `SongInfo` / `SongBookInfo` tables are still created in `SongDb` as a
 Verse text uses inline formatting codes (processed by `VerseRenderer` and `FormattedTextRenderer`):
 - `@@` — marks verse as formatted
 - `@0`–`@4`, `@^` — paragraph indentation levels
-- `@6`/`@5` — red letter (Jesus' words) start/end
+- `@6`/`@5` — red-letter text start/end
 - `@9`/`@7` — italic start/end
 - `@8` — line break
 - `@<tag@>...@/` — special inline elements (cross-references, footnotes, and `@<r=reading@>base@/` ruby, rendered by the Compose pipeline only; see `docs/features/ruby/design.md`)
@@ -237,6 +237,8 @@ Detailed documentation for each major app feature:
 - [Tech Debt Backlog](docs/tech-debt-remediation.md): the single index for open, partial, and completed REM records, with problem descriptions, priorities, and next steps
 
 ## Code Conventions
+
+- **Use neutral red-letter terminology in code and tests.** Refer to this formatting category as “red-letter text” and use neutral synthetic text in its tests.
 
 - **Do not introduce `!!` in production code.** Handle nullable values explicitly. For nullable observable or delegated state, read a local snapshot and use a null check so Kotlin can smart-cast it.
 - **Separate logical sections of long function bodies with blank lines.** Group related operations and make transitions between setup, state loading, rendering, and callbacks easy to scan.
