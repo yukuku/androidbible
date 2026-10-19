@@ -573,7 +573,7 @@ internal fun VerseItemComposeContent(
                 .then(rubyGeometryCopyOnHold(state.attribute.ari))
         ) {
             if (!state.attribute.isShowingSomething) {
-                VerseTextRegion(state, checked, lineMetrics, modifier = Modifier.fillMaxWidth())
+                VerseTextRegion(state, checked, lineMetrics, attributeSize = IntSize.Zero, modifier = Modifier.fillMaxWidth())
             } else {
                 SubcomposeLayout(modifier = Modifier.fillMaxWidth()) { constraints ->
                     val attributes = subcompose("attributes") {
@@ -688,7 +688,7 @@ private fun VerseTextRegion(
     state: VerseItemComposeState,
     checked: Boolean,
     lineMetrics: LineMetrics,
-    attributeSize: IntSize = IntSize.Zero,
+    attributeSize: IntSize,
     modifier: Modifier = Modifier,
 ) {
     val textColor = if (checked) {
@@ -722,7 +722,7 @@ private fun VerseTextRegion(
 
     Box(modifier = modifier) {
         if (attributeSize.width == 0) {
-            VerseBodyText(state, state.render, textStyle, lineMetrics, textColor)
+            VerseBodyText(state, state.render, textStyle, lineMetrics, textColor, isRubyPrepared = false)
         } else {
             VerseTextAroundAttributes(state, textStyle, lineMetrics, textColor, attributeSize)
         }
@@ -763,6 +763,7 @@ private fun VerseTextAroundAttributes(
         if (narrowWidth == 0) {
             VerseBodyText(
                 state, state.render, textStyle, lineMetrics, textColor,
+                isRubyPrepared = false,
                 modifier = Modifier.padding(top = with(density) { attributeSize.height.toDp() }),
             )
         } else {
@@ -778,7 +779,7 @@ private fun VerseTextAroundAttributes(
                     modifier = Modifier.width(with(density) { narrowWidth.toDp() }),
                 )
                 flow.second?.let { remaining ->
-                    VerseBodyText(state, remaining, textStyle, lineMetrics, textColor)
+                    VerseBodyText(state, remaining, textStyle, lineMetrics, textColor, isRubyPrepared = false)
                 }
             }
         }
@@ -798,7 +799,7 @@ private fun VerseBodyText(
     textStyle: TextStyle,
     lineMetrics: LineMetrics,
     textColor: Color,
-    isRubyPrepared: Boolean = false,
+    isRubyPrepared: Boolean,
     modifier: Modifier = Modifier,
 ) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }

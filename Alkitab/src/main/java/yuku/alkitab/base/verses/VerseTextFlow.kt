@@ -26,7 +26,7 @@ internal fun splitVerseAroundAttributes(
 
     // A terminal newline would create an extra empty line in the upper text block.
     val prefixEnd = if (split > 0 && preparedText[split - 1] == '\n') split - 1 else split
-    val first = sliceVerseRender(render.copy(text = preparedText), 0, prefixEnd)
+    val first = sliceVerseRender(render.copy(text = preparedText), 0, prefixEnd, continuationDirection = null)
     val isContinuation = split > 0 && render.text[split - 1] != '\n' &&
         render.text.paragraphStyles.none { it.start == split || it.end == split }
     val direction = if (isContinuation) narrowLayout.getParagraphDirection(split) else null
@@ -37,7 +37,7 @@ private fun sliceVerseRender(
     render: VerseRendererCompose.Result,
     start: Int,
     end: Int,
-    continuationDirection: ResolvedTextDirection? = null,
+    continuationDirection: ResolvedTextDirection?,
 ): VerseRendererCompose.Result {
     val sliced = render.text.subSequence(start, end)
     val text = if (continuationDirection == null) sliced else buildAnnotatedString {
