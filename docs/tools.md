@@ -65,7 +65,7 @@ importers need to run with `tools/` as the working directory.
 `Alkitab/src/plain/assets/internal/`, the dummy Bible text the open-source
 `plain` flavor ships so it builds and runs without the proprietary overlay.
 It is not real Bible text. The first book's chapters 3 through 8 form a
-[rendering gallery](../tools/in-ddd/README.md) covering formatting, scripts,
+rendering gallery covering formatting, scripts,
 ruby annotations, notes, references, and text flowing around attributes.
 Chapters 1 and 2 retain their original text, headings, and references.
 The remaining text supplies navigation fixtures. Regenerate the assets by
