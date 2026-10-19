@@ -37,7 +37,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.Typeface as ComposeTypeface
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.songs.newdoc.Block
 import yuku.alkitab.songs.newdoc.GapBlock
 import yuku.alkitab.songs.newdoc.Line
@@ -87,13 +87,8 @@ class SongComposeStyle(
         (fm.descent - fm.ascent + fm.leading) / 100f
     }
 
-    val bodyFontFamily: FontFamily = when (val tf = typeface) {
-        null, Typeface.DEFAULT -> FontFamily.Default
-        Typeface.SERIF -> FontFamily.Serif
-        Typeface.MONOSPACE -> FontFamily.Monospace
-        Typeface.SANS_SERIF -> FontFamily.SansSerif
-        else -> FontFamily(ComposeTypeface(tf))
-    }
+    val bodyFontFamily: FontFamily = composeFontFamilyFor(typeface)
+    val sansSerifFontFamily: FontFamily = composeFontFamilyFor(Typeface.SANS_SERIF)
 }
 
 private val LINK_STYLE = SpanStyle(textDecoration = TextDecoration.Underline)
@@ -563,7 +558,7 @@ private fun roleTextStyle(style: SongComposeStyle, sizeMult: Float, sansSerif: B
     color = style.bodyColor,
     fontSize = (style.baseSizeSp * sizeMult).sp,
     fontWeight = if (style.isBold) FontWeight.Bold else FontWeight.Normal,
-    fontFamily = if (sansSerif) FontFamily.SansSerif else style.bodyFontFamily,
+    fontFamily = if (sansSerif) style.sansSerifFontFamily else style.bodyFontFamily,
     platformStyle = PlatformTextStyle(includeFontPadding = false),
 )
 

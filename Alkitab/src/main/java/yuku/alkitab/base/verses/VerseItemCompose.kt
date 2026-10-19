@@ -72,6 +72,7 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.withTimeoutOrNull
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.settings.ExperimentalFlags
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.ClipboardUtil

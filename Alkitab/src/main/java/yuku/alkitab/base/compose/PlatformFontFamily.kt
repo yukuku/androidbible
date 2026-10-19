@@ -1,4 +1,4 @@
-package yuku.alkitab.base.verses
+package yuku.alkitab.base.compose
 
 import android.content.Context
 import android.graphics.Typeface
@@ -14,22 +14,22 @@ import androidx.compose.ui.text.font.FontWeight
 internal fun composeFontFamilyFor(typeface: Typeface?): FontFamily {
     val base = typeface ?: Typeface.DEFAULT
     return FontFamily(
-        VerseTypefaceFont(base, FontWeight.Normal, FontStyle.Normal),
-        VerseTypefaceFont(base, FontWeight.Bold, FontStyle.Normal),
-        VerseTypefaceFont(base, FontWeight.Normal, FontStyle.Italic),
-        VerseTypefaceFont(base, FontWeight.Bold, FontStyle.Italic),
+        PlatformTypefaceFont(base, FontWeight.Normal, FontStyle.Normal),
+        PlatformTypefaceFont(base, FontWeight.Bold, FontStyle.Normal),
+        PlatformTypefaceFont(base, FontWeight.Normal, FontStyle.Italic),
+        PlatformTypefaceFont(base, FontWeight.Bold, FontStyle.Italic),
     )
 }
 
-private data class VerseTypefaceFont(
+private data class PlatformTypefaceFont(
     val base: Typeface,
     override val weight: FontWeight,
     override val style: FontStyle,
-) : AndroidFont(FontLoadingStrategy.Blocking, VerseTypefaceLoader, FontVariation.Settings())
+) : AndroidFont(FontLoadingStrategy.Blocking, PlatformTypefaceLoader, FontVariation.Settings())
 
-private object VerseTypefaceLoader : AndroidFont.TypefaceLoader {
+private object PlatformTypefaceLoader : AndroidFont.TypefaceLoader {
     override fun loadBlocking(context: Context, font: AndroidFont): Typeface {
-        font as VerseTypefaceFont
+        font as PlatformTypefaceFont
         val androidStyle = (if (font.weight == FontWeight.Bold) Typeface.BOLD else Typeface.NORMAL) or
             (if (font.style == FontStyle.Italic) Typeface.ITALIC else Typeface.NORMAL)
         return Typeface.create(font.base, androidStyle)
