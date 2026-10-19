@@ -140,7 +140,7 @@ internal fun VerseTextComposeContent(state: VerseTextComposeState, modifier: Mod
                 ),
                 fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
                 platformStyle = PlatformTextStyle(includeFontPadding = false),
-                fontFamily = composeFontFamilyFor(state.typeface, bold),
+                fontFamily = composeFontFamilyFor(state.typeface),
             )
         }
 

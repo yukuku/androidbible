@@ -55,9 +55,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.Typeface as ComposeTypeface
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextDecoration
@@ -334,25 +332,6 @@ internal fun addDictionaryLinks(
 }
 
 private class DictionaryLinkHit(val start: Int, val end: Int, val info: DictionaryLinkInfo)
-
-/**
- * Maps Android's built-in Typeface singletons to Compose's stock
- * FontFamilies. The stock families have italic and bold variants
- * registered, so FontStyle.Italic / FontWeight.Bold resolve to the
- * correct glyphs (or synthesise cleanly). A raw FontFamily(Typeface)
- * wrapper only carries the regular variant and silently renders
- * italic upright, and ignores `FontWeight.Bold`. Custom fonts ship as a single
- * `-Regular.ttf`, so [bold] bakes the weight into the typeface instead, which
- * is what makes the platform draw the faux-bold that
- * `TextView.setTypeface(tf, BOLD)` produces.
- */
-internal fun composeFontFamilyFor(tf: android.graphics.Typeface?, bold: Boolean = false): FontFamily = when (tf) {
-    null, android.graphics.Typeface.DEFAULT -> FontFamily.Default
-    android.graphics.Typeface.SERIF -> FontFamily.Serif
-    android.graphics.Typeface.MONOSPACE -> FontFamily.Monospace
-    android.graphics.Typeface.SANS_SERIF -> FontFamily.SansSerif
-    else -> FontFamily(ComposeTypeface(if (bold) android.graphics.Typeface.create(tf, android.graphics.Typeface.BOLD) else tf))
-}
 
 /** Whether the attribute column will draw at least one icon. */
 internal val AttributeState.isShowingSomething: Boolean
@@ -705,7 +684,7 @@ private fun VerseTextRegion(
         state.fontBold,
     ) {
         val bold = state.fontBold == android.graphics.Typeface.BOLD
-        val fontFamily = composeFontFamilyFor(state.typeface, bold)
+        val fontFamily = composeFontFamilyFor(state.typeface)
         TextStyle(
             color = textColor,
             fontSize = state.fontSizeDp.sp,
