@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">이 묵상을 다운로드할 수 없습니다. 연결을 확인하고 다시 시도하세요.</string>
     <string name="devotion_unavailable">이 묵상은 아직 서버에서 제공되지 않습니다.</string>
     <string name="devotion_select">묵상과 날짜 선택</string>
+    <string name="highlight_style_original">원래 하이라이트 색상 사용</string>
+    <string name="highlight_style_customize">하이라이트 색상 사용자 정의</string>
+    <string name="highlight_style_current">적응형 색상(기본값)</string>
+    <string name="highlight_style_custom_value">사용자 정의: %1$d%% 적응형</string>
+    <string name="highlight_style_adjustment">하이라이트 색상 조정</string>
+    <string name="highlight_style_explanation">페이지 배경에 얼마나 많은 강조 색상이 적용되는지 선택합니다.</string>
+    <string name="highlight_style_zero">0 · 원본</string>
+    <string name="highlight_style_one">1 · 적응형</string>
+    <string name="highlight_style_preview">미리보기</string>
+    <string name="highlight_style_preview_only">미리보기 색상은 이 샘플에만 영향을 미칩니다.</string>
+    <string name="highlight_style_background">배경색 미리보기</string>
+    <string name="highlight_style_text">텍스트 색상 미리보기</string>
+    <string name="highlight_style_color">하이라이트 색상 미리보기</string>
+    <string name="highlight_style_loading">구절 로드 중…</string>
+    <string name="highlight_style_no_verses">이 미리보기에 사용할 수 있는 구절이 없습니다.</string>
 </resources>

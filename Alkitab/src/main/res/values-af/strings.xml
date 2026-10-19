@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Kon nie hierdie daaglikse Bybeloordenkingsartikel aflaai nie. Gaan jou verbinding na en probeer weer.</string>
     <string name="devotion_unavailable">Hierdie daaglikse Bybeloordenkingsartikel is nog nie vanaf die bediener beskikbaar nie.</string>
     <string name="devotion_select">Kies daaglikse Bybeloordenkingsartikel en datum</string>
+    <string name="highlight_style_original">Gebruik oorspronklike hoogtepuntkleure</string>
+    <string name="highlight_style_customize">Pas hoogtepuntkleure aan</string>
+    <string name="highlight_style_current">Aanpasbare kleure (verstek)</string>
+    <string name="highlight_style_custom_value">Pasgemaak: %1$d%% aanpasbaar</string>
+    <string name="highlight_style_adjustment">Merk kleuraanpassing</string>
+    <string name="highlight_style_explanation">Kies hoeveel hoogtepuntkleure by die bladsyagtergrond aanpas.</string>
+    <string name="highlight_style_zero">0 · Oorspronklik</string>
+    <string name="highlight_style_one">1 · Aanpasbaar</string>
+    <string name="highlight_style_preview">Voorskou</string>
+    <string name="highlight_style_preview_only">Voorskoukleure beïnvloed slegs hierdie voorbeeld.</string>
+    <string name="highlight_style_background">Voorskou agtergrondkleur</string>
+    <string name="highlight_style_text">Voorskou tekskleur</string>
+    <string name="highlight_style_color">Voorskou hoogtepuntkleur</string>
+    <string name="highlight_style_loading">Laai verse …</string>
+    <string name="highlight_style_no_verses">Geen verse beskikbaar vir hierdie voorskou nie.</string>
 </resources>

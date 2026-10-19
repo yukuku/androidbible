@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Impossible de télécharger cette méditation. Vérifiez votre connexion et réessayez.</string>
     <string name="devotion_unavailable">Cette méditation n’est pas encore disponible sur le serveur.</string>
     <string name="devotion_select">Sélectionnez une méditation et une date</string>
+    <string name="highlight_style_original">Utiliser les couleurs de surbrillance d\'origine</string>
+    <string name="highlight_style_customize">Personnaliser les couleurs de surbrillance</string>
+    <string name="highlight_style_current">Couleurs adaptatives (par défaut)</string>
+    <string name="highlight_style_custom_value">Personnalisé : %1$d%% adaptatif</string>
+    <string name="highlight_style_adjustment">Réglage des couleurs de surbrillance</string>
+    <string name="highlight_style_explanation">Choisissez dans quelle mesure les couleurs de surbrillance s\'adaptent à l\'arrière-plan de la page.</string>
+    <string name="highlight_style_zero">0 · Original</string>
+    <string name="highlight_style_one">1 · Adaptatif</string>
+    <string name="highlight_style_preview">Aperçu</string>
+    <string name="highlight_style_preview_only">Les couleurs d\'aperçu n\'affectent que cet échantillon.</string>
+    <string name="highlight_style_background">Aperçu de la couleur d\'arrière-plan</string>
+    <string name="highlight_style_text">Aperçu de la couleur du texte</string>
+    <string name="highlight_style_color">Aperçu de la couleur de surbrillance</string>
+    <string name="highlight_style_loading">Chargement des versets…</string>
+    <string name="highlight_style_no_verses">Aucun verset disponible pour cet aperçu.</string>
 </resources>

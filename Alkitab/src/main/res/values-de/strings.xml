@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Dieser tägliche Bibel-Andachtsartikel konnte nicht heruntergeladen werden. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.</string>
     <string name="devotion_unavailable">Dieser tägliche Bibel-Andachtsartikel ist noch nicht auf dem Server verfügbar.</string>
     <string name="devotion_select">Wählen Sie den täglichen Bibelandachtsartikel und das Datum aus</string>
+    <string name="highlight_style_original">Original-Hervorhebungsfarben verwenden</string>
+    <string name="highlight_style_customize">Hervorhebungsfarben anpassen</string>
+    <string name="highlight_style_current">Adaptive Farben (Standard)</string>
+    <string name="highlight_style_custom_value">Benutzerdefiniert: %1$d%% adaptiv</string>
+    <string name="highlight_style_adjustment">Anpassung der Hervorhebungsfarben</string>
+    <string name="highlight_style_explanation">Wählen Sie aus, wie stark sich die Hervorhebungsfarben an den Seitenhintergrund anpassen.</string>
+    <string name="highlight_style_zero">0 · Original</string>
+    <string name="highlight_style_one">1 · Adaptiv</string>
+    <string name="highlight_style_preview">Vorschau</string>
+    <string name="highlight_style_preview_only">Vorschaufarben wirken sich nur auf dieses Beispiel aus.</string>
+    <string name="highlight_style_background">Vorschau der Hintergrundfarbe</string>
+    <string name="highlight_style_text">Vorschau der Textfarbe</string>
+    <string name="highlight_style_color">Vorschau der Hervorhebungsfarbe</string>
+    <string name="highlight_style_loading">Verse werden geladen…</string>
+    <string name="highlight_style_no_verses">Für diese Vorschau sind keine Verse verfügbar.</string>
 </resources>

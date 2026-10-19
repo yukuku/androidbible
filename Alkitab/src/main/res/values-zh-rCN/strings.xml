@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">无法下载此灵修文章。请检查网络连接后重试。</string>
     <string name="devotion_unavailable">服务器尚未提供此灵修文章。</string>
     <string name="devotion_select">选择灵修文章和日期</string>
+    <string name="highlight_style_original">使用原始高亮颜色</string>
+    <string name="highlight_style_customize">自定义突出显示颜色</string>
+    <string name="highlight_style_current">自适应颜色（默认）</string>
+    <string name="highlight_style_custom_value">自定义：%1$d%% 自适应</string>
+    <string name="highlight_style_adjustment">高亮颜色调整</string>
+    <string name="highlight_style_explanation">选择突出显示颜色适应页面背景的程度。</string>
+    <string name="highlight_style_zero">0 · 原始</string>
+    <string name="highlight_style_one">1·自适应</string>
+    <string name="highlight_style_preview">预览</string>
+    <string name="highlight_style_preview_only">预览颜色仅影响此样本。</string>
+    <string name="highlight_style_background">预览背景颜色</string>
+    <string name="highlight_style_text">预览文本颜色</string>
+    <string name="highlight_style_color">预览高亮颜色</string>
+    <string name="highlight_style_loading">正在加载经文…</string>
+    <string name="highlight_style_no_verses">此预览没有可用的经文。</string>
 </resources>

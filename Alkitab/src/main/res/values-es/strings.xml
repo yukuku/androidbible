@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">No se pudo descargar este devocional. Comprueba tu conexión y vuelve a intentarlo.</string>
     <string name="devotion_unavailable">Este devocional aún no está disponible en el servidor.</string>
     <string name="devotion_select">Selecciona un devocional y una fecha</string>
+    <string name="highlight_style_original">Usar colores de resaltado originales</string>
+    <string name="highlight_style_customize">Personaliza los colores de resaltado</string>
+    <string name="highlight_style_current">Colores adaptables (predeterminado)</string>
+    <string name="highlight_style_custom_value">Personalizado: %1$d%% adaptable</string>
+    <string name="highlight_style_adjustment">Ajuste del color de resaltado</string>
+    <string name="highlight_style_explanation">Elija cuánto se adaptan los colores de resaltado al fondo de la página.</string>
+    <string name="highlight_style_zero">0 · Originales</string>
+    <string name="highlight_style_one">1 · Adaptativo</string>
+    <string name="highlight_style_preview">Vista previa</string>
+    <string name="highlight_style_preview_only">Los colores de vista previa solo afectan a esta muestra.</string>
+    <string name="highlight_style_background">Vista previa del color de fondo</string>
+    <string name="highlight_style_text">Vista previa del color del texto</string>
+    <string name="highlight_style_color">Vista previa del color de resaltado</string>
+    <string name="highlight_style_loading">Cargando versículos…</string>
+    <string name="highlight_style_no_verses">No hay versículos disponibles para esta vista previa.</string>
 </resources>

@@ -522,4 +522,19 @@
     <string name="devotion_download_failed">Impossibile scaricare questa meditazione biblica. Controlla la connessione e riprova.</string>
     <string name="devotion_unavailable">Questa meditazione biblica non è ancora disponibile sul server.</string>
     <string name="devotion_select">Seleziona una meditazione biblica e una data</string>
+    <string name="highlight_style_original">Utilizza i colori di evidenziazione originali</string>
+    <string name="highlight_style_customize">Personalizza i colori evidenziati</string>
+    <string name="highlight_style_current">Colori adattivi (predefinito)</string>
+    <string name="highlight_style_custom_value">Personalizzato: %1$d%% adattivo</string>
+    <string name="highlight_style_adjustment">Regolazione del colore dell\'evidenziazione</string>
+    <string name="highlight_style_explanation">Scegli quanto i colori evidenziati si adattano allo sfondo della pagina.</string>
+    <string name="highlight_style_zero">0 · Originale</string>
+    <string name="highlight_style_one">1 · Adattivo</string>
+    <string name="highlight_style_preview">Anteprima</string>
+    <string name="highlight_style_preview_only">I colori dell\'anteprima influiscono solo su questo campione.</string>
+    <string name="highlight_style_background">Anteprima del colore di sfondo</string>
+    <string name="highlight_style_text">Anteprima del colore del testo</string>
+    <string name="highlight_style_color">Anteprima del colore evidenziato</string>
+    <string name="highlight_style_loading">Caricamento versetti…</string>
+    <string name="highlight_style_no_verses">Nessun versetto disponibile per questa anteprima.</string>
 </resources>

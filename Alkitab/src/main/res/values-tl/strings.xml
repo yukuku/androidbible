@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Hindi ma-download itong pang-araw-araw na artikulong debosyonal sa Bibliya. Suriin ang iyong koneksyon at subukang muli.</string>
     <string name="devotion_unavailable">Ang pang-araw-araw na artikulong debosyonal sa Bibliya na ito ay hindi pa makukuha sa server.</string>
     <string name="devotion_select">Pumili ng pang-araw-araw na artikulo at petsa ng debosyonal sa Bibliya</string>
+    <string name="highlight_style_original">Gumamit ng mga orihinal na kulay ng highlight</string>
+    <string name="highlight_style_customize">I-customize ang mga kulay ng highlight</string>
+    <string name="highlight_style_current">Mga adaptive na kulay (default)</string>
+    <string name="highlight_style_custom_value">Custom: %1$d%% adaptive</string>
+    <string name="highlight_style_adjustment">I-highlight ang pagsasaayos ng kulay</string>
+    <string name="highlight_style_explanation">Piliin kung gaano karaming mga kulay ng highlight ang umaangkop sa background ng page.</string>
+    <string name="highlight_style_zero">0 · Orihinal</string>
+    <string name="highlight_style_one">1 · Adaptive</string>
+    <string name="highlight_style_preview">Preview</string>
+    <string name="highlight_style_preview_only">Ang mga kulay ng preview ay nakakaapekto lamang sa sample na ito.</string>
+    <string name="highlight_style_background">I-preview ang kulay ng background</string>
+    <string name="highlight_style_text">I-preview ang kulay ng text</string>
+    <string name="highlight_style_color">I-preview ang kulay ng highlight</string>
+    <string name="highlight_style_loading">Naglo-load ng mga talata…</string>
+    <string name="highlight_style_no_verses">Walang magagamit na mga talata para sa preview na ito.</string>
 </resources>

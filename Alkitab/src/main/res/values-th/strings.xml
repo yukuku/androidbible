@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">ไม่สามารถดาวน์โหลดบทความประจำวันนี้ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
     <string name="devotion_unavailable">บทความประจำวันนี้ยังไม่มีบนเซิร์ฟเวอร์</string>
     <string name="devotion_select">เลือกบทความประจำวันและวันที่</string>
+    <string name="highlight_style_original">ใช้สีไฮไลต์ดั้งเดิม</string>
+    <string name="highlight_style_customize">ปรับแต่งสีไฮไลท์</string>
+    <string name="highlight_style_current">ปรับสีได้ (ค่าเริ่มต้น)</string>
+    <string name="highlight_style_custom_value">กำหนดเอง: %1$d%% ปรับตัวได้</string>
+    <string name="highlight_style_adjustment">การปรับสีไฮไลท์</string>
+    <string name="highlight_style_explanation">เลือกว่าสีไฮไลต์จะปรับให้เข้ากับพื้นหลังของเพจมากน้อยเพียงใด</string>
+    <string name="highlight_style_zero">0 · ต้นฉบับ</string>
+    <string name="highlight_style_one">1 · ปรับตัวได้</string>
+    <string name="highlight_style_preview">ดูตัวอย่าง</string>
+    <string name="highlight_style_preview_only">สีตัวอย่างมีผลกับตัวอย่างนี้เท่านั้น</string>
+    <string name="highlight_style_background">ดูตัวอย่างสีพื้นหลัง</string>
+    <string name="highlight_style_text">ดูตัวอย่างสีข้อความ</string>
+    <string name="highlight_style_color">ดูตัวอย่างสีไฮไลต์</string>
+    <string name="highlight_style_loading">กำลังโหลดข้อพระคัมภีร์…</string>
+    <string name="highlight_style_no_verses">ไม่มีข้อพระคัมภีร์สำหรับตัวอย่างนี้</string>
 </resources>

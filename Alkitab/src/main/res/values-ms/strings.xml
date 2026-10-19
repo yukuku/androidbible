@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Tidak dapat memuat turun renungan ini. Semak sambungan anda dan cuba lagi.</string>
     <string name="devotion_unavailable">Renungan ini belum tersedia daripada pelayan.</string>
     <string name="devotion_select">Pilih renungan dan tarikh</string>
+    <string name="highlight_style_original">Gunakan warna sorotan asal</string>
+    <string name="highlight_style_customize">Sesuaikan warna sorotan</string>
+    <string name="highlight_style_current">Warna penyesuaian (lalai)</string>
+    <string name="highlight_style_custom_value">Tersuai: %1$d%% adaptif</string>
+    <string name="highlight_style_adjustment">Serlahkan pelarasan warna</string>
+    <string name="highlight_style_explanation">Pilih berapa banyak warna sorotan menyesuaikan diri dengan latar belakang halaman.</string>
+    <string name="highlight_style_zero">0 · Asal</string>
+    <string name="highlight_style_one">1 · Penyesuaian</string>
+    <string name="highlight_style_preview">Pratonton</string>
+    <string name="highlight_style_preview_only">Warna pratonton hanya mempengaruhi sampel ini.</string>
+    <string name="highlight_style_background">Pratonton warna latar belakang</string>
+    <string name="highlight_style_text">Pratonton warna teks</string>
+    <string name="highlight_style_color">Pratonton warna sorotan</string>
+    <string name="highlight_style_loading">Memuatkan ayat…</string>
+    <string name="highlight_style_no_verses">Tiada ayat tersedia untuk pratonton ini.</string>
 </resources>

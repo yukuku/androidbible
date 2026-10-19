@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Nie można pobrać tego rozważania. Sprawdź połączenie i spróbuj ponownie.</string>
     <string name="devotion_unavailable">To rozważanie nie jest jeszcze dostępne na serwerze.</string>
     <string name="devotion_select">Wybierz rozważanie i datę</string>
+    <string name="highlight_style_original">Użyj oryginalnych kolorów podświetlenia</string>
+    <string name="highlight_style_customize">Dostosuj kolory podświetlenia</string>
+    <string name="highlight_style_current">Kolory adaptacyjne (domyślne)</string>
+    <string name="highlight_style_custom_value">Niestandardowy: %1$d%% adaptacyjny</string>
+    <string name="highlight_style_adjustment">Regulacja koloru podświetlenia</string>
+    <string name="highlight_style_explanation">Wybierz, w jakim stopniu kolory podświetlenia dopasowują się do tła strony.</string>
+    <string name="highlight_style_zero">0 · Oryginał</string>
+    <string name="highlight_style_one">1 · Adaptacyjny</string>
+    <string name="highlight_style_preview">Podgląd</string>
+    <string name="highlight_style_preview_only">Kolory podglądu dotyczą tylko tej próbki.</string>
+    <string name="highlight_style_background">Podgląd koloru tła</string>
+    <string name="highlight_style_text">Podgląd koloru tekstu</string>
+    <string name="highlight_style_color">Podgląd koloru podświetlenia</string>
+    <string name="highlight_style_loading">Ładowanie wersetów…</string>
+    <string name="highlight_style_no_verses">Brak dostępnych wersetów dla tego podglądu.</string>
 </resources>

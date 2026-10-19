@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Không thể tải bài tĩnh nguyện này. Hãy kiểm tra kết nối và thử lại.</string>
     <string name="devotion_unavailable">Bài tĩnh nguyện này chưa có trên máy chủ.</string>
     <string name="devotion_select">Chọn bài tĩnh nguyện và ngày</string>
+    <string name="highlight_style_original">Sử dụng màu tô sáng gốc</string>
+    <string name="highlight_style_customize">Tùy chỉnh màu tô sáng</string>
+    <string name="highlight_style_current">Màu thích ứng (mặc định)</string>
+    <string name="highlight_style_custom_value">Tùy chỉnh: %1$d%% thích ứng</string>
+    <string name="highlight_style_adjustment">Điều chỉnh màu tô sáng</string>
+    <string name="highlight_style_explanation">Chọn mức độ màu tô sáng thích ứng với nền trang.</string>
+    <string name="highlight_style_zero">0 · Gốc</string>
+    <string name="highlight_style_one">1 · Thích ứng</string>
+    <string name="highlight_style_preview">Xem trước</string>
+    <string name="highlight_style_preview_only">Màu xem trước chỉ ảnh hưởng đến mẫu này.</string>
+    <string name="highlight_style_background">Màu nền xem trước</string>
+    <string name="highlight_style_text">Màu chữ xem trước</string>
+    <string name="highlight_style_color">Màu tô sáng xem trước</string>
+    <string name="highlight_style_loading">Đang tải các câu Kinh Thánh…</string>
+    <string name="highlight_style_no_verses">Không có câu Kinh Thánh nào cho bản xem trước này.</string>
 </resources>

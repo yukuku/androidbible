@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Kunne ikke downloade denne daglige bibelanagtsartikel. Tjek din forbindelse, og prøv igen.</string>
     <string name="devotion_unavailable">Denne daglige bibelandagt artikel er ikke tilgængelig fra serveren endnu.</string>
     <string name="devotion_select">Vælg daglig bibelandagt artikel og dato</string>
+    <string name="highlight_style_original">Brug originale highlight-farver</string>
+    <string name="highlight_style_customize">Tilpas highlight-farver</string>
+    <string name="highlight_style_current">Adaptive farver (standard)</string>
+    <string name="highlight_style_custom_value">Brugerdefineret: %1$d%% adaptiv</string>
+    <string name="highlight_style_adjustment">Fremhæv farvejustering</string>
+    <string name="highlight_style_explanation">Vælg, hvor meget fremhævede farver tilpasser sig sidens baggrund.</string>
+    <string name="highlight_style_zero">0 · Original</string>
+    <string name="highlight_style_one">1 · Adaptiv</string>
+    <string name="highlight_style_preview">Forhåndsvisning</string>
+    <string name="highlight_style_preview_only">Forhåndsvisningsfarver påvirker kun denne prøve.</string>
+    <string name="highlight_style_background">Forhåndsvisning af baggrundsfarve</string>
+    <string name="highlight_style_text">Eksempel på tekstfarve</string>
+    <string name="highlight_style_color">Forhåndsvisning af højlysfarve</string>
+    <string name="highlight_style_loading">Indlæser vers…</string>
+    <string name="highlight_style_no_verses">Ingen tilgængelige vers for denne forhåndsvisning.</string>
 </resources>

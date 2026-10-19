@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">Deze overdenking kan niet worden gedownload. Controleer uw verbinding en probeer het opnieuw.</string>
     <string name="devotion_unavailable">Deze overdenking is nog niet beschikbaar op de server.</string>
     <string name="devotion_select">Selecteer een overdenking en datum</string>
+    <string name="highlight_style_original">Gebruik originele accentkleuren</string>
+    <string name="highlight_style_customize">Markeerkleuren aanpassen</string>
+    <string name="highlight_style_current">Adaptieve kleuren (standaard)</string>
+    <string name="highlight_style_custom_value">Aangepast: %1$d%% adaptief</string>
+    <string name="highlight_style_adjustment">Hoogtepuntkleuraanpassing</string>
+    <string name="highlight_style_explanation">Kies hoeveel markeringskleuren zich aanpassen aan de pagina-achtergrond.</string>
+    <string name="highlight_style_zero">0 · Origineel</string>
+    <string name="highlight_style_one">1 · Adaptief</string>
+    <string name="highlight_style_preview">Voorbeeld</string>
+    <string name="highlight_style_preview_only">Voorbeeldkleuren hebben alleen invloed op dit voorbeeld.</string>
+    <string name="highlight_style_background">Voorbeeld van achtergrondkleur</string>
+    <string name="highlight_style_text">Voorbeeld van tekstkleur</string>
+    <string name="highlight_style_color">Bekijk een voorbeeld van de markeringskleur</string>
+    <string name="highlight_style_loading">Verzen laden…</string>
+    <string name="highlight_style_no_verses">Er zijn geen verzen beschikbaar voor deze preview.</string>
 </resources>

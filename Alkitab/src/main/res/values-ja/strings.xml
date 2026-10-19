@@ -521,4 +521,19 @@
     <string name="devotion_download_failed">このデボーションをダウンロードできませんでした。接続を確認して、もう一度お試しください。</string>
     <string name="devotion_unavailable">このデボーションはまだサーバーから取得できません。</string>
     <string name="devotion_select">デボーションと日付を選択</string>
+    <string name="highlight_style_original">オリジナルのハイライト カラーを使用する</string>
+    <string name="highlight_style_customize">ハイライトカラーをカスタマイズする</string>
+    <string name="highlight_style_current">アダプティブカラー (デフォルト)</string>
+    <string name="highlight_style_custom_value">カスタム: %1$d%% 適応型</string>
+    <string name="highlight_style_adjustment">ハイライトカラー調整</string>
+    <string name="highlight_style_explanation">ハイライトの色をページの背景にどの程度適応させるかを選択します。</string>
+    <string name="highlight_style_zero">0 · オリジナル</string>
+    <string name="highlight_style_one">1 · アダプティブ</string>
+    <string name="highlight_style_preview">プレビュー</string>
+    <string name="highlight_style_preview_only">プレビューの色はこのサンプルにのみ影響します。</string>
+    <string name="highlight_style_background">プレビューの背景色</string>
+    <string name="highlight_style_text">プレビューのテキストの色</string>
+    <string name="highlight_style_color">プレビューのハイライトカラー</string>
+    <string name="highlight_style_loading">聖句を読み込み中…</string>
+    <string name="highlight_style_no_verses">このプレビューに使用できる聖句はありません。</string>
 </resources>
