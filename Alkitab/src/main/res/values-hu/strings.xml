@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Teljesen átlátszó</string>
     <string name="dv_preview_reference">Zsoltárok 119:105</string>
     <string name="dv_preview_verse">Az én lábamnak szövétneke a te igéd, és ösvényemnek világossága.</string>
+    <string name="search_goto_reference">Ugrás ide: ^1</string>
 </resources>

@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Totalmente transparente</string>
     <string name="dv_preview_reference">Salmos 119:105</string>
     <string name="dv_preview_verse">Lámpara es á mis pies tu palabra, y lumbrera á mi camino.</string>
+    <string name="search_goto_reference">Saltar a: ^1</string>
 </resources>

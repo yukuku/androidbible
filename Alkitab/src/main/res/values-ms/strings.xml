@@ -441,4 +441,5 @@
     <string name="dv_transparency_clear">Telus sepenuhnya</string>
     <string name="dv_preview_reference">Mazmur 119:105</string>
     <string name="dv_preview_verse">Firman-Mu lampu bagi kakiku dan cahaya bagi jalanku.</string>
+    <string name="search_goto_reference">Lompat ke: ^1</string>
 </resources>

@@ -442,4 +442,5 @@
     <string name="dv_transparency_clear">Повністю прозоре</string>
     <string name="dv_preview_reference">Псалми 118:105</string>
     <string name="dv_preview_verse">Для моєї ноги Твоє слово світи́льник, то світло для сте́жки моєї.</string>
+    <string name="search_goto_reference">Швидкий перехід: ^1</string>
 </resources>
