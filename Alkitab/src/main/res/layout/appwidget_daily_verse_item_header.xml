@@ -66,6 +66,7 @@
 		android:minHeight="48dp"
 		android:padding="4dp"
 		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textStyle="italic"
 		android:visibility="gone"
 		tools:text="Selected version unavailable. Using King James Version. Tap to change." />
 </LinearLayout>

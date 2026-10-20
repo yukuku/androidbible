@@ -18,12 +18,14 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import yuku.afw.storage.Preferences
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Version
@@ -150,6 +152,7 @@ class DailyVerseFactoryTest {
     }
 
     @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun `fallback notice renders with widget appearance and disappears when the version is available`() {
         unmockkConstructor(RemoteViews::class)
         val context = RuntimeEnvironment.getApplication()
@@ -170,8 +173,9 @@ class DailyVerseFactoryTest {
         val notice = header.findViewById<TextView>(R.id.tVersionFallback)
         assertEquals(View.VISIBLE, notice.visibility)
         assertEquals("Selected version unavailable. Using Internal Bible. Tap to change.", notice.text.toString())
-        assertEquals(Color.BLACK, notice.currentTextColor)
-        assertEquals(18f * context.resources.displayMetrics.scaledDensity, notice.textSize, 0.01f)
+        assertEquals(Color.argb(204, 0, 0, 0), notice.currentTextColor)
+        assertEquals(18f * 0.8f * context.resources.displayMetrics.scaledDensity, notice.textSize, 0.01f)
+        assertTrue(notice.typeface.isItalic)
         assertEquals("Genesis 1:1", header.findViewById<TextView>(R.id.tReference).text.toString())
 
         Preferences.setString(R.string.pref_language_key, "in")
@@ -184,7 +188,7 @@ class DailyVerseFactoryTest {
         factory.onDataSetChanged()
         factory.getViewAt(0).reapply(context, header)
         assertEquals("Menggunakan Internal Bible. Ketuk untuk memilih versi Alkitab.", notice.text.toString())
-        assertEquals(Color.WHITE, notice.currentTextColor)
+        assertEquals(Color.argb(204, 255, 255, 255), notice.currentTextColor)
 
         state.versionId = "missing"
         every { DailyVerseData.resolveVersion("missing") } returns DailyVerseData.ResolvedVersion(version, isFallback = false)

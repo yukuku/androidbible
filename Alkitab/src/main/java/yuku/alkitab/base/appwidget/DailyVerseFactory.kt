@@ -10,6 +10,7 @@ import android.text.style.SuperscriptSpan
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import androidx.core.graphics.ColorUtils
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.base.util.FormattedVerseText
@@ -69,8 +70,8 @@ class DailyVerseFactory(intent: Intent) : RemoteViewsService.RemoteViewsFactory 
         if (isVersionFallback) {
             val message = if (savedState.versionId == null) R.string.dv_version_unset else R.string.dv_version_unavailable
             rv.setTextViewText(R.id.tVersionFallback, Localized.string(message, version.longName))
-            rv.setTextColor(R.id.tVersionFallback, if (savedState.darkText) Color.BLACK else Color.WHITE)
-            rv.setFloat(R.id.tVersionFallback, "setTextSize", savedState.textSize)
+            rv.setTextColor(R.id.tVersionFallback, ColorUtils.setAlphaComponent(if (savedState.darkText) Color.BLACK else Color.WHITE, 204))
+            rv.setFloat(R.id.tVersionFallback, "setTextSize", savedState.textSize * 0.8f)
             rv.setOnClickFillInIntent(R.id.tVersionFallback, Intent().apply {
                 putExtra("app_widget_action", "configure_widget")
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
