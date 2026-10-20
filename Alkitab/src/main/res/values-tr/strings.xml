@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Dışa aktarılan verileri başka bir uygulamaya göndermek için [%1$s] düğmesine dokunun.</string>
     <string name="data_transfer_import_preview">Yukarıdaki işlemler bir önizlemedir. Verileri içe aktarmak için [%1$s], iptal etmek için [%2$s] düğmesine dokunun.</string>
     <string name="data_transfer_import_done">Tamamlandı. Kapatmak için [%1$s] düğmesine dokunun.</string>
+    <string name="dv_version_unavailable">Seçilen çeviri kullanılamıyor. %1$s kullanılıyor. Değiştirmek için dokunun.</string>
+    <string name="dv_version_unset">%1$s kullanılıyor. Bir Kutsal Kitap çevirisi seçmek için dokunun.</string>
 </resources>

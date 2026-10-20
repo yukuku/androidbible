@@ -553,4 +553,6 @@
     <string name="data_transfer_export_ready">Ketuk [%1$s] untuk mengirim data yang diekspor ke aplikasi lain.</string>
     <string name="data_transfer_import_preview">Operasi di atas hanya pratinjau. Ketuk [%1$s] untuk mengimpor data atau [%2$s] untuk membatalkan.</string>
     <string name="data_transfer_import_done">Selesai. Ketuk [%1$s] untuk menutup.</string>
+    <string name="dv_version_unavailable">Versi yang dipilih tidak tersedia. Menggunakan %1$s. Ketuk untuk mengganti.</string>
+    <string name="dv_version_unset">Menggunakan %1$s. Ketuk untuk memilih versi Alkitab.</string>
 </resources>

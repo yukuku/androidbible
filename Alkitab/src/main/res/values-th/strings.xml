@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">แตะ [%1$s] เพื่อส่งข้อมูลที่ส่งออกไปยังแอปอื่น</string>
     <string name="data_transfer_import_preview">การดำเนินการข้างต้นเป็นเพียงการแสดงตัวอย่าง แตะ [%1$s] เพื่อนำเข้าข้อมูล หรือ [%2$s] เพื่อยกเลิก</string>
     <string name="data_transfer_import_done">เสร็จแล้ว แตะ [%1$s] เพื่อปิด</string>
+    <string name="dv_version_unavailable">ฉบับที่เลือกไม่พร้อมใช้งาน กำลังใช้ %1$s แตะเพื่อเปลี่ยน</string>
+    <string name="dv_version_unset">กำลังใช้ %1$s แตะเพื่อเลือกฉบับพระคัมภีร์</string>
 </resources>

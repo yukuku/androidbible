@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Dotknij [%1$s], aby wysłać wyeksportowane dane do innej aplikacji.</string>
     <string name="data_transfer_import_preview">Powyższe operacje to tylko podgląd. Dotknij [%1$s], aby zaimportować dane, lub [%2$s], aby anulować.</string>
     <string name="data_transfer_import_done">Gotowe. Dotknij [%1$s], aby zamknąć.</string>
+    <string name="dv_version_unavailable">Wybrany przekład jest niedostępny. Używany jest %1$s. Dotknij, aby zmienić.</string>
+    <string name="dv_version_unset">Używany jest %1$s. Dotknij, aby wybrać przekład Biblii.</string>
 </resources>

@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Tik op [%1$s] om jou uitgevoerde data na ’n ander toepassing te stuur.</string>
     <string name="data_transfer_import_preview">Die bewerkings hierbo is ’n voorskou. Tik op [%1$s] om die data in te voer of [%2$s] om te kanselleer.</string>
     <string name="data_transfer_import_done">Klaar. Tik op [%1$s] om toe te maak.</string>
+    <string name="dv_version_unavailable">Die gekose weergawe is nie beskikbaar nie. Gebruik %1$s. Tik om te verander.</string>
+    <string name="dv_version_unset">Gebruik %1$s. Tik om ’n Bybelweergawe te kies.</string>
 </resources>

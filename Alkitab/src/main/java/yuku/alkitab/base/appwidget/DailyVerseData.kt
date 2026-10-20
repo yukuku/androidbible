@@ -31,6 +31,8 @@ object DailyVerseData {
         @JvmField var click: Int = 0
     }
 
+    data class ResolvedVersion(val version: Version, val isFallback: Boolean)
+
     /**
      * Returns the selected verse addresses, or null if no available passage is found.
      * [savedState] is changed and saved when unavailable verses are skipped.
@@ -102,22 +104,28 @@ object DailyVerseData {
     }
 
     @JvmStatic
-    fun getVersion(versionId: String?): Version {
-        if (versionId == null || versionId == MVersionInternal.getVersionInternalId()) {
-            return VersionImpl.getInternalVersion()
+    fun getVersion(versionId: String?): Version = resolveVersion(versionId).version
+
+    @JvmStatic
+    fun resolveVersion(versionId: String?): ResolvedVersion {
+        if (versionId == MVersionInternal.getVersionInternalId()) {
+            return ResolvedVersion(VersionImpl.getInternalVersion(), isFallback = false)
         }
 
-        for (version in yuku.alkitab.base.App.services.storage.db.listAllVersions()) {
-            if (version.versionId == versionId) {
-                if (version.hasDataFile()) {
-                    version.version?.let { return it }
+        if (versionId != null) {
+            for (version in yuku.alkitab.base.App.services.storage.db.listAllVersions()) {
+                if (version.versionId == versionId) {
+                    if (version.hasDataFile()) {
+                        version.version?.let { return ResolvedVersion(it, isFallback = false) }
+                    }
+                    break
                 }
-                break
             }
+
+            AppLog.w(TAG, "Version selected for app widget: $versionId is no longer available. Reverting to internal version.")
         }
 
-        AppLog.w(TAG, "Version selected for app widget: $versionId is no longer available. Reverting to internal version.")
-        return VersionImpl.getInternalVersion()
+        return ResolvedVersion(VersionImpl.getInternalVersion(), isFallback = true)
     }
 
     @JvmStatic

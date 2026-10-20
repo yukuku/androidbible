@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Nhấn [%1$s] để gửi dữ liệu đã xuất sang ứng dụng khác.</string>
     <string name="data_transfer_import_preview">Các thao tác ở trên chỉ là bản xem trước. Nhấn [%1$s] để nhập dữ liệu hoặc [%2$s] để hủy.</string>
     <string name="data_transfer_import_done">Hoàn tất. Nhấn [%1$s] để đóng.</string>
+    <string name="dv_version_unavailable">Bản dịch đã chọn không khả dụng. Đang dùng %1$s. Nhấn để thay đổi.</string>
+    <string name="dv_version_unset">Đang dùng %1$s. Nhấn để chọn bản dịch Kinh Thánh.</string>
 </resources>

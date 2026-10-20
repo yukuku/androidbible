@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Tryk på [%1$s] for at sende dine eksporterede data til en anden app.</string>
     <string name="data_transfer_import_preview">Handlingerne ovenfor er en forhåndsvisning. Tryk på [%1$s] for at importere dataene eller [%2$s] for at annullere.</string>
     <string name="data_transfer_import_done">Færdig. Tryk på [%1$s] for at lukke.</string>
+    <string name="dv_version_unavailable">Den valgte oversættelse er ikke tilgængelig. Bruger %1$s. Tryk for at ændre.</string>
+    <string name="dv_version_unset">Bruger %1$s. Tryk for at vælge en bibeloversættelse.</string>
 </resources>

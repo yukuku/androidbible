@@ -95,6 +95,26 @@ class DailyVerseConfigurationTest {
     }
 
     @Test
+    fun `replacing a missing widget version preserves appearance and navigation`() {
+        DailyVerseData.saveSavedState(42, DailyVerseData.loadSavedState(42).apply { versionId = "file/missing.yes" })
+        val controller = buildController().setup()
+        try {
+            val activity = controller.get()
+            assertEquals("file/missing.yes", activity.configuration.versionId)
+            activity.configuration = activity.configuration.copy(versionId = "internal")
+            activity.saveConfiguration()
+            val saved = DailyVerseData.loadSavedState(42)
+            assertEquals("internal", saved.versionId)
+            assertEquals(22f, saved.textSize, 0f)
+            assertTrue(saved.darkText)
+            assertTrue(saved.hideAppIcon)
+            assertEquals(37, saved.click)
+        } finally {
+            controller.pause().stop().destroy()
+        }
+    }
+
+    @Test
     fun `cancel discards edits and recreation keeps the selected version`() {
         val controller = buildController().setup()
         val activity = controller.get()

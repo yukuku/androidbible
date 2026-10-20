@@ -1,18 +1,21 @@
 # REM-44: Make the Daily-Verse Widget's Version Fallback Explicit
 
-**Addresses:** TD (widget) — daily verse
+**Status:** Complete on 2026-10-20.
+
+**Addresses:** TD (widget): daily verse
 **Module:** Daily-verse widget (`DailyVerseData`)
 **BRICE:** B=2 R=2 I=3 C=3 E=3 → **2.6**
-**Phase:** 4 — Long-term / Minor
+**Phase:** 4: Long-term / Minor
 
-**Problem:** `DailyVerseData.getVersion()` falls back to the internal version whenever the user's selected version can't be loaded (no data file, version deleted, or unset). A warning is logged, but from the user's side the widget quietly switches language/translation with no signal that the configured version is unavailable.
+**Problem addressed:** An unavailable configured Bible version silently substituted the internal version, leaving users unaware of a translation or language change.
 
-**Steps:**
-1. When the configured version can't load, show an explicit hint in the widget (e.g. a one-line "tap to reconfigure" or the fallback version's name) rather than silently substituting.
-2. Offer to re-open the widget configuration activity so the user can pick an available version.
-3. Optionally, detect at configuration time that a version has since been deleted and prompt then.
+**Completed behavior:**
 
-**Difficulty:** Easy. Low priority — behavior is safe, just opaque.
+- `DailyVerseData.resolveVersion` returns the readable version and an explicit fallback flag. Deleted records, missing files, unreadable files, and unset selections use the internal Bible; explicitly selecting the internal Bible is not a fallback.
+- `DailyVerseFactory` shows the fallback Bible's name and a tappable notice beneath the reference. The notice follows the app language and uses the widget's text color at 80% opacity, 80% of its text size, and italics. It remains available with the app icon hidden or no available passage, and disappears when the configured version becomes readable.
+- The notice opens `DailyVerseAppWidgetConfigurationActivity` for the tapped widget. Saving a replacement preserves appearance and navigation; canceling preserves the saved selection. Fallback loading does not replace the configured version ID, so restored content can be used again.
+
+**Validation:** Widget regression coverage includes version resolution, rendered notice visibility and localization, recovery, per-widget configuration intents, and saving a replacement without resetting appearance or navigation. Launcher-specific presentation and activity launching still require device validation.
 
 ---
 

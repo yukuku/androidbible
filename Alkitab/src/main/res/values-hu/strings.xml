@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Az exportált adatok másik alkalmazásba küldéséhez koppints a(z) [%1$s] gombra.</string>
     <string name="data_transfer_import_preview">A fenti műveletek csak előnézetet mutatnak. Az adatok importálásához koppints a(z) [%1$s] gombra, a megszakításhoz pedig a(z) [%2$s] gombra.</string>
     <string name="data_transfer_import_done">Kész. A bezáráshoz koppints a(z) [%1$s] gombra.</string>
+    <string name="dv_version_unavailable">A kiválasztott fordítás nem érhető el. A használt fordítás: %1$s. Koppintson a módosításhoz.</string>
+    <string name="dv_version_unset">A használt fordítás: %1$s. Koppintson egy bibliafordítás kiválasztásához.</string>
 </resources>

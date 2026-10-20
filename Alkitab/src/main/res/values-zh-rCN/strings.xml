@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">点按[%1$s]，将导出的数据发送到其他应用。</string>
     <string name="data_transfer_import_preview">以上操作仅为预览。点按[%1$s]导入数据，或点按[%2$s]取消。</string>
     <string name="data_transfer_import_done">已完成。点按[%1$s]关闭。</string>
+    <string name="dv_version_unavailable">所选译本不可用。正在使用%1$s。点按以更改。</string>
+    <string name="dv_version_unset">正在使用%1$s。点按以选择圣经译本。</string>
 </resources>

@@ -14,6 +14,7 @@ import android.widget.RemoteViews
 import androidx.core.app.JobIntentService
 import java.util.Calendar
 import java.util.GregorianCalendar
+import yuku.alkitab.base.appwidget.DailyVerseAppWidgetConfigurationActivity
 import yuku.alkitab.base.appwidget.DailyVerseAppWidgetService
 import yuku.alkitab.base.appwidget.DailyVerseData
 import yuku.alkitab.base.util.AppLog
@@ -78,6 +79,16 @@ class DailyVerseAppWidgetReceiver : AppWidgetProvider() {
             val appWidgetAction = bundle.getString("app_widget_action") ?: return
 
             when (appWidgetAction) {
+                "configure_widget" -> {
+                    val appWidgetId = bundle.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+                    if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
+
+                    context.startActivity(Intent(context, DailyVerseAppWidgetConfigurationActivity::class.java).apply {
+                        action = AppWidgetManager.ACTION_APPWIDGET_CONFIGURE
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    })
+                }
                 "update_widget" -> {
                     val appWidgetIds = bundle.getIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS)
                     if (appWidgetIds != null) {

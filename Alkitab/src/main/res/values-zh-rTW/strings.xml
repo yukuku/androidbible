@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">輕觸[%1$s]，將匯出的資料傳送至其他應用程式。</string>
     <string name="data_transfer_import_preview">以上操作僅為預覽。輕觸[%1$s]匯入資料，或輕觸[%2$s]取消。</string>
     <string name="data_transfer_import_done">已完成。輕觸[%1$s]關閉。</string>
+    <string name="dv_version_unavailable">所選譯本無法使用。正在使用%1$s。點選以變更。</string>
+    <string name="dv_version_unset">正在使用%1$s。點選以選擇聖經譯本。</string>
 </resources>

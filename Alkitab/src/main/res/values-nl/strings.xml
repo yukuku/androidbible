@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Tik op [%1$s] om je geëxporteerde gegevens naar een andere app te sturen.</string>
     <string name="data_transfer_import_preview">De bovenstaande bewerkingen zijn een voorbeeld. Tik op [%1$s] om de gegevens te importeren of op [%2$s] om te annuleren.</string>
     <string name="data_transfer_import_done">Gereed. Tik op [%1$s] om te sluiten.</string>
+    <string name="dv_version_unavailable">De gekozen vertaling is niet beschikbaar. %1$s wordt gebruikt. Tik om te wijzigen.</string>
+    <string name="dv_version_unset">%1$s wordt gebruikt. Tik om een Bijbelvertaling te kiezen.</string>
 </resources>

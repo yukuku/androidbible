@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">I-tap ang [%1$s] para ipadala ang na-export na datos sa ibang app.</string>
     <string name="data_transfer_import_preview">Ang mga operasyon sa itaas ay paunang pagtingin lamang. I-tap ang [%1$s] para i-import ang datos o [%2$s] para kanselahin.</string>
     <string name="data_transfer_import_done">Tapos na. I-tap ang [%1$s] para isara.</string>
+    <string name="dv_version_unavailable">Hindi available ang napiling salin. Ginagamit ang %1$s. I-tap para palitan.</string>
+    <string name="dv_version_unset">Ginagamit ang %1$s. I-tap para pumili ng salin ng Bibliya.</string>
 </resources>

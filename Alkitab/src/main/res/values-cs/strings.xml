@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Klepnutím na [%1$s] odešlete exportovaná data do jiné aplikace.</string>
     <string name="data_transfer_import_preview">Výše uvedené operace jsou pouze náhled. Klepnutím na [%1$s] importujete data nebo na [%2$s] akci zrušíte.</string>
     <string name="data_transfer_import_done">Hotovo. Klepnutím na [%1$s] zavřete.</string>
+    <string name="dv_version_unavailable">Vybraný překlad není dostupný. Používá se %1$s. Klepnutím jej změníte.</string>
+    <string name="dv_version_unset">Používá se %1$s. Klepnutím vyberete překlad Bible.</string>
 </resources>

@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Toque em [%1$s] para enviar os dados exportados para outra aplicação.</string>
     <string name="data_transfer_import_preview">As operações acima são uma pré-visualização. Toque em [%1$s] para importar os dados ou em [%2$s] para cancelar.</string>
     <string name="data_transfer_import_done">Concluído. Toque em [%1$s] para fechar.</string>
+    <string name="dv_version_unavailable">A versão escolhida não está disponível. Está a ser usada %1$s. Toque para alterar.</string>
+    <string name="dv_version_unset">Está a ser usada %1$s. Toque para escolher uma versão da Bíblia.</string>
 </resources>

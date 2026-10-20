@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">ထုတ်ယူထားသော ဒေတာကို အခြားအက်ပ်သို့ ပို့ရန် [%1$s] ကို နှိပ်ပါ။</string>
     <string name="data_transfer_import_preview">အထက်ပါ လုပ်ဆောင်ချက်များသည် အကြိုကြည့်ရှုမှုသာ ဖြစ်သည်။ ဒေတာကို ထည့်သွင်းရန် [%1$s] ကို နှိပ်ပါ သို့မဟုတ် ပယ်ဖျက်ရန် [%2$s] ကို နှိပ်ပါ။</string>
     <string name="data_transfer_import_done">ပြီးပါပြီ။ ပိတ်ရန် [%1$s] ကို နှိပ်ပါ။</string>
+    <string name="dv_version_unavailable">ရွေးထားသော ဘာသာပြန်မူကို မရနိုင်ပါ။ %1$s ကို အသုံးပြုထားသည်။ ပြောင်းရန် နှိပ်ပါ။</string>
+    <string name="dv_version_unset">%1$s ကို အသုံးပြုထားသည်။ သမ္မာကျမ်းစာ ဘာသာပြန်မူကို ရွေးရန် နှိပ်ပါ။</string>
 </resources>

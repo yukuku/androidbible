@@ -99,6 +99,8 @@ class DailyVerseDataTest {
         assertNull(loaded.versionId)
         assertEquals(7, loaded.click)
         assertSame(VersionImpl.getInternalVersion(), DailyVerseData.getVersion(loaded.versionId))
+        assertTrue(DailyVerseData.resolveVersion(loaded.versionId).isFallback)
+        assertFalse(DailyVerseData.resolveVersion("internal").isFallback)
         DailyVerseData.saveSavedState(54321, null)
     }
 

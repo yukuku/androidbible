@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">I-tap ang [%1$s] aron ipadala ang imong gi-eksport nga datos ngadto sa laing app.</string>
     <string name="data_transfer_import_preview">Ang mga operasyon sa ibabaw usa pa lamang ka pasiuna nga pagtan-aw. I-tap ang [%1$s] aron i-import ang datos o [%2$s] aron kanselahon.</string>
     <string name="data_transfer_import_done">Nahuman na. I-tap ang [%1$s] aron isira.</string>
+    <string name="dv_version_unavailable">Dili magamit ang gipiling bersiyon. Gigamit ang %1$s. I-tap aron usbon.</string>
+    <string name="dv_version_unset">Gigamit ang %1$s. I-tap aron mopili og bersiyon sa Bibliya.</string>
 </resources>

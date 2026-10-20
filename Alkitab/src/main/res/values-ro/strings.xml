@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Atingeți [%1$s] pentru a trimite datele exportate către altă aplicație.</string>
     <string name="data_transfer_import_preview">Operațiunile de mai sus sunt o previzualizare. Atingeți [%1$s] pentru a importa datele sau [%2$s] pentru a anula.</string>
     <string name="data_transfer_import_done">Gata. Atingeți [%1$s] pentru a închide.</string>
+    <string name="dv_version_unavailable">Traducerea selectată nu este disponibilă. Se folosește %1$s. Atingeți pentru a schimba.</string>
+    <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
 </resources>

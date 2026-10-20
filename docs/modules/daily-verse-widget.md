@@ -6,7 +6,7 @@ The daily verse widget brings Bible passages to the Android home screen. Users c
 
 Each widget is configured independently. Supported launchers let users revisit its settings after placement. Saving appearance changes preserves verse navigation; canceling leaves the saved configuration unchanged.
 
-Verse selection draws from a curated collection rather than following Bible order. Different widget instances can show different passages. The widget handles unavailable Bible content so that a missing or unreadable version does not leave it unusable.
+Verse selection draws from a curated collection rather than following Bible order. Different widget instances can show different passages. The widget handles unavailable Bible content so that a missing or unreadable version does not leave it unusable. If its configured version cannot load, a notice names the internal Bible used as a fallback and opens that widget's settings when tapped. The saved selection is preserved until the user saves a replacement, and the notice disappears when that selection becomes readable again. An unset version also offers a choice; explicitly choosing the internal Bible shows no fallback notice.
 
 ## Launcher integration and localization
 

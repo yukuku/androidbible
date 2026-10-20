@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Нажмите [%1$s], чтобы отправить экспортированные данные в другое приложение.</string>
     <string name="data_transfer_import_preview">Операции выше показаны для предварительного просмотра. Нажмите [%1$s], чтобы импортировать данные, или [%2$s], чтобы отменить.</string>
     <string name="data_transfer_import_done">Готово. Нажмите [%1$s], чтобы закрыть.</string>
+    <string name="dv_version_unavailable">Выбранный перевод недоступен. Используется %1$s. Нажмите, чтобы изменить.</string>
+    <string name="dv_version_unset">Используется %1$s. Нажмите, чтобы выбрать перевод Библии.</string>
 </resources>

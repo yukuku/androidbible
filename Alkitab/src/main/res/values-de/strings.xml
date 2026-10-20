@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">Tippe auf [%1$s], um deine exportierten Daten an eine andere App zu senden.</string>
     <string name="data_transfer_import_preview">Die Vorgänge oben sind eine Vorschau. Tippe auf [%1$s], um die Daten zu importieren, oder auf [%2$s], um abzubrechen.</string>
     <string name="data_transfer_import_done">Fertig. Tippe auf [%1$s], um zu schließen.</string>
+    <string name="dv_version_unavailable">Die gewählte Übersetzung ist nicht verfügbar. %1$s wird verwendet. Zum Ändern tippen.</string>
+    <string name="dv_version_unset">%1$s wird verwendet. Tippen, um eine Bibelübersetzung auszuwählen.</string>
 </resources>

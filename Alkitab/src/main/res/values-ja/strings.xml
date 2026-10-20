@@ -545,4 +545,6 @@
     <string name="data_transfer_export_ready">[%1$s]をタップして、エクスポートしたデータを別のアプリに送信します。</string>
     <string name="data_transfer_import_preview">上記の操作はプレビューです。[%1$s]をタップしてデータをインポートするか、[%2$s]をタップしてキャンセルします。</string>
     <string name="data_transfer_import_done">完了しました。[%1$s]をタップして閉じます。</string>
+    <string name="dv_version_unavailable">選択した訳を利用できません。%1$sを使用しています。タップして変更してください。</string>
+    <string name="dv_version_unset">%1$sを使用しています。タップして聖書の訳を選んでください。</string>
 </resources>
