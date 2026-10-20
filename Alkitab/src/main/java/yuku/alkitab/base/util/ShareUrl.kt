@@ -63,7 +63,7 @@ object ShareUrl {
         val done = AtomicBoolean()
 
         val dialog: AlertDialog = MaterialAlertDialogBuilder(activity)
-            .setMessage("Getting share URL…")
+            .setMessage(R.string.share_url_getting)
             .setNegativeButton(R.string.cancel) { d, _ ->
                 if (done.getAndSet(true)) return@setNegativeButton
                 callback.onUserCancel()

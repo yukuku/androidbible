@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s notas forem anexadas neste versiculo.</string>
     <string name="desc_verse_attribute_progress_mark">%s esta aqui agora.</string>
     <string name="desc_progress_mark_list">Lista de pins</string>
-    <string name="desc_backspace">Backspace</string>
+    <string name="desc_backspace">Apagar o último caráter</string>
     <string name="intent_filter_open_yes_file">Abrir ficheiro YES</string>
     <string name="intent_filter_open_pdb_file">Abrir ficheiro PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Abrir ficheiro PDB/YES</string>
@@ -297,7 +297,7 @@
     <string name="book_filter_old_testament">Antigo testamento</string>
     <string name="book_filter_old_pentateuch">Pentateuco</string>
     <string name="book_filter_old_history">História</string>
-    <string name="book_filter_old_wisdom">Sabedoria</string>
+    <string name="book_filter_old_wisdom">Livros sapienciais e poéticos</string>
     <string name="book_filter_old_major_prophets">Profetas principal</string>
     <string name="book_filter_old_minor_prophets">Profetas menores</string>
     <string name="book_filter_new_testament">Novo testamento</string>
@@ -376,7 +376,7 @@
     <string name="pref_bottomToolbarOnText_title">Navegação em verso inferior</string>
     <string name="pref_bottomToolbarOnText_summary">Coloque a barra de navegação de verso na parte inferior da tela da Bíblia</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% Bible app gratuida, com licenza de Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">Aplicação da Bíblia totalmente gratuita</string>
     <string name="about_user_guide">Guia do utilizador</string>
     <string name="about_version_name">versão %s</string>
     <string name="about_material_sources">Fontes de materias</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">Ver cor de destaque</string>
     <string name="highlight_style_loading">A carregar versículos…</string>
     <string name="highlight_style_no_verses">Nenhum versículo disponível para esta antevisão.</string>
+    <string name="data_transfer_send">Enviar</string>
+    <string name="data_transfer_start">Iniciar</string>
+    <string name="data_transfer_close">Fechar</string>
+    <string name="desc_navigate_up">Navegar para cima</string>
+    <string name="desc_more_options">Mais opções</string>
+    <string name="share_url_getting">A obter o URL de partilha…</string>
+    <string name="data_transfer_export_ready">Toque em [%1$s] para enviar os dados exportados para outra aplicação.</string>
+    <string name="data_transfer_import_preview">As operações acima são uma pré-visualização. Toque em [%1$s] para importar os dados ou em [%2$s] para cancelar.</string>
+    <string name="data_transfer_import_done">Concluído. Toque em [%1$s] para fechar.</string>
 </resources>

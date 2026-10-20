@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s приміток додано до цього вірша.</string>
     <string name="desc_verse_attribute_progress_mark">%s відсотків завантажено.</string>
     <string name="desc_progress_mark_list">Список контактів</string>
-    <string name="desc_backspace">Клавіша назад</string>
+    <string name="desc_backspace">Видалити останній символ</string>
     <string name="intent_filter_open_yes_file">Відкрити YES файл</string>
     <string name="intent_filter_open_pdb_file">Відкрити PDB файл</string>
     <string name="intent_filter_open_pdb_or_yes_file">Відкрити PDB/YES файл</string>
@@ -298,7 +298,7 @@
     <string name="book_filter_old_testament">Старий Завіт</string>
     <string name="book_filter_old_pentateuch">П\'ятикнижжя</string>
     <string name="book_filter_old_history">Історія</string>
-    <string name="book_filter_old_wisdom">Мудрість</string>
+    <string name="book_filter_old_wisdom">Книги мудрості та поезії</string>
     <string name="book_filter_old_major_prophets">Великі Пророки</string>
     <string name="book_filter_old_minor_prophets">Малі Пророки</string>
     <string name="book_filter_new_testament">Новий Завіт</string>
@@ -377,7 +377,7 @@
     <string name="pref_bottomToolbarOnText_title">Навігація на нижній панелі</string>
     <string name="pref_bottomToolbarOnText_summary">Розмістити панель навігації внизу вікна Біблії</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безкоштовний додаток для Біблії, ліцензований за ліцензією Apache 2.0</string>
+    <string name="about_text_desc" formatted="false">Повністю безкоштовний біблійний застосунок</string>
     <string name="about_user_guide">Керівництво користувача</string>
     <string name="about_version_name">Версія складання %s</string>
     <string name="about_material_sources">Джерела матеріалів</string>
@@ -537,4 +537,13 @@
     <string name="highlight_style_color">Попередній перегляд кольору виділення</string>
     <string name="highlight_style_loading">Завантаження віршів…</string>
     <string name="highlight_style_no_verses">Для цього попереднього перегляду немає доступних віршів.</string>
+    <string name="data_transfer_send">Надіслати</string>
+    <string name="data_transfer_start">Почати</string>
+    <string name="data_transfer_close">Закрити</string>
+    <string name="desc_navigate_up">Перейти на рівень вище</string>
+    <string name="desc_more_options">Інші параметри</string>
+    <string name="share_url_getting">Отримання посилання для поширення…</string>
+    <string name="data_transfer_export_ready">Натисніть [%1$s], щоб надіслати експортовані дані до іншого застосунку.</string>
+    <string name="data_transfer_import_preview">Наведені вище операції є попереднім переглядом. Натисніть [%1$s], щоб імпортувати дані, або [%2$s], щоб скасувати.</string>
+    <string name="data_transfer_import_done">Готово. Натисніть [%1$s], щоб закрити.</string>
 </resources>

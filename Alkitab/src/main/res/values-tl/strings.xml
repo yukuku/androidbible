@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s mga tala ang nakalakip sa bersong ito.</string>
     <string name="desc_verse_attribute_progress_mark">%s ay kasalukuyang nandito.</string>
     <string name="desc_progress_mark_list">Listahan ng mga pin</string>
-    <string name="desc_backspace">Backspace</string>
+    <string name="desc_backspace">Burahin ang huling karakter</string>
     <string name="intent_filter_open_yes_file">Buksan ang Yes file</string>
     <string name="intent_filter_open_pdb_file">Buksan ang PDB file</string>
     <string name="intent_filter_open_pdb_or_yes_file">Buksan ang PDB/YES file</string>
@@ -296,7 +296,7 @@
     <string name="book_filter_old_testament">Lumang tipan</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
     <string name="book_filter_old_history">Kasaysayan</string>
-    <string name="book_filter_old_wisdom">Karunungan</string>
+    <string name="book_filter_old_wisdom">Mga aklat ng karunungan at tula</string>
     <string name="book_filter_old_major_prophets">Pangunahing mga propeta</string>
     <string name="book_filter_old_minor_prophets">Mga menor na mga propeta</string>
     <string name="book_filter_new_testament">Bagong Tipan</string>
@@ -375,7 +375,7 @@
     <string name="pref_bottomToolbarOnText_title">Ibabang taludtod ng nabigasyon</string>
     <string name="pref_bottomToolbarOnText_summary">Ilagay ang taludtod nabigasyong toolbar sa ibaba ng Bible screen</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">10% libreng Bibliyang app, lisensyado sa ilalim ng Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">Ganap na libreng app ng Bibliya</string>
     <string name="about_user_guide">Gabay ng tagagamit</string>
     <string name="about_version_name">bersyon %s</string>
     <string name="about_material_sources">Mga pinagmulan ng materyales</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">I-preview ang kulay ng highlight</string>
     <string name="highlight_style_loading">Naglo-load ng mga talata…</string>
     <string name="highlight_style_no_verses">Walang magagamit na mga talata para sa preview na ito.</string>
+    <string name="data_transfer_send">Ipadala</string>
+    <string name="data_transfer_start">Simulan</string>
+    <string name="data_transfer_close">Isara</string>
+    <string name="desc_navigate_up">Bumalik</string>
+    <string name="desc_more_options">Higit pang mga opsyon</string>
+    <string name="share_url_getting">Kinukuha ang URL para sa pagbabahagi…</string>
+    <string name="data_transfer_export_ready">I-tap ang [%1$s] para ipadala ang na-export na datos sa ibang app.</string>
+    <string name="data_transfer_import_preview">Ang mga operasyon sa itaas ay paunang pagtingin lamang. I-tap ang [%1$s] para i-import ang datos o [%2$s] para kanselahin.</string>
+    <string name="data_transfer_import_done">Tapos na. I-tap ang [%1$s] para isara.</string>
 </resources>

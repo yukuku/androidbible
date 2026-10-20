@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">這經節附有%s個筆記。</string>
     <string name="desc_verse_attribute_progress_mark">這裏有%s。</string>
     <string name="desc_progress_mark_list">進度標記清單</string>
-    <string name="desc_backspace">退格</string>
+    <string name="desc_backspace">刪除最後一個字元</string>
     <string name="intent_filter_open_yes_file">打開YES檔案</string>
     <string name="intent_filter_open_pdb_file">打開PDB檔案</string>
     <string name="intent_filter_open_pdb_or_yes_file">打開PDB/YES檔案</string>
@@ -295,7 +295,7 @@
     <string name="book_filter_old_testament">舊約</string>
     <string name="book_filter_old_pentateuch">摩西五經</string>
     <string name="book_filter_old_history">歷史書</string>
-    <string name="book_filter_old_wisdom">智慧書</string>
+    <string name="book_filter_old_wisdom">智慧書與詩歌書</string>
     <string name="book_filter_old_major_prophets">大先知書</string>
     <string name="book_filter_old_minor_prophets">小先知書</string>
     <string name="book_filter_new_testament">新約</string>
@@ -374,7 +374,7 @@
     <string name="pref_bottomToolbarOnText_title">底部經文導覽</string>
     <string name="pref_bottomToolbarOnText_summary">把經節導覽列放置到聖經顯示底部</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100%免費的聖經應用，由Apache License 2.0授權</string>
+    <string name="about_text_desc" formatted="false">完全免費的聖經應用程式</string>
     <string name="about_user_guide">使用者指引</string>
     <string name="about_version_name">版本 %s</string>
     <string name="about_material_sources">資料來源</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">預覽高亮顏色</string>
     <string name="highlight_style_loading">正在載入經文…</string>
     <string name="highlight_style_no_verses">此預覽沒有可用的經文。</string>
+    <string name="data_transfer_send">傳送</string>
+    <string name="data_transfer_start">開始</string>
+    <string name="data_transfer_close">關閉</string>
+    <string name="desc_navigate_up">返回上一層</string>
+    <string name="desc_more_options">更多選項</string>
+    <string name="share_url_getting">正在取得分享連結…</string>
+    <string name="data_transfer_export_ready">輕觸[%1$s]，將匯出的資料傳送至其他應用程式。</string>
+    <string name="data_transfer_import_preview">以上操作僅為預覽。輕觸[%1$s]匯入資料，或輕觸[%2$s]取消。</string>
+    <string name="data_transfer_import_done">已完成。輕觸[%1$s]關閉。</string>
 </resources>

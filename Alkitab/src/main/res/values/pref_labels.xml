@@ -42,6 +42,6 @@
     <string name="pref_useLegacyToolbar_summary">Draw the reading screen toolbar with the legacy view instead of Jetpack Compose. Takes effect after the reading screen is reopened.</string>
     <string name="pref_useLegacySong_title">Song lyrics (legacy views)</string>
     <string name="pref_useLegacySong_summary">Render song lyrics with the legacy WebView (HTML/CSS) instead of natively with Jetpack Compose. Open a song to see the change.</string>
-    <string name="pref_useLegacySyncLogin_title">Sync login (legacy views)</string>
-    <string name="pref_useLegacySyncLogin_summary">Show the legacy sync login screen instead of the Jetpack Compose one, which has a show/hide password toggle and an inline confirm-password field.</string>
+    <string name="pref_useLegacySyncLogin_title">Sync sign-in (legacy views)</string>
+    <string name="pref_useLegacySyncLogin_summary">Show the legacy sync sign-in screen instead of the Jetpack Compose one, which has a show/hide password toggle and an inline confirm-password field.</string>
 </resources>

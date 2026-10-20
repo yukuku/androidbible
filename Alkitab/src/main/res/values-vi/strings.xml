@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s ghi chú gắn liền với câu này.</string>
     <string name="desc_verse_attribute_progress_mark">%s hiện ở đây.</string>
     <string name="desc_progress_mark_list">Danh sách các đánh dấu</string>
-    <string name="desc_backspace">Phím xóa lùi</string>
+    <string name="desc_backspace">Xóa ký tự cuối</string>
     <string name="desc_bfl_back">Nhấp để trở lại, nhấn giữ để xem các địa điểm đã thăm quan</string>
     <string name="desc_bfl_forward">Nhấp để chuyển tiếp, nhấn giữ để xem các địa điểm đã thăm quan</string>
     <string name="intent_filter_open_yes_file">Mở thư mục YES</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Cựu Ước</string>
     <string name="book_filter_old_pentateuch">Năm quyển đầu của cựu kim ước</string>
     <string name="book_filter_old_history">Lịch sử</string>
-    <string name="book_filter_old_wisdom">Trí tuệ</string>
+    <string name="book_filter_old_wisdom">Các sách khôn ngoan và thi ca</string>
     <string name="book_filter_old_major_prophets">Tiên tri chính yếu</string>
     <string name="book_filter_old_minor_prophets">Tiên tri phụ</string>
     <string name="book_filter_new_testament">Tân Ước</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Hiện số câu</string>
     <string name="pref_verseNumberIsShown_summary">Hiện số câu ở đầu mỗi câu</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% miễn phí phần mềm Kinh thánh, đăng ký bởi Apache 2.0</string>
+    <string name="about_text_desc" formatted="false">Ứng dụng Kinh Thánh hoàn toàn miễn phí</string>
     <string name="about_user_guide">Hướng dẫn sử dụng</string>
     <string name="about_version_name">phiên bản %s</string>
     <string name="about_material_sources">Nguồn nguyên liệu</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">Màu tô sáng xem trước</string>
     <string name="highlight_style_loading">Đang tải các câu Kinh Thánh…</string>
     <string name="highlight_style_no_verses">Không có câu Kinh Thánh nào cho bản xem trước này.</string>
+    <string name="data_transfer_send">Gửi</string>
+    <string name="data_transfer_start">Bắt đầu</string>
+    <string name="data_transfer_close">Đóng</string>
+    <string name="desc_navigate_up">Quay lại</string>
+    <string name="desc_more_options">Tùy chọn khác</string>
+    <string name="share_url_getting">Đang lấy URL chia sẻ…</string>
+    <string name="data_transfer_export_ready">Nhấn [%1$s] để gửi dữ liệu đã xuất sang ứng dụng khác.</string>
+    <string name="data_transfer_import_preview">Các thao tác ở trên chỉ là bản xem trước. Nhấn [%1$s] để nhập dữ liệu hoặc [%2$s] để hủy.</string>
+    <string name="data_transfer_import_done">Hoàn tất. Nhấn [%1$s] để đóng.</string>
 </resources>
