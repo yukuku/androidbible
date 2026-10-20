@@ -113,7 +113,7 @@ object SongSelectionSheet {
                                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                         )
                         Box(Modifier.weight(1.5f), contentAlignment = Alignment.Center) {
-                            Text(state.enteredCode, fontSize = 24.sp, maxLines = 1)
+                            Text(state.enteredCode, fontSize = 20.sp, maxLines = 1)
                         }
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                             IconButton(onClick = { onKey(R.id.bBackspace) }) {
