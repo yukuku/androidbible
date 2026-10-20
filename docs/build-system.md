@@ -102,24 +102,26 @@ Two consequences worth knowing:
 ./gradlew testPlainDebugUnitTest --tests "fully.qualified.TestClass"
 ./gradlew testPlainDebugUnitTest --tests "*.TestClass.testMethod"
 
-# Lint (also required by every APK and AAB build)
+# Lint (also required by release APK and AAB builds)
 ./gradlew lintPlainDebug
 ```
 
 Android lint errors abort the build in every module, and the app includes its
 library dependencies in the analysis. `NewApi` and `InlinedApi` are fatal and
-check compatibility against the minimum SDK in `gradle/libs.versions.toml`. Every app
-variant's `assemble` and `bundle` task depends on that variant's lint task,
-including debug builds and production releases. Unsupported calls must use a
-compatible API or a runtime SDK guard. No lint baseline is configured. Missing
-translations remain errors and must be supplied for the supported languages.
+check compatibility against the minimum SDK in `gradle/libs.versions.toml`. Release
+variants' `assemble` and `bundle` tasks depend on that variant's lint task.
+Debug builds and installs skip automatic lint analysis for faster development;
+run the debug lint task explicitly when needed. CI runs debug lint explicitly.
+Unsupported calls must use a compatible API or a runtime SDK guard. No lint
+baseline is configured. Missing translations remain errors and must be supplied
+for the supported languages.
 
 ## CI/CD
 
 GitHub Actions workflow (`.github/workflows/android.yml`):
 - Triggers on push/PR to `develop` and `release/**` branches
 - Ubuntu latest, JDK 21 (Zulu)
-- `plain-debug` job: runs `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, `assemblePlainDebug`, `bundlePlainDebug`
+- `plain-debug` job: runs `testPlainDebugUnitTest`, `testPlainReleaseUnitTest`, `lintPlainDebug`, `assemblePlainDebug`, `bundlePlainDebug`
 - `signed-release` job (pushes to `develop` and same-repo PRs): builds and signs all production flavors using the proprietary overlay repo, uploads per-flavor artifacts, and on `develop` pushes publishes a GitHub pre-release. On PRs it also uploads a `pr-preview-apks` artifact (APKs and metadata only — no AABs or mapping files)
 - `pr-apk-preview` job (same-repo PRs only): publishes those signed release APKs to a Cloudflare Worker with static assets and comments immutable `*.workers.dev` download links on the PR
 

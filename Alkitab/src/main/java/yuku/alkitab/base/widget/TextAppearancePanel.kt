@@ -60,7 +60,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -135,7 +134,7 @@ class TextAppearancePanel(
     fun show() {
         if (shown) return
         val lp = FrameLayout.LayoutParams(
-            activity.resources.getDimensionPixelSize(R.dimen.panel_text_appearance_width),
+            FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT,
             Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL,
         )
@@ -265,7 +264,7 @@ class TextAppearancePanel(
         ) {
             Surface(
                 modifier = Modifier
-                    .width(dimensionResource(R.dimen.panel_text_appearance_width))
+                    .width(320.dp)
                     .offset { IntOffset(0, offsetY.value.roundToInt()) }
                     // Non-modal: only touches that land on the sheet itself are
                     // consumed; everything above it falls through to the verses.
