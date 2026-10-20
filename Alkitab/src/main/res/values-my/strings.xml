@@ -374,7 +374,7 @@
     <string name="pref_textPadding_title">ကျမ်းပိုဒ် ပတ်လည်မာဂျင်</string>
     <string name="pref_textPadding_summary">စာဖတ်ခြင်းကို လွယ်ကူစေရန် စာသားများကို မျဉ်းကြောင်းကို ပိုမိုကျဉ်းမြောင်းအောင်ပြုလုပ်ရန်</string>
     <string name="pref_bottomToolbarOnText_title">ကျမ်းချက်လမ်းညွှန်ကို အောက်ခြေတွင်ထားရန်</string>
-    <string name="pref_bottomToolbarOnText_summary">သမ္မာကျမ်းစာမျက်နှာပြင်ပေါ်ရှိ ကျမ်းချက်လမ်းညွှန် ကိရိယာတန်းကို အောက်ခြေတွင်ထားပါ။</string>
+    <string name="pref_bottomToolbarOnText_summary">ကိရိယာတန်းများကို အောက်ခြေတွင်ထားရန်</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">လုံးဝအခမဲ့ သမ္မာကျမ်းစာအက်ပ်</string>
     <string name="about_user_guide">အသုံးပြုသူလမ်းညွှန်</string>
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">ဤနေ့စဉ် သမ္မာကျမ်းစာ ဝတ်ပြုဆုတောင်းမှု ဆောင်းပါးကို ဆာဗာမှ မရရှိနိုင်သေးပါ။</string>
     <string name="devotion_select">နေ့စဉ် သမ္မာကျမ်းစာ ဝတ်ပြုကိုးကွယ်ခြင်းဆိုင်ရာ ဆောင်းပါးနှင့် ရက်စွဲကို ရွေးချယ်ပါ။</string>
     <string name="highlight_style_original">မူရင်းမီးမောင်းထိုးပြသောအရောင်များကို သုံးပါ။</string>
+    <string name="highlight_style_original_value">မူရင်းအရောင်များကို သုံးရန်</string>
     <string name="highlight_style_customize">အသားပေးအရောင်များကို စိတ်ကြိုက်ပြင်ဆင်ပါ။</string>
-    <string name="highlight_style_current">အလိုက်သင့်အရောင်များ (မူရင်း)</string>
-    <string name="highlight_style_custom_value">စိတ်ကြိုက်- %1$d%% သပ္ပါယ်မှု</string>
+    <string name="highlight_style_current">ချိန်ညှိထားသော အရောင်များကို သုံးရန်</string>
+    <string name="highlight_style_custom_value">%1$d%% ချိန်ညှိထားသည်</string>
     <string name="highlight_style_adjustment">အရောင် ချိန်ညှိမှုကို အသားပေးဖော်ပြပါ။</string>
-    <string name="highlight_style_explanation">စာမျက်နှာနောက်ခံနှင့် လိုက်လျောညီထွေဖြစ်စေမည့် မီးမောင်းထိုးပြအရောင်များကို ရွေးပါ။</string>
-    <string name="highlight_style_zero">0 · မူရင်း</string>
-    <string name="highlight_style_one">1 · အလိုက်သင့်</string>
+    <string name="highlight_style_explanation">မီးမောင်းထိုးပြအရောင်များကို စာသားနောက်ခံနှင့် ကိုက်ညီအောင် ချိန်ညှိမည့် အတိုင်းအတာကို သတ်မှတ်ပါ</string>
+    <string name="highlight_style_zero">မူရင်း</string>
+    <string name="highlight_style_one">ချိန်ညှိထားသည်</string>
     <string name="highlight_style_preview">အကြိုကြည့်ရှုခြင်း။</string>
     <string name="highlight_style_loading">ကျမ်းပိုဒ်များကို ဖွင့်နေသည်…</string>
     <string name="highlight_style_no_verses">ဤအစမ်းကြည့်ရှုမှုအတွက် ကျမ်းပိုဒ်များ မရရှိနိုင်ပါ။</string>

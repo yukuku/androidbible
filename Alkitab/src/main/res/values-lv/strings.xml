@@ -373,7 +373,7 @@
     <string name="pref_textPadding_title">Atstarpes apkārt tekstam</string>
     <string name="pref_textPadding_summary">Padara rindstarpas šaurākā lai atvieglotu lasīšanu</string>
     <string name="pref_bottomToolbarOnText_title">Pārvietošanās pa pantiem apakšā</string>
-    <string name="pref_bottomToolbarOnText_summary">Ieliec pantu pārvietošanās rīkjoslu Bībeles ekrāna apakšā</string>
+    <string name="pref_bottomToolbarOnText_summary">Novietot rīkjoslas apakšā</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">Pilnīgi bezmaksas Bībeles lietotne</string>
     <string name="about_user_guide">Lietotāja rokasgrāmata</string>
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">Šīs Bībeles pārdomas vēl nav pieejamas serverī.</string>
     <string name="devotion_select">Izvēlieties Bībeles pārdomas un datumu</string>
     <string name="highlight_style_original">Izmantojiet oriģinālās izceltās krāsas</string>
+    <string name="highlight_style_original_value">Izmantot sākotnējās krāsas</string>
     <string name="highlight_style_customize">Pielāgojiet izceltās krāsas</string>
-    <string name="highlight_style_current">Adaptīvās krāsas (noklusējums)</string>
-    <string name="highlight_style_custom_value">Pielāgots: %1$d%% adaptīvs</string>
+    <string name="highlight_style_current">Izmantot pielāgotās krāsas</string>
+    <string name="highlight_style_custom_value">%1$d%% pielāgots</string>
     <string name="highlight_style_adjustment">Izcelt krāsu pielāgošanu</string>
-    <string name="highlight_style_explanation">Izvēlieties, cik lielā mērā izceltās krāsas pielāgojas lapas fonam.</string>
-    <string name="highlight_style_zero">0 · Oriģināls</string>
-    <string name="highlight_style_one">1 · Adaptīvs</string>
+    <string name="highlight_style_explanation">Iestatiet, cik lielā mērā izcēluma krāsas tiek pielāgotas teksta fonam</string>
+    <string name="highlight_style_zero">Sākotnējās</string>
+    <string name="highlight_style_one">Pielāgotās</string>
     <string name="highlight_style_preview">Priekšskatījums</string>
     <string name="highlight_style_loading">Notiek pantu ielāde…</string>
     <string name="highlight_style_no_verses">Šim priekšskatījumam nav pieejams neviens pants.</string>

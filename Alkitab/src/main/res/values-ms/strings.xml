@@ -373,7 +373,7 @@
     <string name="pref_textPadding_title">Jidar sekitar teks</string>
     <string name="pref_textPadding_summary">Jadikan teks dalam barisan lebih sempit agar mudah dibaca</string>
     <string name="pref_bottomToolbarOnText_title">Navigasi ayat di bawah</string>
-    <string name="pref_bottomToolbarOnText_summary">Letakkan bar alat navigasi ayat di bawah pada skrin Alkitab</string>
+    <string name="pref_bottomToolbarOnText_summary">Letakkan bar alat di bahagian bawah</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">Aplikasi Alkitab percuma sepenuhnya</string>
     <string name="about_user_guide">Panduan Pengguna</string>
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">Renungan ini belum tersedia daripada pelayan.</string>
     <string name="devotion_select">Pilih renungan dan tarikh</string>
     <string name="highlight_style_original">Gunakan warna sorotan asal</string>
+    <string name="highlight_style_original_value">Gunakan warna asal</string>
     <string name="highlight_style_customize">Sesuaikan warna sorotan</string>
-    <string name="highlight_style_current">Warna penyesuaian (lalai)</string>
-    <string name="highlight_style_custom_value">Tersuai: %1$d%% adaptif</string>
+    <string name="highlight_style_current">Gunakan warna yang disesuaikan</string>
+    <string name="highlight_style_custom_value">%1$d%% disesuaikan</string>
     <string name="highlight_style_adjustment">Serlahkan pelarasan warna</string>
-    <string name="highlight_style_explanation">Pilih berapa banyak warna sorotan menyesuaikan diri dengan latar belakang halaman.</string>
-    <string name="highlight_style_zero">0 · Asal</string>
-    <string name="highlight_style_one">1 · Penyesuaian</string>
+    <string name="highlight_style_explanation">Tetapkan sejauh mana warna sorotan disesuaikan dengan latar belakang teks</string>
+    <string name="highlight_style_zero">Asal</string>
+    <string name="highlight_style_one">Disesuaikan</string>
     <string name="highlight_style_preview">Pratonton</string>
     <string name="highlight_style_loading">Memuatkan ayat…</string>
     <string name="highlight_style_no_verses">Tiada ayat tersedia untuk pratonton ini.</string>

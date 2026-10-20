@@ -377,7 +377,7 @@
     <string name="pref_textPadding_title">Yazı etrafındaki boşluklar</string>
     <string name="pref_textPadding_summary">Daha kolay okumak için bir hat üzerindeki yazıyı darlaştır</string>
     <string name="pref_bottomToolbarOnText_title">Alt ayet gezinimi</string>
-    <string name="pref_bottomToolbarOnText_summary">Ayet gezinti çubuğunu İncil ekranının alt kısmına yerleştir</string>
+    <string name="pref_bottomToolbarOnText_summary">Araç çubuklarını alta yerleştir</string>
     <string name="pref_verseNumberIsShown_title">Ayet numaralarını göster</string>
     <string name="pref_verseNumberIsShown_summary">Her ayetin başında ayet numarasını göster</string>
     <!-- about -->
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">Bu günlük Kutsal Kitap okuması henüz sunucuda mevcut değil.</string>
     <string name="devotion_select">Günlük Kutsal Kitap okumasını ve tarihi seçin</string>
     <string name="highlight_style_original">Orijinal vurgu renklerini kullan</string>
+    <string name="highlight_style_original_value">Orijinal renkleri kullan</string>
     <string name="highlight_style_customize">Vurgu renklerini özelleştirin</string>
-    <string name="highlight_style_current">Uyarlanabilir renkler (varsayılan)</string>
-    <string name="highlight_style_custom_value">Özel: %1$d%% uyarlanabilir</string>
+    <string name="highlight_style_current">Ayarlanmış renkleri kullan</string>
+    <string name="highlight_style_custom_value">%1$d%% ayarlanmış</string>
     <string name="highlight_style_adjustment">Vurgu rengi ayarı</string>
-    <string name="highlight_style_explanation">Vurgu renklerinin sayfa arka planına ne kadar uyum sağlayacağını seçin.</string>
-    <string name="highlight_style_zero">0 · Orijinal</string>
-    <string name="highlight_style_one">1 · Uyarlanabilir</string>
+    <string name="highlight_style_explanation">Vurgu renklerinin metin arka planına ne kadar uyarlanacağını ayarlayın</string>
+    <string name="highlight_style_zero">Orijinal</string>
+    <string name="highlight_style_one">Ayarlanmış</string>
     <string name="highlight_style_preview">Önizleme</string>
     <string name="highlight_style_loading">Ayetler yükleniyor…</string>
     <string name="highlight_style_no_verses">Bu önizleme için ayet yok.</string>

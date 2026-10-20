@@ -373,7 +373,7 @@
     <string name="pref_textPadding_title">Marges rondom teks</string>
     <string name="pref_textPadding_summary">Maak teks inlyn smaller om lees te vergemaklik</string>
     <string name="pref_bottomToolbarOnText_title">Onderste vers navigasie</string>
-    <string name="pref_bottomToolbarOnText_summary">Plaas vers navigasie balk onderaan die Bybel skerm</string>
+    <string name="pref_bottomToolbarOnText_summary">Plaas nutsbalke onderaan</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">100% gratis Bybeltoepassing</string>
     <string name="about_user_guide">Gebruikers Gids</string>
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">Hierdie daaglikse Bybeloordenkingsartikel is nog nie vanaf die bediener beskikbaar nie.</string>
     <string name="devotion_select">Kies daaglikse Bybeloordenkingsartikel en datum</string>
     <string name="highlight_style_original">Gebruik oorspronklike hoogtepuntkleure</string>
+    <string name="highlight_style_original_value">Gebruik oorspronklike kleure</string>
     <string name="highlight_style_customize">Pas hoogtepuntkleure aan</string>
-    <string name="highlight_style_current">Aanpasbare kleure (verstek)</string>
-    <string name="highlight_style_custom_value">Pasgemaak: %1$d%% aanpasbaar</string>
+    <string name="highlight_style_current">Gebruik aangepaste kleure</string>
+    <string name="highlight_style_custom_value">%1$d%% aangepas</string>
     <string name="highlight_style_adjustment">Merk kleuraanpassing</string>
-    <string name="highlight_style_explanation">Kies hoeveel hoogtepuntkleure by die bladsyagtergrond aanpas.</string>
-    <string name="highlight_style_zero">0 · Oorspronklik</string>
-    <string name="highlight_style_one">1 · Aanpasbaar</string>
+    <string name="highlight_style_explanation">Stel hoeveel die merkkleure by die teksagtergrond aangepas word</string>
+    <string name="highlight_style_zero">Oorspronklik</string>
+    <string name="highlight_style_one">Aangepas</string>
     <string name="highlight_style_preview">Voorskou</string>
     <string name="highlight_style_loading">Laai verse …</string>
     <string name="highlight_style_no_verses">Geen verse beskikbaar vir hierdie voorskou nie.</string>

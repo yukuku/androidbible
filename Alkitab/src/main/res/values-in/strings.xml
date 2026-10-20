@@ -398,7 +398,7 @@
     <string name="pref_textPadding_title">Beri jarak sekitar teks</string>
     <string name="pref_textPadding_summary">Lebih sedikit teks per barisnya agar mudah dibaca</string>
     <string name="pref_bottomToolbarOnText_title">Bilah alat di bawah</string>
-    <string name="pref_bottomToolbarOnText_summary">Letakkan bilah alat di bagian bawah pada semua layar</string>
+    <string name="pref_bottomToolbarOnText_summary">Letakkan bilah alat di bagian bawah</string>
     <string name="pref_verseNumberIsShown_title">Nomor ayat</string>
     <string name="pref_verseNumberIsShown_summary">Bubuhkan nomor ayat di depan tiap ayat</string>
     <!-- about -->
@@ -529,13 +529,14 @@
     <string name="devotion_select">Pilih renungan dan tanggal</string>
     <string name="song_select">Pilih lagu</string>
     <string name="highlight_style_original">Gunakan warna sorot asli</string>
+    <string name="highlight_style_original_value">Gunakan warna asli</string>
     <string name="highlight_style_customize">Sesuaikan warna sorot</string>
-    <string name="highlight_style_current">Warna adaptif (bawaan)</string>
-    <string name="highlight_style_custom_value">Kustom: %1$d%% adaptif</string>
+    <string name="highlight_style_current">Gunakan warna yang disesuaikan</string>
+    <string name="highlight_style_custom_value">%1$d%% disesuaikan</string>
     <string name="highlight_style_adjustment">Penyesuaian warna sorot</string>
-    <string name="highlight_style_explanation">Pilih seberapa besar warna sorot menyesuaikan dengan latar belakang halaman.</string>
-    <string name="highlight_style_zero">0 · Asli</string>
-    <string name="highlight_style_one">1 · Adaptif</string>
+    <string name="highlight_style_explanation">Atur sejauh apa warna sorot disesuaikan dengan latar belakang teks</string>
+    <string name="highlight_style_zero">Asli</string>
+    <string name="highlight_style_one">Disesuaikan</string>
     <string name="highlight_style_preview">Pratinjau</string>
     <string name="highlight_style_loading">Memuat ayat…</string>
     <string name="highlight_style_no_verses">Tidak ada ayat untuk pratinjau ini.</string>

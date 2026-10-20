@@ -374,7 +374,7 @@
     <string name="pref_textPadding_title">본문 주위의 여백</string>
     <string name="pref_textPadding_summary">자간 간격을 좁혀 읽기에 더 편하게 합니다.</string>
     <string name="pref_bottomToolbarOnText_title">하단 문구 툴바</string>
-    <string name="pref_bottomToolbarOnText_summary">장/절 이동을 위한 툴바를 본문 하단에 위치시킵니다.</string>
+    <string name="pref_bottomToolbarOnText_summary">도구 모음을 아래쪽에 배치</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">완전 무료 성경 앱</string>
     <string name="about_user_guide">사용자 가이드</string>
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">이 묵상은 아직 서버에서 제공되지 않습니다.</string>
     <string name="devotion_select">묵상과 날짜 선택</string>
     <string name="highlight_style_original">원래 하이라이트 색상 사용</string>
+    <string name="highlight_style_original_value">원래 색상 사용</string>
     <string name="highlight_style_customize">하이라이트 색상 사용자 정의</string>
-    <string name="highlight_style_current">적응형 색상(기본값)</string>
-    <string name="highlight_style_custom_value">사용자 정의: %1$d%% 적응형</string>
+    <string name="highlight_style_current">조정된 색상 사용</string>
+    <string name="highlight_style_custom_value">%1$d%% 조정됨</string>
     <string name="highlight_style_adjustment">하이라이트 색상 조정</string>
-    <string name="highlight_style_explanation">페이지 배경에 얼마나 많은 강조 색상이 적용되는지 선택합니다.</string>
-    <string name="highlight_style_zero">0 · 원본</string>
-    <string name="highlight_style_one">1 · 적응형</string>
+    <string name="highlight_style_explanation">강조 색상을 본문 배경에 맞춰 조정할 정도를 설정하세요</string>
+    <string name="highlight_style_zero">원래 색상</string>
+    <string name="highlight_style_one">조정됨</string>
     <string name="highlight_style_preview">미리보기</string>
     <string name="highlight_style_loading">구절 로드 중…</string>
     <string name="highlight_style_no_verses">이 미리보기에 사용할 수 있는 구절이 없습니다.</string>

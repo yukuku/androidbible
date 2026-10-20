@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.cbrt
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import yuku.alkitab.base.App
 
@@ -125,7 +126,8 @@ object Highlights {
         return (mixedAlpha shl 24) or rgb
     }
 
-    fun normalizeAdjustment(value: Float): Float = if (value.isFinite()) value.coerceIn(0f, 1f) else 1f
+    fun normalizeAdjustment(value: Float): Float =
+        if (value.isFinite()) (value.coerceIn(0f, 1f) * 100f).roundToInt() / 100f else 1f
 
     private fun solveAlpha(rgb: Int, bg: Int): Int {
         val srgbDelta = srgbDistance(rgb, bg)

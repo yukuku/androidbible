@@ -377,7 +377,7 @@
     <string name="pref_textPadding_title">Marginesy wokół tekstu</string>
     <string name="pref_textPadding_summary">Uczyń tekst w lini węższym, aby ułatwić czytanie</string>
     <string name="pref_bottomToolbarOnText_title">Nawigacja na dole ekranu</string>
-    <string name="pref_bottomToolbarOnText_summary">Umieść pasek nawigacji na dole ekranu Biblii</string>
+    <string name="pref_bottomToolbarOnText_summary">Umieść paski narzędzi na dole</string>
     <string name="pref_verseNumberIsShown_title">Pokaż numer wersu</string>
     <string name="pref_verseNumberIsShown_summary">Pokaż numer wersu na początku każdego wersu</string>
     <!-- about -->
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">To rozważanie nie jest jeszcze dostępne na serwerze.</string>
     <string name="devotion_select">Wybierz rozważanie i datę</string>
     <string name="highlight_style_original">Użyj oryginalnych kolorów podświetlenia</string>
+    <string name="highlight_style_original_value">Użyj oryginalnych kolorów</string>
     <string name="highlight_style_customize">Dostosuj kolory podświetlenia</string>
-    <string name="highlight_style_current">Kolory adaptacyjne (domyślne)</string>
-    <string name="highlight_style_custom_value">Niestandardowy: %1$d%% adaptacyjny</string>
+    <string name="highlight_style_current">Użyj dostosowanych kolorów</string>
+    <string name="highlight_style_custom_value">%1$d%% dostosowania</string>
     <string name="highlight_style_adjustment">Regulacja koloru podświetlenia</string>
-    <string name="highlight_style_explanation">Wybierz, w jakim stopniu kolory podświetlenia dopasowują się do tła strony.</string>
-    <string name="highlight_style_zero">0 · Oryginał</string>
-    <string name="highlight_style_one">1 · Adaptacyjny</string>
+    <string name="highlight_style_explanation">Ustaw stopień dostosowania kolorów podświetlenia do tła tekstu</string>
+    <string name="highlight_style_zero">Oryginalne</string>
+    <string name="highlight_style_one">Dostosowane</string>
     <string name="highlight_style_preview">Podgląd</string>
     <string name="highlight_style_loading">Ładowanie wersetów…</string>
     <string name="highlight_style_no_verses">Brak dostępnych wersetów dla tego podglądu.</string>

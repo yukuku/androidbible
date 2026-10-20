@@ -377,7 +377,7 @@
     <string name="pref_textPadding_title">Границы вокруг текста</string>
     <string name="pref_textPadding_summary">Сделать текст в строке уже для более удобного чтения</string>
     <string name="pref_bottomToolbarOnText_title">Навигация на нижней панели</string>
-    <string name="pref_bottomToolbarOnText_summary">Разместить панель навигации внизу окна Библии</string>
+    <string name="pref_bottomToolbarOnText_summary">Разместить панели инструментов внизу</string>
     <string name="pref_verseNumberIsShown_title">Отображать номера стихов</string>
     <string name="pref_verseNumberIsShown_summary">Отображать номера перед стихами</string>
     <!-- about -->
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">Это размышление пока недоступно на сервере.</string>
     <string name="devotion_select">Выберите размышление и дату</string>
     <string name="highlight_style_original">Использовать оригинальные цвета выделения</string>
+    <string name="highlight_style_original_value">Использовать исходные цвета</string>
     <string name="highlight_style_customize">Настройка цветов выделения</string>
-    <string name="highlight_style_current">Адаптивные цвета (по умолчанию)</string>
-    <string name="highlight_style_custom_value">Пользовательский: %1$d%% адаптивный</string>
+    <string name="highlight_style_current">Использовать скорректированные цвета</string>
+    <string name="highlight_style_custom_value">%1$d%% коррекции</string>
     <string name="highlight_style_adjustment">Регулировка цвета выделения</string>
-    <string name="highlight_style_explanation">Выберите, насколько цвета выделения адаптируются к фону страницы.</string>
-    <string name="highlight_style_zero">0 · Оригинал</string>
-    <string name="highlight_style_one">1 · Адаптивный</string>
+    <string name="highlight_style_explanation">Настройте степень корректировки цветов выделения под фон текста</string>
+    <string name="highlight_style_zero">Исходные</string>
+    <string name="highlight_style_one">Скорректированные</string>
     <string name="highlight_style_preview">Предварительный просмотр</string>
     <string name="highlight_style_loading">Загрузка стихов…</string>
     <string name="highlight_style_no_verses">Для этого предварительного просмотра нет доступных стихов.</string>

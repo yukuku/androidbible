@@ -373,7 +373,7 @@
     <string name="pref_textPadding_title">Margener omkring tekst</string>
     <string name="pref_textPadding_summary">Lav tekst i en linje smallere, for at lette læsning</string>
     <string name="pref_bottomToolbarOnText_title">Vers-navigation i bund</string>
-    <string name="pref_bottomToolbarOnText_summary">Sæt vers-navigation værktøjslinjen nederst på skærmen</string>
+    <string name="pref_bottomToolbarOnText_summary">Placér værktøjslinjer nederst</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">100% gratis bibelapp</string>
     <string name="about_user_guide">Brugervejledning</string>
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">Denne daglige bibelandagt artikel er ikke tilgængelig fra serveren endnu.</string>
     <string name="devotion_select">Vælg daglig bibelandagt artikel og dato</string>
     <string name="highlight_style_original">Brug originale highlight-farver</string>
+    <string name="highlight_style_original_value">Brug oprindelige farver</string>
     <string name="highlight_style_customize">Tilpas highlight-farver</string>
-    <string name="highlight_style_current">Adaptive farver (standard)</string>
-    <string name="highlight_style_custom_value">Brugerdefineret: %1$d%% adaptiv</string>
+    <string name="highlight_style_current">Brug tilpassede farver</string>
+    <string name="highlight_style_custom_value">%1$d%% tilpasset</string>
     <string name="highlight_style_adjustment">Fremhæv farvejustering</string>
-    <string name="highlight_style_explanation">Vælg, hvor meget fremhævede farver tilpasser sig sidens baggrund.</string>
-    <string name="highlight_style_zero">0 · Original</string>
-    <string name="highlight_style_one">1 · Adaptiv</string>
+    <string name="highlight_style_explanation">Indstil, hvor meget fremhævningsfarverne tilpasses tekstens baggrund</string>
+    <string name="highlight_style_zero">Oprindelige</string>
+    <string name="highlight_style_one">Tilpassede</string>
     <string name="highlight_style_preview">Forhåndsvisning</string>
     <string name="highlight_style_loading">Indlæser vers…</string>
     <string name="highlight_style_no_verses">Ingen tilgængelige vers for denne forhåndsvisning.</string>

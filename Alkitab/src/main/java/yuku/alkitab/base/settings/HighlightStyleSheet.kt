@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -91,23 +90,25 @@ object HighlightStyleSheet {
         highlightAdjustment = amount,
     )
 
-    fun show(activity: Activity, onSave: (Float) -> Unit) {
-        ComposeBottomSheetHost.show(activity) { dismiss ->
-            Content(
-                onSave = {
-                    onSave(it)
-                    dismiss()
-                },
-                onDismiss = dismiss,
-            )
+    fun show(activity: Activity, onValueChanged: (Float) -> Unit) {
+        ComposeBottomSheetHost.show(activity) {
+            Content(onValueChanged = onValueChanged)
         }
     }
 
     @Composable
-    private fun Content(onSave: (Float) -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+    internal fun Content(onValueChanged: (Float) -> Unit, modifier: Modifier = Modifier) {
         val applied = remember { App.services.uiDimensions.applied() }
         var amount by rememberSaveable {
             mutableFloatStateOf(Highlights.normalizeAdjustment(Preferences.getFloat(Prefkey.highlightColorAdjustment, 1f)))
+        }
+
+        fun updateAmount(value: Float) {
+            val normalized = Highlights.normalizeAdjustment(value)
+            if (normalized != amount) {
+                amount = normalized
+                onValueChanged(normalized)
+            }
         }
 
         val version = remember { App.services.versions.activeVersion() }
@@ -133,26 +134,26 @@ object HighlightStyleSheet {
             modifier = modifier.verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(stringResource(R.string.highlight_style_customize), style = MaterialTheme.typography.titleLarge)
             Text(stringResource(R.string.highlight_style_explanation))
 
             Text(when (amount) {
-                0f -> stringResource(R.string.highlight_style_original)
+                0f -> stringResource(R.string.highlight_style_original_value)
                 1f -> stringResource(R.string.highlight_style_current)
                 else -> stringResource(R.string.highlight_style_custom_value, (amount * 100).roundToInt())
             })
             Slider(
                 value = amount,
-                onValueChange = { amount = it },
+                onValueChange = ::updateAmount,
+                valueRange = 0f..1f,
+                steps = 99,
                 modifier = Modifier.semantics { contentDescription = sliderLabel },
             )
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                TextButton(onClick = { amount = 0f }) { Text(stringResource(R.string.highlight_style_zero)) }
-                TextButton(onClick = { amount = 1f }) { Text(stringResource(R.string.highlight_style_one)) }
+                TextButton(onClick = { updateAmount(0f) }) { Text(stringResource(R.string.highlight_style_zero)) }
+                TextButton(onClick = { updateAmount(1f) }) { Text(stringResource(R.string.highlight_style_one)) }
             }
 
             Text(stringResource(R.string.highlight_style_preview), style = MaterialTheme.typography.titleMedium)
-            Text(version.longName, style = MaterialTheme.typography.labelMedium)
             Column(
                 modifier = Modifier.fillMaxWidth().background(Color(applied.backgroundColor)).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -196,11 +197,6 @@ object HighlightStyleSheet {
                         )
                     }
                 }
-            }
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
-                Button(onClick = { onSave(amount) }) { Text(stringResource(R.string.ok)) }
             }
         }
     }

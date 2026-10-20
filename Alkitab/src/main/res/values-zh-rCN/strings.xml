@@ -377,7 +377,7 @@
     <string name="pref_textPadding_title">文字四周的边缘</string>
     <string name="pref_textPadding_summary">缩窄同一行的文字距离以方便阅读</string>
     <string name="pref_bottomToolbarOnText_title">底部经文导览</string>
-    <string name="pref_bottomToolbarOnText_summary">把经节导览列放置到圣经显示底部</string>
+    <string name="pref_bottomToolbarOnText_summary">将工具栏置于底部</string>
     <string name="pref_verseNumberIsShown_title">显示经节号码</string>
     <string name="pref_verseNumberIsShown_summary">在每个经节开头显示经节号码</string>
     <!-- about -->
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">服务器尚未提供此灵修文章。</string>
     <string name="devotion_select">选择灵修文章和日期</string>
     <string name="highlight_style_original">使用原始高亮颜色</string>
+    <string name="highlight_style_original_value">使用原始颜色</string>
     <string name="highlight_style_customize">自定义突出显示颜色</string>
-    <string name="highlight_style_current">自适应颜色（默认）</string>
-    <string name="highlight_style_custom_value">自定义：%1$d%% 自适应</string>
+    <string name="highlight_style_current">使用调整后的颜色</string>
+    <string name="highlight_style_custom_value">已调整 %1$d%%</string>
     <string name="highlight_style_adjustment">高亮颜色调整</string>
-    <string name="highlight_style_explanation">选择突出显示颜色适应页面背景的程度。</string>
-    <string name="highlight_style_zero">0 · 原始</string>
-    <string name="highlight_style_one">1·自适应</string>
+    <string name="highlight_style_explanation">设置高亮颜色根据文本背景调整的程度</string>
+    <string name="highlight_style_zero">原始</string>
+    <string name="highlight_style_one">已调整</string>
     <string name="highlight_style_preview">预览</string>
     <string name="highlight_style_loading">正在加载经文…</string>
     <string name="highlight_style_no_verses">此预览没有可用的经文。</string>

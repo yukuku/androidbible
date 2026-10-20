@@ -377,7 +377,7 @@
     <string name="pref_textPadding_title">Marges autour du texte</string>
     <string name="pref_textPadding_summary">Réduire le texte pour en faciliter la lecture</string>
     <string name="pref_bottomToolbarOnText_title">Navigation de verset en bas</string>
-    <string name="pref_bottomToolbarOnText_summary">Mettre barre d\'outil de navigation de verset en bas sur l\'écran de la Bible</string>
+    <string name="pref_bottomToolbarOnText_summary">Placer les barres d’outils en bas</string>
     <string name="pref_verseNumberIsShown_title">Montrez les numéros de verset</string>
     <string name="pref_verseNumberIsShown_summary">Montrez les numéros de verset au début de chaque verset</string>
     <!-- about -->
@@ -522,13 +522,14 @@
     <string name="devotion_unavailable">Cette méditation n’est pas encore disponible sur le serveur.</string>
     <string name="devotion_select">Sélectionnez une méditation et une date</string>
     <string name="highlight_style_original">Utiliser les couleurs de surbrillance d\'origine</string>
+    <string name="highlight_style_original_value">Utiliser les couleurs d’origine</string>
     <string name="highlight_style_customize">Personnaliser les couleurs de surbrillance</string>
-    <string name="highlight_style_current">Couleurs adaptatives (par défaut)</string>
-    <string name="highlight_style_custom_value">Personnalisé : %1$d%% adaptatif</string>
+    <string name="highlight_style_current">Utiliser les couleurs ajustées</string>
+    <string name="highlight_style_custom_value">%1$d%% d’ajustement</string>
     <string name="highlight_style_adjustment">Réglage des couleurs de surbrillance</string>
-    <string name="highlight_style_explanation">Choisissez dans quelle mesure les couleurs de surbrillance s\'adaptent à l\'arrière-plan de la page.</string>
-    <string name="highlight_style_zero">0 · Original</string>
-    <string name="highlight_style_one">1 · Adaptatif</string>
+    <string name="highlight_style_explanation">Réglez le degré d’adaptation des couleurs de surbrillance à l’arrière-plan du texte</string>
+    <string name="highlight_style_zero">D’origine</string>
+    <string name="highlight_style_one">Ajustées</string>
     <string name="highlight_style_preview">Aperçu</string>
     <string name="highlight_style_loading">Chargement des versets…</string>
     <string name="highlight_style_no_verses">Aucun verset disponible pour cet aperçu.</string>

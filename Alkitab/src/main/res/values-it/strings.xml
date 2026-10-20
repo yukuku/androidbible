@@ -378,7 +378,7 @@
     <string name="pref_textPadding_title">Margini intorno al testo</string>
     <string name="pref_textPadding_summary">Rendi il testo più stretto per facilitare la lettura</string>
     <string name="pref_bottomToolbarOnText_title">Navigazione versetti in basso</string>
-    <string name="pref_bottomToolbarOnText_summary">Posiziona la barra degli strumenti di navigazione in basso nella schermata della Bibbia</string>
+    <string name="pref_bottomToolbarOnText_summary">Posiziona le barre degli strumenti in basso</string>
     <string name="pref_verseNumberIsShown_title">Mostra numeri del verso</string>
     <string name="pref_verseNumberIsShown_summary">Mostra il numero del verso all\'inizio di ogni verso</string>
     <!-- about -->
@@ -523,13 +523,14 @@
     <string name="devotion_unavailable">Questa meditazione biblica non è ancora disponibile sul server.</string>
     <string name="devotion_select">Seleziona una meditazione biblica e una data</string>
     <string name="highlight_style_original">Utilizza i colori di evidenziazione originali</string>
+    <string name="highlight_style_original_value">Usa i colori originali</string>
     <string name="highlight_style_customize">Personalizza i colori evidenziati</string>
-    <string name="highlight_style_current">Colori adattivi (predefinito)</string>
-    <string name="highlight_style_custom_value">Personalizzato: %1$d%% adattivo</string>
+    <string name="highlight_style_current">Usa i colori adattati</string>
+    <string name="highlight_style_custom_value">%1$d%% di adattamento</string>
     <string name="highlight_style_adjustment">Regolazione del colore dell\'evidenziazione</string>
-    <string name="highlight_style_explanation">Scegli quanto i colori evidenziati si adattano allo sfondo della pagina.</string>
-    <string name="highlight_style_zero">0 · Originale</string>
-    <string name="highlight_style_one">1 · Adattivo</string>
+    <string name="highlight_style_explanation">Regola quanto i colori di evidenziazione si adattano allo sfondo del testo</string>
+    <string name="highlight_style_zero">Originali</string>
+    <string name="highlight_style_one">Adattati</string>
     <string name="highlight_style_preview">Anteprima</string>
     <string name="highlight_style_loading">Caricamento versetti…</string>
     <string name="highlight_style_no_verses">Nessun versetto disponibile per questa anteprima.</string>
