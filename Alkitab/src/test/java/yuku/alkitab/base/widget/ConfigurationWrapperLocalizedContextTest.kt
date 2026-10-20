@@ -87,7 +87,7 @@ class ConfigurationWrapperLocalizedContextTest {
 
         val localized = ConfigurationWrapper.localizedContext(AfwApp.context)
 
-        assertEquals("Dapatkan huruf lainnya…", localized.getString(R.string.get_more_fonts))
+        assertEquals("Unduh jenis huruf lainnya…", localized.getString(R.string.get_more_fonts))
         assertEquals("Tema warna", localized.getString(R.string.text_appearance_color_theme))
     }
 
