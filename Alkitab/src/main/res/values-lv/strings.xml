@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Oriģināls</string>
     <string name="highlight_style_one">1 · Adaptīvs</string>
     <string name="highlight_style_preview">Priekšskatījums</string>
-    <string name="highlight_style_preview_only">Priekšskatījuma krāsas ietekmē tikai šo paraugu.</string>
-    <string name="highlight_style_background">Priekšskatiet fona krāsu</string>
-    <string name="highlight_style_text">Priekšskatiet teksta krāsu</string>
-    <string name="highlight_style_color">Priekšskatiet izcēluma krāsu</string>
     <string name="highlight_style_loading">Notiek pantu ielāde…</string>
     <string name="highlight_style_no_verses">Šim priekšskatījumam nav pieejams neviens pants.</string>
     <string name="data_transfer_send">Sūtīt</string>

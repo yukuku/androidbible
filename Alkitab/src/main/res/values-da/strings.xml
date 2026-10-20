@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Original</string>
     <string name="highlight_style_one">1 · Adaptiv</string>
     <string name="highlight_style_preview">Forhåndsvisning</string>
-    <string name="highlight_style_preview_only">Forhåndsvisningsfarver påvirker kun denne prøve.</string>
-    <string name="highlight_style_background">Forhåndsvisning af baggrundsfarve</string>
-    <string name="highlight_style_text">Eksempel på tekstfarve</string>
-    <string name="highlight_style_color">Forhåndsvisning af højlysfarve</string>
     <string name="highlight_style_loading">Indlæser vers…</string>
     <string name="highlight_style_no_verses">Ingen tilgængelige vers for denne forhåndsvisning.</string>
     <string name="data_transfer_send">Send</string>

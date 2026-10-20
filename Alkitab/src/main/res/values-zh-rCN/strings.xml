@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · 原始</string>
     <string name="highlight_style_one">1·自适应</string>
     <string name="highlight_style_preview">预览</string>
-    <string name="highlight_style_preview_only">预览颜色仅影响此样本。</string>
-    <string name="highlight_style_background">预览背景颜色</string>
-    <string name="highlight_style_text">预览文本颜色</string>
-    <string name="highlight_style_color">预览高亮颜色</string>
     <string name="highlight_style_loading">正在加载经文…</string>
     <string name="highlight_style_no_verses">此预览没有可用的经文。</string>
     <string name="data_transfer_send">发送</string>

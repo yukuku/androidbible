@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Oryginał</string>
     <string name="highlight_style_one">1 · Adaptacyjny</string>
     <string name="highlight_style_preview">Podgląd</string>
-    <string name="highlight_style_preview_only">Kolory podglądu dotyczą tylko tej próbki.</string>
-    <string name="highlight_style_background">Podgląd koloru tła</string>
-    <string name="highlight_style_text">Podgląd koloru tekstu</string>
-    <string name="highlight_style_color">Podgląd koloru podświetlenia</string>
     <string name="highlight_style_loading">Ładowanie wersetów…</string>
     <string name="highlight_style_no_verses">Brak dostępnych wersetów dla tego podglądu.</string>
     <string name="data_transfer_send">Wyślij</string>

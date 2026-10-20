@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Оригинал</string>
     <string name="highlight_style_one">1 · Адаптивен</string>
     <string name="highlight_style_preview">Визуализация</string>
-    <string name="highlight_style_preview_only">Цветовете за визуализация засягат само тази проба.</string>
-    <string name="highlight_style_background">Визуализация на цвета на фона</string>
-    <string name="highlight_style_text">Визуализация на цвета на текста</string>
-    <string name="highlight_style_color">Предварителен преглед на подчертавания цвят</string>
     <string name="highlight_style_loading">Зареждане на стихове…</string>
     <string name="highlight_style_no_verses">Няма налични стихове за този преглед.</string>
     <string name="data_transfer_send">Изпрати</string>

@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · 원본</string>
     <string name="highlight_style_one">1 · 적응형</string>
     <string name="highlight_style_preview">미리보기</string>
-    <string name="highlight_style_preview_only">미리보기 색상은 이 샘플에만 영향을 미칩니다.</string>
-    <string name="highlight_style_background">배경색 미리보기</string>
-    <string name="highlight_style_text">텍스트 색상 미리보기</string>
-    <string name="highlight_style_color">하이라이트 색상 미리보기</string>
     <string name="highlight_style_loading">구절 로드 중…</string>
     <string name="highlight_style_no_verses">이 미리보기에 사용할 수 있는 구절이 없습니다.</string>
     <string name="data_transfer_send">보내기</string>

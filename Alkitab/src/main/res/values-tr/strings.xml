@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Orijinal</string>
     <string name="highlight_style_one">1 · Uyarlanabilir</string>
     <string name="highlight_style_preview">Önizleme</string>
-    <string name="highlight_style_preview_only">Önizleme renkleri yalnızca bu örneği etkiler.</string>
-    <string name="highlight_style_background">Arka plan rengini önizleyin</string>
-    <string name="highlight_style_text">Metin rengini önizleyin</string>
-    <string name="highlight_style_color">Vurgu rengini önizleyin</string>
     <string name="highlight_style_loading">Ayetler yükleniyor…</string>
     <string name="highlight_style_no_verses">Bu önizleme için ayet yok.</string>
     <string name="data_transfer_send">Gönder</string>

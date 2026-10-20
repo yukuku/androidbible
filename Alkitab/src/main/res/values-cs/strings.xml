@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Originál</string>
     <string name="highlight_style_one">1 · Adaptivní</string>
     <string name="highlight_style_preview">Náhled</string>
-    <string name="highlight_style_preview_only">Barvy náhledu ovlivňují pouze tento vzorek.</string>
-    <string name="highlight_style_background">Náhled barvy pozadí</string>
-    <string name="highlight_style_text">Náhled barvy textu</string>
-    <string name="highlight_style_color">Náhled barvy zvýraznění</string>
     <string name="highlight_style_loading">Načítání veršů…</string>
     <string name="highlight_style_no_verses">Pro tento náhled nejsou k dispozici žádné verše.</string>
     <string name="data_transfer_send">Odeslat</string>

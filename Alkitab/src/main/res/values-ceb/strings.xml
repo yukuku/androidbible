@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Orihinal</string>
     <string name="highlight_style_one">1 · Mapasibo</string>
     <string name="highlight_style_preview">Paglantaw</string>
-    <string name="highlight_style_preview_only">Ang mga kolor sa preview makaapekto lang sa sample.</string>
-    <string name="highlight_style_background">I-preview ang kolor sa background</string>
-    <string name="highlight_style_text">I-preview ang kolor sa teksto</string>
-    <string name="highlight_style_color">I-preview ang kolor sa highlight</string>
     <string name="highlight_style_loading">Nagkarga sa mga bersikulo…</string>
     <string name="highlight_style_no_verses">Walay mga bersikulo nga magamit alang niini nga preview.</string>
     <string name="data_transfer_send">Ipadala</string>

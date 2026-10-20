@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · オリジナル</string>
     <string name="highlight_style_one">1 · アダプティブ</string>
     <string name="highlight_style_preview">プレビュー</string>
-    <string name="highlight_style_preview_only">プレビューの色はこのサンプルにのみ影響します。</string>
-    <string name="highlight_style_background">プレビューの背景色</string>
-    <string name="highlight_style_text">プレビューのテキストの色</string>
-    <string name="highlight_style_color">プレビューのハイライトカラー</string>
     <string name="highlight_style_loading">聖句を読み込み中…</string>
     <string name="highlight_style_no_verses">このプレビューに使用できる聖句はありません。</string>
     <string name="data_transfer_send">送信</string>

@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Gốc</string>
     <string name="highlight_style_one">1 · Thích ứng</string>
     <string name="highlight_style_preview">Xem trước</string>
-    <string name="highlight_style_preview_only">Màu xem trước chỉ ảnh hưởng đến mẫu này.</string>
-    <string name="highlight_style_background">Màu nền xem trước</string>
-    <string name="highlight_style_text">Màu chữ xem trước</string>
-    <string name="highlight_style_color">Màu tô sáng xem trước</string>
     <string name="highlight_style_loading">Đang tải các câu Kinh Thánh…</string>
     <string name="highlight_style_no_verses">Không có câu Kinh Thánh nào cho bản xem trước này.</string>
     <string name="data_transfer_send">Gửi</string>

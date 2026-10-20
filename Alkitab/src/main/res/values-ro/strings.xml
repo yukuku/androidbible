@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Original</string>
     <string name="highlight_style_one">1 · Adaptiv</string>
     <string name="highlight_style_preview">Previzualizare</string>
-    <string name="highlight_style_preview_only">Culorile de previzualizare afectează numai acest eșantion.</string>
-    <string name="highlight_style_background">Previzualizează culoarea de fundal</string>
-    <string name="highlight_style_text">Previzualizează culoarea textului</string>
-    <string name="highlight_style_color">Previzualizează culoarea evidențierii</string>
     <string name="highlight_style_loading">Se încarcă versete…</string>
     <string name="highlight_style_no_verses">Nu există versete disponibile pentru această previzualizare.</string>
     <string name="data_transfer_send">Trimite</string>

@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Оригинал</string>
     <string name="highlight_style_one">1 · Адаптивный</string>
     <string name="highlight_style_preview">Предварительный просмотр</string>
-    <string name="highlight_style_preview_only">Цвета предварительного просмотра влияют только на этот образец.</string>
-    <string name="highlight_style_background">Предварительный просмотр цвета фона</string>
-    <string name="highlight_style_text">Предварительный просмотр цвета текста</string>
-    <string name="highlight_style_color">Цвет выделения при предварительном просмотре</string>
     <string name="highlight_style_loading">Загрузка стихов…</string>
     <string name="highlight_style_no_verses">Для этого предварительного просмотра нет доступных стихов.</string>
     <string name="data_transfer_send">Отправить</string>

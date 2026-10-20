@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Orihinal</string>
     <string name="highlight_style_one">1 · Adaptive</string>
     <string name="highlight_style_preview">Preview</string>
-    <string name="highlight_style_preview_only">Ang mga kulay ng preview ay nakakaapekto lamang sa sample na ito.</string>
-    <string name="highlight_style_background">I-preview ang kulay ng background</string>
-    <string name="highlight_style_text">I-preview ang kulay ng text</string>
-    <string name="highlight_style_color">I-preview ang kulay ng highlight</string>
     <string name="highlight_style_loading">Naglo-load ng mga talata…</string>
     <string name="highlight_style_no_verses">Walang magagamit na mga talata para sa preview na ito.</string>
     <string name="data_transfer_send">Ipadala</string>

@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Oorspronklik</string>
     <string name="highlight_style_one">1 · Aanpasbaar</string>
     <string name="highlight_style_preview">Voorskou</string>
-    <string name="highlight_style_preview_only">Voorskoukleure beïnvloed slegs hierdie voorbeeld.</string>
-    <string name="highlight_style_background">Voorskou agtergrondkleur</string>
-    <string name="highlight_style_text">Voorskou tekskleur</string>
-    <string name="highlight_style_color">Voorskou hoogtepuntkleur</string>
     <string name="highlight_style_loading">Laai verse …</string>
     <string name="highlight_style_no_verses">Geen verse beskikbaar vir hierdie voorskou nie.</string>
     <string name="data_transfer_send">Stuur</string>

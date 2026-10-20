@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · မူရင်း</string>
     <string name="highlight_style_one">1 · အလိုက်သင့်</string>
     <string name="highlight_style_preview">အကြိုကြည့်ရှုခြင်း။</string>
-    <string name="highlight_style_preview_only">အစမ်းကြည့်သောအရောင်များသည် ဤနမူနာအပေါ်သာသက်ရောက်သည်။</string>
-    <string name="highlight_style_background">နောက်ခံအရောင်ကို အစမ်းကြည့်ပါ။</string>
-    <string name="highlight_style_text">စာသားအရောင်ကို အစမ်းကြည့်ပါ။</string>
-    <string name="highlight_style_color">အသားပေးအရောင်ကို အစမ်းကြည့်ပါ။</string>
     <string name="highlight_style_loading">ကျမ်းပိုဒ်များကို ဖွင့်နေသည်…</string>
     <string name="highlight_style_no_verses">ဤအစမ်းကြည့်ရှုမှုအတွက် ကျမ်းပိုဒ်များ မရရှိနိုင်ပါ။</string>
     <string name="data_transfer_send">ပို့ရန်</string>

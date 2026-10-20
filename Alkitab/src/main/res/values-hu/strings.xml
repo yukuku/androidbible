@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Eredeti</string>
     <string name="highlight_style_one">1 · Adaptív</string>
     <string name="highlight_style_preview">Előnézet</string>
-    <string name="highlight_style_preview_only">Az előnézeti színek csak erre a mintára vannak hatással.</string>
-    <string name="highlight_style_background">Előnézet háttérszín</string>
-    <string name="highlight_style_text">Szövegszín előnézete</string>
-    <string name="highlight_style_color">Kiemelés színének előnézete</string>
     <string name="highlight_style_loading">Igeversek betöltése…</string>
     <string name="highlight_style_no_verses">Ehhez az előnézethez nem állnak rendelkezésre igeversek.</string>
     <string name="data_transfer_send">Küldés</string>

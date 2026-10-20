@@ -531,10 +531,6 @@
     <string name="highlight_style_zero">0 · Оригінал</string>
     <string name="highlight_style_one">1 · Адаптивний</string>
     <string name="highlight_style_preview">Попередній перегляд</string>
-    <string name="highlight_style_preview_only">Кольори попереднього перегляду впливають лише на цей зразок.</string>
-    <string name="highlight_style_background">Попередній перегляд кольору фону</string>
-    <string name="highlight_style_text">Перегляд кольору тексту</string>
-    <string name="highlight_style_color">Попередній перегляд кольору виділення</string>
     <string name="highlight_style_loading">Завантаження віршів…</string>
     <string name="highlight_style_no_verses">Для цього попереднього перегляду немає доступних віршів.</string>
     <string name="data_transfer_send">Надіслати</string>

@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · ต้นฉบับ</string>
     <string name="highlight_style_one">1 · ปรับตัวได้</string>
     <string name="highlight_style_preview">ดูตัวอย่าง</string>
-    <string name="highlight_style_preview_only">สีตัวอย่างมีผลกับตัวอย่างนี้เท่านั้น</string>
-    <string name="highlight_style_background">ดูตัวอย่างสีพื้นหลัง</string>
-    <string name="highlight_style_text">ดูตัวอย่างสีข้อความ</string>
-    <string name="highlight_style_color">ดูตัวอย่างสีไฮไลต์</string>
     <string name="highlight_style_loading">กำลังโหลดข้อพระคัมภีร์…</string>
     <string name="highlight_style_no_verses">ไม่มีข้อพระคัมภีร์สำหรับตัวอย่างนี้</string>
     <string name="data_transfer_send">ส่ง</string>

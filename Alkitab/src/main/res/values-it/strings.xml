@@ -531,10 +531,6 @@
     <string name="highlight_style_zero">0 · Originale</string>
     <string name="highlight_style_one">1 · Adattivo</string>
     <string name="highlight_style_preview">Anteprima</string>
-    <string name="highlight_style_preview_only">I colori dell\'anteprima influiscono solo su questo campione.</string>
-    <string name="highlight_style_background">Anteprima del colore di sfondo</string>
-    <string name="highlight_style_text">Anteprima del colore del testo</string>
-    <string name="highlight_style_color">Anteprima del colore evidenziato</string>
     <string name="highlight_style_loading">Caricamento versetti…</string>
     <string name="highlight_style_no_verses">Nessun versetto disponibile per questa anteprima.</string>
     <string name="data_transfer_send">Invia</string>

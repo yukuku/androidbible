@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Originais</string>
     <string name="highlight_style_one">1 · Adaptativo</string>
     <string name="highlight_style_preview">Visualização</string>
-    <string name="highlight_style_preview_only">As cores de visualização afetam apenas esta amostra.</string>
-    <string name="highlight_style_background">Visualizar cor de fundo</string>
-    <string name="highlight_style_text">Visualizar cor do texto</string>
-    <string name="highlight_style_color">Visualizar cor de destaque</string>
     <string name="highlight_style_loading">Carregando versículos…</string>
     <string name="highlight_style_no_verses">Nenhum versículo disponível para esta prévia.</string>
     <string name="data_transfer_send">Enviar</string>

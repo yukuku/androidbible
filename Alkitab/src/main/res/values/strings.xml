@@ -581,10 +581,6 @@
     <string name="highlight_style_zero">0 · Original</string>
     <string name="highlight_style_one">1 · Adaptive</string>
     <string name="highlight_style_preview">Preview</string>
-    <string name="highlight_style_preview_only">Preview colors only affect this sample.</string>
-    <string name="highlight_style_background">Preview background color</string>
-    <string name="highlight_style_text">Preview text color</string>
-    <string name="highlight_style_color">Preview highlight color</string>
     <string name="highlight_style_loading">Loading verses…</string>
     <string name="highlight_style_no_verses">No verses available for this preview.</string>
     <string name="search_goto_reference">Go to: ^1</string>

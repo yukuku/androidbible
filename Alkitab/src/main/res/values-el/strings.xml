@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Πρωτότυπο</string>
     <string name="highlight_style_one">1 · Προσαρμοστικό</string>
     <string name="highlight_style_preview">Προεπισκόπηση</string>
-    <string name="highlight_style_preview_only">Τα χρώματα προεπισκόπησης επηρεάζουν μόνο αυτό το δείγμα.</string>
-    <string name="highlight_style_background">Προεπισκόπηση χρώματος φόντου</string>
-    <string name="highlight_style_text">Προεπισκόπηση χρώματος κειμένου</string>
-    <string name="highlight_style_color">Προεπισκόπηση χρώματος επισήμανσης</string>
     <string name="highlight_style_loading">Φόρτωση στίχων…</string>
     <string name="highlight_style_no_verses">Δεν υπάρχουν διαθέσιμοι στίχοι για αυτήν την προεπισκόπηση.</string>
     <string name="data_transfer_send">Αποστολή</string>

@@ -530,10 +530,6 @@
     <string name="highlight_style_zero">0 · Origineel</string>
     <string name="highlight_style_one">1 · Adaptief</string>
     <string name="highlight_style_preview">Voorbeeld</string>
-    <string name="highlight_style_preview_only">Voorbeeldkleuren hebben alleen invloed op dit voorbeeld.</string>
-    <string name="highlight_style_background">Voorbeeld van achtergrondkleur</string>
-    <string name="highlight_style_text">Voorbeeld van tekstkleur</string>
-    <string name="highlight_style_color">Bekijk een voorbeeld van de markeringskleur</string>
     <string name="highlight_style_loading">Verzen laden…</string>
     <string name="highlight_style_no_verses">Er zijn geen verzen beschikbaar voor deze preview.</string>
     <string name="data_transfer_send">Verzenden</string>
