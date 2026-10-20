@@ -15,11 +15,12 @@ import androidx.compose.ui.text.font.FontWeight
 internal fun composeFontFamilyFor(typeface: Typeface?): FontFamily {
     val base = typeface ?: Typeface.DEFAULT
     return FontFamily(
-        (100..900 step 100).flatMap { weight ->
-            listOf(
-                PlatformTypefaceFont(base, FontWeight(weight), FontStyle.Normal),
-                PlatformTypefaceFont(base, FontWeight(weight), FontStyle.Italic),
-            )
+        buildList(18) {
+            for (weight in 100..900 step 100) {
+                val fontWeight = FontWeight(weight)
+                add(PlatformTypefaceFont(base, fontWeight, FontStyle.Normal))
+                add(PlatformTypefaceFont(base, fontWeight, FontStyle.Italic))
+            }
         }
     )
 }
