@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s notas están adjuntas a este versículo.</string>
     <string name="desc_verse_attribute_progress_mark">%s es aquí ahora mismo.</string>
     <string name="desc_progress_mark_list">Lista de anclados</string>
-    <string name="desc_backspace">Retroceso</string>
+    <string name="desc_backspace">Borrar el último carácter</string>
     <string name="desc_bfl_back">Toque para ir atrás, presione prolongadamente para ver los lugares visitados</string>
     <string name="desc_bfl_forward">Toque para ir adelante, presione prolongadamente para ver los lugares visitados</string>
     <string name="intent_filter_open_yes_file">Abrir archivo YES</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Antiguo Testamento</string>
     <string name="book_filter_old_pentateuch">Pentateuco</string>
     <string name="book_filter_old_history">Historia</string>
-    <string name="book_filter_old_wisdom">Sabiduría</string>
+    <string name="book_filter_old_wisdom">Sabiduría y poesía</string>
     <string name="book_filter_old_major_prophets">Profetas Mayores</string>
     <string name="book_filter_old_minor_prophets">Profetas Menores</string>
     <string name="book_filter_new_testament">Nuevo testamento</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Mostrar número de versículos</string>
     <string name="pref_verseNumberIsShown_summary">Muestre el número del versículo al comienzo de cada versículo</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">La Biblia de libre acceso a través de la Licencia Apache 2.0</string>
+    <string name="about_text_desc" formatted="false">Aplicación de la Biblia 100% gratuita</string>
     <string name="about_user_guide">Guía de usuario</string>
     <string name="about_version_name">versión %s</string>
     <string name="about_material_sources">Fuentes Materiales</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">Vista previa del color de resaltado</string>
     <string name="highlight_style_loading">Cargando versículos…</string>
     <string name="highlight_style_no_verses">No hay versículos disponibles para esta vista previa.</string>
+    <string name="data_transfer_send">Enviar</string>
+    <string name="data_transfer_start">Iniciar</string>
+    <string name="data_transfer_close">Cerrar</string>
+    <string name="desc_navigate_up">Subir un nivel</string>
+    <string name="desc_more_options">Más opciones</string>
+    <string name="share_url_getting">Obteniendo URL para compartir…</string>
+    <string name="data_transfer_export_ready">Toca [%1$s] para enviar los datos exportados a otra aplicación.</string>
+    <string name="data_transfer_import_preview">Las operaciones anteriores son una vista previa. Toca [%1$s] para importar los datos o [%2$s] para cancelar.</string>
+    <string name="data_transfer_import_done">Listo. Toca [%1$s] para cerrar.</string>
 </resources>

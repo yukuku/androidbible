@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">본 구절에 %s 노트를 추가했습니다.</string>
     <string name="desc_verse_attribute_progress_mark">여기까지 %s를 완료했습니다.</string>
     <string name="desc_progress_mark_list">핀 목록</string>
-    <string name="desc_backspace">백 스페이스</string>
+    <string name="desc_backspace">마지막 문자 삭제</string>
     <string name="intent_filter_open_yes_file">YES 파일 열기</string>
     <string name="intent_filter_open_pdb_file">PDB 파일 열기</string>
     <string name="intent_filter_open_pdb_or_yes_file">PDB/YES 파일 열기</string>
@@ -297,7 +297,7 @@
     <string name="book_filter_old_testament">구약 성경</string>
     <string name="book_filter_old_pentateuch">모세 5경</string>
     <string name="book_filter_old_history">기록</string>
-    <string name="book_filter_old_wisdom">지혜서</string>
+    <string name="book_filter_old_wisdom">지혜서와 시가서</string>
     <string name="book_filter_old_major_prophets">대선지서</string>
     <string name="book_filter_old_minor_prophets">소선지서</string>
     <string name="book_filter_new_testament">신약 성경</string>
@@ -376,7 +376,7 @@
     <string name="pref_bottomToolbarOnText_title">하단 문구 툴바</string>
     <string name="pref_bottomToolbarOnText_summary">장/절 이동을 위한 툴바를 본문 하단에 위치시킵니다.</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% 무료 성경 앱, Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">완전 무료 성경 앱</string>
     <string name="about_user_guide">사용자 가이드</string>
     <string name="about_version_name">버전 %s</string>
     <string name="about_material_sources">자료 출처</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">하이라이트 색상 미리보기</string>
     <string name="highlight_style_loading">구절 로드 중…</string>
     <string name="highlight_style_no_verses">이 미리보기에 사용할 수 있는 구절이 없습니다.</string>
+    <string name="data_transfer_send">보내기</string>
+    <string name="data_transfer_start">시작</string>
+    <string name="data_transfer_close">닫기</string>
+    <string name="desc_navigate_up">상위 화면으로 이동</string>
+    <string name="desc_more_options">옵션 더보기</string>
+    <string name="share_url_getting">공유 URL 가져오는 중…</string>
+    <string name="data_transfer_export_ready">내보낸 데이터를 다른 앱으로 보내려면 [%1$s]를 탭하세요.</string>
+    <string name="data_transfer_import_preview">위 작업은 미리보기입니다. 데이터를 가져오려면 [%1$s]을, 취소하려면 [%2$s]를 탭하세요.</string>
+    <string name="data_transfer_import_done">완료되었습니다. 닫으려면 [%1$s]를 탭하세요.</string>
 </resources>

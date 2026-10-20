@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">这经节附有%s个笔记。</string>
     <string name="desc_verse_attribute_progress_mark">这里有%s。</string>
     <string name="desc_progress_mark_list">进度标记清单</string>
-    <string name="desc_backspace">退格</string>
+    <string name="desc_backspace">删除最后一个字符</string>
     <string name="desc_bfl_back">点击回退，长按看已访问位置</string>
     <string name="desc_bfl_forward">点击前进，长按看已访问位置</string>
     <string name="intent_filter_open_yes_file">打开YES档案</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">旧约</string>
     <string name="book_filter_old_pentateuch">摩西五经</string>
     <string name="book_filter_old_history">历史书</string>
-    <string name="book_filter_old_wisdom">智慧书</string>
+    <string name="book_filter_old_wisdom">智慧书与诗歌书</string>
     <string name="book_filter_old_major_prophets">大先知书</string>
     <string name="book_filter_old_minor_prophets">小先知书</string>
     <string name="book_filter_new_testament">新约</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">显示经节号码</string>
     <string name="pref_verseNumberIsShown_summary">在每个经节开头显示经节号码</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100％免费圣经应用程序，根据Apache许可证2.0许可</string>
+    <string name="about_text_desc" formatted="false">完全免费的圣经应用</string>
     <string name="about_user_guide">使用者指引</string>
     <string name="about_version_name">版本 %s</string>
     <string name="about_material_sources">资料来源</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">预览高亮颜色</string>
     <string name="highlight_style_loading">正在加载经文…</string>
     <string name="highlight_style_no_verses">此预览没有可用的经文。</string>
+    <string name="data_transfer_send">发送</string>
+    <string name="data_transfer_start">开始</string>
+    <string name="data_transfer_close">关闭</string>
+    <string name="desc_navigate_up">返回上一级</string>
+    <string name="desc_more_options">更多选项</string>
+    <string name="share_url_getting">正在获取分享链接…</string>
+    <string name="data_transfer_export_ready">点按[%1$s]，将导出的数据发送到其他应用。</string>
+    <string name="data_transfer_import_preview">以上操作仅为预览。点按[%1$s]导入数据，或点按[%2$s]取消。</string>
+    <string name="data_transfer_import_done">已完成。点按[%1$s]关闭。</string>
 </resources>

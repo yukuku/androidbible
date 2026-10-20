@@ -92,7 +92,7 @@ fun GotoScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(onClick = onUp) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Up")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.desc_navigate_up))
                     }
                     Box(modifier = Modifier.weight(1f).align(Alignment.Bottom)) {
                         PrimaryTabRow(
@@ -122,7 +122,7 @@ fun GotoScreen(
                     }
                     Box {
                         IconButton(onClick = { menuOpen = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.desc_more_options))
                         }
                         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                             DropdownMenuItem(

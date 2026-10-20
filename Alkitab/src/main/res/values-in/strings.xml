@@ -122,8 +122,8 @@
     <string name="bmcat_highlights">Sorotan</string>
     <string name="bmcat_unlabeled_bookmarks">Pembatas buku tanpa label</string>
     <string name="menuLabelSort">Urutkan label berdasarkan abjad</string>
-    <string name="bl_no_notes_written_yet">Belum ada catatan.\nTekan salah satu ayat untuk mulai menulis catatan.</string>
-    <string name="bl_no_highlighted_verses">Belum ada ayat yang disorot.\nTekan ayat untuk mulai menyorot.</string>
+    <string name="bl_no_notes_written_yet">Belum ada catatan.\nKetuk salah satu ayat untuk mulai menulis catatan.</string>
+    <string name="bl_no_highlighted_verses">Belum ada ayat yang disorot.\nKetuk ayat untuk mulai menyorot.</string>
     <string name="bl_there_are_no_bookmarks_without_any_labels">Tidak ada pembatas buku yang tidak berlabel.</string>
     <string name="bl_there_are_no_bookmarks_with_the_label_label">"Tidak ada pembatas buku yang berlabel \'%s\'."</string>
     <string name="bl_filter_by_some_keywords">Saring dengan kata-kata</string>
@@ -143,7 +143,7 @@
     <string name="rename_label">Ganti nama label</string>
     <string name="delete_label">Hapus label</string>
     <string name="please_wait_titik3">Harap tunggu&#8230;</string>
-    <string name="get_more_fonts">Dapatkan huruf lainnya&#8230;</string>
+    <string name="get_more_fonts">Unduh jenis huruf lainnya…</string>
     <string name="redownload">Unduh ulang</string>
     <string name="pdb_error_not_palmbible">File PDB ini bukan dalam format PalmBible+. File PDB ini bertipe \'%1$s\' dan creator idnya \'%2$s\', tidak didukung dalam aplikasi ini.</string>
     <string name="pdb_error_corrupted">File PDB-nya rusak.</string>
@@ -155,18 +155,18 @@
     <string name="color_settings_title">Warna</string>
     <string name="color_settings_night_title">Warna (Mode gelap)</string>
     <string name="menuDisplay">Tampilan</string>
-    <string name="text_appearance_font">Jenis Huruf</string>
+    <string name="text_appearance_font">Jenis huruf</string>
     <string name="text_appearance_theme_custom">Lainnya&#8230;</string>
     <string name="text_appearance_color_theme">Tema warna</string>
     <string name="text_appearance_text_size">Ukuran teks</string>
-    <string name="text_appearance_text_size_for_version">Ukuran huruf untuk ^1</string>
+    <string name="text_appearance_text_size_for_version">Ukuran teks untuk ^1</string>
     <string name="text_appearance_line_spacing">Jarak antarbaris</string>
     <string name="text_appearance_bold">Tebal</string>
     <string name="bookmark_search">Cari</string>
     <string name="verse_select_one_verse_selected">1 ayat dipilih</string>
     <string name="verse_select_multiple_verse_selected">%s ayat dipilih</string>
     <string name="google_play_store_not_installed">Google Play Store tidak terpasang.</string>
-    <string name="pref_language_label_default">Semula</string>
+    <string name="pref_language_label_default">Ikuti bahasa perangkat</string>
     <string name="goto_button_history_tip">Tip: Lain kali, tekan dan tahan tombol ini untuk mengakses riwayat ayat yang dibuka.</string>
     <string name="backforwardlist_clear">Hapus semua</string>
     <!-- Goto tabs -->
@@ -175,9 +175,9 @@
     <string name="goto_tab_grid_label">Pilih</string>
     <string name="menuAskForVerse">Tanyakan nomor ayat</string>
     <!-- Font Manager -->
-    <string name="fm_activity_title">Jenis Huruf</string>
+    <string name="fm_activity_title">Kelola jenis huruf</string>
     <string name="fm_do_you_want_to_delete">Hapus jenis huruf %s?</string>
-    <string name="fm_error_when_extracting_font">Kesalahan ketika mengekstrak huruf %1$s: %2$s</string>
+    <string name="fm_error_when_extracting_font">Kesalahan ketika mengekstrak jenis huruf %1$s: %2$s</string>
     <string name="fm_loading_ellipsis">Memuat&#8230;</string>
     <string name="dl_failed_to_rename_temporary_file">Gagal mengganti nama file sementara</string>
     <!-- Songs -->
@@ -196,7 +196,7 @@
     <string name="sn_delete_song_book">Hapus buku lagu</string>
     <string name="sn_delete_song_book_explanation">Hapus semua lagu dari buku ^1?</string>
     <string name="sn_delete_song_book_result">^1 lagu dari buku ^2 sudah dihapus.</string>
-    <string name="sn_update_book_explanation">Perbarui buku ^1 ke versi terakhir.</string>
+    <string name="sn_update_book_explanation">Perbarui buku ^1 ke versi terbaru?</string>
     <string name="sn_update_book_confirm_button">Perbarui</string>
     <string name="sn_update_book">Perbarui buku lagu</string>
     <string name="sn_update_book_because_too_old">Harap perbarui buku lagu ^1 terlebih dahulu. Setelah diperbarui, kirim kembali perbaikan Anda jika perlu.</string>
@@ -204,7 +204,7 @@
     <string name="sn_private_song_book_dialog_desc">Unduh buku lagu pribadi (tersembunyi)</string>
     <string name="sn_private_song_book_name_hint">Nama buku lagu</string>
     <string name="sn_play_in_loop">Putar berulang-ulang sampai dihentikan?</string>
-    <string name="sn_error_rendering_lyrics">Kesalahan dalam menampilkan lirik. Harap tekan tombol menu dan pilih \"Perbarui buku lagu\".</string>
+    <string name="sn_error_rendering_lyrics">Kesalahan dalam menampilkan lirik. Harap ketuk tombol menu dan pilih \"Perbarui buku lagu\".</string>
     <string name="sn_audio_disclaimer_message">Harap diperhatikan bahwa semua audio yang tersedia dalam aplikasi ini belum tentu bersumber dari penerbit lagu atau buku lagu.</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Hari sebelumnya</string>
@@ -228,9 +228,9 @@
     <string name="desc_verse_attribute_multiple_notes">%s catatan terpasang pada ayat ini.</string>
     <string name="desc_verse_attribute_progress_mark">%s sedang di sini.</string>
     <string name="desc_progress_mark_list">Daftar jejak</string>
-    <string name="desc_backspace">Backspace</string>
-    <string name="desc_bfl_back">Klik untuk mundur, tahan untuk melihat lokasi yang pernah dikunjungi</string>
-    <string name="desc_bfl_forward">Klik untuk maju, tahan untuk melihat lokasi yang pernah dikunjungi</string>
+    <string name="desc_backspace">Hapus karakter terakhir</string>
+    <string name="desc_bfl_back">Ketuk untuk mundur, tekan dan tahan untuk melihat lokasi yang pernah dikunjungi</string>
+    <string name="desc_bfl_forward">Ketuk untuk maju, tekan dan tahan untuk melihat lokasi yang pernah dikunjungi</string>
     <string name="intent_filter_open_yes_file">Buka file YES</string>
     <string name="intent_filter_open_pdb_file">Buka file PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>
@@ -243,7 +243,7 @@
     <string name="pm_progress_4">Jejak 4</string>
     <string name="pm_progress_5">Jejak 5</string>
     <string name="pm_progress_name">Nama jejak</string>
-    <string name="pm_activate_tutorial">Tekan lama dan geser untuk memasang jejak pada suatu ayat.</string>
+    <string name="pm_activate_tutorial">Tekan dan tahan, lalu geser untuk memasang jejak pada suatu ayat.</string>
     <string name="pm_delete_progress_confirm">Hapus <b>^1</b>?</string>
     <string name="recentverses_not_available">Belum ada ayat yang terakhir dibuka.</string>
     <string name="recentverses_just_now">Baru saja</string>
@@ -284,7 +284,7 @@
     <string name="rp_description_with_id"><b>^1</b> (^2 hari)\n<small>ID: ^3</small>\n\n^4</string>
     <string name="rp_download_reading_plan_progress">Mengunduh jadwal baca&#8230;</string>
     <string name="rp_download_reading_plan_failed">Gagal mengunduh jadwal baca yang dipilih. Harap coba lagi dengan terkoneksi ke Internet.</string>
-    <string name="rp_download_reading_plan_data_corrupted">Rencana baca yang diunduh datanya rusak. Harap coba lagi lain kali dengan terkoneksi ke Internet.</string>
+    <string name="rp_download_reading_plan_data_corrupted">Data jadwal baca yang diunduh rusak. Harap coba lagi nanti dengan koneksi internet yang berfungsi.</string>
     <string name="rp_download_already_have">Anda sudah memiliki jadwal baca ini.</string>
     <string name="rp_mark_as_read_up_to">Tandai terbaca sampai sini?</string>
     <string name="version_download_corrupted_file">File yang diunduh tampaknya rusak.</string>
@@ -297,7 +297,7 @@
     <string name="search_in_version_short_name_placeholder">Temukan dalam %s</string>
     <string name="search_syntax_tips"><i>Tip pencarian:</i>\n\n<b>+kata</b> untuk kata itu sendiri\n<b>[q]kota daud[q]</b> untuk urutan kata persis seperti itu</string>
     <string name="search_no_result"><b>^1</b> tidak ditemukan.</string>
-    <string name="search_no_result_fallback">Tap di sini untuk membuka <u>^1</u>.</string>
+    <string name="search_no_result_fallback">Ketuk di sini untuk membuka <u>^1</u>.</string>
     <string name="search_clear_history">Hapus riwayat pencarian</string>
     <string name="bookmark_delete_confirmation">Hapus pembatas buku ini?</string>
     <string name="menuSplitVersion">Belah</string>
@@ -305,12 +305,12 @@
     <string name="menuProgress">Jejak</string>
     <string name="sn_menu_copy">Salin lagu</string>
     <string name="menuPlay">Putar</string>
-    <string name="menuPause">Istirahat</string>
+    <string name="menuPause">Jeda</string>
     <string name="left_drawer_current_reading_title">Bacaan saat ini</string>
     <string name="book_filter_old_testament">Perjanjian Lama</string>
     <string name="book_filter_old_pentateuch">Pentateukh</string>
     <string name="book_filter_old_history">Sejarah</string>
-    <string name="book_filter_old_wisdom">Puisi</string>
+    <string name="book_filter_old_wisdom">Hikmat dan puisi</string>
     <string name="book_filter_old_major_prophets">Nabi-nabi Besar</string>
     <string name="book_filter_old_minor_prophets">Nabi-nabi Kecil</string>
     <string name="book_filter_new_testament">Perjanjian Baru</string>
@@ -334,7 +334,7 @@
     <string name="version_download_add_from_url_prompt_yes_only">URL FILE .yes</string>
     <string name="version_download_invalid_url">URL tidak sah.</string>
     <string name="version_download_not_yes">URL Internetnya harus berakhiran .yes.</string>
-    <string name="patch_text_intro">Editlah bagian-bagian dari teks yang menurut Anda bisa dibetulkan atau diperbaiki. \n\nJangan mengubah bagian-bagian lainnya.\n\nTekan <b><small>KIRIM</small></b> setelah selesai.</string>
+    <string name="patch_text_intro">Editlah bagian-bagian dari teks yang menurut Anda bisa dibetulkan atau diperbaiki. \n\nJangan mengubah bagian-bagian lainnya.\n\nKetuk <b><small>KIRIM</small></b> setelah selesai.</string>
     <string name="patch_text_error_no_edits">Lakukanlah beberapa perubahan sebelum mengirim.</string>
     <string name="patch_text_menu_reference">Referensi</string>
     <string name="patch_text_menu_send">Kirim</string>
@@ -402,7 +402,7 @@
     <string name="pref_verseNumberIsShown_title">Nomor ayat</string>
     <string name="pref_verseNumberIsShown_summary">Bubuhkan nomor ayat di depan tiap ayat</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikasi Alkitab 100% gratis. Terdaftar dibawah Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">Aplikasi Alkitab 100% gratis.</string>
     <string name="about_user_guide">Petunjuk Pemakaian</string>
     <string name="about_version_name">versi %s</string>
     <string name="about_material_sources">Sumber Bahan</string>
@@ -544,4 +544,13 @@
     <string name="highlight_style_loading">Memuat ayat…</string>
     <string name="highlight_style_no_verses">Tidak ada ayat untuk pratinjau ini.</string>
     <string name="search_goto_reference">Loncat ke: ^1</string>
+    <string name="data_transfer_send">Kirim</string>
+    <string name="data_transfer_start">Mulai</string>
+    <string name="data_transfer_close">Tutup</string>
+    <string name="desc_navigate_up">Kembali</string>
+    <string name="desc_more_options">Opsi lainnya</string>
+    <string name="share_url_getting">Mengambil URL berbagi…</string>
+    <string name="data_transfer_export_ready">Ketuk [%1$s] untuk mengirim data yang diekspor ke aplikasi lain.</string>
+    <string name="data_transfer_import_preview">Operasi di atas hanya pratinjau. Ketuk [%1$s] untuk mengimpor data atau [%2$s] untuk membatalkan.</string>
+    <string name="data_transfer_import_done">Selesai. Ketuk [%1$s] untuk menutup.</string>
 </resources>

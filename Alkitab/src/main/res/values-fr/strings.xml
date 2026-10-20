@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s notes sont attachées à ce verset.</string>
     <string name="desc_verse_attribute_progress_mark">%s est actuellement ici.</string>
     <string name="desc_progress_mark_list">Liste des favoris</string>
-    <string name="desc_backspace">Retour arrière</string>
+    <string name="desc_backspace">Supprimer le dernier caractère</string>
     <string name="desc_bfl_back">Cliquer pour reculer, restez appuyer pour voir les endroits visités</string>
     <string name="desc_bfl_forward">Cliquer pour avancer, restez appuyer pour voir les endroits visités</string>
     <string name="intent_filter_open_yes_file">Ouvrir un fichier YES</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Ancien Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuque</string>
     <string name="book_filter_old_history">Historique</string>
-    <string name="book_filter_old_wisdom">Sagesse</string>
+    <string name="book_filter_old_wisdom">Livres de sagesse et de poésie</string>
     <string name="book_filter_old_major_prophets">Grands Prophètes</string>
     <string name="book_filter_old_minor_prophets">Petits Prophètes</string>
     <string name="book_filter_new_testament">Nouveau Testament</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Montrez les numéros de verset</string>
     <string name="pref_verseNumberIsShown_summary">Montrez les numéros de verset au début de chaque verset</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Application Biblique 100% gratuite, sous licence Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">Application biblique entièrement gratuite</string>
     <string name="about_user_guide">Guide de l\'utilisateur</string>
     <string name="about_version_name">version %s</string>
     <string name="about_material_sources">Sources matérielles</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">Aperçu de la couleur de surbrillance</string>
     <string name="highlight_style_loading">Chargement des versets…</string>
     <string name="highlight_style_no_verses">Aucun verset disponible pour cet aperçu.</string>
+    <string name="data_transfer_send">Envoyer</string>
+    <string name="data_transfer_start">Démarrer</string>
+    <string name="data_transfer_close">Fermer</string>
+    <string name="desc_navigate_up">Revenir au niveau supérieur</string>
+    <string name="desc_more_options">Plus d’options</string>
+    <string name="share_url_getting">Obtention du lien de partage…</string>
+    <string name="data_transfer_export_ready">Appuyez sur [%1$s] pour envoyer les données exportées vers une autre application.</string>
+    <string name="data_transfer_import_preview">Les opérations ci-dessus sont un aperçu. Appuyez sur [%1$s] pour importer les données ou sur [%2$s] pour annuler.</string>
+    <string name="data_transfer_import_done">Terminé. Appuyez sur [%1$s] pour fermer.</string>
 </resources>

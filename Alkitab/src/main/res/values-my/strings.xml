@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s မှတ်စုများကို ဤကျမ်းပိုဒ်နှင့်ပူးတွဲထားသည်။</string>
     <string name="desc_verse_attribute_progress_mark">%s လောလောဆယ် ဤနေရာတွင် ရှိနေသည်။</string>
     <string name="desc_progress_mark_list">တွယ်ချိတ်မှုများစာရင်း</string>
-    <string name="desc_backspace">မိမိဖျက်ခြင်သော စာ၏ အနောက်မှ ကာဆယ်ချပြီး ဖျက်ရန်</string>
+    <string name="desc_backspace">နောက်ဆုံး စာလုံးကို ဖျက်ရန်</string>
     <string name="intent_filter_open_yes_file">YES ဖိုင်ကို ဖွင့်ရန်</string>
     <string name="intent_filter_open_pdb_file">PDB ဖိုင်ကို ဖွင့်ရန်</string>
     <string name="intent_filter_open_pdb_or_yes_file">PDB / YES ဖိုင်ကို ဖွင့်ရန်</string>
@@ -297,7 +297,7 @@
     <string name="book_filter_old_testament">ဓမ္မဟောင်းကျမ်း</string>
     <string name="book_filter_old_pentateuch">ပင်တကျွတ်ကျမ်း (မောရှေ၏ပညတ္တိကျမ်း)</string>
     <string name="book_filter_old_history">သမိုင်းမှတ်တမ်း</string>
-    <string name="book_filter_old_wisdom">ပညာပါရမီကျမ်း</string>
+    <string name="book_filter_old_wisdom">ဉာဏ်ပညာနှင့် ကဗျာကျမ်းများ</string>
     <string name="book_filter_old_major_prophets">ပရောဖက်ကြီးများ</string>
     <string name="book_filter_old_minor_prophets">ပရောဖက်ငယ်များ</string>
     <string name="book_filter_new_testament">ဓမ္မသစ်ကျမ်း</string>
@@ -376,7 +376,7 @@
     <string name="pref_bottomToolbarOnText_title">ကျမ်းချက်လမ်းညွှန်ကို အောက်ခြေတွင်ထားရန်</string>
     <string name="pref_bottomToolbarOnText_summary">သမ္မာကျမ်းစာမျက်နှာပြင်ပေါ်ရှိ ကျမ်းချက်လမ်းညွှန် ကိရိယာတန်းကို အောက်ခြေတွင်ထားပါ။</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Apache License 2.0 အောက်တွင် မူပိုင်ခွင့်ရသည့် 100% အခမဲ့ ကျမ်းစာအက်ပလီကေးရှင်း</string>
+    <string name="about_text_desc" formatted="false">လုံးဝအခမဲ့ သမ္မာကျမ်းစာအက်ပ်</string>
     <string name="about_user_guide">အသုံးပြုသူလမ်းညွှန်</string>
     <string name="about_version_name">ဗားရှင်း %s</string>
     <string name="about_material_sources">အချက်အလက်ကုန်ကြမ်း ရင်းမြစ်များ</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">အသားပေးအရောင်ကို အစမ်းကြည့်ပါ။</string>
     <string name="highlight_style_loading">ကျမ်းပိုဒ်များကို ဖွင့်နေသည်…</string>
     <string name="highlight_style_no_verses">ဤအစမ်းကြည့်ရှုမှုအတွက် ကျမ်းပိုဒ်များ မရရှိနိုင်ပါ။</string>
+    <string name="data_transfer_send">ပို့ရန်</string>
+    <string name="data_transfer_start">စတင်ရန်</string>
+    <string name="data_transfer_close">ပိတ်ရန်</string>
+    <string name="desc_navigate_up">နောက်သို့ ပြန်ရန်</string>
+    <string name="desc_more_options">နောက်ထပ် ရွေးချယ်စရာများ</string>
+    <string name="share_url_getting">မျှဝေရန် URL ကို ရယူနေသည်…</string>
+    <string name="data_transfer_export_ready">ထုတ်ယူထားသော ဒေတာကို အခြားအက်ပ်သို့ ပို့ရန် [%1$s] ကို နှိပ်ပါ။</string>
+    <string name="data_transfer_import_preview">အထက်ပါ လုပ်ဆောင်ချက်များသည် အကြိုကြည့်ရှုမှုသာ ဖြစ်သည်။ ဒေတာကို ထည့်သွင်းရန် [%1$s] ကို နှိပ်ပါ သို့မဟုတ် ပယ်ဖျက်ရန် [%2$s] ကို နှိပ်ပါ။</string>
+    <string name="data_transfer_import_done">ပြီးပါပြီ။ ပိတ်ရန် [%1$s] ကို နှိပ်ပါ။</string>
 </resources>

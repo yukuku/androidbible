@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">К этому стиху присоединено %s заметок.</string>
     <string name="desc_verse_attribute_progress_mark">В настоящее время здесь %s.</string>
     <string name="desc_progress_mark_list">Список маркеров продвижения</string>
-    <string name="desc_backspace">бекспейс</string>
+    <string name="desc_backspace">Удалить последний символ</string>
     <string name="desc_bfl_back">Нажмите, чтобы вернуться, удерживайте, чтобы увидеть просмотренное</string>
     <string name="desc_bfl_forward">Нажмите, чтобы продолжить, удерживайте, чтобы увидеть просмотренное</string>
     <string name="intent_filter_open_yes_file">Открыть YES-файл</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Ветхий Завет</string>
     <string name="book_filter_old_pentateuch">Пятикнижие</string>
     <string name="book_filter_old_history">История</string>
-    <string name="book_filter_old_wisdom">Мудрость</string>
+    <string name="book_filter_old_wisdom">Книги мудрости и поэзии</string>
     <string name="book_filter_old_major_prophets">Великие Пророки</string>
     <string name="book_filter_old_minor_prophets">Малые Пророки</string>
     <string name="book_filter_new_testament">Новый завет</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Отображать номера стихов</string>
     <string name="pref_verseNumberIsShown_summary">Отображать номера перед стихами</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% бесплатное приложение Bible app, лицензия от Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">Полностью бесплатное приложение Библии</string>
     <string name="about_user_guide">Руководство пользователя</string>
     <string name="about_version_name">версия %s</string>
     <string name="about_material_sources">Источники материалов</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">Цвет выделения при предварительном просмотре</string>
     <string name="highlight_style_loading">Загрузка стихов…</string>
     <string name="highlight_style_no_verses">Для этого предварительного просмотра нет доступных стихов.</string>
+    <string name="data_transfer_send">Отправить</string>
+    <string name="data_transfer_start">Начать</string>
+    <string name="data_transfer_close">Закрыть</string>
+    <string name="desc_navigate_up">Перейти на уровень выше</string>
+    <string name="desc_more_options">Другие параметры</string>
+    <string name="share_url_getting">Получение ссылки для отправки…</string>
+    <string name="data_transfer_export_ready">Нажмите [%1$s], чтобы отправить экспортированные данные в другое приложение.</string>
+    <string name="data_transfer_import_preview">Операции выше показаны для предварительного просмотра. Нажмите [%1$s], чтобы импортировать данные, или [%2$s], чтобы отменить.</string>
+    <string name="data_transfer_import_done">Готово. Нажмите [%1$s], чтобы закрыть.</string>
 </resources>

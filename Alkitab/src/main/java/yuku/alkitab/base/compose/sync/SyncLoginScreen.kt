@@ -285,12 +285,12 @@ fun SyncLoginScreen(
                 title = { Text(stringResource(titleRes)) },
                 navigationIcon = {
                     IconButton(onClick = onUp) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Up")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.desc_navigate_up))
                     }
                 },
                 actions = {
                     IconButton(onClick = { menuOpen = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = null)
+                        Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.desc_more_options))
                     }
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                         DropdownMenuItem(

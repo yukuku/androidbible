@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s poznámek přiřazených k tomuto verši.</string>
     <string name="desc_verse_attribute_progress_mark">%s je nyní zde.</string>
     <string name="desc_progress_mark_list">Lišta záložek</string>
-    <string name="desc_backspace">Backspace</string>
+    <string name="desc_backspace">Smazat poslední znak</string>
     <string name="intent_filter_open_yes_file">Otevřít YES soubor</string>
     <string name="intent_filter_open_pdb_file">Otevřít PDB soubor</string>
     <string name="intent_filter_open_pdb_or_yes_file">Otevřít PDB/YES soubor</string>
@@ -298,7 +298,7 @@
     <string name="book_filter_old_testament">Starý zákon</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
     <string name="book_filter_old_history">Historie</string>
-    <string name="book_filter_old_wisdom">Moudrost</string>
+    <string name="book_filter_old_wisdom">Mudroslovné a básnické knihy</string>
     <string name="book_filter_old_major_prophets">Velcí proroci</string>
     <string name="book_filter_old_minor_prophets">Malí proroci</string>
     <string name="book_filter_new_testament">Nový zákon</string>
@@ -377,7 +377,7 @@
     <string name="pref_bottomToolbarOnText_title">Navigační lišta dole</string>
     <string name="pref_bottomToolbarOnText_summary">Zobrazovat navigační lištu dole</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikace Bible je 100% zdarma, licencovaná dle Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">Aplikace Bible zcela zdarma</string>
     <string name="about_user_guide">Uživatelská příručka</string>
     <string name="about_version_name">verze %s</string>
     <string name="about_material_sources">Zdroje</string>
@@ -536,4 +536,13 @@
     <string name="highlight_style_color">Náhled barvy zvýraznění</string>
     <string name="highlight_style_loading">Načítání veršů…</string>
     <string name="highlight_style_no_verses">Pro tento náhled nejsou k dispozici žádné verše.</string>
+    <string name="data_transfer_send">Odeslat</string>
+    <string name="data_transfer_start">Spustit</string>
+    <string name="data_transfer_close">Zavřít</string>
+    <string name="desc_navigate_up">Zpět</string>
+    <string name="desc_more_options">Další možnosti</string>
+    <string name="share_url_getting">Získávání URL pro sdílení…</string>
+    <string name="data_transfer_export_ready">Klepnutím na [%1$s] odešlete exportovaná data do jiné aplikace.</string>
+    <string name="data_transfer_import_preview">Výše uvedené operace jsou pouze náhled. Klepnutím na [%1$s] importujete data nebo na [%2$s] akci zrušíte.</string>
+    <string name="data_transfer_import_done">Hotovo. Klepnutím na [%1$s] zavřete.</string>
 </resources>
