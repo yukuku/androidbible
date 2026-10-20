@@ -135,26 +135,7 @@ class Jumper {
         if (BuildConfig.DEBUG) logger.d("jumper stage 10: ${parts.contentToString()}")
 
         //# STAGE 12: Remove string from empty parts
-        run {
-            var hasEmpty = 0
-            for (b in parts) {
-                if (b.isEmpty()) {
-                    hasEmpty++
-                    break
-                }
-            }
-            if (hasEmpty > 0) {
-                val partsWithoutEmpties = arrayOfNulls<String>(parts.size - hasEmpty)
-                var c = 0
-                for (b in parts) {
-                    if (b.isNotEmpty()) {
-                        partsWithoutEmpties[c++] = b
-                    }
-                }
-                @Suppress("UNCHECKED_CAST")
-                parts = partsWithoutEmpties as Array<String>
-            }
-        }
+        parts = parts.filter { it.isNotEmpty() }.toTypedArray()
         if (BuildConfig.DEBUG) logger.d("jumper stage 12: ${parts.contentToString()}")
 
         if (parts.isEmpty()) {
