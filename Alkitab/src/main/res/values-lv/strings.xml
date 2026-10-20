@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s piezīmes ir pievienotas šim pantam.</string>
     <string name="desc_verse_attribute_progress_mark">%s ir pašlaik šeit.</string>
     <string name="desc_progress_mark_list">Lasīšanas gaitas marķieru saraksts</string>
-    <string name="desc_backspace">Atpakaļatkāpe</string>
+    <string name="desc_backspace">Dzēst pēdējo rakstzīmi</string>
     <string name="intent_filter_open_yes_file">Atvērt YES failu</string>
     <string name="intent_filter_open_pdb_file">Atvērt PDB failu</string>
     <string name="intent_filter_open_pdb_or_yes_file">Atvērt PDB/YES failu</string>
@@ -296,7 +296,7 @@
     <string name="book_filter_old_testament">Vecā Derība</string>
     <string name="book_filter_old_pentateuch">5 Mozus grāmatas</string>
     <string name="book_filter_old_history">Vēsture</string>
-    <string name="book_filter_old_wisdom">Gudrība</string>
+    <string name="book_filter_old_wisdom">Gudrības un dzejas grāmatas</string>
     <string name="book_filter_old_major_prophets">Lielie Pravieši</string>
     <string name="book_filter_old_minor_prophets">Mazie Pravieši</string>
     <string name="book_filter_new_testament">Jaunā Derība</string>
@@ -375,7 +375,7 @@
     <string name="pref_bottomToolbarOnText_title">Pārvietošanās pa pantiem apakšā</string>
     <string name="pref_bottomToolbarOnText_summary">Ieliec pantu pārvietošanās rīkjoslu Bībeles ekrāna apakšā</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% bezmaksas Bībeles aplikācija, licenzēts zem Apache Licenze 2.0</string>
+    <string name="about_text_desc" formatted="false">Pilnīgi bezmaksas Bībeles lietotne</string>
     <string name="about_user_guide">Lietotāja rokasgrāmata</string>
     <string name="about_version_name">versija %s</string>
     <string name="about_material_sources">Materiālu avoti</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Priekšskatiet izcēluma krāsu</string>
     <string name="highlight_style_loading">Notiek pantu ielāde…</string>
     <string name="highlight_style_no_verses">Šim priekšskatījumam nav pieejams neviens pants.</string>
+    <string name="data_transfer_send">Sūtīt</string>
+    <string name="data_transfer_start">Sākt</string>
+    <string name="data_transfer_close">Aizvērt</string>
+    <string name="desc_navigate_up">Atgriezties</string>
+    <string name="desc_more_options">Citas opcijas</string>
+    <string name="share_url_getting">Iegūst kopīgošanas URL…</string>
+    <string name="data_transfer_export_ready">Pieskarieties [%1$s], lai nosūtītu eksportētos datus uz citu lietotni.</string>
+    <string name="data_transfer_import_preview">Iepriekš redzamās darbības ir priekšskatījums. Pieskarieties [%1$s], lai importētu datus, vai [%2$s], lai atceltu.</string>
+    <string name="data_transfer_import_done">Pabeigts. Pieskarieties [%1$s], lai aizvērtu.</string>
     <string name="dv_version_unavailable">Izvēlētais tulkojums nav pieejams. Tiek izmantots %1$s. Pieskarieties, lai mainītu.</string>
     <string name="dv_version_unset">Tiek izmantots %1$s. Pieskarieties, lai izvēlētos Bībeles tulkojumu.</string>
 </resources>

@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">Zu diesem Vers gibt es %s Notizen.</string>
     <string name="desc_verse_attribute_progress_mark">%s befindet sich zurzeit hier.</string>
     <string name="desc_progress_mark_list">Lesefortschritts-Liste</string>
-    <string name="desc_backspace">Rücktaste</string>
+    <string name="desc_backspace">Letztes Zeichen löschen</string>
     <string name="desc_bfl_back">Tippen, um zurück zu gehen. Lang drücken, um besuchte Stellen anzuzeigen.</string>
     <string name="desc_bfl_forward">Tippen, um vorwärts zu gehen. Lang drücken, um besuchte Stellen anzuzeigen.</string>
     <string name="intent_filter_open_yes_file">YES-Datei öffnen</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Altes Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
     <string name="book_filter_old_history">Geschichtsbücher</string>
-    <string name="book_filter_old_wisdom">Lehrbücher</string>
+    <string name="book_filter_old_wisdom">Weisheitsbücher und Dichtung</string>
     <string name="book_filter_old_major_prophets">Große Propheten</string>
     <string name="book_filter_old_minor_prophets">Kleine Propheten</string>
     <string name="book_filter_new_testament">Neues Testament</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Versnummern anzeigen</string>
     <string name="pref_verseNumberIsShown_summary">Versnummer am Anfang jedes Verses anzeigen</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% kostenlose Bibel-App, lizenziert unter der Apache Lizenz 2.0</string>
+    <string name="about_text_desc" formatted="false">100% kostenlose Bibel-App</string>
     <string name="about_user_guide">Handbuch</string>
     <string name="about_version_name">Version %s</string>
     <string name="about_material_sources">Material-Quellen</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Vorschau der Hervorhebungsfarbe</string>
     <string name="highlight_style_loading">Verse werden geladen…</string>
     <string name="highlight_style_no_verses">Für diese Vorschau sind keine Verse verfügbar.</string>
+    <string name="data_transfer_send">Senden</string>
+    <string name="data_transfer_start">Starten</string>
+    <string name="data_transfer_close">Schließen</string>
+    <string name="desc_navigate_up">Nach oben navigieren</string>
+    <string name="desc_more_options">Weitere Optionen</string>
+    <string name="share_url_getting">Link zum Teilen wird abgerufen…</string>
+    <string name="data_transfer_export_ready">Tippe auf [%1$s], um deine exportierten Daten an eine andere App zu senden.</string>
+    <string name="data_transfer_import_preview">Die Vorgänge oben sind eine Vorschau. Tippe auf [%1$s], um die Daten zu importieren, oder auf [%2$s], um abzubrechen.</string>
+    <string name="data_transfer_import_done">Fertig. Tippe auf [%1$s], um zu schließen.</string>
     <string name="dv_version_unavailable">Die gewählte Übersetzung ist nicht verfügbar. %1$s wird verwendet. Zum Ändern tippen.</string>
     <string name="dv_version_unset">%1$s wird verwendet. Tippen, um eine Bibelübersetzung auszuwählen.</string>
 </resources>

@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s nota telah dilampirkan pada ayat ini.</string>
     <string name="desc_verse_attribute_progress_mark">%s sedang berada di sini.</string>
     <string name="desc_progress_mark_list">Senarai tanda</string>
-    <string name="desc_backspace">Backspace</string>
+    <string name="desc_backspace">Padam aksara terakhir</string>
     <string name="intent_filter_open_yes_file">Buka fail YES</string>
     <string name="intent_filter_open_pdb_file">Buka fail PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Buka fail PDB/YES</string>
@@ -296,7 +296,7 @@
     <string name="book_filter_old_testament">Perjanjian Lama</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
     <string name="book_filter_old_history">Sejarah</string>
-    <string name="book_filter_old_wisdom">Kebijaksanaan</string>
+    <string name="book_filter_old_wisdom">Hikmat dan puisi</string>
     <string name="book_filter_old_major_prophets">Nabi Utama</string>
     <string name="book_filter_old_minor_prophets">Nabi-nabi Kecil</string>
     <string name="book_filter_new_testament">Perjanjian Baru</string>
@@ -375,7 +375,7 @@
     <string name="pref_bottomToolbarOnText_title">Navigasi ayat di bawah</string>
     <string name="pref_bottomToolbarOnText_summary">Letakkan bar alat navigasi ayat di bawah pada skrin Alkitab</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplikasi Alkitab percuma 100%, dilesenkan oleh Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">Aplikasi Alkitab percuma sepenuhnya</string>
     <string name="about_user_guide">Panduan Pengguna</string>
     <string name="about_version_name">versi %s</string>
     <string name="about_material_sources">Sumber Bahan</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Pratonton warna sorotan</string>
     <string name="highlight_style_loading">Memuatkan ayat…</string>
     <string name="highlight_style_no_verses">Tiada ayat tersedia untuk pratonton ini.</string>
+    <string name="data_transfer_send">Hantar</string>
+    <string name="data_transfer_start">Mula</string>
+    <string name="data_transfer_close">Tutup</string>
+    <string name="desc_navigate_up">Kembali</string>
+    <string name="desc_more_options">Pilihan lain</string>
+    <string name="share_url_getting">Mendapatkan URL perkongsian…</string>
+    <string name="data_transfer_export_ready">Ketik [%1$s] untuk menghantar data yang dieksport ke aplikasi lain.</string>
+    <string name="data_transfer_import_preview">Operasi di atas hanyalah pratonton. Ketik [%1$s] untuk mengimport data atau [%2$s] untuk membatalkan.</string>
+    <string name="data_transfer_import_done">Selesai. Ketik [%1$s] untuk menutup.</string>
     <string name="dv_version_unavailable">Versi yang dipilih tidak tersedia. Menggunakan %1$s. Ketik untuk menukar.</string>
     <string name="dv_version_unset">Menggunakan %1$s. Ketik untuk memilih versi Alkitab.</string>
 </resources>

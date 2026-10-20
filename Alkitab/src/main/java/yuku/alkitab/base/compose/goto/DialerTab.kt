@@ -245,7 +245,7 @@ fun DialerTab(
             Row(modifier = Modifier.fillMaxWidth()) {
                 Box(modifier = Modifier.weight(1f).height(56.dp), contentAlignment = Alignment.Center) {
                     IconButton(onClick = { press("backspace") }) {
-                        Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = "Backspace")
+                        Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = stringResource(R.string.desc_backspace))
                     }
                 }
                 KeypadDigit("0", onDigit, Modifier.weight(1f))

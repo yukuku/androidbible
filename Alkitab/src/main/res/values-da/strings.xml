@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s noter er knyttet til dette vers.</string>
     <string name="desc_verse_attribute_progress_mark">%s er i øjeblikket her.</string>
     <string name="desc_progress_mark_list">Listen over stifter</string>
-    <string name="desc_backspace">Bagslet</string>
+    <string name="desc_backspace">Slet sidste tegn</string>
     <string name="intent_filter_open_yes_file">Åben .yes-fil</string>
     <string name="intent_filter_open_pdb_file">Åben PDB fil</string>
     <string name="intent_filter_open_pdb_or_yes_file">Åben PDB / YES file</string>
@@ -296,7 +296,7 @@
     <string name="book_filter_old_testament">Det Gamle Testamente</string>
     <string name="book_filter_old_pentateuch">Mosebøgerne</string>
     <string name="book_filter_old_history">Historie</string>
-    <string name="book_filter_old_wisdom">Visdom</string>
+    <string name="book_filter_old_wisdom">Visdom og poesi</string>
     <string name="book_filter_old_major_prophets">Store profeter</string>
     <string name="book_filter_old_minor_prophets">Små profeter</string>
     <string name="book_filter_new_testament">Det Nye Testamente</string>
@@ -375,7 +375,7 @@
     <string name="pref_bottomToolbarOnText_title">Vers-navigation i bund</string>
     <string name="pref_bottomToolbarOnText_summary">Sæt vers-navigation værktøjslinjen nederst på skærmen</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bible App, licenseret under Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">100% gratis bibelapp</string>
     <string name="about_user_guide">Brugervejledning</string>
     <string name="about_version_name">version %s</string>
     <string name="about_material_sources">Materiale Kilder</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Forhåndsvisning af højlysfarve</string>
     <string name="highlight_style_loading">Indlæser vers…</string>
     <string name="highlight_style_no_verses">Ingen tilgængelige vers for denne forhåndsvisning.</string>
+    <string name="data_transfer_send">Send</string>
+    <string name="data_transfer_start">Start</string>
+    <string name="data_transfer_close">Luk</string>
+    <string name="desc_navigate_up">Gå tilbage</string>
+    <string name="desc_more_options">Flere muligheder</string>
+    <string name="share_url_getting">Henter delings-URL…</string>
+    <string name="data_transfer_export_ready">Tryk på [%1$s] for at sende dine eksporterede data til en anden app.</string>
+    <string name="data_transfer_import_preview">Handlingerne ovenfor er en forhåndsvisning. Tryk på [%1$s] for at importere dataene eller [%2$s] for at annullere.</string>
+    <string name="data_transfer_import_done">Færdig. Tryk på [%1$s] for at lukke.</string>
     <string name="dv_version_unavailable">Den valgte oversættelse er ikke tilgængelig. Bruger %1$s. Tryk for at ændre.</string>
     <string name="dv_version_unset">Bruger %1$s. Tryk for at vælge en bibeloversættelse.</string>
 </resources>

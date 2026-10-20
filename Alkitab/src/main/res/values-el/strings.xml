@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s νότες έχουν επισυναφθεί σε αυτόν τον στίχο.</string>
     <string name="desc_verse_attribute_progress_mark">%s είναι τώρα εδώ.</string>
     <string name="desc_progress_mark_list">Λίστα pins</string>
-    <string name="desc_backspace">Κενός χώρος</string>
+    <string name="desc_backspace">Διαγραφή τελευταίου χαρακτήρα</string>
     <string name="intent_filter_open_yes_file">Άνοιγμα αρχείου YES</string>
     <string name="intent_filter_open_pdb_file">Άνοιγμα αρχείου PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">Άνοιγμα αρχείου PDB/YES</string>
@@ -296,7 +296,7 @@
     <string name="book_filter_old_testament">Παλαιά Διαθήκη</string>
     <string name="book_filter_old_pentateuch">Πεντάτευχος</string>
     <string name="book_filter_old_history">Ιστορικό</string>
-    <string name="book_filter_old_wisdom">Σοφία</string>
+    <string name="book_filter_old_wisdom">Σοφιολογικά και ποιητικά βιβλία</string>
     <string name="book_filter_old_major_prophets">Κύριοι Προφήτες</string>
     <string name="book_filter_old_minor_prophets">Δευτερεύοντες Προφήτες</string>
     <string name="book_filter_new_testament">Καινή Διαθήκη</string>
@@ -375,7 +375,7 @@
     <string name="pref_bottomToolbarOnText_title">Περιήγηση στον κάτω στίχο</string>
     <string name="pref_bottomToolbarOnText_summary">Βάλτε την γραμμή εργαλείων περιήγησης στο στίχο στο κάτω μέρος της οθόνης Βίβλου</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% δωρεάν πρόγραμμα Βίβλου, με άδεια υπό την Άδεια Apache 2.0</string>
+    <string name="about_text_desc" formatted="false">Εντελώς δωρεάν εφαρμογή της Αγίας Γραφής</string>
     <string name="about_user_guide">Οδηγός Χρήσης</string>
     <string name="about_version_name">έκδοση %s</string>
     <string name="about_material_sources">Πηγές Υλικού</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Προεπισκόπηση χρώματος επισήμανσης</string>
     <string name="highlight_style_loading">Φόρτωση στίχων…</string>
     <string name="highlight_style_no_verses">Δεν υπάρχουν διαθέσιμοι στίχοι για αυτήν την προεπισκόπηση.</string>
+    <string name="data_transfer_send">Αποστολή</string>
+    <string name="data_transfer_start">Έναρξη</string>
+    <string name="data_transfer_close">Κλείσιμο</string>
+    <string name="desc_navigate_up">Επιστροφή</string>
+    <string name="desc_more_options">Περισσότερες επιλογές</string>
+    <string name="share_url_getting">Λήψη URL κοινοποίησης…</string>
+    <string name="data_transfer_export_ready">Πατήστε [%1$s] για να στείλετε τα εξαγόμενα δεδομένα σε άλλη εφαρμογή.</string>
+    <string name="data_transfer_import_preview">Οι παραπάνω ενέργειες είναι προεπισκόπηση. Πατήστε [%1$s] για εισαγωγή των δεδομένων ή [%2$s] για ακύρωση.</string>
+    <string name="data_transfer_import_done">Ολοκληρώθηκε. Πατήστε [%1$s] για κλείσιμο.</string>
     <string name="dv_version_unavailable">Η επιλεγμένη μετάφραση δεν είναι διαθέσιμη. Χρησιμοποιείται η %1$s. Πατήστε για αλλαγή.</string>
     <string name="dv_version_unset">Χρησιμοποιείται η %1$s. Πατήστε για να επιλέξετε μετάφραση της Βίβλου.</string>
 </resources>

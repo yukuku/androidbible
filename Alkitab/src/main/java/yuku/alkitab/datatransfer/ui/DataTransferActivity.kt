@@ -149,7 +149,7 @@ class DataTransferActivity : BaseActivity() {
     }
 
     private fun successfulExport(cacheFile: File) {
-        logBold("Press [Send] to send your exported data to another app of your choice.")
+        logBold(getString(R.string.data_transfer_export_ready, getString(R.string.data_transfer_send)))
         bSend.isEnabled = true
         bSend.setOnClickListener {
             bSend.isEnabled = false
@@ -196,14 +196,14 @@ class DataTransferActivity : BaseActivity() {
 
     private fun successfulImport(cacheFile: File, options: ImportProcess.Options) {
         if (!options.actualRun) {
-            logBold("The operations above are only simulation. Press [Start] to start the actual import or [Close] to cancel.")
+            logBold(getString(R.string.data_transfer_import_preview, getString(R.string.data_transfer_start), getString(R.string.data_transfer_close)))
             bStart.isEnabled = true
             bStart.setOnClickListener {
                 bStart.isEnabled = false
                 startImport(cacheFile, true)
             }
         } else {
-            logBold("Done. Press [Close] to end the import operation.")
+            logBold(getString(R.string.data_transfer_import_done, getString(R.string.data_transfer_close)))
         }
     }
 

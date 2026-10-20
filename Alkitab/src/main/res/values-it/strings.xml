@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s note sono assegnate a questo verso.</string>
     <string name="desc_verse_attribute_progress_mark">%s è questo.</string>
     <string name="desc_progress_mark_list">Lista di pin</string>
-    <string name="desc_backspace">Indietro</string>
+    <string name="desc_backspace">Elimina l’ultimo carattere</string>
     <string name="desc_bfl_back">Tocca per tornare indietro, lunga pressione per vedere i luoghi visitati</string>
     <string name="desc_bfl_forward">Tocca per andare avanti, lunga pressione per vedere i luoghi visitati</string>
     <string name="intent_filter_open_yes_file">Apri file YES</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Vecchio Testamento</string>
     <string name="book_filter_old_pentateuch">Pentateuco</string>
     <string name="book_filter_old_history">Storia</string>
-    <string name="book_filter_old_wisdom">Saggezza</string>
+    <string name="book_filter_old_wisdom">Libri sapienziali e poetici</string>
     <string name="book_filter_old_major_prophets">Profeti maggiori</string>
     <string name="book_filter_old_minor_prophets">Profeti minori</string>
     <string name="book_filter_new_testament">Nuovo Testamento</string>
@@ -382,7 +382,7 @@
     <string name="pref_verseNumberIsShown_title">Mostra numeri del verso</string>
     <string name="pref_verseNumberIsShown_summary">Mostra il numero del verso all\'inizio di ogni verso</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Bible app 100% free gratuita, licenza sotto Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">App della Bibbia completamente gratuita</string>
     <string name="about_user_guide">Guida all\'uso</string>
     <string name="about_version_name">versione %s</string>
     <string name="about_material_sources">Fonti materiali</string>
@@ -537,6 +537,15 @@
     <string name="highlight_style_color">Anteprima del colore evidenziato</string>
     <string name="highlight_style_loading">Caricamento versetti…</string>
     <string name="highlight_style_no_verses">Nessun versetto disponibile per questa anteprima.</string>
+    <string name="data_transfer_send">Invia</string>
+    <string name="data_transfer_start">Avvia</string>
+    <string name="data_transfer_close">Chiudi</string>
+    <string name="desc_navigate_up">Torna al livello superiore</string>
+    <string name="desc_more_options">Altre opzioni</string>
+    <string name="share_url_getting">Recupero del link di condivisione…</string>
+    <string name="data_transfer_export_ready">Tocca [%1$s] per inviare i dati esportati a un’altra app.</string>
+    <string name="data_transfer_import_preview">Le operazioni sopra sono un’anteprima. Tocca [%1$s] per importare i dati o [%2$s] per annullare.</string>
+    <string name="data_transfer_import_done">Completato. Tocca [%1$s] per chiudere.</string>
     <string name="dv_version_unavailable">La versione selezionata non è disponibile. È in uso %1$s. Tocca per cambiare.</string>
     <string name="dv_version_unset">È in uso %1$s. Tocca per scegliere una versione della Bibbia.</string>
 </resources>

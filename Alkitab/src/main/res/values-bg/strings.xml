@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">Към този стих са присъединени %s бележки.</string>
     <string name="desc_verse_attribute_progress_mark">В настоящето време тук %s.</string>
     <string name="desc_progress_mark_list">Списък на маркерите за придвижване</string>
-    <string name="desc_backspace">Клавиш за връщане</string>
+    <string name="desc_backspace">Изтриване на последния знак</string>
     <string name="intent_filter_open_yes_file">Отвори YES-файл</string>
     <string name="intent_filter_open_pdb_file">Отвори PDB-файл</string>
     <string name="intent_filter_open_pdb_or_yes_file">Отвори PDB/YES-файл</string>
@@ -297,7 +297,7 @@
     <string name="book_filter_old_testament">Стария Завет</string>
     <string name="book_filter_old_pentateuch">Петокнижие</string>
     <string name="book_filter_old_history">История</string>
-    <string name="book_filter_old_wisdom">Мъдрост</string>
+    <string name="book_filter_old_wisdom">Книги на мъдростта и поезията</string>
     <string name="book_filter_old_major_prophets">Големи Пророци</string>
     <string name="book_filter_old_minor_prophets">Малки Пророци</string>
     <string name="book_filter_new_testament">Новия завет</string>
@@ -376,7 +376,7 @@
     <string name="pref_bottomToolbarOnText_title">Навигация на долния панел</string>
     <string name="pref_bottomToolbarOnText_summary">Разполага панела за навигации в долната част на прозореца на Библията</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% безплатно приложение на Библията, лицензирано под Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">100% безплатно приложение за Библията</string>
     <string name="about_user_guide">Ръководство на потребителя</string>
     <string name="about_version_name">версия %s</string>
     <string name="about_material_sources">Източници на материали</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Предварителен преглед на подчертавания цвят</string>
     <string name="highlight_style_loading">Зареждане на стихове…</string>
     <string name="highlight_style_no_verses">Няма налични стихове за този преглед.</string>
+    <string name="data_transfer_send">Изпрати</string>
+    <string name="data_transfer_start">Старт</string>
+    <string name="data_transfer_close">Затвори</string>
+    <string name="desc_navigate_up">Назад</string>
+    <string name="desc_more_options">Още опции</string>
+    <string name="share_url_getting">Получаване на URL за споделяне…</string>
+    <string name="data_transfer_export_ready">Докоснете [%1$s], за да изпратите експортираните данни в друго приложение.</string>
+    <string name="data_transfer_import_preview">Операциите по-горе са предварителен преглед. Докоснете [%1$s], за да импортирате данните, или [%2$s], за да отмените.</string>
+    <string name="data_transfer_import_done">Готово. Докоснете [%1$s], за да затворите.</string>
     <string name="dv_version_unavailable">Избраната версия не е налична. Използва се %1$s. Докоснете, за да промените.</string>
     <string name="dv_version_unset">Използва се %1$s. Докоснете, за да изберете библейски превод.</string>
 </resources>

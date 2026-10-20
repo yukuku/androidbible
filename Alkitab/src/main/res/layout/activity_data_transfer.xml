@@ -59,7 +59,7 @@
 			android:id="@+id/bSend"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:text="Send"
+			android:text="@string/data_transfer_send"
 			app:layout_constraintBottom_toTopOf="@+id/bStart"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent" />
@@ -68,7 +68,7 @@
 			android:id="@+id/bStart"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:text="Start"
+			android:text="@string/data_transfer_start"
 			app:layout_constraintBottom_toTopOf="@+id/bClose"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent" />
@@ -77,7 +77,7 @@
 			android:id="@+id/bClose"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:text="Close"
+			android:text="@string/data_transfer_close"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent" />

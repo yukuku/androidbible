@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s notatek jest dołączonych do tego wersu.</string>
     <string name="desc_verse_attribute_progress_mark">%s jest w tym miejscu.</string>
     <string name="desc_progress_mark_list">Lista wskaźników postępów</string>
-    <string name="desc_backspace">Cofnij</string>
+    <string name="desc_backspace">Usuń ostatni znak</string>
     <string name="desc_bfl_back">Kliknij aby powrócić, przytryzymaj aby zobaczyć historie przeglądanych miejsc</string>
     <string name="desc_bfl_forward">Kliknij aby przejść dalej, przytrzymaj aby zobaczyć historie przeglądanych miejsc</string>
     <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Stary Testament</string>
     <string name="book_filter_old_pentateuch">Pięcioksiąg</string>
     <string name="book_filter_old_history">Historyczne</string>
-    <string name="book_filter_old_wisdom">Mądrości</string>
+    <string name="book_filter_old_wisdom">Księgi mądrościowe i poetyckie</string>
     <string name="book_filter_old_major_prophets">Prorocy więksi</string>
     <string name="book_filter_old_minor_prophets">Prorocy mniejsi</string>
     <string name="book_filter_new_testament">Nowy Testament</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Pokaż numer wersu</string>
     <string name="pref_verseNumberIsShown_summary">Pokaż numer wersu na początku każdego wersu</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">W 100% darmowa aplikacja Biblijna na licencji Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">Całkowicie darmowa aplikacja biblijna</string>
     <string name="about_user_guide">Przewodnik użytkownika</string>
     <string name="about_version_name">wersja %s</string>
     <string name="about_material_sources">Źródła materiałów</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Podgląd koloru podświetlenia</string>
     <string name="highlight_style_loading">Ładowanie wersetów…</string>
     <string name="highlight_style_no_verses">Brak dostępnych wersetów dla tego podglądu.</string>
+    <string name="data_transfer_send">Wyślij</string>
+    <string name="data_transfer_start">Rozpocznij</string>
+    <string name="data_transfer_close">Zamknij</string>
+    <string name="desc_navigate_up">Przejdź wyżej</string>
+    <string name="desc_more_options">Więcej opcji</string>
+    <string name="share_url_getting">Pobieranie adresu URL do udostępnienia…</string>
+    <string name="data_transfer_export_ready">Dotknij [%1$s], aby wysłać wyeksportowane dane do innej aplikacji.</string>
+    <string name="data_transfer_import_preview">Powyższe operacje to tylko podgląd. Dotknij [%1$s], aby zaimportować dane, lub [%2$s], aby anulować.</string>
+    <string name="data_transfer_import_done">Gotowe. Dotknij [%1$s], aby zamknąć.</string>
     <string name="dv_version_unavailable">Wybrany przekład jest niedostępny. Używany jest %1$s. Dotknij, aby zmienić.</string>
     <string name="dv_version_unset">Używany jest %1$s. Dotknij, aby wybrać przekład Biblii.</string>
 </resources>

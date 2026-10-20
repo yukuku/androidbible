@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s note sunt atașate la acest verset.</string>
     <string name="desc_verse_attribute_progress_mark">%s este în prezent aici.</string>
     <string name="desc_progress_mark_list">Lista însemne progres</string>
-    <string name="desc_backspace">Tasta de ștergere</string>
+    <string name="desc_backspace">Șterge ultimul caracter</string>
     <string name="desc_bfl_back">Atinge ca să revii, apasă lung ca să vezi locațiile vizitate</string>
     <string name="desc_bfl_forward">Atinge ca să avansezi, apasă lung ca să vezi locațiile vizitate</string>
     <string name="intent_filter_open_yes_file">Deschide fişier YES</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Vechiul Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuh</string>
     <string name="book_filter_old_history">Istoric</string>
-    <string name="book_filter_old_wisdom">Înțelepciunea</string>
+    <string name="book_filter_old_wisdom">Cărți de înțelepciune și poezie</string>
     <string name="book_filter_old_major_prophets">Profeții mari</string>
     <string name="book_filter_old_minor_prophets">Profeții mici</string>
     <string name="book_filter_new_testament">Nou Testament</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Arată numerele versetelor</string>
     <string name="pref_verseNumberIsShown_summary">Arată numărul versetului la începutul fiecărui verset</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">Aplicație de Biblie 100% gratuită, licențiată sub Licența Apache 2.0</string>
+    <string name="about_text_desc" formatted="false">Aplicație biblică complet gratuită</string>
     <string name="about_user_guide">Ghidul utilizatorului</string>
     <string name="about_version_name">versiune %s</string>
     <string name="about_material_sources">Surse materiale</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Previzualizează culoarea evidențierii</string>
     <string name="highlight_style_loading">Se încarcă versete…</string>
     <string name="highlight_style_no_verses">Nu există versete disponibile pentru această previzualizare.</string>
+    <string name="data_transfer_send">Trimite</string>
+    <string name="data_transfer_start">Începe</string>
+    <string name="data_transfer_close">Închide</string>
+    <string name="desc_navigate_up">Navighează în sus</string>
+    <string name="desc_more_options">Mai multe opțiuni</string>
+    <string name="share_url_getting">Se obține URL-ul de partajare…</string>
+    <string name="data_transfer_export_ready">Atingeți [%1$s] pentru a trimite datele exportate către altă aplicație.</string>
+    <string name="data_transfer_import_preview">Operațiunile de mai sus sunt o previzualizare. Atingeți [%1$s] pentru a importa datele sau [%2$s] pentru a anula.</string>
+    <string name="data_transfer_import_done">Gata. Atingeți [%1$s] pentru a închide.</string>
     <string name="dv_version_unavailable">Traducerea selectată nu este disponibilă. Se folosește %1$s. Atingeți pentru a schimba.</string>
     <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
 </resources>

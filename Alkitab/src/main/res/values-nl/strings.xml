@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s notities zijn gekoppeld aan dit vers.</string>
     <string name="desc_verse_attribute_progress_mark">%s is op dit moment hier.</string>
     <string name="desc_progress_mark_list">Lijst over pins</string>
-    <string name="desc_backspace">Backspace</string>
+    <string name="desc_backspace">Laatste teken verwijderen</string>
     <string name="desc_bfl_back">Klik om terug te gaan, klik langer om bezochte locaties te zien</string>
     <string name="desc_bfl_forward">Klik om verder te gaan, klik langer om bezochte locaties te zien</string>
     <string name="intent_filter_open_yes_file">Open YES bestand</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Oude Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
     <string name="book_filter_old_history">Geschiedenis</string>
-    <string name="book_filter_old_wisdom">Wijsheid</string>
+    <string name="book_filter_old_wisdom">Wijsheidsboeken en poëzie</string>
     <string name="book_filter_old_major_prophets">Grote profeten</string>
     <string name="book_filter_old_minor_prophets">Kleine profeten</string>
     <string name="book_filter_new_testament">Nieuwe Testament</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Toon vers nummers</string>
     <string name="pref_verseNumberIsShown_summary">Toon de vers nummers aan het begin van elk vers</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bijbel app, gelicentieerd onder Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">100% gratis Bijbel-app</string>
     <string name="about_user_guide">Handleiding</string>
     <string name="about_version_name">versie %s</string>
     <string name="about_material_sources">Bronmateriaal</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Bekijk een voorbeeld van de markeringskleur</string>
     <string name="highlight_style_loading">Verzen laden…</string>
     <string name="highlight_style_no_verses">Er zijn geen verzen beschikbaar voor deze preview.</string>
+    <string name="data_transfer_send">Verzenden</string>
+    <string name="data_transfer_start">Starten</string>
+    <string name="data_transfer_close">Sluiten</string>
+    <string name="desc_navigate_up">Omhoog navigeren</string>
+    <string name="desc_more_options">Meer opties</string>
+    <string name="share_url_getting">Link voor delen ophalen…</string>
+    <string name="data_transfer_export_ready">Tik op [%1$s] om je geëxporteerde gegevens naar een andere app te sturen.</string>
+    <string name="data_transfer_import_preview">De bovenstaande bewerkingen zijn een voorbeeld. Tik op [%1$s] om de gegevens te importeren of op [%2$s] om te annuleren.</string>
+    <string name="data_transfer_import_done">Gereed. Tik op [%1$s] om te sluiten.</string>
     <string name="dv_version_unavailable">De gekozen vertaling is niet beschikbaar. %1$s wordt gebruikt. Tik om te wijzigen.</string>
     <string name="dv_version_unset">%1$s wordt gebruikt. Tik om een Bijbelvertaling te kiezen.</string>
 </resources>

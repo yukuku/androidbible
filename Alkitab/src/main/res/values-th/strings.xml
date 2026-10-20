@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">ข้อนี้มีโน้ตจำนวน %s โน้ตแนบมาด้วยค่ะ</string>
     <string name="desc_verse_attribute_progress_mark">%s อยู่ตรงนี้ที่ปัจจุบัน</string>
     <string name="desc_progress_mark_list">รายการพิน</string>
-    <string name="desc_backspace">ลบ</string>
+    <string name="desc_backspace">ลบอักขระสุดท้าย</string>
     <string name="intent_filter_open_yes_file">เปิดไฟล์ YES</string>
     <string name="intent_filter_open_pdb_file">เปิดไฟล์ PDB</string>
     <string name="intent_filter_open_pdb_or_yes_file">เปิดไฟล์ PDB/YES</string>
@@ -297,7 +297,7 @@
     <string name="book_filter_old_testament">พันธสัญญาเดิม</string>
     <string name="book_filter_old_pentateuch">พระบัญญัติ</string>
     <string name="book_filter_old_history">ประวัติศาสตร์</string>
-    <string name="book_filter_old_wisdom">หมวดปรีชาญาณ</string>
+    <string name="book_filter_old_wisdom">วรรณกรรมปัญญาและบทกวี</string>
     <string name="book_filter_old_major_prophets">หมวดผู้เผยพระวจนะใหญ่</string>
     <string name="book_filter_old_minor_prophets">หมวดผู้เผยพระวจนะน้อย</string>
     <string name="book_filter_new_testament">พันธสัญญาใหม่</string>
@@ -376,7 +376,7 @@
     <string name="pref_bottomToolbarOnText_title">ให้ระบบการนำทางข้ออยู่ด้านหลัง</string>
     <string name="pref_bottomToolbarOnText_summary">ให้แถบเครื่องมือนำทางข้ออยู่ด้านหลังของหน้าจอในจอพระคัมภีร์</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">แอปพระคัมภีร์ฟรี 100% อนุญาตภายใต้ Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">แอปพระคัมภีร์ฟรีทั้งหมด</string>
     <string name="about_user_guide">คู่มือการใช้</string>
     <string name="about_version_name">เวอร์ชั่น %s</string>
     <string name="about_material_sources">แหล่งข้อมูล</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">ดูตัวอย่างสีไฮไลต์</string>
     <string name="highlight_style_loading">กำลังโหลดข้อพระคัมภีร์…</string>
     <string name="highlight_style_no_verses">ไม่มีข้อพระคัมภีร์สำหรับตัวอย่างนี้</string>
+    <string name="data_transfer_send">ส่ง</string>
+    <string name="data_transfer_start">เริ่ม</string>
+    <string name="data_transfer_close">ปิด</string>
+    <string name="desc_navigate_up">ย้อนกลับ</string>
+    <string name="desc_more_options">ตัวเลือกเพิ่มเติม</string>
+    <string name="share_url_getting">กำลังรับ URL สำหรับแชร์…</string>
+    <string name="data_transfer_export_ready">แตะ [%1$s] เพื่อส่งข้อมูลที่ส่งออกไปยังแอปอื่น</string>
+    <string name="data_transfer_import_preview">การดำเนินการข้างต้นเป็นเพียงการแสดงตัวอย่าง แตะ [%1$s] เพื่อนำเข้าข้อมูล หรือ [%2$s] เพื่อยกเลิก</string>
+    <string name="data_transfer_import_done">เสร็จแล้ว แตะ [%1$s] เพื่อปิด</string>
     <string name="dv_version_unavailable">ฉบับที่เลือกไม่พร้อมใช้งาน กำลังใช้ %1$s แตะเพื่อเปลี่ยน</string>
     <string name="dv_version_unset">กำลังใช้ %1$s แตะเพื่อเลือกฉบับพระคัมภีร์</string>
 </resources>

@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s ang mga nota kay naka attach sa kining bersikulo.</string>
     <string name="desc_verse_attribute_progress_mark">%s kay naa karun dinhi.</string>
     <string name="desc_progress_mark_list">Listahan sa mga pin</string>
-    <string name="desc_backspace">Backspace</string>
+    <string name="desc_backspace">Papasa ang kataposang karakter</string>
     <string name="intent_filter_open_yes_file">Ablihon ang YES file</string>
     <string name="intent_filter_open_pdb_file">Ablihon ang PDB file</string>
     <string name="intent_filter_open_pdb_or_yes_file">Ablihon ang PDB/YES file</string>
@@ -295,7 +295,7 @@
     <string name="book_filter_old_testament">Karaan na testamento</string>
     <string name="book_filter_old_pentateuch">Pentatueuch</string>
     <string name="book_filter_old_history">Kasaysayan</string>
-    <string name="book_filter_old_wisdom">Kaalam</string>
+    <string name="book_filter_old_wisdom">Kaalam ug balak</string>
     <string name="book_filter_old_major_prophets">Dakong mga propeta</string>
     <string name="book_filter_old_minor_prophets">Minor nga propeta</string>
     <string name="book_filter_new_testament">Ebanghelyo</string>
@@ -374,7 +374,7 @@
     <string name="pref_bottomToolbarOnText_title">Ubos na bersikulong nabigasyon</string>
     <string name="pref_bottomToolbarOnText_summary">Ibutang ang bersikulong nabigasyong toolbar sa ubos sa Bible screen</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% libreng biblya nga app, lisensyado ubos sa Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">100% libre nga app sa Bibliya</string>
     <string name="about_user_guide">Giya sa tiggamit</string>
     <string name="about_version_name">beryon %s</string>
     <string name="about_material_sources">Mga tinubdan sa materyales</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">I-preview ang kolor sa highlight</string>
     <string name="highlight_style_loading">Nagkarga sa mga bersikulo…</string>
     <string name="highlight_style_no_verses">Walay mga bersikulo nga magamit alang niini nga preview.</string>
+    <string name="data_transfer_send">Ipadala</string>
+    <string name="data_transfer_start">Sugdi</string>
+    <string name="data_transfer_close">Isira</string>
+    <string name="desc_navigate_up">Balik</string>
+    <string name="desc_more_options">Ubang kapilian</string>
+    <string name="share_url_getting">Gikuha ang URL sa pagpaambit…</string>
+    <string name="data_transfer_export_ready">I-tap ang [%1$s] aron ipadala ang imong gi-eksport nga datos ngadto sa laing app.</string>
+    <string name="data_transfer_import_preview">Ang mga operasyon sa ibabaw usa pa lamang ka pasiuna nga pagtan-aw. I-tap ang [%1$s] aron i-import ang datos o [%2$s] aron kanselahon.</string>
+    <string name="data_transfer_import_done">Nahuman na. I-tap ang [%1$s] aron isira.</string>
     <string name="dv_version_unavailable">Dili magamit ang gipiling bersiyon. Gigamit ang %1$s. I-tap aron usbon.</string>
     <string name="dv_version_unset">Gigamit ang %1$s. I-tap aron mopili og bersiyon sa Bibliya.</string>
 </resources>

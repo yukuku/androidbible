@@ -217,7 +217,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s hierdie verse het notas by.</string>
     <string name="desc_verse_attribute_progress_mark">%s is huidiglik hier.</string>
     <string name="desc_progress_mark_list">Lys van vorderings merkers</string>
-    <string name="desc_backspace">Back Space</string>
+    <string name="desc_backspace">Vee laaste karakter uit</string>
     <string name="intent_filter_open_yes_file">Maak Yes leêr oop</string>
     <string name="intent_filter_open_pdb_file">Maak PDB leêr oop</string>
     <string name="intent_filter_open_pdb_or_yes_file">Maak PDB/YES leêr oop</string>
@@ -296,7 +296,7 @@
     <string name="book_filter_old_testament">Ou Testament</string>
     <string name="book_filter_old_pentateuch">Pentateug</string>
     <string name="book_filter_old_history">Geskiedenis</string>
-    <string name="book_filter_old_wisdom">Wysheid</string>
+    <string name="book_filter_old_wisdom">Wysheid en poësie</string>
     <string name="book_filter_old_major_prophets">Primêre Profete</string>
     <string name="book_filter_old_minor_prophets">Sekondêre Profete</string>
     <string name="book_filter_new_testament">Nuwe Testament</string>
@@ -375,7 +375,7 @@
     <string name="pref_bottomToolbarOnText_title">Onderste vers navigasie</string>
     <string name="pref_bottomToolbarOnText_summary">Plaas vers navigasie balk onderaan die Bybel skerm</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">100% gratis Bybel toep, gelisensieerd onder Apache License 2.0</string>
+    <string name="about_text_desc" formatted="false">100% gratis Bybeltoepassing</string>
     <string name="about_user_guide">Gebruikers Gids</string>
     <string name="about_version_name">weergawe %s</string>
     <string name="about_material_sources">Materiaal Bronne</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Voorskou hoogtepuntkleur</string>
     <string name="highlight_style_loading">Laai verse …</string>
     <string name="highlight_style_no_verses">Geen verse beskikbaar vir hierdie voorskou nie.</string>
+    <string name="data_transfer_send">Stuur</string>
+    <string name="data_transfer_start">Begin</string>
+    <string name="data_transfer_close">Maak toe</string>
+    <string name="desc_navigate_up">Gaan terug</string>
+    <string name="desc_more_options">Meer opsies</string>
+    <string name="share_url_getting">Kry deel-URL…</string>
+    <string name="data_transfer_export_ready">Tik op [%1$s] om jou uitgevoerde data na ’n ander toepassing te stuur.</string>
+    <string name="data_transfer_import_preview">Die bewerkings hierbo is ’n voorskou. Tik op [%1$s] om die data in te voer of [%2$s] om te kanselleer.</string>
+    <string name="data_transfer_import_done">Klaar. Tik op [%1$s] om toe te maak.</string>
     <string name="dv_version_unavailable">Die gekose weergawe is nie beskikbaar nie. Gebruik %1$s. Tik om te verander.</string>
     <string name="dv_version_unset">Gebruik %1$s. Tik om ’n Bybelweergawe te kies.</string>
 </resources>

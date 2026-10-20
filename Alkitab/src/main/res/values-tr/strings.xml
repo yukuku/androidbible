@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">Bu ayette %s notu var.</string>
     <string name="desc_verse_attribute_progress_mark">%s şuan burada.</string>
     <string name="desc_progress_mark_list">İğnelerin listesi</string>
-    <string name="desc_backspace">Geri tuşu</string>
+    <string name="desc_backspace">Son karakteri sil</string>
     <string name="desc_bfl_back">Geri dönmek için dokunun, ziyaret edilen yerleri görmek için uzun basın</string>
     <string name="desc_bfl_forward">İleri gitmek için dokunun, ziyaret edilen yerleri görmek için uzun basın</string>
     <string name="intent_filter_open_yes_file">YES dosyasını aç</string>
@@ -300,7 +300,7 @@
     <string name="book_filter_old_testament">Eski Ahit</string>
     <string name="book_filter_old_pentateuch">Tevrat</string>
     <string name="book_filter_old_history">Tarihçe</string>
-    <string name="book_filter_old_wisdom">Bilgelik</string>
+    <string name="book_filter_old_wisdom">Bilgelik ve şiir kitapları</string>
     <string name="book_filter_old_major_prophets">Büyük Peygamberler</string>
     <string name="book_filter_old_minor_prophets">Küçük Peygamberler</string>
     <string name="book_filter_new_testament">Yeni Ahit</string>
@@ -381,7 +381,7 @@
     <string name="pref_verseNumberIsShown_title">Ayet numaralarını göster</string>
     <string name="pref_verseNumberIsShown_summary">Her ayetin başında ayet numarasını göster</string>
     <!-- about -->
-    <string name="about_text_desc" tools:ignore="AndroidLintStringFormatInvalid">%100 bedava İncil uygulaması, Apache License 2.0 yetkisi altında</string>
+    <string name="about_text_desc" formatted="false">Tamamen ücretsiz Kutsal Kitap uygulaması</string>
     <string name="about_user_guide">Kullanıcı Rehberi</string>
     <string name="about_version_name">sürüm %s</string>
     <string name="about_material_sources">Materyal Kaynakları</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Vurgu rengini önizleyin</string>
     <string name="highlight_style_loading">Ayetler yükleniyor…</string>
     <string name="highlight_style_no_verses">Bu önizleme için ayet yok.</string>
+    <string name="data_transfer_send">Gönder</string>
+    <string name="data_transfer_start">Başlat</string>
+    <string name="data_transfer_close">Kapat</string>
+    <string name="desc_navigate_up">Üst düzeye git</string>
+    <string name="desc_more_options">Diğer seçenekler</string>
+    <string name="share_url_getting">Paylaşım URL’si alınıyor…</string>
+    <string name="data_transfer_export_ready">Dışa aktarılan verileri başka bir uygulamaya göndermek için [%1$s] düğmesine dokunun.</string>
+    <string name="data_transfer_import_preview">Yukarıdaki işlemler bir önizlemedir. Verileri içe aktarmak için [%1$s], iptal etmek için [%2$s] düğmesine dokunun.</string>
+    <string name="data_transfer_import_done">Tamamlandı. Kapatmak için [%1$s] düğmesine dokunun.</string>
     <string name="dv_version_unavailable">Seçilen çeviri kullanılamıyor. %1$s kullanılıyor. Değiştirmek için dokunun.</string>
     <string name="dv_version_unset">%1$s kullanılıyor. Bir Kutsal Kitap çevirisi seçmek için dokunun.</string>
 </resources>

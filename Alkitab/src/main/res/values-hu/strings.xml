@@ -218,7 +218,7 @@
     <string name="desc_verse_attribute_multiple_notes">%s megjegyzés hozzáadva a versszakhoz.</string>
     <string name="desc_verse_attribute_progress_mark">%s itt van jelenleg.</string>
     <string name="desc_progress_mark_list">Jelölőlista</string>
-    <string name="desc_backspace">Vissza</string>
+    <string name="desc_backspace">Utolsó karakter törlése</string>
     <string name="desc_bfl_back">Érintésre visszalépés, hosszan nyomásra a korábban nézett helyek</string>
     <string name="desc_bfl_forward">Érintésre továbblépés, hosszan nyomásra a korábban nézett helyek</string>
     <string name="intent_filter_open_yes_file">YES fájl megnyitása</string>
@@ -359,7 +359,7 @@
 	<!-- Notification channels -->
     <string name="about_material_sources">Anyagforrások</string>
     <string name="about_project_page">Projektoldal</string>
-    <string name="about_text_desc">100%-ban ingyenes Biblia alkalmazás, az Apache License 2.0 alatt licencelve</string>
+    <string name="about_text_desc" formatted="false">Teljesen ingyenes Biblia-alkalmazás</string>
     <string name="about_user_guide">Felhasználói útmutató</string>
     <string name="audio_bar_close">Hangsáv bezárása</string>
     <string name="audio_bar_next_verse">Következő versszak</string>
@@ -385,7 +385,7 @@
     <string name="book_filter_new_pauline_epistles">Páli levelek</string>
     <string name="book_filter_old_major_prophets">Nagypróféták</string>
     <string name="book_filter_old_minor_prophets">Kispróféták</string>
-    <string name="book_filter_old_wisdom">Bölcsességi könyvek</string>
+    <string name="book_filter_old_wisdom">Bölcsességi és költői könyvek</string>
     <string name="color_picker_channel_blue">KÉK</string>
     <string name="color_picker_channel_green">ZÖLD</string>
     <string name="color_picker_channel_red">PIROS</string>
@@ -536,6 +536,15 @@
     <string name="highlight_style_color">Kiemelés színének előnézete</string>
     <string name="highlight_style_loading">Igeversek betöltése…</string>
     <string name="highlight_style_no_verses">Ehhez az előnézethez nem állnak rendelkezésre igeversek.</string>
+    <string name="data_transfer_send">Küldés</string>
+    <string name="data_transfer_start">Indítás</string>
+    <string name="data_transfer_close">Bezárás</string>
+    <string name="desc_navigate_up">Vissza</string>
+    <string name="desc_more_options">További lehetőségek</string>
+    <string name="share_url_getting">Megosztási URL lekérése…</string>
+    <string name="data_transfer_export_ready">Az exportált adatok másik alkalmazásba küldéséhez koppints a(z) [%1$s] gombra.</string>
+    <string name="data_transfer_import_preview">A fenti műveletek csak előnézetet mutatnak. Az adatok importálásához koppints a(z) [%1$s] gombra, a megszakításhoz pedig a(z) [%2$s] gombra.</string>
+    <string name="data_transfer_import_done">Kész. A bezáráshoz koppints a(z) [%1$s] gombra.</string>
     <string name="dv_version_unavailable">A kiválasztott fordítás nem érhető el. A használt fordítás: %1$s. Koppintson a módosításhoz.</string>
     <string name="dv_version_unset">A használt fordítás: %1$s. Koppintson egy bibliafordítás kiválasztásához.</string>
 </resources>
