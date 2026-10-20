@@ -373,7 +373,7 @@
     <string name="pref_textPadding_title">Τα πλαίσια γύρω από το κείμενο</string>
     <string name="pref_textPadding_summary">Σμικρύνετε το κείμενο σε μια γραμμή για ευκολία ανάγνωσης</string>
     <string name="pref_bottomToolbarOnText_title">Περιήγηση στον κάτω στίχο</string>
-    <string name="pref_bottomToolbarOnText_summary">Βάλτε την γραμμή εργαλείων περιήγησης στο στίχο στο κάτω μέρος της οθόνης Βίβλου</string>
+    <string name="pref_bottomToolbarOnText_summary">Τοποθέτηση γραμμών εργαλείων στο κάτω μέρος</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">Εντελώς δωρεάν εφαρμογή της Αγίας Γραφής</string>
     <string name="about_user_guide">Οδηγός Χρήσης</string>
@@ -522,18 +522,15 @@
     <string name="devotion_unavailable">Αυτός ο βιβλικός στοχασμός δεν είναι ακόμη διαθέσιμος στον διακομιστή.</string>
     <string name="devotion_select">Επιλέξτε βιβλικό στοχασμό και ημερομηνία</string>
     <string name="highlight_style_original">Χρησιμοποιήστε πρωτότυπα χρώματα επισήμανσης</string>
+    <string name="highlight_style_original_value">Χρήση αρχικών χρωμάτων</string>
     <string name="highlight_style_customize">Προσαρμόστε τα χρώματα επισήμανσης</string>
-    <string name="highlight_style_current">Προσαρμόσιμα χρώματα (προεπιλογή)</string>
-    <string name="highlight_style_custom_value">Προσαρμοσμένο: %1$d%% προσαρμοστικό</string>
+    <string name="highlight_style_current">Χρήση προσαρμοσμένων χρωμάτων</string>
+    <string name="highlight_style_custom_value">%1$d%% προσαρμογή</string>
     <string name="highlight_style_adjustment">Επισήμανση προσαρμογής χρώματος</string>
-    <string name="highlight_style_explanation">Επιλέξτε πόσα χρώματα επισήμανσης προσαρμόζονται στο φόντο της σελίδας.</string>
-    <string name="highlight_style_zero">0 · Πρωτότυπο</string>
-    <string name="highlight_style_one">1 · Προσαρμοστικό</string>
+    <string name="highlight_style_explanation">Ορίστε πόσο προσαρμόζονται τα χρώματα επισήμανσης στο φόντο του κειμένου</string>
+    <string name="highlight_style_zero">Αρχικά</string>
+    <string name="highlight_style_one">Προσαρμοσμένα</string>
     <string name="highlight_style_preview">Προεπισκόπηση</string>
-    <string name="highlight_style_preview_only">Τα χρώματα προεπισκόπησης επηρεάζουν μόνο αυτό το δείγμα.</string>
-    <string name="highlight_style_background">Προεπισκόπηση χρώματος φόντου</string>
-    <string name="highlight_style_text">Προεπισκόπηση χρώματος κειμένου</string>
-    <string name="highlight_style_color">Προεπισκόπηση χρώματος επισήμανσης</string>
     <string name="highlight_style_loading">Φόρτωση στίχων…</string>
     <string name="highlight_style_no_verses">Δεν υπάρχουν διαθέσιμοι στίχοι για αυτήν την προεπισκόπηση.</string>
     <string name="data_transfer_send">Αποστολή</string>

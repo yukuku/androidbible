@@ -374,7 +374,7 @@
     <string name="pref_textPadding_title">Граници около текста</string>
     <string name="pref_textPadding_summary">Прави граница около текста за по-удобно четене.</string>
     <string name="pref_bottomToolbarOnText_title">Навигация на долния панел</string>
-    <string name="pref_bottomToolbarOnText_summary">Разполага панела за навигации в долната част на прозореца на Библията</string>
+    <string name="pref_bottomToolbarOnText_summary">Поставете лентите с инструменти в долната част</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">100% безплатно приложение за Библията</string>
     <string name="about_user_guide">Ръководство на потребителя</string>
@@ -522,18 +522,15 @@
     <string name="devotion_unavailable">Това духовно размишление все още не е достъпно на сървъра.</string>
     <string name="devotion_select">Изберете духовно размишление и дата</string>
     <string name="highlight_style_original">Използвайте оригинални цветове за подчертаване</string>
+    <string name="highlight_style_original_value">Използвайте оригиналните цветове</string>
     <string name="highlight_style_customize">Персонализирайте цветовете за подчертаване</string>
-    <string name="highlight_style_current">Адаптивни цветове (по подразбиране)</string>
-    <string name="highlight_style_custom_value">Персонализирано: %1$d%% адаптивно</string>
+    <string name="highlight_style_current">Използвайте коригираните цветове</string>
+    <string name="highlight_style_custom_value">%1$d%% корекция</string>
     <string name="highlight_style_adjustment">Корекция на цвета на маркирането</string>
-    <string name="highlight_style_explanation">Изберете колко цветове за осветяване се адаптират към фона на страницата.</string>
-    <string name="highlight_style_zero">0 · Оригинал</string>
-    <string name="highlight_style_one">1 · Адаптивен</string>
+    <string name="highlight_style_explanation">Задайте доколко цветовете за подчертаване се коригират спрямо фона на текста</string>
+    <string name="highlight_style_zero">Оригинални</string>
+    <string name="highlight_style_one">Коригирани</string>
     <string name="highlight_style_preview">Визуализация</string>
-    <string name="highlight_style_preview_only">Цветовете за визуализация засягат само тази проба.</string>
-    <string name="highlight_style_background">Визуализация на цвета на фона</string>
-    <string name="highlight_style_text">Визуализация на цвета на текста</string>
-    <string name="highlight_style_color">Предварителен преглед на подчертавания цвят</string>
     <string name="highlight_style_loading">Зареждане на стихове…</string>
     <string name="highlight_style_no_verses">Няма налични стихове за този преглед.</string>
     <string name="data_transfer_send">Изпрати</string>

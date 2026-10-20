@@ -372,7 +372,7 @@
     <string name="pref_textPadding_title">Ang mga kilid sa palibot sa teksto</string>
     <string name="pref_textPadding_summary">Maghimo og teksto sa linyang mas pig-ot para sayon sa pagbasa</string>
     <string name="pref_bottomToolbarOnText_title">Ubos na bersikulong nabigasyon</string>
-    <string name="pref_bottomToolbarOnText_summary">Ibutang ang bersikulong nabigasyong toolbar sa ubos sa Bible screen</string>
+    <string name="pref_bottomToolbarOnText_summary">Ibutang ang mga toolbar sa ubos</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">100% libre nga app sa Bibliya</string>
     <string name="about_user_guide">Giya sa tiggamit</string>
@@ -522,18 +522,15 @@
     <string name="devotion_unavailable">Kining inadlaw nga artikulo sa debosyonal sa Bibliya wala pa makuha gikan sa server.</string>
     <string name="devotion_select">Pagpili ug adlaw-adlaw nga artikulo sa debosyonal sa Bibliya ug petsa</string>
     <string name="highlight_style_original">Gamita ang orihinal nga highlight nga mga kolor</string>
+    <string name="highlight_style_original_value">Gamita ang orihinal nga mga kolor</string>
     <string name="highlight_style_customize">Ipasibo ang mga kolor sa highlight</string>
-    <string name="highlight_style_current">Adaptive nga mga kolor (default)</string>
-    <string name="highlight_style_custom_value">Custom: %1$d%% mapahiangay</string>
+    <string name="highlight_style_current">Gamita ang gipahiangay nga mga kolor</string>
+    <string name="highlight_style_custom_value">%1$d%% gipahiangay</string>
     <string name="highlight_style_adjustment">I-highlight ang pag-adjust sa kolor</string>
-    <string name="highlight_style_explanation">Pilia kung unsa kadaghan ang mga kolor sa highlight nga ipahiangay sa background sa panid.</string>
-    <string name="highlight_style_zero">0 · Orihinal</string>
-    <string name="highlight_style_one">1 · Mapasibo</string>
+    <string name="highlight_style_explanation">Itakda kung unsa ka dako ang pagpahiangay sa mga kolor sa highlight sa background sa teksto</string>
+    <string name="highlight_style_zero">Orihinal</string>
+    <string name="highlight_style_one">Gipahiangay</string>
     <string name="highlight_style_preview">Paglantaw</string>
-    <string name="highlight_style_preview_only">Ang mga kolor sa preview makaapekto lang sa sample.</string>
-    <string name="highlight_style_background">I-preview ang kolor sa background</string>
-    <string name="highlight_style_text">I-preview ang kolor sa teksto</string>
-    <string name="highlight_style_color">I-preview ang kolor sa highlight</string>
     <string name="highlight_style_loading">Nagkarga sa mga bersikulo…</string>
     <string name="highlight_style_no_verses">Walay mga bersikulo nga magamit alang niini nga preview.</string>
     <string name="data_transfer_send">Ipadala</string>

@@ -437,7 +437,7 @@
 	<string name="pref_textPadding_summary">Make text in a line narrower to ease reading</string>
 
 	<string name="pref_bottomToolbarOnText_title">Toolbar at the bottom</string>
-	<string name="pref_bottomToolbarOnText_summary">Put toolbars at the bottom on all screens</string>
+	<string name="pref_bottomToolbarOnText_summary">Put toolbars at the bottom</string>
 
 	<string name="pref_verseNumberIsShown_title">Show verse numbers</string>
 	<string name="pref_verseNumberIsShown_summary">Show the verse number at the beginning of each verse</string>
@@ -573,18 +573,15 @@
     <string name="devotion_select">Select devotion and date</string>
     <string name="song_select">Select song</string>
     <string name="highlight_style_original">Use original highlight colors</string>
+    <string name="highlight_style_original_value">Use original colors</string>
     <string name="highlight_style_customize">Customize highlight colors</string>
-    <string name="highlight_style_current">Adaptive colors (default)</string>
-    <string name="highlight_style_custom_value">Custom: %1$d%% adaptive</string>
+    <string name="highlight_style_current">Use adjusted colors</string>
+    <string name="highlight_style_custom_value">%1$d%% adjusted</string>
     <string name="highlight_style_adjustment">Highlight color adjustment</string>
-    <string name="highlight_style_explanation">Choose how much highlight colors adapt to the page background.</string>
-    <string name="highlight_style_zero">0 · Original</string>
-    <string name="highlight_style_one">1 · Adaptive</string>
+    <string name="highlight_style_explanation">Set how much highlight colors are adjusted to the text background</string>
+    <string name="highlight_style_zero">Original</string>
+    <string name="highlight_style_one">Adjusted</string>
     <string name="highlight_style_preview">Preview</string>
-    <string name="highlight_style_preview_only">Preview colors only affect this sample.</string>
-    <string name="highlight_style_background">Preview background color</string>
-    <string name="highlight_style_text">Preview text color</string>
-    <string name="highlight_style_color">Preview highlight color</string>
     <string name="highlight_style_loading">Loading verses…</string>
     <string name="highlight_style_no_verses">No verses available for this preview.</string>
     <string name="search_goto_reference">Go to: ^1</string>
@@ -597,4 +594,5 @@
     <string name="data_transfer_export_ready">Tap [%1$s] to send your exported data to another app.</string>
     <string name="data_transfer_import_preview">The operations above are a preview. Tap [%1$s] to import the data or [%2$s] to cancel.</string>
     <string name="data_transfer_import_done">Done. Tap [%1$s] to close.</string>
+    <string name="highlight_style_percentage" translatable="false">%1$d%%</string>
 </resources>
