@@ -536,4 +536,6 @@
     <string name="highlight_style_color">I-preview ang kulay ng highlight</string>
     <string name="highlight_style_loading">Naglo-load ng mga talata…</string>
     <string name="highlight_style_no_verses">Walang magagamit na mga talata para sa preview na ito.</string>
+    <string name="dv_version_unavailable">Hindi available ang napiling salin. Ginagamit ang %1$s. I-tap para palitan.</string>
+    <string name="dv_version_unset">Ginagamit ang %1$s. I-tap para pumili ng salin ng Bibliya.</string>
 </resources>

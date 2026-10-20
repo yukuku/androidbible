@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Previzualizează culoarea evidențierii</string>
     <string name="highlight_style_loading">Se încarcă versete…</string>
     <string name="highlight_style_no_verses">Nu există versete disponibile pentru această previzualizare.</string>
+    <string name="dv_version_unavailable">Traducerea selectată nu este disponibilă. Se folosește %1$s. Atingeți pentru a schimba.</string>
+    <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
 </resources>

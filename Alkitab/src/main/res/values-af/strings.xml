@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Voorskou hoogtepuntkleur</string>
     <string name="highlight_style_loading">Laai verse …</string>
     <string name="highlight_style_no_verses">Geen verse beskikbaar vir hierdie voorskou nie.</string>
+    <string name="dv_version_unavailable">Die gekose weergawe is nie beskikbaar nie. Gebruik %1$s. Tik om te verander.</string>
+    <string name="dv_version_unset">Gebruik %1$s. Tik om ’n Bybelweergawe te kies.</string>
 </resources>

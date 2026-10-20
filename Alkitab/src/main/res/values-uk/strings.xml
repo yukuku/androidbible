@@ -537,4 +537,6 @@
     <string name="highlight_style_color">Попередній перегляд кольору виділення</string>
     <string name="highlight_style_loading">Завантаження віршів…</string>
     <string name="highlight_style_no_verses">Для цього попереднього перегляду немає доступних віршів.</string>
+    <string name="dv_version_unavailable">Вибраний переклад недоступний. Використовується %1$s. Натисніть, щоб змінити.</string>
+    <string name="dv_version_unset">Використовується %1$s. Натисніть, щоб вибрати переклад Біблії.</string>
 </resources>

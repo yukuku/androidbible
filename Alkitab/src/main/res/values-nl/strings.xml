@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Bekijk een voorbeeld van de markeringskleur</string>
     <string name="highlight_style_loading">Verzen laden…</string>
     <string name="highlight_style_no_verses">Er zijn geen verzen beschikbaar voor deze preview.</string>
+    <string name="dv_version_unavailable">De gekozen vertaling is niet beschikbaar. %1$s wordt gebruikt. Tik om te wijzigen.</string>
+    <string name="dv_version_unset">%1$s wordt gebruikt. Tik om een Bijbelvertaling te kiezen.</string>
 </resources>

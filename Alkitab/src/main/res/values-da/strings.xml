@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Forhåndsvisning af højlysfarve</string>
     <string name="highlight_style_loading">Indlæser vers…</string>
     <string name="highlight_style_no_verses">Ingen tilgængelige vers for denne forhåndsvisning.</string>
+    <string name="dv_version_unavailable">Den valgte oversættelse er ikke tilgængelig. Bruger %1$s. Tryk for at ændre.</string>
+    <string name="dv_version_unset">Bruger %1$s. Tryk for at vælge en bibeloversættelse.</string>
 </resources>

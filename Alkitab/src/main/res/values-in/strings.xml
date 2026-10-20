@@ -544,4 +544,6 @@
     <string name="highlight_style_loading">Memuat ayat…</string>
     <string name="highlight_style_no_verses">Tidak ada ayat untuk pratinjau ini.</string>
     <string name="search_goto_reference">Loncat ke: ^1</string>
+    <string name="dv_version_unavailable">Versi yang dipilih tidak tersedia. Menggunakan %1$s. Ketuk untuk mengganti.</string>
+    <string name="dv_version_unset">Menggunakan %1$s. Ketuk untuk memilih versi Alkitab.</string>
 </resources>

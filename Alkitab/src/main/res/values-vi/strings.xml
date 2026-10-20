@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Màu tô sáng xem trước</string>
     <string name="highlight_style_loading">Đang tải các câu Kinh Thánh…</string>
     <string name="highlight_style_no_verses">Không có câu Kinh Thánh nào cho bản xem trước này.</string>
+    <string name="dv_version_unavailable">Bản dịch đã chọn không khả dụng. Đang dùng %1$s. Nhấn để thay đổi.</string>
+    <string name="dv_version_unset">Đang dùng %1$s. Nhấn để chọn bản dịch Kinh Thánh.</string>
 </resources>

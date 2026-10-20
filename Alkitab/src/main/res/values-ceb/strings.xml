@@ -536,4 +536,6 @@
     <string name="highlight_style_color">I-preview ang kolor sa highlight</string>
     <string name="highlight_style_loading">Nagkarga sa mga bersikulo…</string>
     <string name="highlight_style_no_verses">Walay mga bersikulo nga magamit alang niini nga preview.</string>
+    <string name="dv_version_unavailable">Dili magamit ang gipiling bersiyon. Gigamit ang %1$s. I-tap aron usbon.</string>
+    <string name="dv_version_unset">Gigamit ang %1$s. I-tap aron mopili og bersiyon sa Bibliya.</string>
 </resources>

@@ -536,4 +536,6 @@
     <string name="highlight_style_color">预览高亮颜色</string>
     <string name="highlight_style_loading">正在加载经文…</string>
     <string name="highlight_style_no_verses">此预览没有可用的经文。</string>
+    <string name="dv_version_unavailable">所选译本不可用。正在使用%1$s。点按以更改。</string>
+    <string name="dv_version_unset">正在使用%1$s。点按以选择圣经译本。</string>
 </resources>

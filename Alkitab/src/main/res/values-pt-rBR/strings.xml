@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Visualizar cor de destaque</string>
     <string name="highlight_style_loading">Carregando versículos…</string>
     <string name="highlight_style_no_verses">Nenhum versículo disponível para esta prévia.</string>
+    <string name="dv_version_unavailable">A versão escolhida não está disponível. Usando %1$s. Toque para alterar.</string>
+    <string name="dv_version_unset">Usando %1$s. Toque para escolher uma versão da Bíblia.</string>
 </resources>

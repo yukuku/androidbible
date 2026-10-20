@@ -536,4 +536,6 @@
     <string name="highlight_style_color">ดูตัวอย่างสีไฮไลต์</string>
     <string name="highlight_style_loading">กำลังโหลดข้อพระคัมภีร์…</string>
     <string name="highlight_style_no_verses">ไม่มีข้อพระคัมภีร์สำหรับตัวอย่างนี้</string>
+    <string name="dv_version_unavailable">ฉบับที่เลือกไม่พร้อมใช้งาน กำลังใช้ %1$s แตะเพื่อเปลี่ยน</string>
+    <string name="dv_version_unset">กำลังใช้ %1$s แตะเพื่อเลือกฉบับพระคัมภีร์</string>
 </resources>

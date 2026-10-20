@@ -14,6 +14,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import org.junit.After
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
@@ -129,6 +130,35 @@ class DailyVerseLoadingTest {
             assertTrue(selected.hasDataFile())
             assertNull(selected.version)
             assertSame(VersionImpl.getInternalVersion(), DailyVerseData.getVersion(selected.versionId))
+            assertTrue(DailyVerseData.resolveVersion(selected.versionId).isFallback)
+        } finally {
+            App.services = services
+        }
+    }
+
+    @Test
+    fun `version resolution distinguishes deleted missing and available translations`() {
+        val missing = MVersionDb().apply { filename = File(tmp.root, "missing.yes").absolutePath }
+        val available = mockk<MVersionDb>()
+        val version = mockk<Version>()
+        every { available.versionId } returns "preset/available"
+        every { available.hasDataFile() } returns true
+        every { available.version } returns version
+        val db = mockk<InternalDb>()
+        every { db.listAllVersions() } returns listOf(missing, available)
+        val storage = mockk<StorageProvider>()
+        every { storage.db } returns db
+        val services = App.services
+        App.services = AppServices(storage, services.versions, services.uiDimensions)
+        try {
+            for (id in listOf("preset/deleted", missing.versionId)) {
+                val resolved = DailyVerseData.resolveVersion(id)
+                assertTrue(resolved.isFallback)
+                assertSame(VersionImpl.getInternalVersion(), resolved.version)
+            }
+            val resolved = DailyVerseData.resolveVersion(available.versionId)
+            assertFalse(resolved.isFallback)
+            assertSame(version, resolved.version)
         } finally {
             App.services = services
         }

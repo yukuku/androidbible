@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Podgląd koloru podświetlenia</string>
     <string name="highlight_style_loading">Ładowanie wersetów…</string>
     <string name="highlight_style_no_verses">Brak dostępnych wersetów dla tego podglądu.</string>
+    <string name="dv_version_unavailable">Wybrany przekład jest niedostępny. Używany jest %1$s. Dotknij, aby zmienić.</string>
+    <string name="dv_version_unset">Używany jest %1$s. Dotknij, aby wybrać przekład Biblii.</string>
 </resources>

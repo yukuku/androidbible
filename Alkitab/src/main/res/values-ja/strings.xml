@@ -536,4 +536,6 @@
     <string name="highlight_style_color">プレビューのハイライトカラー</string>
     <string name="highlight_style_loading">聖句を読み込み中…</string>
     <string name="highlight_style_no_verses">このプレビューに使用できる聖句はありません。</string>
+    <string name="dv_version_unavailable">選択した訳を利用できません。%1$sを使用しています。タップして変更してください。</string>
+    <string name="dv_version_unset">%1$sを使用しています。タップして聖書の訳を選んでください。</string>
 </resources>

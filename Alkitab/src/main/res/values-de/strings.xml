@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Vorschau der Hervorhebungsfarbe</string>
     <string name="highlight_style_loading">Verse werden geladen…</string>
     <string name="highlight_style_no_verses">Für diese Vorschau sind keine Verse verfügbar.</string>
+    <string name="dv_version_unavailable">Die gewählte Übersetzung ist nicht verfügbar. %1$s wird verwendet. Zum Ändern tippen.</string>
+    <string name="dv_version_unset">%1$s wird verwendet. Tippen, um eine Bibelübersetzung auszuwählen.</string>
 </resources>

@@ -74,7 +74,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 - [REM-21: Migrate Song Storage from Parcelable to JSON](tech-debt-remediation/REM-21-song-json-storage.md) ✅ **2.8** — app-side done; backend redirect branching and `kidung-data` authoring are out of scope (separate repos).
 - [REM-22: Introduce Jetpack Compose for New Screens](tech-debt-remediation/REM-22-jetpack-compose.md): **2.6** (ongoing; navigation, verse lists/dialogs, reader toolbar, songs, and sync login default to Compose; search toolbar also ported)
 - [REM-45: Migrate the IsiActivity Shell to Compose (Staged)](tech-debt-remediation/REM-45-isiactivity-compose-shell.md): **2.2** (partial; normal toolbar ported, selection toolbar and other shell elements remain; split-container migration depends on retiring the legacy verse pipeline)
-- [REM-44: Make the Daily-Verse Widget's Version Fallback Explicit](tech-debt-remediation/REM-44-widget-version-fallback.md) — **2.6** (2026-07 audit)
+- [REM-44: Make the Daily-Verse Widget's Version Fallback Explicit](tech-debt-remediation/REM-44-widget-version-fallback.md) ✅ **2.6** (completed 2026-10-20; localized fallback notice and per-widget reconfiguration)
 - [REM-42: Bounded Eviction for the Version Cache](tech-debt-remediation/REM-42-version-cache-eviction.md) — **2.4** (2026-07 audit)
 - [REM-43: Surface or Resolve Cross-Device Sync Conflicts](tech-debt-remediation/REM-43-sync-conflict-handling.md) — **2.4** (long-standing last-write-wins limitation)
 
@@ -127,7 +127,7 @@ Summary reconciled with the implementation, test sources, and task records on 20
 | [REM-19](tech-debt-remediation/REM-19-prdownloader-replacement.md)      | ~~Replace PRDownloader~~ ✅                                           | **2.8** | 3     |
 | [REM-21](tech-debt-remediation/REM-21-song-json-storage.md)             | ~~Song storage migration~~ ✅ (app-side)                              | **2.8** | 4     |
 | [REM-22](tech-debt-remediation/REM-22-jetpack-compose.md)               | Jetpack Compose adoption (ongoing across multiple screens)           | **2.6** | 4     |
-| [REM-44](tech-debt-remediation/REM-44-widget-version-fallback.md)       | Explicit widget version fallback (2026-07 audit)                     | **2.6** | 4     |
+| [REM-44](tech-debt-remediation/REM-44-widget-version-fallback.md)       | ~~Explicit widget version fallback~~ ✅                            | **2.6** | 4     |
 | [REM-42](tech-debt-remediation/REM-42-version-cache-eviction.md)        | Bounded version-cache eviction (2026-07 audit)                       | **2.4** | 4     |
 | [REM-43](tech-debt-remediation/REM-43-sync-conflict-handling.md)        | Surface/resolve sync conflicts                                       | **2.4** | 4     |
 | [REM-45](tech-debt-remediation/REM-45-isiactivity-compose-shell.md)     | IsiActivity Compose shell (partial; normal toolbar ported)           | **2.2** | 4     |

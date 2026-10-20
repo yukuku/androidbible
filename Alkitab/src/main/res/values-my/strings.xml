@@ -536,4 +536,6 @@
     <string name="highlight_style_color">အသားပေးအရောင်ကို အစမ်းကြည့်ပါ။</string>
     <string name="highlight_style_loading">ကျမ်းပိုဒ်များကို ဖွင့်နေသည်…</string>
     <string name="highlight_style_no_verses">ဤအစမ်းကြည့်ရှုမှုအတွက် ကျမ်းပိုဒ်များ မရရှိနိုင်ပါ။</string>
+    <string name="dv_version_unavailable">ရွေးထားသော ဘာသာပြန်မူကို မရနိုင်ပါ။ %1$s ကို အသုံးပြုထားသည်။ ပြောင်းရန် နှိပ်ပါ။</string>
+    <string name="dv_version_unset">%1$s ကို အသုံးပြုထားသည်။ သမ္မာကျမ်းစာ ဘာသာပြန်မူကို ရွေးရန် နှိပ်ပါ။</string>
 </resources>

@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Цвет выделения при предварительном просмотре</string>
     <string name="highlight_style_loading">Загрузка стихов…</string>
     <string name="highlight_style_no_verses">Для этого предварительного просмотра нет доступных стихов.</string>
+    <string name="dv_version_unavailable">Выбранный перевод недоступен. Используется %1$s. Нажмите, чтобы изменить.</string>
+    <string name="dv_version_unset">Используется %1$s. Нажмите, чтобы выбрать перевод Библии.</string>
 </resources>

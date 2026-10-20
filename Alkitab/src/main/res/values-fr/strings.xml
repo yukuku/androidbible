@@ -536,4 +536,6 @@
     <string name="highlight_style_color">Aperçu de la couleur de surbrillance</string>
     <string name="highlight_style_loading">Chargement des versets…</string>
     <string name="highlight_style_no_verses">Aucun verset disponible pour cet aperçu.</string>
+    <string name="dv_version_unavailable">La version choisie est indisponible. %1$s est utilisée. Appuyez pour changer.</string>
+    <string name="dv_version_unset">%1$s est utilisée. Appuyez pour choisir une version de la Bible.</string>
 </resources>
