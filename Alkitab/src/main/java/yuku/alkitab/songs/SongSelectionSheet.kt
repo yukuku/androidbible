@@ -53,7 +53,12 @@ object SongSelectionSheet {
         onBookSelected: (String) -> Unit,
         onMoreSelected: () -> Unit,
     ) {
-        ComposeBottomSheetHost.show(activity, dimBackground = false) { dismiss ->
+        ComposeBottomSheetHost.show(
+            activity = activity,
+            sheetMaxWidth = 320.dp,
+            sheetGesturesEnabled = true,
+            dimBackground = false,
+        ) { dismiss ->
             val state = remember { KeypadState() }
             val books = remember { App.services.storage.songDb.listSongBookInfos() }
             var expanded by remember { mutableStateOf(false) }
@@ -61,7 +66,12 @@ object SongSelectionSheet {
                 onReady(state, dismiss)
                 onDispose(onDisposed)
             }
-            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp)) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            ) {
                 ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
                     OutlinedTextField(
                         value = state.bookName,
@@ -70,7 +80,9 @@ object SongSelectionSheet {
                         singleLine = true,
                         textStyle = MaterialTheme.typography.bodyLarge,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                     )
                     ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         books.forEach { book ->
@@ -98,7 +110,9 @@ object SongSelectionSheet {
                         )
                     }
                 }
-                Row(Modifier.fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier
+                    .fillMaxWidth()
+                    .height(56.dp), verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.weight(3f), contentAlignment = Alignment.Center) {
                         Text(state.enteredCode, fontSize = 24.sp)
                     }
@@ -129,7 +143,10 @@ object SongSelectionSheet {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Spacer(Modifier.weight(1f))
                     Key("0", true, Modifier.weight(1f)) { onKey(R.id.bDigit0) }
-                    Box(Modifier.weight(2f).height(56.dp).padding(horizontal = 2.dp), contentAlignment = Alignment.Center) {
+                    Box(Modifier
+                        .weight(2f)
+                        .height(56.dp)
+                        .padding(horizontal = 2.dp), contentAlignment = Alignment.Center) {
                         Button(onClick = { onKey(R.id.bOk) }, enabled = state.okEnabled, modifier = Modifier.fillMaxWidth()) {
                             Text(stringResource(R.string.ok))
                         }
@@ -141,7 +158,9 @@ object SongSelectionSheet {
 
     @Composable
     private fun Key(label: String, enabled: Boolean, modifier: Modifier, onClick: () -> Unit) {
-        Box(modifier.height(56.dp).padding(2.dp), contentAlignment = Alignment.Center) {
+        Box(modifier
+            .height(56.dp)
+            .padding(2.dp), contentAlignment = Alignment.Center) {
             TextButton(
                 onClick = onClick,
                 enabled = enabled,
