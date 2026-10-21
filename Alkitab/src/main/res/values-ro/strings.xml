@@ -377,7 +377,7 @@
     <string name="pref_textPadding_title">Marginile în jurul textului</string>
     <string name="pref_textPadding_summary">Modifică textul într-o linie îngustă pentru a ușura lectura</string>
     <string name="pref_bottomToolbarOnText_title">Navigare verset în jos</string>
-    <string name="pref_bottomToolbarOnText_summary">Pune bara de navigare verset, în partea de jos a ecranului Bibliei</string>
+    <string name="pref_bottomToolbarOnText_summary">Plasează barele de instrumente în partea de jos</string>
     <string name="pref_verseNumberIsShown_title">Arată numerele versetelor</string>
     <string name="pref_verseNumberIsShown_summary">Arată numărul versetului la începutul fiecărui verset</string>
     <!-- about -->
@@ -522,18 +522,15 @@
     <string name="devotion_select">Selectați zilnic articolul biblic devoțional și data</string>
     <string name="song_select">Selectați melodia</string>
     <string name="highlight_style_original">Folosiți culori de evidențiere originale</string>
+    <string name="highlight_style_original_value">Folosește culorile originale</string>
     <string name="highlight_style_customize">Personalizați culorile de evidențiere</string>
-    <string name="highlight_style_current">Culori adaptive (implicit)</string>
-    <string name="highlight_style_custom_value">Personalizat: %1$d%% adaptiv</string>
+    <string name="highlight_style_current">Folosește culorile ajustate</string>
+    <string name="highlight_style_custom_value">%1$d%% ajustat</string>
     <string name="highlight_style_adjustment">Ajustarea culorilor de evidențiere</string>
-    <string name="highlight_style_explanation">Alegeți cât de mult se adaptează culorile de evidențiere la fundalul paginii.</string>
-    <string name="highlight_style_zero">0 · Original</string>
-    <string name="highlight_style_one">1 · Adaptiv</string>
+    <string name="highlight_style_explanation">Setează cât de mult sunt ajustate culorile de evidențiere la fundalul textului</string>
+    <string name="highlight_style_zero">Originale</string>
+    <string name="highlight_style_one">Ajustate</string>
     <string name="highlight_style_preview">Previzualizare</string>
-    <string name="highlight_style_preview_only">Culorile de previzualizare afectează numai acest eșantion.</string>
-    <string name="highlight_style_background">Previzualizează culoarea de fundal</string>
-    <string name="highlight_style_text">Previzualizează culoarea textului</string>
-    <string name="highlight_style_color">Previzualizează culoarea evidențierii</string>
     <string name="highlight_style_loading">Se încarcă versete…</string>
     <string name="highlight_style_no_verses">Nu există versete disponibile pentru această previzualizare.</string>
     <string name="data_transfer_send">Trimite</string>

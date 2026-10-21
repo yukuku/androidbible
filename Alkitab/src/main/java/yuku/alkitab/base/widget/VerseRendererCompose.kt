@@ -91,6 +91,7 @@ object VerseRendererCompose {
      * @param verseNumberText label for the verse number (e.g. "12" or "12a").
      * @param highlightInfo full or partial highlight to overlay.
      * @param checked when the verse is selected; suppresses red text + verse-number color override.
+     * @param highlightAdjustment opacity adjustment for the highlight, defaulting to the reading setting.
      */
     fun render(
         isVerseNumberShown: Boolean,
@@ -99,11 +100,12 @@ object VerseRendererCompose {
         verseNumberText: String = Ari.toVerse(ari).toString(),
         highlightInfo: Highlights.Info? = null,
         checked: Boolean = false,
+        highlightAdjustment: Float = App.services.uiDimensions.applied().highlightColorAdjustment,
     ): Result {
         val text_len = text.length
 
         if (text_len < 2 || text[0] != '@' || text[1] != '@') {
-            return simpleRender(isVerseNumberShown, text, verseNumberText, highlightInfo, checked)
+            return simpleRender(isVerseNumberShown, text, verseNumberText, highlightInfo, checked, highlightAdjustment)
         }
 
         var text_c = buf_char_.get()!!
@@ -124,7 +126,7 @@ object VerseRendererCompose {
         processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, checked, ari, inlineLinks, rubies)
 
         val built = sb.toAnnotatedString()
-        val withHighlight = applyHighlight(built, highlightInfo, startPosAfterVerseNumber, checked)
+        val withHighlight = applyHighlight(built, highlightInfo, startPosAfterVerseNumber, checked, highlightAdjustment)
 
         return Result(
             text = withHighlight,
@@ -266,10 +268,16 @@ object VerseRendererCompose {
      * In a checked verse, the run under the band gets its own text color, picked against the
      * band instead of the selection color used for the rest of the verse.
      */
-    private fun applyHighlight(text: AnnotatedString, highlightInfo: Highlights.Info?, startPosAfterVerseNumber: Int, checked: Boolean): AnnotatedString {
+    private fun applyHighlight(
+        text: AnnotatedString,
+        highlightInfo: Highlights.Info?,
+        startPosAfterVerseNumber: Int,
+        checked: Boolean,
+        highlightAdjustment: Float,
+    ): AnnotatedString {
         if (highlightInfo == null) return text
         val applied = App.services.uiDimensions.applied()
-        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor, applied.highlightColorAdjustment)
+        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor, highlightAdjustment)
         val textColor = if (checked) {
             val selectedVerseBgColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
             Color(TextColorUtil.getForCheckedVerseHighlight(applied.fontColor, selectedVerseBgColor, applied.backgroundColor, band))
@@ -280,9 +288,11 @@ object VerseRendererCompose {
 
         val builder = AnnotatedString.Builder(text)
         val verseBody = text.subSequence(startPosAfterVerseNumber, text.length)
-        if (highlightInfo.shouldRenderAsPartialForVerseText(verseBody.text)) {
-            val rawStart = startPosAfterVerseNumber + highlightInfo.partial!!.startOffset
-            val rawEnd = startPosAfterVerseNumber + highlightInfo.partial!!.endOffset
+        val partial = highlightInfo.partial
+
+        if (partial != null && highlightInfo.shouldRenderAsPartialForVerseText(verseBody.text)) {
+            val rawStart = startPosAfterVerseNumber + partial.startOffset
+            val rawEnd = startPosAfterVerseNumber + partial.endOffset
             val start = minOf(rawStart, rawEnd)
             val end = maxOf(rawStart, rawEnd)
             if (end > start) {
@@ -389,6 +399,7 @@ object VerseRendererCompose {
         verseNumberText: String,
         highlightInfo: Highlights.Info?,
         checked: Boolean,
+        highlightAdjustment: Float,
     ): Result {
         val sb = AnnotatedString.Builder()
 
@@ -419,7 +430,7 @@ object VerseRendererCompose {
         }
 
         val built = sb.toAnnotatedString()
-        val withHighlight = applyHighlight(built, highlightInfo, startPosAfterVerseNumber, checked)
+        val withHighlight = applyHighlight(built, highlightInfo, startPosAfterVerseNumber, checked, highlightAdjustment)
 
         return Result(
             text = withHighlight,

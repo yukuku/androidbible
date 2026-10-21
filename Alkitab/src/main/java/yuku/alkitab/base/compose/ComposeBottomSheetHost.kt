@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.DialogWindowProvider
 import kotlinx.coroutines.launch
 
@@ -30,6 +31,17 @@ object ComposeBottomSheetHost {
     @OptIn(ExperimentalMaterial3Api::class)
     @JvmStatic
     fun show(activity: Activity, sheetGesturesEnabled: Boolean = true, dimBackground: Boolean = true, content: @Composable (dismiss: () -> Unit) -> Unit) {
+        show(activity, BottomSheetDefaults.SheetMaxWidth, sheetGesturesEnabled, dimBackground, content)
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun show(
+        activity: Activity,
+        sheetMaxWidth: Dp,
+        sheetGesturesEnabled: Boolean,
+        dimBackground: Boolean,
+        content: @Composable (dismiss: () -> Unit) -> Unit,
+    ) {
         val root = activity.findViewById<ViewGroup>(android.R.id.content) ?: return
         val composeView = ComposeView(activity)
         composeView.setContent {
@@ -41,6 +53,7 @@ object ComposeBottomSheetHost {
                 if (visible) {
                     ModalBottomSheet(
                         sheetState = sheetState,
+                        sheetMaxWidth = sheetMaxWidth,
                         scrimColor = if (dimBackground) BottomSheetDefaults.ScrimColor else Color.Transparent,
                         sheetGesturesEnabled = sheetGesturesEnabled,
                         dragHandle = if (sheetGesturesEnabled) {

@@ -377,7 +377,7 @@
     <string name="pref_textPadding_title">Marges rondom de tekst</string>
     <string name="pref_textPadding_summary">Maak tekst in een regel smaller voor de leesbaarheid</string>
     <string name="pref_bottomToolbarOnText_title">Onderste vers navigatie</string>
-    <string name="pref_bottomToolbarOnText_summary">Zet de vers navigatie toolbar beneden op het Bijbel scherm</string>
+    <string name="pref_bottomToolbarOnText_summary">Werkbalken onderaan plaatsen</string>
     <string name="pref_verseNumberIsShown_title">Toon vers nummers</string>
     <string name="pref_verseNumberIsShown_summary">Toon de vers nummers aan het begin van elk vers</string>
     <!-- about -->
@@ -522,18 +522,15 @@
     <string name="devotion_unavailable">Deze overdenking is nog niet beschikbaar op de server.</string>
     <string name="devotion_select">Selecteer een overdenking en datum</string>
     <string name="highlight_style_original">Gebruik originele accentkleuren</string>
+    <string name="highlight_style_original_value">Oorspronkelijke kleuren gebruiken</string>
     <string name="highlight_style_customize">Markeerkleuren aanpassen</string>
-    <string name="highlight_style_current">Adaptieve kleuren (standaard)</string>
-    <string name="highlight_style_custom_value">Aangepast: %1$d%% adaptief</string>
+    <string name="highlight_style_current">Aangepaste kleuren gebruiken</string>
+    <string name="highlight_style_custom_value">%1$d%% aangepast</string>
     <string name="highlight_style_adjustment">Hoogtepuntkleuraanpassing</string>
-    <string name="highlight_style_explanation">Kies hoeveel markeringskleuren zich aanpassen aan de pagina-achtergrond.</string>
-    <string name="highlight_style_zero">0 · Origineel</string>
-    <string name="highlight_style_one">1 · Adaptief</string>
+    <string name="highlight_style_explanation">Stel in hoeveel de markeringskleuren aan de tekstachtergrond worden aangepast</string>
+    <string name="highlight_style_zero">Oorspronkelijk</string>
+    <string name="highlight_style_one">Aangepast</string>
     <string name="highlight_style_preview">Voorbeeld</string>
-    <string name="highlight_style_preview_only">Voorbeeldkleuren hebben alleen invloed op dit voorbeeld.</string>
-    <string name="highlight_style_background">Voorbeeld van achtergrondkleur</string>
-    <string name="highlight_style_text">Voorbeeld van tekstkleur</string>
-    <string name="highlight_style_color">Bekijk een voorbeeld van de markeringskleur</string>
     <string name="highlight_style_loading">Verzen laden…</string>
     <string name="highlight_style_no_verses">Er zijn geen verzen beschikbaar voor deze preview.</string>
     <string name="data_transfer_send">Verzenden</string>

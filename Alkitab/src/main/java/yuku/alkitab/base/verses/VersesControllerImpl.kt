@@ -698,7 +698,7 @@ class VerseTextHolder(private val view: VerseItem, private val guide: ReadingGui
         }
 
         val attributeView = view.attributeView
-        attributeView.setScale(scaleForAttributeView(App.services.uiDimensions.applied().fontSize2dp * ui.textSizeMult))
+        attributeView.setScale(attributeViewScale(App.services.uiDimensions.applied().fontSize2dp * textSizeMult))
         attributeView.bookmarkCount = data.versesAttributes.bookmarkCountMap_[index]
         attributeView.noteCount = data.versesAttributes.noteCountMap_[index]
         attributeView.progressMarkBits = data.versesAttributes.progressMarkBitsMap_[index]
@@ -795,14 +795,6 @@ class VerseTextHolder(private val view: VerseItem, private val guide: ReadingGui
                 }
             }
         }
-    }
-
-    private fun scaleForAttributeView(fontSizeDp: Float) = when {
-        fontSizeDp >= 13 /* 72% */ && fontSizeDp < 24 /* 133% */ -> 1f
-        fontSizeDp < 8 -> 0.5f // 0 ~ 44%
-        fontSizeDp < 18 -> 0.75f // 44% ~ 72%
-        fontSizeDp >= 36 -> 2f // 200% ~
-        else -> 1.5f // 24 to 36 // 133% ~ 200%
     }
 }
 

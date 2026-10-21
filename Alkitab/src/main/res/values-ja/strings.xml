@@ -374,7 +374,7 @@
     <string name="pref_textPadding_title">文字の周りの余白</string>
     <string name="pref_textPadding_summary">読みやすくするために文字を細くする。</string>
     <string name="pref_bottomToolbarOnText_title">ナビゲーションバーを下にする</string>
-    <string name="pref_bottomToolbarOnText_summary">聖書画面の下部にある詩のナビゲーションツールバーを配置します。</string>
+    <string name="pref_bottomToolbarOnText_summary">ツールバーを下部に配置</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">完全無料の聖書アプリ</string>
     <string name="about_user_guide">使用ガイド</string>
@@ -522,18 +522,15 @@
     <string name="devotion_unavailable">このデボーションはまだサーバーから取得できません。</string>
     <string name="devotion_select">デボーションと日付を選択</string>
     <string name="highlight_style_original">オリジナルのハイライト カラーを使用する</string>
+    <string name="highlight_style_original_value">元の色を使用</string>
     <string name="highlight_style_customize">ハイライトカラーをカスタマイズする</string>
-    <string name="highlight_style_current">アダプティブカラー (デフォルト)</string>
-    <string name="highlight_style_custom_value">カスタム: %1$d%% 適応型</string>
+    <string name="highlight_style_current">調整した色を使用</string>
+    <string name="highlight_style_custom_value">%1$d%% 調整</string>
     <string name="highlight_style_adjustment">ハイライトカラー調整</string>
-    <string name="highlight_style_explanation">ハイライトの色をページの背景にどの程度適応させるかを選択します。</string>
-    <string name="highlight_style_zero">0 · オリジナル</string>
-    <string name="highlight_style_one">1 · アダプティブ</string>
+    <string name="highlight_style_explanation">ハイライトの色を本文の背景に合わせて調整する度合いを設定します</string>
+    <string name="highlight_style_zero">元の色</string>
+    <string name="highlight_style_one">調整後</string>
     <string name="highlight_style_preview">プレビュー</string>
-    <string name="highlight_style_preview_only">プレビューの色はこのサンプルにのみ影響します。</string>
-    <string name="highlight_style_background">プレビューの背景色</string>
-    <string name="highlight_style_text">プレビューのテキストの色</string>
-    <string name="highlight_style_color">プレビューのハイライトカラー</string>
     <string name="highlight_style_loading">聖句を読み込み中…</string>
     <string name="highlight_style_no_verses">このプレビューに使用できる聖句はありません。</string>
     <string name="data_transfer_send">送信</string>

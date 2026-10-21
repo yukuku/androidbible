@@ -374,7 +374,7 @@
     <string name="pref_textPadding_title">ระยะขอบรอบตัวบท</string>
     <string name="pref_textPadding_summary">ทำให้ตัวอักษรที่อยู่เส้นเดียวกันให้แคบลงเพื่อการอ่านที่สะดวกขึ้น</string>
     <string name="pref_bottomToolbarOnText_title">ให้ระบบการนำทางข้ออยู่ด้านหลัง</string>
-    <string name="pref_bottomToolbarOnText_summary">ให้แถบเครื่องมือนำทางข้ออยู่ด้านหลังของหน้าจอในจอพระคัมภีร์</string>
+    <string name="pref_bottomToolbarOnText_summary">วางแถบเครื่องมือไว้ด้านล่าง</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">แอปพระคัมภีร์ฟรีทั้งหมด</string>
     <string name="about_user_guide">คู่มือการใช้</string>
@@ -522,18 +522,15 @@
     <string name="devotion_unavailable">บทความประจำวันนี้ยังไม่มีบนเซิร์ฟเวอร์</string>
     <string name="devotion_select">เลือกบทความประจำวันและวันที่</string>
     <string name="highlight_style_original">ใช้สีไฮไลต์ดั้งเดิม</string>
+    <string name="highlight_style_original_value">ใช้สีเดิม</string>
     <string name="highlight_style_customize">ปรับแต่งสีไฮไลท์</string>
-    <string name="highlight_style_current">ปรับสีได้ (ค่าเริ่มต้น)</string>
-    <string name="highlight_style_custom_value">กำหนดเอง: %1$d%% ปรับตัวได้</string>
+    <string name="highlight_style_current">ใช้สีที่ปรับแล้ว</string>
+    <string name="highlight_style_custom_value">ปรับแล้ว %1$d%%</string>
     <string name="highlight_style_adjustment">การปรับสีไฮไลท์</string>
-    <string name="highlight_style_explanation">เลือกว่าสีไฮไลต์จะปรับให้เข้ากับพื้นหลังของเพจมากน้อยเพียงใด</string>
-    <string name="highlight_style_zero">0 · ต้นฉบับ</string>
-    <string name="highlight_style_one">1 · ปรับตัวได้</string>
+    <string name="highlight_style_explanation">กำหนดระดับการปรับสีไฮไลต์ให้เข้ากับพื้นหลังของข้อความ</string>
+    <string name="highlight_style_zero">สีเดิม</string>
+    <string name="highlight_style_one">ปรับแล้ว</string>
     <string name="highlight_style_preview">ดูตัวอย่าง</string>
-    <string name="highlight_style_preview_only">สีตัวอย่างมีผลกับตัวอย่างนี้เท่านั้น</string>
-    <string name="highlight_style_background">ดูตัวอย่างสีพื้นหลัง</string>
-    <string name="highlight_style_text">ดูตัวอย่างสีข้อความ</string>
-    <string name="highlight_style_color">ดูตัวอย่างสีไฮไลต์</string>
     <string name="highlight_style_loading">กำลังโหลดข้อพระคัมภีร์…</string>
     <string name="highlight_style_no_verses">ไม่มีข้อพระคัมภีร์สำหรับตัวอย่างนี้</string>
     <string name="data_transfer_send">ส่ง</string>

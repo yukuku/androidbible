@@ -163,5 +163,5 @@ contributions.
 
 ![Visible tabs separating the fields of an RPA info section](images/reading-plans.png)
 
-For the runtime format and progress tracking, see [Reading Plans](../modules/reading-plans.md)
+For the runtime format and progress tracking, see [Reading Plans](../modules/reading.md#reading-plans)
 and [Binary Formats](../binary-formats.md#rpb-reading-plan-format).

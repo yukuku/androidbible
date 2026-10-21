@@ -20,6 +20,18 @@ import org.junit.Test
  */
 class HighlightsTest {
     @Test
+    fun `adjustments use exact hundredths and remain stable when normalized repeatedly`() {
+        for (percent in 0..100) {
+            val amount = percent / 100f
+            assertEquals(amount, Highlights.normalizeAdjustment(amount))
+        }
+        for ((input, expected) in listOf(0.001f to 0f, 0.006f to 0.01f, 0.371f to 0.37f, 0.376f to 0.38f, 0.994f to 0.99f, 0.998f to 1f)) {
+            assertEquals(expected, Highlights.normalizeAdjustment(input))
+            assertEquals(expected, Highlights.normalizeAdjustment(Highlights.normalizeAdjustment(input)))
+        }
+    }
+
+    @Test
     fun `zero adjustment reproduces fixed opacity regardless of background or input alpha`() {
         for (background in listOf(0xffffff, 0x000000, 0xf5deb3)) {
             for (color in listOf(0xffff00, 0xff0000, 0x0000ff, 0x00112233, 0xff112233.toInt())) {

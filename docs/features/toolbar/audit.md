@@ -1,5 +1,9 @@
 # Reader toolbar space audit
 
+> Historical measurements from 2026-09-21. Recommendations and dimensions below
+> describe that audit baseline. See [the implemented toolbar](compose-implementation.md)
+> for the resulting design.
+
 Audit date: 2026-09-21.
 
 The reader toolbar leaves very little room for the verse reference, especially

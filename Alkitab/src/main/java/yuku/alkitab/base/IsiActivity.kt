@@ -1683,9 +1683,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         if (textAppearancePanel == null) { // not showing yet
             textAppearancePanel = TextAppearancePanel(
-                this,
-                overlayContainer,
-                object : TextAppearancePanel.Listener {
+                activity = this,
+                parent = overlayContainer,
+                listener = object : TextAppearancePanel.Listener {
                     override fun onValueChanged() {
                         applyPreferences()
                     }
@@ -1695,8 +1695,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                         textAppearancePanel = null
                     }
                 },
-                RequestCodes.FromActivity.TextAppearanceGetFonts,
-                RequestCodes.FromActivity.TextAppearanceCustomColors
+                reqcodeGetFonts = RequestCodes.FromActivity.TextAppearanceGetFonts,
+                reqcodeCustomColors = RequestCodes.FromActivity.TextAppearanceCustomColors,
             )
             splitViewManager.configureTextAppearancePanelForSplitVersion()
             textAppearancePanel?.show()

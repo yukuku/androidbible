@@ -292,7 +292,7 @@ read the binary format in the app.
 
 ## Snappy Compression
 
-The `Snappy` module provides JNI bindings to the Snappy compression library (C++ native code). Used for compressing the `text` section of YES2 files. Compression is per-section, not per-verse — the entire text section is compressed as one block.
+The `Snappy` module provides JNI bindings to the Snappy compression library (C++ native code). Used for compressing the `text` section of YES2 files. The text section uses the `snappy-blocks` layout with independently compressed blocks and block-size metadata.
 
 NDK is required to build this module (`jni/Android.mk` and `jni/Application.mk`).
 

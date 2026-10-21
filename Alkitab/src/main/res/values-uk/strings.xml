@@ -375,7 +375,7 @@
     <string name="pref_textPadding_title">Межі навколо тексту</string>
     <string name="pref_textPadding_summary">Зробіть текст рідшим рядком, щоб полегшити читання</string>
     <string name="pref_bottomToolbarOnText_title">Навігація на нижній панелі</string>
-    <string name="pref_bottomToolbarOnText_summary">Розмістити панель навігації внизу вікна Біблії</string>
+    <string name="pref_bottomToolbarOnText_summary">Розмістити панелі інструментів унизу</string>
     <!-- about -->
     <string name="about_text_desc" formatted="false">Повністю безкоштовний біблійний застосунок</string>
     <string name="about_user_guide">Керівництво користувача</string>
@@ -523,18 +523,15 @@
     <string name="devotion_unavailable">Ці духовні роздуми ще недоступні на сервері.</string>
     <string name="devotion_select">Виберіть духовні роздуми та дату</string>
     <string name="highlight_style_original">Використовуйте оригінальні кольори виділення</string>
+    <string name="highlight_style_original_value">Використовувати початкові кольори</string>
     <string name="highlight_style_customize">Налаштувати кольори виділення</string>
-    <string name="highlight_style_current">Адаптивні кольори (за замовчуванням)</string>
-    <string name="highlight_style_custom_value">Спеціальний: %1$d%% адаптивний</string>
+    <string name="highlight_style_current">Використовувати скориговані кольори</string>
+    <string name="highlight_style_custom_value">%1$d%% коригування</string>
     <string name="highlight_style_adjustment">Регулювання кольору виділення</string>
-    <string name="highlight_style_explanation">Виберіть, наскільки кольори виділення адаптуються до фону сторінки.</string>
-    <string name="highlight_style_zero">0 · Оригінал</string>
-    <string name="highlight_style_one">1 · Адаптивний</string>
+    <string name="highlight_style_explanation">Налаштуйте ступінь коригування кольорів виділення під тло тексту</string>
+    <string name="highlight_style_zero">Початкові</string>
+    <string name="highlight_style_one">Скориговані</string>
     <string name="highlight_style_preview">Попередній перегляд</string>
-    <string name="highlight_style_preview_only">Кольори попереднього перегляду впливають лише на цей зразок.</string>
-    <string name="highlight_style_background">Попередній перегляд кольору фону</string>
-    <string name="highlight_style_text">Перегляд кольору тексту</string>
-    <string name="highlight_style_color">Попередній перегляд кольору виділення</string>
     <string name="highlight_style_loading">Завантаження віршів…</string>
     <string name="highlight_style_no_verses">Для цього попереднього перегляду немає доступних віршів.</string>
     <string name="data_transfer_send">Надіслати</string>

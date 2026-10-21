@@ -1,114 +1,61 @@
-# Text Rendering Pipeline
+# Text rendering
 
-## Overview
+Bible readers supply raw verse text and section headings. The presentation layer
+combines them with verse identity, selection, markers, reading guides, and audio
+highlights. Compose is the default rendering path; legacy Android Views remain
+available through the verse experimental setting.
 
-Bible verse text goes through a multi-stage pipeline from binary storage to rendered `SpannableStringBuilder` displayed in a `RecyclerView`.
+## Shared presentation
 
-## Pipeline
+Verse lists use a common controller interface so the reader, parallel panes,
+and verse dialogs can work with either renderer. Compose builds annotated text
+and native rows; legacy views build spans and custom verse rows. Snippets outside
+verse lists use a shared text slot to follow the reader's appearance.
 
-```
-YES2 binary file
-  → Yes2Reader.loadChapterText()
-    → SingleChapterVerses (array of raw verse strings with formatting codes)
-      → VersesDataModel (merges verses + pericope headers into display list)
-        → VersesControllerImpl (RecyclerView adapter)
-          → VerseRenderer.render() (applies formatting codes as spans)
-            → VerseItem (custom RelativeLayout with background drawing)
-```
+The [verses package](../Alkitab/src/main/java/yuku/alkitab/base/verses) owns these
+controllers and renderers. Both paths must preserve verse addresses, visible
+text, selection behavior, and highlight ranges. Section headings are separate
+items interleaved with verses, rather than part of verse text.
 
-## Formatting Codes
+## Formatting and plain text
 
-Verse text uses inline formatting codes prefixed with `@`:
+Verse text can contain inline formatting for paragraphs, italics, red letters,
+line breaks, footnotes, cross-references, and ruby annotations. The
+[YET guide](developer/yet.md#text-formatting) documents the authoring syntax;
+[Binary formats](binary-formats.md) documents file encoding.
 
-| Code      | Meaning                                          |
-|-----------|--------------------------------------------------|
-| `@@`      | Marks verse as having formatting (must be first) |
-| `@0`      | Paragraph level 0 (no indent)                    |
-| `@1`–`@4` | Paragraph indent levels 1–4                      |
-| `@^`      | Continuation indent                              |
-| `@6`      | Red letter start (Jesus' words)                  |
-| `@5`      | Red letter end                                   |
-| `@9`      | Italic start                                     |
-| `@7`      | Italic end                                       |
-| `@8`      | Line break / blank line                          |
-| `@<tag@>` | Start of special inline element (xref, footnote, ruby) |
-| `@/`      | End of special inline element                    |
+Keep formatting codes out of copied/shared text. `FormattedVerseText` provides
+plain-text conversion. Search uses its own formatting-aware matching path;
+changes must keep query normalization and decoded verse text consistent. See
+[Search](modules/search.md).
 
-Special inline elements:
+`FormattedTextRenderer` supports a smaller span-based formatting surface for
+callers that do not need complete verse rows. It is distinct from the full
+verse-list presentation.
 
-| Element                 | Meaning                                                        |
-|-------------------------|----------------------------------------------------------------|
-| `@<f1@>@/`              | Footnote link, field 1 (empty content)                          |
-| `@<x1@>@/`              | Cross-reference link, field 1 (empty content)                   |
-| `@<r=reading@>base@/`   | Ruby: `reading` is drawn above `base`. A one-letter kind may follow `r` (`@<rf=…@>` furigana, `@<rp=…@>` pinyin, `@<rs=…@>` Strong's, …); it is reported on `RubyRange.kind` and does not change rendering |
+## Ruby annotations
 
-## VerseRenderer
+Compose renders ruby readings above their base text. The base remains the text
+used for highlights, dictionary links, accessibility, copy, and search. Layout
+reserves vertical and horizontal room for readings and handles wrapping and RTL
+text. The legacy verse renderer shows the base without the ruby reading.
 
-`VerseRenderer.kt` processes formatting codes and produces a `SpannableStringBuilder`:
+The [ruby design](features/ruby/design.md) owns encoding, malformed-input rules,
+data-source research, and open work. Renderer code and tests own the placement
+algorithm. `VerseRubySnapshotTest` generates sheets for visual review under
+`Alkitab/build/snapshots/verse-ruby/`.
 
-1. Detects `@@` prefix to determine if verse has formatting
-2. Iterates through characters, building spans for each formatting region
-3. Applies `ForegroundColorSpan` for red letters, `StyleSpan(ITALIC)` for italics
-4. Handles indentation via `LeadingMarginSpan`
-5. Processes `@<tag@>` blocks for cross-references and footnotes
-6. Verse numbers are prepended as superscript spans
+## Appearance and contrast
 
-## FormattedTextRenderer
+Applied reading appearance combines base preferences and per-version size
+adjustments. Pinch zoom updates the reader's base size. Consumers should use
+the shared appearance rather than duplicate preference calculations.
 
-`FormattedTextRenderer.kt` is a lightweight production renderer — "a much simpler version of `VerseRenderer`" per its own doc comment — used where only a subset of the formatting codes matters (italics `@9…@7`, line break `@8`, `@<tag@>…@/` inline elements). It builds a `SpannableStringBuilder` directly, without the verse-number/paragraph machinery of the full pipeline.
+Selection overlays and highlight bands both affect text contrast. Both renderers
+choose readable text for highlighted runs within a selection; red-letter text
+follows the selection's contrast rules. Dictionary links underline text while
+inheriting its color. Saved highlight colors remain unchanged by display-time
+adjustments; see [Markers](modules/markers.md).
 
-A Compose port of verse rendering also exists (`VerseRendererCompose.kt`) alongside the View-based `VerseRenderer.kt`.
-
-## Ruby (Compose only)
-
-`@<r=reading@>base@/` keeps `base` inline in the `AnnotatedString` and records a `VerseRendererCompose.RubyRange` for it, so highlight offsets, dictionary links and TalkBack text are unaffected by the annotation. The verse composable then draws the reading above the base:
-
-- `computeLineMetrics` reserves a band above every line (`LineMetrics.rubyBandPx`) when the verse has ruby, and the text is laid out with `LineHeightStyle.Alignment.Bottom` so the whole surplus sits on top of the glyphs.
-- `widenRubyBases` makes room for a reading wider than its base. `rubySideSlackPx` values the room already beside the base: the whitespace between two words counts, halved when the word beyond it is annotated too, a neighbouring character without ruby is worth one ruby em of overhang (`RUBY_OVERHANG_RATIO`), and a reading directly abutting the base costs a gap (`RUBY_SIDE_GAP_RATIO`). Whatever is still missing is added to the space characters flanking the base, half per side, so a Strong's number over a word as short as `air` widens the gaps around it rather than spreading it into `a i r`. Only a base with no space on a side that needs room, such as one Han character between two others, falls back to letter spacing inside the base.
-- `Modifier.rubyOverlay` paints each reading over its base using the `TextLayoutResult`. Placement is decided per line and per `TextLayoutResult`, not from the text, because only the laid-out geometry knows where the lines broke and how wide the padded gaps ended up: a base that starts a wrapped line has no room to its left however much whitespace precedes it in the text. Readings on a line are ordered by where they were laid out, so a right-to-left run is bounded by the neighbours a reader sees beside it. `rubyLineLayoutPx` then places each one centred over its base (`rubyCentredLeftPx`), pushes right any that would collide with the one before, and pulls the line back from the right edge, so a reading far wider than its base stays whole by borrowing room a narrower neighbour is not using. Only a line holding more than it can fit ellipsises, and even then positions rise left to right so two readings never overlap. A base run broken across lines gets a proportional slice of the reading on each line (`rubySliceFor`). The reading takes the color of the innermost colored span under its centre character (`rubyColorAt`), so red-letter and highlighted, selected runs stay readable.
-- Reading size is `RUBY_FONT_SIZE_RATIO` (0.5) of the verse size.
-
-The View-based `VerseRenderer` ignores the `r` tag and shows only the base text, and `FormattedVerseText.removeSpecialCodes` strips the reading, so search, copy and share operate on the base text. `VerseRubySnapshotTest` renders sample sheets (basics, poetry, highlights, inline styles, typography variants) to `Alkitab/build/snapshots/verse-ruby/` for visual review. See `docs/features/ruby/design.md` for the data format, sources and open items.
-
-## Plain Text Conversion
-
-`FormattedVerseText.removeSpecialCodes()` strips all `@`-codes to produce plain text for:
-- Clipboard copy operations
-- Search indexing
-- Share text generation
-
-This is important — search and copy must use the stripped text, not raw formatted text.
-
-## Pericope Rendering
-
-Pericopes (section headers like "The Sermon on the Mount") are rendered as distinct items in the RecyclerView, interleaved with verses. The `VersesDataModel.itemPointer` array maps display positions:
-- Negative values → pericope index (bitwise NOT)
-- Non-negative values → verse index (0-based)
-
-## VerseItem Layout
-
-`VerseItem.kt` is a custom `RelativeLayout` that handles:
-- Checked/selected state visual feedback (colored background)
-- "Attention" animation (pulse highlight when navigating to a verse)
-- Drag-and-drop for progress mark pins
-- Accessibility (TalkBack support with verse number and text)
-- Highlight color painting on the background canvas
-
-### Text color in a selected verse
-
-A checked verse paints the selection color over the page at `TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA`. The host then forces the text to black or white via `TextColorUtil.getForCheckedVerse`, based on the selection color alone.
-
-A highlight band is drawn on top of that overlay. So both renderers give a highlighted run its own color through `TextColorUtil.getForCheckedVerseHighlight`, which picks whichever of the reading color or the forced color has better contrast against what the band actually paints. Words of Jesus lose their red in a checked verse and follow the same per-run color.
-
-Dictionary links (`DictionaryLinkSpan`, and the Compose `addDictionaryLinks`) only underline. They never set their own color, so they follow the run they sit in.
-
-`VerseTextColorSnapshotTest` renders every theme, selection color, highlight color and selection state through both pipelines into `Alkitab/build/snapshots/verse-text-color/` for visual review.
-
-## Text Sizing
-
-Font size is controlled by:
-1. Base `textSize` preference (user setting)
-2. Per-version `textSizeMult` multiplier (from `PerVersion` settings)
-3. `CalculatedDimensions` in `S.applied()` precomputes final sizes
-
-Two-finger pinch gesture in `IsiActivity` adjusts the base text size in real time.
+`VerseTextColorSnapshotTest` renders theme, selection, and highlight combinations
+through both pipelines under `Alkitab/build/snapshots/verse-text-color/`.

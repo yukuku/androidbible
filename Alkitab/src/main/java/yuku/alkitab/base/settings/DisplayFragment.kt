@@ -47,16 +47,19 @@ class DisplayFragment : PreferenceFragmentCompat() {
             val amount = Highlights.normalizeAdjustment(Preferences.getFloat(Prefkey.highlightColorAdjustment, 1f))
             originalHighlight.isChecked = amount == 0f
             customizeHighlight.summary = when (amount) {
-                0f -> getString(R.string.highlight_style_original)
-                1f -> getString(R.string.highlight_style_current)
-                else -> getString(R.string.highlight_style_custom_value, (amount * 100).roundToInt())
+                0f, 1f -> null
+                else -> getString(R.string.highlight_style_percentage, (amount * 100).roundToInt())
             }
         }
 
         fun saveHighlightAdjustment(amount: Float) {
-            Preferences.setFloat(Prefkey.highlightColorAdjustment, amount)
-            App.services.uiDimensions.recalculate()
-            AppEvents.emitNeedsRestart()
+            val normalized = Highlights.normalizeAdjustment(amount)
+            if (Preferences.getFloat(Prefkey.highlightColorAdjustment, 1f) != normalized) {
+                Preferences.setFloat(Prefkey.highlightColorAdjustment, normalized)
+                App.services.uiDimensions.recalculate()
+                AppEvents.emitNeedsRestart()
+            }
+
             updateHighlightPreferences()
         }
 
@@ -71,7 +74,7 @@ class DisplayFragment : PreferenceFragmentCompat() {
 
         preferenceScreen.addPreference(originalHighlight)
         preferenceScreen.addPreference(customizeHighlight)
-        updateHighlightPreferences()
+        saveHighlightAdjustment(Preferences.getFloat(Prefkey.highlightColorAdjustment, 1f))
 
         findPreference<ListPreference>(getString(R.string.pref_currentReadingDisplay_key))?.let {
             SettingsActivity.autoDisplayListPreference(it)

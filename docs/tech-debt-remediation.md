@@ -85,76 +85,10 @@ Summary reconciled with the implementation, test sources, and task records on 20
 - [REM-51: Make Preference Types and Cache Invalidation Explicit](tech-debt-remediation/REM-51-preferences-architecture.md): typed keys/defaults and cache ownership. Hold/unhold safety is complete in REM-02; editor synchronization is complete in REM-34.
 - [REM-52: Review the FancyShowCaseView Dependency](tech-debt-remediation/REM-52-showcase-dependency.md): evaluate maintenance, Android compatibility, and tip anchoring alongside reader UI work.
 
----
+## How to use this index
 
-## Priority Summary (Sorted by BRICE Score)
-
-| ID                                                                      | Task                                                                 | BRICE   | Phase |
-|-------------------------------------------------------------------------|----------------------------------------------------------------------|---------|-------|
-| [REM-01](tech-debt-remediation/REM-01-songbookutil-deserialization.md)  | ~~Fix SongBookUtil deserialization safety~~ ✅                        | **4.6** | 1     |
-| [REM-02](tech-debt-remediation/REM-02-preferences-hold-unhold.md)       | ~~Fix Preferences hold/unhold safety~~ ✅                             | **4.2** | 1     |
-| [REM-04](tech-debt-remediation/REM-04-fcm-token-retry.md)               | ~~Fix FCM token retry~~ ✅                                            | **4.2** | 1     |
-| [REM-05](tech-debt-remediation/REM-05-devotion-downloader-threading.md) | ~~Fix DevotionDownloader threading~~ ✅                               | **4.0** | 1     |
-| [REM-03](tech-debt-remediation/REM-03-localbroadcastmanager.md)         | ~~Replace LocalBroadcastManager~~ ✅                                  | **3.8** | 1     |
-| [REM-23](tech-debt-remediation/REM-23-ybuild-gradle.md)                 | ~~Port ybuild.sh to Gradle~~ ✅                                       | **3.8** | 2     |
-| [REM-26](tech-debt-remediation/REM-26-verserenderer-kotlin.md)          | ~~Port VerseRenderer to Kotlin~~ ✅                                   | **3.8** | 3     |
-| [REM-33](tech-debt-remediation/REM-33-import-safety.md)                 | Make data-transfer import safe (2026-07 audit)                       | **3.8** | 1     |
-| [REM-35](tech-debt-remediation/REM-35-songbook-update-dfv.md)           | ~~Fix song book update dataFormatVersion~~ ✅                        | **3.8** | 1     |
-| [REM-36](tech-debt-remediation/REM-36-yes2-ascii-decoder.md)            | ~~Fix YES2 ASCII search decoder~~ ✅                                | **3.8** | 1     |
-| [REM-37](tech-debt-remediation/REM-37-bible-audio-state.md)             | ~~Bible audio state + appearance~~ ✅              | **3.8** | 2     |
-| [REM-46](tech-debt-remediation/REM-46-debouncer-thread-leak.md)         | ~~Stop Debouncer thread leak~~ ✅                                    | **3.6** | 2     |
-| [REM-47](tech-debt-remediation/REM-47-yesreaderfactory-file-leak.md)    | ~~Close YesReaderFactory header file~~ ✅                            | **3.6** | 2     |
-| [REM-06](tech-debt-remediation/REM-06-isiactivity-gestures.md)          | ~~Extract IsiActivity gestures~~ ✅                                   | **3.4** | 2     |
-| [REM-07](tech-debt-remediation/REM-07-isiactivity-action-mode.md)       | ~~Extract IsiActivity action mode~~ ✅                                | **3.4** | 2     |
-| [REM-09](tech-debt-remediation/REM-09-isiactivity-viewmodel.md)         | Introduce ViewModel                                                  | **3.4** | 2     |
-| [REM-12](tech-debt-remediation/REM-12-itemtouchhelper.md)               | ~~Replace DragSortListView~~ ✅                                       | **3.4** | 2     |
-| [REM-14](tech-debt-remediation/REM-14-material-dialogs.md)              | ~~Replace material-dialogs~~ ✅                                       | **3.4** | 2     |
-| [REM-18](tech-debt-remediation/REM-18-test-coverage.md)                 | ~~Add test coverage~~ ✅                                              | **3.4** | 2     |
-| [REM-34](tech-debt-remediation/REM-34-sync-delivery.md)                 | ~~Fix sync delivery + shared-state races~~ ✅                         | **3.4** | 1     |
-| [REM-38](tech-debt-remediation/REM-38-reader-lifecycle.md)              | ~~Reader lifecycle fixes~~ ✅                               | **3.4** | 2     |
-| [REM-39](tech-debt-remediation/REM-39-text-decoding.md)                 | ~~Text decoding correctness (2026-07 audit)~~ ✅ | **3.4** | 2     |
-| [REM-40](tech-debt-remediation/REM-40-download-robustness.md)           | ~~Version download robustness (2026-07 audit)~~ ✅ | **3.4** | 2     |
-| [REM-41](tech-debt-remediation/REM-41-defensive-guards.md)              | ~~Defensive data guards~~ ✅             | **3.4** | 2     |
-| [REM-25](tech-debt-remediation/REM-25-verserenderer-decompose.md)       | ~~Decompose VerseRenderer.render~~ ✅                                 | **3.4** | 3     |
-| [REM-24](tech-debt-remediation/REM-24-s-service-locator.md)             | ~~Refactor S.kt service locator (steps 24a–24d complete)~~ ✅         | **3.2** | 2     |
-| [REM-08](tech-debt-remediation/REM-08-isiactivity-split-view.md)        | ~~Extract split view manager~~ ✅                                     | **3.2** | 2     |
-| [REM-32](tech-debt-remediation/REM-32-room-song-db.md)                  | ~~Room migration (SongDb)~~ ✅                                        | **3.2** | 2     |
-| [REM-15](tech-debt-remediation/REM-15-coroutines.md)                    | Introduce coroutines (devotion downloads complete)                   | **3.2** | 3     |
-| [REM-16](tech-debt-remediation/REM-16-java-to-kotlin.md)                | Java→Kotlin conversion (9/11 done)                                   | **3.0** | 3     |
-| [REM-17](tech-debt-remediation/REM-17-kotlin-dsl-build.md)              | ~~Kotlin DSL build migration~~ ✅                                     | **3.0** | 3     |
-| [REM-20](tech-debt-remediation/REM-20-ambilwarna-replacement.md)        | ~~Replace AmbilWarna~~ ✅                                             | **3.0** | 3     |
-| [REM-48](tech-debt-remediation/REM-48-old-ascii-decoder.md)             | ~~Harden OldVerseTextDecoder.Ascii (2026-09 Kotlin conversion)~~ ✅ | **3.0** | 2     |
-| [REM-19](tech-debt-remediation/REM-19-prdownloader-replacement.md)      | ~~Replace PRDownloader~~ ✅                                           | **2.8** | 3     |
-| [REM-21](tech-debt-remediation/REM-21-song-json-storage.md)             | ~~Song storage migration~~ ✅ (app-side)                              | **2.8** | 4     |
-| [REM-22](tech-debt-remediation/REM-22-jetpack-compose.md)               | Jetpack Compose adoption (ongoing across multiple screens)           | **2.6** | 4     |
-| [REM-44](tech-debt-remediation/REM-44-widget-version-fallback.md)       | ~~Explicit widget version fallback~~ ✅                            | **2.6** | 4     |
-| [REM-42](tech-debt-remediation/REM-42-version-cache-eviction.md)        | Bounded version-cache eviction (2026-07 audit)                       | **2.4** | 4     |
-| [REM-43](tech-debt-remediation/REM-43-sync-conflict-handling.md)        | Surface/resolve sync conflicts                                       | **2.4** | 4     |
-| [REM-45](tech-debt-remediation/REM-45-isiactivity-compose-shell.md)     | IsiActivity Compose shell (partial; normal toolbar ported)           | **2.2** | 4     |
-
-## Suggested Execution Order
-
-**Sprint 1 (1 week):** ~~REM-01~~✅, ~~REM-02~~✅, ~~REM-04~~✅, ~~REM-05~~✅ — quick safety fixes (all done)
-**Sprint 2 (1 week):** ~~REM-03~~✅ — LocalBroadcastManager removal (done)
-**Sprint 3 (2 weeks):** ~~REM-07~~✅, ~~REM-06~~✅, ~~REM-08~~✅ — IsiActivity decomposition (all done)
-**Sprint 4 (1 week):** ~~REM-12~~✅, ~~REM-14~~✅ — deprecated library replacements (done)
-**Sprint 5 (2 weeks):** ~~REM-32~~✅ — Room migration for SongDb (`AlkitabSongRoomDb`). `InternalDbHelper` is the active source of truth for every Bible-related table; `SongDbHelper` is a rollback safety net only.
-**Sprint 6 (2 weeks):** REM-09, ~~REM-18a-f~~✅ — ViewModel + test coverage (REM-18a/b/c/d/e/f done)
-**Ongoing:** REM-15, REM-16, ~~REM-17~~✅ — modernization work mixed into feature sprints (REM-17 done)
-
-### 2026-07 audit follow-up (suggested)
-
-**Sprint 7 (1 week), user-data safety first:** ~~REM-36~~✅ (search fix, completed 2026-10-15), ~~REM-35~~✅ (song-book update, completed 2026-07-20), ~~REM-33~~✅ (import safety, completed 2026-10-15), ~~REM-41~~✅ (defensive guards and deliberate widget retry strides, completed 2026-10-15)
-**Sprint 8 (1 week):** REM-34 (sync delivery/races), ~~REM-41~~✅ (defensive guards, completed 2026-10-15)
-**Sprint 9 (1 week):** REM-37 (Bible audio state), REM-38 (reader lifecycle), REM-39 (text decoding, complete 2026-10-15), REM-40 (download robustness, complete 2026-10-15)
-
-### 2026-09 Kotlin conversion follow-up (suggested)
-
-**Sprint 10 (a few days):** REM-47 and REM-46 complete (2026-10-15); REM-48 (YES1 ASCII decoder) complete on 2026-10-15.
-
-### Partial work completed as of 2026-10-15
-
-- REM-15: devotion downloads use coroutines and observable state with cancellation and retry tests. Sync, search, and chapter-loading work remain.
-- REM-37/38: completed on 2026-10-15. Player callbacks drive playback observation and polling; appearance changes refresh highlights. Reader restoration preserves history identity, intent parsing has no navigation side effects, and share dialogs follow activity destruction.
-- REM-41: completed on 2026-10-15. Deliberate widget-specific retry strides, verse and reading-plan bounds, and RPB footer checks have regression coverage. Devotion requests deduplicate by source/date. Database downgrades are unsupported.
-- REM-22/45: Compose adoption extends beyond Goto and verse content to the normal reader toolbar, song content, sync login, and the search toolbar. The selection toolbar and the remaining reader shell are separate unfinished work.
+The entries above are the single status listing. Scores and phases record the
+original prioritization; completed entries are retained for rationale and
+verification history. Choose future work from open and partial entries, then
+read the linked record for remaining scope. Completed records may describe
+intermediate implementations that later work superseded.
