@@ -1,66 +1,32 @@
-# Markers Module (Bookmarks, Notes, Highlights)
+# Bookmarks, notes, and highlights
 
-## Overview
+Markers attach user content to Bible passages. Bookmarks save places, notes
+hold text with clickable verse references, and highlights mark whole verses or
+text ranges. Users can browse, search, and sort their saved markers; labels
+organize bookmarks.
 
-"Markers" is the unified system for bookmarks, notes, and highlights. All three share the same `Marker` database table, distinguished by a `kind` column. Markers can be organized with labels (categories) and synced across devices.
+## Identity and storage
 
-## Key Files
+Marker kinds share a common storage model, with a verse address, range, content,
+and timestamps. Local database IDs serve device-local access; globally unique
+IDs preserve identity across [sync](sync.md) and [backup/import](data-transfer.md).
+Labels and marker-label assignments have their own sync identities. See
+[Storage](../storage.md) for database ownership.
 
-- `Alkitab/src/main/java/yuku/alkitab/base/ac/MarkerListActivity.kt` — Filtered list of markers with search and sorting
-- `Alkitab/src/main/java/yuku/alkitab/base/ac/MarkersActivity.java` — Label management (create, rename, delete, reorder via `ItemTouchHelper` drag)
-- `Alkitab/src/main/java/yuku/alkitab/base/ac/NoteActivity.java` — Note editor with verse link detection
-- `Alkitab/src/main/java/yuku/alkitab/base/util/Highlights.kt` — JSON-based highlight encoding
-- `Alkitab/src/main/java/yuku/alkitab/base/widget/AttributeView.java` — Icon drawing for bookmark/note/highlight indicators
-- `Alkitab/src/main/java/yuku/alkitab/base/verses/VersesAttributes.kt` — Per-verse attribute maps
-- `Alkitab/src/main/java/yuku/alkitab/base/verses/VerseAttributeLoader.kt` — Loads attributes from DB and content providers
-- `Alkitab/src/main/java/yuku/alkitab/base/storage/MarkerDao.kt` / `LabelDao.kt` / `Marker_LabelDao.kt` — Per-table DAOs issuing raw SQL against the legacy `AlkitabDb` (`InternalDbHelper`)
+Highlights preserve saved colors and, for partial highlights, text ranges with
+verification information. Display-time color adjustment adapts those colors to
+the reading background without rewriting saved markers. Preview samples do not
+create user markers. Changes to text normalization must preserve partial-range
+compatibility.
 
-## Marker Model
+## Reader integration
 
-```
-Marker {
-  _id: long           — local database ID
-  gid: String         — globally unique ID for sync
-  ari: int            — verse reference (ARI encoding)
-  kind: int           — 0=bookmark, 1=note, 2=highlight
-  caption: String     — display text (bookmark title / note content / highlight color info)
-  verseCount: int     — number of verses covered
-  createTime: Date
-  modifyTime: Date
-}
-```
+The reader combines markers with progress pins and other verse attributes.
+Compose and legacy rendering must present the same saved content, selection,
+and adjusted highlight appearance. Note links use the shared verse-reference
+parser; its [compatibility tests](../../Alkitab/src/test/desktop-verse-parser.md)
+document the parsing contract.
 
-Storage: the `Marker`, `Label`, and `Marker_Label` tables live in the legacy `AlkitabDb` SQLite file managed by `InternalDbHelper`. The `MarkerDao` / `LabelDao` / `Marker_LabelDao` classes expose a `Marker` / `Label` / `Marker_Label` model surface for callers and issue raw SQL internally.
-
-## Labels
-
-Labels are user-created categories for organizing bookmarks. Each label has a `title`, `ordering`, and `backgroundColor`. The `marker_label` junction table creates many-to-many relationships. Labels also have GIDs for sync.
-
-## Highlights
-
-Highlights use a JSON encoding in the `caption` field supporting:
-- Full-verse highlights (solid color)
-- Partial highlights (character range within a verse)
-- Hash-based verification to detect when verse text has changed
-
-The `Highlights` utility handles encoding/decoding and color management. `Highlights.blendOver()` masks the input to 24-bit RGB and interpolates opacity between fixed `0xA0` at adjustment 0 and background-adaptive opacity at adjustment 1. The adaptive result is cached independently of the adjustment.
-
-Display settings offers an unchecked-by-default “Use original highlight colors” checkbox and a customizer with a 0–1 slider. The checkbox selects 0 when checked and 1 when cleared. Intermediate preference summaries show only the percentage, and endpoint summaries are hidden. Adjustments are stored and rendered in 0.01 increments. `Prefkey.highlightColorAdjustment` stores the amount, defaulting to 1; it affects rendering without modifying saved markers. Both verse renderers, marker snippets, and the highlight picker use the applied adjustment. The customizer previews up to three highlighted verses from the selected chapter in the active Bible version, retaining saved colors and partial ranges. If fewer than three highlighted verses are available, unhighlighted verses from the same chapter fill the remaining slots with sample yellow, green, and blue highlights from the default palette. Samples remain in chapter order. The preview uses the active reading theme and the reader’s Compose renderer and row layout, preserving red-letter and verse-number colors, italics, paragraph formatting, and ruby annotations. Slider changes and endpoint selections apply immediately; dismissing the sheet keeps the chosen adjustment. The sheet shows the explanation, adjusted-percentage label, endpoint labels, and preview without a title, version name, or confirmation buttons. Sample highlights are never written to markers.
-
-Color selection in `TypeHighlightDialog` and the label color editor uses the iOS-style Compose color picker at `yuku.alkitab.base.compose.colorpicker.IosColorPicker` / `ColorPickerDialog`, hosted inside a `ModalBottomSheet`.
-
-## Attribute Display
-
-`VerseAttributeLoader` aggregates bookmark count, note count, highlight color, progress mark presence, and map availability for each verse in a chapter. These are displayed as small icons in `AttributeView` next to each verse.
-
-## Sorting Options
-
-MarkerListActivity supports sorting by:
-- `createTime` — when the marker was first created
-- `modifyTime` — when last edited
-- `ari` — Bible order (by verse reference)
-- `caption` — alphabetical by content
-
-## Verse Link Detection
-
-`NoteActivity` uses `DesktopVerseFinder` in the app’s `yuku.alkitabconverter.util` package to detect verse references in note text and convert them to clickable links that navigate to the referenced verse.
+The [storage package](../../Alkitab/src/main/java/yuku/alkitab/base/storage)
+owns marker persistence; reader attribute loading and presentation live in the
+[verses package](../../Alkitab/src/main/java/yuku/alkitab/base/verses).

@@ -1,50 +1,32 @@
-# Data Transfer Module
+# User-data backup and import
 
-## Overview
+Data transfer exports and imports JSON snapshots of bookmarks, notes, highlights,
+labels, reading-plan progress, progress pins, and reading history. It supports
+backup/restore and moving user content between devices without signing in.
+It does not package installed Bible versions, song books, or every app setting.
 
-JSON-based export/import of user data (markers, labels, reading plan progress, history, progress pins). Designed for backup/restore and migration between devices without cloud sync.
+## Import safety
 
-## Key Files
+A simulation previews changes inside a rolled-back database transaction and
+leaves reading history untouched. Actual import commits database changes before
+replacing the staged history. Database import failures roll back database writes
+and leave history unchanged.
 
-- `Alkitab/src/main/java/yuku/alkitab/datatransfer/process/ExportProcess.kt` — Exports user data to JSON
-- `Alkitab/src/main/java/yuku/alkitab/datatransfer/process/ImportProcess.kt` — Imports from JSON with dry-run support
-- `Alkitab/src/main/java/yuku/alkitab/datatransfer/model/JsonFileStructure.kt` — Kotlinx.Serializable data structures
-- `Alkitab/src/main/java/yuku/alkitab/datatransfer/ui/DataTransferActivity.kt` — UI for export/import
-- `Alkitab/src/main/java/yuku/alkitab/datatransfer/model/Gid.kt` — GID handling
-- `Alkitab/src/main/java/yuku/alkitab/datatransfer/model/Rpp.kt` — Reading plan progress structures
+Marker kinds and marker-label references are validated. References may resolve
+against either the imported file or existing local data, regardless of file
+ordering. Invalid rows reject the import rather than silently dropping content.
+Entity identity and provenance are preserved across export and import.
 
-## JSON Structure
+Completed readings survive even if the plan has been deleted. Such progress can
+be restored without reinstalling the plan; the export uses `0` when the missing
+plan has no start time.
 
-```json
-{
-  "success": true,
-  "snapshots": {
-    "history": { "entities": [...] },
-    "mabel": {
-      "entities": {
-        "markers": [...],
-        "labels": [...],
-        "marker_labels": [...]
-      }
-    },
-    "pins": { "entities": [...] },
-    "rp": { "entities": [...] }
-  }
-}
-```
+## Ownership
 
-Uses Kotlinx Serialization for JSON encoding/decoding.
+The [data-transfer package](../../Alkitab/src/main/java/yuku/alkitab/datatransfer)
+owns the UI, snapshot model, validation, and transactional import/export. The
+serializable models and compatibility tests define the JSON contract. Storage
+interfaces separate snapshot operations from database access.
 
-## Import Process
-
-1. **Simulation mode** (dry run): Parses the file and validates changes inside a rolled-back database transaction. Reading history remains untouched in memory and preferences.
-2. **Actual import**: Commits database changes, then replaces and saves the staged reading history. Exceptions during database import roll back all database writes and leave history untouched.
-3. Per-entity `creator_id` tracking for provenance
-
-Marker kinds must be recognized enum values. Marker-label assignments must reference markers and labels present either in the file or the local database; file ordering does not affect validation. Invalid rows reject the import rather than silently dropping data.
-
-Exports retain completed readings for deleted reading plans, matching sync's preservation of that progress. Since the export format requires a numeric `startTime`, a missing plan's start time is represented as `0`. Import restores its completed readings without requiring the plan to be installed.
-
-## Storage Interface
-
-`ReadonlyStorageInterface` / `ReadWriteStorageInterface` abstract database access for testability. Implementations (`ReadonlyStorageImpl`, `ReadWriteStorageImpl`) wrap `InternalDb` operations.
+See [Storage](../storage.md) for persistence and [Sync](sync.md) for cross-device
+synchronization. A successful import or export does not imply a successful sync.

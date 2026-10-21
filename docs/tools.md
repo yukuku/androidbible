@@ -84,7 +84,7 @@ older `plan` records with explicit ARI pairs. `tools/AlkitabConverter/file/`
 holds the sources for the bundled plans (`bibleplan_*.txt`, `blueletter_*`,
 `esv_*`) as worked examples. The `.rpb` format is specified in
 [binary-formats.md](binary-formats.md), and the app side is covered in
-[modules/reading-plans.md](modules/reading-plans.md).
+[Reading aids](modules/reading.md#reading-plans).
 
 ## Supporting modules
 

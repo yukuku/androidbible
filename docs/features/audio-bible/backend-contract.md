@@ -4,8 +4,8 @@
 implementation — caching tiers, crawling, admin tooling, hosting — is out of
 scope here and lives with the backend.
 
-**Client counterparts:** [prd.md](prd.md), [client-plan.md](client-plan.md),
-[multi-audio-sets-design.md](multi-audio-sets-design.md).
+**Client guide:** [Audio playback](../../modules/audio-playback.md).
+**Design rationale:** [Bible-audio decisions](design.md).
 
 Base URL is `BuildConfig.SERVER_HOST` (`https://api.alkitab.app`). All requests
 are unauthenticated `GET`s issued through `Connections.okHttp`, so OkHttp's
@@ -41,7 +41,8 @@ backend's business — `grep -ri "sabda" Alkitab/src/main` must return nothing.
 | `GET` | `/audio/timing/<preset>/<audioId>/<book_1>/<chapter_1>.json` | Verse timing |
 
 There is no global catalog endpoint. Availability is queried one version at a
-time — see [multi-audio-sets-design.md](multi-audio-sets-design.md) §1 for why.
+time. See [recording identity and availability](design.md#recording-identity-and-availability)
+for the rationale.
 
 ---
 

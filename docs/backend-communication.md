@@ -1,69 +1,62 @@
-# Backend Communication
+# Backend communication
 
-## HTTP Client
+## Origins and HTTP
 
-All network requests use OkHttp3 configured in `Connections.kt`:
-- Custom user agent string
-- 50MB disk cache
-- Long-timeout variant for large downloads
-- Singleton `OkHttpClient` instance
+`BuildConfig.SERVER_HOST` points to `https://api.alkitab.app`. The public website
+at `https://alkitab.app` is a different origin; use the API host when reproducing
+app requests. Firebase-function routing is configured separately in
+[the app build file](../Alkitab/build.gradle.kts), including its debug emulator
+address.
 
-## API Endpoints
+[Connections](../Alkitab/src/main/java/yuku/alkitab/base/connection/Connections.kt)
+provides shared OkHttp clients, the app user agent, an HTTP disk cache, and
+specialized timeouts. Feature owners define request cancellation, retry, and
+response validation; using the shared client alone does not supply those rules.
 
-### Base URL
-- Release: `https://api.alkitab.app`
-- Debug: Same base, but FCM functions use `http://10.0.3.2:5001/pulau-ribka/us-central1/` (emulator localhost)
+## Responsibilities
 
-### Bible Version Downloads
+| Feature | Backend interaction | Client ownership |
+| --- | --- | --- |
+| Bible versions | Catalog updates and downloadable Bible files | Version management, catalog updater, WorkManager download worker |
+| Sync | Account operations, entity deltas, and FCM registration | Sync package and its workers |
+| Devotions | Source/date article requests | Devotion downloader and article cache |
+| Songs | Catalog and gzipped JSON song books | Song-book utilities and song storage |
+| Bible audio | Per-version recordings, chapter files, and verse timing | Audio repositories and playback service |
+| Reporting | Firebase-function reporting endpoints | Report and feedback components |
 
-Version files are downloaded by `VersionDownloadWorker` (a `CoroutineWorker` using the shared OkHttp client). The worker reports progress via `setProgress(Data)`; `DownloadMapper` observes `WorkManager.getWorkInfoByIdFlow(uuid)` on a `MainScope` coroutine and mirrors `WorkInfo.State` into `DownloadManager.STATUS_*` constants for the version-list UI. Resume support: the worker checks the destination file's existing length and, if non-zero, sends `Range: bytes=N-` (the worker explicitly sends `Accept-Encoding: identity` so OkHttp does not transparently strip Content-Length on a gzip response). The download URL and metadata come from `VersionConfig`. The previous `PRDownloader`-based implementation (and the `PrDownloaderFixed` module) were removed in REM-19.
+Bible downloads support resumption and report progress to version management.
+Catalog updates fall back to the bundled Bible-version catalog. Song downloads
+use portable JSON documents, not Java object deserialization; see [Songs](modules/songs.md).
 
-### Sync API
+Sync exchanges deltas at `POST /sync/api/sync`. FCM prompts other devices to
+synchronize; it is not the user-data transport. Persisted scheduling, sync
+results, and conflict handling are separate concerns. See [Sync](modules/sync.md)
+for support logs and [REM-50](tech-debt-remediation/REM-50-sync-api-boundary.md)
+for unfinished API-boundary work.
 
-```
-POST /sync/api/sync
-```
-Request body contains `simpleToken`, `installation_id`, `fcm_token`, and per-entity deltas. Response contains server-side deltas to apply locally. See [Sync Module](modules/sync.md).
+Devotions use `GET /devotion/get?name={kind}&date={yyyymmdd}`. An unavailable
+article is distinct from a failed request; the downloader owns selected-date
+requests, prefetch, deduplication, and retry state. See [Reading aids](modules/reading.md#devotions).
 
-### Devotion API
+The [Bible-audio HTTP contract](features/audio-bible/backend-contract.md) owns
+its endpoint paths, indexing rules, and response shapes. Audio-set availability
+requires the backend; there is no bundled audio catalog.
 
-```
-GET /devotion/get?name={kind}&date={yyyymmdd}
-```
-Returns devotional article text, or `NG` when content is unavailable. `DevotionDownloader` deduplicates by source/date and gives selected readings a separate foreground coroutine from prefetch. Its cancellable backend uses a 30-second total HTTP call timeout and publishes retained loading/failure/unavailable state. See [Devotions](modules/devotions.md) for cache, Retry, and lifecycle behavior.
+## Firebase and build configuration
 
-### Song Book Downloads
+FCM supplies sync prompts and token registration; failed registrations are
+recorded for retry. Crashlytics provides release crash reporting. The checked-in
+Firebase configuration is a placeholder for open-source builds, so successful
+compilation does not establish working Firebase services.
 
-Song books are fetched as serialized Java objects (gzip-compressed). Download URL is constructed from the server host + song book identifier.
+Production Firebase configuration and flavor-specific setup belong to
+[Build system](build-system.md#firebase). Consult the build configuration and
+FCM code when investigating debug behavior.
 
-### Version Config Updates
+## Inter-app communication
 
-`VersionConfigUpdaterService` periodically fetches an updated version catalog JSON from the server. The response is cached at `files/version_config.json`, falling back to the bundled `assets/version_config.json`.
-
-### Ribka Functions (Firebase Cloud Functions)
-
-Firebase Cloud Functions hosted at `us-central1-pulau-ribka.cloudfunctions.net`:
-- FCM token registration
-- Push notification dispatch for sync
-- Error/crash reporting via `RibkaReportActivity`
-
-## Firebase Integration
-
-- **Cloud Messaging (FCM)**: Push notifications to trigger sync on other devices
-- **Crashlytics**: Crash reporting (release builds only)
-- FCM token managed by `Fcm.java`, registered with backend on app start. A failed registration sets `Prefkey.fcm_registration_pending = true`; `Sync.sendFcmRegistrationId` retries up to three times on a daemon `ScheduledExecutorService` (1 min / 5 min / 30 min), and `App.staticInit()` re-enters `retryPendingFcmRegistrationIfNeeded` on next launch when the flag is set (REM-04).
-- A placeholder `Alkitab/google-services.json` is committed so `plainDebug` builds out of the box. The real `google-services.json` (covering all production applicationIds) lives at `$ALKITAB_PROPRIETARY_DIR/google-services.json` and is copied per-flavor into the gitignored `Alkitab/src/<flavor>/google-services.json` at build time.
-
-## File Downloads
-
-Bible-version downloads run inside `VersionDownloadWorker` (see "Bible Version Downloads" above). Song-book downloads use raw OkHttp via `Connections.downloadCall(...)`. There is no shared "downloader" abstraction — each path uses the appropriate primitive.
-
-## Content Provider (Outgoing)
-
-The app exposes a read-only `ContentProvider` (`yuku.alkitab.base.cp.Provider`, ported to Kotlin in REM-16) for other apps to query Bible verses. This is outgoing communication — other apps query Alkitab, not the reverse.
-
-See `AlkitabIntegration` module for the client-side API that other apps use.
-
-## Share URLs
-
-`ShareUrl` generates shareable verse links for copy/share operations. The URL format encodes the verse reference for web viewing.
+The read-only content provider exposes Bible queries to other Android apps;
+it is an Android API, separate from server communication. The
+[opening-verses guide](developer/opening-verses.md) and `AlkitabIntegration`
+cover supported client integrations. Shared verse URLs are generated by the
+app's share-link utility.

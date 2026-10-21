@@ -2,7 +2,7 @@
 
 Design document for migrating song storage and distribution from non-portable binary formats (Android `Parcelable` on disk, Java serialization over the wire) to a portable, document-based JSON format.
 
-- **Status:** design / feasibility
+- **Status:** Android JSON storage, download parsing, and legacy conversion implemented; see [REM-21](../../tech-debt-remediation/REM-21-song-json-storage.md). Backend redirect and `kidung-data` authoring sections are separate-repository proposals, not verified delivery status.
 - **Date:** 2026-05-28
 - **Related preview artifact** (open in a browser): [`song-editor.html`](./song-editor.html) — live 3-pane editor (txt → canonical JSON → app-faithful render) that parses **both** the legacy and the new `@doc` txt formats. Its sample dropdown includes "KRI 25 — legacy", "KRI 25 — @doc", and a refrain/scripture/row/size demo.
 
@@ -10,7 +10,7 @@ Design document for migrating song storage and distribution from non-portable bi
 
 ## 1. Motivation
 
-Songs are currently stored and distributed in two opaque, non-portable binary formats:
+The migration addressed two opaque, non-portable binary formats:
 
 1. **On-device storage** — each song is an Android `Parcel.marshall()` byte buffer in the Room `song_info.data` BLOB column (`dataFormatVersion = 3`).
 2. **Download** — a song book is a gzipped Java `ObjectOutputStream` of `List<Song>`.
@@ -287,7 +287,7 @@ The decoder yields the legacy field values; a converter maps them to canonical b
 
 **Lazy, on-read** — no bulk migration pass.
 
-- The Room `song_info` payload becomes UTF-8 JSON in the existing `data` BLOB. `dataFormatVersion` is bumped (e.g. to `5`) to mark the new payload, so the read path can distinguish JSON rows from legacy Parcelable rows and the conversion is idempotent.
+- The Room `song_info` payload becomes UTF-8 JSON in the existing `data` BLOB. `dataFormatVersion` is set to `5` to mark the new payload, so the read path can distinguish JSON rows from legacy Parcelable rows and the conversion is idempotent.
 - The single song-read helper (used by **both** the song viewer and on-device song search — recall search deserializes every song to filter it in `listSongInfosByBookNameAndDeepFilter`) does:
   1. If the row's `dataFormatVersion` marks JSON → parse JSON.
   2. Else (legacy Parcelable) → custom-decode (§4) → convert (§5) → use; then **write the JSON back** to the row with the bumped `dataFormatVersion`, so each legacy song is converted at most once.
@@ -299,7 +299,7 @@ This keeps the storage-engine swap (Room) and the payload swap independent, as t
 
 ## 7. Download path
 
-- **App.** `SongBookUtil.deserializeSongs` (Java `ObjectInputStream` guarded by `SafeObjectInputStream`) is replaced by a JSON parser (Moshi / kotlinx). This removes the Java-deserialization gadget surface entirely — a security win. `OptionalGzipInputStream` stays (the payload is still gzipped). The supported `dataFormatVersion` check (`SongBookUtil.isSupportedDataFormatVersion`) is updated to accept the new JSON version.
+- **App.** `SongBookUtil.deserializeSongs` uses Kotlinx Serialization for JSON parsing; the Java `ObjectInputStream`/`SafeObjectInputStream` path has been removed. This removes the Java-deserialization gadget surface entirely — a security win. `OptionalGzipInputStream` stays (the payload is still gzipped). The supported `dataFormatVersion` check (`SongBookUtil.isSupportedDataFormatVersion`) is updated to accept the new JSON version.
 - **Backend.** `get_songs` keeps issuing a 302 redirect, but branches on the requested `dataFormatVersion`: new clients → `…/songs/v1/data/<book>-5.json.gz`; old clients → the existing `<book>-4.ser.gz`. Old installs keep working; the web (pickle/HTML) path is untouched.
 - **`kidung-data`.** A new `OutputJson` (alongside the existing `OutputSer`) emits `<book>-5.json.gz` (the §3.7 wrapper). The book index `song_book_infos.txt` stays as-is (the backend parses it server-side via `parse_infos_content`). Static artifacts are published to `boafiles.kejut.com` as today.
 
@@ -380,7 +380,7 @@ lyric groups (caption "Versi N" fallback when >1 group and no caption;
 copyright (footer)
 ```
 
-The reference renderer is in [`song-editor.html`](./song-editor.html). On device this becomes a new `SongDocument` model + renderer that produces the WebView HTML, replacing the legacy `SongFragment.songToHtml` / `SongViewActivity.convertSongToText` paths. Scripture OSIS is localized at render against the active version (unchanged behavior).
+The reference renderer is in [`song-editor.html`](./song-editor.html). On device `SongDocument` feeds the default Compose renderer and the legacy WebView renderer; see [Songs](../../modules/songs.md). Scripture OSIS is localized at render against the active version (unchanged behavior).
 
 ---
 

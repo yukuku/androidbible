@@ -1,61 +1,35 @@
-# Bible Versions Module
+# Bible versions
 
-## Overview
+Users can download Bible versions from the catalog, enable and reorder installed
+versions, and import their own files. The built-in version remains available
+without a download. Parallel reading can use a different version in each pane.
 
-The app supports 100+ downloadable Bible versions across many languages. Versions use the custom YES2 binary format. Users can also import PalmBible+ PDB files, which are converted to YES2.
+## Content lifecycle
 
-## Key Files
+The [version-manager package](../../Alkitab/src/main/java/yuku/alkitab/versionmanager)
+owns the catalog, installed-version UI, and file imports. A bundled Bible-version
+catalog supplies a fallback; server updates are cached locally. Catalog entries
+describe available content, while installed metadata identifies usable local
+files.
 
-- `Alkitab/src/main/java/yuku/alkitab/versionmanager/VersionsActivity.kt` — Version management UI
-- `Alkitab/src/main/java/yuku/alkitab/versionmanager/VersionListFragment.kt` — Lists downloadable and installed versions; `RecyclerView` + `ItemTouchHelper` for the downloaded-tab reorder
-- `Alkitab/src/main/java/yuku/alkitab/versionmanager/VersionFileImporter.kt` — Imports .yes, .pdb, .yes.gz, .pdb.gz files
-- `Alkitab/src/main/java/yuku/alkitab/base/config/VersionConfig.java` — JSON catalog of available versions
-- `Alkitab/src/main/java/yuku/alkitab/base/storage/YesReaderFactory.kt` — Factory for loading YES1/YES2 readers
-- `Alkitab/src/main/java/yuku/alkitab/base/util/VersionDownloadWorker.kt` — `CoroutineWorker` (OkHttp + Range-based resume) used to download `.yes` files
-- `Alkitab/src/main/java/yuku/alkitab/base/util/DownloadMapper.kt` — In-process tracker that observes `WorkManager.getWorkInfoByIdFlow` and mirrors state into `DownloadManager.STATUS_*` constants for the list UI
-- `Alkitab/src/main/java/yuku/alkitab/base/storage/VersionDao.kt` — Per-table DAO issuing raw SQL against the legacy `Version` table in `AlkitabDb` (`InternalDbHelper`)
+Downloads run through WorkManager with progress and resume support. Completion
+installs the content and registers it for use. Local imports accept YES and
+PalmBible+ PDB files, including gzip-compressed variants; PDB content is converted
+to YES2. Readers support legacy YES files as well as YES2.
 
-## MVersion Hierarchy
+Version identity is shared by preferences, navigation, and other features:
 
-```
-MVersion (abstract)
-├── MVersionInternal — Built-in version, always available, ID = "internal"
-├── MVersionDb — Downloaded/user-added versions stored in database
-└── MVersionPreset — Metadata for versions available to download (not yet installed)
-```
+- `internal` identifies the built-in Bible.
+- `preset/<name>` identifies a catalog version.
+- `file/<path>` identifies user-imported content.
 
-`App.services.versions.getAvailableVersions()` merges internal + DB versions, filtering for active ones. Version instances (`VersionImpl`) are cached in a `ConcurrentHashMap` with `SoftReference` for memory-efficient GC.
+Per-version appearance adjustments are separate from the Bible text. Installed
+metadata and reader caches must handle unavailable or replaced files; a cached
+reader does not guarantee that the underlying file remains readable.
 
-## Version IDs
+## Related guides
 
-- `"internal"` — the built-in version
-- `"preset/[name]"` — downloaded from the preset catalog
-- `"file/[path]"` — user-imported from a file
-
-## Version Config
-
-`version_config.json` (44KB, bundled in assets) contains metadata for all downloadable versions: locale, short/long names, modify times, group ordering. This config is periodically updated from the server and cached locally at `files/version_config.json`.
-
-## Import / Download Flow
-
-For downloads from the preset catalog:
-1. User picks a preset in `VersionListFragment`
-2. `DownloadMapper.enqueue(...)` builds a `OneTimeWorkRequest` for `VersionDownloadWorker` and starts a `MainScope` observer on `WorkManager.getWorkInfoByIdFlow(uuid)`
-3. The worker streams the file via OkHttp (`Accept-Encoding: identity`, `Range: bytes=N-` on resume) into a temp file under `cacheDir/DownloadMapper-tmp/`, reporting progress via `setProgress(Data)`
-4. On `SUCCEEDED`, `VersionDownloadCompleteReceiver.onReceive(id)` finalizes the file (decompresses gzip via `OptionalGzipInputStream` if needed), moves it into app storage, and inserts a row into the `version` table
-
-For local imports (`.yes` / `.pdb`):
-1. User selects a `.yes` or `.pdb` file (via file manager or intent)
-2. `VersionFileImporter` detects format and handles gzip decompression
-3. PDB files are converted to YES2 via the `BiblePlus` reader inside `:Alkitab`, saved as `pdb-{name}.yes`
-4. YES2 files are copied to app storage
-5. A row is inserted into the `version` table
-6. Import size limit: 100MB
-
-## YES2 Format Details
-
-See [Binary Formats](../binary-formats.md) for the complete YES2 specification.
-
-## Per-Version Settings
-
-`PerVersion` table stores per-version settings like font size multiplier, allowing different text sizes for different Bible versions.
+See [Storage](../storage.md) for persistence, [Binary formats](../binary-formats.md)
+for runtime encoding, and the [YET authoring guide](../developer/yet.md) and
+[Tools](../tools.md) for creating Bible files. Audio recording availability is a
+separate backend lookup described in [Audio playback](audio-playback.md).

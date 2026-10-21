@@ -1,5 +1,12 @@
 # iOS Port Feasibility Survey
 
+> Historical research. The inventory, dependency comparisons, and effort estimates
+> below describe the survey's baseline and have not been revalidated for the
+> current app. Compose adoption, song storage, downloads, and reader architecture
+> have since changed. Use [Architecture](../../architecture.md),
+> [Storage](../../storage.md), and the [feature guides](../../README.md#feature-guides)
+> for current behavior; reassess scope before using these estimates for planning.
+
 A detailed assessment of the effort and risks involved in porting the Alkitab / Quick Bible Android app to native iOS as a near 1:1 port of its current feature set.
 
 > **TL;DR** — A true *line-by-line* 1:1 port is **not feasible** because 40–50% of the codebase consists of Android-framework-specific UI (Activities, Fragments, RecyclerView, custom Views, AppWidget, ContentProvider). A faithful *functional* 1:1 port that preserves behavior, data formats, database schema, sync protocol, and feature set **is feasible** with no technical show-stoppers. Estimated effort: **~1,850 engineer-hours** (roughly 6–7 months for a 2-person team, or 3–4 months for a 3–4 person team) — see §15 for the per-area breakdown. The Android data layer, binary formats, sync protocol, and core models are highly portable; the UI has to be rewritten. Recommended UI stack is a **SwiftUI shell with a UIKit reader** — SwiftUI for the lists/forms/widget, UIKit for the verse rendering and split-view reader where attributed text, gesture composition, and scroll coupling push SwiftUI past its comfort zone. See §9 for the breakdown.
