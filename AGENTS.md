@@ -25,9 +25,9 @@ Include the outcome, relevant validation, and remaining limitations alongside th
 
 ### Task context and pull requests
 
-When the user assigns a task in a dedicated Git worktree, finish the task by committing the changes, pushing its task branch to `yukuku/androidbible`, and creating or updating a pull request targeting `develop`, unless the user explicitly requests otherwise. Creating or updating the PR is part of completing the task; do not ask for separate permission.
+When the agent runs in a cloud environment or the user assigns a task in a dedicated Git worktree, finish the task by committing the changes, pushing its task branch to `yukuku/androidbible`, and creating or updating a pull request targeting `develop`, unless the user explicitly requests otherwise. The cloud-environment requirement applies even when the checkout is not a dedicated worktree. Creating or updating the PR is part of completing the task; do not ask for separate permission.
 
-When the user assigns a task in a regular checkout rather than a dedicated worktree, treat it as interactive collaboration: the user and agents may be editing the code together. Work in the existing checkout. A PR is not required, and do not create a new worktree unless the user explicitly asks. Do not automatically commit or push shared edits merely to finish the task.
+When the agent runs locally and the user assigns a task in a regular checkout rather than a dedicated worktree, treat it as interactive collaboration: the user and agents may be editing the code together. Work in the existing checkout. A PR is not required, and do not create a new worktree unless the user explicitly asks. Do not automatically commit or push shared edits merely to finish the task.
 
 When continuing work on an existing PR, update that PR rather than opening another one. The following guidance applies when creating or updating a PR:
 
