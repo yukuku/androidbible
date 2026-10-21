@@ -341,14 +341,7 @@ internal val AttributeState.isShowingSomething: Boolean
         (progressMarkBits and AttributeView.PROGRESS_MARK_BIT_MASK) != 0 ||
         hasMaps
 
-/** Icon scale for the attribute column, stepped by the effective font size in dp. */
-fun attributeViewScale(fontSizeDp: Float) = when {
-    fontSizeDp >= 13 /* 72% */ && fontSizeDp < 24 /* 133% */ -> 1f
-    fontSizeDp < 8 -> 0.5f // 0 ~ 44%
-    fontSizeDp < 18 -> 0.75f // 44% ~ 72%
-    fontSizeDp >= 36 -> 2f // 200% ~
-    else -> 1.5f // 24 to 36 // 133% ~ 200%
-}
+fun attributeViewScale(fontSizeDp: Float): Float = (fontSizeDp * 1.5f).coerceIn(16f, 48f) / 30f
 
 /**
  * Builds the immutable per-row state consumed by [VerseItemComposeContent].
@@ -396,7 +389,7 @@ fun buildVerseItemComposeState(
     val applied = App.services.uiDimensions.applied()
     val fontSizeDp = applied.fontSize2dp * textSizeMult
     val verseNumberFontSizeDp = applied.fontSize2dp * 0.7f * textSizeMult
-    val attributeScale = attributeViewScale(applied.fontSize2dp * ui.textSizeMult)
+    val attributeScale = attributeViewScale(fontSizeDp)
 
     val render = if (ari in ui.dictionaryModeAris ||
         checked && Preferences.getBoolean(context.getString(R.string.pref_autoDictionaryAnalyze_key), context.resources.getBoolean(R.bool.pref_autoDictionaryAnalyze_default))

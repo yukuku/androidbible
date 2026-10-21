@@ -359,7 +359,7 @@ class VerseItemSideBySideSnapshotTest {
         }
 
         val attr = verseItem.attributeView
-        attr.setScale(scaleForAttributeView(FONT_SIZE_DP * case.textSizeMult))
+        attr.setScale(attributeViewScale(FONT_SIZE_DP * case.textSizeMult))
         attr.bookmarkCount = case.bookmarkCount
         attr.noteCount = case.noteCount
         attr.progressMarkBits = case.progressMarkBits
@@ -403,7 +403,7 @@ class VerseItemSideBySideSnapshotTest {
                 noteCount = case.noteCount,
                 progressMarkBits = case.progressMarkBits,
                 hasMaps = case.hasMaps,
-                scale = scaleForAttributeView(applied.fontSize2dp * case.textSizeMult),
+                scale = attributeViewScale(applied.fontSize2dp * case.textSizeMult),
                 version = null,
                 versionId = null,
                 ari = ari,
@@ -514,14 +514,6 @@ class VerseItemSideBySideSnapshotTest {
 
     private fun idleLoopers() {
         Shadows.shadowOf(Looper.getMainLooper()).idle()
-    }
-
-    private fun scaleForAttributeView(fontSizeDp: Float) = when {
-        fontSizeDp >= 13f && fontSizeDp < 24f -> 1f
-        fontSizeDp < 8f -> 0.5f
-        fontSizeDp < 18f -> 0.75f
-        fontSizeDp >= 36f -> 2f
-        else -> 1.5f
     }
 
     private fun escapeHtml(s: String): String =
