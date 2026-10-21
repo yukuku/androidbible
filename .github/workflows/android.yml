@@ -193,8 +193,8 @@ jobs:
 
       # Build a short label used in artifact names. For PRs we use the PR
       # number and the PR head's short SHA (not github.sha, which on
-      # pull_request events is the temporary merge commit). For pushes to
-      # develop we fall back to "<branch>-<shortsha>".
+      # pull_request events is the temporary merge commit). For pushes we
+      # fall back to "<branch>-<shortsha>".
       - name: Compute artifact tag
         id: tag
         run: |
@@ -205,6 +205,7 @@ jobs:
             SHA="${GITHUB_SHA}"
             LABEL="${GITHUB_REF_NAME}"
           fi
+          LABEL="${LABEL//[^a-zA-Z0-9._-]/-}"
           echo "tag=${LABEL}-${SHA:0:7}" >> "$GITHUB_OUTPUT"
 
       - name: Build signed release (all production flavors)

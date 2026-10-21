@@ -11,7 +11,7 @@ This file provides guidance to coding agents when working with code in this repo
 
 ## Branches
 
-**`develop` is the main integration branch — base all work on `develop` and target every PR at `develop`, never `master`.** The repo follows git-flow: `master` only receives merges from `release/*` branches when a version ships.
+**`develop` is the main integration branch. Base all work on `develop` and target every PR at `develop`.** Use short-lived release branches when needed and tags to identify beta and production releases. The retired `master` branch is preserved by the `archive/master` tag.
 
 ## Task completion and communication
 
