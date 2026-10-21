@@ -239,23 +239,52 @@ an optional `dry_run`, and it:
 4. Uploads everything as a workflow artifact with 90-day retention (rather than
    the 14 days `android.yml` uses), because a mapping file stays useful for as
    long as the build it belongs to is installed anywhere.
-5. Creates a GitHub Release tagged `v<versionName>`, marked as a pre-release for
-   beta stages, carrying the AAB, APK, `mapping.txt` and native debug symbols
-   for each flavor.
+5. When `dry_run=false`, creates a GitHub Release tagged `v<versionName>`,
+   marked as a pre-release for beta stages, carrying the AAB, APK,
+   `mapping.txt` and native debug symbols for each flavor. With `dry_run=true`,
+   the complete signed build remains available as a workflow artifact without
+   creating a GitHub Release or tag.
 
 Its tags are version names (`v5.0.0-beta.2`), which keeps them distinct from the
 `versionCode`-based tags (`v23605150`) that `android.yml` creates for dev
 pre-releases.
 
-Releasing a beta, end to end:
+#### Build a new beta through GitHub CI
+
+Produce beta APKs and AABs with the manual Release workflow on GitHub CI.
+The local Gradle task only increments the beta number. A beta-build request
+does not require local APK/AAB builds, unit tests, or locally configured signing
+keys and proprietary assets. Code changes beyond release metadata still need
+their appropriate validation.
+
+Starting from the branch containing the intended changes, check that the
+working tree contains only the changes intended for this beta. Bump the number
+once, commit only the version file, and push that branch before dispatching:
 
 ```bash
-./gradlew bumpBetaNumber
-git commit -am "Bump to 5.0.0-beta.2" && git push
-# then run the Release workflow against that commit with stage=beta,
-# download the AABs from the GitHub Release, and upload them with
-# tools/play/publish.py --flavor <flavor> upload --track beta.
+set -o pipefail
+./gradlew bumpBetaNumber 2>&1 | tail -60
+git diff -- version.properties
+git add version.properties
+git commit -m "Bump beta number"
+git push -u origin "$(git branch --show-current)"
+gh workflow run release.yml --ref "$(git branch --show-current)" \
+  -f stage=beta -f dry_run=true
+gh run list --workflow release.yml --branch "$(git branch --show-current)" --limit 1
 ```
+
+Use `dry_run=true` for a build without publishing. Despite the input's name,
+this performs the full signed build for all three production flavors. Download
+the `release-<versionName>` artifact from the run after it succeeds. Inspect the
+run with `gh run view <run-id>` and download with
+`gh run download <run-id> --name release-<versionName> --dir /tmp/alkitab-beta`.
+Report a dispatched or running build as such; claim completion only after the
+run succeeds.
+
+When a GitHub beta pre-release with downloadable assets is requested, use the
+same dispatch command with `-f dry_run=false`. Both modes leave Google Play
+untouched. Uploading to Play is a separate publishing action described in
+[Google Play Publishing](play-publishing.md).
 
 ## Play Publishing
 
