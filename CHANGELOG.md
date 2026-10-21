@@ -4,6 +4,23 @@ A user-facing history of Bible for Android (Alkitab / Quick Bible).
 Internal refactors, dependency bumps, CI tweaks, and pure
 translation-only updates are generally omitted.
 
+## 5.0.0-beta.5 (2026-10-21)
+
+- Fixed startup crashes on Android 8.
+- Highlight colors can use their original appearance or adapt to the
+  reading background, with a slider to adjust the balance.
+- Appearance controls are now available in Songs, Devotion, and Notes.
+- Typing a Bible reference in Search offers a “Go to” suggestion that
+  opens the passage directly.
+- The Daily Verse widget has a redesigned settings screen and support
+  for reconfiguration.
+- Tap the song or devotion toolbar title to choose a songbook and song
+  number, or a devotion and date.
+- Pinch to temporarily resize devotional text or swipe to change the day.
+- Verse text wraps beneath bookmark, note, and other icons, leaving more
+  room for reading.
+- Fixes for Sync, local backups, Bible audio playback, and the Go to screen.
+
 ## 5.0.0-beta.4 — 2026-10-14
 
 - Optional reading guides mark the passages from your current reading
