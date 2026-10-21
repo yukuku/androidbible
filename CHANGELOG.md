@@ -21,7 +21,7 @@ translation-only updates are generally omitted.
   room for reading.
 - Fixes for Sync, local backups, Bible audio playback, and the Go to screen.
 
-## 5.0.0-beta.4 — 2026-10-14
+## 5.0.0-beta.4 (2026-10-14)
 
 - Optional reading guides mark the passages from your current reading
   plan or devotion in the Bible reader. The drawer shows every passage
@@ -43,7 +43,7 @@ translation-only updates are generally omitted.
 - Appearance and download messages respect the app's language setting.
   Drawer scrolling, toolbar icons, and submenu alignment are improved.
 
-## 5.0.0-beta.3 — 2026-09-23
+## 5.0.0-beta.3 (2026-09-23)
 
 * Compose screens are now the default (toolbar, verses, navigation, song, sync login),
   but can be turned off from the settings.
@@ -52,7 +52,7 @@ translation-only updates are generally omitted.
   Currently only displays and only supports a single line of ruby text.
 * Fix jumping to a verse in devotion where the verse reference has commas delimiting multiple verse numbers.
 
-## 5.0.0-beta.2 — 2026-09-09
+## 5.0.0-beta.2 (2026-09-09)
 
 - Highlighted text stays readable when a verse is selected, and
   dictionary links no longer clash with the color of the verse they sit
@@ -63,7 +63,7 @@ translation-only updates are generally omitted.
   headings lost their bold with a custom font.
 - Production builds are a few hundred kilobytes smaller.
 
-## 5.0.0-beta.1 — 2026-09-08
+## 5.0.0-beta.1 (2026-09-08)
 
 First beta of the 5.0 line, and the largest release in years: narrated
 Bibles, edge-to-edge display, a new storage format for song books, and
@@ -126,7 +126,7 @@ the first wave of a Jetpack Compose migration.
   substantial unit test suite was added around sync, search, verse
   rendering, the database, and the YES2 format.
 
-## 4.11.2 — 2025-09-12
+## 4.11.2 (2025-09-12)
 
 - Dropped the `READ_SYNC_SETTINGS`, `WRITE_SYNC_SETTINGS`,
   `AUTHENTICATE_ACCOUNTS`, and `ACCESS_NETWORK_STATE` permissions, so the
@@ -134,7 +134,7 @@ the first wave of a Jetpack Compose migration.
 - Small polish: dialogs no longer use the old "DialogWhenLarge" theme,
   for a cleaner full-screen look on tablets.
 
-## 4.11.1 — 2025-09-04
+## 4.11.1 (2025-09-04)
 
 - Smaller install size: image assets converted to WebP.
 - Snappy native library now supports newer Android devices that use
@@ -142,7 +142,7 @@ the first wave of a Jetpack Compose migration.
 - Removed the `AD_ID` permission again.
 - Leaner release builds through better ExoPlayer shrinking.
 
-## 4.11.0 — 2025-09-04
+## 4.11.0 (2025-09-04)
 
 - **Dark theme extended to Devotions and Songs**, so night mode is now
   consistent across the whole app.
@@ -157,13 +157,13 @@ the first wave of a Jetpack Compose migration.
 - Devotion prefetch shortened from 31 days to 15 days.
 - Analytics event tracking removed.
 
-## 4.10.1 — 2024-04-24
+## 4.10.1 (2024-04-24)
 
 - Fixed a long-standing bug that made footnotes and cross-references
   silently disappear in later chapters of some Bibles (caused by
   treating a reference index as signed instead of unsigned).
 
-## 4.10.0 — 2023-07-18
+## 4.10.0 (2023-07-18)
 
 - **NFC / Android Beam** ("send verse to nearby device") feature
   removed; the platform dropped it in Android 10.
@@ -179,7 +179,7 @@ the first wave of a Jetpack Compose migration.
 - Download errors now properly detect non-2xx HTTP responses.
 - Various small crash fixes.
 
-## 4.9.0 — 2023-06-08
+## 4.9.0 (2023-06-08)
 
 - **Minimum Android raised to 8.0 Oreo** (API 26), dropping support for
   Android 4.x–7.x.
@@ -206,7 +206,7 @@ the first wave of a Jetpack Compose migration.
 - Verse-reference parser now accepts en-dash and em-dash.
 - `AD_ID` permission removed.
 
-## 4.8.1 — 2021-04-05
+## 4.8.1 (2021-04-05)
 
 - Bundles the fixes needed after 4.8.0 rolled out its bigger
   feature set: language option not being applied correctly again,
@@ -215,7 +215,7 @@ the first wave of a Jetpack Compose migration.
 - Added Hungarian language.
 - AYT audio disclaimer shown where relevant.
 
-## 4.8.0 — 2021-02-08
+## 4.8.0 (2021-02-08)
 
 - **Data Transfer**: export and import your bookmarks, notes,
   highlights, pins, labels, reading-plan progress, and history as a
@@ -230,7 +230,7 @@ the first wave of a Jetpack Compose migration.
 - Searching with curly quote characters works.
 - Fixed links on verse dialogs that prevented jumping to the verse.
 
-## 4.7.1 — 2020-08-20
+## 4.7.1 (2020-08-20)
 
 - Removed the 30-pericopes-per-chapter cap.
 - Cleaned up the outdated "fonts are needed" message and a stale
@@ -240,7 +240,7 @@ the first wave of a Jetpack Compose migration.
   bottom.
 - Updated translations.
 
-## 4.7.0 — 2020-07-18
+## 4.7.0 (2020-07-18)
 
 - **Back and forward navigation** on the Bible screen, with long-press
   to see a full history list.
@@ -255,7 +255,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed a bug on Android 8 and earlier where the text display became
   messy after changing the Bible text size.
 
-## 4.6.4 — 2020-02-18
+## 4.6.4 (2020-02-18)
 
 - Startup no longer forces a sync; push notifications handle that.
 - Fixed a text-view resizing bug on Android 4.4. Verse height did not
@@ -265,7 +265,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed a crash when loading songs.
 - Fixed an undefined symbol in the Snappy native library.
 
-## 4.6.3 — 2020-01-30
+## 4.6.3 (2020-01-30)
 
 - **Downloads work again on Android 4.4 KitKat** by forcing TLS 1.2 via
   Google's ProviderInstaller. This covers both Bible translations and
@@ -275,7 +275,7 @@ the first wave of a Jetpack Compose migration.
 - A few null-safety fixes in the Goto grid and the verse dialog, and in
   the devotion reminder and verse selector.
 
-## 4.6.2 — 2020-01-23
+## 4.6.2 (2020-01-23)
 
 - Scrollbar is back.
 - Song activity shows position and duration in its title.
@@ -283,7 +283,7 @@ the first wave of a Jetpack Compose migration.
   crashed on Android 5.1; MIDI playback error −38 at the end of a song;
   language switching on Android 5.1.
 
-## 4.6.1 — 2020-01-07
+## 4.6.1 (2020-01-07)
 
 - **Full AndroidX migration** and library modernisation.
 - **ExoPlayer replaces MediaPlayer** for non-MIDI song audio — MP3s
@@ -301,7 +301,7 @@ the first wave of a Jetpack Compose migration.
 - "Manage versions" / "Manage reading plans" open automatically when
   nothing is installed yet.
 
-## 4.5.7 — 2019-05-28
+## 4.5.7 (2019-05-28)
 
 - **Push sync migrated from GCM to FCM** (Google was shutting GCM
   down).
@@ -311,12 +311,12 @@ the first wave of a Jetpack Compose migration.
 - Security fix for a zip path-traversal vulnerability on user-data
   import.
 
-## 4.5.6 — 2019-04-24
+## 4.5.6 (2019-04-24)
 
 - Added Cebuano and Tagalog UI translations.
 - Ukrainian UI translation dropped.
 
-## 4.5.5 — 2018-11-16
+## 4.5.5 (2018-11-16)
 
 - **Hide the app icon on the daily-verse widget** via a new
   preference.
@@ -331,23 +331,23 @@ the first wave of a Jetpack Compose migration.
 - Fixed verse text on songs.
 - Removed mdpi assets.
 
-## 4.5.4 — 2018-11-07
+## 4.5.4 (2018-11-07)
 
 - **Ribka** support: report typos or suggest corrections in the AYT
   Bible text directly from the verse menu.
 
-## 4.5.3 — 2018-09-26
+## 4.5.3 (2018-09-26)
 
 - **"Download from URL"** for Bible versions works again.
 - Clearer error messages when a version download fails.
 
-## 4.5.2 — 2018-06-29
+## 4.5.2 (2018-06-29)
 
 - Background services moved to `JobIntentService` to stop crashes on
   Android 8+ (affects the FCM sync receiver and widget updater). This
   fixes the crash when updating widgets on Android 8.0 and up.
 
-## 4.5.1 — 2018-06-28
+## 4.5.1 (2018-06-28)
 
 - **Preset versions are grouped** on the download list (e.g. by
   language family) — easier to scan.
@@ -364,7 +364,7 @@ the first wave of a Jetpack Compose migration.
 - Target SDK raised to 27 (Android 8.1).
 - Source code updated for use with Android Studio 3.1.3.
 
-## 4.5.0 — 2018-02-21
+## 4.5.0 (2018-02-21)
 
 - Sharing verses now uses **FileProvider**, so sharing to other apps is
   much more reliable. This fixes sharing Bible files.
@@ -378,7 +378,7 @@ the first wave of a Jetpack Compose migration.
   blog).
 - Updated translations.
 
-## 4.4.3 — 2017-11-02
+## 4.4.3 (2017-11-02)
 
 - Crash reporting moved from an in-house reporter to **Crashlytics**.
 - Song-book download page opens automatically if none are installed.
@@ -386,12 +386,12 @@ the first wave of a Jetpack Compose migration.
 - Various widget and NFC crash fixes, plus a workaround for an
   Android 6.0.0 EditText crash.
 
-## 4.4.1 — 2017-07-25
+## 4.4.1 (2017-07-25)
 
 - Fixed the shortcut to other apps appearing when the app is opened in
   landscape.
 
-## 4.4.0 — 2017-03-21
+## 4.4.0 (2017-03-21)
 
 - **Per-version text size** (set from the Display panel; in split view
   each side can have its own size, expressed as a percentage).
@@ -416,7 +416,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed the "up" button on the help page.
 - Fixed a hang when setting or turning off the devotion reminder.
 
-## 4.4 Beta 8 — 2016-09-08
+## 4.4 Beta 8 (2016-09-08)
 
 - Added a new feature to use super big text size for UI elements.
 - Fixed search results being checked unintentionally when the search
@@ -427,7 +427,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed preloading devotions when switching devotion kind.
 - Fixed paragraph spacing in Android 7.0.
 
-## 4.4 Beta 7 — 2016-08-31
+## 4.4 Beta 7 (2016-08-31)
 
 - Fixed history dialog not closing.
 - Fixed not being able to add a label on the bookmark dialog.
@@ -437,7 +437,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed a crash when sending feedback.
 - Fixed a short hang when processing a downloaded version.
 
-## 4.4 Beta 6 — 2016-08-19
+## 4.4 Beta 6 (2016-08-19)
 
 - Fixed detecting a verse reference containing a space between numbers
   without punctuation.
@@ -449,23 +449,23 @@ the first wave of a Jetpack Compose migration.
   opened from another app.
 - Show a progress bar when opening download pages, e.g. reading plans.
 
-## 4.3.8 — 2016-08-19
+## 4.3.8 (2016-08-19)
 
 - Added Bulgarian and Danish UI languages, plus Korean app and
   feedback-module translations.
 
-## 4.3.7 — 2016-04-08
+## 4.3.7 (2016-04-08)
 
 - New devotions: **refheart** (Reforming Heart, Indonesian) and **ROC**
   (My Utmost For His Highest).
 - Added Thai UI language.
 - A reversed-offset partial highlight no longer crashes.
 
-## 4.3.6 — 2016-02-29
+## 4.3.6 (2016-02-29)
 
 - Sync skips past a disabled sync set and continues with the rest.
 
-## 4.3.5 — 2016-02-26
+## 4.3.5 (2016-02-26)
 
 - Fixed truncated verse lines on Android 6.0 Marshmallow (line-height
   workaround).
@@ -476,14 +476,14 @@ the first wave of a Jetpack Compose migration.
 - Fixed restoring markers from an old backup sometimes forgetting to
   assign labels to certain bookmarks.
 
-## 4.4 Beta 5 — 2016-01-28
+## 4.4 Beta 5 (2016-01-28)
 
 - Copy/share primary/secondary/both versions.
 - Able to set a per-version relative font size by enabling Split and
   then opening Display.
 - Close the drawer after opening the pin list dialog.
 
-## 4.4 Beta 4 — 2016-01-15
+## 4.4 Beta 4 (2016-01-15)
 
 - Fixed restoring markers from an old backup sometimes forgetting to
   assign labels to certain bookmarks.
@@ -500,7 +500,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed detecting a verse reference in notes that is followed by the
   word "the".
 
-## 4.4 Beta 3 — 2015-12-12
+## 4.4 Beta 3 (2015-12-12)
 
 - Fixed a bug where there were gaps when text is made very small.
 - Fixed a line-spacing bug in Android 6.0 when there is paragraph
@@ -509,7 +509,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed version selector appearance in Android 6.0.1.
 - Hopeful fix so that verse contents are no longer truncated.
 
-## 4.4 Beta 2 — 2015-12-04
+## 4.4 Beta 2 (2015-12-04)
 
 - Private song books (marked in teal).
 - Searching non-ASCII Bible text now works properly.
@@ -519,7 +519,7 @@ the first wave of a Jetpack Compose migration.
 - Reverted: top and bottom paddings no longer crop text on the note
   editor.
 
-## 4.4 Beta 1 — 2015-11-27
+## 4.4 Beta 1 (2015-11-27)
 
 - Option to navigate without entering a verse number.
 - No longer auto-selects a verse when entering the screen, just a brief
@@ -540,7 +540,7 @@ the first wave of a Jetpack Compose migration.
 - Top and bottom paddings no longer crop text on the note editor.
 - Select and copy verses from the search results page.
 
-## 4.3.4 — 2015-11-27
+## 4.3.4 (2015-11-27)
 
 - "Import old markers" now also recognizes the `org.sabda` variant's
   export format.
@@ -552,18 +552,18 @@ the first wave of a Jetpack Compose migration.
 - Fixed a crash when an accessibility service calls an invalid position
   on the verse ListView.
 
-## 4.3.3 — 2015-10-29
+## 4.3.3 (2015-10-29)
 
 - Fixed a thread-pool crash on older Android versions, which stopped
   markers loading on Android 4.1 and lower.
 
-## 4.3.2 — 2015-10-26
+## 4.3.2 (2015-10-26)
 
 - Follow-up fix for upgrading from pre-2.0 installs.
 - Less memory needed when syncing a large amount of data.
 - Updated translations and internal versions.
 
-## 4.3.1 — 2015-10-23
+## 4.3.1 (2015-10-23)
 
 - Feature Guide Video (YouTube link).
 - Marker-list sorting moved to a submenu, instead of a separate dialog
@@ -574,7 +574,7 @@ the first wave of a Jetpack Compose migration.
   the marker list.
 - Suppressed a spurious dictionary-provider error.
 
-## 4.3.0 — 2015-09-30
+## 4.3.0 (2015-09-30)
 
 - **Extensions**: third-party apps can add attribute icons and popups
   to verses. The list auto-refreshes as extensions are installed or
@@ -604,14 +604,14 @@ the first wave of a Jetpack Compose migration.
 - Fixed not being able to open search results or any other verse links
   when opening the app from the widget.
 
-## 4.3 Beta 3 — 2015-08-25
+## 4.3 Beta 3 (2015-08-25)
 
 - Support for extension apps: create your own app that enriches
   user-selected verses (docs).
 - Fixed an unresponsive pointer when dragging the verse floater.
 - Fixed memory leaks.
 
-## 4.3 Beta 2 — 2015-08-17
+## 4.3 Beta 2 (2015-08-17)
 
 - Integration with Bible Maps (blog).
 - Verse sharing pages support formatted verses (like poems or italics).
@@ -621,7 +621,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed a bug where left/right verse navigation buttons were very hard
   to tap.
 
-## 4.3 Beta 1 — 2015-07-17
+## 4.3 Beta 1 (2015-07-17)
 
 - Partial sync, which helps successfully sync a large amount of data
   (blog).
@@ -632,7 +632,7 @@ the first wave of a Jetpack Compose migration.
 - Moved sync triggering from each time the Bible screen is opened to
   when the app process starts up.
 
-## 4.2.2 — 2015-07-30
+## 4.2.2 (2015-07-30)
 
 - Reading-plan progress bar updates when you change the start date;
   the start-date picker defaults to the current start date.
@@ -640,13 +640,13 @@ the first wave of a Jetpack Compose migration.
   Services prompt.
 - Fixed a bug where announcements could not be viewed.
 
-## 4.2.1 — 2015-07-08
+## 4.2.1 (2015-07-08)
 
 - Critical stack-overflow fix. It caused a crash when opening the
   markers, share, font manager, and help screens.
 - Crash reports are capped in length.
 
-## 4.2.0 — 2015-07-07
+## 4.2.0 (2015-07-07)
 
 - **Reading plans sync across devices** (progress and start-dates).
   The plan itself still needs to be downloaded per device. Deleting a
@@ -674,7 +674,7 @@ the first wave of a Jetpack Compose migration.
 - Check whether the dictionary is installed before activating
   auto-lookup dictionary in settings.
 
-## 4.2 Beta 5 — 2015-07-01
+## 4.2 Beta 5 (2015-07-01)
 
 - Sync reading plan progress (blog).
 - Restart a reading plan from the beginning.
@@ -683,7 +683,7 @@ the first wave of a Jetpack Compose migration.
 - On light backgrounds, scrollbars are now still visible
   (Android 5.0+).
 
-## 4.2 Beta 4 — 2015-06-24
+## 4.2 Beta 4 (2015-06-24)
 
 - Sync progress marks (blog).
 - When dragging progress marks, the drawer closes immediately so you
@@ -696,7 +696,7 @@ the first wave of a Jetpack Compose migration.
 - Fixes to partial highlight where the soft keyboard covers the OK
   button.
 
-## 4.2 Beta 3 — 2015-06-22
+## 4.2 Beta 3 (2015-06-22)
 
 - In night mode, the action bar and the split version handle are shown
   in dark (blog).
@@ -706,7 +706,7 @@ the first wave of a Jetpack Compose migration.
 - On the marker list, the time of the last edit is displayed instead of
   the date if the edit occurred on the same day.
 
-## 4.2 Beta 2 — 2015-06-17
+## 4.2 Beta 2 (2015-06-17)
 
 - The current reading is shown on the Bible text screen after clicking
   one of the readings from the reading plan list.
@@ -714,7 +714,7 @@ the first wave of a Jetpack Compose migration.
 - When copying or sharing verses, a share URL is created so you can
   share verses by link (can be disabled) (blog).
 
-## 4.2 Beta 1 — 2015-06-10
+## 4.2 Beta 1 (2015-06-10)
 
 - Clicking a saved note at a certain position immediately edits the
   note at that position.
@@ -727,7 +727,7 @@ the first wave of a Jetpack Compose migration.
 - Speak the availability of bookmarks, notes, and progress markers on a
   verse when using TalkBack.
 
-## 4.1.1 — 2015-05-25
+## 4.1.1 (2015-05-25)
 
 - Fixes for several crashes: song keypad, passing too many songs,
   search-engine NPE, database-index upgrade from very old versions.
@@ -735,7 +735,7 @@ the first wave of a Jetpack Compose migration.
   responding to almost all presses.
 - Companion release to 4.1.0 (see below).
 
-## 4.1.0 — 2015-05-22
+## 4.1.0 (2015-05-22)
 
 - Indonesian **Alkitab** gets integration with SABDA's **Kamus
   Alkitab** (dictionary), **Tafsiran Alkitab** (commentary), and
@@ -757,7 +757,7 @@ the first wave of a Jetpack Compose migration.
 - Dictionary, Guide, and Commentary menus are disabled on Quick Bible,
   since all of them are in Indonesian.
 
-## 4.1 Beta 2 — 2015-05-05
+## 4.1 Beta 2 (2015-05-05)
 
 - Download additional songbooks via web page (blog).
 - More flexible system for Devotion.
@@ -771,7 +771,7 @@ the first wave of a Jetpack Compose migration.
 - Option to keep dictionary words automatically looked up when
   selecting verses.
 
-## 4.1 Beta 1 — 2015-04-30
+## 4.1 Beta 1 (2015-04-30)
 
 - Integration with Dictionary app (blog).
 - Integration with Guide app (blog).
@@ -787,12 +787,12 @@ the first wave of a Jetpack Compose migration.
 - Create and add custom reading plans (blog).
 - Updated to Play Services 7.3.0 and Support Library 22.1.1.
 
-## 4.0.1 — 2015-04-10
+## 4.0.1 (2015-04-10)
 
 - Fixed a widget crash on Android < 5.0.
 - Fixed a crash on Android < 4.1 from a mistyped API call.
 
-## 4.0.0 — 2015-04-09
+## 4.0.0 (2015-04-09)
 
 (finally!)
 
@@ -842,7 +842,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed a long-standing widget refresh problem where the verse
   reference and text did not match.
 
-## 4.0 Beta 16 — 2015-03-18
+## 4.0 Beta 16 (2015-03-18)
 
 - More popup dialogs are shown using the Material Design theme.
 - Semi-transparent Home screen widgets.
@@ -860,7 +860,7 @@ the first wave of a Jetpack Compose migration.
 - Fixed missing spaces when copying/sharing a verse that has poem
   formatting.
 
-## 4.0 Beta 15 — 2015-03-13
+## 4.0 Beta 15 (2015-03-13)
 
 - Announcement system: a weekly check is performed by the app for
   messages from the server.
@@ -877,7 +877,7 @@ the first wave of a Jetpack Compose migration.
 - Some popup dialogs are now Material Design-themed even on
   Android < 5.0.
 
-## 4.0 Beta 14 — 2015-02-04
+## 4.0 Beta 14 (2015-02-04)
 
 - Fixed marker migration fatal bugs.
 - The search text box is automatically focused when the screen is
@@ -886,12 +886,12 @@ the first wave of a Jetpack Compose migration.
   verses.
 - Max label caption length increased from 24 to 48 characters.
 
-## 4.0 Beta 13 — 2015-01-28
+## 4.0 Beta 13 (2015-01-28)
 
 - Ask to migrate markers from v3 (yuku.alkitab and yuku.alkitab.kjv) on
   v4 of the new app (org.sabda.online).
 
-## 4.0 Beta 12 — 2015-01-23
+## 4.0 Beta 12 (2015-01-23)
 
 - Quick Bible is now published by SABDA, because Yuku is unable to
   publish it.
@@ -917,7 +917,7 @@ the first wave of a Jetpack Compose migration.
 - Able to selectively disable and enable devotions from the build
   config (e.g. Quick Bible should not have RH).
 
-## 4.0 Beta 11 — 2014-12-11
+## 4.0 Beta 11 (2014-12-11)
 
 - Material Design. Holo design is now switched to Material Design,
   following the style of Android Lollipop.
@@ -928,7 +928,7 @@ the first wave of a Jetpack Compose migration.
   looked weird on big screens).
 - Fixed full screen mode on Android 4.4.
 
-## 4.0 Beta 10 — 2014-12-06
+## 4.0 Beta 10 (2014-12-06)
 
 - Sync: remotely synchronize bookmarks, notes, highlights, and labels
   across devices.
@@ -939,7 +939,7 @@ the first wave of a Jetpack Compose migration.
 - Full screen mode now works better, and clicking on verses does not
   cause the whole screen to shift down.
 
-## 4.0 Beta 9 — 2014-09-27
+## 4.0 Beta 9 (2014-09-27)
 
 - Rearrange Bible versions by dragging.
 - View the list of progress markers.
@@ -954,7 +954,7 @@ the first wave of a Jetpack Compose migration.
 - Add a yes file from an Internet URL directly without using a separate
   downloader.
 
-## 4.0 Beta 8 — 2014-08-14
+## 4.0 Beta 8 (2014-08-14)
 
 An overview of what changed since v3.
 
@@ -995,7 +995,7 @@ Search:
 - Select book categories to be searched (Pentateuch, Gospels, etc.).
 - History of recent searches.
 
-## (Quick Bible re-launch) — 2015-01-29
+## (Quick Bible re-launch) (2015-01-29)
 
 - Quick Bible returned to Play Store after the Yuku developer account
   was reinstated. The relaunch introduced the material-design UI,
@@ -1004,20 +1004,20 @@ Search:
   version downloads, and an upgraded cross-version search — all
   rolled into what shipped as the 4.0 series.
 
-## (SABDA re-publish) — 2014-12-15
+## (SABDA re-publish) (2014-12-15)
 
 - While the Yuku developer account was suspended, the app was
   re-published on Play Store under SABDA as "SABDA Alkitab (Yuku
   Android)". On first launch it offered to transfer your bookmarks
   from the old app's automatic backup.
 
-## 3.7.0 — 2016-01-06
+## 3.7.0 (2016-01-06)
 
 - "Download reading plan by ID" support.
 - Late maintenance release on the legacy 3.x branch — the 4.x series
   was already the main line by this point.
 
-## 3.6.3 — 2014-09-19
+## 3.6.3 (2014-09-19)
 
 - **Patch text** mechanism: propose edits to songs and devotions, with
   tappable verse references inside the editor.
@@ -1029,13 +1029,13 @@ Search:
   startup crash when the previously-selected version was no longer
   loadable.
 
-## 3.6.2 — 2014-07-24
+## 3.6.2 (2014-07-24)
 
 - Added Malay and SDA Toraja versions.
 - Help button now opens the website; official site link on About.
 - Beta ribbon removed.
 
-## 3.6.1 — 2014-06-06
+## 3.6.1 (2014-06-06)
 
 - **Custom highlight color**.
 - **Dark theme for the Goto screen.**
@@ -1048,7 +1048,7 @@ Search:
   screen; Full-screen and Night-mode toggles moved into the Text
   Appearance panel.
 
-## 3.6.0 — 2014-06-02
+## 3.6.0 (2014-06-02)
 
 - **Morning & Evening** devotion added (Indonesian meid-a).
 - Refreshed font-download UI; new Roboto / Droid font names.
@@ -1061,7 +1061,7 @@ Search:
 - Split view stays in sync when scrolling or using volume-button
   chapter navigation.
 
-## 3.5.6 — 2014-05-23
+## 3.5.6 (2014-05-23)
 
 - Added English Lexham Bible (en-leb).
 - Beta-tester program link added to About.
@@ -1069,7 +1069,7 @@ Search:
 - KJV download combined with red-letter text (separate red-letter
   edition removed).
 
-## 3.5.5 — 2014-04-22
+## 3.5.5 (2014-04-22)
 
 - Fixed a bookmark edit / delete bug.
 - Added NKI songbook.
@@ -1078,7 +1078,7 @@ Search:
 - Opening a verse from search results starts a new reader screen
   instead of replacing the current one.
 
-## 3.5.4 — 2014-04-15
+## 3.5.4 (2014-04-15)
 
 - **Sharing to WhatsApp omits the subject line** (no more "(no
   subject)" prefix).
@@ -1090,14 +1090,14 @@ Search:
 - All preset versions are now YES2; the older YES1 entries were
   removed from the download list.
 
-## 3.5.3 — 2014-04-08
+## 3.5.3 (2014-04-08)
 
 - Goto dialog's extraneous action bar removed.
 - The floating box on the goto grid shows an empty box for the
   current book / chapter so it's obvious which one is selected.
 - Added the Pontic (pon-old) version.
 
-## 3.5.2 — 2014-04-05
+## 3.5.2 (2014-04-05)
 
 - Rollup of several small fixes: song-player stability, unicode
   emoji surviving backup / restore, WhatsApp share without an empty
@@ -1105,11 +1105,11 @@ Search:
   "5a"-style verse suffixes parsing, and prefetch of Renungan Harian
   devotion limited to 3 days ahead.
 
-## 3.5.1 — 2014-04-03
+## 3.5.1 (2014-04-03)
 
 - Narrower action-bar buttons for small and pre-ICS devices.
 
-## 3.5.0 — 2014-04-02
+## 3.5.0 (2014-04-02)
 
 - **Compare versions**: see the same verse in multiple versions in a
   single dialog.
@@ -1118,36 +1118,36 @@ Search:
   daylight-saving transitions.
 - Refreshed About screen and higher-resolution icons.
 
-## 3.4.7 — 2014-03-29
+## 3.4.7 (2014-03-29)
 
 - Pericope and out-of-plan verse shading draws correctly.
 - Copying or sharing from split view shows the book abbreviation
   instead of `[?]` when a book is unavailable.
 
-## 3.4.6 — 2014-03-28
+## 3.4.6 (2014-03-28)
 
 - **Immersive mode on Android 4.4 KitKat.**
 - New songbooks: KPKL and KPPK.
 - Pressing different zones of the split handle opens either the
   version-chooser or the split-version dialog.
 
-## 3.4.5 — 2014-01-09
+## 3.4.5 (2014-01-09)
 
 - Verses can also be selected via the floating menu.
 - Highlight appearance tweaks.
 - Fixed sharing verses from a version without a short-name.
 
-## 3.4.4 — 2013-11-27
+## 3.4.4 (2013-11-27)
 
 - Removed stray leading spaces in some TB verses.
 - More fixes for the reading-plan progress-table corruption.
 
-## 3.4.3 — 2013-11-25
+## 3.4.3 (2013-11-25)
 
 - Fixed reading-plan progress-table corruption for users upgrading
   via 3.3.3.
 
-## 3.4.2 — 2013-11-20
+## 3.4.2 (2013-11-20)
 
 - Reading plans downloaded from a server (no longer built in);
   description and day count shown before download.
@@ -1155,14 +1155,14 @@ Search:
   clearly.
 - Added NET Bible.
 
-## 3.4.1 — 2013-11-18
+## 3.4.1 (2013-11-18)
 
 - **Night mode** menu (dark theme) with night-aware color settings.
 - **Double-tap anywhere** toggles full-screen.
 - Non-English Latin characters are now searchable.
 - Warning when downloading a version in a locale you may not use.
 
-## 3.4.0 — 2013-11-15
+## 3.4.0 (2013-11-15)
 
 - **Reading plans**: daily readings with a hide/show detail toggle,
   a "Today" popup, a "Catch me up" shortcut when you fall behind,
@@ -1175,21 +1175,21 @@ Search:
 - Clicking a verse link inside a song now opens the verse in a
   popup dialog.
 
-## 3.3.3 — 2013-11-15
+## 3.3.3 (2013-11-15)
 
 - Last split version is remembered across app launches.
 - New **text-size option for the daily-verse widget**.
 - Added Hindi (hi-bsi) and Tamil (ta-bsi) versions.
 - Devotion encoding issues fixed.
 
-## 3.3.2 — 2013-11-11
+## 3.3.2 (2013-11-11)
 
 - Feedback messages must be at least 40 characters.
 - Donation page opens inside the app.
 - Added Japanese locale; added Romanian Fidela, GBV 2001, and Telugu
   Bibles.
 
-## 3.3.1 — 2013-10-24
+## 3.3.1 (2013-10-24)
 
 - **TSI Bible** added.
 - **Transparent daily-verse widget** variant (dark text on transparent
@@ -1197,7 +1197,7 @@ Search:
 - New "show yesterday's verse" option in the widget.
 - Fixed a Facebook-sharing bug on Quick Bible.
 
-## 3.3.0 — 2013-10-21
+## 3.3.0 (2013-10-21)
 
 - **Daily-verse home-screen widget** (scrollable on Android 4.0+).
   Pick the version, font size, transparency, and light / dark text;
@@ -1219,7 +1219,7 @@ Search:
 - Reference parser now understands chapter-to-chapter ranges like
   "Ps 38-39".
 
-## 3.2.0 — 2013-09-23
+## 3.2.0 (2013-09-23)
 
 - **Progress marks**: 5 named pins for your current reading location,
   each with its own color and default name. Long-press to rename or
@@ -1238,13 +1238,13 @@ Search:
 - New UI languages: Czech, Simplified Chinese, Traditional Chinese.
 - Fixed a crash when upgrading from very old installs.
 
-## 3.1.1 — 2013-06-12
+## 3.1.1 (2013-06-12)
 
 - Shared verses now generate a version-specific URL for supported
   Bible versions (the shared link opens the right translation).
 - Removed Afrikaans 1953 and Xhosa from the download list.
 
-## 3.1.0 — 2013-06-03
+## 3.1.0 (2013-06-03)
 
 - **Full-screen reading mode** (with a menu toggle).
 - **Volume buttons change chapters** (optional).
@@ -1252,12 +1252,12 @@ Search:
   selected verses.
 - A small easter egg.
 
-## 3.0.6 — 2013-05-14
+## 3.0.6 (2013-05-14)
 
 - Fixed swapped / broken font-preview images.
 - Minor crash fix.
 
-## 3.0.5 — 2013-05-11
+## 3.0.5 (2013-05-11)
 
 - **Split view**: read two Bible versions side by side with a
   draggable divider, synchronized scrolling, cross-references that
@@ -1284,7 +1284,7 @@ Search:
   handled correctly.
 - Many new preset versions added.
 
-## 2.9.5 — 2013-03-18
+## 2.9.5 (2013-03-18)
 
 - Cold-start from an external app now scrolls the verse list
   correctly.
@@ -1296,28 +1296,28 @@ Search:
 - Released the **AlkitabIntegration** helper library for third-party
   apps.
 
-## 2.9.4 — 2013-02-12
+## 2.9.4 (2013-02-12)
 
 - New app translations: Afrikaans and Spanish (other locales
   updated).
 - Skip the bookmark auto-backup step when there are no bookmarks.
 - Songbook URL updated; song data moved to the v3 format.
 
-## 2.9.3 — 2013-02-06
+## 2.9.3 (2013-02-06)
 
 - KJV ships with a reverse index for faster first search.
 - Tokenizer recognizes apostrophes inside words.
 - Fixed KJV words containing `- `.
 
-## 2.9.2 — 2013-02-05
+## 2.9.2 (2013-02-05)
 
 - Fixed a KJV file with a truncated Revelation chapter.
 
-## 2.9.1 — 2013-02-05
+## 2.9.1 (2013-02-05)
 
 - Fixed TB John 12:34 text.
 
-## 2.9.0 — 2013-02-04
+## 2.9.0 (2013-02-04)
 
 - **Drag-and-reorder** for bookmark labels.
 - Native search view on the search screen (replaces the old custom
@@ -1328,26 +1328,26 @@ Search:
 - Under the hood: **new YES2 Bible file format** supporting verses
   longer than 4000 bytes and single-file pericopes.
 
-## 2.8.7 — 2013-01-15
+## 2.8.7 (2013-01-15)
 
 - Keep-screen-on now also applies inside the devotion screen.
 - Jumper accepts en-dash and em-dash in verse ranges.
 - Four more UI translations added.
 
-## 2.8.6 — 2013-01-11
+## 2.8.6 (2013-01-11)
 
 - **FAQ page** shown before the Feedback screen.
 - Optional "prepend the verse number on every verse" mode when
   copying or sharing multiple verses.
 - Dutch translation added; German updated.
 
-## 2.8.5 — 2012-12-21
+## 2.8.5 (2012-12-21)
 
 - Devotion screen redesigned with a single action bar and a popup to
   pick the devotion source.
 - Smaller devotion copyright footer; copyright notices updated.
 
-## 2.8.4 — 2012-12-14
+## 2.8.4 (2012-12-14)
 
 - Content-provider verse-range queries load a whole chapter at once,
   so external apps that show many verses are much faster.
@@ -1355,25 +1355,25 @@ Search:
   verse text.
 - Last-commit hash shown on About in debug builds.
 
-## 2.8.3 — 2012-12-05
+## 2.8.3 (2012-12-05)
 
 - New "redownload" menu in the devotion screen.
 - Book and chapter in the Goto grid can be re-selected independently
   (two tap zones).
 - Attempted fix for Goto-direct keyboard issues on some devices.
 
-## 2.8.2 — 2012-11-28
+## 2.8.2 (2012-11-28)
 
 - Content provider can be reached again from other apps on Android
   4.2+.
 - Worked around crashes caused by HTML tags in devotion titles.
 
-## 2.8.1 — 2012-11-22
+## 2.8.1 (2012-11-22)
 
 - Silent bump — the 2.8.0 feature set rolled forward for a Play Store
   update.
 
-## 2.8.0 — 2012-11-20
+## 2.8.0 (2012-11-20)
 
 - **In-app Feedback / "suggest a feature"** wizard.
 - Faster first-run search via a preloaded reverse index (TB).
@@ -1382,7 +1382,7 @@ Search:
 - Search tokenizer treats hyphens as part of a word, and "Sela" /
   "Higayon" no longer split into single letters.
 
-## 2.7.1 — 2012-10-30
+## 2.7.1 (2012-10-30)
 
 - Revamped formatted-verse rendering (paragraph indent, italics,
   line breaks).
@@ -1396,7 +1396,7 @@ Search:
 - Added Ukrainian UI translation and new Bible presets: Afrikaans
   1953, Korean KRV, and Polish Gdańska 1632.
 
-## 2.7.0 — 2012-10-09
+## 2.7.0 (2012-10-09)
 
 - **New Content Provider API**: other apps can query
   `content://yuku.alkitab.provider/bible/verses/...` to fetch a
@@ -1410,24 +1410,24 @@ Search:
   indent, italics, line breaks).
 - Jump references accept ranges with a single or double dash.
 
-## 2.6.3 — 2012-09-11
+## 2.6.3 (2012-09-11)
 
 - 100th release overall. Mostly patch work on top of 2.6.0.
 - Fixed copy / share of a song when the song contains a scripture
   reference.
 - KPKA and PPK song books upgraded to v3 with corrected data.
 
-## 2.6.2 — 2012-09-02
+## 2.6.2 (2012-09-02)
 
 - No longer forces the Holo theme on every device — the app follows
   the system look where appropriate.
 
-## 2.6.1 — 2012-09-01
+## 2.6.1 (2012-09-01)
 
 - Emergency fix so the on-screen keyboard pops up again on pre-4.0
   Android when using the "direct" Go-to tab.
 
-## 2.6.0 — 2012-08-28
+## 2.6.0 (2012-08-28)
 
 - **Go-to redesign**: three tabs (keypad, grid, direct-input) instead
   of a mode chooser.
@@ -1437,12 +1437,12 @@ Search:
   manager.
 - Fixed a Jelly Bean bug where selected verses didn't turn black.
 
-## 2.5.2 — 2012-07-09
+## 2.5.2 (2012-07-09)
 
 - Fixed a serious search bug where many queries returned nothing
   because the query wasn't lowercased before matching.
 
-## 2.5.1 — 2012-07-03
+## 2.5.1 (2012-07-03)
 
 - Copy and Share added to the Song screen.
 - Smarter search query parser: queries like `a +"b c"` are handled
@@ -1451,7 +1451,7 @@ Search:
   songs in a row without retyping.
 - About screen now lists translators.
 
-## 2.5.0 — 2012-06-16
+## 2.5.0 (2012-06-16)
 
 - **Song Book** feature introduced: a new Songs screen bundles four
   Indonesian hymn books (KPRI, KJ, NKB, PKJ) with full-text lyric
@@ -1464,7 +1464,7 @@ Search:
 - **Custom fonts**: install and use any font file from storage;
   includes a small Font Manager with a few downloadable fonts.
 
-## 2.4.0 — 2012-06-05
+## 2.4.0 (2012-06-05)
 
 - **Line Spacing** preference so you can loosen or tighten the space
   between verse lines.
@@ -1472,19 +1472,19 @@ Search:
 - New menu entry to launch the companion ESV Study Bible add-on if
   it's installed.
 
-## 2.3.1 — 2012-05-16
+## 2.3.1 (2012-05-16)
 
 - Search can be restricted to the **currently open book**.
 - In-app help page for the NFC verse-sharing feature.
 - Pericope title top margin scales with the chosen font size.
 
-## 2.3.0 — 2012-05-12
+## 2.3.0 (2012-05-12)
 
 - **NFC** support: tap two devices together to send or receive a
   verse reference.
 - Search and Version actions are always visible on the action bar.
 
-## 2.2.3 → 2.2.7 — 2012-01-12 → 2012-03-21
+## 2.2.3 → 2.2.7 (2012-01-12 → 2012-03-21)
 
 - New downloadable Bible versions added across the series: Tagalog
   (Ang Biblia 1905), German (Luther 1912), English (BBE), Hungarian
@@ -1497,7 +1497,7 @@ Search:
 - Backed-up **label colors** are now restored along with the labels.
 - Verse share link to Facebook fixed to produce the correct URL.
 
-## 2.2.2 — 2012-01-11
+## 2.2.2 (2012-01-11)
 
 - Companion of the blog's "2.2" release:
   - **Bookmark labels can have custom colors** — long-press a label
@@ -1510,7 +1510,7 @@ Search:
     kept for Android 2.2 and below. Fixed the ICS Preferences
     flicker caused by forcing a locale that clashed with the OS.
 
-## 2.2.0 → 2.2.1 — 2012-01-05 → 2012-01-11
+## 2.2.0 → 2.2.1 (2012-01-05 → 2012-01-11)
 
 - New downloadable versions: **Romanian (Cornilescu, 1928)** and
   **Japanese (口語訳 Kougo)**.
@@ -1521,7 +1521,7 @@ Search:
 - Switching languages no longer makes the screen flicker on rotation
   or resume.
 
-## 2.1.0 — 2011-11-28
+## 2.1.0 (2011-11-28)
 
 - KJV Bible data now includes **italic formatting for
   translator-added words** (not in the Hebrew / Aramaic / Greek
@@ -1529,14 +1529,14 @@ Search:
   Jesus' words. Indonesian users need to delete and re-download
   the KJV add-on.
 
-## 2.0.6 — 2011-11-28
+## 2.0.6 (2011-11-28)
 
 - Fixed invisible (white-on-white) search-result text on tablets on
   Android 3.0+.
 - Home button returns to the Bible text instead of exiting.
 - Recent-verses list expanded from 10 to 20 entries.
 
-## 2.0.2 → 2.0.5 — 2011-10-07 → 2011-11-23
+## 2.0.2 → 2.0.5 (2011-10-07 → 2011-11-23)
 
 - Bookmark backup/restore now includes your **labels** too, and on
   restore merges labels into the existing database instead of
@@ -1547,7 +1547,7 @@ Search:
 - Fixed an internal reader crash on KJV when a chapter had no
   pericopes.
 
-## 2.0.0 — 2011-10-01
+## 2.0.0 (2011-10-01)
 
 - **Redesigned verse menu**: tap a verse and press the fading-in
   button at the bottom-right, instead of long-pressing.
@@ -1560,7 +1560,7 @@ Search:
   live in one place, with search and label filtering.
 - Six new highlight colors.
 
-## 1.9.13 → 1.9.15 — 2011-08-17 → 2011-09-14
+## 1.9.13 → 1.9.15 (2011-08-17 → 2011-09-14)
 
 - **Final 1.x maintenance releases** — shipped after 1.9.12 was
   announced on the blog as the last 1.x release, but still before
@@ -1572,7 +1572,7 @@ Search:
 - Tablet default font bumped to 22sp and larger keypad / Go-to
   activity layouts added for xlarge screens.
 
-## 1.9.12 — 2011-08-16
+## 1.9.12 (2011-08-16)
 
 - Stability fixes for the PDB-related crashes introduced in 1.9.2.
 - **English Standard Version** (with italics) added as a download.
@@ -1582,7 +1582,7 @@ Search:
   in the end, 1.9.13 through 1.9.15 followed as maintenance on the
   1.x branch.
 
-## 1.9.2 → 1.9.11 — 2011-06-08 → 2011-07-09
+## 1.9.2 → 1.9.11 (2011-06-08 → 2011-07-09)
 
 - **PalmBible+ (`.pdb`) file reader**: import any PDB Bible; the
   app converts it to the internal `.yes` format with a progress
@@ -1610,13 +1610,13 @@ Search:
 - Locale-override language setting applied more reliably, without
   needing a handler-based refresh.
 
-## 1.4.5 — 2011-03-30
+## 1.4.5 (2011-03-30)
 
 - Amazon Appstore release: the "more versions" link points to the
   market generically.
 - Redesigned feedback form and verse-content screen layout.
 
-## 1.4.4 — 2011-03-17
+## 1.4.4 (2011-03-17)
 
 - ~100 corrections to the Indonesian Bible text (20–30 meaningful,
   the rest minor), sourced from Yayasan Lembaga SABDA. Corrected
@@ -1625,41 +1625,41 @@ Search:
   more phantom key-release sound).
 - Book names display with spaces instead of underscores.
 
-## 1.4.3 — 2011-01-20
+## 1.4.3 (2011-01-20)
 
 - Updated the **Toba** and **KJV** Bibles (removed stray asterisks,
   fixed underscores in book names).
 - Volume-button verse scrolling no longer makes the system beep.
 
-## 1.4.2 — 2011-01-16
+## 1.4.2 (2011-01-16)
 
 - **Batak Toba Bible** added as an optional download (Indonesian
   Alkitab only). First five books named "1–5 Musa".
 
-## 1.4.1 — 2011-01-12
+## 1.4.1 (2011-01-12)
 
 - ~30 text corrections in the Indonesian Terjemahan Baru Bible.
 - KJV add-on updated to include **red-letter text for Jesus' words**
   (users on older versions must delete `kjv.yes` and re-download).
 
-## 1.4 — 2010-12-28
+## 1.4 (2010-12-28)
 
 - **Red Letters in KJV**: words spoken by Jesus are highlighted in
   red. Red-letter data sourced from CCEL.
 
-## 1.3 — 2010-12-21
+## 1.3 (2010-12-21)
 
 - **Color highlighting** with 6 selectable colors (50% alpha so text
   stays readable on any theme).
 - **Whole-word search**: prefix a query with `+` (e.g. `+adam`) to
   match the exact word.
 
-## 1.2.2 — 2010-11-04
+## 1.2.2 (2010-11-04)
 
 - English KJV version published at 1.2.2 to match the Indonesian
   release; donation menu added; small enhancements.
 
-## 1.2.1 — 2010-11-03
+## 1.2.1 (2010-11-03)
 
 - Scroll thumb on the search-results list.
 - Progress dialogs added to import / export bookmarks; import now
@@ -1667,7 +1667,7 @@ Search:
 - Fixed shifted section headings in Ecclesiastes and an incorrect
   history entry when using Jump To without a book name.
 
-## 1.2 — 2010-10-19
+## 1.2 (2010-10-19)
 
 - **Navigation history**: long-press the verse-address button to see
   the last 10 navigations (Go To / Jump To / bookmark /
@@ -1677,7 +1677,7 @@ Search:
 - Faster Go To book list.
 - Devotion text can be copied and shared.
 
-## 1.1 — 2010-09-08
+## 1.1 (2010-09-08)
 
 - **First English release**, branded "Quick KJV Bible" (emphasizing
   speed). KJV is bundled as the default.
@@ -1685,12 +1685,12 @@ Search:
 - English build intentionally ships without devotions, version
   switching, or help screens.
 
-## 1.0.2 — 2010-08-06
+## 1.0.2 (2010-08-06)
 
 - Crash-recovery tweak: if the app crashes, it exits cleanly instead
   of hanging.
 
-## 1.0.1 — 2010-08-05
+## 1.0.1 (2010-08-05)
 
 - New **"Starry Night"** color theme.
 - Fixed a bug where tapping a bookmark didn't jump straight to the
@@ -1698,7 +1698,7 @@ Search:
 - Corrected the on-screen keypad layout so it applies only on
   small-portrait screens.
 
-## 1.0 — 2010-08-04
+## 1.0 (2010-08-04)
 
 - **First major release.** Psalm indentations and neater verse
   display with regular line spacing.
@@ -1717,7 +1717,7 @@ Search:
   scrolling; high-res icons for hdpi devices; many Bible-text typo
   corrections.
 
-## 0.9 / 0.9.1 — 2010-04-21
+## 0.9 / 0.9.1 (2010-04-21)
 
 - **Section headings (Judul Perikop)** above the relevant verses,
   with tappable parallel-reference links that jump to the related
@@ -1727,13 +1727,13 @@ Search:
 - **Devotion** feature introduced.
 - 0.9.1 shipped shortly after with a small bug fix.
 
-## 0.8 — 2010-03-26
+## 0.8 (2010-03-26)
 
 - **First search feature**, powered by SQLite FTS3.
 - Requires a ~9 MB initial index on SD card (indexing takes ~5
   minutes on a Nexus One); after that, search is sub-second.
 
-## 0.7 — 2010-03-15
+## 0.7 (2010-03-15)
 
 - **Flexible quick verse-jump**: accepts inputs like `1 pet 3:16`,
   `1 pe 3 16`, `1p3 16`, `1p3.16`.
@@ -1742,7 +1742,7 @@ Search:
   screen lists them; re-adding a verse updates the date instead of
   duplicating it.
 
-## 0.6 — 2010-03-04
+## 0.6 (2010-03-04)
 
 - Enlarged touch targets on the Go To screen (chapter and verse
   buttons are now finger-friendly).
@@ -1751,7 +1751,7 @@ Search:
 - **Adjustable text brightness** (percentage).
 - Simpler About screen.
 
-## 0.5 — 2010-01-29
+## 0.5 (2010-01-29)
 
 - **Chapter-address button** moved from the title bar to the bottom
   and also opens Go To.
@@ -1759,7 +1759,7 @@ Search:
   (serif / sans / monospace), bold toggle.
 - Feedback prompt on every launch.
 
-## 0.4 — 2010-01-12
+## 0.4 (2010-01-12)
 
 - **First Play Store (Android Market) release.**
 - Chapter-index data moved to a binary format — book info now loads
@@ -1768,21 +1768,21 @@ Search:
 - Go To screen has a book-selection dropdown (previously the book
   had to be set separately from chapter:verse).
 
-## 0.3 / 0.3.1 — 2010-01-12 / 2010-01-15
+## 0.3 / 0.3.1 (2010-01-12 / 2010-01-15)
 
 - Early development milestones before the Play Store launch: an
   on-launch warning dialog notes the app is unfinished and asks
   users to update; the phone-keypad chapter/verse input is split
   into its own layout, with a different key order in landscape.
 
-## 0.2 — 2010-01-11
+## 0.2 (2010-01-11)
 
 - **First version that actually shows Bible text** on screen (plain
   text sourced from bibledatabase.org).
 - Left / right buttons navigate chapters; Menu > Book picks a
   book; Menu > Go To opens chapter / verse inputs.
 
-## 0.1 (inception) — 2009-12-22
+## 0.1 (inception) (2009-12-22)
 
 - Project begins. Author decides to build an Indonesian Bible app
   for Android because no such app exists at the time; earliest
