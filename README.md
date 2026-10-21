@@ -81,8 +81,6 @@ See [Build System](docs/build-system.md) for version stages, production overlays
 Firebase configuration, signing keys, and release artifacts. [Google Play
 Publishing](docs/play-publishing.md) covers uploading those artifacts to the store.
 
-Translations are integrated with `integrate_translations.sh`.
-
 License
 --------
 
