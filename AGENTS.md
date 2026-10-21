@@ -79,162 +79,17 @@ Use the installed JDK and Android SDK when available. Check `java -version`, and
 
 Code changes should be verified with a local `./gradlew assemblePlainDebug` (and relevant `testPlainDebugUnitTest` invocations) before committing — do not treat the GitHub Actions run as the first build.
 
-## Architecture
+## Architecture and documentation
 
-### Module Structure
+Start with the [documentation index](docs/README.md). [Architecture](docs/architecture.md)
+owns module boundaries, application services, ARI addressing, UI architecture,
+and localization. [Storage](docs/storage.md) owns persistence and migration
+constraints; [feature guides](docs/README.md#feature-guides) describe capabilities.
 
-The project is a multi-module Gradle build. The main app module is **`:Alkitab`**. All other modules are libraries:
-
-| Module | Purpose |
-|--------|---------|
-| `AlkitabModel` | Core data models (`Ari`, `Version`, `Book`, `SingleChapterVerses`, `MVersion`) |
-| `AlkitabIo` | `BibleReader` interface, UTF-8 decoding, gzip stream handling |
-| `AlkitabYes2` | YES2 binary Bible format reader/writer with Snappy compression |
-| `AlkitabIntegration` | Inter-app communication API (intent-based verse lookup) |
-| `Bintex` | Binary serialization format used by YES2 and reading plans |
-| `Snappy` | JNI Snappy compression (native C++ via NDK) |
-
-App implementation code lives under `Alkitab/src/main/java/`:
-
-| Package | Purpose |
-|---------|---------|
-| `com.example.android.wizardpager`, `yuku.alkitabfeedback` | Feedback wizard and submission |
-| `com.compactbyte.android.bible`, `com.compactbyte.bibleplus.reader` | PalmBible+ PDB import |
-| `yuku.kpri.model` | Legacy song decoding models; preserve class names for stored data compatibility |
-| `yuku.afw` | Application context, preferences, and adapter helpers |
-| `yuku.devoxx.flowlayout` | Flow layout widget |
-| `yuku.alkitabconverter.util` | Verse reference finder and parser |
-
-Desktop converters share the `AlkitabModel`, `AlkitabIo`, `AlkitabYes2`, `Bintex`, and `Snappy` source directories through `tools/common-jvm/common-jvm.iml`. Keep those source roots synchronized when moving shared code; see [Tools](docs/tools.md).
-
-Parser tests and their golden fixture belong to the app test suite. See [parser compatibility tests](Alkitab/src/test/desktop-verse-parser.md) for the baseline contract and targeted test commands. App shrinker rules live in `Alkitab/proguard-rules.pro`.
-
-Bible-version downloads run inside `VersionDownloadWorker` (a `CoroutineWorker`) using the shared OkHttp client.
-
-### Key Singletons and Entry Points
-
-- **`App.java`**: Application class, extends `yuku.afw.App`. Initializes Firebase, FCM registration, and preference defaults. Holds the eagerly-initialized `App.services` (`AppServices` container) introduced by REM-24.
-- **`S.kt`** — Legacy service locator. Holds lazy references to `InternalDb`, `SongDb`, active Bible version state, and calculated UI dimensions. New code should depend on the narrower `StorageProvider` / `VersionManager` / `UiDimensionsProvider` interfaces via `App.services.*`; existing `S.foo` call sites are being migrated incrementally (REM-24).
-- **`IsiActivity.kt`** (at `yuku/alkitab/base/IsiActivity.kt`) — Main Bible reader activity. Verse display, navigation history, and volume-button navigation still live here; gesture handling, the action-mode callback, and split-view management have been extracted into `ReaderGestureHandler` (REM-06), `VerseActionModeController` (REM-07), and `SplitViewManager` (REM-08) respectively.
-
-### Data Flow: Bible Text Rendering
-
-```
-S.activeVersion() → MVersion → Version (abstract)
-  → Version.loadChapterText() → SingleChapterVerses
-  → Version.loadPericope() → section headers
-  → VersesDataModel (merges verses + pericopes via itemPointer array)
-  → VersesControllerImpl (RecyclerView adapter)
-  → VerseRenderer / FormattedTextRenderer (applies formatting codes)
-  → VerseItem (custom RelativeLayout with highlight/selection drawing)
-```
-
-Every verse list is built through `createVersesController`, which swaps the
-list's RecyclerView for a `VersesComposeView` driven by
-`VersesComposeControllerImpl` (a LazyColumn-based implementation of the same
-`VersesController` interface): `VerseRendererCompose` renders verse text to an
-`AnnotatedString`, rows reuse `VerseItemComposeContent`, and pericope headers
-are composed natively. `IsiActivity`'s two panes, `VersesDialog` and
-`XrefDialog` all go through it. The RecyclerView pipeline above is kept as an
-opt-out, reachable through the "Verse (legacy views)" experimental setting.
-
-Screens that show verse text outside a verse list (search results, the marker
-list, the progress-mark list, the report screen) hold a `VerseTextSlot`
-instead, which swaps the row's snippet TextView for a `VerseTextComposeView`
-rendering the same `AnnotatedString` in the reader's verse appearance.
-
-### ARI (Alkitab Resource Identifier)
-
-The fundamental addressing scheme — a 24-bit integer encoding book, chapter, and verse:
-```
-bits 23-16: bookId (0-65)
-bits 15-8:  chapter (1-based, 0 = whole book)
-bits 7-0:   verse (1-based, 0 = whole chapter)
-```
-Used everywhere: database storage, intent extras, sync protocol, content provider URIs. See `Ari.java` in AlkitabModel.
-
-### Database Schema
-
-The app uses three SQLite files — `AlkitabDb` and `SongDb` (hand-rolled `SQLiteOpenHelper`s, still the active sources of truth for everything Bible-related), plus `AlkitabSongRoomDb` (Room-backed, the active source of truth for the Songs subsystem after REM-32).
-
-- **`AlkitabDb`** — hand-rolled `SQLiteOpenHelper` (`InternalDbHelper`). Sets `user_version` to the build-time `App.getVersionCode()` and migrates through `onUpgrade` based on that. Tables:
-  - **Marker** — bookmarks, notes, highlights (distinguished by `kind` column). Each row has a `gid` (globally unique ID) for sync.
-  - **Label** — bookmark categories with custom background colors. Columns are Indonesian (`judul`, `urutan`, `warnaLatar`).
-  - **Marker_Label** — many-to-many junction between markers and labels.
-  - **Version** — metadata for downloaded Bible versions (filename, locale, active flag, ordering).
-  - **Devotion** — cached devotional articles keyed by `(name, date, dataFormatVersion)`.
-  - **PerVersion** — per-version settings keyed by `versionId`.
-  - **ProgressMark** / **ProgressMarkHistory** — 5 reading progress pins (addressed by `preset_id`) plus the append-only history of every pin update.
-  - **ReadingPlan** / **ReadingPlanProgress** — downloaded reading plans (metadata + RPB binary blob) and per-day completion rows.
-  - **SyncShadow** / **SyncLog** — sync state tracking (last-synced entity snapshot per sync set) plus an append-only audit log of every sync event.
-- **`SongDb`** — hand-rolled `SQLiteOpenHelper` (`SongDbHelper`). After REM-32, every table here is a rollback safety net only, plus the source of legacy rows for `SongDbDataMigration` on first launch with the migrated code.
-- **`AlkitabSongRoomDb`** — Room database (`yuku.alkitab.base.storage.room.SongRoomDatabase`, at `@Database(version = 1)`). Holds the Songs subsystem tables migrated as part of REM-32. Lives in its own SQLite file because the Songs module is genuinely self-contained — it shares no rows, FKs, or transactions with the Bible-reading tables.
-  - **song_info** (REM-32) — one row per song, with `(bookName, code)` and `(bookName, ordering)` indexes. The `data` BLOB holds a UTF-8 JSON-encoded `yuku.alkitab.songs.newdoc.SongDocument` at `dataFormatVersion = 5` (REM-21); rows still at an older `dataFormatVersion` are a legacy Parcelable-marshalled `yuku.kpri.model.Song`, decoded and converted to JSON lazily on first read (`SongDb.readDocument`), at most once per row.
-  - **song_book_info** (REM-32) — one row per installed song book, indexed by `name`.
-
-The legacy `SongInfo` / `SongBookInfo` tables are still created in `SongDb` as a rollback safety net. `SongDbDataMigration` (wired from `S.songDb`'s lazy initializer) copies them into Room on first launch with the migrated code; the `SongDb` facade preserves the public surface so callers don't change. `InternalDb` plus its per-table facades (`MarkerDao`, `LabelDao`, `Marker_LabelDao`, `VersionDao`, `DevotionDao`, `PerVersionDao`, `ProgressMarkDao`, `ReadingPlanDao`, `SyncShadowDao`) talk directly to `AlkitabDb` via raw SQL.
-
-### Verse Text Formatting Codes
-
-Verse text uses inline formatting codes (processed by `VerseRenderer` and `FormattedTextRenderer`):
-- `@@` — marks verse as formatted
-- `@0`–`@4`, `@^` — paragraph indentation levels
-- `@6`/`@5` — red letter (Jesus' words) start/end
-- `@9`/`@7` — italic start/end
-- `@8` — line break
-- `@<tag@>...@/` — special inline elements (cross-references, footnotes, and `@<r=reading@>base@/` ruby, rendered by the Compose pipeline only; see `docs/features/ruby/design.md`)
-
-`FormattedVerseText.removeSpecialCodes()` strips these for plain-text operations (copy, search).
-
-### Sync Protocol
-
-Delta-based sync over REST (`/sync/api/sync`). Each entity type has a dedicated class:
-- `Sync_Mabel` — markers, labels, marker-label associations
-- `Sync_Pins` — progress marks
-- `Sync_Rp` — reading plan progress
-- `Sync_History` — reading history
-
-Uses operation deltas (add/mod/del) with base revisions. Firebase Cloud Messaging triggers sync on other devices. Auth is simple token-based (`simpleToken`).
-
-### Content Provider
-
-`yuku.alkitab.base.cp.Provider` — read-only ContentProvider for external apps to query Bible verses by ARI or LID (sequential verse ID). Supports single verse, range queries, and version listing.
-
-### YES2 Binary Bible Format
-
-Custom binary format for Bible text files (`.yes`):
-- Header magic bytes, then section index (Bintex-encoded)
-- Sections: `versionInfo`, `booksInfo`, `text`, `xrefs`, `footnotes`, `pericopies`
-- Text section supports Snappy compression
-- Loaded via `YesReaderFactory` → `Yes2Reader`
-- PDB (PalmBible+) files are converted to YES2 on import
-
-## Module Documentation
-
-Detailed documentation for each major app feature:
-
-- [Songs](docs/modules/songs.md) — Song book browsing, search, audio (MP3/MIDI) playback
-- [Reading Plans](docs/modules/reading-plans.md) — RPB binary format, daily progress tracking
-- [Versions](docs/modules/versions.md) — Bible version management, download, YES2 format
-- [Markers](docs/modules/markers.md) — Bookmarks, notes, highlights system
-- [Sync](docs/modules/sync.md) — Cloud sync protocol and FCM push
-- [Devotions](docs/modules/devotions.md) — Daily devotional articles
-- [Audio Playback](docs/modules/audio-playback.md) — ExoPlayer/MIDI controllers for songs
-- [Search](docs/modules/search.md) — Full-text verse search engine
-- [Daily Verse Widget](docs/modules/daily-verse-widget.md) — Home screen widget
-- [Data Transfer](docs/modules/data-transfer.md) — JSON export/import of user data
-
-## Technical Documentation
-
-- [Architecture Deep Dive](docs/architecture.md) — Singleton patterns, data flow, module dependencies
-- [Build System](docs/build-system.md) — Flavors, signing, CI/CD, release process
-- [Google Play Publishing](docs/play-publishing.md) — Manual store uploads via `tools/play/publish.py`, GPP-shaped metadata layout
-- [Tools](docs/tools.md) — The desktop converters in `tools/` for Bible versions and reading plans, and the prebuilt jars
-- [Text Rendering](docs/text-rendering.md) — Verse formatting pipeline and codes
-- [Binary Formats](docs/binary-formats.md) — YES2, Bintex, RPB file format specs
-- [Storage & Database](docs/storage.md) — SQLite schema, preferences, file storage
-- [Backend Communication](docs/backend-communication.md) — API endpoints, download flows
-- [Tech Debt Backlog](docs/tech-debt-remediation.md): the single index for open, partial, and completed REM records, with problem descriptions, priorities, and next steps
+Desktop converters share app-library source roots through
+`tools/common-jvm/common-jvm.iml`; keep those roots synchronized when moving shared
+code. See [Tools](docs/tools.md). Parser tests and their golden fixture belong to
+the app test suite; see [parser compatibility tests](Alkitab/src/test/desktop-verse-parser.md).
 
 ## Code Conventions
 

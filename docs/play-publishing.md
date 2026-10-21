@@ -1,9 +1,9 @@
 # Google Play Publishing
 
 Releases are pushed to Google Play by hand with `tools/play/publish.py`.
-CI never talks to the Play Console: `.github/workflows/android.yml` builds
-and signs the AABs and stops there, so nothing reaches the store without
-someone running the tool.
+CI creates signed artifacts and GitHub releases; it does not upload to Play.
+Use the manual release workflow for store-bound builds as described in
+[Build system](build-system.md#release-workflow), then run the publishing tool.
 
 The tool wraps the Google Play Developer API v3. It uploads bundles,
 assigns them to tracks, promotes releases between tracks, and syncs the

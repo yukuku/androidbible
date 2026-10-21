@@ -3,9 +3,9 @@
 ## Gradle Configuration
 
 - **AGP / Kotlin / library versions**: pinned in the version catalog, `gradle/libs.versions.toml`
-- **Compile SDK**: 36, **Min SDK**: 26, **Target SDK**: 35
+- **Compile, minimum, and target SDK**: pinned in `gradle/libs.versions.toml`
 - **JVM Toolchain**: 21 (all modules)
-- **NDK**: required for Snappy native code; exact version pinned in the build config
+- **NDK**: required for Snappy native code; exact version pinned in `gradle/libs.versions.toml`
 - **Build files**: Kotlin DSL (`build.gradle.kts`, `settings.gradle.kts`) with a version catalog in `gradle/libs.versions.toml`
 
 ## Product Flavors
@@ -273,15 +273,16 @@ Release builds use ProGuard with:
 Defined in `Alkitab/build.gradle.kts`:
 - `SERVER_HOST`: `https://api.alkitab.app`
 - `RIBKA_FUNCTIONS_HOST`: `https://us-central1-pulau-ribka.cloudfunctions.net/` (release)
-- `RIBKA_FUNCTIONS_HOST_DEBUG`: `http://10.0.3.2:5001/pulau-ribka/us-central1/` (debug, emulator localhost)
+- `RIBKA_FUNCTIONS_HOST`: overridden to `http://10.0.3.2:5001/pulau-ribka/us-central1/` in debug builds (emulator host address)
 
 ## Firebase
 
 - A placeholder `Alkitab/google-services.json` is committed so `plainDebug` works out of the box. The real `google-services.json` (covering all production applicationIds) lives at `$ALKITAB_PROPRIETARY_DIR/google-services.json` and is copied per-flavor into gitignored `Alkitab/src/<flavor>/google-services.json` at build time — see "Release Build" above.
 - FCM registration is skipped in debug builds
 - Firebase BOM (Messaging + Crashlytics); version pinned in `gradle/libs.versions.toml`
-- Debug builds use `RIBKA_FUNCTIONS_HOST_DEBUG` for FCM functions
 
-## Supported Locales
+## Supported locales
 
-30 locales configured via `androidResources.localeFilters` in `Alkitab/build.gradle.kts`: af, bg, ceb, cs, da, de, el, es, fr, hu, in, it, ja, ko, lv, ms, my, nl, pl, pt-rBR, pt, ro, ru, th, tl, tr, uk, vi, zh-rCN, zh-rTW.
+Supported packaged locales are configured by `androidResources.localeFilters`
+in `Alkitab/build.gradle.kts`. The app's language preference is independent of
+the device locale; see [Architecture](architecture.md#language-and-appearance).

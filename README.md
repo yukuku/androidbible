@@ -42,7 +42,7 @@ Contributing
 
 Every pull request against `develop` runs the unit tests and a `plainDebug` build. Pull requests from branches inside this repository also get signed release APKs for all production flavors, uploaded to a preview URL and linked in a comment on the pull request. Pull requests from forks skip that job, since it needs secrets that forks cannot read.
 
-Before working on the codebase, read [AGENTS.md](AGENTS.md) for the architecture overview, module structure, ARI verse addressing, and code conventions.
+See the [documentation index](docs/README.md) for architecture, feature guides, and tooling, and [AGENTS.md](AGENTS.md) for contributor conventions.
 
 Bible translations/versions
 ---------------------------
@@ -68,43 +68,18 @@ The inter-app API lives in the `AlkitabIntegration` module. See the [content and
 Developer Documentation
 -----------------------
 
-Start with [AGENTS.md](AGENTS.md) (architecture overview, module structure, ARI encoding, code conventions, and build instructions), then the `docs/` folder:
-
-**Architecture & infrastructure**
-- [Architecture Deep Dive](docs/architecture.md) — singleton patterns, data flow, module dependencies
-- [Build System](docs/build-system.md) — flavors, signing, CI/CD, release process
-- [Google Play Publishing](docs/play-publishing.md) — store uploads via `tools/play/publish.py`
-- [Tools](docs/tools.md) — the desktop converters in `tools/` for Bible versions and reading plans
-- [Storage & Database](docs/storage.md) — SQLite schema, preferences, file storage
-- [Backend Communication](docs/backend-communication.md) — API endpoints, download flows
-- [Text Rendering](docs/text-rendering.md) — verse formatting pipeline and codes
-- [Binary Formats](docs/binary-formats.md) — YES2, Bintex, RPB file format specs
-
-**Feature modules**
-- [Songs](docs/modules/songs.md) — song book browsing, search, audio playback
-- [Reading Plans](docs/modules/reading-plans.md) — RPB binary format, daily progress tracking
-- [Versions](docs/modules/versions.md) — Bible version management, download, YES2 format
-- [Markers](docs/modules/markers.md) — bookmarks, notes, highlights system
-- [Sync](docs/modules/sync.md) — cloud sync protocol and FCM push
-- [Devotions](docs/modules/devotions.md) — daily devotional articles
-- [Audio Playback](docs/modules/audio-playback.md) — ExoPlayer/MIDI controllers
-- [Search](docs/modules/search.md) — full-text verse search engine
-- [Daily Verse Widget](docs/modules/daily-verse-widget.md) — home screen widget
-- [Data Transfer](docs/modules/data-transfer.md) — JSON export/import of user data
-
-Design documents for in-flight features are under `docs/features/`.
-
-**Tech debt**
-- [Tech Debt Backlog](docs/tech-debt-remediation.md): open, partial, and completed REM records with problem descriptions, priorities, and next steps
+The [documentation index](docs/README.md) links the architecture, infrastructure,
+feature guides, contracts, and historical design records. Content authors and
+integrators can start with the [developer guides](docs/developer/README.md).
 
 Release builds
 --------------
 
 The [Releases](https://github.com/yukuku/androidbible/releases) page holds pre-release APKs built automatically from every push to `develop`. They are signed with the production key and installable, but they are development builds, not the stable versions on Google Play.
 
-`versionName` comes from `version.properties` combined with a build stage: `dev` by default, `beta` with `-PversionStage=beta`, and `release` with `-PversionStage=release`. Never hardcode a version in `Alkitab/build.gradle.kts`.
-
-Release packaging is pure Gradle. Production flavors expect the signing env vars (`SIGN_KEYSTORE`, `SIGN_ALIAS`, `SIGN_PASSWORD`, plus `SIGN_SABDA_KEYSTORE`, `SIGN_SABDA_ALIAS`, `SIGN_SABDA_PASSWORD` for the `sabda_alkitab` flavor, which has its own upload key) and `ALKITAB_PROPRIETARY_DIR`, which must contain `overlay/<applicationId>/text_raw/` (Bible text) and `google-services.json` (real Firebase config covering every production applicationId). With those set, `./gradlew assembleYuku_alkitabRelease` (or any other production flavor) builds and signs the APK directly. Set `BUILD_DIST` to override the `dev` suffix in the output filename.
+See [Build System](docs/build-system.md) for version stages, production overlays,
+Firebase configuration, signing keys, and release artifacts. [Google Play
+Publishing](docs/play-publishing.md) covers uploading those artifacts to the store.
 
 Translations are integrated with `integrate_translations.sh`.
 
