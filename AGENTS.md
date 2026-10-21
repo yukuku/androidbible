@@ -43,6 +43,14 @@ Read-only analysis and advice do not require a PR.
 
 ## Build Commands
 
+For a new beta build, follow [Build a new beta through GitHub CI](docs/build-system.md#build-a-new-beta-through-github-ci).
+Run `bumpBetaNumber` locally, commit and push `version.properties`, then dispatch
+`release.yml` with `gh workflow run` and `stage=beta`. Build the signed APKs and
+AABs on GitHub CI. A beta metadata bump does not require local APK/AAB builds or
+unit tests. Use `dry_run=true` when publishing is not requested; use
+`dry_run=false` when a GitHub pre-release is requested. Google Play publishing
+is a separate action.
+
 ```bash
 # Debug APK (open-source build, works out of the box)
 ./gradlew assemblePlainDebug
