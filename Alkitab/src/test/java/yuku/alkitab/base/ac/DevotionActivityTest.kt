@@ -9,6 +9,8 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.os.Looper
 import android.preference.PreferenceManager
+import android.text.Selection
+import android.text.Spannable
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -236,6 +238,96 @@ class DevotionActivityTest {
         assertEquals(originalWidth, activity.lContent.width)
         assertTrue(activity.lContent.lineCount > originalLines)
         assertEquals(36f, activity.lContent.textSize, 0.01f)
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "en-rUS-w393dp-h851dp-mdpi")
+    fun `a left swipe on the article advances exactly one day and a right swipe goes back`() {
+        output = "<p>" + "Devotional text for scrolling. ".repeat(400) + "</p>"
+        foreground.runNext()
+        idle()
+        swipe(-160f, 56f, childDisallowsInterception = true)
+        assertEquals("20260930", format.format(activity.currentDate))
+        foreground.runNext()
+        idle()
+        swipe(160f, 56f, childDisallowsInterception = true)
+        assertEquals("20260929", format.format(activity.currentDate))
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "en-rUS-w393dp-h851dp-mdpi")
+    fun `vertical scrolling and small horizontal movements keep the selected day`() {
+        output = "<p>" + "Devotional text for scrolling. ".repeat(400) + "</p>"
+        foreground.runNext()
+        idle()
+        swipe(0f, -160f)
+        assertEquals("20260929", format.format(activity.currentDate))
+        assertTrue(activity.findViewById<View>(R.id.scrollContent).scrollY > 0)
+        swipe(-20f)
+        assertEquals("20260929", format.format(activity.currentDate))
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "en-rUS-w393dp-h851dp-mdpi")
+    fun `swipes change days while the article is loading or unavailable`() {
+        swipe(-160f)
+        assertEquals("20260930", format.format(activity.currentDate))
+        result = DevotionDownloader.State.UNAVAILABLE
+        foreground.runAll()
+        idle()
+        swipe(160f)
+        assertEquals("20260929", format.format(activity.currentDate))
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "en-rUS-w393dp-h851dp-mdpi")
+    fun `swiping selected article text keeps the selected day`() {
+        output = "<p>" + "Devotional text for selection. ".repeat(400) + "</p>"
+        foreground.runNext()
+        idle()
+        layoutReader()
+        val text = activity.lContent.text as Spannable
+        Selection.setSelection(text, 0, 10)
+        swipe(-160f, childDisallowsInterception = true)
+        assertEquals("20260929", format.format(activity.currentDate))
+        Selection.removeSelection(text)
+        swipe(-160f)
+        assertEquals("20260930", format.format(activity.currentDate))
+    }
+
+    private fun layoutReader() {
+        val decor = activity.window.decorView
+        val density = activity.resources.displayMetrics.density
+        decor.measure(
+            View.MeasureSpec.makeMeasureSpec((393 * density).toInt(), View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec((851 * density).toInt(), View.MeasureSpec.EXACTLY),
+        )
+        decor.layout(0, 0, (393 * density).toInt(), (851 * density).toInt())
+    }
+
+    private fun swipe(dx: Float, dy: Float = 0f, childDisallowsInterception: Boolean = false) {
+        layoutReader()
+        val density = activity.resources.displayMetrics.density
+        val root = activity.findViewById<TwofingerLinearLayout>(R.id.root)
+        val downTime = android.os.SystemClock.uptimeMillis()
+        fun touch(action: Int, fraction: Float) {
+            val event = MotionEvent.obtain(downTime, downTime + (fraction * 300).toLong(), action,
+                (196f + dx * fraction) * density, (300f + dy * fraction) * density, 0)
+            try {
+                root.dispatchTouchEvent(event)
+            } finally {
+                event.recycle()
+            }
+        }
+        touch(MotionEvent.ACTION_DOWN, 0f)
+        if (childDisallowsInterception) activity.lContent.parent.requestDisallowInterceptTouchEvent(true)
+        for (step in 1..64) touch(MotionEvent.ACTION_MOVE, step / 64f)
+        touch(MotionEvent.ACTION_UP, 1f)
+        idle()
     }
 
     private fun pinch(scale: Float) {
