@@ -23,9 +23,13 @@ Focus on choices the user would reasonably want to review, such as how you inter
 
 Include the outcome, relevant validation, and remaining limitations alongside these decisions. This reporting requirement does not create an additional approval step for work already authorized.
 
-### Complete implementation tasks with a pull request
+### Task context and pull requests
 
-Unless the user explicitly requests otherwise, finish every implementation task by committing the changes, pushing a task branch to `yukuku/androidbible`, and opening a pull request targeting `develop`. This is part of completing the task, including requests phrased as building a feature or fixing a bug; do not ask for separate permission to create the PR.
+When the user assigns a task in a dedicated Git worktree, finish the task by committing the changes, pushing its task branch to `yukuku/androidbible`, and creating or updating a pull request targeting `develop`, unless the user explicitly requests otherwise. Creating or updating the PR is part of completing the task; do not ask for separate permission.
+
+When the user assigns a task in a regular checkout rather than a dedicated worktree, treat it as interactive collaboration: the user and agents may be editing the code together. Work in the existing checkout. A PR is not required, and do not create a new worktree unless the user explicitly asks. Do not automatically commit or push shared edits merely to finish the task.
+
+When continuing work on an existing PR, update that PR rather than opening another one. The following guidance applies when creating or updating a PR:
 
 Use a branch in this repository so the PR triggers GitHub Actions to build signed release APKs and publish APK preview links. See [the CI and preview documentation](docs/build-system.md#cicd).
 
