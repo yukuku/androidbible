@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jadwal Baca 2.0: tetap akrab, langkah berikutnya lebih jelas</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#edf0f2;color:#24343d;font:16px/1.5 system-ui,sans-serif}
+header,main,footer{max-width:1260px;margin:auto;padding:28px}
+h1{font-size:30px;margin:0 0 12px}
+h2{font-size:21px;margin:4px 0}
+p{margin:10px 0 16px}
+a{color:#075b83}
+nav{display:flex;gap:20px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,350px),1fr));gap:32px;align-items:start}
+.example>p{min-height:96px}
+.phone{max-width:380px;margin:auto;background:#303030;color:#fafafa;border-radius:16px;overflow:hidden;box-shadow:0 4px 18px #0002}
+.status{padding:8px 16px;background:#455a64;font-size:12px;display:flex;justify-content:space-between}
+.toolbar{background:#455a64;display:flex;align-items:center;gap:12px;padding:12px 16px;min-height:56px}
+.toolbar strong{flex:1;font-size:18px}
+.icon{font-size:24px;min-width:24px;text-align:center}
+.content{padding:16px}
+.plan{display:flex;gap:12px;align-items:center;font-size:20px;margin:0 0 16px;font-weight:600}
+.plan span:first-child{flex:1}
+.date{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:center;padding:12px 0;border-bottom:1px solid #ffffff26}
+.date strong{display:block}
+.muted{color:#c2c7cb;font-size:14px}
+.pillbar{display:flex;gap:16px;flex-wrap:wrap;padding:14px 0}
+.action{color:#4fc3f7;font-weight:600}
+.primary{display:block;background:#4fc3f7;color:#132d38;padding:13px 16px;border-radius:5px;text-align:center;font-weight:650;margin:16px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;border-bottom:1px solid #ffffff14}
+.row span:first-child{flex:1}
+.check{width:22px;height:22px;border:2px solid #b5bec2;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.checked{background:#4fc3f7;border-color:#4fc3f7;color:#173440;font-weight:bold}
+.summary{margin-top:24px;padding-top:16px;border-top:1px solid #ffffff26}
+.track{height:5px;background:#505050;margin:12px 0}
+.fill{height:100%;background:#4fc3f7}
+.notice{padding:14px;background:#394348;border-left:3px solid #4fc3f7;margin:16px 0}
+.success{color:#80cbc4;font-weight:600}
+.verse{background:#f4f1e9;color:#252525;padding:22px;min-height:280px;font:20px/1.7 Georgia,serif}
+.verse small{font:14px system-ui;color:#555}
+.dayrow{padding:14px 0;border-bottom:1px solid #ffffff26;display:flex;justify-content:space-between;gap:10px}
+.dayrow strong{display:block}
+.sheet{background:#3b3b3b;border-radius:12px;padding:18px;margin-top:18px}
+.sheet h3{margin-top:0}
+.meta{font-size:13px;font-weight:600;color:#46616c;letter-spacing:.04em}
+.sample{border:1px solid #ffffff26;padding:12px;margin:16px 0}
+.catalogue{background:#f4f4f4;color:#222;padding:16px}
+.catalogue .muted{color:#555}
+.catalogue h3{margin:6px 0}
+.catalogue .sample{border-color:#ccc}
+footer{font-size:14px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:450px){header,main,footer{padding:18px}
+.example>p{min-height:0}
+}
+@media print{body{background:white}
+.grid{display:block}
+.example{break-inside:avoid;margin:24px 0}
+.phone{box-shadow:none}
+nav{display:none}
+}
+
+#reader .phone{position:relative}
+#reader .toolbar{gap:4px;padding:8px}
+#reader .toolbar strong{min-width:0;font-size:16px;overflow-wrap:anywhere}
+#reader .verse{min-height:490px}
+.plan-control{flex:0 0 48px}
+.plan-control summary{width:48px;height:48px;display:grid;place-items:center;cursor:pointer;list-style:none;border-radius:6px;color:#4fc3f7}
+.plan-control summary::-webkit-details-marker{display:none}
+.plan-control summary:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+.plan-control summary svg{width:22px;height:22px}
+.plan-control[open] summary{background:#263238}
+.plan-popover{position:absolute;top:96px;right:8px;left:8px;background:#263238;color:#fafafa;padding:18px;border-radius:8px;z-index:2;box-shadow:0 6px 18px #0005}
+.plan-popover strong{font-size:18px!important}
+.plan-popover .muted{margin-top:8px}
+
+</style>
+</head>
+<body>
+<header>
+<h1>Jadwal Baca 2.0: tetap akrab, langkah berikutnya lebih jelas</h1>
+<p>Usulan tampilan mandiri. Tekan ikon jadwal berwarna biru di bilah pembaca untuk menampilkan atau menyembunyikan kontrol bacaan. Kontrol ponsel lainnya hanya ilustrasi; data aplikasi tidak berubah.</p>
+<nav><a href="#reader">Coba kontrol pembaca ringkas</a><a href="#daily">Bacaan harian</a></nav>
+</header>
+<main class="grid">
+<section class="example" id="daily">
+<div class="meta">RP2-001 · RP2-003 · RP2-005</div>
+<h2>Bacaan harian</h2>
+<p>Pertahankan pemilih jadwal, panah hari, dan kotak centang di kanan. Perjelas bacaan berikutnya.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">☰</span>
+<strong>Jadwal baca</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="content">
+<div class="plan">
+<span>Bible Plan Gospels</span>
+<span aria-hidden="true">⌄</span>
+</div>
+<div class="date">
+<span class="icon" aria-hidden="true">‹</span>
+<div>
+<strong>Hari 1 dari 30</strong>
+<span class="muted">27 Sep 2026 ⌄</span>
+</div>
+<span class="icon" aria-hidden="true">›</span>
+</div>
+<div class="pillbar">
+<span class="action">Hari ini</span>
+<span class="action">Tampilkan daftar baca</span>
+</div>
+<strong>1 dari 3 bacaan selesai</strong>
+<div class="primary">Lanjutkan · Matius 2</div>
+<div class="row">
+<span>Matius 1</span>
+<span class="sr">selesai</span>
+<span class="check checked" aria-hidden="true">✓</span>
+</div>
+<div class="row">
+<span>Matius 2</span>
+<span class="sr">belum selesai</span>
+<span class="check " aria-hidden="true">
+</span>
+</div>
+<div class="row">
+<span>Matius 3</span>
+<span class="sr">belum selesai</span>
+<span class="check " aria-hidden="true">
+</span>
+</div>
+<div class="summary">
+<span class="muted">Kemajuan jadwal baca</span>
+<div class="track" aria-hidden="true">
+<div class="fill" style="width:1.12%">
+</div>
+</div>
+<span class="muted">1 dari 89 bacaan selesai</span>
+</div>
+</div>
+</div>
+</section>
+<section class="example" id="reader">
+<div class="meta">RP2-002</div>
+<h2>Membaca dalam jadwal</h2>
+<p>Ikon jadwal kecil di bilah yang sudah ada menjaga ruang ayat tetap luas. Tekan untuk melihat konteks bacaan dan menandainya selesai.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">☰</span>
+<span aria-hidden="true">‹</span>
+<strong>Matius 2</strong>
+<span aria-hidden="true">›</span>
+<span>TB</span>
+<span aria-hidden="true">♫</span>
+<span aria-hidden="true">⌕</span>
+<details class="plan-control"><summary aria-label="Jadwal baca: Hari 1, bacaan 2 dari 3. Tampilkan atau sembunyikan kontrol" title="Jadwal baca: Hari 1, bacaan 2 dari 3. Tampilkan atau sembunyikan kontrol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 12l3 3 5-6"/></svg></summary><div class="plan-popover">
+<strong>Bible Plan Gospels</strong>
+<div class="muted">Hari 1 · Bacaan 2 dari 3</div>
+<p>Bacaan yang dijadwalkan: Matius 2</p>
+<div class="primary">Tandai selesai & lanjut</div>
+<div class="action">Kembali ke jadwal baca</div><p class="muted">Tekan ikon jadwal lagi untuk menutup. Membuka atau menutup panel ini tidak menandai bacaan selesai.</p></div></details>
+</div>
+<div class="verse">
+<small>Matius 2 · contoh area teks</small>
+<p>[Teks Alkitab dalam versi pilihan Anda.]</p>
+</div>
+</div>
+</section>
+<section class="example" id="all-days">
+<div class="meta">RP2-003 · RP2-007</div>
+<h2>Semua hari</h2>
+<p>Tindakan “Tampilkan daftar baca” yang sudah dikenal membuka daftar hari. Pilih hari untuk membuka baris bacaan yang sama.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">‹</span>
+<strong>Daftar baca</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="content">
+<div class="plan">
+<span>Bible Plan Gospels</span>
+<span aria-hidden="true">⌄</span>
+</div>
+<div class="pillbar">
+<span class="action">Hari ini</span>
+<span class="action">Ke yang belum dibaca</span>
+<span class="action">Ke hari…</span>
+</div>
+<div class="dayrow">
+<div>
+<strong>Hari 1</strong>
+<span class="muted">27 Sep 2026 · 1 dari 3 selesai</span>
+</div>
+<span aria-hidden="true">›</span>
+</div>
+<div class="dayrow">
+<div>
+<strong>Hari 2</strong>
+<span class="muted">28 Sep 2026 · Belum dibaca</span>
+</div>
+<span aria-hidden="true">›</span>
+</div>
+<div class="dayrow">
+<div>
+<strong>Hari 3</strong>
+<span class="muted">29 Sep 2026 · Belum dibaca</span>
+</div>
+<span aria-hidden="true">›</span>
+</div>
+</div>
+</div>
+</section>
+<section class="example" id="reschedule">
+<div class="meta">RP2-001 · RP2-008</div>
+<h2>Melanjutkan setelah jeda</h2>
+<p>Jelaskan bacaan sebelumnya yang belum selesai tanpa persentase merah. Mengatur tanggal tetap berbeda dari mengulang dari awal.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">☰</span>
+<strong>Jadwal baca</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="content">
+<div class="plan">
+<span>Bible Plan Gospels</span>
+<span aria-hidden="true">⌄</span>
+</div>
+<div class="notice">
+<strong>Ada 5 bacaan sebelumnya yang belum selesai.</strong>
+<p>Bacaan berikutnya ada di Hari 1 (27 Sep). Jadwal hari ini adalah Hari 3 (29 Sep).</p>
+<span class="action">Lanjutkan · Matius 2</span>
+</div>
+<div class="sheet">
+<h3>Atur jadwal</h3>
+<strong>Pindahkan hari pertama yang belum selesai ke hari ini?</strong>
+<p>Bacaan yang sudah selesai tetap dicentang. Tidak ada bacaan yang akan ditandai selesai.</p>
+<p>Hari 1: 27 Sep → 29 Sep 2026</p>
+<p>Rencana selesai: 26 Okt → 28 Okt 2026</p>
+<div class="primary">Geser jadwal</div>
+<span class="action">Batal</span>
+</div>
+</div>
+</div>
+</section>
+<section class="example" id="complete">
+<div class="meta">RP2-006</div>
+<h2>Bacaan sehari selesai</h2>
+<p>Tetap tampilkan daftar yang sudah dicentang. Tawarkan hari berikutnya tanpa berpindah secara otomatis.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">☰</span>
+<strong>Jadwal baca</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="content">
+<div class="plan">
+<span>Bible Plan Gospels</span>
+<span aria-hidden="true">⌄</span>
+</div>
+<div class="date">
+<span class="icon" aria-hidden="true">‹</span>
+<div>
+<strong>Hari 1 dari 30</strong>
+<span class="muted">27 Sep 2026 ⌄</span>
+</div>
+<span class="icon" aria-hidden="true">›</span>
+</div>
+<div class="pillbar">
+<span class="action">Hari ini</span>
+<span class="action">Tampilkan daftar baca</span>
+</div>
+<p class="success">✓ Bacaan hari ini selesai</p>
+<strong>3 dari 3 bacaan selesai</strong>
+<div class="row">
+<span>Matius 1</span>
+<span class="sr">selesai</span>
+<span class="check checked" aria-hidden="true">✓</span>
+</div>
+<div class="row">
+<span>Matius 2</span>
+<span class="sr">selesai</span>
+<span class="check checked" aria-hidden="true">✓</span>
+</div>
+<div class="row">
+<span>Matius 3</span>
+<span class="sr">selesai</span>
+<span class="check checked" aria-hidden="true">✓</span>
+</div>
+<div class="primary">Lihat hari berikutnya</div>
+<div class="summary">
+<span class="muted">Kemajuan jadwal baca</span>
+<div class="track" aria-hidden="true">
+<div class="fill" style="width:3.37%">
+</div>
+</div>
+<span class="muted">3 dari 89 bacaan selesai</span>
+</div>
+</div>
+</div>
+</section>
+<section class="example" id="preview">
+<div class="meta">RP2-009</div>
+<h2>Pratinjau jadwal</h2>
+<p>Pertahankan katalog dan jalur unduh yang dikenal. Tambahkan langkah mulai sebelum menetapkan jadwal.</p>
+<div class="phone">
+<div class="status">
+<span>9:41</span>
+<span aria-hidden="true">▰</span>
+</div>
+<div class="toolbar">
+<span class="icon" aria-hidden="true">‹</span>
+<strong>Unduh jadwal baca</strong>
+<span class="icon" aria-hidden="true">⋮</span>
+</div>
+<div class="catalogue">
+<h3>Bible Plan Gospels</h3>
+<p>Baca keempat Injil dalam 30 hari. Biasanya tiga pasal per hari.</p>
+<div class="sample">
+<strong>Contoh: Hari 1</strong>
+<p>Matius 1 · Matius 2 · Matius 3</p>
+</div>
+<p>Tanggal mulai<br>
+<strong>27 Sep 2026 ⌄</strong>
+</p>
+<div class="primary">Mulai jadwal baca</div>
+<p class="muted">ID jadwal: bibleplan_gospels</p>
+</div>
+</div>
+</section>
+</main>
+<footer>Arah desain: pertahankan latar gelap dan aksen biru; jaga agar navigasi dan tindakan membaca tetap dikenal. Ini ilustrasi, bukan spesifikasi akhir yang telah disetujui. Pratinjau tetap memakai latar terang seperti katalog saat ini. Tanggal, jumlah, dan terjemahan merupakan contoh.</footer>
+</body>
+</html>
