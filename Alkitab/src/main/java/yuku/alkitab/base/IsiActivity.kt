@@ -30,6 +30,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
@@ -38,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
@@ -161,7 +161,6 @@ import yuku.alkitab.versionmanager.VersionsActivity
 import yuku.devoxx.flowlayout.FlowLayout
 
 private const val TAG = "IsiActivity"
-private const val EXTRA_verseUrl = "verseUrl"
 private const val INSTANCE_STATE_ari = "ari"
 
 class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseActionModeHost, VerseActionModeActions, ReaderGestureHost, ReaderGestureActions, SplitViewHost, SplitViewActions {
@@ -176,7 +175,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     // --- VerseActionModeHost overrides ---
     // Thin read-only accessors so the controller can reach the Activity's state
     // without pulling the whole Activity type into its API.
-    override val activity: androidx.appcompat.app.AppCompatActivity get() = this
+    override val activity: AppCompatActivity get() = this
     override val activeSplit0Book: Book get() = activeSplit0.book
     override val activeSplit0Version: Version get() = activeSplit0.version
     override val activeSplit0VersionId: String get() = activeSplit0.versionId
@@ -216,10 +215,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     private val gestureHandler by lazy { ReaderGestureHandler(this, this) }
 
-    // --- SplitViewActions overrides (state is read via SplitViewHost; the
-    // remaining SplitViewHost properties — `splitRoot`, `splitHandleButton`,
-    // `lsSplit0`, `lsSplit1`, `bVersion`, `leftDrawer` — are marked `override`
-    // at their declarations below).
+    // --- SplitViewActions overrides
     override fun openPrimaryVersionsDialog() = openVersionsDialog()
     override fun loadChapterIntoSplit1(version: Version, versionId: String, book: Book, chapter_1: Int): Boolean {
         uncheckVersesWhenActionModeDestroyed = false
@@ -286,8 +282,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
     override var chapter_1 = 0
     private var fullScreen = false
-
-    val history get() = History
 
     override var actionMode: ActionMode? = null
     private val selectionBackCallback = object : OnBackPressedCallback(false) {
@@ -630,9 +624,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             // Runtime assertions: splitRoot must have 3 children;
             // lsSplitView0, splitHandleButton, lsSplitView1 in that order.
             if (splitRoot.childCount != 3) throw RuntimeException("splitRoot does not have correct children")
-            if (splitRoot.getChildAt(0) !== splitRoot.findViewById<View>(R.id.lsSplitView0)) throw RuntimeException("splitRoot does not have correct children")
-            if (splitRoot.getChildAt(1) !== splitRoot.findViewById<View>(R.id.splitHandleButton)) throw RuntimeException("splitRoot does not have correct children")
-            if (splitRoot.getChildAt(2) !== splitRoot.findViewById<View>(R.id.lsSplitView1)) throw RuntimeException("splitRoot does not have correct children")
+            if (splitRoot.getChildAt(0) !== splitRoot.findViewById(R.id.lsSplitView0)) throw RuntimeException("splitRoot does not have correct children")
+            if (splitRoot.getChildAt(1) !== splitRoot.findViewById(R.id.splitHandleButton)) throw RuntimeException("splitRoot does not have correct children")
+            if (splitRoot.getChildAt(2) !== splitRoot.findViewById(R.id.lsSplitView1)) throw RuntimeException("splitRoot does not have correct children")
         }
 
         backForwardListController = BackForwardListController(
@@ -730,11 +724,20 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // first display of active version
         displayActiveVersion()
 
+        val audioBarView: ComposeView = findViewById(R.id.audio_bar)
+        audioBinder.attach(audioBarHost, audioBarView)
+
         // load chapter and verse
-        display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
+        if (savedInstanceState == null && intentResult != null) {
+            audioBinder.navigateToPassage {
+                display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
+            }
+        } else {
+            display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
+        }
 
         if (savedInstanceState == null && intentResult != null) {
-            history.add(openingAri)
+            History.add(openingAri)
         }
 
         backForwardListController.newEntry(openingAri)
@@ -756,8 +759,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         AppEvents.observe(this, AppEvents.currentReadingChanged, ::updateCurrentReading)
         AppEvents.observe(this, AppEvents.activeVersionChanged, ::updateCurrentReading)
 
-        val audioBarView: ComposeView = findViewById(R.id.audio_bar)
-        audioBinder.attach(audioBarHost, audioBarView)
         lifecycleScope.launch {
             audioBinder.uiState.collect {
                 refreshAudioHighlights()
@@ -893,7 +894,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         super.onNewIntent(intent)
         setIntent(intent)
         val destination = extractIntent(intent) ?: return
-        jumpToAri(destination.ari, callAttention = false)
+        audioBinder.navigateToPassage {
+            jumpToAri(destination.ari, callAttention = false)
+        }
         if (destination.selectVerse && activeSplit0.book.bookId == Ari.toBook(destination.ari) && chapter_1 == Ari.toChapter(destination.ari)) {
             for (i in 0 until destination.selectVerseCount) {
                 callAttentionForVerseToBothSplits(Ari.toVerse(destination.ari) + i)
@@ -1117,7 +1120,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         // Add target ari to history
         val target_ari = Ari.encode(selected.bookId, ari_cv)
-        history.add(target_ari)
+        History.add(target_ari)
         backForwardListController.newEntry(target_ari)
     }
 
@@ -1151,7 +1154,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
         // Add target ari to history
         if (addHistoryEntry) {
-            history.add(ari)
+            History.add(ari)
             backForwardListController.newEntry(ari)
         }
 
@@ -1234,7 +1237,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             splitViewManager.saveToPreferences()
         }
 
-        history.save()
+        History.save()
     }
 
     override fun onStart() {
@@ -1288,7 +1291,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             startActivityForResult(GotoActivity.createIntent(activeSplit0.book.bookId, this.chapter_1, getVerse_1BasedOnScrolls()), RequestCodes.FromActivity.Goto)
         }
 
-        if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && history.size > 0) {
+        if (!Preferences.getBoolean(Prefkey.history_button_understood, false) && History.size > 0) {
 
             FancyShowCaseView.Builder(this)
                 .focusOn(if (useComposeToolbar) composeReferenceAnchor else bGoto)
@@ -1312,7 +1315,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     private fun bGoto_longClick() {
-        if (history.size > 0) {
+        if (History.size > 0) {
             MaterialDialogAdapterHelper.showDialogWithAdapter(this, HistoryAdapter())
             Preferences.setBoolean(Prefkey.history_button_understood, true)
         } else {
@@ -1341,7 +1344,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val holder = _holder_ as HistoryEntryHolder
 
             run {
-                val entry = history.getEntry(position)
+                val entry = History.getEntry(position)
                 holder.text1.text = buildSpannedString {
                     append(activeSplit0.version.reference(entry.ari))
                     append("  ")
@@ -1361,7 +1364,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             holder.itemView.setOnClickListener {
                 val position = holder.bindingAdapterPosition
                 if (position == RecyclerView.NO_POSITION) return@setOnClickListener
-                val ari = history.getEntry(position).ari
+                val ari = History.getEntry(position).ari
                 dismissDialog()
                 jumpToAri(ari)
             }
@@ -1395,7 +1398,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         }
 
         override fun getItemCount(): Int {
-            return history.size
+            return History.size
         }
     }
 
@@ -1600,8 +1603,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             v.setPadding(insets.left, 0, insets.right, 0)
 
             val toolbarCoversTop = toolbarHost.isVisible && !isBottomToolbarOnText()
-            val topEdgeCovered = toolbarCoversTop
-            val topInset = if (topEdgeCovered) 0 else insets.top
+            val topInset = if (toolbarCoversTop) 0 else insets.top
             val bottomEdgeCovered = (toolbarHost.isVisible && isBottomToolbarOnText()) || ViewCompat.requireViewById<View>(root, R.id.audio_bar).height > 0
             val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
             val stackedSplit = splitHandleButton.isVisible && splitRoot.orientation == LinearLayout.VERTICAL
@@ -1737,9 +1739,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RequestCodes.FromActivity.Goto && resultCode == RESULT_OK && data != null) {
-            val result = GotoActivity.obtainResult(data)
-            if (result != null) {
+        when (requestCode) {
+            RequestCodes.FromActivity.Goto if resultCode == RESULT_OK && data != null -> {
+                val result = GotoActivity.obtainResult(data)
                 val ari_cv: Int
 
                 updateBackForwardListCurrentEntry()
@@ -1778,18 +1780,22 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 }
 
                 // Add target ari to history
-                history.add(target_ari)
+                History.add(target_ari)
                 backForwardListController.newEntry(target_ari)
             }
-        } else if (requestCode == RequestCodes.FromActivity.TextAppearanceGetFonts) {
-            textAppearancePanel?.onActivityResult(requestCode)
-        } else if (requestCode == RequestCodes.FromActivity.TextAppearanceCustomColors) {
-            textAppearancePanel?.onActivityResult(requestCode)
-        } else if (requestCode == RequestCodes.FromActivity.EditNote1 && resultCode == RESULT_OK) {
-            reloadBothAttributeMaps()
-        } else if (requestCode == RequestCodes.FromActivity.EditNote2 && resultCode == RESULT_OK) {
-            lsSplit0.uncheckAllVerses(true)
-            reloadBothAttributeMaps()
+            RequestCodes.FromActivity.TextAppearanceGetFonts -> {
+                textAppearancePanel?.onActivityResult(requestCode)
+            }
+            RequestCodes.FromActivity.TextAppearanceCustomColors -> {
+                textAppearancePanel?.onActivityResult(requestCode)
+            }
+            RequestCodes.FromActivity.EditNote1 if resultCode == RESULT_OK -> {
+                reloadBothAttributeMaps()
+            }
+            RequestCodes.FromActivity.EditNote2 if resultCode == RESULT_OK -> {
+                lsSplit0.uncheckAllVerses(true)
+                reloadBothAttributeMaps()
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data)
@@ -2081,7 +2087,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                         holder.lSnippet.visibility = View.GONE
 
                         val labels = App.services.storage.db.listLabelsByMarker(marker)
-                        if (labels.size != 0) {
+                        if (labels.isNotEmpty()) {
                             holder.panelLabels.visibility = View.VISIBLE
                             holder.panelLabels.removeAllViews()
                             for (label in labels) {

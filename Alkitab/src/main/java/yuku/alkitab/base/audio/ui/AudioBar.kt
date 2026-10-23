@@ -44,7 +44,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -207,7 +206,6 @@ fun AudioBar(
                     WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
                 ),
             ) {
-                var dragValue by rememberSaveable { mutableStateOf<Float?>(null) }
                 val isWide = maxWidth >= 600.dp
 
                 Column(
@@ -221,8 +219,6 @@ fun AudioBar(
                         AudioBarWideRow(
                             state = state,
                             onCommand = onCommand,
-                            dragValue = dragValue,
-                            onDragValueChange = { dragValue = it },
                             modifier = Modifier.fillMaxWidth(),
                         )
                     } else {
@@ -230,8 +226,6 @@ fun AudioBar(
                         AudioBarSliderRow(
                             state = state,
                             onCommand = onCommand,
-                            dragValue = dragValue,
-                            onDragValueChange = { dragValue = it },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 8.dp),
@@ -485,11 +479,9 @@ private val PREPARING_INDICATION_DELAY = 100.milliseconds
 private fun AudioBarSliderRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
-    dragValue: Float?,
     modifier: Modifier = Modifier,
-    onDragValueChange: (Float?) -> Unit,
 ) {
-    val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
+    val effectivePosition = state.positionMs
 
     Row(
         modifier = modifier,
@@ -506,8 +498,6 @@ private fun AudioBarSliderRow(
         AudioBarSlider(
             state = state,
             onCommand = onCommand,
-            dragValue = dragValue,
-            onDragValueChange = onDragValueChange,
             modifier = Modifier.weight(1f),
         )
 
@@ -526,22 +516,17 @@ private fun AudioBarSliderRow(
 private fun AudioBarSlider(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
-    dragValue: Float?,
-    onDragValueChange: (Float?) -> Unit,
     modifier: Modifier,
 ) {
-    val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
+    val effectivePosition = state.positionMs
     Slider(
         value = effectivePosition.toFloat(),
         valueRange = 0f..maxOf(state.durationMs.toFloat(), 1f),
         onValueChange = { v ->
-            onDragValueChange(v)
             onCommand(AudioBarCommand.SeekDrag(v.roundToLong()))
         },
         onValueChangeFinished = {
-            val v = dragValue ?: return@Slider
-            onCommand(AudioBarCommand.SeekCommit(v.roundToLong()))
-            onDragValueChange(null)
+            onCommand(AudioBarCommand.SeekCommit(state.positionMs))
         },
         enabled = state.durationMs > 0L && state.error == null,
         modifier = modifier,
@@ -552,8 +537,6 @@ private fun AudioBarSlider(
 private fun AudioBarWideRow(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
-    dragValue: Float?,
-    onDragValueChange: (Float?) -> Unit,
     modifier: Modifier,
 ) {
     Row(
@@ -579,8 +562,6 @@ private fun AudioBarWideRow(
                 AudioBarSliderRow(
                     state = state,
                     onCommand = onCommand,
-                    dragValue = dragValue,
-                    onDragValueChange = onDragValueChange,
                     modifier = Modifier.weight(1f),
                 )
                 CloseButton(onCommand = onCommand)

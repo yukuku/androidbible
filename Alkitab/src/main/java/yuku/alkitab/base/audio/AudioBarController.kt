@@ -17,7 +17,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.audio.model.AudioSet
 import yuku.alkitab.base.audio.ui.AudioBar
@@ -39,13 +39,7 @@ import yuku.alkitab.model.Book
  * once the user starts audio, so an IsiActivity never spins a service up for
  * someone who does not tap the audio icon.
  */
-class AudioBarController(
-    private val context: Context,
-) {
-    /**
-     * The activity-side surface the controller needs to read from to compute
-     * chapter labels and to navigate when the user taps prev/next chapter.
-     */
+class AudioBarController(private val context: Context) {
     interface Host {
         fun audioCurrentBook(): Book
 
@@ -76,794 +70,559 @@ class AudioBarController(
         fun audioBarVisibilityChanged(visible: Boolean)
     }
 
+    private sealed interface Connection {
+        data object Unbound : Connection
+        data object Binding : Connection
+        data class Connected(val service: BibleAudioService) : Connection
+        /** The binding remains registered until unbindService, even after the service disconnects. */
+        data object Disconnected : Connection
+    }
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var collectJob: Job? = null
-
     private var host: Host? = null
     private var composeView: ComposeView? = null
-
-    private var service: BibleAudioService? = null
-
-    /**
-     * Tracks whether [Context.bindService] returned successfully. This flag must
-     * stay set until [detach] calls `unbindService`, even after
-     * [ServiceConnection.onServiceDisconnected] fires: Android's contract is that
-     * the connection still needs to be explicitly unbound, otherwise the
-     * `ServiceConnection` leaks.
-     */
-    private var bound = false
-    /** Tracks whether the user has *requested* the bar visible (via [toggle]). */
-    private var requestedVisible = false
-    /**
-     * Set by [reshowIfSessionActive] while binding to an already-running service
-     * purely to restore the bar after activity recreation or
-     * return-from-background. The first projected [PlaybackState] that reports
-     * [PlaybackState.isActive] flips the bar back on, then clears this flag.
-     * Cleared without showing if the session has ended by the time we connect
-     * (no flicker).
-     */
-    private var reshowPending = false
-    /**
-     * Set while the user has the slider thumb under their finger. Drives a
-     * special case in [projectToUi]: live playback keeps pushing a `verse_1`
-     * derived from the player's current position every 100 ms, which must not
-     * clobber the drag-preview verse_1 written from [AudioBarCommand.SeekDrag].
-     * Cleared on [AudioBarCommand.SeekCommit].
-     */
-    private var dragging = false
-
-    /**
-     * The last `(bookId, chapter_1)` pair the *service* reported. The activity
-     * follows the service's chapter only when this pair *changes*, meaning the
-     * change was service-driven (lock screen, Bluetooth skip, auto-advance)
-     * rather than a manual swipe in the activity. Without this latch, comparing
-     * against `host.audio*` would force the reader back to the playing chapter
-     * on every position tick, breaking manual browsing during playback.
-     *
-     * `(-1, 0)` is the sentinel for "no chapter loaded yet" and matches
-     * [PlaybackState.IDLE].
-     */
-    private var lastServiceBookId = -1
-    private var lastServiceChapter1 = 0
-
-    /** The audio source picked for the current session. Cleared on [hide]. */
-    private var selectedSource: AudioSourceOption? = null
-
-    /**
-     * Whether the recording sheet currently on screen was opened by the
-     * play-from-verse flow, which lists only recordings with timing. Kept so
-     * [refreshSetChoices] rebuilds the open sheet in the mode it was opened in.
-     */
-    private var setSheetTimedOnly = false
-
-    /**
-     * 1-based verse the next chapter load should seek to, or `0` for the
-     * chapter start. Set by [showFromVerse] (and by [pickSet] when switching
-     * recordings mid-verse) and cleared by [dispatchLoad] only once a request
-     * actually reaches the service: a request built while the service is still
-     * connecting is dropped and rebuilt later from this same field, so clearing
-     * it any earlier would lose the requested verse. Chapter-follow loads
-     * ([onChapterChanged]) reset it explicitly so browsing always starts at the
-     * beginning.
-     */
-    private var startVerse1 = 0
-
+    private var connection: Connection = Connection.Unbound
+    private var session = AudioBarSession.HIDDEN
+    private var isNavigatingToPassage = false
+    private var isProcessingTransition = false
+    private val transitions = ArrayDeque<() -> Unit>()
+    private var isComposeContentInstalled = false
     private val _uiState = MutableStateFlow(AudioBarUiState.HIDDEN)
     val uiState: StateFlow<AudioBarUiState> = _uiState.asStateFlow()
 
-    /**
-     * Whether the toolbar audio icon should be shown for the currently visible
-     * version(s). A non-blocking peek: the host builds its source options from
-     * [AudioSetsRepository.cachedSetsFor], so an unresolved version reads as
-     * unavailable until its fetch lands and `IsiActivity` re-prepares the menu.
-     */
+    private val service: BibleAudioService?
+        get() = (connection as? Connection.Connected)?.service
+
     val isAvailable: Boolean
         get() = host?.audioAvailableSources()?.isNotEmpty() == true
 
-    /**
-     * Whether the "play audio from this verse" verse action should be offered:
-     * at least one visible version has a recording with verse timing that
-     * covers the book being read. Without timing there is no verse position to
-     * seek to, so the action could only start at the chapter top. Same
-     * non-blocking cache peek as [isAvailable].
-     */
     val isPlayFromVerseAvailable: Boolean
-        get() {
-            val host = this.host ?: return false
-            return hasPlayableOption(buildSetGroups(host, timedOnly = true))
-        }
+        get() = host?.let { hasPlayableOption(buildSetGroups(it, isTimedOnly = true)) } == true
 
-    /** True while the audio bar is on screen; drives the toolbar audio-icon variant. */
     val isBarVisible: Boolean
-        get() = _uiState.value.visible
+        get() = uiState.value.visible
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val localBinder = binder as? BibleAudioService.LocalBinder ?: return
-            // LocalBinder holds the service via WeakReference (to avoid a
-            // service leak through the Binder framework's JNI globals); the
-            // strong reference held in `service` keeps it alive for the lifetime
-            // of this binding, so a null here means the service was destroyed
-            // before the connection arrived. Bail out and let the next show()
-            // rebind.
-            val svc = localBinder.service ?: return
-            service = svc
-            // `bound` is set in ensureBound when bindService returns true, NOT
-            // here: onServiceConnected is fire-and-forget, and if the service
-            // crashes before it runs we still need to unbind.
-            collectJob?.cancel()
-            collectJob = scope.launch {
-                svc.playbackState.collect { state -> projectToUi(state) }
+            val connected = (binder as? BibleAudioService.LocalBinder)?.service
+            transition {
+                if (connection == Connection.Unbound) return@transition
+                if (connected == null) {
+                    closeSession(isStopPlayback = false)
+                    return@transition
+                }
+                connection = Connection.Connected(connected)
+                collectJob?.cancel()
+                collectJob = scope.launch {
+                    connected.playbackState.collect { snapshot ->
+                        transition { receivePlayback(connected, snapshot) }
+                    }
+                }
             }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            service = null
-            // Do NOT clear `bound`: the ServiceConnection stays registered with
-            // the OS until `unbindService` runs in detach. Disconnection means
-            // the service died; the binding itself is not released.
-            collectJob?.cancel()
-            collectJob = null
+            transition {
+                if (connection == Connection.Unbound) return@transition
+                connection = Connection.Disconnected
+                collectJob?.cancel()
+                collectJob = null
+                session = session.copy(
+                    preview = null,
+                    pending = session.pending ?: AudioBarPendingAction.Restore,
+                    playback = session.playback.copy(isPlaying = false, preparing = true),
+                )
+            }
+        }
+
+        override fun onBindingDied(name: ComponentName?) {
+            transition { closeSession(isStopPlayback = false) }
+        }
+
+        override fun onNullBinding(name: ComponentName?) {
+            transition { closeSession(isStopPlayback = false) }
         }
     }
 
-    /**
-     * Hooks the controller into the activity. Idempotent: calling twice replaces
-     * the host without re-binding the service.
-     *
-     * The compose content is installed lazily on first [show] rather than here,
-     * and disposed in [hide], so the AudioBar's Compose runtime, Recomposer and
-     * snapshot machinery are only active while the bar is visible. Keeping them
-     * resident makes the verses-list scroll measurably laggier.
-     */
     fun attach(host: Host, composeView: ComposeView) {
         this.host = host
         this.composeView = composeView
     }
 
-    /**
-     * Restores the audio bar when the activity becomes visible again (rotation,
-     * process/activity recreation, or return-from-background) while the service
-     * is still mid-session. Call from `IsiActivity.onStart`: it covers both a
-     * fresh activity (after [attach]) and a returning one on the same instance.
-     *
-     * Binds only when [BibleAudioService.hasActiveSession] is already true, so
-     * the service is never spun up for users who haven't started audio. The
-     * actual reshow happens in [projectToUi] once the first [PlaybackState]
-     * arrives, avoiding a show-then-hide flicker if the session just ended.
-     */
-    fun reshowIfSessionActive() {
-        if (!shouldBindForReshow(requestedVisible, BibleAudioService.hasActiveSession)) return
-        reshowPending = true
+    fun reshowIfSessionActive() = transition {
+        if (session.isRequestedVisible || !BibleAudioService.hasActiveSession) return@transition
+        session = session.copy(isRequestedVisible = true, pending = AudioBarPendingAction.Restore)
         ensureBound()
     }
 
-    private var composeContentInstalled = false
-
-    private fun ensureComposeContent() {
-        val cv = composeView ?: return
-        if (composeContentInstalled) return
-        cv.setContent {
-            val state by uiState.collectAsState()
-            AudioBar(state = state, onCommand = ::onCommand, modifier = Modifier)
+    fun onActiveVersionChanged() = transition {
+        val currentHost = host ?: return@transition
+        val source = session.source
+        if (source != null && source.versionId !in currentHost.audioVisibleVersionIds()) {
+            closeSession(isStopPlayback = true)
+        } else {
+            refreshChoices()
         }
-        composeContentInstalled = true
     }
 
-    private fun teardownComposeContent() {
-        val cv = composeView ?: return
-        if (!composeContentInstalled) return
-        cv.disposeComposition()
-        composeContentInstalled = false
-    }
-
-    /**
-     * Called when the active version changes (split toggled, version swapped).
-     * Stops audio when the selected source has left the screen.
-     */
-    fun onActiveVersionChanged() {
-        val host = this.host ?: return
-        val source = selectedSource
-        if (source != null && source.versionId !in host.audioVisibleVersionIds()) {
-            hide()
-            return
+    fun navigateToPassage(navigate: () -> Unit) = transition {
+        val isAudioActive = session.isRequestedVisible || BibleAudioService.hasActiveSession
+        isNavigatingToPassage = true
+        try {
+            service?.pause()
+            navigate()
+        } finally {
+            isNavigatingToPassage = false
         }
-        refreshSetChoices()
-    }
-
-    /**
-     * Called from `IsiActivity.display()` so the audio follows the reader.
-     * Closes the bar if the new book is not in the selected version, or not
-     * covered by the selected recording: loading it would only 404, and
-     * silently switching recordings mid-browse is worse than closing.
-     */
-    fun onChapterChanged() {
-        if (!requestedVisible) return
-        val host = this.host ?: return
-        val source = selectedSource ?: return
-        val readerBook = host.audioCurrentBook()
-        val chapter1 = host.audioCurrentChapter1()
-        val sourceBook = host.audioBookInVersion(source.versionId, readerBook.bookId)
-        if (sourceBook == null) {
-            hide()
-            return
-        }
-        val set = selectedSet()
-        if (set != null && !set.coversBook(sourceBook.bookId)) {
-            hide()
-            return
-        }
-        val availableChapter = chapter1.coerceIn(1, sourceBook.chapter_count)
-
-        if (sourceBook.bookId == lastServiceBookId && availableChapter == lastServiceChapter1) {
-            return
-        }
-
-        // Bump the latch before loadChapter so projectToUi treats the resulting
-        // state as activity-driven and skips the reverse host.audioDisplayChapter call.
-        lastServiceBookId = sourceBook.bookId
-        lastServiceChapter1 = availableChapter
-
-        // Chapter browsing supersedes any not-yet-delivered play-from-verse target.
-        startVerse1 = 0
-        val request = BibleAudioService.AudioRequest(
-            versionId = source.versionId,
-            audioId = source.audioId,
-            bookId = sourceBook.bookId,
-            chapter_1 = availableChapter,
-            displayTitle = "${sourceBook.shortName} $availableChapter",
-            displaySubtitle = displaySubtitle(source),
-            startVerse_1 = 0,
+        if (!isAudioActive) return@transition
+        val target = currentTarget() ?: return@transition
+        session = session.copy(
+            isRequestedVisible = true,
+            pending = AudioBarPendingAction.FollowReader(target, isAutoPlay = false),
+            dialog = AudioBarDialog.None,
+            preview = null,
         )
-        dispatchLoad(host, request)
+        if (ensureBound()) performPendingAction()
+    }
+
+    fun onChapterChanged() {
+        if (isNavigatingToPassage) return
+        transition {
+            if (!session.isRequestedVisible) return@transition
+            val target = currentTarget() ?: return@transition
+            if (session.pending == null && target.matches(session.playback)) return@transition
+            session = session.copy(
+                pending = AudioBarPendingAction.FollowReader(target, isAutoPlay = true),
+                dialog = AudioBarDialog.None,
+                preview = null,
+            )
+            if (ensureBound()) performPendingAction()
+        }
     }
 
     fun toggle() {
-        if (requestedVisible) {
-            hide()
-        } else {
-            show()
-        }
+        if (session.isRequestedVisible) hide() else show()
     }
 
-    /**
-     * Opens the bar and starts playback seeked to [verse_1] (1-based), backing
-     * the "play audio from this verse" verse action.
-     *
-     * - Session already on the reader's chapter with a recording that has
-     *   timing (or whose timing is still unresolved): plain seek, no reload.
-     * - No session, and every recording that would play has timing: the normal
-     *   [show] flow (direct start, or the split-view source picker), carrying
-     *   the start verse.
-     * - Otherwise the recording that would play is known to lack timing, so a
-     *   verse seek in it cannot resolve. The recording sheet opens listing only
-     *   recordings with timing (grouped per version, like the bar's recording
-     *   chip), and the pick starts playback at the verse.
-     */
-    fun showFromVerse(verse_1: Int) {
-        val host = this.host ?: return
-        val svc = service
-        val sessionOnTimedSet = requestedVisible && selectedSource != null &&
-            selectedSet()?.hasTiming != false
-        if (sessionOnTimedSet && svc != null &&
-            host.audioCurrentBook().bookId == lastServiceBookId &&
-            host.audioCurrentChapter1() == lastServiceChapter1
+    fun show() = transition { showAtVerse(0) }
+
+    fun showFromVerse(verse_1: Int) = transition {
+        val currentHost = host ?: return@transition
+        val target = currentTarget() ?: return@transition
+        val connected = service
+        if (session.source != null && selectedSet()?.hasTiming != false &&
+            session.pending == null && target.matches(session.playback) && connected != null
         ) {
-            svc.seekToVerse(verse_1)
-            return
+            session = session.copy(dialog = AudioBarDialog.None, preview = null)
+            connected.seekToVerse(verse_1)
+            connected.play()
+            return@transition
         }
-        startVerse1 = verse_1
-
-        if (sessionOnTimedSet) {
-            // Session on a chapter other than the reader's (or the service is
-            // still connecting): reload the reader's chapter at the verse.
-            startSession(host)
-            return
+        if (session.source != null && selectedSet()?.hasTiming != false) {
+            val source = session.source ?: return@transition
+            queueLoad(source, target, verse_1, isAutoPlay = true)
+            return@transition
         }
-
-        if (!requestedVisible) {
-            val sources = host.audioAvailableSources()
-            if (sources.isNotEmpty() && sources.all { resolvedSet(it)?.hasTiming == true }) {
-                show()
-                return
-            }
+        val sources = currentHost.audioAvailableSources()
+        if (!session.isRequestedVisible && sources.isNotEmpty() && sources.all { resolvedSet(it)?.hasTiming == true }) {
+            showAtVerse(verse_1)
+            return@transition
         }
-
-        val groups = buildSetGroups(host, timedOnly = true)
-        if (groups.isEmpty()) {
-            // The verse action is hidden when no timed recording is visible;
-            // guard against a set list refreshed between menu prep and tap.
-            AppLog.w(TAG, "showFromVerse: no recording with timing on screen")
-            startVerse1 = 0
-            if (!requestedVisible) show()
-            return
-        }
-        requestedVisible = true
-        ensureComposeContent()
-        setSheetTimedOnly = true
-        _uiState.update { it.copy(setGroups = groups) }
-        host.audioBarVisibilityChanged(true)
-    }
-
-    fun show() {
-        val host = this.host ?: return
-        requestedVisible = true
-        ensureComposeContent()
-
-        val sources = host.audioAvailableSources()
-        when (sources.size) {
-            0 -> {
-                // Should be unreachable: the menu icon is hidden when no source has audio.
-                AppLog.w(TAG, "show() called with no audio sources visible")
-                requestedVisible = false
-                startVerse1 = 0
-            }
-            1 -> {
-                selectedSource = sources[0]
-                startSession(host)
-            }
-            else -> {
-                // Split view with audio on both sides: let the user pick a
-                // source instead of starting one immediately.
-                _uiState.update {
-                    AudioBarUiState.HIDDEN.copy(visible = false, pickerOptions = sources)
-                }
-                host.audioBarVisibilityChanged(true)
-            }
-        }
-    }
-
-    /** Binds the service and fires the first loadChapter once [selectedSource] is set. */
-    private fun startSession(host: Host) {
-        requestedVisible = true
-        ensureComposeContent()
-        ensureBound()
-        _uiState.update {
-            it.copy(
-                visible = true,
-                preparing = service == null,
-                pickerOptions = null,
-                setGroups = null,
-                canChooseSet = canChooseSet(host),
-            )
-        }
-        host.audioBarVisibilityChanged(true)
-        val request = buildRequest(host) ?: return
-        dispatchLoad(host, request)
-    }
-
-    fun hide() {
-        requestedVisible = false
-        reshowPending = false
-        dragging = false
-        selectedSource = null
-        startVerse1 = 0
-        lastServiceBookId = -1
-        lastServiceChapter1 = 0
-        service?.stop()
-        _uiState.update { AudioBarUiState.HIDDEN }
-        host?.audioBarVisibilityChanged(false)
-        teardownComposeContent()
-        // Unbind so BibleAudioService can destroy, releasing ExoPlayer, the
-        // MediaSession and the foreground notification. Holding the binding
-        // between shows would avoid bind/unbind churn, but leaves enough
-        // audio-stack overhead resident to make the verses-list scroll
-        // measurably laggier once the bar is dismissed.
-        if (bound) {
-            try {
-                context.unbindService(serviceConnection)
-            } catch (e: IllegalArgumentException) {
-                AppLog.w(TAG, "unbindService on hide: ${e.message}")
-            }
-            bound = false
-            service = null
-            collectJob?.cancel()
-            collectJob = null
-        }
-    }
-
-    /**
-     * Releases activity references. Called from `IsiActivity.onDestroy`.
-     * Does NOT call `service.stop()`: the service is independently owned and may
-     * keep playing while the activity is recreated.
-     */
-    fun detach() {
-        reshowPending = false
-        if (bound) {
-            try {
-                context.unbindService(serviceConnection)
-            } catch (e: IllegalArgumentException) {
-                AppLog.w(TAG, "unbindService raced with onDestroy: ${e.message}")
-            }
-            bound = false
-        }
-        service = null
-        collectJob?.cancel()
-        collectJob = null
-        scope.cancel()
-        host = null
-        composeView = null
-        // Drop the pending Host reference too, otherwise an in-flight load
-        // queued before the service connected leaks the activity.
-        pendingLoad = null
-    }
-
-    // -- internals --------------------------------------------------------------
-
-    private var pendingLoad: Host? = null
-
-    private fun ensureBound() {
-        if (bound) return
-        // The service must outlive the activity (rotation, backgrounding, lock
-        // screen), and a pure `bindService` would die the moment we unbind.
-        // `startService` keeps the service alive without starting the 5-second
-        // `startForeground` deadline, and media3's `MediaNotificationManager`
-        // promotes it to foreground itself the moment the player enters a
-        // user-engaged state (BUFFERING/READY): it calls
-        // `ContextCompat.startForegroundService(...)` and `Service.startForeground`
-        // back-to-back inside the same main-thread frame, satisfying the system's
-        // foreground-service rules without us posting anything. The
-        // `mediaPlayback` foreground-service-type exemption covers the
-        // background-start restriction on Android 12+.
-        val startIntent = Intent(context, BibleAudioService::class.java)
-        context.startService(startIntent)
-        val bindIntent = Intent(context, BibleAudioService::class.java)
-            .setAction(BibleAudioService.ACTION_LOCAL_BIND)
-        try {
-            // bindService can return false if the service can't be found or the
-            // system refuses to deliver. Only flip `bound` on success so detach
-            // doesn't try to unbind a connection that was never registered.
-            if (context.bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE)) {
-                bound = true
-            } else {
-                AppLog.w(TAG, "bindService returned false: service not bound")
-            }
-        } catch (e: SecurityException) {
-            // Should never happen since we own the service. Logged for paranoia.
-            AppLog.e(TAG, "bindService denied: ${e.message}")
-        }
-    }
-
-    /** Returns null when the selected version doesn't include the reader's current book. */
-    private fun buildRequest(host: Host): BibleAudioService.AudioRequest? {
-        val source = selectedSource ?: return null
-        val readerBook = host.audioCurrentBook()
-        val chapter1 = host.audioCurrentChapter1()
-        val sourceBook = host.audioBookInVersion(source.versionId, readerBook.bookId)
-            ?: return null
-        val availableChapter = chapter1.coerceIn(1, sourceBook.chapter_count)
-        return BibleAudioService.AudioRequest(
-            versionId = source.versionId,
-            audioId = source.audioId,
-            bookId = sourceBook.bookId,
-            chapter_1 = availableChapter,
-            displayTitle = "${sourceBook.shortName} $availableChapter",
-            displaySubtitle = displaySubtitle(source),
-            startVerse_1 = startVerse1,
+        if (buildSetGroups(currentHost, isTimedOnly = true).isEmpty()) return@transition
+        session = session.copy(
+            isRequestedVisible = true,
+            pending = null,
+            dialog = AudioBarDialog.Recording(target, verse_1, isTimedOnly = true),
+            preview = null,
         )
     }
 
-    /**
-     * Hands [request] to the service, or queues a rebuild for when the service
-     * connects. [startVerse1] is cleared only when the request is actually
-     * delivered: the queued path rebuilds the request in [projectToUi] via
-     * [buildRequest], which must still see the requested start verse, so that
-     * "play audio from this verse" survives the initial service binding instead
-     * of degrading to a chapter-top start.
-     */
-    private fun dispatchLoad(host: Host, request: BibleAudioService.AudioRequest) {
-        val svc = service
-        if (svc == null) {
-            pendingLoad = host
-            return
-        }
-        svc.loadChapter(request)
-        startVerse1 = 0
-    }
-
-    /** The [AudioSet] behind [option], or null while its version's set list is unresolved. */
-    private fun resolvedSet(option: AudioSourceOption): AudioSet? =
-        AudioSetsRepository.cachedSetsFor(option.versionId)
-            ?.sets?.firstOrNull { it.audioId == option.audioId }
-
-    /**
-     * The recording selected for the current session, resolved against the
-     * cached set list. Null while nothing is selected or the cache is cold
-     * (e.g. right after process death).
-     */
-    private fun selectedSet(): AudioSet? = selectedSource?.let(::resolvedSet)
-
-    private fun canChooseSet(host: Host): Boolean = canChooseSet(
-        versionIds = host.audioVisibleVersionIds(),
-        setsOf = { versionId -> AudioSetsRepository.cachedSetsFor(versionId)?.sets },
-    )
-
-    /**
-     * Recomputes the parts of the UI state derived from which versions are on
-     * screen and what the set cache holds: the chooser button's visibility, and
-     * the sheet's contents while it is open. Neither is driven by
-     * [PlaybackState], so without this they would sit stale until the next
-     * position tick, and indefinitely while paused.
-     */
-    fun refreshSetChoices() {
-        val host = this.host ?: return
-        _uiState.update { current ->
-            current.copy(
-                canChooseSet = canChooseSet(host),
-                setGroups = current.setGroups?.let { previous ->
-                    buildSetGroups(host, timedOnly = setSheetTimedOnly).ifEmpty { previous }
-                },
+    private fun showAtVerse(startVerse1: Int) {
+        val currentHost = host ?: return
+        val target = currentTarget() ?: return
+        val sources = currentHost.audioAvailableSources()
+        when (sources.size) {
+            0 -> closeSession(isStopPlayback = false)
+            1 -> queueLoad(sources.single(), target, startVerse1, isAutoPlay = true)
+            else -> session = session.copy(
+                isRequestedVisible = true,
+                pending = null,
+                dialog = AudioBarDialog.Source(target, startVerse1),
+                preview = null,
             )
         }
     }
 
-    /**
-     * Notification subtitle: `"<version short name> · <set title>"` when the
-     * version has more than one recording, the bare version name otherwise.
-     */
+    fun hide() = transition { closeSession(isStopPlayback = true) }
+
+    fun detach() {
+        closeSession(isStopPlayback = false)
+        publish()
+        scope.cancel()
+        transitions.clear()
+        host = null
+        composeView = null
+    }
+
+    private fun closeSession(isStopPlayback: Boolean) {
+        val connected = service
+        val isRegistered = connection != Connection.Unbound
+        session = AudioBarSession.HIDDEN
+        collectJob?.cancel()
+        collectJob = null
+        connection = Connection.Unbound
+        if (isStopPlayback) connected?.stop()
+        if (isRegistered) {
+            try {
+                context.unbindService(serviceConnection)
+            } catch (e: IllegalArgumentException) {
+                AppLog.w(TAG, "unbindService: ${e.message}")
+            }
+        }
+    }
+
+    private fun ensureBound(): Boolean {
+        if (connection != Connection.Unbound) return true
+        connection = Connection.Binding
+        try {
+            context.startService(Intent(context, BibleAudioService::class.java))
+            val intent = Intent(context, BibleAudioService::class.java).setAction(BibleAudioService.ACTION_LOCAL_BIND)
+            if (context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)) return true
+            AppLog.w(TAG, "bindService returned false")
+        } catch (e: SecurityException) {
+            AppLog.e(TAG, "bindService denied: ${e.message}")
+        } catch (e: IllegalStateException) {
+            AppLog.e(TAG, "startService denied: ${e.message}")
+        }
+        connection = Connection.Unbound
+        closeSession(isStopPlayback = false)
+        return false
+    }
+
+    private fun currentTarget(): AudioBarTarget? {
+        val currentHost = host ?: return null
+        return AudioBarTarget(currentHost.audioCurrentBook().bookId, currentHost.audioCurrentChapter1())
+    }
+
+    private fun queueLoad(source: AudioSourceOption, target: AudioBarTarget, startVerse1: Int, isAutoPlay: Boolean) {
+        val request = buildRequest(source, target, startVerse1, isAutoPlay)
+        if (request == null) {
+            closeSession(isStopPlayback = true)
+            return
+        }
+        queueRequest(source, request)
+    }
+
+    private fun buildRequest(source: AudioSourceOption, target: AudioBarTarget, startVerse1: Int, isAutoPlay: Boolean): BibleAudioService.AudioRequest? {
+        val currentHost = host ?: return null
+        val book = currentHost.audioBookInVersion(source.versionId, target.bookId)
+        val set = resolvedSet(source)
+        if (book == null || set?.coversBook(target.bookId) == false) {
+            return null
+        }
+        val chapter1 = target.chapter1.coerceIn(1, book.chapter_count)
+        return BibleAudioService.AudioRequest(
+            versionId = source.versionId,
+            audioId = source.audioId,
+            bookId = book.bookId,
+            chapter_1 = chapter1,
+            displayTitle = "${book.shortName} $chapter1",
+            displaySubtitle = displaySubtitle(source),
+            startVerse_1 = startVerse1,
+            isAutoPlay = isAutoPlay,
+        )
+    }
+
+    private fun queueRequest(source: AudioSourceOption, request: BibleAudioService.AudioRequest) {
+        session = session.copy(
+            isRequestedVisible = true,
+            source = source,
+            pending = AudioBarPendingAction.Load(request),
+            dialog = AudioBarDialog.None,
+            preview = null,
+            isTimingAvailable = false,
+        )
+        if (ensureBound()) performPendingAction()
+    }
+
+    private fun performPendingAction() {
+        val connected = service ?: return
+        when (val pending = session.pending) {
+            is AudioBarPendingAction.Load -> {
+                val request = pending.request
+                session = session.copy(
+                    pending = null,
+                    playback = session.playback.copy(
+                        versionId = request.versionId, audioId = request.audioId,
+                        bookId = request.bookId, chapter_1 = request.chapter_1,
+                        verse_1 = 0, positionMs = 0L, durationMs = 0L,
+                        isPlaying = false, preparing = true, error = null, logs = emptyList(),
+                    ),
+                    preview = null,
+                    isTimingAvailable = false,
+                )
+                connected.loadChapter(request)
+            }
+            is AudioBarPendingAction.FollowReader -> {
+                if (!pending.isAutoPlay) connected.pause()
+                val source = session.source ?: sourceFromPlayback(session.playback)
+                if (source == null) {
+                    closeSession(isStopPlayback = true)
+                } else {
+                    queueLoad(source, pending.target, 0, pending.isAutoPlay)
+                }
+            }
+            AudioBarPendingAction.Restore, null -> Unit
+        }
+    }
+
+    private fun receivePlayback(connected: BibleAudioService, snapshot: PlaybackState) {
+        if (connected !== service || !session.isRequestedVisible || snapshot != connected.playbackState.value) return
+        when (session.pending) {
+            is AudioBarPendingAction.Load -> {
+                performPendingAction()
+                return
+            }
+            is AudioBarPendingAction.FollowReader -> {
+                session = session.copy(playback = snapshot)
+                performPendingAction()
+                return
+            }
+            AudioBarPendingAction.Restore -> session = session.copy(pending = null)
+            null -> Unit
+        }
+        if (!snapshot.isActive) {
+            closeSession(isStopPlayback = false)
+            return
+        }
+        val currentHost = host ?: return
+        if (snapshot.versionId !in currentHost.audioVisibleVersionIds()) {
+            closeSession(isStopPlayback = false)
+            return
+        }
+        val previous = session.playback
+        val isSameRecordingChapter = previous.versionId == snapshot.versionId && previous.audioId == snapshot.audioId &&
+            previous.bookId == snapshot.bookId && previous.chapter_1 == snapshot.chapter_1
+        val source = sourceFromPlayback(snapshot)
+        session = session.copy(
+            playback = snapshot,
+            source = source,
+            preview = if (isSameRecordingChapter) session.preview else null,
+            isTimingAvailable = computeTimingAvailable(
+                setHasTiming = source?.let(::resolvedSet)?.hasTiming,
+                stateVerse1 = snapshot.verse_1,
+                currentTimingAvailable = isSameRecordingChapter && session.isTimingAvailable,
+            ),
+        )
+        if (previous.bookId != snapshot.bookId || previous.chapter_1 != snapshot.chapter_1) {
+            val targetBook = currentHost.audioVisibleVersionIds().firstNotNullOfOrNull {
+                currentHost.audioBookInVersion(it, snapshot.bookId)
+            }
+            if (targetBook != null && (currentHost.audioCurrentBook().bookId != snapshot.bookId ||
+                    currentHost.audioCurrentChapter1() != snapshot.chapter_1)) {
+                currentHost.audioDisplayChapter(targetBook, snapshot.chapter_1)
+            }
+        }
+    }
+
+    private fun sourceFromPlayback(snapshot: PlaybackState): AudioSourceOption? {
+        if (!snapshot.isActive) return null
+        val currentHost = host ?: return null
+        if (snapshot.versionId !in currentHost.audioVisibleVersionIds()) return null
+        val versionName = currentHost.audioVersionShortName(snapshot.versionId) ?: return null
+        val set = AudioSetsRepository.cachedSetsFor(snapshot.versionId)?.sets?.firstOrNull { it.audioId == snapshot.audioId }
+        val previous = session.source?.takeIf { it.versionId == snapshot.versionId && it.audioId == snapshot.audioId }
+        return AudioSourceOption(snapshot.versionId, versionName, snapshot.audioId, set?.title ?: previous?.title ?: snapshot.audioId)
+    }
+
+    fun refreshSetChoices() = transition { refreshChoices() }
+
+    private fun refreshChoices() {
+        val currentHost = host ?: return
+        if (session.pending == null && session.playback.isActive) {
+            session = session.copy(source = sourceFromPlayback(session.playback))
+        }
+        when (val dialog = session.dialog) {
+            is AudioBarDialog.Source -> if (currentHost.audioAvailableSources().isEmpty()) closeSession(isStopPlayback = false)
+            is AudioBarDialog.Recording -> if (buildSetGroups(currentHost, dialog.isTimedOnly).isEmpty()) {
+                if (session.source == null) closeSession(isStopPlayback = false)
+                else session = session.copy(dialog = AudioBarDialog.None)
+            }
+            else -> Unit
+        }
+    }
+
+    internal fun onCommand(cmd: AudioBarCommand) = transition {
+        val currentHost = host ?: return@transition
+        if (!session.isRequestedVisible) return@transition
+        var loggedCommand = cmd
+        when (cmd) {
+            is AudioBarCommand.PickSource -> {
+                val dialog = session.dialog as? AudioBarDialog.Source ?: return@transition
+                val source = currentHost.audioAvailableSources().firstOrNull { it.versionId == cmd.versionId } ?: return@transition
+                queueLoad(source, dialog.target, dialog.startVerse1, isAutoPlay = true)
+            }
+            AudioBarCommand.CancelPicker, AudioBarCommand.Close -> closeSession(isStopPlayback = true)
+            AudioBarCommand.PlayPause -> {
+                val connected = service ?: return@transition
+                if (session.playback.isPlaying) connected.pause() else connected.play()
+            }
+            AudioBarCommand.PrevVerse -> service?.seekToPrevVerse()
+            AudioBarCommand.NextVerse -> service?.seekToNextVerse()
+            AudioBarCommand.Speed -> session = session.copy(dialog = AudioBarDialog.Speed)
+            AudioBarCommand.DismissSpeedSheet, AudioBarCommand.DismissLogSheet -> session = session.copy(dialog = AudioBarDialog.None)
+            AudioBarCommand.OpenSetSheet -> {
+                val target = currentTarget() ?: return@transition
+                if (buildSetGroups(currentHost, isTimedOnly = false).isEmpty()) return@transition
+                session = session.copy(dialog = AudioBarDialog.Recording(target, 0, isTimedOnly = false))
+            }
+            AudioBarCommand.DismissSetSheet -> {
+                if (session.source == null) closeSession(isStopPlayback = false)
+                else session = session.copy(dialog = AudioBarDialog.None)
+            }
+            is AudioBarCommand.PickSet -> pickSet(currentHost, cmd.versionId, cmd.audioId)
+            AudioBarCommand.Retry -> {
+                val source = session.source ?: return@transition
+                val target = currentTarget() ?: return@transition
+                val request = buildRequest(source, target, 0, isAutoPlay = true) ?: return@transition
+                AudioSetsRepository.invalidate(source.versionId)
+                queueRequest(source, request)
+            }
+            is AudioBarCommand.SetSpeed -> {
+                session = session.copy(playback = session.playback.copy(speed = cmd.speed), dialog = AudioBarDialog.None)
+                service?.setSpeed(cmd.speed)
+            }
+            is AudioBarCommand.SeekDrag -> {
+                val connected = service ?: return@transition
+                session = session.copy(preview = AudioBarDragPreview(cmd.positionMs, connected.peekVerseAt(cmd.positionMs)))
+            }
+            is AudioBarCommand.SeekCommit -> {
+                val preview = session.preview ?: return@transition
+                session = session.copy(preview = null)
+                loggedCommand = AudioBarCommand.SeekCommit(preview.positionMs)
+                service?.seekTo(preview.positionMs)
+            }
+            AudioBarCommand.OpenLogSheet -> session = session.copy(dialog = AudioBarDialog.Log)
+        }
+        describeCommand(loggedCommand)?.let { service?.logUiEvent(it) }
+    }
+
+    private fun pickSet(currentHost: Host, versionId: String, audioId: String) {
+        val dialog = session.dialog as? AudioBarDialog.Recording
+        val target = dialog?.target ?: currentTarget() ?: return
+        val set = AudioSetsRepository.cachedSetsFor(versionId)?.sets?.firstOrNull { it.audioId == audioId } ?: return
+        if (!set.coversBook(target.bookId)) return
+        val versionName = currentHost.audioVersionShortName(versionId) ?: return
+        val source = AudioSourceOption(versionId, versionName, set.audioId, set.title)
+        val pendingVerse = dialog?.startVerse1 ?: (session.pending as? AudioBarPendingAction.Load)?.request?.startVerse_1 ?: 0
+        val startVerse = startVerseForSetSwitch(set.hasTiming, pendingVerse, session.playback.verse_1)
+        AudioSetSelections.store(versionId, set.audioId)
+        if (source.versionId == session.source?.versionId && source.audioId == session.source?.audioId &&
+            session.pending == null && target.matches(session.playback) && service != null
+        ) {
+            session = session.copy(dialog = AudioBarDialog.None)
+            if (pendingVerse > 0) {
+                service?.seekToVerse(pendingVerse)
+                service?.play()
+            }
+        } else {
+            queueLoad(source, target, startVerse, isAutoPlay = true)
+        }
+    }
+
+    private fun resolvedSet(source: AudioSourceOption): AudioSet? = AudioSetsRepository.cachedSetsFor(source.versionId)
+        ?.sets?.firstOrNull { it.audioId == source.audioId }
+
+    private fun selectedSet(): AudioSet? = session.source?.let(::resolvedSet)
+
+    private fun buildSetGroups(currentHost: Host, isTimedOnly: Boolean): List<AudioSetGroup> = buildSetGroups(
+        versionIds = currentHost.audioVisibleVersionIds().distinct(),
+        currentBookId = currentHost.audioCurrentBook().bookId,
+        selectedVersionId = session.source?.versionId,
+        selectedAudioId = session.source?.audioId,
+        timedOnly = isTimedOnly,
+        setsOf = { AudioSetsRepository.cachedSetsFor(it)?.sets },
+        versionNameOf = currentHost::audioVersionShortName,
+        versionHasBook = { currentHost.audioBookInVersion(it, currentHost.audioCurrentBook().bookId) != null },
+    )
+
     private fun displaySubtitle(source: AudioSourceOption): String {
         val sets = AudioSetsRepository.cachedSetsFor(source.versionId)?.sets
         return if (sets != null && sets.size > 1) "${source.shortName} · ${source.title}" else source.shortName
     }
 
-    private fun onCommand(cmd: AudioBarCommand) {
-        val svc = service
-        val host = this.host ?: return
-        describeCommand(cmd)?.let { svc?.logUiEvent(it) }
-        when (cmd) {
-            is AudioBarCommand.PickSource -> {
-                val sources = host.audioAvailableSources()
-                val picked = sources.firstOrNull { it.versionId == cmd.versionId } ?: return
-                selectedSource = picked
-                startSession(host)
+    private fun transition(action: () -> Unit) {
+        if (!scope.isActive) return
+        transitions.addLast(action)
+        if (isProcessingTransition) return
+        isProcessingTransition = true
+        try {
+            while (transitions.isNotEmpty()) {
+                transitions.removeFirst().invoke()
+                publish()
             }
-            AudioBarCommand.CancelPicker -> hide()
-            AudioBarCommand.PlayPause -> {
-                if (svc == null) return
-                if (_uiState.value.isPlaying) svc.pause() else svc.play()
-            }
-            AudioBarCommand.PrevVerse -> svc?.seekToPrevVerse()
-            AudioBarCommand.NextVerse -> svc?.seekToNextVerse()
-            AudioBarCommand.Close -> hide()
-            AudioBarCommand.Speed -> {
-                _uiState.update { it.copy(showSpeedSheet = true) }
-            }
-            AudioBarCommand.DismissSpeedSheet -> {
-                _uiState.update { it.copy(showSpeedSheet = false) }
-            }
-            AudioBarCommand.OpenSetSheet -> {
-                val groups = buildSetGroups(host, timedOnly = false)
-                if (groups.isEmpty()) return
-                setSheetTimedOnly = false
-                _uiState.update { it.copy(setGroups = groups) }
-            }
-            AudioBarCommand.DismissSetSheet -> {
-                if (selectedSource == null) {
-                    // The play-from-verse picker was dismissed before any
-                    // session existed, so there is nothing to keep on screen.
-                    hide()
-                } else {
-                    startVerse1 = 0
-                    _uiState.update { it.copy(setGroups = null) }
-                }
-            }
-            is AudioBarCommand.PickSet -> pickSet(host, cmd.versionId, cmd.audioId)
-            AudioBarCommand.Retry -> retryLoad(host)
-            is AudioBarCommand.SetSpeed -> {
-                svc?.setSpeed(cmd.speed)
-                _uiState.update { it.copy(speed = cmd.speed, showSpeedSheet = false) }
-            }
-            is AudioBarCommand.SeekDrag -> {
-                // AudioBar owns the thumb's mm:ss locally, but the resolved
-                // verse_1 goes into the shared UI state so the verse highlight
-                // and smooth-scroll follow the finger live (peekVerseAt has no
-                // playback side effects). The `dragging` flag tells projectToUi
-                // to leave verse_1 alone while the finger is down, otherwise the
-                // 100 ms playback poll overwrites the preview twice a second.
-                dragging = true
-                val previewVerse = svc?.peekVerseAt(cmd.positionMs) ?: return
-                _uiState.update { it.copy(verse_1 = previewVerse) }
-            }
-            is AudioBarCommand.SeekCommit -> {
-                dragging = false
-                svc?.seekTo(cmd.positionMs)
-            }
-            AudioBarCommand.OpenLogSheet -> {
-                _uiState.update { it.copy(showLogSheet = true) }
-            }
-            AudioBarCommand.DismissLogSheet -> {
-                _uiState.update { it.copy(showLogSheet = false) }
-            }
+        } finally {
+            isProcessingTransition = false
         }
     }
 
-    /**
-     * The recording-picker sheet's content: one group per visible version whose
-     * set list has resolved non-empty, so two groups in split view when both
-     * sides have audio. Rows for sets (or versions) that don't cover the book
-     * being read are listed but disabled. With [timedOnly], recordings without
-     * verse timing are dropped entirely, since an untimed recording cannot serve
-     * a verse seek and listing it disabled would only advertise a dead end.
-     */
-    private fun buildSetGroups(host: Host, timedOnly: Boolean): List<AudioSetGroup> {
-        val currentBookId = host.audioCurrentBook().bookId
-        return buildSetGroups(
-            versionIds = host.audioVisibleVersionIds().distinct(),
-            currentBookId = currentBookId,
-            selectedVersionId = selectedSource?.versionId,
-            selectedAudioId = selectedSource?.audioId,
-            timedOnly = timedOnly,
-            setsOf = { versionId -> AudioSetsRepository.cachedSetsFor(versionId)?.sets },
-            versionNameOf = host::audioVersionShortName,
-            versionHasBook = { versionId -> host.audioBookInVersion(versionId, currentBookId) != null },
+    private fun projectUiState(): AudioBarUiState {
+        val playback = session.playback
+        val dialog = session.dialog
+        val currentHost = host
+        val preview = session.preview
+        return AudioBarUiState(
+            visible = session.isRequestedVisible && session.source != null && dialog !is AudioBarDialog.Source,
+            isPlaying = playback.isPlaying,
+            preparing = playback.preparing || session.pending is AudioBarPendingAction.Load || session.pending is AudioBarPendingAction.FollowReader,
+            positionMs = preview?.positionMs ?: playback.positionMs,
+            durationMs = playback.durationMs,
+            verse_1 = preview?.verse1 ?: playback.verse_1,
+            speed = playback.speed,
+            error = playback.error,
+            timingAvailable = session.isTimingAvailable,
+            logs = playback.logs,
+            showLogSheet = dialog == AudioBarDialog.Log,
+            playingVersionId = session.source?.versionId,
+            canChooseSet = currentHost != null && canChooseSet(currentHost.audioVisibleVersionIds()) {
+                AudioSetsRepository.cachedSetsFor(it)?.sets
+            },
+            pickerOptions = if (dialog is AudioBarDialog.Source) currentHost?.audioAvailableSources() else null,
+            showSpeedSheet = dialog == AudioBarDialog.Speed,
+            setGroups = if (dialog is AudioBarDialog.Recording && currentHost != null) buildSetGroups(currentHost, dialog.isTimedOnly) else null,
         )
     }
 
-    /**
-     * Switches the session to another recording, either of the same version or
-     * of the other split's version (the sheet lists both in split view, so this
-     * is also the mid-session way to move audio across the splits). Persists the
-     * per-version choice, then reloads the current chapter in the new recording.
-     * For the start verse, a pending play-from-verse target wins, then
-     * continuity with the verse that was playing; a recording without timing
-     * always starts at the chapter top. Timing differs per recording, so a
-     * millisecond-preserving switch would land in an arbitrary place.
-     *
-     * Also serves the play-from-verse picker's pick, including before any
-     * session exists ([selectedSource] still null), where [startSession] binds
-     * the service and shows the bar.
-     */
-    private fun pickSet(host: Host, versionId: String, audioId: String) {
-        val source = selectedSource
-        if (source != null && versionId == source.versionId && audioId == source.audioId) {
-            _uiState.update { it.copy(setGroups = null) }
-            // Re-picked the recording already playing while a play-from-verse
-            // target is pending: a seek does the job.
-            val sv = startVerse1
-            if (sv > 0) {
-                startVerse1 = 0
-                service?.seekToVerse(sv)
-            }
-            return
+    private fun publish() {
+        val previous = _uiState.value
+        val next = projectUiState()
+        _uiState.value = next
+        if (next.visible || next.pickerOptions != null || next.setGroups != null || next.showSpeedSheet || next.showLogSheet) {
+            ensureComposeContent()
+        } else {
+            teardownComposeContent()
         }
-        val newSet = AudioSetsRepository.cachedSetsFor(versionId)?.sets
-            ?.firstOrNull { it.audioId == audioId } ?: return
-        val versionName = host.audioVersionShortName(versionId) ?: return
-        AudioSetSelections.store(versionId, newSet.audioId)
-        startVerse1 = startVerseForSetSwitch(
-            newSetHasTiming = newSet.hasTiming,
-            pendingStartVerse1 = startVerse1,
-            playingVerse1 = _uiState.value.verse_1,
-        )
-        selectedSource = AudioSourceOption(
-            versionId = versionId,
-            shortName = versionName,
-            audioId = newSet.audioId,
-            title = newSet.title,
-        )
-        startSession(host)
+        if (previous.visible != next.visible || previous.pickerOptions != next.pickerOptions) {
+            host?.audioBarVisibilityChanged(next.visible)
+        }
+        describeStateTransition(previous, next)?.let { service?.logUiEvent(it) }
     }
 
-    /**
-     * Retries a failed chapter load from scratch. The cached set answer for
-     * the source version is dropped after the request is built, so a failure
-     * that came from a set resolution cached as "no audio" (e.g. the network
-     * was down at fetch time) gets a fresh query on this explicitly
-     * user-initiated retry.
-     */
-    private fun retryLoad(host: Host) {
-        val source = selectedSource ?: return
-        val request = buildRequest(host) ?: return
-        AudioSetsRepository.invalidate(source.versionId)
-        dispatchLoad(host, request)
+    private fun ensureComposeContent() {
+        val view = composeView ?: return
+        if (isComposeContentInstalled) return
+        view.setContent {
+            val state by uiState.collectAsState()
+            AudioBar(state = state, onCommand = ::onCommand, modifier = Modifier)
+        }
+        isComposeContentInstalled = true
     }
 
-    private fun projectToUi(state: PlaybackState) {
-        val host = this.host
-
-        // Auto-reshow after activity recreation or return-from-background: the
-        // service is still mid-session but the bar was reset to hidden. Flip it
-        // back on once the first active state lands, reconstructing the session
-        // source from the service's loaded versionId. Runs before the
-        // _uiState.update below so `visible` picks it up in the same emission.
-        if (reshowPending) {
-            val reshow = shouldReshowNow(reshowPending, state)
-            // One-shot: the flag is consumed on the first state after binding
-            // whether or not the bar reshows, so a session that ended before the
-            // connection landed (!state.isActive) causes no show-then-hide
-            // flicker against an idle service.
-            reshowPending = false
-            if (reshow) {
-                requestedVisible = true
-                ensureComposeContent()
-                host?.audioAvailableSources()
-                    ?.firstOrNull { it.versionId == state.versionId }
-                    ?.let { option ->
-                        // Prefer the recording the service is actually playing
-                        // over the option's (selection-derived) one, so the bar
-                        // reflects the live session even if the persisted
-                        // selection changed while we were away.
-                        val playingSet = AudioSetsRepository.cachedSetsFor(option.versionId)
-                            ?.sets?.firstOrNull { it.audioId == state.audioId }
-                        selectedSource = if (playingSet != null) {
-                            option.copy(audioId = playingSet.audioId, title = playingSet.title)
-                        } else {
-                            option
-                        }
-                    }
-                host?.audioBarVisibilityChanged(true)
-            }
-        }
-
-        // Snapshot before draining: if a load was queued before the service
-        // connected, the first incoming state is usually `IDLE`, which would
-        // briefly clear the spinner before the loadChapter call sets it back to
-        // preparing. Holding the spinner true until the queued load has fired
-        // avoids that flicker.
-        val isPending = pendingLoad != null
-        pendingLoad?.let { ph ->
-            pendingLoad = null
-            buildRequest(ph)?.let { req -> dispatchLoad(ph, req) }
-        }
-
-        // A coordinator-driven external stop (a hymn took over audio) resets the
-        // service to IDLE. Tear the bar down so it doesn't linger in a dead,
-        // un-resumable state. `isPending` guards the startup race where the
-        // freshly-created service replays IDLE before our queued loadChapter runs.
-        if (!isPending && requestedVisible && state == PlaybackState.IDLE) {
-            hide()
-            return
-        }
-
-        // Sync the activity to the chapter the service is now playing. Only fires
-        // for service-driven changes (lock screen / Bluetooth / auto-advance);
-        // activity-driven changes from onChapterChanged bump the latch first.
-        if (host != null && state.bookId >= 0 &&
-            (state.bookId != lastServiceBookId || state.chapter_1 != lastServiceChapter1)
-        ) {
-            lastServiceBookId = state.bookId
-            lastServiceChapter1 = state.chapter_1
-            val hostBook = host.audioCurrentBook()
-            if (hostBook.bookId != state.bookId || host.audioCurrentChapter1() != state.chapter_1) {
-                val targetBook = host.audioVisibleVersionIds()
-                    .firstNotNullOfOrNull { host.audioBookInVersion(it, state.bookId) }
-                if (targetBook != null) {
-                    host.audioDisplayChapter(targetBook, state.chapter_1)
-                }
-            }
-        }
-
-        val playingVersionId = state.versionId.takeIf { it.isNotEmpty() }
-            ?: selectedSource?.versionId
-
-        val selectedSet = selectedSet()
-
-        val effectivePreparing = state.preparing || isPending
-        val previousUiState = _uiState.value
-        _uiState.update { current ->
-            current.copy(
-                visible = requestedVisible && current.pickerOptions == null,
-                isPlaying = state.isPlaying,
-                preparing = effectivePreparing,
-                positionMs = state.positionMs,
-                durationMs = state.durationMs,
-                verse_1 = if (dragging) current.verse_1 else state.verse_1,
-                speed = state.speed,
-                error = state.error,
-                logs = state.logs,
-                timingAvailable = computeTimingAvailable(
-                    setHasTiming = selectedSet?.hasTiming,
-                    stateVerse1 = state.verse_1,
-                    currentTimingAvailable = current.timingAvailable,
-                ),
-                playingVersionId = playingVersionId,
-                canChooseSet = host != null && canChooseSet(host),
-            )
-        }
-        // Logging re-enters here via the service's state flow, but the
-        // re-entrant pass sees an unchanged label and logs nothing, so this
-        // settles after one extra emission.
-        describeStateTransition(previousUiState, _uiState.value)?.let { service?.logUiEvent(it) }
+    private fun teardownComposeContent() {
+        if (!isComposeContentInstalled) return
+        composeView?.disposeComposition()
+        isComposeContentInstalled = false
     }
 
     companion object {
@@ -920,21 +679,6 @@ class AudioBarController(
             state.isPlaying -> AudioLogStateLabel(R.string.audio_log_state_playing)
             else -> AudioLogStateLabel(R.string.audio_log_state_paused)
         }
-
-        /**
-         * Whether [reshowIfSessionActive] should bind to the service: only when
-         * the bar isn't already managed by this controller ([requestedVisible])
-         * and the service reports an active session. Pure for unit testing.
-         */
-        internal fun shouldBindForReshow(requestedVisible: Boolean, hasActiveSession: Boolean): Boolean =
-            !requestedVisible && hasActiveSession
-
-        /**
-         * Whether a pending reshow should fire for [state]: only once the first
-         * active state arrives. Pure for unit testing.
-         */
-        internal fun shouldReshowNow(reshowPending: Boolean, state: PlaybackState): Boolean =
-            reshowPending && state.isActive
 
         /**
          * Whether verse highlight and verse-skip should be enabled. A selected
