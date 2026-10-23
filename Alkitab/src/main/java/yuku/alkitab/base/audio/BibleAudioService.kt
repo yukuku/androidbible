@@ -18,6 +18,7 @@ import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import java.io.ByteArrayOutputStream
+import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -124,10 +125,10 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         val displaySubtitle: String,
         /**
          * 1-based verse to start playback at, or `0` to start at the beginning of
-         * the chapter. Honored only once timing is loaded; falls back to position
-         * 0 when the chapter has no timing or no entry for this verse.
+         * the chapter. Falls back to position 0 when the chapter has no timing or no entry for this verse.
          */
         val startVerse_1: Int,
+        val isAutoPlay: Boolean,
     )
 
     /**
@@ -145,7 +146,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
      * still-bound lifetime.
      */
     class LocalBinder internal constructor(service: BibleAudioService) : Binder() {
-        private val ref = java.lang.ref.WeakReference(service)
+        private val ref = WeakReference(service)
         val service: BibleAudioService? get() = ref.get()
     }
 
@@ -232,9 +233,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             _playbackState.update {
                 it.copy(isPlaying = false, positionMs = player.durationMs)
             }
-            // Auto-advance to the next chapter. At the Bible boundary
-            // skipChapter is a no-op, so we stay parked at the end of
-            // Revelation 22.
+            // Auto-advance to the next chapter.
             if (currentRequest != null) {
                 skipChapter(1)
             }
@@ -274,10 +273,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         )
 
         // Wrap the inner ExoPlayer so the system's transport controls (lock
-        // screen, Bluetooth, Android Auto) skip *chapters* instead of media
-        // items. Only one MediaItem is ever queued, so the standard
-        // skipNext/skipPrevious would otherwise be no-ops. See
-        // BibleChapterNavigatingPlayer.
+        // screen, Bluetooth, Android Auto) skip *chapters* instead of media items.
         val mediaSessionPlayer = BibleChapterNavigatingPlayer(
             inner = player.exoPlayer,
             onSeekToNextChapter = { skipChapter(1) },
@@ -290,8 +286,6 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             .build()
             .also { addSession(it) }
 
-        // Use our pre-created low-importance channel so the notification doesn't
-        // make sound or vibrate.
         setMediaNotificationProvider(
             DefaultMediaNotificationProvider.Builder(this)
                 .setChannelId(NOTIFICATION_CHANNEL_ID)
@@ -319,8 +313,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         // Match Spotify / YouTube Music: swiping the app from recents while
-        // audio is playing should keep playback alive. If we're paused,
-        // releasing is a reasonable cleanup.
+        // audio is playing should keep playback alive.
         if (player.isPlaying) {
             return
         }
@@ -361,17 +354,15 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         // position/duration reset below with the old chapter's values. Polling
         // resumes when the player reaches READY (or on an explicit play()).
         positionJob?.cancel()
+        if (!request.isAutoPlay) {
+            player.pause()
+        }
         currentRequest = request
         hasActiveSession = true
         pendingStartVerse1 = request.startVerse_1
         playerReadyForSeek = false
         timingLoaded = false
-        // The log resets here because a retry is a fresh load attempt; mixing
-        // its events with the failed attempt's would make the log sheet read as
-        // one non-chronological HTTP conversation. Bumping the generation
-        // before the media item is swapped keeps the outgoing chapter's
-        // cancellation events out of the new log, since those arrive from
-        // OkHttp after this reset. See [BibleAudioPlayer.logGeneration].
+        // The log resets here because a retry is a fresh load attempt.
         loadGeneration++
         player.logGeneration = loadGeneration
         highlightTracker.setTiming(emptyList())
@@ -414,9 +405,6 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             val metadataBuilder = MediaMetadata.Builder()
                 .setTitle(request.displayTitle)
                 .setArtist(request.displaySubtitle)
-            // Bytes are attached inline rather than as a Uri because the default
-            // BitmapLoader only resolves http/file/content schemes, not the
-            // android.resource://... a launcher icon would need.
             appIconArtworkBytes?.let { bytes ->
                 metadataBuilder.setArtworkData(bytes, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
             }
@@ -425,15 +413,10 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 .setMediaMetadata(metadataBuilder.build())
                 .build()
             player.exoPlayer.setMediaItem(mediaItem)
-            player.exoPlayer.playWhenReady = true
+            player.exoPlayer.playWhenReady = currentRequest?.isAutoPlay == true
             player.exoPlayer.prepare()
         }
 
-        // Stay on Dispatchers.Main.immediate (the scope's default) so setTiming
-        // runs on the same thread as positionJob's update calls;
-        // HighlightTracker is not thread-safe by design. The repository does its
-        // own withContext(Dispatchers.IO) for the network hop, so the blocking
-        // work is still off the main thread.
         timingJob = scope.launch {
             val timing = BibleAudioRepository.fetchTiming(
                 request.versionId,
@@ -479,11 +462,13 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     }
 
     fun play() {
+        currentRequest = currentRequest?.copy(isAutoPlay = true)
         AudioPlaybackCoordinator.acquire(this)
         player.play()
     }
 
     fun pause() {
+        currentRequest = currentRequest?.copy(isAutoPlay = false)
         player.pause()
     }
 
@@ -593,6 +578,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                 displayTitle = "${book.shortName} $chapter1",
                 displaySubtitle = current.displaySubtitle,
                 startVerse_1 = 0,
+                isAutoPlay = true,
             )
         )
     }

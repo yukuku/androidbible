@@ -52,7 +52,6 @@ class GotoActivity : BaseActivity(), BaseGotoFragment.GotoFinishListener {
             }
         }
 
-        @JvmStatic
         fun obtainResult(data: Intent): Result {
             return Result().apply {
                 bookId = data.getIntExtra(EXTRA_bookId, -1)
