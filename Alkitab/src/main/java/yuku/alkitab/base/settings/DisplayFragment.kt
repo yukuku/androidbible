@@ -40,7 +40,6 @@ class DisplayFragment : PreferenceFragmentCompat() {
             key = Prefkey.textColorAdjustment.name
             isPersistent = false
             setTitle(R.string.text_color_adjustment)
-            setSummary(R.string.text_color_adjustment_explanation)
             min = 0
             max = 100
             seekBarIncrement = 1
@@ -48,8 +47,18 @@ class DisplayFragment : PreferenceFragmentCompat() {
             updatesContinuously = true
             value = (TextColorUtil.normalizeAdjustment(Preferences.getFloat(Prefkey.textColorAdjustment, 1f)) * 100).roundToInt()
         }
+        val contrastFormat = java.text.NumberFormat.getNumberInstance(resources.configuration.locales[0]).apply {
+            maximumFractionDigits = 3
+        }
+        fun updateAdjustmentSummary(percent: Int) {
+            val value = if (percent == 0) "0%" else "$percent% · ${contrastFormat.format(TextColorUtil.targetContrast(percent / 100f))}:1"
+            textAdjustment.summary = "$value\n${getString(R.string.text_color_adjustment_explanation)}"
+        }
+        updateAdjustmentSummary(textAdjustment.value)
         textAdjustment.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
-            Preferences.setFloat(Prefkey.textColorAdjustment, (value as Int) / 100f)
+            val percent = value as Int
+            Preferences.setFloat(Prefkey.textColorAdjustment, percent / 100f)
+            updateAdjustmentSummary(percent)
             App.services.uiDimensions.recalculate()
             AppEvents.emitNeedsRestart()
             true

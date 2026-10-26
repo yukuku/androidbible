@@ -64,15 +64,31 @@ class TextColorUtilTest {
     }
 
     @Test
-    fun `intermediate adjustment blends text toward its correction without changing the endpoints`() {
+    fun `each percentage meets its target and preserves colors already meeting that target`() {
+        val random = Random(73)
+        repeat(100) {
+            val foreground = random.nextInt() or 0xff000000.toInt()
+            val background = random.nextInt() or 0xff000000.toInt()
+            for (percent in (0..100) + (100 downTo 0)) {
+                val amount = percent / 100f
+                val target = 1.0 + 3.5 * percent / 100.0
+                assertEquals(target, TextColorUtil.targetContrast(amount), 0.0)
+                val result = TextColorUtil.adjustForContrast(foreground, background, amount)
+                assertTrue("$percent%: $target", ColorUtils.calculateContrast(result, background) >= target)
+                if (ColorUtils.calculateContrast(foreground, background) >= target) assertEquals(foreground, result)
+            }
+        }
+    }
+
+    @Test
+    fun `intermediate targets solve contrast directly rather than blending the full correction`() {
         val foreground = 0xffaaaaaa.toInt()
         val background = 0xffcccccc.toInt()
-        val corrected = TextColorUtil.adjustForContrast(foreground, background, 1f)
-        for (percent in 0..100) {
-            val amount = percent / 100f
-            assertEquals(amount, TextColorUtil.normalizeAdjustment(amount))
-            assertEquals(ColorUtils.blendARGB(foreground, corrected, amount), TextColorUtil.adjustForContrast(foreground, background, amount))
-        }
+        val result = TextColorUtil.adjustForContrast(foreground, background, 0.5f)
+        val actual = ColorUtils.calculateContrast(result, background)
+        assertTrue(actual >= 2.75 && actual < 2.85)
+        assertEquals(4.5, TextColorUtil.targetContrast(1f), 0.0)
+        assertEquals(1.0, TextColorUtil.targetContrast(0f), 0.0)
     }
 
     @Test

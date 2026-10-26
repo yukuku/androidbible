@@ -62,8 +62,9 @@ in selected verses as well as ordinary reading. Dictionary links underline text
 while inheriting its color.
 
 Display settings provide one text color adjustment slider. Its independent
-preference defaults to full correction; lower values blend toward the original
-text colors. The setting does not change saved markers or highlight opacity.
+preference defaults to 100%, targeting 4.5:1 contrast. Each percentage sets a
+minimum contrast target using `1 + 3.5 × percentage / 100`; 0% disables correction.
+Colors already meeting the selected target remain unchanged. The setting does not change saved markers or highlight opacity.
 See [Markers](modules/markers.md).
 
 `VerseTextColorSnapshotTest` renders theme, selection, and highlight combinations

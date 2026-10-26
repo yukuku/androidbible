@@ -27,10 +27,15 @@ object TextColorUtil {
         }
     }
 
-    private val contrastCache = ConcurrentHashMap<Long, Int>()
+    private data class ContrastKey(val foreground: Int, val background: Int, val percent: Int)
+
+    private val contrastCache = ConcurrentHashMap<ContrastKey, Int>()
 
     fun normalizeAdjustment(value: Float): Float =
         if (value.isFinite()) (value.coerceIn(0f, 1f) * 100f).roundToInt() / 100f else 1f
+
+    fun targetContrast(adjustment: Float): Double =
+        1.0 + 3.5 * (normalizeAdjustment(adjustment) * 100f).roundToInt() / 100.0
 
     fun readingBackground(pageColor: Int, selectionColor: Int, isSelected: Boolean): Int {
         val page = pageColor or 0xff000000.toInt()
@@ -45,22 +50,21 @@ object TextColorUtil {
         val amount = normalizeAdjustment(adjustment)
         if (amount == 0f) return foreground
         if (contrastCache.size > 512) contrastCache.clear()
-        val key = (foreground.toLong() shl 32) or (background.toLong() and 0xffffffffL)
-        val adjusted = contrastCache.getOrPut(key) { solveContrast(foreground, background) }
-        return if (amount == 1f) adjusted else ColorUtils.blendARGB(foreground, adjusted, amount)
+        val key = ContrastKey(foreground, background, (amount * 100f).roundToInt())
+        return contrastCache.getOrPut(key) { solveContrast(foreground, background, targetContrast(amount)) }
     }
 
-    private fun solveContrast(foreground: Int, background: Int): Int {
-        if (ColorUtils.calculateContrast(foreground, background) >= 4.5) return foreground
+    private fun solveContrast(foreground: Int, background: Int, targetContrast: Double): Int {
+        if (ColorUtils.calculateContrast(foreground, background) >= targetContrast) return foreground
 
         fun candidate(target: Int): Int? {
-            if (ColorUtils.calculateContrast(target, background) < 4.5) return null
+            if (ColorUtils.calculateContrast(target, background) < targetContrast) return null
             var lo = 0f
             var hi = 1f
             repeat(16) {
                 val mid = (lo + hi) / 2f
                 val color = ColorUtils.blendARGB(foreground, target, mid)
-                if (ColorUtils.calculateContrast(color, background) >= 4.5) hi = mid else lo = mid
+                if (ColorUtils.calculateContrast(color, background) >= targetContrast) hi = mid else lo = mid
             }
             return ColorUtils.blendARGB(foreground, target, hi)
         }

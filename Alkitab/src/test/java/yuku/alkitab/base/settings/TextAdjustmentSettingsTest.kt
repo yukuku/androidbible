@@ -70,10 +70,17 @@ class TextAdjustmentSettingsTest {
 
     @Test
     fun `slider persists exact text adjustment percentages and restores them when reopened`() {
-        for (percent in listOf(0, 37, 100)) {
+        for (percent in listOf(0, 37, 50, 100)) {
             withSlider { slider ->
                 assertTrue(slider.callChangeListener(percent))
                 slider.value = percent
+                val expected = when (percent) {
+                    0 -> "0%"
+                    37 -> "37% · 2.295:1"
+                    50 -> "50% · 2.75:1"
+                    else -> "100% · 4.5:1"
+                }
+                assertTrue(slider.summary.toString().startsWith(expected + "\n"))
                 assertEquals(percent / 100f, Preferences.getFloat(Prefkey.textColorAdjustment, -1f))
             }
             withSlider { assertEquals(percent, it.value) }
