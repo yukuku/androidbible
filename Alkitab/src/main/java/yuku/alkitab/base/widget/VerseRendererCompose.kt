@@ -90,8 +90,7 @@ object VerseRendererCompose {
      * @param text raw verse text (possibly starting with `@@`).
      * @param verseNumberText label for the verse number (e.g. "12" or "12a").
      * @param highlightInfo full or partial highlight to overlay.
-     * @param checked when the verse is selected; suppresses red text + verse-number color override.
-     * @param highlightAdjustment opacity adjustment for the highlight, defaulting to the reading setting.
+     * @param checked when the verse is selected.
      */
     fun render(
         isVerseNumberShown: Boolean,
@@ -100,12 +99,12 @@ object VerseRendererCompose {
         verseNumberText: String = Ari.toVerse(ari).toString(),
         highlightInfo: Highlights.Info? = null,
         checked: Boolean = false,
-        highlightAdjustment: Float = App.services.uiDimensions.applied().highlightColorAdjustment,
     ): Result {
         val text_len = text.length
+        val textAdjustment = App.services.uiDimensions.applied().textColorAdjustment
 
         if (text_len < 2 || text[0] != '@' || text[1] != '@') {
-            return simpleRender(isVerseNumberShown, text, verseNumberText, highlightInfo, checked, highlightAdjustment)
+            return simpleRender(isVerseNumberShown, text, verseNumberText, highlightInfo, checked, textAdjustment)
         }
 
         var text_c = buf_char_.get()!!
@@ -123,10 +122,10 @@ object VerseRendererCompose {
 
         val inlineLinks = mutableListOf<InlineLinkRange>()
         val rubies = mutableListOf<RubyRange>()
-        processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, checked, ari, inlineLinks, rubies)
+        processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, ari, inlineLinks, rubies)
 
         val built = sb.toAnnotatedString()
-        val withHighlight = applyHighlight(built, highlightInfo, startPosAfterVerseNumber, checked, highlightAdjustment)
+        val withHighlight = applyColors(built, highlightInfo, startPosAfterVerseNumber, checked, textAdjustment)
 
         return Result(
             text = withHighlight,
@@ -169,7 +168,6 @@ object VerseRendererCompose {
         sb: AnnotatedString.Builder,
         startPosAfterVerseNumber: Int,
         verseNumberText: String,
-        checked: Boolean,
         ari: Int,
         inlineLinks: MutableList<InlineLinkRange>,
         rubies: MutableList<RubyRange>,
@@ -230,13 +228,11 @@ object VerseRendererCompose {
                 }
                 '6' -> startRed = sb.length
                 '5' -> if (startRed != -1) {
-                    if (!checked) {
-                        sb.addStyle(
-                            SpanStyle(color = Color(App.services.uiDimensions.applied().fontRedColor)),
-                            startRed,
-                            sb.length,
-                        )
-                    }
+                    sb.addStyle(
+                        SpanStyle(color = Color(App.services.uiDimensions.applied().fontRedColor)),
+                        startRed,
+                        sb.length,
+                    )
                     startRed = -1
                 }
                 '9' -> startItalic = sb.length
@@ -264,44 +260,32 @@ object VerseRendererCompose {
         applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0)
     }
 
-    /**
-     * In a checked verse, the run under the band gets its own text color, picked against the
-     * band instead of the selection color used for the rest of the verse.
-     */
-    private fun applyHighlight(
+    private fun applyColors(
         text: AnnotatedString,
         highlightInfo: Highlights.Info?,
         startPosAfterVerseNumber: Int,
         checked: Boolean,
-        highlightAdjustment: Float,
+        textAdjustment: Float,
     ): AnnotatedString {
-        if (highlightInfo == null) return text
         val applied = App.services.uiDimensions.applied()
-        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor, highlightAdjustment)
-        val textColor = if (checked) {
-            val selectedVerseBgColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-            Color(TextColorUtil.getForCheckedVerseHighlight(applied.fontColor, selectedVerseBgColor, applied.backgroundColor, band))
-        } else {
-            Color.Unspecified
-        }
-        val style = SpanStyle(color = textColor, background = Color(band))
-
         val builder = AnnotatedString.Builder(text)
-        val verseBody = text.subSequence(startPosAfterVerseNumber, text.length)
-        val partial = highlightInfo.partial
-
-        if (partial != null && highlightInfo.shouldRenderAsPartialForVerseText(verseBody.text)) {
-            val rawStart = startPosAfterVerseNumber + partial.startOffset
-            val rawEnd = startPosAfterVerseNumber + partial.endOffset
-            val start = minOf(rawStart, rawEnd)
-            val end = maxOf(rawStart, rawEnd)
-            if (end > start) {
-                builder.addStyle(style, start, end)
+        if (highlightInfo != null) {
+            val verseBody = text.subSequence(startPosAfterVerseNumber, text.length)
+            val partial = highlightInfo.partial
+            val start: Int
+            val end: Int
+            if (partial != null && highlightInfo.shouldRenderAsPartialForVerseText(verseBody.text)) {
+                start = startPosAfterVerseNumber + minOf(partial.startOffset, partial.endOffset)
+                end = startPosAfterVerseNumber + maxOf(partial.startOffset, partial.endOffset)
+            } else {
+                start = startPosAfterVerseNumber
+                end = text.length
             }
-        } else {
-            builder.addStyle(style, startPosAfterVerseNumber, text.length)
+            if (end > start) builder.addStyle(SpanStyle(background = Color(Highlights.alphaMix(highlightInfo.colorRgb))), start, end)
         }
-        return builder.toAnnotatedString()
+        val selectionColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
+        val background = TextColorUtil.readingBackground(applied.backgroundColor, selectionColor, checked)
+        return VerseTextColors.apply(builder.toAnnotatedString(), applied.fontColor, background, textAdjustment, checked)
     }
 
     private fun processSpecialTag(
@@ -399,7 +383,7 @@ object VerseRendererCompose {
         verseNumberText: String,
         highlightInfo: Highlights.Info?,
         checked: Boolean,
-        highlightAdjustment: Float,
+        textAdjustment: Float,
     ): Result {
         val sb = AnnotatedString.Builder()
 
@@ -430,7 +414,7 @@ object VerseRendererCompose {
         }
 
         val built = sb.toAnnotatedString()
-        val withHighlight = applyHighlight(built, highlightInfo, startPosAfterVerseNumber, checked, highlightAdjustment)
+        val withHighlight = applyColors(built, highlightInfo, startPosAfterVerseNumber, checked, textAdjustment)
 
         return Result(
             text = withHighlight,

@@ -69,13 +69,13 @@ class VerseRendererComposeCheckedHighlightTest {
             checked = true,
         )
 
-        val band = Highlights.blendOver(0xffff00, BACKGROUND)
+        val band = Highlights.alphaMix(0xffff00)
         val bandStyles = result.text.spanStyles.filter { it.item.background == Color(band) }
         assertEquals(1, bandStyles.size)
         assertEquals(3, bandStyles[0].start)
         assertEquals(8, bandStyles[0].end)
-        assertEquals(Color(TextColorUtil.getForCheckedVerseHighlight(FONT_COLOR, BLUE_SELECTION, BACKGROUND, band)), bandStyles[0].item.color)
-        assertEquals(Color(FONT_COLOR), bandStyles[0].item.color)
+        val foreground = result.text.spanStyles.last { it.start <= 3 && it.end > 3 && it.item.color != Color.Unspecified }.item.color
+        assertEquals(Color(FONT_COLOR), foreground)
     }
 
     @Test
@@ -132,7 +132,7 @@ class VerseRendererComposeCheckedHighlightTest {
             checked = false,
         )
 
-        val band = Highlights.blendOver(0xffff00, BACKGROUND)
+        val band = Highlights.alphaMix(0xffff00)
         val bandStyles = result.text.spanStyles.filter { it.item.background == Color(band) }
         assertEquals(1, bandStyles.size)
         assertEquals(Color.Unspecified, bandStyles[0].item.color)

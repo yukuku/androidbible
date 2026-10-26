@@ -528,18 +528,6 @@
     <string name="dv_transparency_clear">Sepenuhnya transparan</string>
     <string name="devotion_select">Pilih renungan dan tanggal</string>
     <string name="song_select">Pilih lagu</string>
-    <string name="highlight_style_original">Gunakan warna sorot asli</string>
-    <string name="highlight_style_original_value">Gunakan warna asli</string>
-    <string name="highlight_style_customize">Sesuaikan warna sorot</string>
-    <string name="highlight_style_current">Gunakan warna yang disesuaikan</string>
-    <string name="highlight_style_custom_value">%1$d%% disesuaikan</string>
-    <string name="highlight_style_adjustment">Penyesuaian warna sorot</string>
-    <string name="highlight_style_explanation">Atur sejauh apa warna sorot disesuaikan dengan latar belakang teks</string>
-    <string name="highlight_style_zero">Asli</string>
-    <string name="highlight_style_one">Disesuaikan</string>
-    <string name="highlight_style_preview">Pratinjau</string>
-    <string name="highlight_style_loading">Memuat ayat…</string>
-    <string name="highlight_style_no_verses">Tidak ada ayat untuk pratinjau ini.</string>
     <string name="search_goto_reference">Loncat ke: ^1</string>
     <string name="data_transfer_send">Kirim</string>
     <string name="data_transfer_start">Mulai</string>
@@ -552,4 +540,6 @@
     <string name="data_transfer_import_done">Selesai. Ketuk [%1$s] untuk menutup.</string>
     <string name="dv_version_unavailable">Versi yang dipilih tidak tersedia. Menggunakan %1$s. Ketuk untuk mengganti.</string>
     <string name="dv_version_unset">Menggunakan %1$s. Ketuk untuk memilih versi Alkitab.</string>
+    <string name="text_color_adjustment">Penyesuaian warna teks</string>
+    <string name="text_color_adjustment_explanation">Sesuaikan warna teks agar mudah dibaca pada latar belakang, sorotan, dan ayat yang dipilih. 0% mempertahankan warna teks asli; 100% menerapkan penyesuaian kontras penuh.</string>
 </resources>

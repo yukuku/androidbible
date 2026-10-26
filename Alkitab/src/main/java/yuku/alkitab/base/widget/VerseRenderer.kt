@@ -114,9 +114,9 @@ object VerseRenderer {
         // initialize lVerseNumber to have no padding first
         lVerseNumber?.setPadding(0, 0, 0, 0)
 
-        processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, checked, ari, inlineLinkSpanFactory)
+        processFormattingCodes(text, text_c, text_len, sb, startPosAfterVerseNumber, verseNumberText, ari, inlineLinkSpanFactory)
 
-        applyHighlight(sb, highlightInfo, startPosAfterVerseNumber, checked)
+        applyColors(sb, highlightInfo, startPosAfterVerseNumber, checked)
 
         bindToTextViews(lText, lVerseNumber, sb, isVerseNumberShown, startPosAfterVerseNumber, verseNumberText)
 
@@ -152,7 +152,7 @@ object VerseRenderer {
      * (paragraph styles, italic/red runs, line breaks, special tags) to [sb]. Calls
      * [applyParaStyle] once at the end to flush the trailing paragraph's margin span.
      */
-    private fun processFormattingCodes(text: String, text_c: CharArray, text_len: Int, sb: SpannableStringBuilder, startPosAfterVerseNumber: Int, verseNumberText: String, checked: Boolean, ari: Int, inlineLinkSpanFactory: VerseInlineLinkSpan.Factory?) {
+    private fun processFormattingCodes(text: String, text_c: CharArray, text_len: Int, sb: SpannableStringBuilder, startPosAfterVerseNumber: Int, verseNumberText: String, ari: Int, inlineLinkSpanFactory: VerseInlineLinkSpan.Factory?) {
         // '0'..'4', '^' indent 0..4 or new para; -1 undefined
         var paraType = -1
         // Note: this is intentionally 0 (not sb.length) so that for a verse with no paragraph
@@ -208,9 +208,7 @@ object VerseRenderer {
                 }
                 '6' -> startRed = sb.length
                 '5' -> if (startRed != -1) {
-                    if (!checked) {
-                        sb.setSpan(ForegroundColorSpan(App.services.uiDimensions.applied().fontRedColor), startRed, sb.length, 0)
-                    }
+                    sb.setSpan(ForegroundColorSpan(App.services.uiDimensions.applied().fontRedColor), startRed, sb.length, 0)
                     startRed = -1
                 }
                 '9' -> startItalic = sb.length
@@ -231,38 +229,24 @@ object VerseRenderer {
         applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0)
     }
 
-    /**
-     * Attaches a [BackgroundColorSpan] for the highlight. A partial highlight whose hash still
-     * matches the rendered body covers only its stored offsets; otherwise the whole verse body
-     * (after the verse-number prefix) is highlighted.
-     *
-     * In a checked verse, the run under the band gets its own text color, picked against the
-     * band instead of the selection color used for the rest of the verse.
-     */
-    private fun applyHighlight(sb: SpannableStringBuilder, highlightInfo: Highlights.Info?, startPosAfterVerseNumber: Int, checked: Boolean) {
-        if (highlightInfo == null) return
-
+    private fun applyColors(sb: SpannableStringBuilder, highlightInfo: Highlights.Info?, startPosAfterVerseNumber: Int, checked: Boolean) {
         val applied = App.services.uiDimensions.applied()
-        val band = Highlights.blendOver(highlightInfo.colorRgb, applied.backgroundColor, applied.highlightColorAdjustment)
-
-        val start: Int
-        val end: Int
-        if (highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length))) {
-            val rawStart = startPosAfterVerseNumber + highlightInfo.partial!!.startOffset
-            val rawEnd = startPosAfterVerseNumber + highlightInfo.partial!!.endOffset
-            start = minOf(rawStart, rawEnd)
-            end = maxOf(rawStart, rawEnd)
-        } else {
-            start = startPosAfterVerseNumber
-            end = sb.length
+        if (highlightInfo != null) {
+            val partial = highlightInfo.partial
+            val start: Int
+            val end: Int
+            if (partial != null && highlightInfo.shouldRenderAsPartialForVerseText(sb.subSequence(startPosAfterVerseNumber, sb.length))) {
+                start = startPosAfterVerseNumber + minOf(partial.startOffset, partial.endOffset)
+                end = startPosAfterVerseNumber + maxOf(partial.startOffset, partial.endOffset)
+            } else {
+                start = startPosAfterVerseNumber
+                end = sb.length
+            }
+            if (end > start) sb.setSpan(BackgroundColorSpan(Highlights.alphaMix(highlightInfo.colorRgb)), start, end, 0)
         }
-
-        sb.setSpan(BackgroundColorSpan(band), start, end, 0)
-        if (checked) {
-            val selectedVerseBgColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
-            val textColor = TextColorUtil.getForCheckedVerseHighlight(applied.fontColor, selectedVerseBgColor, applied.backgroundColor, band)
-            sb.setSpan(ForegroundColorSpan(textColor), start, end, 0)
-        }
+        val selectionColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
+        val background = TextColorUtil.readingBackground(applied.backgroundColor, selectionColor, checked)
+        VerseTextColors.apply(sb, applied.fontColor, background, applied.textColorAdjustment, checked, applied.verseNumberColor)
     }
 
     /**
@@ -380,7 +364,7 @@ object VerseRenderer {
             sb.setSpan(createLeadingMarginSpan(App.services.uiDimensions.applied().indentParagraphRest), 0, sb.length, 0)
         }
 
-        applyHighlight(sb, highlightInfo, startPosAfterVerseNumber, checked)
+        applyColors(sb, highlightInfo, startPosAfterVerseNumber, checked)
 
         lText?.text = sb
 

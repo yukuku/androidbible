@@ -21,28 +21,13 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import yuku.afw.App as AfwApp
+import yuku.alkitab.base.widget.VerseTextColors
 
-/**
- * Visual matrix of every highlight color drawn over a range of reading backgrounds.
- *
- * Each background gets two renderings of the same rows. The left one fills the band with a
- * constant 0xA0 alpha; the right one uses [Highlights.blendOver], which solves the alpha per
- * (color, background) pair. Putting them next to each other is the point of the test: it shows
- * where a constant alpha turns unreadable (a saturated blue on a light page, anything bright on
- * the black night page) and where the two agree because the color already sits near the
- * background.
- *
- * Per-background PNGs, a combined `contact-sheet.png`, and an `index.html` land in
- * `Alkitab/build/snapshots/highlight-blend/`.
- * Nothing is pixel-compared: the test asserts only that the report was produced, and exists so
- * the blend can be eyeballed after any change to [Highlights.blendOver]'s constants.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = AfwApp::class, sdk = [34], qualifiers = "w720dp-h1280dp-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class HighlightBlendSnapshotTest {
 
-    private val FLAT_ALPHA = 0xa0
     private val WIDTH_PX = 640
     private val TEXT_SIZE_SP = 13f
     private val SAMPLE = "In the beginning God created the heavens and the earth."
@@ -129,12 +114,10 @@ class HighlightBlendSnapshotTest {
             </style></head>
             <body>
             <h1>Highlight color × reading background</h1>
-            <p>Left: a constant 0xA0 alpha for every pair. Right: <code>Highlights.blendOver</code>, which
-            solves the alpha so the band sits a fixed perceptual (Oklab) distance from the background,
-            floored by a minimum raw sRGB separation so it stays visible on dark pages. The
-            <code>a=</code> figure on each row is the alpha that was used.</p>
+            <p>Both columns use the same fixed 160/255 highlight opacity. Left: original text colors.
+            Right: text colors adjusted to meet 4.5:1 contrast.</p>
             <table>
-              <thead><tr><th>Background</th><th>Constant 0xA0 alpha</th><th>blendOver</th></tr></thead>
+              <thead><tr><th>Background</th><th>Original text</th><th>Adjusted text</th></tr></thead>
               <tbody>
             $rows
               </tbody>
@@ -177,8 +160,8 @@ class HighlightBlendSnapshotTest {
             typeface = Typeface.SANS_SERIF
         }
 
-        canvas.drawText("constant 0xA0 alpha", gutter.toFloat(), 28f, title)
-        canvas.drawText("blendOver", (gutter + WIDTH_PX + gutter).toFloat(), 28f, title)
+        canvas.drawText("Original text", gutter.toFloat(), 28f, title)
+        canvas.drawText("Adjusted text", (gutter + WIDTH_PX + gutter).toFloat(), 28f, title)
 
         var y = headerHeight + blockGap
         for ((background, flat, blend) in pairs) {
@@ -212,11 +195,7 @@ class HighlightBlendSnapshotTest {
         for ((index, swatch) in swatches.withIndex()) {
             if (index > 0) sb.append("\n")
 
-            val argb = if (blended) {
-                Highlights.blendOver(swatch.rgb, background.rgb)
-            } else {
-                (FLAT_ALPHA shl 24) or swatch.rgb
-            }
+            val argb = Highlights.alphaMix(swatch.rgb)
 
             val labelStart = sb.length
             sb.append("#%06x a=%02x ".format(swatch.rgb, (argb ushr 24) and 0xff))
@@ -227,6 +206,7 @@ class HighlightBlendSnapshotTest {
             sb.setSpan(BackgroundColorSpan(argb), bandStart, sb.length, 0)
         }
 
+        VerseTextColors.apply(sb, 0xff000000.toInt() or background.textColor, 0xff000000.toInt() or background.rgb, if (blended) 1f else 0f, false, background.textColor)
         val view = TextView(ApplicationProvider.getApplicationContext()).apply {
             setTextSize(TypedValue.COMPLEX_UNIT_SP, TEXT_SIZE_SP)
             setTextColor(0xff000000.toInt() or background.textColor)

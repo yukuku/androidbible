@@ -14,16 +14,16 @@ Labels and marker-label assignments have their own sync identities. See
 [Storage](../storage.md) for database ownership.
 
 Highlights preserve saved colors and, for partial highlights, text ranges with
-verification information. Display-time color adjustment adapts those colors to
-the reading background without rewriting saved markers. Preview samples do not
-create user markers. Changes to text normalization must preserve partial-range
-compatibility.
+verification information. Highlights use a fixed opacity. Display-time text
+color adjustment keeps text readable against the highlight and reading
+background without rewriting saved markers. Changes to text normalization must
+preserve partial-range compatibility.
 
 ## Reader integration
 
 The reader combines markers with progress pins and other verse attributes.
 Compose and legacy rendering must present the same saved content, selection,
-and adjusted highlight appearance. Note links use the shared verse-reference
+and highlight appearance with readable text. Note links use the shared verse-reference
 parser; its [compatibility tests](../../Alkitab/src/test/desktop-verse-parser.md)
 document the parsing contract.
 

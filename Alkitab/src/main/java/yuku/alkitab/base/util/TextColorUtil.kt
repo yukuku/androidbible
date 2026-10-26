@@ -1,6 +1,8 @@
 package yuku.alkitab.base.util
 
 import androidx.core.graphics.ColorUtils
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.roundToInt
 
 object TextColorUtil {
 
@@ -25,25 +27,56 @@ object TextColorUtil {
         }
     }
 
-    /**
-     * Text color for a highlighted run inside a checked verse.
-     *
-     * The highlight band is drawn on top of the selection overlay. So the color from
-     * [getForCheckedVerse] can be wrong there, for example white text on a yellow highlight.
-     * This picks whichever color, the reading color or the checked-verse color, has better
-     * contrast against what the band actually paints.
-     */
-    @JvmStatic
-    fun getForCheckedVerseHighlight(fontColor: Int, checkedVerseBgColor: Int, pageBackgroundColor: Int, highlightBand: Int): Int {
-        val checkedTextColor = getForCheckedVerse(checkedVerseBgColor)
-        val overlay = ColorUtils.setAlphaComponent(checkedVerseBgColor, CHECKED_VERSE_OVERLAY_ALPHA)
-        val selection = ColorUtils.compositeColors(overlay, pageBackgroundColor or 0xff000000.toInt())
-        val painted = ColorUtils.compositeColors(highlightBand, selection)
-        val readingColor = fontColor or 0xff000000.toInt()
-        return if (ColorUtils.calculateContrast(checkedTextColor, painted) >= ColorUtils.calculateContrast(readingColor, painted)) {
-            checkedTextColor
-        } else {
-            readingColor
+    private val contrastCache = ConcurrentHashMap<Long, Int>()
+
+    fun normalizeAdjustment(value: Float): Float =
+        if (value.isFinite()) (value.coerceIn(0f, 1f) * 100f).roundToInt() / 100f else 1f
+
+    fun readingBackground(pageColor: Int, selectionColor: Int, isSelected: Boolean): Int {
+        val page = pageColor or 0xff000000.toInt()
+        return if (isSelected) {
+            ColorUtils.compositeColors(ColorUtils.setAlphaComponent(selectionColor, CHECKED_VERSE_OVERLAY_ALPHA), page)
+        } else page
+    }
+
+    fun adjustForContrast(textColor: Int, backgroundColor: Int, adjustment: Float): Int {
+        val foreground = textColor or 0xff000000.toInt()
+        val background = backgroundColor or 0xff000000.toInt()
+        val amount = normalizeAdjustment(adjustment)
+        if (amount == 0f) return foreground
+        if (contrastCache.size > 512) contrastCache.clear()
+        val key = (foreground.toLong() shl 32) or (background.toLong() and 0xffffffffL)
+        val adjusted = contrastCache.getOrPut(key) { solveContrast(foreground, background) }
+        return if (amount == 1f) adjusted else ColorUtils.blendARGB(foreground, adjusted, amount)
+    }
+
+    private fun solveContrast(foreground: Int, background: Int): Int {
+        if (ColorUtils.calculateContrast(foreground, background) >= 4.5) return foreground
+
+        fun candidate(target: Int): Int? {
+            if (ColorUtils.calculateContrast(target, background) < 4.5) return null
+            var lo = 0f
+            var hi = 1f
+            repeat(16) {
+                val mid = (lo + hi) / 2f
+                val color = ColorUtils.blendARGB(foreground, target, mid)
+                if (ColorUtils.calculateContrast(color, background) >= 4.5) hi = mid else lo = mid
+            }
+            return ColorUtils.blendARGB(foreground, target, hi)
         }
+
+        fun distance(color: Int): Int = listOf(16, 8, 0).sumOf { shift ->
+            val delta = ((foreground shr shift) and 0xff) - ((color shr shift) and 0xff)
+            delta * delta
+        }
+
+        fun chroma(color: Int): Int {
+            val channels = listOf((color shr 16) and 0xff, (color shr 8) and 0xff, color and 0xff)
+            return channels.max() - channels.min()
+        }
+
+        val candidates = listOfNotNull(candidate(0xff000000.toInt()), candidate(0xffffffff.toInt()))
+        val tinted = candidates.filter { chroma(it) > 0 }
+        return (if (chroma(foreground) > 0 && tinted.isNotEmpty()) tinted else candidates).minBy(::distance)
     }
 }

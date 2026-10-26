@@ -691,11 +691,11 @@ class VerseTextHolder(private val view: VerseItem, private val guide: ReadingGui
         Appearances.applyTextAppearance(lText, textSizeMult)
         Appearances.applyVerseNumberAppearance(lVerseNumber, textSizeMult)
 
-        if (checked) { // override text color with black or white!
-            val selectedTextColor = TextColorUtil.getForCheckedVerse(Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default))
-            lText.setTextColor(selectedTextColor)
-            lVerseNumber.setTextColor(selectedTextColor)
-        }
+        val applied = App.services.uiDimensions.applied()
+        val selectionColor = Preferences.getInt(R.string.pref_selectedVerseBgColor_key, R.integer.pref_selectedVerseBgColor_default)
+        val background = TextColorUtil.readingBackground(applied.backgroundColor, selectionColor, checked)
+        lText.setTextColor(applied.fontColor)
+        lVerseNumber.setTextColor(TextColorUtil.adjustForContrast(if (checked) applied.fontColor else applied.verseNumberColor, background, applied.textColorAdjustment))
 
         val attributeView = view.attributeView
         attributeView.setScale(attributeViewScale(App.services.uiDimensions.applied().fontSize2dp * textSizeMult))

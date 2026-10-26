@@ -379,11 +379,12 @@ class VerseRendererTest {
     }
 
     @Test
-    fun `checked=true suppresses the red-letter ForegroundColorSpan (so Jesus' words do not look red when the verse is selected)`() {
+    fun `selected verses retain red-letter formatting`() {
         val sb = renderToSb(text = "@@a @6Verily@5 b", verseNumberText = "1", checked = true)
-        val reds = sb.getSpans(0, sb.length, ForegroundColorSpan::class.java)
-
-        assertEquals("no red span must be attached when the verse is checked", 0, reds.size)
+        val redStart = sb.indexOf("Verily")
+        val red = sb.getSpans(redStart, redStart + 1, ForegroundColorSpan::class.java).last().foregroundColor
+        val normal = sb.getSpans(3, 4, ForegroundColorSpan::class.java).last().foregroundColor
+        org.junit.Assert.assertNotEquals(normal, red)
     }
 
     @Test
@@ -488,10 +489,10 @@ class VerseRendererTest {
     // endregion
 
     @Test
-    fun `both renderers respect the applied highlight adjustment for full and partial highlights`() {
+    fun `both renderers keep fixed highlight opacity at every text adjustment amount`() {
         val text = "Hello world"
         for (amount in listOf(0f, 0.5f, 1f)) {
-            dims.highlightColorAdjustment = amount
+            dims.textColorAdjustment = amount
             for (isPartial in listOf(false, true)) {
                 val info = Highlights.Info().apply {
                     colorRgb = 0xff0000
@@ -501,7 +502,7 @@ class VerseRendererTest {
                         endOffset = 4
                     }
                 }
-                val expected = Highlights.blendOver(info.colorRgb, BACKGROUND, amount)
+                val expected = Highlights.alphaMix(info.colorRgb)
                 val legacy = renderToSb(text = text, verseNumberText = "1", highlight = info)
                 val band = legacy.getSpans(0, legacy.length, BackgroundColorSpan::class.java).single()
                 assertEquals(expected, band.backgroundColor)
@@ -529,7 +530,7 @@ class VerseRendererTest {
         // The background must start after "1  " (the verse-number prefix), not at 0.
         assertEquals(3, sb.getSpanStart(bgs[0]))
         assertEquals(sb.length, sb.getSpanEnd(bgs[0]))
-        assertEquals(Highlights.blendOver(0x00ff00, BACKGROUND), bgs[0].backgroundColor)
+        assertEquals(Highlights.alphaMix(0x00ff00), bgs[0].backgroundColor)
     }
 
     @Test
@@ -572,8 +573,7 @@ class VerseRendererTest {
     }
 
     @Test
-    fun `in a checked verse the highlighted run gets its own text color chosen against the band rather than the selection`() {
-        pinSelectedVerseBgColor(0xff0277bd.toInt())
+    fun `selected text has explicit colors for both highlighted and unhighlighted ranges`() {
         val text = "Hello world"
         val info = Highlights.Info().apply {
             colorRgb = 0xffff00
@@ -584,26 +584,8 @@ class VerseRendererTest {
             }
         }
         val sb = renderToSb(text = text, verseNumberText = "1", highlight = info, checked = true)
-        val fgs = sb.getSpans(0, sb.length, ForegroundColorSpan::class.java)
-
-        assertEquals(1, fgs.size)
-        assertEquals(3, sb.getSpanStart(fgs[0]))
-        assertEquals(8, sb.getSpanEnd(fgs[0]))
-        // A yellow band is opaque on the light page, so the reading color beats the white that
-        // the blue selection alone would force.
-        assertEquals(FONT_COLOR, fgs[0].foregroundColor)
-        assertEquals(
-            TextColorUtil.getForCheckedVerseHighlight(FONT_COLOR, 0xff0277bd.toInt(), BACKGROUND, Highlights.blendOver(0xffff00, BACKGROUND)),
-            fgs[0].foregroundColor,
-        )
-    }
-
-    @Test
-    fun `a checked verse without a highlight attaches no ForegroundColorSpan and leaves the text color to the host`() {
-        pinSelectedVerseBgColor(0xff0277bd.toInt())
-        val sb = renderToSb(text = "Hello", verseNumberText = "1", checked = true)
-
-        assertEquals(0, sb.getSpans(0, sb.length, ForegroundColorSpan::class.java).size)
+        assertTrue(sb.getSpans(3, 8, ForegroundColorSpan::class.java).isNotEmpty())
+        assertTrue(sb.getSpans(9, 14, ForegroundColorSpan::class.java).isNotEmpty())
     }
 
     @Test

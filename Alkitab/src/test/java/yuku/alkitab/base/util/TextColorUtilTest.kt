@@ -1,6 +1,10 @@
 package yuku.alkitab.base.util
 
+import androidx.core.graphics.ColorUtils
+import java.io.File
+import kotlin.random.Random
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -9,47 +13,88 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class TextColorUtilTest {
-
-    private val BLACK = 0xff000000.toInt()
-    private val WHITE = 0xffffffff.toInt()
-    private val LIGHT_PAGE = 0xfff0f0f0.toInt()
-    private val LIGHT_PAGE_TEXT = 0xff212121.toInt()
-    private val NIGHT_PAGE = 0xff000000.toInt()
-    private val NIGHT_PAGE_TEXT = 0xffaeaeae.toInt()
-    private val BLUE_SELECTION = 0xff0277bd.toInt()
-    private val LIGHT_YELLOW_SELECTION = 0xfffff59d.toInt()
-
     @Test
-    fun `getForCheckedVerse picks white on a dark selection and black on a light one`() {
-        assertEquals(WHITE, TextColorUtil.getForCheckedVerse(BLUE_SELECTION))
-        assertEquals(BLACK, TextColorUtil.getForCheckedVerse(LIGHT_YELLOW_SELECTION))
+    fun `full adjustment meets minimum contrast across arbitrary text and background colors`() {
+        val random = Random(42)
+        repeat(10000) {
+            val foreground = random.nextInt() or 0xff000000.toInt()
+            val background = random.nextInt() or 0xff000000.toInt()
+            val result = TextColorUtil.adjustForContrast(foreground, background, 1f)
+            assertTrue("${result.toUInt().toString(16)} on ${background.toUInt().toString(16)}", ColorUtils.calculateContrast(result, background) >= 4.5)
+            if (ColorUtils.calculateContrast(foreground, background) >= 4.5) assertEquals(foreground, result)
+            assertEquals(foreground, TextColorUtil.adjustForContrast(foreground, background, 0f))
+        }
     }
 
     @Test
-    fun `a yellow band on a light page keeps the reading color even though the blue selection alone would force white`() {
-        val band = Highlights.blendOver(0xffff00, LIGHT_PAGE)
-        val color = TextColorUtil.getForCheckedVerseHighlight(LIGHT_PAGE_TEXT, BLUE_SELECTION, LIGHT_PAGE, band)
-        assertEquals(LIGHT_PAGE_TEXT, color)
+    fun `export production color results for the standalone preview parity check`() {
+        val random = Random(20261026)
+        val cases = buildList {
+            repeat(256) {
+                val foreground = random.nextInt() or 0xff000000.toInt()
+                val background = random.nextInt() or 0xff000000.toInt()
+                for (percent in listOf(0, 1, 37, 50, 99, 100)) {
+                    val result = TextColorUtil.adjustForContrast(foreground, background, percent / 100f)
+                    add("[${foreground and 0xffffff},${background and 0xffffff},$percent,${result and 0xffffff}]")
+                }
+            }
+        }
+        val file = File("build/snapshots/text-adjustment/color-fixtures.json")
+        requireNotNull(file.parentFile).mkdirs()
+        file.writeText(cases.joinToString(prefix = "[", postfix = "]"))
     }
 
     @Test
-    fun `a band that stays dark on the night page keeps the white the blue selection picks`() {
-        val band = Highlights.blendOver(0x0080ff, NIGHT_PAGE)
-        val color = TextColorUtil.getForCheckedVerseHighlight(NIGHT_PAGE_TEXT, BLUE_SELECTION, NIGHT_PAGE, band)
-        assertEquals(WHITE, color)
+    fun `red text retains a red tint when corrected over bright and dark backgrounds`() {
+        val red = 0xffb71c1c.toInt()
+        for (background in listOf(0xff000000, 0xff808080, 0xffffff00, 0xff0000ff, 0xfff0f0f0)) {
+            val adjusted = TextColorUtil.adjustForContrast(red, background.toInt(), 1f)
+            assertTrue(ColorUtils.calculateContrast(adjusted, background.toInt()) >= 4.5)
+            assertTrue(((adjusted shr 16) and 255) > ((adjusted shr 8) and 255))
+            assertEquals((adjusted shr 8) and 255, adjusted and 255)
+        }
     }
 
     @Test
-    fun `a light selection under a yellow band stays black because black reads better than the grey reading color`() {
-        val band = Highlights.blendOver(0xffff00, LIGHT_PAGE)
-        val color = TextColorUtil.getForCheckedVerseHighlight(0xff606060.toInt(), LIGHT_YELLOW_SELECTION, LIGHT_PAGE, band)
-        assertEquals(BLACK, color)
+    fun `a readable tinted alternative is preferred when the nearest correction loses the text hue`() {
+        val background = ColorUtils.compositeColors(Highlights.alphaMix(0xff8000), 0xff303030.toInt())
+        val adjusted = TextColorUtil.adjustForContrast(0xffef9a9a.toInt(), background, 1f)
+        assertTrue(ColorUtils.calculateContrast(adjusted, background) >= 4.5)
+        assertTrue(((adjusted shr 16) and 255) > ((adjusted shr 8) and 255))
     }
 
     @Test
-    fun `a reading color without an alpha channel is treated as opaque`() {
-        val band = Highlights.blendOver(0xffff00, LIGHT_PAGE)
-        val color = TextColorUtil.getForCheckedVerseHighlight(0x212121, BLUE_SELECTION, LIGHT_PAGE, band)
-        assertEquals(LIGHT_PAGE_TEXT, color)
+    fun `intermediate adjustment blends text toward its correction without changing the endpoints`() {
+        val foreground = 0xffaaaaaa.toInt()
+        val background = 0xffcccccc.toInt()
+        val corrected = TextColorUtil.adjustForContrast(foreground, background, 1f)
+        for (percent in 0..100) {
+            val amount = percent / 100f
+            assertEquals(amount, TextColorUtil.normalizeAdjustment(amount))
+            assertEquals(ColorUtils.blendARGB(foreground, corrected, amount), TextColorUtil.adjustForContrast(foreground, background, amount))
+        }
+    }
+
+    @Test
+    fun `invalid adjustment values are bounded and nonfinite values use full correction`() {
+        assertEquals(0f, TextColorUtil.normalizeAdjustment(-1f))
+        assertEquals(1f, TextColorUtil.normalizeAdjustment(2f))
+        assertEquals(1f, TextColorUtil.normalizeAdjustment(Float.NaN))
+        assertEquals(1f, TextColorUtil.normalizeAdjustment(Float.POSITIVE_INFINITY))
+        assertEquals(0.37f, TextColorUtil.normalizeAdjustment(0.371f))
+        assertEquals(0.38f, TextColorUtil.normalizeAdjustment(0.376f))
+    }
+
+    @Test
+    fun `selection is composited over the page before a fixed highlight band`() {
+        val page = 0xff202020.toInt()
+        val selection = 0xff0277bd.toInt()
+        val actual = TextColorUtil.readingBackground(page, selection, true)
+        assertEquals(ColorUtils.compositeColors(0xa00277bd.toInt(), page), actual)
+        assertEquals(page, TextColorUtil.readingBackground(page, selection, false))
+        val band = Highlights.alphaMix(0xffff00)
+        val painted = ColorUtils.compositeColors(band, actual)
+        val result = TextColorUtil.adjustForContrast(0xffaeaeae.toInt(), painted, 1f)
+        assertTrue(ColorUtils.calculateContrast(result, painted) >= 4.5)
     }
 }

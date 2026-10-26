@@ -28,17 +28,17 @@ class AppliedDimensionsTest {
     }
 
     @Test
-    fun `highlight adjustment defaults to adaptive and persists custom and original values`() {
-        Preferences.remove(Prefkey.highlightColorAdjustment)
+    fun `text adjustment defaults to full contrast correction and persists custom and original values`() {
+        Preferences.remove(Prefkey.textColorAdjustment)
         try {
-            assertEquals(1f, S.calculateDimensionsFromPreferences().highlightColorAdjustment)
+            assertEquals(1f, S.calculateDimensionsFromPreferences().textColorAdjustment)
             for (amount in listOf(0f, 0.37f, 1f)) {
-                Preferences.setFloat(Prefkey.highlightColorAdjustment, amount)
+                Preferences.setFloat(Prefkey.textColorAdjustment, amount)
                 S.recalculate()
-                assertEquals(amount, S.applied().highlightColorAdjustment)
+                assertEquals(amount, S.applied().textColorAdjustment)
             }
         } finally {
-            Preferences.remove(Prefkey.highlightColorAdjustment)
+            Preferences.remove(Prefkey.textColorAdjustment)
             S.recalculate()
         }
     }

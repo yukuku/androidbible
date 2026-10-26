@@ -53,6 +53,7 @@ import yuku.alkitab.base.App
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.compose.colorpicker.ColorPickerDialog
 import yuku.alkitab.base.util.Highlights
+import yuku.alkitab.base.widget.VerseTextColors
 import yuku.alkitab.debug.R
 import yuku.alkitab.util.Ari
 import yuku.alkitab.util.IntArrayList
@@ -319,19 +320,16 @@ private fun VerseTextSelectable(
 ) {
     val applied = App.services.uiDimensions.applied()
     val backgroundColor = applied.backgroundColor
-    val transformation = remember(highlightColorRgb, highlightRange, backgroundColor) {
-        if (highlightColorRgb == null || highlightRange == null) {
-            VisualTransformation.None
-        } else {
-            val blended = Color(Highlights.blendOver(highlightColorRgb, backgroundColor, App.services.uiDimensions.applied().highlightColorAdjustment))
-            VisualTransformation { text ->
+    val transformation = remember(highlightColorRgb, highlightRange, applied) {
+        VisualTransformation { text ->
+            val styled = AnnotatedString.Builder(text)
+            if (highlightColorRgb != null && highlightRange != null) {
                 val start = minOf(highlightRange.first, highlightRange.second).coerceIn(0, text.length)
                 val end = maxOf(highlightRange.first, highlightRange.second).coerceIn(start, text.length)
-                val styled = AnnotatedString.Builder(text)
-                    .apply { addStyle(SpanStyle(background = blended), start, end) }
-                    .toAnnotatedString()
-                TransformedText(styled, OffsetMapping.Identity)
+                if (end > start) styled.addStyle(SpanStyle(background = Color(Highlights.alphaMix(highlightColorRgb))), start, end)
             }
+            val adjusted = VerseTextColors.apply(styled.toAnnotatedString(), applied.fontColor, backgroundColor, applied.textColorAdjustment, false)
+            TransformedText(adjusted, OffsetMapping.Identity)
         }
     }
 
@@ -399,7 +397,7 @@ private fun ColorSwatch(
             .height(44.dp)
             .clip(RoundedCornerShape(6.dp))
             .background(Color(backgroundColor))
-            .background(Color(Highlights.blendOver(rgb, backgroundColor, App.services.uiDimensions.applied().highlightColorAdjustment)))
+            .background(Color(Highlights.alphaMix(rgb)))
             .border(
                 width = if (selected) 3.dp else 0.5.dp,
                 color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
