@@ -532,4 +532,6 @@
     <string name="data_transfer_import_done">ပြီးပါပြီ။ ပိတ်ရန် [%1$s] ကို နှိပ်ပါ။</string>
     <string name="dv_version_unavailable">ရွေးထားသော ဘာသာပြန်မူကို မရနိုင်ပါ။ %1$s ကို အသုံးပြုထားသည်။ ပြောင်းရန် နှိပ်ပါ။</string>
     <string name="dv_version_unset">%1$s ကို အသုံးပြုထားသည်။ သမ္မာကျမ်းစာ ဘာသာပြန်မူကို ရွေးရန် နှိပ်ပါ။</string>
+    <string name="text_color_adjustment">စာသားအရောင် ချိန်ညှိခြင်း</string>
+    <string name="text_color_adjustment_explanation" formatted="false">ဖတ်ရှုရလွယ်ကူစေရန် အရောင်ခြယ်ထားသော စာသားနှင့် ရွေးချယ်ထားသော ကျမ်းပိုဒ်များ၏ စာသားအရောင်ကိုသာ ချိန်ညှိပါ။ 0% သည် မူလအရောင်များကို ထိန်းထားပြီး 100% သည် အရောင်ကွာခြားမှုကို အပြည့်အဝ ပြုပြင်ပေးသည်။</string>
 </resources>

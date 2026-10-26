@@ -532,4 +532,6 @@
     <string name="data_transfer_import_done">Terminé. Appuyez sur [%1$s] pour fermer.</string>
     <string name="dv_version_unavailable">La version choisie est indisponible. %1$s est utilisée. Appuyez pour changer.</string>
     <string name="dv_version_unset">%1$s est utilisée. Appuyez pour choisir une version de la Bible.</string>
+    <string name="text_color_adjustment">Ajustement de la couleur du texte</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Ajuste les couleurs pour améliorer la lisibilité uniquement dans le texte surligné et les versets sélectionnés. 0% conserve les couleurs originales ; 100% applique la correction complète du contraste.</string>
 </resources>

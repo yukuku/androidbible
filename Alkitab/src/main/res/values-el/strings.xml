@@ -532,4 +532,6 @@
     <string name="data_transfer_import_done">Ολοκληρώθηκε. Πατήστε [%1$s] για κλείσιμο.</string>
     <string name="dv_version_unavailable">Η επιλεγμένη μετάφραση δεν είναι διαθέσιμη. Χρησιμοποιείται η %1$s. Πατήστε για αλλαγή.</string>
     <string name="dv_version_unset">Χρησιμοποιείται η %1$s. Πατήστε για να επιλέξετε μετάφραση της Βίβλου.</string>
+    <string name="text_color_adjustment">Προσαρμογή χρώματος κειμένου</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Προσαρμόζει τα χρώματα για αναγνωσιμότητα μόνο στο επισημασμένο κείμενο και στα επιλεγμένα εδάφια. Το 0% διατηρεί τα αρχικά χρώματα· το 100% εφαρμόζει πλήρη διόρθωση αντίθεσης.</string>
 </resources>

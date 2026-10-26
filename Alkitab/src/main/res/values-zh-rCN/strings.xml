@@ -532,4 +532,6 @@
     <string name="data_transfer_import_done">已完成。点按[%1$s]关闭。</string>
     <string name="dv_version_unavailable">所选译本不可用。正在使用%1$s。点按以更改。</string>
     <string name="dv_version_unset">正在使用%1$s。点按以选择圣经译本。</string>
+    <string name="text_color_adjustment">文字颜色调整</string>
+    <string name="text_color_adjustment_explanation" formatted="false">仅调整高亮文字和所选经文的文字颜色，以提高可读性。0% 保留原始颜色；100% 应用完整的对比度校正。</string>
 </resources>

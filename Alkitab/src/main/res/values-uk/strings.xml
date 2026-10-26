@@ -533,4 +533,6 @@
     <string name="data_transfer_import_done">Готово. Натисніть [%1$s], щоб закрити.</string>
     <string name="dv_version_unavailable">Вибраний переклад недоступний. Використовується %1$s. Натисніть, щоб змінити.</string>
     <string name="dv_version_unset">Використовується %1$s. Натисніть, щоб вибрати переклад Біблії.</string>
+    <string name="text_color_adjustment">Корекція кольору тексту</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Коригує кольори для зручності читання лише в підсвіченому тексті та вибраних віршах. 0% зберігає початкові кольори; 100% застосовує повну корекцію контрасту.</string>
 </resources>

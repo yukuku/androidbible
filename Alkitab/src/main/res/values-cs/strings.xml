@@ -532,4 +532,6 @@
     <string name="data_transfer_import_done">Hotovo. Klepnutím na [%1$s] zavřete.</string>
     <string name="dv_version_unavailable">Vybraný překlad není dostupný. Používá se %1$s. Klepnutím jej změníte.</string>
     <string name="dv_version_unset">Používá se %1$s. Klepnutím vyberete překlad Bible.</string>
+    <string name="text_color_adjustment">Úprava barvy textu</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Upravuje barvy pro lepší čitelnost pouze ve zvýrazněném textu a vybraných verších. 0% zachová původní barvy; 100% použije plnou korekci kontrastu.</string>
 </resources>

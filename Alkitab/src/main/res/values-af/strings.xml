@@ -532,4 +532,6 @@
     <string name="data_transfer_import_done">Klaar. Tik op [%1$s] om toe te maak.</string>
     <string name="dv_version_unavailable">Die gekose weergawe is nie beskikbaar nie. Gebruik %1$s. Tik om te verander.</string>
     <string name="dv_version_unset">Gebruik %1$s. Tik om ’n Bybelweergawe te kies.</string>
+    <string name="text_color_adjustment">Tekskleuraanpassing</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Pas tekskleure slegs in gemerkte teks en gekose verse aan vir leesbaarheid. 0% behou oorspronklike kleure; 100% pas volle kontraskorreksie toe.</string>
 </resources>

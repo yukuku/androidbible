@@ -583,5 +583,5 @@
     <string name="data_transfer_import_preview">The operations above are a preview. Tap [%1$s] to import the data or [%2$s] to cancel.</string>
     <string name="data_transfer_import_done">Done. Tap [%1$s] to close.</string>
     <string name="text_color_adjustment">Text color adjustment</string>
-    <string name="text_color_adjustment_explanation">Adjust text colors for readability only in highlighted text and selected verses. 0% keeps original text colors; 100% applies full contrast correction.</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Adjust text colors for readability only in highlighted text and selected verses. 0% keeps original text colors; 100% applies full contrast correction.</string>
 </resources>
