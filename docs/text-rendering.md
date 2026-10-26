@@ -53,8 +53,11 @@ the shared appearance rather than duplicate preference calculations.
 
 Highlight bands use a fixed opacity and preserve saved colors. Both renderers
 resolve text contrast against the page, selection overlay, and highlight band
-in painting order. They retain readable text colors and adjust insufficient
-contrast toward darker or lighter shades. Red-letter text retains its own color
+in painting order. Correction applies only to text covered by a highlight or
+verse selection. Unaffected text keeps its configured color, even when it has
+low contrast against the page. Within affected text, the renderers retain
+readable colors and adjust insufficient contrast toward darker or lighter shades.
+Red-letter text retains its own color
 in selected verses as well as ordinary reading. Dictionary links underline text
 while inheriting its color.
 

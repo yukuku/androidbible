@@ -15,8 +15,9 @@ Labels and marker-label assignments have their own sync identities. See
 
 Highlights preserve saved colors and, for partial highlights, text ranges with
 verification information. Highlights use a fixed opacity. Display-time text
-color adjustment keeps text readable against the highlight and reading
-background without rewriting saved markers. Changes to text normalization must
+color adjustment keeps highlighted or selected text readable against its
+background without rewriting saved markers. Unaffected text retains the
+configured reading colors. Changes to text normalization must
 preserve partial-range compatibility.
 
 ## Reader integration

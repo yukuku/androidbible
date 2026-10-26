@@ -328,7 +328,7 @@ class VerseTextColorSnapshotTest {
         val selectionArgb = 0xff000000.toInt() or selection.rgb
         val overlay = ColorUtils.setAlphaComponent(selectionArgb, TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA)
         val restBackground = if (row.checked) ColorUtils.compositeColors(overlay, theme.background) else theme.background
-        val restText = TextColorUtil.adjustForContrast(theme.fontColor, restBackground, 1f)
+        val restText = if (row.checked) TextColorUtil.adjustForContrast(theme.fontColor, restBackground, 1f) else theme.fontColor
         val rest = "rest #%06x %.1f:1".format(restText and 0xffffff, ColorUtils.calculateContrast(restText, restBackground))
 
         val highlight = row.highlight ?: return rest

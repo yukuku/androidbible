@@ -667,7 +667,11 @@ private fun VerseTextRegion(
     val applied = App.services.uiDimensions.applied()
     val background = TextColorUtil.readingBackground(applied.backgroundColor, selectedVerseBackgroundColor(), checked)
     val textColor = Color(state.fontColor)
-    val numberColor = Color(TextColorUtil.adjustForContrast(if (checked) state.fontColor else state.verseNumberColor, background, applied.textColorAdjustment))
+    val numberColor = if (checked) {
+        Color(TextColorUtil.adjustForContrast(state.fontColor, background, applied.textColorAdjustment))
+    } else {
+        Color(state.verseNumberColor)
+    }
 
     val textStyle = remember(
         state.fontSizeDp,

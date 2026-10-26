@@ -41,6 +41,7 @@ class VerseTextContrastTest {
             backgroundColor = 0xfff0f0f0.toInt()
         }
         S.overrideAppliedDimensions(dims)
+        Preferences.setInt(ApplicationProvider.getApplicationContext<android.content.Context>().getString(R.string.pref_selectedVerseBgColor_key), 0xff0277bd.toInt())
     }
 
     @Test
@@ -77,6 +78,36 @@ class VerseTextContrastTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun `unselected unhighlighted text preserves deliberately similar colors at every adjustment amount`() {
+        dims.backgroundColor = 0xff808080.toInt()
+        dims.fontColor = 0xff808080.toInt()
+        dims.fontRedColor = 0xff888080.toInt()
+        dims.verseNumberColor = 0xff828282.toInt()
+        for (amount in listOf(0f, 0.37f, 1f)) {
+            dims.textColorAdjustment = amount
+            verify(raw, null, false, 0xff0277bd.toInt())
+        }
+    }
+
+    @Test
+    fun `a partial highlight corrects only covered portions of ordinary and red text`() {
+        dims.backgroundColor = 0xff808080.toInt()
+        dims.fontColor = 0xff808080.toInt()
+        dims.fontRedColor = 0xff888080.toInt()
+        val highlight = Highlights.Info().apply {
+            colorRgb = 0x0000ff
+            partial = Highlights.Info.Partial().apply {
+                hashCode = body.hashCode()
+                startOffset = 4
+                endOffset = 18
+            }
+        }
+        verify(raw, highlight, false, 0xff0277bd.toInt())
+        verify(raw, highlight, true, 0xff0277bd.toInt())
+        verify(raw, highlight, false, 0xff0277bd.toInt())
     }
 
     @Test
@@ -119,7 +150,17 @@ class VerseTextContrastTest {
             assertEquals("foreground at $index", foreground, legacyPaint.color)
             assertEquals("band at $index", band, legacyPaint.bgColor)
             val painted = ColorUtils.compositeColors(band, selectionBackground)
-            assertTrue("contrast at $index: ${ColorUtils.calculateContrast(foreground, painted)}", ColorUtils.calculateContrast(foreground, painted) >= 4.5)
+            if (isSelected || band != 0) {
+                assertTrue("contrast at $index: ${ColorUtils.calculateContrast(foreground, painted)}", ColorUtils.calculateContrast(foreground, painted) >= 4.5)
+            } else {
+                val redStart = composed.text.text.indexOf("Jesus")
+                val original = when {
+                    index == 0 -> dims.verseNumberColor
+                    index in redStart until redStart + "Jesus speaks here".length -> dims.fontRedColor
+                    else -> dims.fontColor
+                }
+                assertEquals("unaffected color at $index", original, foreground)
+            }
             if (band != 0) assertEquals(160, AndroidColor.alpha(band))
         }
         val redOffset = composed.text.text.indexOf("Jesus")

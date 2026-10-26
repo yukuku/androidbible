@@ -49,8 +49,10 @@ object VerseTextColors {
         val boundaries = (listOf(0, length) + (foregrounds + backgrounds).flatMap { listOf(it.start, it.end) }).distinct().sorted()
         return boundaries.zipWithNext().mapNotNull { (start, end) ->
             val original = foregrounds.lastOrNull { start >= it.start && start < it.end }?.color ?: fontColor
-            val painted = backgrounds.filter { start >= it.start && start < it.end }
-                .fold(background) { under, band -> ColorUtils.compositeColors(band.color, under) }
+            val bands = backgrounds.filter { start >= it.start && start < it.end }
+            if (!isSelected && bands.isEmpty()) return@mapNotNull null
+
+            val painted = bands.fold(background) { under, band -> ColorUtils.compositeColors(band.color, under) }
             val adjusted = TextColorUtil.adjustForContrast(original, painted, adjustment)
             if (adjusted != original || isSelected) ColorRange(start, end, adjusted) else null
         }
