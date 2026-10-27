@@ -16,8 +16,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,7 +48,6 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.LocalContext
@@ -213,6 +212,11 @@ class VersesComposeControllerImpl(
     private val itemSizeCache = SparseIntArray()
     private var cacheDataVersion = -1
 
+    private data class VerseNavigation(val requestId: Int, val ari: Int)
+
+    private var verseNavigation by mutableStateOf<VerseNavigation?>(null)
+    private var nextNavigationId = 0
+
     init {
         composeHost.controller = this
     }
@@ -220,6 +224,8 @@ class VersesComposeControllerImpl(
     override var versesDataModel: VersesDataModel
         get() = dataWithVersion.data
         set(value) {
+            val navigation = verseNavigation
+            if (navigation != null && Ari.toBookChapter(navigation.ari) != value.ari_bc_) verseNavigation = null
             val vn = dataVersionNumber.incrementAndGet()
             dataWithVersion = DataWithVersion(vn, value)
             attentionState = AttentionUi.NONE
@@ -313,6 +319,7 @@ class VersesComposeControllerImpl(
      * context.
      */
     private fun launchScroll(programmatic: Boolean = true, block: suspend (data: VersesDataModel) -> Unit) {
+        verseNavigation = null
         val vn = dataVersionNumber.get()
         val scope = composeHost.findViewTreeLifecycleOwner()?.lifecycleScope ?: return
         scope.launch(uiFrameClock) {
@@ -365,12 +372,7 @@ class VersesComposeControllerImpl(
             return
         }
 
-        launchScroll { data ->
-            if (position >= data.itemCount) return@launchScroll
-            // Apply the jump with the next layout so a split pane's pending
-            // size change cannot clamp it against the old viewport.
-            listState.requestScrollToItem(position, snapOffsetPx(position))
-        }
+        verseNavigation = VerseNavigation(++nextNavigationId, Ari.encodeWithBc(versesDataModel.ari_bc_, verse_1))
     }
 
     override fun scrollToVerse(verse_1: Int, prop: Float) {
@@ -765,6 +767,42 @@ class VersesComposeControllerImpl(
         val ui = uiState
         val listeners = listenersState
 
+        val navigation = verseNavigation
+        LaunchedEffect(navigation, dataW.vn) {
+            if (navigation == null || verseNavigation != navigation || Ari.toBookChapter(navigation.ari) != data.ari_bc_) return@LaunchedEffect
+            val verse_1 = Ari.toVerse(navigation.ari)
+            val anchor = data.getPositionOfPericopeBeginningFromVerse(verse_1)
+            val verse = data.getPositionIgnoringPericopeFromVerse(verse_1)
+            if (anchor < 0 || verse < 0) return@LaunchedEffect
+
+            listState.requestScrollToItem(anchor, snapOffsetPx(anchor))
+            if (data.verses_.getVerse(verse_1 - 1).isEmpty()) return@LaunchedEffect
+
+            // Chapter rows can resize after the initial jump. Correct only when
+            // the requested verse leaves the viewport, preserving end clamping.
+            snapshotFlow { listState.layoutInfo }.collect { info ->
+                if (verseNavigation != navigation || dataVersionNumber.get() != dataW.vn ||
+                    info.visibleItemsInfo.isEmpty() || info.viewportSize.height <= paddingBottomPx
+                ) return@collect
+                if (listState.isScrollInProgress) {
+                    verseNavigation = null
+                    return@collect
+                }
+
+                val item = info.visibleItemsInfo.firstOrNull { it.index == verse }
+                val top = item?.let { it.offset + info.beforeContentPadding }
+                if (top == null || top >= info.viewportSize.height - paddingBottomPx || top + item.size <= 0) {
+                    listState.requestScrollToItem(verse, snapOffsetPx(verse))
+                }
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            listState.interactionSource.interactions.collect { interaction ->
+                if (interaction is DragInteraction.Start) verseNavigation = null
+            }
+        }
+
         val attention = attentionState
         LaunchedEffect(attention) {
             if (attention.start != 0L) {
@@ -815,23 +853,13 @@ class VersesComposeControllerImpl(
         }
 
         CompositionLocalProvider(LocalDensity provides unscaledDensity) {
-            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                var lastItemHeightPx by remember(dataW.vn, constraints.maxWidth) { mutableIntStateOf(0) }
-                var lastItemTargetHeightPx by remember(dataW.vn, constraints.maxWidth) { mutableIntStateOf(0) }
-
-                // Reserve the target height during shrinking animations so a verse jump
-                // cannot be pulled backward while the final row changes size.
-                val endPaddingPx = if (ui.isScrollPastEndEnabled && data.itemCount > 0) {
-                    (constraints.maxHeight - minOf(lastItemHeightPx, lastItemTargetHeightPx)).coerceAtLeast(paddingBottomPx)
-                } else {
-                    paddingBottomPx
-                }
+            Box(modifier = Modifier.fillMaxSize()) {
                 val contentPadding = with(unscaledDensity) {
                     PaddingValues.Absolute(
                         left = paddingLeftPx.toDp(),
                         top = paddingTopPx.toDp(),
                         right = paddingRightPx.toDp(),
-                        bottom = endPaddingPx.toDp(),
+                        bottom = paddingBottomPx.toDp(),
                     )
                 }
 
@@ -856,25 +884,7 @@ class VersesComposeControllerImpl(
                             backgroundColor = App.services.uiDimensions.applied().backgroundColor,
                             startInsetPx = (if (LocalLayoutDirection.current == LayoutDirection.Rtl) paddingRightPx else paddingLeftPx).toFloat(),
                         ) {
-                            val endMeasurement = if (ui.isScrollPastEndEnabled && position == data.itemCount - 1) {
-                                Modifier.layout { measurable, constraints ->
-                                    val placeable = measurable.measure(constraints)
-                                    lastItemHeightPx = placeable.height
-                                    layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
-                                }
-                            } else {
-                                Modifier
-                            }
-                            val endTargetMeasurement = if (ui.isScrollPastEndEnabled && position == data.itemCount - 1) {
-                                Modifier.layout { measurable, constraints ->
-                                    val placeable = measurable.measure(constraints)
-                                    lastItemTargetHeightPx = placeable.height
-                                    layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
-                                }
-                            } else {
-                                Modifier
-                            }
-                            Box(endMeasurement.animateContentSize(animationSpec = tween(durationMillis = 250)).then(endTargetMeasurement)) {
+                            Box(Modifier.animateContentSize(animationSpec = tween(durationMillis = 250))) {
                                 when (data.getItemViewType(position)) {
                                     ItemType.verseText -> VerseRow(data, ui, listeners, position)
                                     ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))

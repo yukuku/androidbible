@@ -58,6 +58,7 @@ class VersesControllerImpl(
     private var bottomInset = 0
 
     private val dataVersionNumber = AtomicInteger()
+    private var navigationAri = 0
 
     private val layoutManager: LinearLayoutManager
     private val adapter: VersesAdapter
@@ -90,19 +91,21 @@ class VersesControllerImpl(
         )
         this.adapter = adapter
         rv.adapter = adapter
-        rv.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                val lastPosition = adapter.itemCount - 1
-                if (this@VersesControllerImpl.versesUiModel.isScrollPastEndEnabled &&
-                    lastPosition >= 0 && parent.getChildAdapterPosition(view) == lastPosition
-                ) {
-                    outRect.bottom = (parent.height - parent.paddingBottom - getMeasuredItemHeight(lastPosition)).coerceAtLeast(0)
+        rv.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            if (navigationAri == 0 || rv.height <= rv.paddingBottom || rv.width == 0) return@addOnLayoutChangeListener
+            val verse_1 = Ari.toVerse(navigationAri)
+            val position = this.versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
+            if (position < 0 || this.versesDataModel.verses_.getVerse(verse_1 - 1).isEmpty()) return@addOnLayoutChangeListener
+            val row = layoutManager.findViewByPosition(position)
+            if (row == null || row.bottom <= 0 || row.top >= rv.height - rv.paddingBottom) {
+                val ari = navigationAri
+                val vn = dataVersionNumber.get()
+                val offset = if (position == 0) 0 else -rv.paddingTop
+                rv.post {
+                    if (navigationAri == ari && dataVersionNumber.get() == vn) {
+                        layoutManager.scrollToPositionWithOffset(position, offset)
+                    }
                 }
-            }
-        })
-        rv.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
-                rv.invalidateItemDecorations()
             }
         }
     }
@@ -114,6 +117,7 @@ class VersesControllerImpl(
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 this.scrollState = newState
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) navigationAri = 0
             }
 
             override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
@@ -198,6 +202,7 @@ class VersesControllerImpl(
      */
     override var versesDataModel = versesDataModel
         set(value) {
+            if (Ari.toBookChapter(navigationAri) != value.ari_bc_) navigationAri = 0
             field = value
             dataVersionNumber.incrementAndGet()
             attention.clear()
@@ -283,6 +288,7 @@ class VersesControllerImpl(
     }
 
     override fun scrollToTop() {
+        navigationAri = 0
         rv.scrollToPosition(0)
     }
 
@@ -292,11 +298,13 @@ class VersesControllerImpl(
         if (position == -1) {
             AppLog.w(TAG, "could not find verse_1=$verse_1, weird!")
         } else {
+            val ari = Ari.encodeWithBc(versesDataModel.ari_bc_, verse_1)
+            navigationAri = ari
             val vn = dataVersionNumber.get()
 
             rv.post {
                 // this may happen async from above, so check data version first
-                if (vn != dataVersionNumber.get()) return@post
+                if (vn != dataVersionNumber.get() || navigationAri != ari) return@post
 
                 // negate padding offset, unless this is the first verse
                 val paddingNegator = if (position == 0) 0 else -rv.paddingTop
@@ -307,6 +315,7 @@ class VersesControllerImpl(
     }
 
     override fun scrollToVerse(verse_1: Int, prop: Float) {
+        navigationAri = 0
         val position = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
         if (position == -1) {
             AppLog.d(TAG, "could not find verse_1: $verse_1")
@@ -317,6 +326,7 @@ class VersesControllerImpl(
     }
 
     override fun scrollToPericope(verse_1: Int, prop: Float) {
+        navigationAri = 0
         val blockStartPos = versesDataModel.getPositionOfPericopeBeginningFromVerse(verse_1)
         if (blockStartPos == -1) {
             AppLog.d(TAG, "could not find pericope above verse_1: $verse_1")
@@ -387,12 +397,24 @@ class VersesControllerImpl(
      * Returns -1 if there is no visible child (e.g. when split is collapsed until the height is 0).
      */
     private fun getPositionBasedOnScroll(): Int {
-        // Verses can be visible inside the scroll-past top padding.
-        for (index in 0 until layoutManager.childCount) {
-            val child = layoutManager.getChildAt(index) ?: continue
-            if (child.bottom > 0) return layoutManager.getPosition(child)
+        val pos = layoutManager.findFirstVisibleItemPosition()
+
+        // check if the top one has been scrolled
+        val child = layoutManager.findViewByPosition(pos)
+        if (child != null) {
+            val top = child.top
+            if (top == 0) {
+                return pos
+            }
+            val bottom = child.bottom
+            return if (bottom > 0) {
+                pos
+            } else {
+                pos + 1
+            }
         }
-        return -1
+
+        return pos
     }
 
     override fun getVerse_1BasedOnScroll(): Int {
@@ -400,6 +422,7 @@ class VersesControllerImpl(
     }
 
     override fun pageDown(): VersesController.PressResult {
+        navigationAri = 0
         val oldPos = layoutManager.findFirstVisibleItemPosition()
         var newPos = layoutManager.findLastVisibleItemPosition()
 
@@ -417,6 +440,7 @@ class VersesControllerImpl(
     }
 
     override fun pageUp(): VersesController.PressResult {
+        navigationAri = 0
         val oldPos = layoutManager.findFirstVisibleItemPosition()
         val targetHeight = (rv.height - rv.paddingTop - rv.paddingBottom).coerceAtLeast(0)
 
@@ -510,7 +534,6 @@ class VersesControllerImpl(
 
     private fun applyPadding() {
         rv.setPadding(basePadding.left, basePadding.top + topInset, basePadding.right, basePadding.bottom + bottomInset)
-        rv.invalidateItemDecorations()
     }
 
     override fun setViewScrollbarThumb(thumb: Drawable) {
@@ -556,6 +579,8 @@ class VersesControllerImpl(
         }
         if (verse_1 == 0) return
 
+        navigationAri = 0
+
         val pos = versesDataModel.getPositionIgnoringPericopeFromVerse(verse_1)
         if (pos == -1) return
         val rowView = layoutManager.findViewByPosition(pos)
@@ -566,7 +591,7 @@ class VersesControllerImpl(
         // sitting right in front of the user is more distracting than helpful.
         if (rowView != null) {
             val rowTop = layoutManager.getDecoratedTop(rowView)
-            val rowBottom = rowView.bottom
+            val rowBottom = layoutManager.getDecoratedBottom(rowView)
             val viewportTop = rv.paddingTop
             val viewportBottom = rv.height - rv.paddingBottom
             if (rowTop >= viewportTop && rowBottom <= viewportBottom) return
@@ -603,7 +628,6 @@ class VersesControllerImpl(
         adapter.data = versesDataModel
         adapter.ui = versesUiModel
         adapter.listeners = versesListeners
-        rv.invalidateItemDecorations()
     }
 
     /**
