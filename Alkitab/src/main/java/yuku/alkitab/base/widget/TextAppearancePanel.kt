@@ -67,6 +67,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
@@ -78,6 +81,7 @@ import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.FontManager
+import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.debug.R
 
 /**
@@ -112,6 +116,7 @@ class TextAppearancePanel(
     private var uiSplitVersionId by mutableStateOf<String?>(null)
     private var uiSplitVersionLongName by mutableStateOf<String?>(null)
     private var uiPerVersionMult by mutableStateOf(1f)
+    private var uiTextColorAdjustment by mutableStateOf(TextColorUtil.DEFAULT_ADJUSTMENT)
     private var uiNightMode by mutableStateOf(false)
     private var uiColors by mutableStateOf(intArrayOf(0, 0, 0, 0))
 
@@ -157,6 +162,7 @@ class TextAppearancePanel(
             App.context.resources.getInteger(R.integer.pref_ukuranHuruf2_default).toFloat(),
         )
         uiLineSpacing = Preferences.getFloat(Prefkey.lineSpacingMult, DEFAULT_LINE_SPACING)
+        uiTextColorAdjustment = TextColorUtil.normalizeAdjustment(Preferences.getFloat(Prefkey.textColorAdjustment, TextColorUtil.DEFAULT_ADJUSTMENT))
         uiNightMode = Preferences.getBoolean(Prefkey.is_night_mode, false)
         uiColors = ColorThemes.getCurrentColors(uiNightMode)
 
@@ -221,6 +227,14 @@ class TextAppearancePanel(
         val snapped = (value * 20f).roundToInt() / 20f // 0.05 steps
         Preferences.setFloat(Prefkey.lineSpacingMult, snapped)
         uiLineSpacing = snapped
+        listener.onValueChanged()
+    }
+
+    private fun onTextColorAdjustmentChanged(value: Float) {
+        val adjustment = TextColorUtil.normalizeAdjustment(value / 100f)
+        if (adjustment == uiTextColorAdjustment) return
+        Preferences.setFloat(Prefkey.textColorAdjustment, adjustment)
+        uiTextColorAdjustment = adjustment
         listener.onValueChanged()
     }
 
@@ -333,6 +347,7 @@ class TextAppearancePanel(
                     )
 
                     ColorThemeRow()
+                    TextColorContrastRow()
                 }
             }
         }
@@ -376,8 +391,8 @@ class TextAppearancePanel(
         ) {
             Text(
                 text = stringResource(R.string.text_appearance_font),
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.weight(1f).align(Alignment.Bottom),
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
             )
             IconButton(onClick = onClose) {
@@ -489,6 +504,26 @@ class TextAppearancePanel(
                 Text(stringResource(R.string.text_appearance_bold))
             }
         }
+    }
+
+    @Composable
+    private fun TextColorContrastRow() {
+        val locale = LocalConfiguration.current.locales[0]
+        val ratio = remember(uiTextColorAdjustment, locale) {
+            NumberFormat.getNumberInstance(locale).apply {
+                minimumFractionDigits = 2
+                maximumFractionDigits = 2
+                roundingMode = RoundingMode.HALF_UP
+            }.format(BigDecimal.valueOf(TextColorUtil.targetContrast(uiTextColorAdjustment)))
+        }
+        val title = stringResource(R.string.text_appearance_text_color_contrast)
+        SectionLabel(if (uiTextColorAdjustment == 0f) title else "$title ($ratio:1)")
+        SliderRow(
+            value = uiTextColorAdjustment * 100f,
+            valueRange = 0f..100f,
+            valueLabel = "${(uiTextColorAdjustment * 100f).roundToInt()}%",
+            onValueChange = ::onTextColorAdjustmentChanged,
+        )
     }
 
     @Composable

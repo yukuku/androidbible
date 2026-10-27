@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">Не удалось загрузить это размышление. Проверьте подключение и повторите попытку.</string>
     <string name="devotion_unavailable">Это размышление пока недоступно на сервере.</string>
     <string name="devotion_select">Выберите размышление и дату</string>
-    <string name="highlight_style_original">Использовать оригинальные цвета выделения</string>
-    <string name="highlight_style_original_value">Использовать исходные цвета</string>
-    <string name="highlight_style_customize">Настройка цветов выделения</string>
-    <string name="highlight_style_current">Использовать скорректированные цвета</string>
-    <string name="highlight_style_custom_value">%1$d%% коррекции</string>
-    <string name="highlight_style_adjustment">Регулировка цвета выделения</string>
-    <string name="highlight_style_explanation">Настройте степень корректировки цветов выделения под фон текста</string>
-    <string name="highlight_style_zero">Исходные</string>
-    <string name="highlight_style_one">Скорректированные</string>
-    <string name="highlight_style_preview">Предварительный просмотр</string>
-    <string name="highlight_style_loading">Загрузка стихов…</string>
-    <string name="highlight_style_no_verses">Для этого предварительного просмотра нет доступных стихов.</string>
     <string name="data_transfer_send">Отправить</string>
     <string name="data_transfer_start">Начать</string>
     <string name="data_transfer_close">Закрыть</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Готово. Нажмите [%1$s], чтобы закрыть.</string>
     <string name="dv_version_unavailable">Выбранный перевод недоступен. Используется %1$s. Нажмите, чтобы изменить.</string>
     <string name="dv_version_unset">Используется %1$s. Нажмите, чтобы выбрать перевод Библии.</string>
+    <string name="text_appearance_text_color_contrast">Контраст цвета текста</string>
 </resources>

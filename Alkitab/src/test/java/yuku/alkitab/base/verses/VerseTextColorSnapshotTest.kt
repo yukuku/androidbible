@@ -170,6 +170,7 @@ class VerseTextColorSnapshotTest {
         )
 
         dims = S.CalculatedDimensions().apply {
+            textColorAdjustment = 1f
             fontSize2dp = 17f
             fontFace = Typeface.DEFAULT
             fontBold = Typeface.NORMAL
@@ -214,7 +215,7 @@ class VerseTextColorSnapshotTest {
             <p>Each block is one reading theme and one selection color. Rows go from no highlight through every
             highlight color, first not selected, then selected with a full highlight, then selected with a partial
             highlight. The left column is the legacy VerseItem, the right the Compose VerseItemComposeView. Every verse
-            has words of Jesus (red text when not selected) and dictionary-linked words (underlined: "body", "love").</p>
+            has words of Jesus (red text in both selection states) and dictionary-linked words (underlined: "body", "love").</p>
             <p>The label above each row gives the text color used on the highlight band and its contrast ratio against
             what the band actually paints, then the color used on the rest of the verse and its contrast against the
             selection overlay (or the page when not selected).</p>
@@ -328,17 +329,13 @@ class VerseTextColorSnapshotTest {
         val selectionArgb = 0xff000000.toInt() or selection.rgb
         val overlay = ColorUtils.setAlphaComponent(selectionArgb, TextColorUtil.CHECKED_VERSE_OVERLAY_ALPHA)
         val restBackground = if (row.checked) ColorUtils.compositeColors(overlay, theme.background) else theme.background
-        val restText = if (row.checked) TextColorUtil.getForCheckedVerse(selectionArgb) else theme.fontColor
+        val restText = if (row.checked) TextColorUtil.adjustForContrast(theme.fontColor, restBackground, 1f) else theme.fontColor
         val rest = "rest #%06x %.1f:1".format(restText and 0xffffff, ColorUtils.calculateContrast(restText, restBackground))
 
         val highlight = row.highlight ?: return rest
-        val band = Highlights.blendOver(highlight.rgb, theme.background)
+        val band = Highlights.alphaMix(highlight.rgb)
         val painted = ColorUtils.compositeColors(band, restBackground)
-        val bandText = if (row.checked) {
-            TextColorUtil.getForCheckedVerseHighlight(theme.fontColor, selectionArgb, theme.background, band)
-        } else {
-            theme.fontColor
-        }
+        val bandText = TextColorUtil.adjustForContrast(theme.fontColor, painted, 1f)
         return "band a=%02x text #%06x %.1f:1   %s".format((band ushr 24) and 0xff, bandText and 0xffffff, ColorUtils.calculateContrast(bandText, painted), rest)
     }
 

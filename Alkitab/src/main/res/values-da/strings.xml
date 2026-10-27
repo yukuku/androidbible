@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">Kunne ikke downloade denne daglige bibelanagtsartikel. Tjek din forbindelse, og prøv igen.</string>
     <string name="devotion_unavailable">Denne daglige bibelandagt artikel er ikke tilgængelig fra serveren endnu.</string>
     <string name="devotion_select">Vælg daglig bibelandagt artikel og dato</string>
-    <string name="highlight_style_original">Brug originale highlight-farver</string>
-    <string name="highlight_style_original_value">Brug oprindelige farver</string>
-    <string name="highlight_style_customize">Tilpas highlight-farver</string>
-    <string name="highlight_style_current">Brug tilpassede farver</string>
-    <string name="highlight_style_custom_value">%1$d%% tilpasset</string>
-    <string name="highlight_style_adjustment">Fremhæv farvejustering</string>
-    <string name="highlight_style_explanation">Indstil, hvor meget fremhævningsfarverne tilpasses tekstens baggrund</string>
-    <string name="highlight_style_zero">Oprindelige</string>
-    <string name="highlight_style_one">Tilpassede</string>
-    <string name="highlight_style_preview">Forhåndsvisning</string>
-    <string name="highlight_style_loading">Indlæser vers…</string>
-    <string name="highlight_style_no_verses">Ingen tilgængelige vers for denne forhåndsvisning.</string>
     <string name="data_transfer_send">Send</string>
     <string name="data_transfer_start">Start</string>
     <string name="data_transfer_close">Luk</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Færdig. Tryk på [%1$s] for at lukke.</string>
     <string name="dv_version_unavailable">Den valgte oversættelse er ikke tilgængelig. Bruger %1$s. Tryk for at ændre.</string>
     <string name="dv_version_unset">Bruger %1$s. Tryk for at vælge en bibeloversættelse.</string>
+    <string name="text_appearance_text_color_contrast">Tekstfarvekontrast</string>
 </resources>

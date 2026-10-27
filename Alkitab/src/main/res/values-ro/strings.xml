@@ -521,18 +521,6 @@
     <string name="devotion_retry">Reîncercați</string>
     <string name="devotion_select">Selectați zilnic articolul biblic devoțional și data</string>
     <string name="song_select">Selectați melodia</string>
-    <string name="highlight_style_original">Folosiți culori de evidențiere originale</string>
-    <string name="highlight_style_original_value">Folosește culorile originale</string>
-    <string name="highlight_style_customize">Personalizați culorile de evidențiere</string>
-    <string name="highlight_style_current">Folosește culorile ajustate</string>
-    <string name="highlight_style_custom_value">%1$d%% ajustat</string>
-    <string name="highlight_style_adjustment">Ajustarea culorilor de evidențiere</string>
-    <string name="highlight_style_explanation">Setează cât de mult sunt ajustate culorile de evidențiere la fundalul textului</string>
-    <string name="highlight_style_zero">Originale</string>
-    <string name="highlight_style_one">Ajustate</string>
-    <string name="highlight_style_preview">Previzualizare</string>
-    <string name="highlight_style_loading">Se încarcă versete…</string>
-    <string name="highlight_style_no_verses">Nu există versete disponibile pentru această previzualizare.</string>
     <string name="data_transfer_send">Trimite</string>
     <string name="data_transfer_start">Începe</string>
     <string name="data_transfer_close">Închide</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Gata. Atingeți [%1$s] pentru a închide.</string>
     <string name="dv_version_unavailable">Traducerea selectată nu este disponibilă. Se folosește %1$s. Atingeți pentru a schimba.</string>
     <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
+    <string name="text_appearance_text_color_contrast">Contrastul culorii textului</string>
 </resources>

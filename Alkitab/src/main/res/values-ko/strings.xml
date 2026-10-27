@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">이 묵상을 다운로드할 수 없습니다. 연결을 확인하고 다시 시도하세요.</string>
     <string name="devotion_unavailable">이 묵상은 아직 서버에서 제공되지 않습니다.</string>
     <string name="devotion_select">묵상과 날짜 선택</string>
-    <string name="highlight_style_original">원래 하이라이트 색상 사용</string>
-    <string name="highlight_style_original_value">원래 색상 사용</string>
-    <string name="highlight_style_customize">하이라이트 색상 사용자 정의</string>
-    <string name="highlight_style_current">조정된 색상 사용</string>
-    <string name="highlight_style_custom_value">%1$d%% 조정됨</string>
-    <string name="highlight_style_adjustment">하이라이트 색상 조정</string>
-    <string name="highlight_style_explanation">강조 색상을 본문 배경에 맞춰 조정할 정도를 설정하세요</string>
-    <string name="highlight_style_zero">원래 색상</string>
-    <string name="highlight_style_one">조정됨</string>
-    <string name="highlight_style_preview">미리보기</string>
-    <string name="highlight_style_loading">구절 로드 중…</string>
-    <string name="highlight_style_no_verses">이 미리보기에 사용할 수 있는 구절이 없습니다.</string>
     <string name="data_transfer_send">보내기</string>
     <string name="data_transfer_start">시작</string>
     <string name="data_transfer_close">닫기</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">완료되었습니다. 닫으려면 [%1$s]를 탭하세요.</string>
     <string name="dv_version_unavailable">선택한 번역본을 사용할 수 없습니다. %1$s 사용 중입니다. 탭하여 변경하세요.</string>
     <string name="dv_version_unset">%1$s 사용 중입니다. 탭하여 성경 번역본을 선택하세요.</string>
+    <string name="text_appearance_text_color_contrast">글자색 대비</string>
 </resources>

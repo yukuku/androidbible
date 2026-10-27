@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">このデボーションをダウンロードできませんでした。接続を確認して、もう一度お試しください。</string>
     <string name="devotion_unavailable">このデボーションはまだサーバーから取得できません。</string>
     <string name="devotion_select">デボーションと日付を選択</string>
-    <string name="highlight_style_original">オリジナルのハイライト カラーを使用する</string>
-    <string name="highlight_style_original_value">元の色を使用</string>
-    <string name="highlight_style_customize">ハイライトカラーをカスタマイズする</string>
-    <string name="highlight_style_current">調整した色を使用</string>
-    <string name="highlight_style_custom_value">%1$d%% 調整</string>
-    <string name="highlight_style_adjustment">ハイライトカラー調整</string>
-    <string name="highlight_style_explanation">ハイライトの色を本文の背景に合わせて調整する度合いを設定します</string>
-    <string name="highlight_style_zero">元の色</string>
-    <string name="highlight_style_one">調整後</string>
-    <string name="highlight_style_preview">プレビュー</string>
-    <string name="highlight_style_loading">聖句を読み込み中…</string>
-    <string name="highlight_style_no_verses">このプレビューに使用できる聖句はありません。</string>
     <string name="data_transfer_send">送信</string>
     <string name="data_transfer_start">開始</string>
     <string name="data_transfer_close">閉じる</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">完了しました。[%1$s]をタップして閉じます。</string>
     <string name="dv_version_unavailable">選択した訳を利用できません。%1$sを使用しています。タップして変更してください。</string>
     <string name="dv_version_unset">%1$sを使用しています。タップして聖書の訳を選んでください。</string>
+    <string name="text_appearance_text_color_contrast">文字色のコントラスト</string>
 </resources>

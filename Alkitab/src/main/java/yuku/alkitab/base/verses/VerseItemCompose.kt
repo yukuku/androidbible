@@ -664,10 +664,13 @@ private fun VerseTextRegion(
     attributeSize: IntSize,
     modifier: Modifier = Modifier,
 ) {
-    val textColor = if (checked) {
-        Color(TextColorUtil.getForCheckedVerse(selectedVerseBackgroundColor()))
+    val textColor = Color(state.fontColor)
+    val numberColor = if (checked && !LocalInspectionMode.current) {
+        val applied = App.services.uiDimensions.applied()
+        val background = TextColorUtil.readingBackground(applied.backgroundColor, selectedVerseBackgroundColor(), true)
+        Color(TextColorUtil.adjustForContrast(state.fontColor, background, applied.textColorAdjustment))
     } else {
-        Color(state.fontColor)
+        Color(if (checked) state.fontColor else state.verseNumberColor)
     }
 
     val textStyle = remember(
@@ -705,7 +708,7 @@ private fun VerseTextRegion(
             BasicText(
                 text = AnnotatedString(gutter),
                 style = textStyle.copy(
-                    color = if (checked) textColor else Color(state.verseNumberColor),
+                    color = numberColor,
                     fontSize = state.verseNumberFontSizeDp.sp,
                     fontWeight = FontWeight.Normal,
                     fontFamily = composeFontFamilyFor(state.typeface),

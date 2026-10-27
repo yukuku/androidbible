@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableKt;
 import java.util.Objects;
-import yuku.alkitab.base.App;
 import yuku.alkitab.base.verses.VersesController;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -30,12 +29,12 @@ public class AttributeView extends View {
 
 	static final SparseArray<Bitmap> scaledIconBitmaps = new SparseArray<>();
 	static float scaledIconBitmapsScale = Float.NaN;
-	static Paint bookmarkCountPaint;
-    static Paint noteCountPaint;
+	private final Paint bookmarkCountPaint;
+	private final Paint noteCountPaint;
 
-	static float density = App.context.getResources().getDisplayMetrics().density;
+	private final float density = getContext().getResources().getDisplayMetrics().density;
 
-	static {
+	{
 		bookmarkCountPaint = new Paint();
 		bookmarkCountPaint.setTypeface(Typeface.DEFAULT_BOLD);
 		bookmarkCountPaint.setColor(0xff000000);

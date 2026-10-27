@@ -7,13 +7,8 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import kotlin.math.roundToInt
-import yuku.afw.storage.Preferences
-import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.events.AppEvents
-import yuku.alkitab.base.storage.Prefkey
-import yuku.alkitab.base.util.Highlights
 import yuku.alkitab.base.widget.ConfigurationWrapper
 import yuku.alkitab.debug.R
 
@@ -34,47 +29,6 @@ class DisplayFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_display)
-
-        val originalHighlight = CheckBoxPreference(requireContext()).apply {
-            isPersistent = false
-            setTitle(R.string.highlight_style_original)
-        }
-        val customizeHighlight = Preference(requireContext()).apply {
-            setTitle(R.string.highlight_style_customize)
-        }
-
-        fun updateHighlightPreferences() {
-            val amount = Highlights.normalizeAdjustment(Preferences.getFloat(Prefkey.highlightColorAdjustment, 1f))
-            originalHighlight.isChecked = amount == 0f
-            customizeHighlight.summary = when (amount) {
-                0f, 1f -> null
-                else -> getString(R.string.highlight_style_percentage, (amount * 100).roundToInt())
-            }
-        }
-
-        fun saveHighlightAdjustment(amount: Float) {
-            val normalized = Highlights.normalizeAdjustment(amount)
-            if (Preferences.getFloat(Prefkey.highlightColorAdjustment, 1f) != normalized) {
-                Preferences.setFloat(Prefkey.highlightColorAdjustment, normalized)
-                App.services.uiDimensions.recalculate()
-                AppEvents.emitNeedsRestart()
-            }
-
-            updateHighlightPreferences()
-        }
-
-        originalHighlight.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
-            saveHighlightAdjustment(if (value as Boolean) 0f else 1f)
-            true
-        }
-        customizeHighlight.setOnPreferenceClickListener {
-            HighlightStyleSheet.show(requireActivity(), ::saveHighlightAdjustment)
-            true
-        }
-
-        preferenceScreen.addPreference(originalHighlight)
-        preferenceScreen.addPreference(customizeHighlight)
-        saveHighlightAdjustment(Preferences.getFloat(Prefkey.highlightColorAdjustment, 1f))
 
         findPreference<ListPreference>(getString(R.string.pref_currentReadingDisplay_key))?.let {
             SettingsActivity.autoDisplayListPreference(it)

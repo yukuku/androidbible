@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">Dili ma-download kining inadlaw nga artikulo sa debosyonal sa Bibliya. Susiha ang imong koneksyon ug sulayi pag-usab.</string>
     <string name="devotion_unavailable">Kining inadlaw nga artikulo sa debosyonal sa Bibliya wala pa makuha gikan sa server.</string>
     <string name="devotion_select">Pagpili ug adlaw-adlaw nga artikulo sa debosyonal sa Bibliya ug petsa</string>
-    <string name="highlight_style_original">Gamita ang orihinal nga highlight nga mga kolor</string>
-    <string name="highlight_style_original_value">Gamita ang orihinal nga mga kolor</string>
-    <string name="highlight_style_customize">Ipasibo ang mga kolor sa highlight</string>
-    <string name="highlight_style_current">Gamita ang gipahiangay nga mga kolor</string>
-    <string name="highlight_style_custom_value">%1$d%% gipahiangay</string>
-    <string name="highlight_style_adjustment">I-highlight ang pag-adjust sa kolor</string>
-    <string name="highlight_style_explanation">Itakda kung unsa ka dako ang pagpahiangay sa mga kolor sa highlight sa background sa teksto</string>
-    <string name="highlight_style_zero">Orihinal</string>
-    <string name="highlight_style_one">Gipahiangay</string>
-    <string name="highlight_style_preview">Paglantaw</string>
-    <string name="highlight_style_loading">Nagkarga sa mga bersikulo…</string>
-    <string name="highlight_style_no_verses">Walay mga bersikulo nga magamit alang niini nga preview.</string>
     <string name="data_transfer_send">Ipadala</string>
     <string name="data_transfer_start">Sugdi</string>
     <string name="data_transfer_close">Isira</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Nahuman na. I-tap ang [%1$s] aron isira.</string>
     <string name="dv_version_unavailable">Dili magamit ang gipiling bersiyon. Gigamit ang %1$s. I-tap aron usbon.</string>
     <string name="dv_version_unset">Gigamit ang %1$s. I-tap aron mopili og bersiyon sa Bibliya.</string>
+    <string name="text_appearance_text_color_contrast">Kontras sa kolor sa teksto</string>
 </resources>

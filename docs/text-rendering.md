@@ -51,11 +51,22 @@ Applied reading appearance combines base preferences and per-version size
 adjustments. Pinch zoom updates the reader's base size. Consumers should use
 the shared appearance rather than duplicate preference calculations.
 
-Selection overlays and highlight bands both affect text contrast. Both renderers
-choose readable text for highlighted runs within a selection; red-letter text
-follows the selection's contrast rules. Dictionary links underline text while
-inheriting its color. Saved highlight colors remain unchanged by display-time
-adjustments; see [Markers](modules/markers.md).
+Highlight bands use a fixed opacity and preserve saved colors. Both renderers
+resolve text contrast against the page, selection overlay, and highlight band
+in painting order. Correction applies only to text covered by a highlight or
+verse selection. Unaffected text keeps its configured color, even when it has
+low contrast against the page. Within affected text, the renderers retain
+readable colors and adjust insufficient contrast toward darker or lighter shades.
+Red-letter text retains its own color
+in selected verses as well as ordinary reading. Dictionary links underline text
+while inheriting its color.
+
+The appearance panel provides a text color contrast slider below Color theme.
+Its title shows the target ratio except at 0%, and its value shows the percentage.
+Its independent preference defaults to 70%, targeting 3.45:1 contrast. Each percentage sets a
+minimum contrast target using `1 + 3.5 × percentage / 100`; 0% disables correction.
+Colors already meeting the selected target remain unchanged. The setting does not change saved markers or highlight opacity.
+See [Markers](modules/markers.md).
 
 `VerseTextColorSnapshotTest` renders theme, selection, and highlight combinations
 through both pipelines under `Alkitab/build/snapshots/verse-text-color/`.

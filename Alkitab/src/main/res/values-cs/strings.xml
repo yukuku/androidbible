@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">Toto biblické zamyšlení nelze stáhnout. Zkontrolujte připojení a zkuste to znovu.</string>
     <string name="devotion_unavailable">Toto biblické zamyšlení zatím není na serveru k dispozici.</string>
     <string name="devotion_select">Vyberte biblické zamyšlení a datum</string>
-    <string name="highlight_style_original">Použijte původní barvy zvýraznění</string>
-    <string name="highlight_style_original_value">Použít původní barvy</string>
-    <string name="highlight_style_customize">Přizpůsobení barev zvýraznění</string>
-    <string name="highlight_style_current">Použít přizpůsobené barvy</string>
-    <string name="highlight_style_custom_value">%1$d%% přizpůsobeno</string>
-    <string name="highlight_style_adjustment">Zvýrazněte nastavení barev</string>
-    <string name="highlight_style_explanation">Nastavte, jak moc se barvy zvýraznění přizpůsobí pozadí textu</string>
-    <string name="highlight_style_zero">Původní</string>
-    <string name="highlight_style_one">Přizpůsobené</string>
-    <string name="highlight_style_preview">Náhled</string>
-    <string name="highlight_style_loading">Načítání veršů…</string>
-    <string name="highlight_style_no_verses">Pro tento náhled nejsou k dispozici žádné verše.</string>
     <string name="data_transfer_send">Odeslat</string>
     <string name="data_transfer_start">Spustit</string>
     <string name="data_transfer_close">Zavřít</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Hotovo. Klepnutím na [%1$s] zavřete.</string>
     <string name="dv_version_unavailable">Vybraný překlad není dostupný. Používá se %1$s. Klepnutím jej změníte.</string>
     <string name="dv_version_unset">Používá se %1$s. Klepnutím vyberete překlad Bible.</string>
+    <string name="text_appearance_text_color_contrast">Kontrast barvy textu</string>
 </resources>

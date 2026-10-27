@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">Nie można pobrać tego rozważania. Sprawdź połączenie i spróbuj ponownie.</string>
     <string name="devotion_unavailable">To rozważanie nie jest jeszcze dostępne na serwerze.</string>
     <string name="devotion_select">Wybierz rozważanie i datę</string>
-    <string name="highlight_style_original">Użyj oryginalnych kolorów podświetlenia</string>
-    <string name="highlight_style_original_value">Użyj oryginalnych kolorów</string>
-    <string name="highlight_style_customize">Dostosuj kolory podświetlenia</string>
-    <string name="highlight_style_current">Użyj dostosowanych kolorów</string>
-    <string name="highlight_style_custom_value">%1$d%% dostosowania</string>
-    <string name="highlight_style_adjustment">Regulacja koloru podświetlenia</string>
-    <string name="highlight_style_explanation">Ustaw stopień dostosowania kolorów podświetlenia do tła tekstu</string>
-    <string name="highlight_style_zero">Oryginalne</string>
-    <string name="highlight_style_one">Dostosowane</string>
-    <string name="highlight_style_preview">Podgląd</string>
-    <string name="highlight_style_loading">Ładowanie wersetów…</string>
-    <string name="highlight_style_no_verses">Brak dostępnych wersetów dla tego podglądu.</string>
     <string name="data_transfer_send">Wyślij</string>
     <string name="data_transfer_start">Rozpocznij</string>
     <string name="data_transfer_close">Zamknij</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Gotowe. Dotknij [%1$s], aby zamknąć.</string>
     <string name="dv_version_unavailable">Wybrany przekład jest niedostępny. Używany jest %1$s. Dotknij, aby zmienić.</string>
     <string name="dv_version_unset">Używany jest %1$s. Dotknij, aby wybrać przekład Biblii.</string>
+    <string name="text_appearance_text_color_contrast">Kontrast koloru tekstu</string>
 </resources>

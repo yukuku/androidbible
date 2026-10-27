@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">No se pudo descargar este devocional. Comprueba tu conexión y vuelve a intentarlo.</string>
     <string name="devotion_unavailable">Este devocional aún no está disponible en el servidor.</string>
     <string name="devotion_select">Selecciona un devocional y una fecha</string>
-    <string name="highlight_style_original">Usar colores de resaltado originales</string>
-    <string name="highlight_style_original_value">Usar colores originales</string>
-    <string name="highlight_style_customize">Personaliza los colores de resaltado</string>
-    <string name="highlight_style_current">Usar colores ajustados</string>
-    <string name="highlight_style_custom_value">%1$d%% ajustado</string>
-    <string name="highlight_style_adjustment">Ajuste del color de resaltado</string>
-    <string name="highlight_style_explanation">Ajusta cuánto se adaptan los colores de resaltado al fondo del texto</string>
-    <string name="highlight_style_zero">Originales</string>
-    <string name="highlight_style_one">Ajustados</string>
-    <string name="highlight_style_preview">Vista previa</string>
-    <string name="highlight_style_loading">Cargando versículos…</string>
-    <string name="highlight_style_no_verses">No hay versículos disponibles para esta vista previa.</string>
     <string name="data_transfer_send">Enviar</string>
     <string name="data_transfer_start">Iniciar</string>
     <string name="data_transfer_close">Cerrar</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Listo. Toca [%1$s] para cerrar.</string>
     <string name="dv_version_unavailable">La versión seleccionada no está disponible. Se usa %1$s. Toca para cambiarla.</string>
     <string name="dv_version_unset">Se usa %1$s. Toca para elegir una versión de la Biblia.</string>
+    <string name="text_appearance_text_color_contrast">Contraste del color del texto</string>
 </resources>

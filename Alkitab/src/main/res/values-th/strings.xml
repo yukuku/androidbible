@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">ไม่สามารถดาวน์โหลดบทความประจำวันนี้ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
     <string name="devotion_unavailable">บทความประจำวันนี้ยังไม่มีบนเซิร์ฟเวอร์</string>
     <string name="devotion_select">เลือกบทความประจำวันและวันที่</string>
-    <string name="highlight_style_original">ใช้สีไฮไลต์ดั้งเดิม</string>
-    <string name="highlight_style_original_value">ใช้สีเดิม</string>
-    <string name="highlight_style_customize">ปรับแต่งสีไฮไลท์</string>
-    <string name="highlight_style_current">ใช้สีที่ปรับแล้ว</string>
-    <string name="highlight_style_custom_value">ปรับแล้ว %1$d%%</string>
-    <string name="highlight_style_adjustment">การปรับสีไฮไลท์</string>
-    <string name="highlight_style_explanation">กำหนดระดับการปรับสีไฮไลต์ให้เข้ากับพื้นหลังของข้อความ</string>
-    <string name="highlight_style_zero">สีเดิม</string>
-    <string name="highlight_style_one">ปรับแล้ว</string>
-    <string name="highlight_style_preview">ดูตัวอย่าง</string>
-    <string name="highlight_style_loading">กำลังโหลดข้อพระคัมภีร์…</string>
-    <string name="highlight_style_no_verses">ไม่มีข้อพระคัมภีร์สำหรับตัวอย่างนี้</string>
     <string name="data_transfer_send">ส่ง</string>
     <string name="data_transfer_start">เริ่ม</string>
     <string name="data_transfer_close">ปิด</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">เสร็จแล้ว แตะ [%1$s] เพื่อปิด</string>
     <string name="dv_version_unavailable">ฉบับที่เลือกไม่พร้อมใช้งาน กำลังใช้ %1$s แตะเพื่อเปลี่ยน</string>
     <string name="dv_version_unset">กำลังใช้ %1$s แตะเพื่อเลือกฉบับพระคัมภีร์</string>
+    <string name="text_appearance_text_color_contrast">ความต่างสีข้อความ</string>
 </resources>

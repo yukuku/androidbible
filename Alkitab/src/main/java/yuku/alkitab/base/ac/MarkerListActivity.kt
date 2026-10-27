@@ -3,9 +3,7 @@ package yuku.alkitab.base.ac
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.SpannableStringBuilder
 import android.text.TextUtils
-import android.text.style.BackgroundColorSpan
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -54,6 +52,7 @@ import yuku.alkitab.base.verses.renderVerseText
 import yuku.alkitab.base.verses.withReferencePrefix
 import yuku.alkitab.base.verses.withSearchHilite
 import yuku.alkitab.base.widget.VerseRenderer
+import yuku.alkitab.base.widget.VerseRendererCompose
 import yuku.alkitab.base.widget.VerseRenderer.FormattedTextResult
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.Label
@@ -697,22 +696,17 @@ class MarkerListActivity : BaseActivity() {
                         textSizeMult = textSizeMult,
                         colorOverride = checkedTextColor,
                         legacy = { lSnippet ->
-                            val verseText = legacyVerseText()
-                            val hilited = if (hiliteTokens != null) SearchEngine.hilite(verseText, hiliteTokens, hiliteColor) else SpannableStringBuilder(verseText)
-                            if (info != null) {
-                                val span = BackgroundColorSpan(Highlights.blendOver(info.colorRgb, App.services.uiDimensions.applied().backgroundColor, App.services.uiDimensions.applied().highlightColorAdjustment))
-                                if (info.shouldRenderAsPartialForVerseText(verseText)) {
-                                    hilited.setSpan(span, info.partial!!.startOffset, info.partial!!.endOffset, 0)
-                                } else {
-                                    hilited.setSpan(span, 0, hilited.length, 0)
-                                }
-                            }
+                            if (rawVerseText != null) {
+                                VerseRenderer.render(lText = lSnippet, ari = ari, text = rawVerseText, highlightInfo = info, checked = checked)
+                            } else lSnippet.text = notAvailableText
+                            val verseText = lSnippet.text
+                            val hilited = if (hiliteTokens != null) SearchEngine.hilite(verseText, hiliteTokens, hiliteColor) else verseText
                             lSnippet.text = hilited
                             Appearances.applyTextAppearance(lSnippet, textSizeMult)
                             if (checked) lSnippet.setTextColor(checkedTextColor)
                         },
                         compose = {
-                            val verseText = if (rawVerseText == null) AnnotatedString(notAvailableText) else renderVerseText(ari, rawVerseText, info)
+                            val verseText = if (rawVerseText == null) AnnotatedString(notAvailableText) else VerseRendererCompose.render(false, ari, rawVerseText, highlightInfo = info, checked = checked).text
                             verseText.withSearchHilite(hiliteTokens, hiliteColor)
                         },
                     )

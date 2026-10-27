@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">Deze overdenking kan niet worden gedownload. Controleer uw verbinding en probeer het opnieuw.</string>
     <string name="devotion_unavailable">Deze overdenking is nog niet beschikbaar op de server.</string>
     <string name="devotion_select">Selecteer een overdenking en datum</string>
-    <string name="highlight_style_original">Gebruik originele accentkleuren</string>
-    <string name="highlight_style_original_value">Oorspronkelijke kleuren gebruiken</string>
-    <string name="highlight_style_customize">Markeerkleuren aanpassen</string>
-    <string name="highlight_style_current">Aangepaste kleuren gebruiken</string>
-    <string name="highlight_style_custom_value">%1$d%% aangepast</string>
-    <string name="highlight_style_adjustment">Hoogtepuntkleuraanpassing</string>
-    <string name="highlight_style_explanation">Stel in hoeveel de markeringskleuren aan de tekstachtergrond worden aangepast</string>
-    <string name="highlight_style_zero">Oorspronkelijk</string>
-    <string name="highlight_style_one">Aangepast</string>
-    <string name="highlight_style_preview">Voorbeeld</string>
-    <string name="highlight_style_loading">Verzen laden…</string>
-    <string name="highlight_style_no_verses">Er zijn geen verzen beschikbaar voor deze preview.</string>
     <string name="data_transfer_send">Verzenden</string>
     <string name="data_transfer_start">Starten</string>
     <string name="data_transfer_close">Sluiten</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Gereed. Tik op [%1$s] om te sluiten.</string>
     <string name="dv_version_unavailable">De gekozen vertaling is niet beschikbaar. %1$s wordt gebruikt. Tik om te wijzigen.</string>
     <string name="dv_version_unset">%1$s wordt gebruikt. Tik om een Bijbelvertaling te kiezen.</string>
+    <string name="text_appearance_text_color_contrast">Tekstkleurcontrast</string>
 </resources>

@@ -20,50 +20,11 @@ import org.junit.Test
  */
 class HighlightsTest {
     @Test
-    fun `adjustments use exact hundredths and remain stable when normalized repeatedly`() {
-        for (percent in 0..100) {
-            val amount = percent / 100f
-            assertEquals(amount, Highlights.normalizeAdjustment(amount))
-        }
-        for ((input, expected) in listOf(0.001f to 0f, 0.006f to 0.01f, 0.371f to 0.37f, 0.376f to 0.38f, 0.994f to 0.99f, 0.998f to 1f)) {
-            assertEquals(expected, Highlights.normalizeAdjustment(input))
-            assertEquals(expected, Highlights.normalizeAdjustment(Highlights.normalizeAdjustment(input)))
+    fun `highlight opacity is always exactly 160 and stored RGB is preserved`() {
+        for (color in listOf(0xffff00, 0xff0000, 0x0000ff, 0x00112233, 0xff112233.toInt())) {
+            assertEquals(0xa0000000.toInt() or (color and 0xffffff), Highlights.alphaMix(color))
         }
     }
-
-    @Test
-    fun `zero adjustment reproduces fixed opacity regardless of background or input alpha`() {
-        for (background in listOf(0xffffff, 0x000000, 0xf5deb3)) {
-            for (color in listOf(0xffff00, 0xff0000, 0x0000ff, 0x00112233, 0xff112233.toInt())) {
-                assertEquals(0xa0000000.toInt() or (color and 0xffffff), Highlights.blendOver(color, background, 0f))
-            }
-        }
-    }
-
-    @Test
-    fun `adjustment interpolates opacity while preserving RGB and the adaptive default`() {
-        for (background in listOf(0xffffff, 0x000000, 0xf5deb3)) {
-            for (color in listOf(0xffff00, 0xff0000, 0x0000ff)) {
-                val adaptive = Highlights.blendOver(color, background)
-                assertEquals(adaptive, Highlights.blendOver(color, background, 1f))
-                val halfway = Highlights.blendOver(color, background, 0.5f)
-                assertEquals((160 + (adaptive ushr 24) + 1) / 2, halfway ushr 24)
-                assertEquals(color, halfway and 0xffffff)
-                // Cache hits must still honor the amount on each call.
-                assertEquals(adaptive, Highlights.blendOver(color, background, 1f))
-                assertEquals(160, Highlights.blendOver(color, background, 0f) ushr 24)
-            }
-        }
-    }
-
-    @Test
-    fun `invalid adjustments are bounded and nonfinite values use the default`() {
-        assertEquals(0f, Highlights.normalizeAdjustment(-1f))
-        assertEquals(1f, Highlights.normalizeAdjustment(2f))
-        assertEquals(1f, Highlights.normalizeAdjustment(Float.NaN))
-        assertEquals(1f, Highlights.normalizeAdjustment(Float.POSITIVE_INFINITY))
-    }
-
 
     // region encode → decode round-trip (full-verse)
 
@@ -245,101 +206,6 @@ class HighlightsTest {
         assertNotNull(info)
         assertEquals(0, info!!.colorRgb)
         assertNull(info.partial)
-    }
-
-    // endregion
-
-    // region blendOver
-
-    private fun alphaOf(argb: Int) = (argb ushr 24) and 0xff
-
-    private fun rgbOf(argb: Int) = argb and 0xffffff
-
-    /** Alpha-composite [argb] onto [bg], the same way a BackgroundColorSpan is drawn. */
-    private fun composite(argb: Int, bg: Int): Int {
-        val a = alphaOf(argb) / 255f
-        var res = 0
-        for (shift in intArrayOf(16, 8, 0)) {
-            val c = (argb shr shift) and 0xff
-            val b = (bg shr shift) and 0xff
-            res = res or ((a * c + (1f - a) * b + 0.5f).toInt().coerceIn(0, 0xff) shl shift)
-        }
-        return res
-    }
-
-    @Test
-    fun `blendOver preserves the input RGB bits and ignores any alpha bits the caller passes`() {
-        val bg = 0xf0f0f0
-
-        assertEquals(0x123456, rgbOf(Highlights.blendOver(0x123456, bg)))
-        assertEquals(0x000000, rgbOf(Highlights.blendOver(0x000000, bg)))
-        assertEquals(0xffffff, rgbOf(Highlights.blendOver(0xffffff, bg)))
-        assertEquals(
-            Highlights.blendOver(0x123456, bg),
-            Highlights.blendOver(0xff123456.toInt(), bg),
-        )
-    }
-
-    @Test
-    fun `blendOver is fully opaque when the highlight color is the background color`() {
-        assertEquals(0xff, alphaOf(Highlights.blendOver(0xf0f0f0, 0xf0f0f0)))
-        assertEquals(0xff, alphaOf(Highlights.blendOver(0x000000, 0x000000)))
-    }
-
-    @Test
-    fun `blendOver applies a color that barely differs from the background at close to full strength`() {
-        assertTrue(alphaOf(Highlights.blendOver(0xe8e8e8, 0xf0f0f0)) > 0xe0)
-        assertTrue(alphaOf(Highlights.blendOver(0x101010, 0x000000)) > 0xe0)
-    }
-
-    @Test
-    fun `blendOver gets more transparent the further the highlight color sits from the background`() {
-        val bg = 0xffffff
-        val yellow = alphaOf(Highlights.blendOver(0xffff00, bg))
-        val red = alphaOf(Highlights.blendOver(0xff0000, bg))
-        val blue = alphaOf(Highlights.blendOver(0x0000ff, bg))
-
-        assertTrue("yellow ($yellow) sits nearest to white, so it stays the most opaque", yellow > red)
-        assertTrue("red ($red) sits nearer to white than blue ($blue) does", red > blue)
-    }
-
-    @Test
-    fun `blendOver picks a different alpha for the same color depending on the background it covers`() {
-        assertNotEquals(
-            alphaOf(Highlights.blendOver(0xffff00, 0xffffff)),
-            alphaOf(Highlights.blendOver(0xffff00, 0x000000)),
-        )
-    }
-
-    @Test
-    fun `blendOver keeps every preset color separated from a black background by the sRGB floor`() {
-        for (rgb in intArrayOf(0xff0000, 0xff8000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff)) {
-            val band = composite(Highlights.blendOver(rgb, 0x000000), 0x000000)
-            val separation = distance(band, 0x000000)
-            assertTrue(
-                "%06x on black composited to %06x, only %.3f away".format(rgb, band, separation),
-                separation > 0.28f,
-            )
-        }
-    }
-
-    @Test
-    fun `blendOver lands a bright color on a dark background far below the strength it needs on a light one`() {
-        for (rgb in intArrayOf(0xffff00, 0x00ffff, 0x00ff00)) {
-            assertTrue(
-                "%06x should be applied much more thinly on black than on white".format(rgb),
-                alphaOf(Highlights.blendOver(rgb, 0x000000)) < alphaOf(Highlights.blendOver(rgb, 0xffffff)),
-            )
-        }
-    }
-
-    private fun distance(x: Int, y: Int): Float {
-        var sum = 0f
-        for (shift in intArrayOf(16, 8, 0)) {
-            val d = (((x shr shift) and 0xff) - ((y shr shift) and 0xff)) / 255f
-            sum += d * d
-        }
-        return kotlin.math.sqrt(sum)
     }
 
     // endregion

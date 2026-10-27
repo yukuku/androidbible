@@ -521,18 +521,6 @@
     <string name="devotion_download_failed">Δεν ήταν δυνατή η λήψη αυτού του βιβλικού στοχασμού. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</string>
     <string name="devotion_unavailable">Αυτός ο βιβλικός στοχασμός δεν είναι ακόμη διαθέσιμος στον διακομιστή.</string>
     <string name="devotion_select">Επιλέξτε βιβλικό στοχασμό και ημερομηνία</string>
-    <string name="highlight_style_original">Χρησιμοποιήστε πρωτότυπα χρώματα επισήμανσης</string>
-    <string name="highlight_style_original_value">Χρήση αρχικών χρωμάτων</string>
-    <string name="highlight_style_customize">Προσαρμόστε τα χρώματα επισήμανσης</string>
-    <string name="highlight_style_current">Χρήση προσαρμοσμένων χρωμάτων</string>
-    <string name="highlight_style_custom_value">%1$d%% προσαρμογή</string>
-    <string name="highlight_style_adjustment">Επισήμανση προσαρμογής χρώματος</string>
-    <string name="highlight_style_explanation">Ορίστε πόσο προσαρμόζονται τα χρώματα επισήμανσης στο φόντο του κειμένου</string>
-    <string name="highlight_style_zero">Αρχικά</string>
-    <string name="highlight_style_one">Προσαρμοσμένα</string>
-    <string name="highlight_style_preview">Προεπισκόπηση</string>
-    <string name="highlight_style_loading">Φόρτωση στίχων…</string>
-    <string name="highlight_style_no_verses">Δεν υπάρχουν διαθέσιμοι στίχοι για αυτήν την προεπισκόπηση.</string>
     <string name="data_transfer_send">Αποστολή</string>
     <string name="data_transfer_start">Έναρξη</string>
     <string name="data_transfer_close">Κλείσιμο</string>
@@ -544,4 +532,5 @@
     <string name="data_transfer_import_done">Ολοκληρώθηκε. Πατήστε [%1$s] για κλείσιμο.</string>
     <string name="dv_version_unavailable">Η επιλεγμένη μετάφραση δεν είναι διαθέσιμη. Χρησιμοποιείται η %1$s. Πατήστε για αλλαγή.</string>
     <string name="dv_version_unset">Χρησιμοποιείται η %1$s. Πατήστε για να επιλέξετε μετάφραση της Βίβλου.</string>
+    <string name="text_appearance_text_color_contrast">Αντίθεση χρώματος κειμένου</string>
 </resources>
