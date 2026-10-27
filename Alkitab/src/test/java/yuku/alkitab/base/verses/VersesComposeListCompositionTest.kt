@@ -119,36 +119,37 @@ class VersesComposeListCompositionTest {
     private class Harness(
         val controller: VersesComposeControllerImpl,
         val view: VersesComposeView,
+        val automaticFrameClock: BroadcastFrameClock?,
+        var viewportHeight: Int = 640,
     )
 
     /**
-     * Builds the controller with its data already set BEFORE the view
-     * attaches, so the chapter renders in the attach-time initial composition
-     * and scrolls compose new rows inside the measure pass (LazyLayout
-     * subcomposition). This keeps the tests independent of Robolectric's
-     * recomposition frame clock, which only reliably ticks for the first
-     * activity of a test sandbox — production recomposition paths are
-     * exercised by the sandbox-isolated data-change test below.
+     * Each list has its own recomposition clock so tests do not depend on
+     * Robolectric's shared Choreographer. A supplied clock lets animation
+     * tests control frame time themselves.
      */
-    private fun composeList(verseCount: Int, frameClock: BroadcastFrameClock? = null): Harness {
+    private fun composeList(
+        verseCount: Int,
+        frameClock: BroadcastFrameClock? = null,
+        initialData: VersesDataModel = dataModel(verseCount),
+    ): Harness {
         val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
         activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
 
         val view = VersesComposeView(activity)
         val controller = VersesComposeControllerImpl(view, "test")
-        controller.versesDataModel = dataModel(verseCount)
+        controller.versesDataModel = initialData
         val frame = FrameLayout(activity)
         activity.setContentView(frame)
-        if (frameClock != null) {
-            val dispatcher = Handler(Looper.getMainLooper()).asCoroutineDispatcher()
-            view.setParentCompositionContext(frame.createLifecycleAwareWindowRecomposer(dispatcher + frameClock))
-        }
+        val compositionFrameClock = frameClock ?: BroadcastFrameClock()
+        val dispatcher = Handler(Looper.getMainLooper()).asCoroutineDispatcher()
+        view.setParentCompositionContext(frame.createLifecycleAwareWindowRecomposer(dispatcher + compositionFrameClock))
         frame.addView(
             view,
             ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT),
         )
 
-        val harness = Harness(controller, view)
+        val harness = Harness(controller, view, compositionFrameClock.takeIf { frameClock == null })
         var rounds = 0
         while (harness.controller.listState.layoutInfo.visibleItemsInfo.isEmpty()) {
             pumpLayout(harness)
@@ -163,12 +164,16 @@ class VersesComposeListCompositionTest {
         // scroll-command → forced remeasure chains fully settle before
         // assertions.
         repeat(2) {
+            Snapshot.sendApplyNotifications()
+            idleLoopers()
+            harness.automaticFrameClock?.sendFrame(System.nanoTime())
             idleLoopers()
             harness.view.measure(
                 View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(VIEWPORT_HEIGHT_PX, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(harness.viewportHeight, View.MeasureSpec.EXACTLY),
             )
-            harness.view.layout(0, 0, VIEWPORT_WIDTH_PX, VIEWPORT_HEIGHT_PX)
+            harness.view.layout(0, 0, VIEWPORT_WIDTH_PX, harness.viewportHeight)
+            harness.view.draw(Canvas())
             idleLoopers()
         }
     }
@@ -181,6 +186,9 @@ class VersesComposeListCompositionTest {
     private fun pumpFrames(harness: Harness, frames: Int = 60) {
         repeat(frames) {
             Shadows.shadowOf(Looper.getMainLooper()).idleFor(20, TimeUnit.MILLISECONDS)
+            Snapshot.sendApplyNotifications()
+            harness.automaticFrameClock?.sendFrame(System.nanoTime())
+            idleLoopers()
             harness.view.measure(
                 View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(VIEWPORT_HEIGHT_PX, View.MeasureSpec.EXACTLY),
@@ -222,6 +230,17 @@ class VersesComposeListCompositionTest {
         pumpLayout(harness)
 
         assertEquals(40, harness.controller.getVerse_1BasedOnScroll())
+    }
+
+    @Test
+    fun `verse navigation uses the destination pane size when its viewport shrinks`() {
+        val harness = composeList(12)
+
+        harness.viewportHeight = 160
+        harness.controller.scrollToVerse(10)
+        pumpLayout(harness)
+
+        assertEquals(10, harness.controller.getVerse_1BasedOnScroll())
     }
 
     @Test
@@ -270,6 +289,58 @@ class VersesComposeListCompositionTest {
         pumpLayout(harness)
 
         assertEquals(50, harness.controller.getVerse_1BasedOnScroll())
+    }
+
+    @Test
+    fun `verse navigation uses the destination chapter when section heading positions change`() {
+        val chapter = dataModel(30)
+        val withHeadings = chapter.copy(
+            pericopeBlockCount_ = 30,
+            pericopeAris_ = IntArray(30) { Ari.encode(1, 2, it + 1) },
+            pericopeBlocks_ = List(30) {
+                PericopeBlock().apply {
+                    title = "Section ${it + 1}"
+                    parallels = emptyArray()
+                }
+            },
+        )
+        val withoutHeadings = chapter.copy(
+            ari_bc_ = Ari.encode(1, 3, 0),
+            pericopeBlockCount_ = 0,
+            pericopeAris_ = IntArray(0),
+            pericopeBlocks_ = emptyList(),
+        )
+        val frameClock = BroadcastFrameClock()
+        val harness = composeList(30, frameClock, initialData = withHeadings)
+        var frameTimeNanos = 0L
+        fun settle() {
+            repeat(20) {
+                Snapshot.sendApplyNotifications()
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(20, TimeUnit.MILLISECONDS)
+                frameTimeNanos += 20_000_000L
+                frameClock.sendFrame(frameTimeNanos)
+                pumpLayout(harness)
+                harness.view.draw(Canvas())
+            }
+        }
+        settle()
+
+        harness.controller.versesDataModel = withoutHeadings
+        harness.controller.scrollToVerse(10)
+        settle()
+        assertEquals(10, harness.controller.getVerse_1BasedOnScroll())
+
+        harness.controller.versesDataModel = withoutHeadings.copy()
+        harness.controller.scrollToVerse(20)
+        settle()
+        assertEquals(20, harness.controller.getVerse_1BasedOnScroll())
+
+        harness.controller.versesDataModel = withHeadings
+        harness.controller.scrollToVerse(10)
+        settle()
+        assertEquals(10, harness.controller.getVerse_1BasedOnScroll())
+        val first = harness.controller.listState.layoutInfo.visibleItemsInfo.first()
+        assertEquals(VersesDataModel.ItemType.pericope, withHeadings.getItemViewType(first.index))
     }
 
     @Test

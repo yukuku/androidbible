@@ -365,7 +365,9 @@ class VersesComposeControllerImpl(
 
         launchScroll { data ->
             if (position >= data.itemCount) return@launchScroll
-            listState.scrollToItem(position, snapOffsetPx(position))
+            // Apply the jump with the next layout so a split pane's pending
+            // size change cannot clamp it against the old viewport.
+            listState.requestScrollToItem(position, snapOffsetPx(position))
         }
     }
 
