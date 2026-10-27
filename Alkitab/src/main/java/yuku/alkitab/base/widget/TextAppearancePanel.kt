@@ -391,8 +391,8 @@ class TextAppearancePanel(
         ) {
             Text(
                 text = stringResource(R.string.text_appearance_font),
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.weight(1f).align(Alignment.Bottom),
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
             )
             IconButton(onClick = onClose) {
