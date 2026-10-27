@@ -28,10 +28,10 @@ class AppliedDimensionsTest {
     }
 
     @Test
-    fun `text adjustment defaults to full contrast correction and persists custom and original values`() {
+    fun `text adjustment defaults to seventy percent contrast correction and persists custom and original values`() {
         Preferences.remove(Prefkey.textColorAdjustment)
         try {
-            assertEquals(1f, S.calculateDimensionsFromPreferences().textColorAdjustment)
+            assertEquals(0.7f, S.calculateDimensionsFromPreferences().textColorAdjustment)
             for (amount in listOf(0f, 0.37f, 1f)) {
                 Preferences.setFloat(Prefkey.textColorAdjustment, amount)
                 S.recalculate()

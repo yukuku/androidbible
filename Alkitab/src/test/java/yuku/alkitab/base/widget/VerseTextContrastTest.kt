@@ -35,6 +35,7 @@ class VerseTextContrastTest {
     fun setUp() {
         yuku.afw.App.initWithAppContext(ApplicationProvider.getApplicationContext())
         dims = S.CalculatedDimensions().apply {
+            textColorAdjustment = 1f
             fontColor = 0xff212121.toInt()
             fontRedColor = 0xffb71c1c.toInt()
             verseNumberColor = 0xff828282.toInt()

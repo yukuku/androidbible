@@ -116,7 +116,7 @@ class TextAppearancePanel(
     private var uiSplitVersionId by mutableStateOf<String?>(null)
     private var uiSplitVersionLongName by mutableStateOf<String?>(null)
     private var uiPerVersionMult by mutableStateOf(1f)
-    private var uiTextColorAdjustment by mutableStateOf(1f)
+    private var uiTextColorAdjustment by mutableStateOf(TextColorUtil.DEFAULT_ADJUSTMENT)
     private var uiNightMode by mutableStateOf(false)
     private var uiColors by mutableStateOf(intArrayOf(0, 0, 0, 0))
 
@@ -162,7 +162,7 @@ class TextAppearancePanel(
             App.context.resources.getInteger(R.integer.pref_ukuranHuruf2_default).toFloat(),
         )
         uiLineSpacing = Preferences.getFloat(Prefkey.lineSpacingMult, DEFAULT_LINE_SPACING)
-        uiTextColorAdjustment = TextColorUtil.normalizeAdjustment(Preferences.getFloat(Prefkey.textColorAdjustment, 1f))
+        uiTextColorAdjustment = TextColorUtil.normalizeAdjustment(Preferences.getFloat(Prefkey.textColorAdjustment, TextColorUtil.DEFAULT_ADJUSTMENT))
         uiNightMode = Preferences.getBoolean(Prefkey.is_night_mode, false)
         uiColors = ColorThemes.getCurrentColors(uiNightMode)
 

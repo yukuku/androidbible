@@ -170,6 +170,7 @@ class VerseTextColorSnapshotTest {
         )
 
         dims = S.CalculatedDimensions().apply {
+            textColorAdjustment = 1f
             fontSize2dp = 17f
             fontFace = Typeface.DEFAULT
             fontBold = Typeface.NORMAL

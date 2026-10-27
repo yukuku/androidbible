@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 
 object TextColorUtil {
+    const val DEFAULT_ADJUSTMENT = 0.7f
 
     /** Alpha for the selection overlay on a checked verse row. */
     const val CHECKED_VERSE_OVERLAY_ALPHA = 0xa0
@@ -32,7 +33,7 @@ object TextColorUtil {
     private val contrastCache = ConcurrentHashMap<ContrastKey, Int>()
 
     fun normalizeAdjustment(value: Float): Float =
-        if (value.isFinite()) (value.coerceIn(0f, 1f) * 100f).roundToInt() / 100f else 1f
+        if (value.isFinite()) (value.coerceIn(0f, 1f) * 100f).roundToInt() / 100f else DEFAULT_ADJUSTMENT
 
     fun targetContrast(adjustment: Float): Double =
         1.0 + 3.5 * (normalizeAdjustment(adjustment) * 100f).roundToInt() / 100.0

@@ -63,7 +63,7 @@ while inheriting its color.
 
 The appearance panel provides a text color contrast slider below Color theme.
 Its title shows the target ratio except at 0%, and its value shows the percentage.
-Its independent preference defaults to 100%, targeting 4.5:1 contrast. Each percentage sets a
+Its independent preference defaults to 70%, targeting 3.45:1 contrast. Each percentage sets a
 minimum contrast target using `1 + 3.5 × percentage / 100`; 0% disables correction.
 Colors already meeting the selected target remain unchanged. The setting does not change saved markers or highlight opacity.
 See [Markers](modules/markers.md).

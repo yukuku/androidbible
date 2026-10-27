@@ -85,7 +85,9 @@ class TextAppearanceContrastTest {
         fun slider() = nodes().single { it.config.getOrNull(SemanticsProperties.ProgressBarRangeInfo)?.range == 0f..100f }
         try {
             settle(40)
-            assertEquals(100f, slider().config[SemanticsProperties.ProgressBarRangeInfo].current)
+            assertEquals(70f, slider().config[SemanticsProperties.ProgressBarRangeInfo].current)
+            textNode("$title (${if (language == "in") "3,45" else "3.45"}:1)")
+            textNode("70%")
             for ((index, percent) in listOf(0, 25, 50, 57, 100).withIndex()) {
                 assertTrue(requireNotNull(slider().config[SemanticsActions.SetProgress].action).invoke(percent.toFloat()))
                 settle(5)

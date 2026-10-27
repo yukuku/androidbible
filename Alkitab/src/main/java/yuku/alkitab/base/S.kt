@@ -42,7 +42,7 @@ object S {
         var lineSpacingMult = 0f
 
         @JvmField
-        var textColorAdjustment = 1f
+        var textColorAdjustment = TextColorUtil.DEFAULT_ADJUSTMENT
 
         @JvmField
         var fontBold = 0
@@ -189,7 +189,7 @@ object S {
         val res = CalculatedDimensions()
         val resources = App.context.resources
         res.textColorAdjustment = TextColorUtil.normalizeAdjustment(
-            Preferences.getFloat(Prefkey.textColorAdjustment, 1f),
+            Preferences.getFloat(Prefkey.textColorAdjustment, TextColorUtil.DEFAULT_ADJUSTMENT),
         )
 
         //# configure font size

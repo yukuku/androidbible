@@ -92,11 +92,11 @@ class TextColorUtilTest {
     }
 
     @Test
-    fun `invalid adjustment values are bounded and nonfinite values use full correction`() {
+    fun `invalid adjustment values are bounded and nonfinite values use the default correction`() {
         assertEquals(0f, TextColorUtil.normalizeAdjustment(-1f))
         assertEquals(1f, TextColorUtil.normalizeAdjustment(2f))
-        assertEquals(1f, TextColorUtil.normalizeAdjustment(Float.NaN))
-        assertEquals(1f, TextColorUtil.normalizeAdjustment(Float.POSITIVE_INFINITY))
+        assertEquals(0.7f, TextColorUtil.normalizeAdjustment(Float.NaN))
+        assertEquals(0.7f, TextColorUtil.normalizeAdjustment(Float.POSITIVE_INFINITY))
         assertEquals(0.37f, TextColorUtil.normalizeAdjustment(0.371f))
         assertEquals(0.38f, TextColorUtil.normalizeAdjustment(0.376f))
     }
