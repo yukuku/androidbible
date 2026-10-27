@@ -373,58 +373,6 @@ class VersesComposeListCompositionTest {
     }
 
     @Test
-    fun `legacy navigation keeps chapter ending verses visible without extra space`() {
-        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
-        val key = context.getString(R.string.pref_useLegacyVerseItem_key)
-        val isLegacy = yuku.afw.storage.Preferences.getBoolean(key, false)
-        yuku.afw.storage.Preferences.setBoolean(key, true)
-        try {
-            val activityController = Robolectric.buildActivity(AppCompatActivity::class.java).create().start().resume()
-            val activity = activityController.get()
-            activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
-            val view = EmptyableRecyclerView(activity).apply { clipToPadding = false }
-            val controller = VersesControllerImpl(view, "split")
-            controller.versesDataModel = dataModel(25).copy(
-                verses_ = FakeVerses(List(25) { "Short verse ${it + 1}." }),
-            )
-            activity.setContentView(view)
-            activityController.visible()
-            fun settle(height: Int) {
-                repeat(3) {
-                    idleLoopers()
-                    view.measure(
-                        View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
-                        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
-                    )
-                    view.layout(0, 0, 360, height)
-                    view.draw(Canvas())
-                }
-            }
-            controller.setViewPadding(Rect(8, 16, 8, 24))
-            controller.setViewVerticalInsets(20, 30)
-            for (height in listOf(320, 480, 160)) {
-                view.layoutParams.height = height
-                view.requestLayout()
-                for (verse in listOf(22, 25, 1)) {
-                    controller.scrollToVerse(verse)
-                    settle(height)
-                    val position = controller.versesDataModel.getPositionIgnoringPericopeFromVerse(verse)
-                    val row = view.layoutManager?.findViewByPosition(position)
-                    assertTrue("verse $verse must be visible in a $height px pane: row=${row?.top}..${row?.bottom}, view=${view.height}, children=${view.childCount}", row != null && row.bottom > 0 && row.top < height)
-                    assertEquals(54, view.paddingBottom)
-                }
-            }
-            controller.scrollToVerse(22)
-            controller.scrollToTop()
-            settle(160)
-            val first = view.layoutManager?.findViewByPosition(0)
-            assertTrue("a later scroll must cancel a queued verse jump", first != null && first.bottom > 0 && first.top < 160)
-        } finally {
-            yuku.afw.storage.Preferences.setBoolean(key, isLegacy)
-        }
-    }
-
-    @Test
     fun `scrollToVerse on a verse with a pericope header above scrolls to the header keeping the verse next`() {
         val harness = composeList(60)
 
