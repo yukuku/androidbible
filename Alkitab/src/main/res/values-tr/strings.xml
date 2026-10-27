@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Tamamlandı. Kapatmak için [%1$s] düğmesine dokunun.</string>
     <string name="dv_version_unavailable">Seçilen çeviri kullanılamıyor. %1$s kullanılıyor. Değiştirmek için dokunun.</string>
     <string name="dv_version_unset">%1$s kullanılıyor. Bir Kutsal Kitap çevirisi seçmek için dokunun.</string>
-    <string name="text_color_adjustment">Metin rengi ayarı</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Vurgulanan metnin veya seçilen ayetlerin okunabilirliği için.</string>
-    <string name="text_color_adjustment_value">%1$d%% (kontrast oranı %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Metin rengi kontrastı</string>
 </resources>

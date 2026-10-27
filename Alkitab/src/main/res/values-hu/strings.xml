@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Kész. A bezáráshoz koppints a(z) [%1$s] gombra.</string>
     <string name="dv_version_unavailable">A kiválasztott fordítás nem érhető el. A használt fordítás: %1$s. Koppintson a módosításhoz.</string>
     <string name="dv_version_unset">A használt fordítás: %1$s. Koppintson egy bibliafordítás kiválasztásához.</string>
-    <string name="text_color_adjustment">Szövegszín módosítása</string>
-    <string name="text_color_adjustment_explanation" formatted="false">A kiemelt szöveg és a kijelölt versek olvashatóságáért.</string>
-    <string name="text_color_adjustment_value">%1$d%% (kontrasztarány %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Szövegszín kontrasztja</string>
 </resources>

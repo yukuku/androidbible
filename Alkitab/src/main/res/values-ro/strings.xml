@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Gata. Atingeți [%1$s] pentru a închide.</string>
     <string name="dv_version_unavailable">Traducerea selectată nu este disponibilă. Se folosește %1$s. Atingeți pentru a schimba.</string>
     <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
-    <string name="text_color_adjustment">Ajustarea culorii textului</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Pentru lizibilitatea textului evidențiat sau din versetele selectate.</string>
-    <string name="text_color_adjustment_value">%1$d%% (raport de contrast de %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Contrastul culorii textului</string>
 </resources>

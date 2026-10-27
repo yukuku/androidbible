@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Gereed. Tik op [%1$s] om te sluiten.</string>
     <string name="dv_version_unavailable">De gekozen vertaling is niet beschikbaar. %1$s wordt gebruikt. Tik om te wijzigen.</string>
     <string name="dv_version_unset">%1$s wordt gebruikt. Tik om een Bijbelvertaling te kiezen.</string>
-    <string name="text_color_adjustment">Tekstkleur aanpassen</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Voor leesbaarheid van gemarkeerde tekst of geselecteerde verzen.</string>
-    <string name="text_color_adjustment_value">%1$d%% (contrastverhouding van %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Tekstkleurcontrast</string>
 </resources>

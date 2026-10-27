@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Готово. Докоснете [%1$s], за да затворите.</string>
     <string name="dv_version_unavailable">Избраната версия не е налична. Използва се %1$s. Докоснете, за да промените.</string>
     <string name="dv_version_unset">Използва се %1$s. Докоснете, за да изберете библейски превод.</string>
-    <string name="text_color_adjustment">Корекция на цвета на текста</string>
-    <string name="text_color_adjustment_explanation" formatted="false">За четливост на текста при подчертаване или в избрани стихове.</string>
-    <string name="text_color_adjustment_value">%1$d%% (контрастно съотношение %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Контраст на цвета на текста</string>
 </resources>

@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Nahuman na. I-tap ang [%1$s] aron isira.</string>
     <string name="dv_version_unavailable">Dili magamit ang gipiling bersiyon. Gigamit ang %1$s. I-tap aron usbon.</string>
     <string name="dv_version_unset">Gigamit ang %1$s. I-tap aron mopili og bersiyon sa Bibliya.</string>
-    <string name="text_color_adjustment">Pag-adjust sa kolor sa teksto</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Aron sayon basahon ang teksto kon gi-highlight o anaa sa gipiling mga bersikulo.</string>
-    <string name="text_color_adjustment_value">%1$d%% (contrast ratio nga %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Kontras sa kolor sa teksto</string>
 </resources>

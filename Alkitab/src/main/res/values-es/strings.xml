@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Listo. Toca [%1$s] para cerrar.</string>
     <string name="dv_version_unavailable">La versión seleccionada no está disponible. Se usa %1$s. Toca para cambiarla.</string>
     <string name="dv_version_unset">Se usa %1$s. Toca para elegir una versión de la Biblia.</string>
-    <string name="text_color_adjustment">Ajuste del color del texto</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Para facilitar la lectura del texto resaltado o de los versículos seleccionados.</string>
-    <string name="text_color_adjustment_value">%1$d%% (relación de contraste de %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Contraste del color del texto</string>
 </resources>

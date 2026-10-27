@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Gotowe. Dotknij [%1$s], aby zamknąć.</string>
     <string name="dv_version_unavailable">Wybrany przekład jest niedostępny. Używany jest %1$s. Dotknij, aby zmienić.</string>
     <string name="dv_version_unset">Używany jest %1$s. Dotknij, aby wybrać przekład Biblii.</string>
-    <string name="text_color_adjustment">Dostosowanie koloru tekstu</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Dla czytelności wyróżnionego tekstu lub zaznaczonych wersetów.</string>
-    <string name="text_color_adjustment_value">%1$d%% (współczynnik kontrastu %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Kontrast koloru tekstu</string>
 </resources>

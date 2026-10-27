@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">เสร็จแล้ว แตะ [%1$s] เพื่อปิด</string>
     <string name="dv_version_unavailable">ฉบับที่เลือกไม่พร้อมใช้งาน กำลังใช้ %1$s แตะเพื่อเปลี่ยน</string>
     <string name="dv_version_unset">กำลังใช้ %1$s แตะเพื่อเลือกฉบับพระคัมภีร์</string>
-    <string name="text_color_adjustment">การปรับสีข้อความ</string>
-    <string name="text_color_adjustment_explanation" formatted="false">เพื่อให้อ่านข้อความที่ไฮไลต์หรือข้อพระคัมภีร์ที่เลือกได้ง่าย</string>
-    <string name="text_color_adjustment_value">%1$d%% (อัตราส่วนความต่างสี %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">ความต่างสีข้อความ</string>
 </resources>

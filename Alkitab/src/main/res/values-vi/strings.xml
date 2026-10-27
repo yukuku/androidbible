@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Hoàn tất. Nhấn [%1$s] để đóng.</string>
     <string name="dv_version_unavailable">Bản dịch đã chọn không khả dụng. Đang dùng %1$s. Nhấn để thay đổi.</string>
     <string name="dv_version_unset">Đang dùng %1$s. Nhấn để chọn bản dịch Kinh Thánh.</string>
-    <string name="text_color_adjustment">Điều chỉnh màu chữ</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Giúp dễ đọc văn bản được tô sáng hoặc trong các câu được chọn.</string>
-    <string name="text_color_adjustment_value">%1$d%% (tỷ lệ tương phản %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Độ tương phản màu chữ</string>
 </resources>

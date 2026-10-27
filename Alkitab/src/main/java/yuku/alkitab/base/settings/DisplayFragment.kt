@@ -7,13 +7,8 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import kotlin.math.roundToInt
-import yuku.afw.storage.Preferences
-import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.events.AppEvents
-import yuku.alkitab.base.storage.Prefkey
-import yuku.alkitab.base.util.TextColorUtil
 import yuku.alkitab.base.widget.ConfigurationWrapper
 import yuku.alkitab.debug.R
 
@@ -34,27 +29,6 @@ class DisplayFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_display)
-
-        val textAdjustment = TextAdjustmentPreference(requireContext()).apply {
-            key = Prefkey.textColorAdjustment.name
-            isPersistent = false
-            setTitle(R.string.text_color_adjustment)
-            setSummary(R.string.text_color_adjustment_explanation)
-            min = 0
-            max = 100
-            seekBarIncrement = 1
-            updatesContinuously = true
-            value = (TextColorUtil.normalizeAdjustment(Preferences.getFloat(Prefkey.textColorAdjustment, 1f)) * 100).roundToInt()
-        }
-        textAdjustment.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
-            val percent = value as Int
-            Preferences.setFloat(Prefkey.textColorAdjustment, percent / 100f)
-            textAdjustment.updateValueLabel(percent)
-            App.services.uiDimensions.recalculate()
-            AppEvents.emitNeedsRestart()
-            true
-        }
-        preferenceScreen.addPreference(textAdjustment)
 
         findPreference<ListPreference>(getString(R.string.pref_currentReadingDisplay_key))?.let {
             SettingsActivity.autoDisplayListPreference(it)

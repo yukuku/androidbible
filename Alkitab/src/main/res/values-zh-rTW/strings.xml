@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">已完成。輕觸[%1$s]關閉。</string>
     <string name="dv_version_unavailable">所選譯本無法使用。正在使用%1$s。點選以變更。</string>
     <string name="dv_version_unset">正在使用%1$s。點選以選擇聖經譯本。</string>
-    <string name="text_color_adjustment">文字顏色調整</string>
-    <string name="text_color_adjustment_explanation" formatted="false">讓標示文字或所選經文更容易閱讀。</string>
-    <string name="text_color_adjustment_value">%1$d%% (對比度 %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">文字顏色對比度</string>
 </resources>

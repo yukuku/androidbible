@@ -582,7 +582,5 @@
     <string name="data_transfer_export_ready">Tap [%1$s] to send your exported data to another app.</string>
     <string name="data_transfer_import_preview">The operations above are a preview. Tap [%1$s] to import the data or [%2$s] to cancel.</string>
     <string name="data_transfer_import_done">Done. Tap [%1$s] to close.</string>
-    <string name="text_color_adjustment">Text color adjustment</string>
-    <string name="text_color_adjustment_explanation" formatted="false">For text readability when highlighted or in selected verses.</string>
-    <string name="text_color_adjustment_value">%1$d%% (contrast ratio of %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Text color contrast</string>
 </resources>

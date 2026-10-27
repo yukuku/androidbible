@@ -532,7 +532,5 @@
     <string name="data_transfer_import_done">Pabeigts. Pieskarieties [%1$s], lai aizvērtu.</string>
     <string name="dv_version_unavailable">Izvēlētais tulkojums nav pieejams. Tiek izmantots %1$s. Pieskarieties, lai mainītu.</string>
     <string name="dv_version_unset">Tiek izmantots %1$s. Pieskarieties, lai izvēlētos Bībeles tulkojumu.</string>
-    <string name="text_color_adjustment">Teksta krāsas pielāgošana</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Lai teksts būtu lasāms, kad tas ir izcelts vai atrodas atlasītajos pantos.</string>
-    <string name="text_color_adjustment_value">%1$d%% (kontrasta attiecība %2$s:1)</string>
+    <string name="text_appearance_text_color_contrast">Teksta krāsas kontrasts</string>
 </resources>
