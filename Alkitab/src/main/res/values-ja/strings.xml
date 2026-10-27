@@ -533,6 +533,6 @@
     <string name="dv_version_unavailable">選択した訳を利用できません。%1$sを使用しています。タップして変更してください。</string>
     <string name="dv_version_unset">%1$sを使用しています。タップして聖書の訳を選んでください。</string>
     <string name="text_color_adjustment">文字色の調整</string>
-    <string name="text_color_adjustment_explanation" formatted="false">ハイライトされた文字と選択された節のみ、読みやすくなるように文字色を調整します。0%では元の色を維持し、100%ではコントラストを完全に補正します。</string>
+    <string name="text_color_adjustment_explanation" formatted="false">ハイライトされた文字や選択された節を読みやすくします。</string>
     <string name="text_color_adjustment_value">%1$d%% (コントラスト比 %2$s:1)</string>
 </resources>

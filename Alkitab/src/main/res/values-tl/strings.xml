@@ -533,6 +533,6 @@
     <string name="dv_version_unavailable">Hindi available ang napiling salin. Ginagamit ang %1$s. I-tap para palitan.</string>
     <string name="dv_version_unset">Ginagamit ang %1$s. I-tap para pumili ng salin ng Bibliya.</string>
     <string name="text_color_adjustment">Pagsasaayos ng kulay ng teksto</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Ayusin ang mga kulay para madaling mabasa ang naka-highlight na teksto at mga napiling talata lamang. Pinapanatili ng 0% ang orihinal na mga kulay; inilalapat ng 100% ang buong pagwawasto ng contrast.</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Para madaling mabasa ang naka-highlight na teksto o mga napiling talata.</string>
     <string name="text_color_adjustment_value">%1$d%% (contrast ratio na %2$s:1)</string>
 </resources>

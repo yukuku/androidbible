@@ -534,6 +534,6 @@
     <string name="dv_version_unavailable">La versione selezionata non è disponibile. È in uso %1$s. Tocca per cambiare.</string>
     <string name="dv_version_unset">È in uso %1$s. Tocca per scegliere una versione della Bibbia.</string>
     <string name="text_color_adjustment">Regolazione del colore del testo</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Regola i colori per migliorare la leggibilità solo nel testo evidenziato e nei versetti selezionati. 0% mantiene i colori originali; 100% applica la correzione completa del contrasto.</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Per facilitare la lettura del testo evidenziato o dei versetti selezionati.</string>
     <string name="text_color_adjustment_value">%1$d%% (rapporto di contrasto di %2$s:1)</string>
 </resources>
