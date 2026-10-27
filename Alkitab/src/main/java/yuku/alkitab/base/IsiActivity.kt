@@ -878,6 +878,10 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     }
 
     override fun onVisibleVersionsChanged() {
+        val isSplitEnabled = activeSplit1 != null
+        uiSplit0 = uiSplit0.copy(isScrollPastEndEnabled = isSplitEnabled)
+        uiSplit1 = uiSplit1.copy(isScrollPastEndEnabled = isSplitEnabled)
+
         updateCurrentReading()
         resolveAudioSetsAsync()
         audioBinder.onActiveVersionChanged()

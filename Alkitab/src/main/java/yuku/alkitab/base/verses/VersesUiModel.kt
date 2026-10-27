@@ -6,6 +6,7 @@ data class VersesUiModel(
     val isVerseNumberShown: Boolean,
     val dictionaryModeAris: Set<Int>,
     val readingGuide: ReadingGuide = ReadingGuide.NONE,
+    val isScrollPastEndEnabled: Boolean = false,
 ) {
     companion object {
         @JvmField

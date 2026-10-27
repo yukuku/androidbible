@@ -23,10 +23,35 @@ import yuku.alkitab.base.audio.ui.AudioBarUiState
 import yuku.alkitab.base.audio.ui.AudioHighlightColor
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.History
+import yuku.alkitab.base.widget.SplitViewManager
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
 class IsiActivityIntentTest {
+    @Test
+    @Config(application = App::class)
+    fun `both reader panes allow end alignment only while a split version is open`() {
+        val previousVersion = Preferences.getString(Prefkey.lastSplitVersionId, null)
+        Preferences.setString(Prefkey.lastSplitVersionId, "internal")
+        val controller = Robolectric.buildActivity(IsiActivity::class.java).create()
+        try {
+            val activity = controller.get()
+            assertTrue(activity.lsSplit0.versesUiModel.isScrollPastEndEnabled)
+            assertTrue(activity.lsSplit1.versesUiModel.isScrollPastEndEnabled)
+
+            val manager = IsiActivity::class.java.getDeclaredMethod("getSplitViewManager").apply { isAccessible = true }
+                .invoke(activity) as SplitViewManager
+            manager.disableSplitVersion()
+
+            assertTrue(!activity.lsSplit0.versesUiModel.isScrollPastEndEnabled)
+            assertTrue(!activity.lsSplit1.versesUiModel.isScrollPastEndEnabled)
+        } finally {
+            controller.destroy()
+            if (previousVersion == null) Preferences.remove(Prefkey.lastSplitVersionId)
+            else Preferences.setString(Prefkey.lastSplitVersionId, previousVersion)
+        }
+    }
+
     @Test
     fun `lid parsing returns the destination without touching uninitialized reader views`() {
         val activity = Robolectric.buildActivity(IsiActivity::class.java).get()

@@ -244,6 +244,142 @@ class VersesComposeListCompositionTest {
     }
 
     @Test
+    fun `verse navigation aligns panes whose translations have different amounts of text after the target`() {
+        val chapter = dataModel(12)
+        val primary = composeList(12, initialData = chapter.copy(
+            verses_ = FakeVerses(List(12) { "Long verse ${it + 1}. " + "More words in this translation. ".repeat(20) }),
+        ))
+        val secondary = composeList(12, initialData = chapter.copy(
+            verses_ = FakeVerses(List(12) { "Short verse ${it + 1} with enough words to fill two lines." }),
+        ))
+        for (pane in listOf(primary, secondary)) {
+            pane.controller.versesUiModel = VersesUiModel.EMPTY.copy(isScrollPastEndEnabled = true)
+            pane.viewportHeight = 320
+            pumpLayout(pane)
+            pane.controller.scrollToVerse(10)
+            pumpLayout(pane)
+        }
+
+        assertEquals("primary pane", 10, primary.controller.getVerse_1BasedOnScroll())
+        assertEquals("secondary pane", 10, secondary.controller.getVerse_1BasedOnScroll())
+    }
+
+    @Test
+    fun `split navigation can align the last verse after resizing and reloading the chapter`() {
+        val chapter = dataModel(25).copy(
+            verses_ = FakeVerses(List(25) { "Short verse ${it + 1}." }),
+        )
+        val harness = composeList(25, initialData = chapter)
+        harness.controller.versesUiModel = VersesUiModel.EMPTY.copy(isScrollPastEndEnabled = true)
+        harness.controller.setViewPadding(Rect(8, 16, 8, 24))
+        harness.controller.setViewVerticalInsets(20, 30)
+
+        for (height in listOf(320, 480, 160)) {
+            harness.viewportHeight = height
+            for (verse in listOf(22, 25, 1)) {
+                harness.controller.versesDataModel = chapter.copy()
+                harness.controller.scrollToVerse(verse)
+                pumpLayout(harness)
+                pumpLayout(harness)
+
+                assertEquals("verse $verse in a $height px pane", verse, harness.controller.getVerse_1BasedOnScroll())
+                if (verse == 25) {
+                    harness.controller.listState.dispatchRawDelta(100_000f)
+                    pumpLayout(harness)
+                    val last = harness.controller.listState.layoutInfo.visibleItemsInfo.last()
+                    assertEquals("scrolling must stop with the last verse at the top", 0, last.offset + 36)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `split navigation stays aligned while the final verse shrinks across chapters`() {
+        val shortChapter = dataModel(25).copy(
+            verses_ = FakeVerses(List(25) { "Short verse ${it + 1}." }),
+        )
+        val longChapter = shortChapter.copy(
+            ari_bc_ = Ari.encode(1, 3, 0),
+            verses_ = FakeVerses(List(25) {
+                if (it == 24) "A much longer final verse. ".repeat(100) else "Short verse ${it + 1}."
+            }),
+        )
+        val clock = BroadcastFrameClock()
+        val harness = composeList(25, clock, initialData = longChapter)
+        harness.controller.versesUiModel = VersesUiModel.EMPTY.copy(isScrollPastEndEnabled = true)
+        var time = 0L
+        fun settle() {
+            repeat(30) {
+                Snapshot.sendApplyNotifications()
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(20, TimeUnit.MILLISECONDS)
+                time += 20_000_000L
+                clock.sendFrame(time)
+                pumpLayout(harness)
+            }
+        }
+        settle()
+        for (verse in listOf(22, 25)) {
+            harness.controller.versesDataModel = longChapter
+            harness.controller.scrollToVerse(25)
+            settle()
+
+            harness.controller.versesDataModel = shortChapter
+            harness.controller.scrollToVerse(verse)
+            settle()
+
+            assertEquals("verse $verse after the height animation", verse, harness.controller.getVerse_1BasedOnScroll())
+        }
+    }
+
+    @Test
+    fun `legacy split navigation aligns short verses at the end of a chapter`() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val key = context.getString(R.string.pref_useLegacyVerseItem_key)
+        val isLegacy = yuku.afw.storage.Preferences.getBoolean(key, false)
+        yuku.afw.storage.Preferences.setBoolean(key, true)
+        try {
+            val activity = Robolectric.buildActivity(AppCompatActivity::class.java).setup().get()
+            activity.setTheme(androidx.appcompat.R.style.Theme_AppCompat)
+            val view = EmptyableRecyclerView(activity).apply { clipToPadding = false }
+            val controller = VersesControllerImpl(view, "split")
+            controller.versesDataModel = dataModel(25).copy(
+                verses_ = FakeVerses(List(25) { "Short verse ${it + 1}." }),
+            )
+            controller.versesUiModel = VersesUiModel.EMPTY.copy(isScrollPastEndEnabled = true)
+            activity.setContentView(view)
+            fun settle(height: Int) {
+                repeat(3) {
+                    idleLoopers()
+                    view.measure(
+                        View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
+                    )
+                    view.layout(0, 0, 360, height)
+                    view.draw(Canvas())
+                }
+            }
+            controller.setViewPadding(Rect(8, 16, 8, 24))
+            controller.setViewVerticalInsets(20, 30)
+            for (height in listOf(320, 480, 160)) {
+                for (verse in listOf(22, 25, 1)) {
+                    controller.scrollToVerse(verse)
+                    settle(height)
+                    assertEquals("verse $verse in a $height px pane", verse, controller.getVerse_1BasedOnScroll())
+                    if (verse == 25) {
+                        view.scrollBy(0, 100_000)
+                        settle(height)
+                        val position = controller.versesDataModel.getPositionIgnoringPericopeFromVerse(25)
+                        val row = view.layoutManager?.findViewByPosition(position)
+                        assertEquals("scrolling must stop with the last verse at the top", 0, row?.top)
+                    }
+                }
+            }
+        } finally {
+            yuku.afw.storage.Preferences.setBoolean(key, isLegacy)
+        }
+    }
+
+    @Test
     fun `scrollToVerse on a verse with a pericope header above scrolls to the header keeping the verse next`() {
         val harness = composeList(60)
 

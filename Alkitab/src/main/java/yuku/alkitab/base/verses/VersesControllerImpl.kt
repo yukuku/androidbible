@@ -90,6 +90,21 @@ class VersesControllerImpl(
         )
         this.adapter = adapter
         rv.adapter = adapter
+        rv.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                val lastPosition = adapter.itemCount - 1
+                if (this@VersesControllerImpl.versesUiModel.isScrollPastEndEnabled &&
+                    lastPosition >= 0 && parent.getChildAdapterPosition(view) == lastPosition
+                ) {
+                    outRect.bottom = (parent.height - parent.paddingBottom - getMeasuredItemHeight(lastPosition)).coerceAtLeast(0)
+                }
+            }
+        })
+        rv.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
+                rv.invalidateItemDecorations()
+            }
+        }
     }
 
     private val rvScrollListener
@@ -372,24 +387,12 @@ class VersesControllerImpl(
      * Returns -1 if there is no visible child (e.g. when split is collapsed until the height is 0).
      */
     private fun getPositionBasedOnScroll(): Int {
-        val pos = layoutManager.findFirstVisibleItemPosition()
-
-        // check if the top one has been scrolled
-        val child = layoutManager.findViewByPosition(pos)
-        if (child != null) {
-            val top = child.top
-            if (top == 0) {
-                return pos
-            }
-            val bottom = child.bottom
-            return if (bottom > 0) {
-                pos
-            } else {
-                pos + 1
-            }
+        // Verses can be visible inside the scroll-past top padding.
+        for (index in 0 until layoutManager.childCount) {
+            val child = layoutManager.getChildAt(index) ?: continue
+            if (child.bottom > 0) return layoutManager.getPosition(child)
         }
-
-        return pos
+        return -1
     }
 
     override fun getVerse_1BasedOnScroll(): Int {
@@ -507,6 +510,7 @@ class VersesControllerImpl(
 
     private fun applyPadding() {
         rv.setPadding(basePadding.left, basePadding.top + topInset, basePadding.right, basePadding.bottom + bottomInset)
+        rv.invalidateItemDecorations()
     }
 
     override fun setViewScrollbarThumb(thumb: Drawable) {
@@ -562,7 +566,7 @@ class VersesControllerImpl(
         // sitting right in front of the user is more distracting than helpful.
         if (rowView != null) {
             val rowTop = layoutManager.getDecoratedTop(rowView)
-            val rowBottom = layoutManager.getDecoratedBottom(rowView)
+            val rowBottom = rowView.bottom
             val viewportTop = rv.paddingTop
             val viewportBottom = rv.height - rv.paddingBottom
             if (rowTop >= viewportTop && rowBottom <= viewportBottom) return
@@ -599,6 +603,7 @@ class VersesControllerImpl(
         adapter.data = versesDataModel
         adapter.ui = versesUiModel
         adapter.listeners = versesListeners
+        rv.invalidateItemDecorations()
     }
 
     /**

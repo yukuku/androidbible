@@ -17,6 +17,7 @@ import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,6 +48,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.LocalContext
@@ -813,13 +815,23 @@ class VersesComposeControllerImpl(
         }
 
         CompositionLocalProvider(LocalDensity provides unscaledDensity) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                var lastItemHeightPx by remember(dataW.vn, constraints.maxWidth) { mutableIntStateOf(0) }
+                var lastItemTargetHeightPx by remember(dataW.vn, constraints.maxWidth) { mutableIntStateOf(0) }
+
+                // Reserve the target height during shrinking animations so a verse jump
+                // cannot be pulled backward while the final row changes size.
+                val endPaddingPx = if (ui.isScrollPastEndEnabled && data.itemCount > 0) {
+                    (constraints.maxHeight - minOf(lastItemHeightPx, lastItemTargetHeightPx)).coerceAtLeast(paddingBottomPx)
+                } else {
+                    paddingBottomPx
+                }
                 val contentPadding = with(unscaledDensity) {
                     PaddingValues.Absolute(
                         left = paddingLeftPx.toDp(),
                         top = paddingTopPx.toDp(),
                         right = paddingRightPx.toDp(),
-                        bottom = paddingBottomPx.toDp(),
+                        bottom = endPaddingPx.toDp(),
                     )
                 }
 
@@ -844,7 +856,25 @@ class VersesComposeControllerImpl(
                             backgroundColor = App.services.uiDimensions.applied().backgroundColor,
                             startInsetPx = (if (LocalLayoutDirection.current == LayoutDirection.Rtl) paddingRightPx else paddingLeftPx).toFloat(),
                         ) {
-                            Box(Modifier.animateContentSize(animationSpec = tween(durationMillis = 250))) {
+                            val endMeasurement = if (ui.isScrollPastEndEnabled && position == data.itemCount - 1) {
+                                Modifier.layout { measurable, constraints ->
+                                    val placeable = measurable.measure(constraints)
+                                    lastItemHeightPx = placeable.height
+                                    layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
+                                }
+                            } else {
+                                Modifier
+                            }
+                            val endTargetMeasurement = if (ui.isScrollPastEndEnabled && position == data.itemCount - 1) {
+                                Modifier.layout { measurable, constraints ->
+                                    val placeable = measurable.measure(constraints)
+                                    lastItemTargetHeightPx = placeable.height
+                                    layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
+                                }
+                            } else {
+                                Modifier
+                            }
+                            Box(endMeasurement.animateContentSize(animationSpec = tween(durationMillis = 250)).then(endTargetMeasurement)) {
                                 when (data.getItemViewType(position)) {
                                     ItemType.verseText -> VerseRow(data, ui, listeners, position)
                                     ItemType.pericope -> PericopeHeaderComposeItem(data, ui, listeners, position, data.getPericopeIndex(position))
