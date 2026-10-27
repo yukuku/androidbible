@@ -7,7 +7,6 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SeekBarPreference
 import kotlin.math.roundToInt
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
@@ -36,29 +35,21 @@ class DisplayFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_display)
 
-        val textAdjustment = SeekBarPreference(requireContext()).apply {
+        val textAdjustment = TextAdjustmentPreference(requireContext()).apply {
             key = Prefkey.textColorAdjustment.name
             isPersistent = false
             setTitle(R.string.text_color_adjustment)
+            setSummary(R.string.text_color_adjustment_explanation)
             min = 0
             max = 100
             seekBarIncrement = 1
-            showSeekBarValue = true
             updatesContinuously = true
             value = (TextColorUtil.normalizeAdjustment(Preferences.getFloat(Prefkey.textColorAdjustment, 1f)) * 100).roundToInt()
         }
-        val contrastFormat = java.text.NumberFormat.getNumberInstance(resources.configuration.locales[0]).apply {
-            maximumFractionDigits = 3
-        }
-        fun updateAdjustmentSummary(percent: Int) {
-            val value = if (percent == 0) "0%" else "$percent% · ${contrastFormat.format(TextColorUtil.targetContrast(percent / 100f))}:1"
-            textAdjustment.summary = "$value\n${getString(R.string.text_color_adjustment_explanation)}"
-        }
-        updateAdjustmentSummary(textAdjustment.value)
         textAdjustment.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
             val percent = value as Int
             Preferences.setFloat(Prefkey.textColorAdjustment, percent / 100f)
-            updateAdjustmentSummary(percent)
+            textAdjustment.updateValueLabel(percent)
             App.services.uiDimensions.recalculate()
             AppEvents.emitNeedsRestart()
             true

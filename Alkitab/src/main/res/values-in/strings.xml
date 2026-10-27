@@ -541,5 +541,6 @@
     <string name="dv_version_unavailable">Versi yang dipilih tidak tersedia. Menggunakan %1$s. Ketuk untuk mengganti.</string>
     <string name="dv_version_unset">Menggunakan %1$s. Ketuk untuk memilih versi Alkitab.</string>
     <string name="text_color_adjustment">Penyesuaian warna teks</string>
-    <string name="text_color_adjustment_explanation" formatted="false">Sesuaikan warna teks agar mudah dibaca hanya pada teks yang disorot dan ayat yang dipilih. 0% mempertahankan warna teks asli; 100% menerapkan penyesuaian kontras penuh.</string>
+    <string name="text_color_adjustment_explanation" formatted="false">Agar teks mudah dibaca ketika disorot atau ayatnya dipilih</string>
+    <string name="text_color_adjustment_value">%1$d%% (rasio kontras %2$s:1)</string>
 </resources>

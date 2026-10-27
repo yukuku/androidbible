@@ -534,4 +534,5 @@
     <string name="dv_version_unset">%1$s wird verwendet. Tippen, um eine Bibelübersetzung auszuwählen.</string>
     <string name="text_color_adjustment">Anpassung der Textfarbe</string>
     <string name="text_color_adjustment_explanation" formatted="false">Passt Textfarben zur besseren Lesbarkeit nur in hervorgehobenem Text und ausgewählten Versen an. 0% behält die ursprünglichen Farben bei; 100% wendet die vollständige Kontrastkorrektur an.</string>
+    <string name="text_color_adjustment_value">%1$d%% (Kontrastverhältnis %2$s:1)</string>
 </resources>

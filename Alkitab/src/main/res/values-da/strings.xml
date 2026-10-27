@@ -534,4 +534,5 @@
     <string name="dv_version_unset">Bruger %1$s. Tryk for at vælge en bibeloversættelse.</string>
     <string name="text_color_adjustment">Justering af tekstfarve</string>
     <string name="text_color_adjustment_explanation" formatted="false">Juster kun tekstfarver i fremhævet tekst og valgte vers for bedre læsbarhed. 0% bevarer de oprindelige farver; 100% anvender fuld kontrastkorrektion.</string>
+    <string name="text_color_adjustment_value">%1$d%% (kontrastforhold på %2$s:1)</string>
 </resources>

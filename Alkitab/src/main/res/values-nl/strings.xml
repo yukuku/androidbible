@@ -534,4 +534,5 @@
     <string name="dv_version_unset">%1$s wordt gebruikt. Tik om een Bijbelvertaling te kiezen.</string>
     <string name="text_color_adjustment">Tekstkleur aanpassen</string>
     <string name="text_color_adjustment_explanation" formatted="false">Past kleuren voor leesbaarheid alleen aan in gemarkeerde tekst en geselecteerde verzen. 0% behoudt de oorspronkelijke kleuren; 100% past volledige contrastcorrectie toe.</string>
+    <string name="text_color_adjustment_value">%1$d%% (contrastverhouding van %2$s:1)</string>
 </resources>

@@ -534,4 +534,5 @@
     <string name="dv_version_unset">Đang dùng %1$s. Nhấn để chọn bản dịch Kinh Thánh.</string>
     <string name="text_color_adjustment">Điều chỉnh màu chữ</string>
     <string name="text_color_adjustment_explanation" formatted="false">Chỉ điều chỉnh màu để dễ đọc trong phần văn bản được tô sáng và các câu được chọn. 0% giữ nguyên màu gốc; 100% áp dụng hiệu chỉnh độ tương phản đầy đủ.</string>
+    <string name="text_color_adjustment_value">%1$d%% (tỷ lệ tương phản %2$s:1)</string>
 </resources>

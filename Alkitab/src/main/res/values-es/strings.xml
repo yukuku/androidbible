@@ -534,4 +534,5 @@
     <string name="dv_version_unset">Se usa %1$s. Toca para elegir una versión de la Biblia.</string>
     <string name="text_color_adjustment">Ajuste del color del texto</string>
     <string name="text_color_adjustment_explanation" formatted="false">Ajusta los colores para mejorar la legibilidad solo en el texto resaltado y los versículos seleccionados. 0% conserva los colores originales; 100% aplica la corrección completa del contraste.</string>
+    <string name="text_color_adjustment_value">%1$d%% (relación de contraste de %2$s:1)</string>
 </resources>
