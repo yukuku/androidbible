@@ -16,6 +16,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -211,6 +212,11 @@ class VersesComposeControllerImpl(
     private val itemSizeCache = SparseIntArray()
     private var cacheDataVersion = -1
 
+    private data class VerseNavigation(val requestId: Int, val ari: Int)
+
+    private var verseNavigation by mutableStateOf<VerseNavigation?>(null)
+    private var nextNavigationId = 0
+
     init {
         composeHost.controller = this
     }
@@ -218,6 +224,8 @@ class VersesComposeControllerImpl(
     override var versesDataModel: VersesDataModel
         get() = dataWithVersion.data
         set(value) {
+            val navigation = verseNavigation
+            if (navigation != null && Ari.toBookChapter(navigation.ari) != value.ari_bc_) verseNavigation = null
             val vn = dataVersionNumber.incrementAndGet()
             dataWithVersion = DataWithVersion(vn, value)
             attentionState = AttentionUi.NONE
@@ -311,6 +319,7 @@ class VersesComposeControllerImpl(
      * context.
      */
     private fun launchScroll(programmatic: Boolean = true, block: suspend (data: VersesDataModel) -> Unit) {
+        verseNavigation = null
         val vn = dataVersionNumber.get()
         val scope = composeHost.findViewTreeLifecycleOwner()?.lifecycleScope ?: return
         scope.launch(uiFrameClock) {
@@ -363,10 +372,7 @@ class VersesComposeControllerImpl(
             return
         }
 
-        launchScroll { data ->
-            if (position >= data.itemCount) return@launchScroll
-            listState.scrollToItem(position, snapOffsetPx(position))
-        }
+        verseNavigation = VerseNavigation(++nextNavigationId, Ari.encodeWithBc(versesDataModel.ari_bc_, verse_1))
     }
 
     override fun scrollToVerse(verse_1: Int, prop: Float) {
@@ -760,6 +766,42 @@ class VersesComposeControllerImpl(
         val data = dataW.data
         val ui = uiState
         val listeners = listenersState
+
+        val navigation = verseNavigation
+        LaunchedEffect(navigation, dataW.vn) {
+            if (navigation == null || verseNavigation != navigation || Ari.toBookChapter(navigation.ari) != data.ari_bc_) return@LaunchedEffect
+            val verse_1 = Ari.toVerse(navigation.ari)
+            val anchor = data.getPositionOfPericopeBeginningFromVerse(verse_1)
+            val verse = data.getPositionIgnoringPericopeFromVerse(verse_1)
+            if (anchor < 0 || verse < 0) return@LaunchedEffect
+
+            listState.requestScrollToItem(anchor, snapOffsetPx(anchor))
+            if (data.verses_.getVerse(verse_1 - 1).isEmpty()) return@LaunchedEffect
+
+            // Chapter rows can resize after the initial jump. Correct only when
+            // the requested verse leaves the viewport, preserving end clamping.
+            snapshotFlow { listState.layoutInfo }.collect { info ->
+                if (verseNavigation != navigation || dataVersionNumber.get() != dataW.vn ||
+                    info.visibleItemsInfo.isEmpty() || info.viewportSize.height <= paddingBottomPx
+                ) return@collect
+                if (listState.isScrollInProgress) {
+                    verseNavigation = null
+                    return@collect
+                }
+
+                val item = info.visibleItemsInfo.firstOrNull { it.index == verse }
+                val top = item?.let { it.offset + info.beforeContentPadding }
+                if (top == null || top >= info.viewportSize.height - paddingBottomPx || top + item.size <= 0) {
+                    listState.requestScrollToItem(verse, snapOffsetPx(verse))
+                }
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            listState.interactionSource.interactions.collect { interaction ->
+                if (interaction is DragInteraction.Start) verseNavigation = null
+            }
+        }
 
         val attention = attentionState
         LaunchedEffect(attention) {
