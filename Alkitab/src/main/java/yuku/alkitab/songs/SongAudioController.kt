@@ -123,7 +123,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
     override fun getProgress(): LongArray {
         val svc = service ?: return longArrayOf(-1, -1)
         return when (state) {
-            State.playing, State.paused, State.complete -> longArrayOf(svc.currentPositionMs, svc.durationMs)
+            State.preparing, State.playing, State.paused, State.complete -> longArrayOf(svc.currentPositionMs, svc.durationMs)
             else -> longArrayOf(-1, -1)
         }
     }

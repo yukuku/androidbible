@@ -4,6 +4,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -27,6 +28,35 @@ class SongAudioControlsTest {
         verify { player.seekTo(0L) }
         verify { player.seekTo(1234L) }
         verify { player.seekTo(10000L) }
+    }
+
+    @Test
+    fun `buffering during a seek preserves the player position and duration`() {
+        val controller = SongAudioController(mockk(relaxed = true))
+        val service = mockk<SongAudioService>(relaxed = true)
+        every { service.currentPositionMs } returns 60000L
+        every { service.durationMs } returns 120000L
+        SongAudioController::class.java.getDeclaredField("service").apply { isAccessible = true }.set(controller, service)
+        controller.state = MediaController.State.preparing
+
+        assertArrayEquals(longArrayOf(60000L, 120000L), controller.getProgress())
+    }
+
+    @Test
+    fun `rapid seeks retain the latest target while playback is buffering`() {
+        val controller = SongAudioController(mockk(relaxed = true))
+        val service = mockk<SongAudioService>(relaxed = true)
+        var position = 1000L
+        every { service.currentPositionMs } answers { position }
+        every { service.durationMs } returns 120000L
+        every { service.seekTo(any()) } answers { position = firstArg<Long>() }
+        SongAudioController::class.java.getDeclaredField("service").apply { isAccessible = true }.set(controller, service)
+        controller.state = MediaController.State.preparing
+
+        for (target in listOf(30000L, 90000L, 15000L)) {
+            controller.seekTo(target)
+            assertArrayEquals(longArrayOf(target, 120000L), controller.getProgress())
+        }
     }
 
     @Test
