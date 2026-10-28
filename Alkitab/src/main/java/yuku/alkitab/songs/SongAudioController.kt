@@ -20,10 +20,9 @@ private const val TAG = "SongAudioController"
  * using the application context, so the service outlives the activity and keeps
  * playing in the background with its media notification.
  *
- * Maps the service's [SongPlaybackState] onto the [MediaController.State] machine
- * that [SongViewActivity]'s toolbar already understands, so the UI code is
- * unchanged. Replaces the former activity-scoped `ExoplayerController` and
- * `MidiController`; format selection (MP3 vs MIDI) is handled inside the service.
+ * Maps the service's [SongPlaybackState] onto [MediaController.State] for the
+ * song media sheet and activity. Format selection (MP3 or MIDI) belongs to the
+ * service.
  */
 class SongAudioController(private val appContext: Context) : MediaController() {
 
@@ -31,6 +30,9 @@ class SongAudioController(private val appContext: Context) : MediaController() {
     private var collectJob: Job? = null
     private var service: SongAudioService? = null
     private var bound = false
+
+    var isLooping = false
+        private set
 
     private var displayTitle = ""
     private var displaySubtitle = ""
@@ -65,11 +67,13 @@ class SongAudioController(private val appContext: Context) : MediaController() {
 
     override fun reset() {
         super.reset()
+        isLooping = false
         service?.stop()
         unbind()
     }
 
     override fun playOrPause(playInLoop: Boolean) {
+        isLooping = playInLoop
         when (state) {
             State.reset -> Unit
 
@@ -89,11 +93,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
             State.preparing -> Unit
 
             State.playing -> {
-                if (playInLoop) {
-                    service?.setLoop(true)
-                } else {
-                    service?.pause()
-                }
+                service?.pause()
             }
 
             State.paused -> {
@@ -101,6 +101,23 @@ class SongAudioController(private val appContext: Context) : MediaController() {
                 service?.play()
             }
         }
+    }
+
+    fun isCurrentUrl(candidate: String): Boolean = url == candidate && state != State.reset
+
+    fun pause() {
+        pendingRequest = null
+        service?.pause()
+    }
+
+    fun seekTo(positionMs: Long) {
+        service?.seekTo(positionMs)
+    }
+
+    fun setLoop(isLooping: Boolean) {
+        this.isLooping = isLooping
+        service?.setLoop(isLooping)
+        pendingRequest = pendingRequest?.copy(loop = isLooping)
     }
 
     override fun getProgress(): LongArray {

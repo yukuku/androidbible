@@ -1,6 +1,7 @@
 package yuku.alkitab.songs
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
@@ -19,10 +20,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebViewClient
-import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
-import androidx.annotation.StringRes
-import androidx.annotation.WorkerThread
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ShareCompat
 import androidx.core.net.toUri
@@ -30,10 +28,13 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 import java.util.Locale
+import kotlinx.coroutines.launch
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.ac.AlertDialogActivity
@@ -127,76 +128,32 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         override fun onTwofingerEnd(mode: TwofingerLinearLayout.Mode?) {}
     }
 
-    private val mediaState = MediaState()
+    private val mediaViewModel by lazy { ViewModelProvider(this)[SongMediaViewModel::class.java] }
+    private var mediaProgress: String? = null
+        set(value) {
+            field = value
+            updateActivityTitle()
+        }
 
     override fun getLeftDrawer() = leftDrawer
 
-    inner class MediaState {
-        var enabled = false
-
-        @DrawableRes
-        var icon = 0
-
-        @StringRes
-        var label = 0
-        var loading = false
-        var progress: String? = null
-            set(value) {
-                field = value
-                updateActivityTitle()
-            }
-    }
-
-    /**
-     * This method might be called from non-UI thread. Be careful when manipulating UI.
-     */
-    @WorkerThread
     override fun onControllerStateChanged(state: MediaController.State) {
-        when (state) {
-            MediaController.State.reset -> {
-                mediaState.enabled = false
-                mediaState.icon = R.drawable.ic_action_hollowplay
-                mediaState.label = R.string.menuPlay
-            }
-
-            MediaController.State.reset_media_known_to_exist, MediaController.State.paused, MediaController.State.complete -> {
-                mediaState.enabled = true
-                mediaState.icon = R.drawable.ic_action_play
-                mediaState.label = R.string.menuPlay
-            }
-
-            MediaController.State.playing -> {
-                // we start playing now
-                mediaState.enabled = true
-                mediaState.icon = R.drawable.ic_action_pause
-                mediaState.label = R.string.menuPause
-            }
-
-            else -> {
-            }
-        }
-
-        mediaState.loading = state == MediaController.State.preparing
-
-        runOnUiThread {
-            obtainSongProgress()
-            invalidateOptionsMenu()
-        }
+        runOnUiThread { obtainSongProgress() }
     }
 
     fun obtainSongProgress() {
         val (position, duration) = songAudioController.getProgress()
         if (position == -1L) {
-            mediaState.progress = null
+            mediaProgress = null
             return
         }
 
         if (duration == -1L) {
-            mediaState.progress = String.format(Locale.US, "%d:%02d", position / 60000, position % 60000 / 1000)
+            mediaProgress = String.format(Locale.US, "%d:%02d", position / 60000, position % 60000 / 1000)
             return
         }
 
-        mediaState.progress = String.format(Locale.US, "%d:%02d / %d:%02d", position / 60000, position % 60000 / 1000, duration / 60000, duration % 60000 / 1000)
+        mediaProgress = String.format(Locale.US, "%d:%02d / %d:%02d", position / 60000, position % 60000 / 1000, duration / 60000, duration % 60000 / 1000)
     }
 
     fun goTo(dir: Int) {
@@ -276,6 +233,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         if (App.services.storage.songDb.countSongBookInfos() == 0) {
             openDownloadSongBookPage()
         }
+
+        observeSongMedia()
 
         object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
@@ -379,80 +338,72 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         songAudioController.updateMediaState()
     }
 
-    private fun checkAudioExistance() {
-        val currentBookName = currentBookName ?: return
-        val currentSong = currentSong ?: return
-
-        Background.run {
-            try {
-                val filename = getAudioFilename(currentBookName, currentSong.code)
-                val response = Connections.downloadString(BuildConfig.SERVER_HOST + "/addon/audio/exists?filename=" + Uri.encode(filename))
-                if (response.startsWith("OK")) {
-                    // make sure this is the correct one due to possible race condition
-                    val currentCurrentBookName = this.currentBookName
-                    val currentCurrentSong = this.currentSong
-                    if (currentCurrentBookName == currentBookName && currentCurrentSong?.code == currentSong.code) {
-                        runOnUiThread {
-                            if (songAudioController.canHaveNewUrl()) {
-                                // The service's ExoPlayer auto-detects MP3 vs MIDI,
-                                // so no extension branching is needed here.
-                                val url = "${BuildConfig.SERVER_HOST}/addon/audio/${getAudioFilename(currentBookName, currentSong.code)}"
-                                songAudioController.setUI(this, this)
-                                songAudioController.setDisplayInfo(
-                                    "${SongBookUtil.escapeSongBookName(currentBookName)} ${currentSong.code}",
-                                    currentSong.meta.title ?: "",
-                                )
-                                songAudioController.mediaKnownToExist(url)
-                            } else {
-                                AppLog.d(TAG, "songAudioController can't have new URL at this moment.")
-                            }
-                        }
+    private fun observeSongMedia() {
+        lifecycleScope.launch {
+            mediaViewModel.state.collect { state ->
+                val song = currentSong
+                if (state.bookName == currentBookName && state.code == song?.code) {
+                    val clip = state.media?.audioClips?.firstOrNull()
+                    if (clip != null && song != null && songAudioController.canHaveNewUrl()) {
+                        songAudioController.setDisplayInfo(
+                            "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
+                            song.meta.title.orEmpty(),
+                        )
+                        songAudioController.mediaKnownToExist(clip.url)
                     }
-                } else {
-                    AppLog.d(TAG, "@@checkAudioExistance response: $response")
+                    invalidateOptionsMenu()
                 }
-            } catch (e: IOException) {
-                AppLog.e(TAG, "@@checkAudioExistance", e)
             }
+        }
+    }
+
+    private fun playSongClip(clip: SongAudioClip) {
+        val song = currentSong ?: return
+        val proceed = {
+            if (!songAudioController.isCurrentUrl(clip.url)) {
+                val isLooping = songAudioController.isLooping
+                songAudioController.reset()
+                songAudioController.setLoop(isLooping)
+                songAudioController.setDisplayInfo(
+                    "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
+                    song.meta.title.orEmpty(),
+                )
+                songAudioController.mediaKnownToExist(clip.url)
+            }
+            songAudioController.playOrPause(songAudioController.isLooping)
+        }
+        if (audioDisclaimerAcknowledged) {
+            proceed()
+        } else {
+            MaterialAlertDialogBuilder(this)
+                .setMessage(R.string.sn_audio_disclaimer_message)
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    audioDisclaimerAcknowledged = true
+                    proceed()
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        }
+    }
+
+    private fun openSongVideo(video: SongYoutubeVideo) {
+        try {
+            songAudioController.pause()
+            startActivity(Intent(Intent.ACTION_VIEW, "https://www.youtube.com/watch?v=${video.videoId}".toUri()))
+        } catch (e: ActivityNotFoundException) {
+            Snackbar.make(root, R.string.sn_media_no_video_app, Snackbar.LENGTH_LONG).show()
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_song_view, menu)
-
-        Handler(Looper.getMainLooper()).post {
-            val view = findViewById<View>(R.id.menuMediaControl) ?: return@post
-
-            view.setOnLongClickListener {
-                if (mediaState.icon == R.drawable.ic_action_play) {
-                    MaterialAlertDialogBuilder(this)
-                        .setMessage(R.string.sn_play_in_loop)
-                        .setNegativeButton(R.string.cancel, null)
-                        .setPositiveButton(R.string.ok) { _, _ ->
-                            songAudioController.playOrPause(true)
-                        }
-                        .show()
-                    true
-                } else {
-                    false
-                }
-            }
-        }
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val menuMediaControl = menu.findItem(R.id.menuMediaControl)
-        menuMediaControl.isEnabled = mediaState.enabled
-        if (mediaState.icon != 0) menuMediaControl.setIcon(mediaState.icon)
-        if (mediaState.label != 0) menuMediaControl.setTitle(mediaState.label)
-        if (mediaState.loading) {
-            setCustomProgressBarIndeterminateVisible(true)
-            menuMediaControl.isVisible = false
-        } else {
-            setCustomProgressBarIndeterminateVisible(false)
-            menuMediaControl.isVisible = true
-        }
+        menuMediaControl.isEnabled = currentSong != null
+        menuMediaControl.isVisible = currentSong != null
 
         val songShown = currentBookName != null
 
@@ -504,26 +455,15 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             R.id.menuMediaControl -> {
-                val proceed = {
-                    val currentBookName = currentBookName
-                    val currentSong = currentSong
-                    if (currentBookName != null && currentSong != null) {
-                        songAudioController.playOrPause(false)
-                    }
-                }
-                if (audioDisclaimerAcknowledged) {
-                    proceed()
-                } else {
-                    MaterialAlertDialogBuilder(this)
-                        .setMessage(R.string.sn_audio_disclaimer_message)
-                        .setPositiveButton(R.string.ok) { _, _ ->
-                            audioDisclaimerAcknowledged = true
-                            proceed()
-                        }
-                        .setNegativeButton(R.string.cancel, null)
-                        .show()
-                }
-
+                val song = currentSong ?: return true
+                SongMediaSheet.show(
+                    this,
+                    "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
+                    mediaViewModel,
+                    songAudioController,
+                    ::playSongClip,
+                    ::openSongVideo,
+                )
                 return true
             }
 
@@ -646,7 +586,12 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             songAudioController.reset()
         }
 
-        if (doc == null) return
+        if (doc == null) {
+            currentBookName = null
+            currentSong = null
+            invalidateOptionsMenu()
+            return
+        }
 
         selectionControls?.setBookName(SongBookUtil.escapeSongBookName(bookName))
         selectionControls?.setCode(doc.code)
@@ -677,7 +622,8 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         Preferences.setString(Prefkey.song_last_bookName, bookName)
         Preferences.setString(Prefkey.song_last_code, doc.code)
 
-        checkAudioExistance()
+        if (bookName != null) mediaViewModel.load(bookName, doc.code, false)
+        invalidateOptionsMenu()
     }
 
     private fun updateActivityTitle() {
@@ -690,7 +636,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             append(song.code)
             append(" ▾")
 
-            val progress = mediaState.progress
+            val progress = mediaProgress
             if (progress != null) {
                 append(" ")
                 inSpans(RelativeSizeSpan(0.75f)) {
@@ -1000,10 +946,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         @JvmStatic
         fun createIntent(): Intent {
             return Intent(App.context, SongViewActivity::class.java)
-        }
-
-        fun getAudioFilename(bookName: String, code: String): String {
-            return String.format(Locale.US, "songs/v2/%s_%s", bookName, code)
         }
     }
 }

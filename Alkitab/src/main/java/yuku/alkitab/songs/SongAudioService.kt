@@ -215,6 +215,11 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
         player.playWhenReady = false
     }
 
+    fun seekTo(positionMs: Long) {
+        val duration = durationMs
+        if (duration > 0) player.seekTo(positionMs.coerceIn(0L, duration))
+    }
+
     fun setLoop(loop: Boolean) {
         player.repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
     }

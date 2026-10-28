@@ -30,3 +30,19 @@ The [portable-song design](../features/portable-songs/design.md) records the JSO
 format and legacy conversion rationale. Backend publishing and authoring tools
 live in separate repositories; Android implementation status does not establish
 that those external tools have shipped.
+
+## Song media
+
+Opening a song requests `/songs/media` from the backend using its book name and
+code. The toolbar's Audio & video action opens a media sheet with available
+audio controls and approved YouTube videos. The sheet is at most 360dp wide and
+leaves a gap below the status bar. Audio supports play/pause, seeking and repeat;
+playback continues through the existing song audio service after dismissal.
+Video items open through an external YouTube URL intent, pausing song audio.
+
+The server supplies video titles, channels, thumbnails, view counts with exact
+or approximate precision, and ISO 8601 publication dates. Android does not call
+the YouTube API. The server owns the shuffled seven-day media snapshot and CDN
+cache policy. Missing counts remain absent. Loading, retry, partial-result and
+empty states are shown within the sheet. Media requests are scoped to the
+current song so an earlier response cannot replace a later selection.
