@@ -35,7 +35,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -107,7 +106,7 @@ internal fun SongMediaSheetContent(
                 .navigationBarsPadding(),
         ) {
             Row(
-                Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
@@ -120,14 +119,14 @@ internal fun SongMediaSheetContent(
             LazyColumn(Modifier.weight(1f, fill = false)) {
                 if (state.isLoading) {
                     item {
-                        Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator(Modifier.size(28.dp))
                         }
                     }
                 }
                 if (state.isError || media?.isIncomplete == true) {
                     item {
-                        Column(Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
+                        Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                             Text(stringResource(R.string.sn_media_load_error), style = MaterialTheme.typography.bodyMedium)
                             TextButton(onClick = onRetry, enabled = !state.isLoading) {
                                 Text(stringResource(R.string.devotion_retry))
@@ -137,7 +136,7 @@ internal fun SongMediaSheetContent(
                 }
                 if (media != null) {
                     items(media.audioClips) { clip ->
-                        SongAudioBar(clip, controller, { onPlay(clip) }, Modifier.padding(16.dp))
+                        SongAudioBar(clip, controller, { onPlay(clip) }, Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
                     }
                     items(media.youtubeVideos, key = { it.videoId }) { video ->
                         SongVideoRow(video, { onVideo(video) })
@@ -146,14 +145,14 @@ internal fun SongMediaSheetContent(
                         item {
                             Text(
                                 stringResource(R.string.sn_media_empty),
-                                Modifier.padding(24.dp),
+                                Modifier.padding(16.dp),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
                 }
-                item { Spacer(Modifier.height(16.dp)) }
+                item { Spacer(Modifier.height(8.dp)) }
             }
         }
     }
@@ -185,44 +184,42 @@ private fun SongAudioBar(
     val position = if (isActive) progress.first.coerceAtLeast(0) else 0L
     val duration = if (isActive) progress.second.coerceAtLeast(0) else 0L
     val seekDescription = stringResource(R.string.sn_media_seek)
-    Surface(modifier, shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-        Column(Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.MusicNote, null, tint = MaterialTheme.colorScheme.primary)
-                Text(stringResource(R.string.sn_media_audio), Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleSmall)
-                IconToggleButton(checked = isLooping, onCheckedChange = { controller.setLoop(it); isLooping = it }) {
-                    Icon(Icons.Default.Repeat, stringResource(R.string.sn_media_repeat))
-                }
-                FilledIconButton(onClick = onPlay, enabled = !isPreparing) {
-                    if (isPreparing) {
-                        CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
-                    } else {
-                        Icon(
-                            if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            stringResource(if (isPlaying) R.string.audio_bar_pause else R.string.audio_bar_play),
-                        )
-                    }
+    Column(modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.MusicNote, null, tint = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.sn_media_audio), Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleSmall)
+            IconToggleButton(checked = isLooping, onCheckedChange = { controller.setLoop(it); isLooping = it }) {
+                Icon(Icons.Default.Repeat, stringResource(R.string.sn_media_repeat))
+            }
+            FilledIconButton(onClick = onPlay, enabled = !isPreparing) {
+                if (isPreparing) {
+                    CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+                } else {
+                    Icon(
+                        if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        stringResource(if (isPlaying) R.string.audio_bar_pause else R.string.audio_bar_play),
+                    )
                 }
             }
-            Slider(
-                value = (seekPosition ?: position.toFloat()).coerceIn(0f, duration.coerceAtLeast(1).toFloat()),
-                onValueChange = { seekPosition = it },
-                onValueChangeFinished = {
-                    seekPosition?.let { controller.seekTo(it.toLong()) }
-                    seekPosition = null
-                    progress = controller.getProgress().let { it[0] to it[1] }
-                },
-                valueRange = 0f..duration.coerceAtLeast(1).toFloat(),
-                enabled = duration > 0,
-                modifier = Modifier.fillMaxWidth().semantics { contentDescription = seekDescription },
-            )
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(formatSongTime(seekPosition?.toLong() ?: position), style = MaterialTheme.typography.labelMedium)
-                Text(if (duration > 0) formatSongTime(duration) else "–:––", style = MaterialTheme.typography.labelMedium)
-            }
-            if (isActive && playbackState == MediaController.State.error) {
-                Text(stringResource(R.string.audio_bar_error_retry), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
-            }
+        }
+        Slider(
+            value = (seekPosition ?: position.toFloat()).coerceIn(0f, duration.coerceAtLeast(1).toFloat()),
+            onValueChange = { seekPosition = it },
+            onValueChangeFinished = {
+                seekPosition?.let { controller.seekTo(it.toLong()) }
+                seekPosition = null
+                progress = controller.getProgress().let { it[0] to it[1] }
+            },
+            valueRange = 0f..duration.coerceAtLeast(1).toFloat(),
+            enabled = duration > 0,
+            modifier = Modifier.fillMaxWidth().semantics { contentDescription = seekDescription },
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(formatSongTime(seekPosition?.toLong() ?: position), style = MaterialTheme.typography.labelMedium)
+            Text(if (duration > 0) formatSongTime(duration) else "–:––", style = MaterialTheme.typography.labelMedium)
+        }
+        if (isActive && playbackState == MediaController.State.error) {
+            Text(stringResource(R.string.audio_bar_error_retry), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
         }
     }
 }
@@ -234,8 +231,8 @@ internal fun formatSongTime(positionMs: Long): String =
 private fun SongVideoRow(video: SongYoutubeVideo, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val locale = LocalConfiguration.current.locales[0]
     Row(
-        modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 20.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box(
             Modifier.width(104.dp).aspectRatio(16f / 9f).clip(RoundedCornerShape(8.dp))
@@ -250,7 +247,7 @@ private fun SongVideoRow(video: SongYoutubeVideo, onClick: () -> Unit, modifier:
                 modifier = Modifier.matchParentSize(),
             )
         }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+        Column(Modifier.weight(1f)) {
             Text(video.title, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
             Text(video.channelName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
 
