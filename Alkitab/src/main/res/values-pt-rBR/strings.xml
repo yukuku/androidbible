@@ -533,8 +533,7 @@
     <string name="dv_version_unavailable">A versão escolhida não está disponível. Usando %1$s. Toque para alterar.</string>
     <string name="dv_version_unset">Usando %1$s. Toque para escolher uma versão da Bíblia.</string>
     <string name="sn_media_title">Áudio e vídeo</string>
-    <string name="sn_media_audio">Áudio do cântico</string>
-    <string name="sn_media_youtube">Vídeos do YouTube</string>
+    <string name="sn_media_audio">Áudio</string>
     <string name="sn_media_repeat">Repetir áudio</string>
     <string name="sn_media_seek">Posição de reprodução</string>
     <string name="sn_media_empty">Ainda não há áudio ou vídeos disponíveis para este cântico.</string>

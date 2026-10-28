@@ -534,8 +534,7 @@
     <string name="dv_version_unset">Se usa %1$s. Toca para elegir una versión de la Biblia.</string>
     <string name="text_appearance_text_color_contrast">Contraste del color del texto</string>
     <string name="sn_media_title">Audio y vídeo</string>
-    <string name="sn_media_audio">Audio de la canción</string>
-    <string name="sn_media_youtube">Vídeos de YouTube</string>
+    <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Repetir audio</string>
     <string name="sn_media_seek">Posición de reproducción</string>
     <string name="sn_media_empty">Aún no hay audio ni vídeos disponibles para esta canción.</string>

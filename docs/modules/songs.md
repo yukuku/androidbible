@@ -41,8 +41,10 @@ playback continues through the existing song audio service after dismissal.
 Video items open through an external YouTube URL intent, pausing song audio.
 
 The server supplies video titles, channels, thumbnails, view counts with exact
-or approximate precision, and ISO 8601 publication dates. Android does not call
-the YouTube API. The server owns the shuffled seven-day media snapshot and CDN
-cache policy. Missing counts remain absent. Loading, retry, partial-result and
-empty states are shown within the sheet. Media requests are scoped to the
+or approximate precision, and ISO 8601 publication dates. Thumbnails use Coil
+Compose. Video rows show compact K/M view counts and a publication date on one
+line. Indonesian uses day, abbreviated month and year; other app locales use
+their localized date format. Android does not call the YouTube API. The server
+owns the shuffled seven-day media snapshot and CDN cache policy. Missing counts
+remain absent. Loading, retry, partial-result and empty states are shown within the sheet. Media requests are scoped to the
 current song so an earlier response cannot replace a later selection.

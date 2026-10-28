@@ -534,8 +534,7 @@
     <string name="dv_version_unset">Gigamit ang %1$s. I-tap aron mopili og bersiyon sa Bibliya.</string>
     <string name="text_appearance_text_color_contrast">Kontras sa kolor sa teksto</string>
     <string name="sn_media_title">Audio ug video</string>
-    <string name="sn_media_audio">Audio sa awit</string>
-    <string name="sn_media_youtube">Mga video sa YouTube</string>
+    <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Usba ang audio</string>
     <string name="sn_media_seek">Posisyon sa pagpatukar</string>
     <string name="sn_media_empty">Wala pay audio o mga video alang niini nga awit.</string>

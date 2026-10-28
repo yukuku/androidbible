@@ -584,8 +584,7 @@
     <string name="data_transfer_import_done">Done. Tap [%1$s] to close.</string>
     <string name="text_appearance_text_color_contrast">Text color contrast</string>
     <string name="sn_media_title">Audio &amp; video</string>
-    <string name="sn_media_audio">Song audio</string>
-    <string name="sn_media_youtube">YouTube videos</string>
+    <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Repeat audio</string>
     <string name="sn_media_seek">Playback position</string>
     <string name="sn_media_empty">No audio or videos are available for this song yet.</string>

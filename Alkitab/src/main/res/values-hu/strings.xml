@@ -534,8 +534,7 @@
     <string name="dv_version_unset">A használt fordítás: %1$s. Koppintson egy bibliafordítás kiválasztásához.</string>
     <string name="text_appearance_text_color_contrast">Szövegszín kontrasztja</string>
     <string name="sn_media_title">Hang és videó</string>
-    <string name="sn_media_audio">Az ének hangfelvétele</string>
-    <string name="sn_media_youtube">YouTube-videók</string>
+    <string name="sn_media_audio">Hang</string>
     <string name="sn_media_repeat">Hang ismétlése</string>
     <string name="sn_media_seek">Lejátszási pozíció</string>
     <string name="sn_media_empty">Ehhez az énekhez még nem érhető el hangfelvétel vagy videó.</string>

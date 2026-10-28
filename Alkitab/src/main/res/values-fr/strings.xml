@@ -534,8 +534,7 @@
     <string name="dv_version_unset">%1$s est utilisée. Appuyez pour choisir une version de la Bible.</string>
     <string name="text_appearance_text_color_contrast">Contraste de la couleur du texte</string>
     <string name="sn_media_title">Audio et vidéo</string>
-    <string name="sn_media_audio">Audio du chant</string>
-    <string name="sn_media_youtube">Vidéos YouTube</string>
+    <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Répéter l’audio</string>
     <string name="sn_media_seek">Position de lecture</string>
     <string name="sn_media_empty">Aucun audio ni aucune vidéo n’est encore disponible pour ce chant.</string>

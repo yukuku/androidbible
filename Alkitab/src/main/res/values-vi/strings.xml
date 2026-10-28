@@ -534,8 +534,7 @@
     <string name="dv_version_unset">Đang dùng %1$s. Nhấn để chọn bản dịch Kinh Thánh.</string>
     <string name="text_appearance_text_color_contrast">Độ tương phản màu chữ</string>
     <string name="sn_media_title">Âm thanh và video</string>
-    <string name="sn_media_audio">Âm thanh bài hát</string>
-    <string name="sn_media_youtube">Video YouTube</string>
+    <string name="sn_media_audio">Âm thanh</string>
     <string name="sn_media_repeat">Lặp lại âm thanh</string>
     <string name="sn_media_seek">Vị trí phát</string>
     <string name="sn_media_empty">Chưa có âm thanh hoặc video cho bài hát này.</string>

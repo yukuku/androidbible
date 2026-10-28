@@ -534,8 +534,7 @@
     <string name="dv_version_unset">%1$s kullanılıyor. Bir Kutsal Kitap çevirisi seçmek için dokunun.</string>
     <string name="text_appearance_text_color_contrast">Metin rengi kontrastı</string>
     <string name="sn_media_title">Ses ve video</string>
-    <string name="sn_media_audio">İlahi sesi</string>
-    <string name="sn_media_youtube">YouTube videoları</string>
+    <string name="sn_media_audio">Ses</string>
     <string name="sn_media_repeat">Sesi tekrarla</string>
     <string name="sn_media_seek">Oynatma konumu</string>
     <string name="sn_media_empty">Bu ilahi için henüz ses veya video yok.</string>

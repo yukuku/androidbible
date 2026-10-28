@@ -534,8 +534,7 @@
     <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
     <string name="text_appearance_text_color_contrast">Contrastul culorii textului</string>
     <string name="sn_media_title">Audio și video</string>
-    <string name="sn_media_audio">Înregistrarea audio a cântării</string>
-    <string name="sn_media_youtube">Videoclipuri YouTube</string>
+    <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Repetă înregistrarea audio</string>
     <string name="sn_media_seek">Poziția redării</string>
     <string name="sn_media_empty">Nu sunt încă disponibile înregistrări audio sau videoclipuri pentru această cântare.</string>

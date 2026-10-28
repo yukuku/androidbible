@@ -534,8 +534,7 @@
     <string name="dv_version_unset">Používá se %1$s. Klepnutím vyberete překlad Bible.</string>
     <string name="text_appearance_text_color_contrast">Kontrast barvy textu</string>
     <string name="sn_media_title">Zvuk a video</string>
-    <string name="sn_media_audio">Zvuk písně</string>
-    <string name="sn_media_youtube">Videa na YouTube</string>
+    <string name="sn_media_audio">Zvuk</string>
     <string name="sn_media_repeat">Opakovat zvuk</string>
     <string name="sn_media_seek">Pozice přehrávání</string>
     <string name="sn_media_empty">Pro tuto píseň zatím není k dispozici zvuk ani video.</string>

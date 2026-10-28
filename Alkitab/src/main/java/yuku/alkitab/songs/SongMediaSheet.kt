@@ -1,6 +1,5 @@
 package yuku.alkitab.songs
 
-import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,17 +48,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import coil.load
-import java.text.DateFormat
+import coil.compose.AsyncImage
 import java.text.NumberFormat
-import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.delay
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
@@ -113,10 +110,7 @@ internal fun SongMediaSheetContent(
                 Modifier.fillMaxWidth().padding(start = 20.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.sn_media_title), style = MaterialTheme.typography.titleLarge)
-                    Text(title, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
+                Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
                 IconButton(onClick = onDismiss) {
                     Icon(Icons.Default.Close, stringResource(R.string.desc_close))
                 }
@@ -145,20 +139,8 @@ internal fun SongMediaSheetContent(
                     items(media.audioClips) { clip ->
                         SongAudioBar(clip, controller, { onPlay(clip) }, Modifier.padding(16.dp))
                     }
-                    if (media.youtubeVideos.isNotEmpty()) {
-                        item {
-                            Row(
-                                Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Icon(Icons.Default.SmartDisplay, null, tint = MaterialTheme.colorScheme.primary)
-                                Text(stringResource(R.string.sn_media_youtube), style = MaterialTheme.typography.titleSmall)
-                            }
-                        }
-                        items(media.youtubeVideos, key = { it.videoId }) { video ->
-                            SongVideoRow(video, { onVideo(video) })
-                        }
+                    items(media.youtubeVideos, key = { it.videoId }) { video ->
+                        SongVideoRow(video, { onVideo(video) })
                     }
                     if (!state.isLoading && !state.isError && !media.isIncomplete && media.audioClips.isEmpty() && media.youtubeVideos.isEmpty()) {
                         item {
@@ -261,29 +243,36 @@ private fun SongVideoRow(video: SongYoutubeVideo, onClick: () -> Unit, modifier:
             contentAlignment = Alignment.Center,
         ) {
             Icon(Icons.Default.SmartDisplay, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            AndroidView(
-                factory = { context -> ImageView(context).apply { scaleType = ImageView.ScaleType.CENTER_CROP } },
-                update = { it.load(video.thumbnailUrl) },
+            AsyncImage(
+                model = video.thumbnailUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize(),
             )
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            Text(video.title, style = MaterialTheme.typography.titleSmall, maxLines = 3, overflow = TextOverflow.Ellipsis)
-            Text(video.channelName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            val count = video.viewCount
-            if (count != null) {
-                val formatted = NumberFormat.getIntegerInstance(locale).format(count)
+            Text(video.title, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(video.channelName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+
+            val metadata = formatSongVideoMetadata(video.viewCount, video.isViewCountApproximate, video.publishedAt, locale)
+            if (metadata.isNotEmpty()) {
+                val count = video.viewCount
+                val spokenViews = if (count != null) {
+                    stringResource(
+                        if (video.isViewCountApproximate) R.string.sn_media_views_approximate else R.string.sn_media_views_exact,
+                        NumberFormat.getIntegerInstance(locale).format(count),
+                    )
+                } else {
+                    null
+                }
+                val spokenMetadata = listOfNotNull(spokenViews, video.publishedAt?.let { formatSongVideoDate(it, locale) }).joinToString(" • ")
                 Text(
-                    stringResource(if (video.isViewCountApproximate) R.string.sn_media_views_approximate else R.string.sn_media_views_exact, formatted),
+                    metadata,
+                    modifier = Modifier.semantics { contentDescription = spokenMetadata },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            video.publishedAt?.let {
-                Text(
-                    DateFormat.getDateInstance(DateFormat.MEDIUM, locale).format(Date.from(it)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

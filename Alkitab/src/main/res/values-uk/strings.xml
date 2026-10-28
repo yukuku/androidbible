@@ -535,8 +535,7 @@
     <string name="dv_version_unset">Використовується %1$s. Натисніть, щоб вибрати переклад Біблії.</string>
     <string name="text_appearance_text_color_contrast">Контраст кольору тексту</string>
     <string name="sn_media_title">Аудіо та відео</string>
-    <string name="sn_media_audio">Аудіозапис пісні</string>
-    <string name="sn_media_youtube">Відео на YouTube</string>
+    <string name="sn_media_audio">Аудіо</string>
     <string name="sn_media_repeat">Повторювати аудіо</string>
     <string name="sn_media_seek">Позиція відтворення</string>
     <string name="sn_media_empty">Для цієї пісні ще немає аудіо чи відео.</string>
