@@ -65,6 +65,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import coil.compose.AsyncImage
 import java.text.NumberFormat
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.debug.R
@@ -125,10 +126,14 @@ internal fun SongMediaSheetContent(
 ) {
     BoxWithConstraints(modifier.fillMaxWidth()) {
         Column(
-            Modifier.fillMaxWidth().heightIn(max = (maxHeight - 48.dp).coerceAtLeast(1.dp)),
+            Modifier
+                .fillMaxWidth()
+                .heightIn(max = (maxHeight - 64.dp).coerceAtLeast(1.dp)),
         ) {
             Row(
-                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(Modifier.weight(1f)) {
@@ -149,7 +154,9 @@ internal fun SongMediaSheetContent(
             ) {
                 if (state.isLoading) {
                     item {
-                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        Box(Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator(Modifier.size(28.dp))
                         }
                     }
@@ -206,7 +213,7 @@ private fun SongAudioBar(
             progress = controller.getProgress().let { it[0] to it[1] }
             isActive = controller.isCurrentUrl(clip.url)
             isLooping = controller.isLooping
-            delay(250)
+            delay(250.milliseconds)
         }
     }
     val isPlaying = isActive && playbackState == MediaController.State.playing
@@ -217,7 +224,9 @@ private fun SongAudioBar(
     Column(modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.MusicNote, null, tint = MaterialTheme.colorScheme.primary)
-            Text(stringResource(R.string.sn_media_audio), Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.sn_media_audio), Modifier
+                .weight(1f)
+                .padding(start = 8.dp), style = MaterialTheme.typography.titleSmall)
             IconToggleButton(checked = isLooping, onCheckedChange = { controller.setLoop(it); isLooping = it }) {
                 Icon(Icons.Default.Repeat, stringResource(R.string.sn_media_repeat))
             }
@@ -242,7 +251,9 @@ private fun SongAudioBar(
             },
             valueRange = 0f..duration.coerceAtLeast(1).toFloat(),
             enabled = duration > 0,
-            modifier = Modifier.fillMaxWidth().semantics { contentDescription = seekDescription },
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentDescription = seekDescription },
         )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(formatSongTime(seekPosition?.toLong() ?: position), style = MaterialTheme.typography.labelMedium)
@@ -258,14 +269,24 @@ internal fun formatSongTime(positionMs: Long): String =
     String.format(Locale.US, "%d:%02d", positionMs / 60000, positionMs % 60000 / 1000)
 
 @Composable
-private fun SongVideoRow(video: SongYoutubeVideo, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun SongVideoRow(
+    video: SongYoutubeVideo,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val locale = LocalConfiguration.current.locales[0]
     Row(
-        modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box(
-            Modifier.width(104.dp).aspectRatio(16f / 9f).clip(RoundedCornerShape(8.dp))
+            Modifier
+                .width(104.dp)
+                .aspectRatio(16f / 9f)
+                .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh),
             contentAlignment = Alignment.Center,
         ) {

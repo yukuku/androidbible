@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,7 +47,7 @@ object ColorPickerDialog {
     fun show(context: Context, initialColor: Int, listener: Listener) {
         val activity = context.findActivity() ?: return
         ComposeBottomSheetHost.show(activity) { dismiss ->
-            var currentColor by remember { mutableStateOf(initialColor or 0xff000000.toInt()) }
+            var currentColor by remember { mutableIntStateOf(initialColor or 0xff000000.toInt()) }
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())

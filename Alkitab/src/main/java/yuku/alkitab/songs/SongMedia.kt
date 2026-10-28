@@ -1,5 +1,6 @@
 package yuku.alkitab.songs
 
+import androidx.compose.runtime.Stable
 import java.time.Instant
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -75,6 +76,7 @@ private data class SongVideoViewsResponse(
 
 data class SongAudioClip(val url: String)
 
+@Stable
 data class SongYoutubeVideo(
     val videoId: String,
     val title: String,

@@ -30,17 +30,11 @@ import kotlinx.coroutines.launch
  */
 object ComposeBottomSheetHost {
     @OptIn(ExperimentalMaterial3Api::class)
-    @JvmStatic
-    fun show(activity: Activity, sheetGesturesEnabled: Boolean = true, dimBackground: Boolean = true, content: @Composable (dismiss: () -> Unit) -> Unit) {
-        show(activity, BottomSheetDefaults.SheetMaxWidth, sheetGesturesEnabled, dimBackground, content = content)
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
     fun show(
         activity: Activity,
-        sheetMaxWidth: Dp,
-        sheetGesturesEnabled: Boolean,
-        dimBackground: Boolean,
+        sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
+        sheetGesturesEnabled: Boolean = true,
+        dimBackground: Boolean = true,
         contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
         content: @Composable (dismiss: () -> Unit) -> Unit,
     ) {

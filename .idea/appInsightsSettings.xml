@@ -23,9 +23,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="yuku.alkitab.debug" />
-                  <option name="mobileSdkAppId" value="1:866757332604:android:5e30440a15e37b7a" />
-                  <option name="projectId" value="alkitab-host-hrd" />
-                  <option name="projectNumber" value="866757332604" />
+                  <option name="mobileSdkAppId" value="1:0000000000:android:0000000000" />
+                  <option name="projectId" value="0000000000" />
+                  <option name="projectNumber" value="0000000000" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
