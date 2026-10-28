@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Bản dịch đã chọn không khả dụng. Đang dùng %1$s. Nhấn để thay đổi.</string>
     <string name="dv_version_unset">Đang dùng %1$s. Nhấn để chọn bản dịch Kinh Thánh.</string>
     <string name="text_appearance_text_color_contrast">Độ tương phản màu chữ</string>
+    <string name="sn_media_title">Âm thanh và video</string>
+    <string name="sn_media_audio">Âm thanh bài hát</string>
+    <string name="sn_media_youtube">Video YouTube</string>
+    <string name="sn_media_repeat">Lặp lại âm thanh</string>
+    <string name="sn_media_seek">Vị trí phát</string>
+    <string name="sn_media_empty">Chưa có âm thanh hoặc video cho bài hát này.</string>
+    <string name="sn_media_load_error">Không thể tải một số nội dung đa phương tiện. Vui lòng thử lại.</string>
+    <string name="sn_media_views_exact">%1$s lượt xem</string>
+    <string name="sn_media_views_approximate">Khoảng %1$s lượt xem</string>
+    <string name="sn_media_no_video_app">Không có ứng dụng để mở video này.</string>
 </resources>

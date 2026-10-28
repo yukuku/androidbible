@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Wybrany przekład jest niedostępny. Używany jest %1$s. Dotknij, aby zmienić.</string>
     <string name="dv_version_unset">Używany jest %1$s. Dotknij, aby wybrać przekład Biblii.</string>
     <string name="text_appearance_text_color_contrast">Kontrast koloru tekstu</string>
+    <string name="sn_media_title">Dźwięk i wideo</string>
+    <string name="sn_media_audio">Nagranie pieśni</string>
+    <string name="sn_media_youtube">Filmy z YouTube</string>
+    <string name="sn_media_repeat">Powtarzaj dźwięk</string>
+    <string name="sn_media_seek">Pozycja odtwarzania</string>
+    <string name="sn_media_empty">Dla tej pieśni nie ma jeszcze nagrań dźwiękowych ani filmów.</string>
+    <string name="sn_media_load_error">Nie udało się wczytać niektórych multimediów. Spróbuj ponownie.</string>
+    <string name="sn_media_views_exact">Liczba wyświetleń: %1$s</string>
+    <string name="sn_media_views_approximate">Przybliżona liczba wyświetleń: %1$s</string>
+    <string name="sn_media_no_video_app">Brak aplikacji do otwarcia tego filmu.</string>
 </resources>

@@ -534,4 +534,14 @@
     <string name="dv_version_unavailable">Вибраний переклад недоступний. Використовується %1$s. Натисніть, щоб змінити.</string>
     <string name="dv_version_unset">Використовується %1$s. Натисніть, щоб вибрати переклад Біблії.</string>
     <string name="text_appearance_text_color_contrast">Контраст кольору тексту</string>
+    <string name="sn_media_title">Аудіо та відео</string>
+    <string name="sn_media_audio">Аудіозапис пісні</string>
+    <string name="sn_media_youtube">Відео на YouTube</string>
+    <string name="sn_media_repeat">Повторювати аудіо</string>
+    <string name="sn_media_seek">Позиція відтворення</string>
+    <string name="sn_media_empty">Для цієї пісні ще немає аудіо чи відео.</string>
+    <string name="sn_media_load_error">Не вдалося завантажити деякі медіафайли. Спробуйте ще раз.</string>
+    <string name="sn_media_views_exact">Перегляди: %1$s</string>
+    <string name="sn_media_views_approximate">Приблизна кількість переглядів: %1$s</string>
+    <string name="sn_media_no_video_app">Немає застосунку для відкриття цього відео.</string>
 </resources>

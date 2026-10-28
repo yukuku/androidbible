@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">所選譯本無法使用。正在使用%1$s。點選以變更。</string>
     <string name="dv_version_unset">正在使用%1$s。點選以選擇聖經譯本。</string>
     <string name="text_appearance_text_color_contrast">文字顏色對比度</string>
+    <string name="sn_media_title">音訊與影片</string>
+    <string name="sn_media_audio">詩歌音訊</string>
+    <string name="sn_media_youtube">YouTube 影片</string>
+    <string name="sn_media_repeat">重複播放音訊</string>
+    <string name="sn_media_seek">播放位置</string>
+    <string name="sn_media_empty">這首詩歌暫時沒有音訊或影片。</string>
+    <string name="sn_media_load_error">部分媒體無法載入，請重試。</string>
+    <string name="sn_media_views_exact">觀看次數：%1$s</string>
+    <string name="sn_media_views_approximate">觀看次數：約 %1$s</string>
+    <string name="sn_media_no_video_app">沒有可開啟此影片的應用程式。</string>
 </resources>

@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Traducerea selectată nu este disponibilă. Se folosește %1$s. Atingeți pentru a schimba.</string>
     <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
     <string name="text_appearance_text_color_contrast">Contrastul culorii textului</string>
+    <string name="sn_media_title">Audio și video</string>
+    <string name="sn_media_audio">Înregistrarea audio a cântării</string>
+    <string name="sn_media_youtube">Videoclipuri YouTube</string>
+    <string name="sn_media_repeat">Repetă înregistrarea audio</string>
+    <string name="sn_media_seek">Poziția redării</string>
+    <string name="sn_media_empty">Nu sunt încă disponibile înregistrări audio sau videoclipuri pentru această cântare.</string>
+    <string name="sn_media_load_error">Unele fișiere media nu au putut fi încărcate. Încercați din nou.</string>
+    <string name="sn_media_views_exact">%1$s vizionări</string>
+    <string name="sn_media_views_approximate">Aproximativ %1$s vizionări</string>
+    <string name="sn_media_no_video_app">Nu există nicio aplicație disponibilă pentru a deschide acest videoclip.</string>
 </resources>

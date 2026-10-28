@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Den valgte oversættelse er ikke tilgængelig. Bruger %1$s. Tryk for at ændre.</string>
     <string name="dv_version_unset">Bruger %1$s. Tryk for at vælge en bibeloversættelse.</string>
     <string name="text_appearance_text_color_contrast">Tekstfarvekontrast</string>
+    <string name="sn_media_title">Lyd og video</string>
+    <string name="sn_media_audio">Sangens lyd</string>
+    <string name="sn_media_youtube">YouTube-videoer</string>
+    <string name="sn_media_repeat">Gentag lyd</string>
+    <string name="sn_media_seek">Afspilningsposition</string>
+    <string name="sn_media_empty">Der er endnu ingen lyd eller videoer til denne sang.</string>
+    <string name="sn_media_load_error">Nogle medier kunne ikke indlæses. Prøv igen.</string>
+    <string name="sn_media_views_exact">%1$s visninger</string>
+    <string name="sn_media_views_approximate">Omkring %1$s visninger</string>
+    <string name="sn_media_no_video_app">Ingen app kan åbne denne video.</string>
 </resources>

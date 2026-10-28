@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">A versão escolhida não está disponível. Está a ser usada %1$s. Toque para alterar.</string>
     <string name="dv_version_unset">Está a ser usada %1$s. Toque para escolher uma versão da Bíblia.</string>
     <string name="text_appearance_text_color_contrast">Contraste da cor do texto</string>
+    <string name="sn_media_title">Áudio e vídeo</string>
+    <string name="sn_media_audio">Áudio do cântico</string>
+    <string name="sn_media_youtube">Vídeos do YouTube</string>
+    <string name="sn_media_repeat">Repetir áudio</string>
+    <string name="sn_media_seek">Posição de reprodução</string>
+    <string name="sn_media_empty">Ainda não há áudio ou vídeos disponíveis para este cântico.</string>
+    <string name="sn_media_load_error">Não foi possível carregar alguns conteúdos multimédia. Tente novamente.</string>
+    <string name="sn_media_views_exact">%1$s visualizações</string>
+    <string name="sn_media_views_approximate">Cerca de %1$s visualizações</string>
+    <string name="sn_media_no_video_app">Não há nenhuma aplicação disponível para abrir este vídeo.</string>
 </resources>

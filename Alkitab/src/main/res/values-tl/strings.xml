@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Hindi available ang napiling salin. Ginagamit ang %1$s. I-tap para palitan.</string>
     <string name="dv_version_unset">Ginagamit ang %1$s. I-tap para pumili ng salin ng Bibliya.</string>
     <string name="text_appearance_text_color_contrast">Contrast ng kulay ng teksto</string>
+    <string name="sn_media_title">Audio at video</string>
+    <string name="sn_media_audio">Audio ng awit</string>
+    <string name="sn_media_youtube">Mga video sa YouTube</string>
+    <string name="sn_media_repeat">Ulitin ang audio</string>
+    <string name="sn_media_seek">Posisyon ng pag-play</string>
+    <string name="sn_media_empty">Wala pang audio o video para sa awit na ito.</string>
+    <string name="sn_media_load_error">Hindi ma-load ang ilang media. Pakisubukang muli.</string>
+    <string name="sn_media_views_exact">%1$s panonood</string>
+    <string name="sn_media_views_approximate">Humigit-kumulang %1$s panonood</string>
+    <string name="sn_media_no_video_app">Walang app na maaaring magbukas ng video na ito.</string>
 </resources>

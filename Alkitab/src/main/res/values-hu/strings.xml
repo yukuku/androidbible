@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">A kiválasztott fordítás nem érhető el. A használt fordítás: %1$s. Koppintson a módosításhoz.</string>
     <string name="dv_version_unset">A használt fordítás: %1$s. Koppintson egy bibliafordítás kiválasztásához.</string>
     <string name="text_appearance_text_color_contrast">Szövegszín kontrasztja</string>
+    <string name="sn_media_title">Hang és videó</string>
+    <string name="sn_media_audio">Az ének hangfelvétele</string>
+    <string name="sn_media_youtube">YouTube-videók</string>
+    <string name="sn_media_repeat">Hang ismétlése</string>
+    <string name="sn_media_seek">Lejátszási pozíció</string>
+    <string name="sn_media_empty">Ehhez az énekhez még nem érhető el hangfelvétel vagy videó.</string>
+    <string name="sn_media_load_error">Néhány médiatartalmat nem sikerült betölteni. Próbálja újra.</string>
+    <string name="sn_media_views_exact">%1$s megtekintés</string>
+    <string name="sn_media_views_approximate">Körülbelül %1$s megtekintés</string>
+    <string name="sn_media_no_video_app">Nincs elérhető alkalmazás a videó megnyitásához.</string>
 </resources>

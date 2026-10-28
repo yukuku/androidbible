@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">ရွေးထားသော ဘာသာပြန်မူကို မရနိုင်ပါ။ %1$s ကို အသုံးပြုထားသည်။ ပြောင်းရန် နှိပ်ပါ။</string>
     <string name="dv_version_unset">%1$s ကို အသုံးပြုထားသည်။ သမ္မာကျမ်းစာ ဘာသာပြန်မူကို ရွေးရန် နှိပ်ပါ။</string>
     <string name="text_appearance_text_color_contrast">စာသားအရောင် ကွာခြားမှု</string>
+    <string name="sn_media_title">အသံနှင့် ဗီဒီယို</string>
+    <string name="sn_media_audio">သီချင်းအသံ</string>
+    <string name="sn_media_youtube">YouTube ဗီဒီယိုများ</string>
+    <string name="sn_media_repeat">အသံကို ထပ်ကျော့ဖွင့်ရန်</string>
+    <string name="sn_media_seek">ဖွင့်နေသည့်နေရာ</string>
+    <string name="sn_media_empty">ဤသီချင်းအတွက် အသံ သို့မဟုတ် ဗီဒီယိုများ မရရှိနိုင်သေးပါ။</string>
+    <string name="sn_media_load_error">မီဒီယာအချို့ကို ဖွင့်၍မရပါ။ ထပ်မံကြိုးစားပါ။</string>
+    <string name="sn_media_views_exact">ကြည့်ရှုမှု %1$s ကြိမ်</string>
+    <string name="sn_media_views_approximate">ကြည့်ရှုမှု %1$s ကြိမ်ခန့်</string>
+    <string name="sn_media_no_video_app">ဤဗီဒီယိုကို ဖွင့်ရန် အက်ပ်မရှိပါ။</string>
 </resources>

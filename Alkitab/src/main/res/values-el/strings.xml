@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Η επιλεγμένη μετάφραση δεν είναι διαθέσιμη. Χρησιμοποιείται η %1$s. Πατήστε για αλλαγή.</string>
     <string name="dv_version_unset">Χρησιμοποιείται η %1$s. Πατήστε για να επιλέξετε μετάφραση της Βίβλου.</string>
     <string name="text_appearance_text_color_contrast">Αντίθεση χρώματος κειμένου</string>
+    <string name="sn_media_title">Ήχος και βίντεο</string>
+    <string name="sn_media_audio">Ήχος τραγουδιού</string>
+    <string name="sn_media_youtube">Βίντεο στο YouTube</string>
+    <string name="sn_media_repeat">Επανάληψη ήχου</string>
+    <string name="sn_media_seek">Θέση αναπαραγωγής</string>
+    <string name="sn_media_empty">Δεν υπάρχει ακόμη διαθέσιμος ήχος ή βίντεο για αυτό το τραγούδι.</string>
+    <string name="sn_media_load_error">Δεν ήταν δυνατή η φόρτωση ορισμένων πολυμέσων. Δοκιμάστε ξανά.</string>
+    <string name="sn_media_views_exact">%1$s προβολές</string>
+    <string name="sn_media_views_approximate">Περίπου %1$s προβολές</string>
+    <string name="sn_media_no_video_app">Δεν υπάρχει διαθέσιμη εφαρμογή για το άνοιγμα αυτού του βίντεο.</string>
 </resources>

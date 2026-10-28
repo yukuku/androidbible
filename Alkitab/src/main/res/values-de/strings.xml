@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Die gewählte Übersetzung ist nicht verfügbar. %1$s wird verwendet. Zum Ändern tippen.</string>
     <string name="dv_version_unset">%1$s wird verwendet. Tippen, um eine Bibelübersetzung auszuwählen.</string>
     <string name="text_appearance_text_color_contrast">Textfarbkontrast</string>
+    <string name="sn_media_title">Audio und Video</string>
+    <string name="sn_media_audio">Liedaufnahme</string>
+    <string name="sn_media_youtube">YouTube-Videos</string>
+    <string name="sn_media_repeat">Audio wiederholen</string>
+    <string name="sn_media_seek">Wiedergabeposition</string>
+    <string name="sn_media_empty">Für dieses Lied sind noch keine Audioaufnahmen oder Videos verfügbar.</string>
+    <string name="sn_media_load_error">Einige Medien konnten nicht geladen werden. Bitte versuche es erneut.</string>
+    <string name="sn_media_views_exact">%1$s Aufrufe</string>
+    <string name="sn_media_views_approximate">Etwa %1$s Aufrufe</string>
+    <string name="sn_media_no_video_app">Keine App zum Öffnen dieses Videos verfügbar.</string>
 </resources>

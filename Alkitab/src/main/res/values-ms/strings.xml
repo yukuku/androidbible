@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Versi yang dipilih tidak tersedia. Menggunakan %1$s. Ketik untuk menukar.</string>
     <string name="dv_version_unset">Menggunakan %1$s. Ketik untuk memilih versi Alkitab.</string>
     <string name="text_appearance_text_color_contrast">Kontras warna teks</string>
+    <string name="sn_media_title">Audio dan video</string>
+    <string name="sn_media_audio">Audio lagu</string>
+    <string name="sn_media_youtube">Video YouTube</string>
+    <string name="sn_media_repeat">Ulang audio</string>
+    <string name="sn_media_seek">Kedudukan main balik</string>
+    <string name="sn_media_empty">Belum ada audio atau video untuk lagu ini.</string>
+    <string name="sn_media_load_error">Sesetengah media tidak dapat dimuatkan. Sila cuba lagi.</string>
+    <string name="sn_media_views_exact">%1$s tontonan</string>
+    <string name="sn_media_views_approximate">Kira-kira %1$s tontonan</string>
+    <string name="sn_media_no_video_app">Tiada aplikasi tersedia untuk membuka video ini.</string>
 </resources>

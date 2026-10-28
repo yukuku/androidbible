@@ -533,4 +533,14 @@
     <string name="dv_version_unavailable">Die gekose weergawe is nie beskikbaar nie. Gebruik %1$s. Tik om te verander.</string>
     <string name="dv_version_unset">Gebruik %1$s. Tik om ’n Bybelweergawe te kies.</string>
     <string name="text_appearance_text_color_contrast">Tekskleurkontras</string>
+    <string name="sn_media_title">Oudio en video</string>
+    <string name="sn_media_audio">Liedjie-oudio</string>
+    <string name="sn_media_youtube">YouTube-video’s</string>
+    <string name="sn_media_repeat">Herhaal oudio</string>
+    <string name="sn_media_seek">Terugspeelposisie</string>
+    <string name="sn_media_empty">Geen oudio of video’s is nog vir hierdie liedjie beskikbaar nie.</string>
+    <string name="sn_media_load_error">Sommige media kon nie gelaai word nie. Probeer asseblief weer.</string>
+    <string name="sn_media_views_exact">%1$s kyke</string>
+    <string name="sn_media_views_approximate">Ongeveer %1$s kyke</string>
+    <string name="sn_media_no_video_app">Geen toepassing is beskikbaar om hierdie video oop te maak nie.</string>
 </resources>
