@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Sách bài hát cá nhân</string>
     <string name="sn_private_song_book_dialog_desc">Tải sách bài hát cá nhân</string>
     <string name="sn_private_song_book_name_hint">Tên sách bài hát</string>
-    <string name="sn_play_in_loop">Bạn có muốn chơi các bài hát một lượt?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Ngày trước</string>
     <string name="desc_next_day">Ngày sau</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Kinh Thánh</string>
     <string name="menuProgress">Các ghim</string>
     <string name="sn_menu_copy">Chép bài hát</string>
-    <string name="menuPlay">Nghe</string>
-    <string name="menuPause">Tạm dừng</string>
     <string name="left_drawer_current_reading_title">Đang đọc</string>
     <string name="book_filter_old_testament">Cựu Ước</string>
     <string name="book_filter_old_pentateuch">Năm quyển đầu của cựu kim ước</string>

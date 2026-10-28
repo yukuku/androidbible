@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">Pribadong libro na kanta</string>
     <string name="sn_private_song_book_dialog_desc">I-download ang pribadong (nakatago) libro na kanta</string>
     <string name="sn_private_song_book_name_hint">Pangalan sa librong pangkanta</string>
-    <string name="sn_play_in_loop">Ginahan kang i-play sa loop hantud kini muhunong?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Kaniadtong adlawa</string>
     <string name="desc_next_day">Sunod adlaw</string>
@@ -289,8 +288,6 @@
     <string name="menuBible">Bibliya</string>
     <string name="menuProgress">Pin</string>
     <string name="sn_menu_copy">Kopyaha ang kanta</string>
-    <string name="menuPlay">Duwa</string>
-    <string name="menuPause">Hunong sa</string>
     <string name="left_drawer_current_reading_title">Kasamtangang gibasa</string>
     <string name="book_filter_old_testament">Karaan na testamento</string>
     <string name="book_filter_old_pentateuch">Pentatueuch</string>

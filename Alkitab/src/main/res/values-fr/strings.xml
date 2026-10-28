@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Recueil de chants privé</string>
     <string name="sn_private_song_book_dialog_desc">Télécharger un recueil de chants privé (caché)</string>
     <string name="sn_private_song_book_name_hint">Nom du recueil de chants</string>
-    <string name="sn_play_in_loop">Voulez-vous jouer en boucle jusqu\'à interruption ?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Jour précédent</string>
     <string name="desc_next_day">Jour suivant</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Bible</string>
     <string name="menuProgress">Progrès</string>
     <string name="sn_menu_copy">Copie d\'un Chant</string>
-    <string name="menuPlay">Jouer</string>
-    <string name="menuPause">Mettre en Pause</string>
     <string name="left_drawer_current_reading_title">Lecture en cours</string>
     <string name="book_filter_old_testament">Ancien Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuque</string>

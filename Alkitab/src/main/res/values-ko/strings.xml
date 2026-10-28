@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">나의 개인 찬양집</string>
     <string name="sn_private_song_book_dialog_desc">나의 개인 (숨은) 찬양집 다운로드</string>
     <string name="sn_private_song_book_name_hint">찬양집 이름</string>
-    <string name="sn_play_in_loop">멈춤 버튼 선택 때까지 계속 반복하시겠습니까?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">전 날</string>
     <string name="desc_next_day">다음 날</string>
@@ -291,8 +290,6 @@
     <string name="menuBible">성경</string>
     <string name="menuProgress">핀</string>
     <string name="sn_menu_copy">찬양 복사</string>
-    <string name="menuPlay">재생</string>
-    <string name="menuPause">정지</string>
     <string name="left_drawer_current_reading_title">통독 진도</string>
     <string name="book_filter_old_testament">구약 성경</string>
     <string name="book_filter_old_pentateuch">모세 5경</string>

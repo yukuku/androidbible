@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Libro di canzoni privato</string>
     <string name="sn_private_song_book_dialog_desc">Scarica un libro di canzoni privato (nascosto)</string>
     <string name="sn_private_song_book_name_hint">Nome libro di canzoni</string>
-    <string name="sn_play_in_loop">Vuoi ascoltare un loop fino all\'arresto?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Giorno precedente</string>
     <string name="desc_next_day">Giorno successivo</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Bibbia</string>
     <string name="menuProgress">Pin</string>
     <string name="sn_menu_copy">Copia canzone</string>
-    <string name="menuPlay">Riproduci</string>
-    <string name="menuPause">Pausa</string>
     <string name="left_drawer_current_reading_title">Lettura corrente</string>
     <string name="book_filter_old_testament">Vecchio Testamento</string>
     <string name="book_filter_old_pentateuch">Pentateuco</string>

@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Privé liederen boek</string>
     <string name="sn_private_song_book_dialog_desc">Download een privé (verborgen) liedboek</string>
     <string name="sn_private_song_book_name_hint">Liedboek naam</string>
-    <string name="sn_play_in_loop">Wil je herhalend blijven afspelen tot er wordt gestopt?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Vorige dag</string>
     <string name="desc_next_day">Volgende dag</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Bijbel</string>
     <string name="menuProgress">Voortgang</string>
     <string name="sn_menu_copy">Kopieer lied</string>
-    <string name="menuPlay">Afspelen</string>
-    <string name="menuPause">Pauze</string>
     <string name="left_drawer_current_reading_title">Huidig aan het lezen</string>
     <string name="book_filter_old_testament">Oude Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>

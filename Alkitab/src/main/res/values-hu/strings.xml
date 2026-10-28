@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Privát énekeskönyv</string>
     <string name="sn_private_song_book_dialog_desc">Egy privát (rejtett) énekeskönyv letöltése</string>
     <string name="sn_private_song_book_name_hint">Az énekeskönyv neve</string>
-    <string name="sn_play_in_loop">Szeretné, hogy leállításig végtelenítve játssza le?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Előző nap</string>
     <string name="desc_next_day">Következő nap</string>
@@ -285,8 +284,6 @@
     <string name="menuBible">Biblia</string>
     <string name="menuProgress">Jelölők</string>
     <string name="sn_menu_copy">Dal másolása</string>
-    <string name="menuPlay">Lejátszás</string>
-    <string name="menuPause">Szünet</string>
     <string name="left_drawer_current_reading_title">Jelenlegi olvasás</string>
     <string name="book_filter_old_testament">Ótestamentum</string>
     <string name="book_filter_old_pentateuch">Mózes öt könyve</string>

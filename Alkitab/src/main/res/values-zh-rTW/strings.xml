@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">私人的詩歌書</string>
     <string name="sn_private_song_book_dialog_desc">下載私人的（隱藏）詩歌書</string>
     <string name="sn_private_song_book_name_hint">詩歌書名稱</string>
-    <string name="sn_play_in_loop">你想玩循環式直到停止?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">前一天</string>
     <string name="desc_next_day">後一天</string>
@@ -289,8 +288,6 @@
     <string name="menuBible">聖經</string>
     <string name="menuProgress">進度</string>
     <string name="sn_menu_copy">複製歌曲</string>
-    <string name="menuPlay">播放</string>
-    <string name="menuPause">暫停</string>
     <string name="left_drawer_current_reading_title">現正閱讀</string>
     <string name="book_filter_old_testament">舊約</string>
     <string name="book_filter_old_pentateuch">摩西五經</string>

@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">Buku lagu peribadi</string>
     <string name="sn_private_song_book_dialog_desc">Muat turun buku lagu peribadi (tersembunyi)</string>
     <string name="sn_private_song_book_name_hint">Nama buku lagu</string>
-    <string name="sn_play_in_loop">Adakah anda mahu mainkan sebahagian lagu secara berulang sehingga dihentikan?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Hari sebelumnya</string>
     <string name="desc_next_day">Hari seterusnya</string>
@@ -290,8 +289,6 @@
     <string name="menuBible">Alkitab</string>
     <string name="menuProgress">Kemajuan</string>
     <string name="sn_menu_copy">Salin lagu</string>
-    <string name="menuPlay">Main</string>
-    <string name="menuPause">Jeda</string>
     <string name="left_drawer_current_reading_title">Pembacaan terkini</string>
     <string name="book_filter_old_testament">Perjanjian Lama</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>

@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Hinário privado</string>
     <string name="sn_private_song_book_dialog_desc">Baixar um hinário privado (oculto)</string>
     <string name="sn_private_song_book_name_hint">Nome do hinário</string>
-    <string name="sn_play_in_loop">Você quer voltar para onde parou?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Dia anterior</string>
     <string name="desc_next_day">Dia seguinte</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Bíblia</string>
     <string name="menuProgress">Progresso</string>
     <string name="sn_menu_copy">Copiar música</string>
-    <string name="menuPlay">Reproduzir</string>
-    <string name="menuPause">Pausar</string>
     <string name="left_drawer_current_reading_title">Leitura atual</string>
     <string name="book_filter_old_testament">Antigo Testamento</string>
     <string name="book_filter_old_pentateuch">Pentateuco</string>

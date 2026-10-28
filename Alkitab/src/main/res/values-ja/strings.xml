@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">プライベートの聖歌集</string>
     <string name="sn_private_song_book_dialog_desc">プライベートな聖歌集をダウンロードする</string>
     <string name="sn_private_song_book_name_hint">聖歌集の名前</string>
-    <string name="sn_play_in_loop">停止するまでループで再生しますか？</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">昨日</string>
     <string name="desc_next_day">翌日</string>
@@ -291,8 +290,6 @@
     <string name="menuBible">聖書</string>
     <string name="menuProgress">しおり</string>
     <string name="sn_menu_copy">聖歌をコピー</string>
-    <string name="menuPlay">再生</string>
-    <string name="menuPause">一時停止</string>
     <string name="left_drawer_current_reading_title">今日の箇所</string>
     <string name="book_filter_old_testament">旧約聖書</string>
     <string name="book_filter_old_pentateuch">モーセの5書</string>

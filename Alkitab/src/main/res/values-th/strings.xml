@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">หนังสือเพลงส่วนตัว</string>
     <string name="sn_private_song_book_dialog_desc">ดาวน์โหลดหนังสือเพลงส่วนตัว (ซึ่งปิดบังอยู่)</string>
     <string name="sn_private_song_book_name_hint">ชื่อหนังสือเพลง</string>
-    <string name="sn_play_in_loop">ต้องการเปิดฟังอย่างวงต่อเนื่องจนกว่าจะกดหยุดหรือไม่?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">วันก่อน</string>
     <string name="desc_next_day">วันต่อไป</string>
@@ -291,8 +290,6 @@
     <string name="menuBible">พระคำภีร์</string>
     <string name="menuProgress">พิน</string>
     <string name="sn_menu_copy">ก๊อบเพลง</string>
-    <string name="menuPlay">ฟัง</string>
-    <string name="menuPause">หยุดฟัง</string>
     <string name="left_drawer_current_reading_title">การอ่าน ณ ที่ปัจจุบัน</string>
     <string name="book_filter_old_testament">พันธสัญญาเดิม</string>
     <string name="book_filter_old_pentateuch">พระบัญญัติ</string>

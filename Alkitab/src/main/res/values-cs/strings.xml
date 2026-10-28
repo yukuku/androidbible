@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Soukromý zpěvník</string>
     <string name="sn_private_song_book_dialog_desc">Stáhnout neveřejné zpěvníky</string>
     <string name="sn_private_song_book_name_hint">Název zpěvníku</string>
-    <string name="sn_play_in_loop">Chcete přehrát smyčku, dokud se neukončí?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Předchozí den</string>
     <string name="desc_next_day">Následující den</string>
@@ -292,8 +291,6 @@
     <string name="menuBible">Bible</string>
     <string name="menuProgress">Přehled</string>
     <string name="sn_menu_copy">Kopírovat skladbu</string>
-    <string name="menuPlay">Přehrát</string>
-    <string name="menuPause">Pauza</string>
     <string name="left_drawer_current_reading_title">Nynější čtení</string>
     <string name="book_filter_old_testament">Starý zákon</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>

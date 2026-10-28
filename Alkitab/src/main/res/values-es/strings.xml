@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Cancionero privado</string>
     <string name="sn_private_song_book_dialog_desc">Descargar un himnario privada (esconder)</string>
     <string name="sn_private_song_book_name_hint">Nombre del cancionero</string>
-    <string name="sn_play_in_loop">¿Quieres reproducir en bucle hasta que sea detenido?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Día anterior</string>
     <string name="desc_next_day">Día siguiente</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Biblia</string>
     <string name="menuProgress">Progreso</string>
     <string name="sn_menu_copy">Copiar canción</string>
-    <string name="menuPlay">Reproducir</string>
-    <string name="menuPause">Pausa</string>
     <string name="left_drawer_current_reading_title">Lectura actual</string>
     <string name="book_filter_old_testament">Antiguo Testamento</string>
     <string name="book_filter_old_pentateuch">Pentateuco</string>

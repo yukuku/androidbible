@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Личная книга гимнов</string>
     <string name="sn_private_song_book_dialog_desc">Скачать личную (скрытую) книгу гимнов</string>
     <string name="sn_private_song_book_name_hint">Название книги гимнов</string>
-    <string name="sn_play_in_loop">Вы хотите проигрывать до тех пор, пока вы не остановите?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Предыдущий день</string>
     <string name="desc_next_day">Следующий день</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Библия</string>
     <string name="menuProgress">Продвижение</string>
     <string name="sn_menu_copy">Скопировать песню</string>
-    <string name="menuPlay">Воспроизвести</string>
-    <string name="menuPause">Пауза</string>
     <string name="left_drawer_current_reading_title">Текущее чтение</string>
     <string name="book_filter_old_testament">Ветхий Завет</string>
     <string name="book_filter_old_pentateuch">Пятикнижие</string>

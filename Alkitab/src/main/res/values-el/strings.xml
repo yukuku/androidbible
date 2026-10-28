@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">Προσωπικό βιβλίο ύμνων</string>
     <string name="sn_private_song_book_dialog_desc">Κατεβάστε από τον υπολογιστή ένα προσωπικό (κρυμμένο) βιβλίο ύμνων</string>
     <string name="sn_private_song_book_name_hint">Όνομα βιβλίου ύμνων</string>
-    <string name="sn_play_in_loop">Θέλεις να παίξεις ένα κομμάτι μέχρι να τελειώσουν οι μπαταρίες;</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Προηγούμενη ημέρα</string>
     <string name="desc_next_day">Επόμενη ημέρα</string>
@@ -290,8 +289,6 @@
     <string name="menuBible">Βίβλος</string>
     <string name="menuProgress">Πρόοδος</string>
     <string name="sn_menu_copy">Αντιγράψετε ύμνο</string>
-    <string name="menuPlay">Αναπαραγωγή</string>
-    <string name="menuPause">Παύση</string>
     <string name="left_drawer_current_reading_title">Τρέχουσα ανάγνωση</string>
     <string name="book_filter_old_testament">Παλαιά Διαθήκη</string>
     <string name="book_filter_old_pentateuch">Πεντάτευχος</string>

@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">Personīgā dziesmu grāmata</string>
     <string name="sn_private_song_book_dialog_desc">Lejuplādēt privāto (slēpto) dziesmu grāmatu</string>
     <string name="sn_private_song_book_name_hint">Dziesmu grāmatas nosaukums</string>
-    <string name="sn_play_in_loop">Vai jūs vēlaties palaist ciklu līdz tas apstāsies?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Iepriekšējā diena</string>
     <string name="desc_next_day">Nākošā diena</string>
@@ -290,8 +289,6 @@
     <string name="menuBible">Bībele</string>
     <string name="menuProgress">Progress</string>
     <string name="sn_menu_copy">Kopēt dziesmu</string>
-    <string name="menuPlay">Palaist</string>
-    <string name="menuPause">Pauze</string>
     <string name="left_drawer_current_reading_title">Tekošā lasīšana</string>
     <string name="book_filter_old_testament">Vecā Derība</string>
     <string name="book_filter_old_pentateuch">5 Mozus grāmatas</string>
