@@ -1,7 +1,14 @@
 package yuku.alkitab.songs
 
-import com.google.gson.JsonParser
 import java.time.Instant
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 
 data class SongMedia(
     val audioClips: List<SongAudioClip>,
@@ -10,33 +17,33 @@ data class SongMedia(
 ) {
     companion object {
         fun parse(json: String): SongMedia {
-            val root = JsonParser.parseString(json).asJsonObject
-            val audio = root.getAsJsonArray("audio_clips").mapNotNull { value ->
-                val url = value.asJsonObject.get("url")?.asString
+            val root = Json.parseToJsonElement(json).jsonObject
+            val audio = root.getValue("audio_clips").jsonArray.mapNotNull { value ->
+                val url = value.jsonObject["url"]?.jsonPrimitive?.contentOrNull
                 url?.takeIf { it.startsWith("https://") }?.let(::SongAudioClip)
             }
-            val videos = root.getAsJsonArray("youtube_videos").mapNotNull { value ->
-                val item = value.asJsonObject
-                val id = item.get("videoId")?.asString ?: return@mapNotNull null
+            val videos = root.getValue("youtube_videos").jsonArray.mapNotNull { value ->
+                val item = value.jsonObject
+                val id = item["videoId"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
                 if (!id.matches(Regex("[A-Za-z0-9_-]{11}"))) return@mapNotNull null
-                val views = item.get("views")?.takeUnless { it.isJsonNull }?.asJsonObject
-                val count = views?.get("view_count")?.takeUnless { it.isJsonNull }?.asLong?.takeIf { it >= 0 }
-                val precision = views?.get("precision")?.asString
-                val published = item.get("published_at")?.asString?.let {
+                val views = item["views"]?.takeUnless { it is JsonNull }?.jsonObject
+                val count = views?.get("view_count")?.jsonPrimitive?.longOrNull?.takeIf { it >= 0 }
+                val precision = views?.get("precision")?.jsonPrimitive?.contentOrNull
+                val published = item["published_at"]?.jsonPrimitive?.contentOrNull?.let {
                     runCatching { Instant.parse(it) }.getOrNull()
                 }
                 SongYoutubeVideo(
                     videoId = id,
-                    title = item.get("title")?.asString.orEmpty(),
-                    channelName = item.get("channel_name")?.asString.orEmpty(),
-                    thumbnailUrl = item.get("thumbnail_url")?.takeUnless { it.isJsonNull }?.asString
+                    title = item["title"]?.jsonPrimitive?.contentOrNull.orEmpty(),
+                    channelName = item["channel_name"]?.jsonPrimitive?.contentOrNull.orEmpty(),
+                    thumbnailUrl = item["thumbnail_url"]?.jsonPrimitive?.contentOrNull
                         ?.takeIf { it.startsWith("https://") },
                     viewCount = count?.takeIf { precision == "exact" || precision == "approximate" },
                     isViewCountApproximate = precision == "approximate",
                     publishedAt = published,
                 )
             }
-            return SongMedia(audio, videos, root.get("is_incomplete")?.asBoolean == true)
+            return SongMedia(audio, videos, root["is_incomplete"]?.jsonPrimitive?.booleanOrNull == true)
         }
     }
 }

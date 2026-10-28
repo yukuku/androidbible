@@ -62,6 +62,21 @@ class SongMediaTest {
     }
 
     @Test
+    fun `nullable thumbnails and view counts keep the video available`() {
+        val json = response("null").replace("\"thumbnail_url\":\"https://example.com/thumb.jpg\"", "\"thumbnail_url\":null")
+        val video = SongMedia.parse(json).youtubeVideos.single()
+        assertNull(video.thumbnailUrl)
+        assertNull(video.viewCount)
+        assertEquals("abcdefghijk", video.videoId)
+    }
+
+    @Test
+    fun `additional server fields are ignored`() {
+        val json = response("null").replace("\"audio_clips\":", "\"future_field\":{\"nested\":[1,true,null]},\"audio_clips\":")
+        assertEquals(SongMedia.parse(response("null")), SongMedia.parse(json))
+    }
+
+    @Test
     fun `song playback times retain minutes past one hour`() {
         assertEquals("0:00", formatSongTime(0))
         assertEquals("1:05", formatSongTime(65000))
