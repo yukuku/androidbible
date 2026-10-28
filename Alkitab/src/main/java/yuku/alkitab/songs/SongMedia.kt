@@ -55,22 +55,22 @@ private data class SongMediaResponse(
 )
 
 @Serializable
-private data class SongAudioClipResponse(val url: String?)
+private data class SongAudioClipResponse(@SerialName("url") val url: String?)
 
 @Serializable
 private data class SongYoutubeVideoResponse(
-    val videoId: String?,
-    val title: String?,
+    @SerialName("videoId") val videoId: String?,
+    @SerialName("title") val title: String?,
     @SerialName("channel_name") val channelName: String?,
     @SerialName("thumbnail_url") val thumbnailUrl: String?,
-    val views: SongVideoViewsResponse?,
+    @SerialName("views") val views: SongVideoViewsResponse?,
     @SerialName("published_at") val publishedAt: String?,
 )
 
 @Serializable
 private data class SongVideoViewsResponse(
     @SerialName("view_count") val viewCount: Long?,
-    val precision: String?,
+    @SerialName("precision") val precision: String?,
 )
 
 data class SongAudioClip(val url: String)
