@@ -105,6 +105,8 @@ the app test suite; see [parser compatibility tests](Alkitab/src/test/desktop-ve
 
 ## Code Conventions
 
+- **Use `kotlinx.serialization` for JSON parsing and serialization in app code.** Deserialize fixed JSON schemas into `@Serializable` data classes, using an explicit `@SerialName` on every serialized property, even when the Kotlin property name matches the wire name. Reserve JSON-tree parsing for genuinely dynamic structures. Do not introduce new Gson usages or extend Gson-based implementations. Migrate the JSON handling being changed to kotlinx.serialization, while keeping unrelated legacy Gson code outside the task's scope.
+
 - **Do not introduce `!!` in production code.** Handle nullable values explicitly. For nullable observable or delegated state, read a local snapshot and use a null check so Kotlin can smart-cast it.
 - **Separate logical sections of long function bodies with blank lines.** Group related operations and make transitions between setup, state loading, rendering, and callbacks easy to scan.
 

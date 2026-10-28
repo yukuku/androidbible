@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Carte de cântări personală</string>
     <string name="sn_private_song_book_dialog_desc">Descarcă o carte de cântări personală (ascunsă)</string>
     <string name="sn_private_song_book_name_hint">Nume carte de cântări</string>
-    <string name="sn_play_in_loop">Vrei să redai până la oprire?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Ziua precedentă</string>
     <string name="desc_next_day">Ziua următoare</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Biblia</string>
     <string name="menuProgress">Progres</string>
     <string name="sn_menu_copy">Copiază cântec</string>
-    <string name="menuPlay">Redă</string>
-    <string name="menuPause">Pauză</string>
     <string name="left_drawer_current_reading_title">Lectura curentă</string>
     <string name="book_filter_old_testament">Vechiul Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuh</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">Traducerea selectată nu este disponibilă. Se folosește %1$s. Atingeți pentru a schimba.</string>
     <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
     <string name="text_appearance_text_color_contrast">Contrastul culorii textului</string>
+    <string name="sn_media_title">Audio și video</string>
+    <string name="sn_media_audio">Audio</string>
+    <string name="sn_media_repeat">Repetă înregistrarea audio</string>
+    <string name="sn_media_seek">Poziția redării</string>
+    <string name="sn_media_empty">Nu sunt încă disponibile înregistrări audio sau videoclipuri pentru această cântare.</string>
+    <string name="sn_media_load_error">Unele fișiere media nu au putut fi încărcate. Încercați din nou.</string>
+    <string name="sn_media_views_exact">%1$s vizionări</string>
+    <string name="sn_media_views_approximate">Aproximativ %1$s vizionări</string>
+    <string name="sn_media_no_video_app">Nu există nicio aplicație disponibilă pentru a deschide acest videoclip.</string>
 </resources>

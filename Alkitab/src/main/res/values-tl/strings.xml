@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">Pribadong libro ng kanta</string>
     <string name="sn_private_song_book_dialog_desc">Mag-download ng isang pribadong (tago) libro ng kanta</string>
     <string name="sn_private_song_book_name_hint">Pangalan ng libro ng mga kanta</string>
-    <string name="sn_play_in_loop">Gusto mo bang maglaro sa isang loop hanggang tumigil ito?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Nakaraang araw</string>
     <string name="desc_next_day">Susunod na araw</string>
@@ -290,8 +289,6 @@
     <string name="menuBible">Bibliya</string>
     <string name="menuProgress">Mga pin</string>
     <string name="sn_menu_copy">Kopyahin ang kanta</string>
-    <string name="menuPlay">Patugtugin</string>
-    <string name="menuPause">Itigil sandali</string>
     <string name="left_drawer_current_reading_title">Kasalukuyang pagbasa</string>
     <string name="book_filter_old_testament">Lumang tipan</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">Hindi available ang napiling salin. Ginagamit ang %1$s. I-tap para palitan.</string>
     <string name="dv_version_unset">Ginagamit ang %1$s. I-tap para pumili ng salin ng Bibliya.</string>
     <string name="text_appearance_text_color_contrast">Contrast ng kulay ng teksto</string>
+    <string name="sn_media_title">Audio at video</string>
+    <string name="sn_media_audio">Audio</string>
+    <string name="sn_media_repeat">Ulitin ang audio</string>
+    <string name="sn_media_seek">Posisyon ng pag-play</string>
+    <string name="sn_media_empty">Wala pang audio o video para sa awit na ito.</string>
+    <string name="sn_media_load_error">Hindi ma-load ang ilang media. Pakisubukang muli.</string>
+    <string name="sn_media_views_exact">%1$s panonood</string>
+    <string name="sn_media_views_approximate">Humigit-kumulang %1$s panonood</string>
+    <string name="sn_media_no_video_app">Walang app na maaaring magbukas ng video na ito.</string>
 </resources>

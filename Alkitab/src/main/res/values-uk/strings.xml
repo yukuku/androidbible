@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Особиста книга пісень</string>
     <string name="sn_private_song_book_dialog_desc">Завантажити особисту (приховану) книгу пісень</string>
     <string name="sn_private_song_book_name_hint">Назва книги пісень</string>
-    <string name="sn_play_in_loop">Ви хочете програвати доти, поки ви не зупините?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Попередній день</string>
     <string name="desc_next_day">Наступний день</string>
@@ -292,8 +291,6 @@
     <string name="menuBible">Біблія</string>
     <string name="menuProgress">Прогрес</string>
     <string name="sn_menu_copy">Скопіювати пісню</string>
-    <string name="menuPlay">Грати</string>
-    <string name="menuPause">Пауза</string>
     <string name="left_drawer_current_reading_title">Тепер читаєте</string>
     <string name="book_filter_old_testament">Старий Завіт</string>
     <string name="book_filter_old_pentateuch">П\'ятикнижжя</string>
@@ -534,4 +531,13 @@
     <string name="dv_version_unavailable">Вибраний переклад недоступний. Використовується %1$s. Натисніть, щоб змінити.</string>
     <string name="dv_version_unset">Використовується %1$s. Натисніть, щоб вибрати переклад Біблії.</string>
     <string name="text_appearance_text_color_contrast">Контраст кольору тексту</string>
+    <string name="sn_media_title">Аудіо та відео</string>
+    <string name="sn_media_audio">Аудіо</string>
+    <string name="sn_media_repeat">Повторювати аудіо</string>
+    <string name="sn_media_seek">Позиція відтворення</string>
+    <string name="sn_media_empty">Для цієї пісні ще немає аудіо чи відео.</string>
+    <string name="sn_media_load_error">Не вдалося завантажити деякі медіафайли. Спробуйте ще раз.</string>
+    <string name="sn_media_views_exact">Перегляди: %1$s</string>
+    <string name="sn_media_views_approximate">Приблизна кількість переглядів: %1$s</string>
+    <string name="sn_media_no_video_app">Немає застосунку для відкриття цього відео.</string>
 </resources>

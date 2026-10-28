@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Privé liederen boek</string>
     <string name="sn_private_song_book_dialog_desc">Download een privé (verborgen) liedboek</string>
     <string name="sn_private_song_book_name_hint">Liedboek naam</string>
-    <string name="sn_play_in_loop">Wil je herhalend blijven afspelen tot er wordt gestopt?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Vorige dag</string>
     <string name="desc_next_day">Volgende dag</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Bijbel</string>
     <string name="menuProgress">Voortgang</string>
     <string name="sn_menu_copy">Kopieer lied</string>
-    <string name="menuPlay">Afspelen</string>
-    <string name="menuPause">Pauze</string>
     <string name="left_drawer_current_reading_title">Huidig aan het lezen</string>
     <string name="book_filter_old_testament">Oude Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">De gekozen vertaling is niet beschikbaar. %1$s wordt gebruikt. Tik om te wijzigen.</string>
     <string name="dv_version_unset">%1$s wordt gebruikt. Tik om een Bijbelvertaling te kiezen.</string>
     <string name="text_appearance_text_color_contrast">Tekstkleurcontrast</string>
+    <string name="sn_media_title">Audio en video</string>
+    <string name="sn_media_audio">Audio</string>
+    <string name="sn_media_repeat">Audio herhalen</string>
+    <string name="sn_media_seek">Afspeelpositie</string>
+    <string name="sn_media_empty">Er zijn nog geen audio of video’s beschikbaar voor dit lied.</string>
+    <string name="sn_media_load_error">Sommige media konden niet worden geladen. Probeer het opnieuw.</string>
+    <string name="sn_media_views_exact">%1$s weergaven</string>
+    <string name="sn_media_views_approximate">Ongeveer %1$s weergaven</string>
+    <string name="sn_media_no_video_app">Er is geen app beschikbaar om deze video te openen.</string>
 </resources>

@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">私人的詩歌書</string>
     <string name="sn_private_song_book_dialog_desc">下載私人的（隱藏）詩歌書</string>
     <string name="sn_private_song_book_name_hint">詩歌書名稱</string>
-    <string name="sn_play_in_loop">你想玩循環式直到停止?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">前一天</string>
     <string name="desc_next_day">後一天</string>
@@ -289,8 +288,6 @@
     <string name="menuBible">聖經</string>
     <string name="menuProgress">進度</string>
     <string name="sn_menu_copy">複製歌曲</string>
-    <string name="menuPlay">播放</string>
-    <string name="menuPause">暫停</string>
     <string name="left_drawer_current_reading_title">現正閱讀</string>
     <string name="book_filter_old_testament">舊約</string>
     <string name="book_filter_old_pentateuch">摩西五經</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">所選譯本無法使用。正在使用%1$s。點選以變更。</string>
     <string name="dv_version_unset">正在使用%1$s。點選以選擇聖經譯本。</string>
     <string name="text_appearance_text_color_contrast">文字顏色對比度</string>
+    <string name="sn_media_title">音訊與影片</string>
+    <string name="sn_media_audio">音訊</string>
+    <string name="sn_media_repeat">重複播放音訊</string>
+    <string name="sn_media_seek">播放位置</string>
+    <string name="sn_media_empty">這首詩歌暫時沒有音訊或影片。</string>
+    <string name="sn_media_load_error">部分媒體無法載入，請重試。</string>
+    <string name="sn_media_views_exact">觀看次數：%1$s</string>
+    <string name="sn_media_views_approximate">觀看次數：約 %1$s</string>
+    <string name="sn_media_no_video_app">沒有可開啟此影片的應用程式。</string>
 </resources>

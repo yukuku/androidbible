@@ -25,6 +25,7 @@ import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.debug.BuildConfig
 import yuku.alkitab.debug.R
+import androidx.core.net.toUri
 
 object PrereleaseFeedback {
     val version: PrereleaseVersion? = PrereleaseVersion.parse(App.getVersionName())
@@ -41,7 +42,7 @@ object PrereleaseFeedback {
                     val subject = version.emailSubject(
                         activity.getString(R.string.app_name), App.getVersionName(), BuildConfig.LAST_COMMIT_HASH,
                     )
-                    val uri = Uri.parse("mailto:help@alkitab.app?subject=${Uri.encode(subject)}")
+                    val uri = "mailto:help@alkitab.app?subject=${Uri.encode(subject)}".toUri()
                     try {
                         activity.startActivity(Intent(Intent.ACTION_SENDTO, uri))
                         dismiss()

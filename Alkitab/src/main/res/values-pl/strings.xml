@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Prywatny śpiewnik</string>
     <string name="sn_private_song_book_dialog_desc">Pobierz prywatny (ukryty) śpiewnik</string>
     <string name="sn_private_song_book_name_hint">Nazwa śpiewnika</string>
-    <string name="sn_play_in_loop">Czy chcesz odtwarzać w pętli aż do ręcznego zatrzymania?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Poprzedni dzień</string>
     <string name="desc_next_day">Następny dzień</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Biblia</string>
     <string name="menuProgress">Postęp</string>
     <string name="sn_menu_copy">Kopiuj pieśń</string>
-    <string name="menuPlay">Odtwórz</string>
-    <string name="menuPause">Pauza</string>
     <string name="left_drawer_current_reading_title">Obecnie czytasz</string>
     <string name="book_filter_old_testament">Stary Testament</string>
     <string name="book_filter_old_pentateuch">Pięcioksiąg</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">Wybrany przekład jest niedostępny. Używany jest %1$s. Dotknij, aby zmienić.</string>
     <string name="dv_version_unset">Używany jest %1$s. Dotknij, aby wybrać przekład Biblii.</string>
     <string name="text_appearance_text_color_contrast">Kontrast koloru tekstu</string>
+    <string name="sn_media_title">Dźwięk i wideo</string>
+    <string name="sn_media_audio">Dźwięk</string>
+    <string name="sn_media_repeat">Powtarzaj dźwięk</string>
+    <string name="sn_media_seek">Pozycja odtwarzania</string>
+    <string name="sn_media_empty">Dla tej pieśni nie ma jeszcze nagrań dźwiękowych ani filmów.</string>
+    <string name="sn_media_load_error">Nie udało się wczytać niektórych multimediów. Spróbuj ponownie.</string>
+    <string name="sn_media_views_exact">Liczba wyświetleń: %1$s</string>
+    <string name="sn_media_views_approximate">Przybliżona liczba wyświetleń: %1$s</string>
+    <string name="sn_media_no_video_app">Brak aplikacji do otwarcia tego filmu.</string>
 </resources>

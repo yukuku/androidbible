@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">Private lied boek</string>
     <string name="sn_private_song_book_dialog_desc">Laai \'n private (versteekte) lied boek af</string>
     <string name="sn_private_song_book_name_hint">Lied boek naam</string>
-    <string name="sn_play_in_loop">Moet dit aanhoudend speel totdat jy dit stop?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Vorige dag</string>
     <string name="desc_next_day">Volgende dag</string>
@@ -290,8 +289,6 @@
     <string name="menuBible">Bybel</string>
     <string name="menuProgress">Vordering</string>
     <string name="sn_menu_copy">Kopieer lied/musiek</string>
-    <string name="menuPlay">Speel</string>
-    <string name="menuPause">Wag</string>
     <string name="left_drawer_current_reading_title">Huidige leesstuk</string>
     <string name="book_filter_old_testament">Ou Testament</string>
     <string name="book_filter_old_pentateuch">Pentateug</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">Die gekose weergawe is nie beskikbaar nie. Gebruik %1$s. Tik om te verander.</string>
     <string name="dv_version_unset">Gebruik %1$s. Tik om ’n Bybelweergawe te kies.</string>
     <string name="text_appearance_text_color_contrast">Tekskleurkontras</string>
+    <string name="sn_media_title">Oudio en video</string>
+    <string name="sn_media_audio">Oudio</string>
+    <string name="sn_media_repeat">Herhaal oudio</string>
+    <string name="sn_media_seek">Terugspeelposisie</string>
+    <string name="sn_media_empty">Geen oudio of video’s is nog vir hierdie liedjie beskikbaar nie.</string>
+    <string name="sn_media_load_error">Sommige media kon nie gelaai word nie. Probeer asseblief weer.</string>
+    <string name="sn_media_views_exact">%1$s kyke</string>
+    <string name="sn_media_views_approximate">Ongeveer %1$s kyke</string>
+    <string name="sn_media_no_video_app">Geen toepassing is beskikbaar om hierdie video oop te maak nie.</string>
 </resources>

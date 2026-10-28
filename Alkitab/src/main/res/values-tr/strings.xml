@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Özel şarkı kitabı</string>
     <string name="sn_private_song_book_dialog_desc">Bir özel (gizli) şarkı kitabı indir</string>
     <string name="sn_private_song_book_name_hint">Şarkı kitabı adı</string>
-    <string name="sn_play_in_loop">Durdurulana kadar tekrar edilerek oynatılsın mı?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Önceki gün</string>
     <string name="desc_next_day">Sonraki gün</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Kutsal Kitap</string>
     <string name="menuProgress">Pinler</string>
     <string name="sn_menu_copy">Şarkıyı kopyala</string>
-    <string name="menuPlay">Oynat</string>
-    <string name="menuPause">Durdur</string>
     <string name="left_drawer_current_reading_title">Mevcut okuma</string>
     <string name="book_filter_old_testament">Eski Ahit</string>
     <string name="book_filter_old_pentateuch">Tevrat</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">Seçilen çeviri kullanılamıyor. %1$s kullanılıyor. Değiştirmek için dokunun.</string>
     <string name="dv_version_unset">%1$s kullanılıyor. Bir Kutsal Kitap çevirisi seçmek için dokunun.</string>
     <string name="text_appearance_text_color_contrast">Metin rengi kontrastı</string>
+    <string name="sn_media_title">Ses ve video</string>
+    <string name="sn_media_audio">Ses</string>
+    <string name="sn_media_repeat">Sesi tekrarla</string>
+    <string name="sn_media_seek">Oynatma konumu</string>
+    <string name="sn_media_empty">Bu ilahi için henüz ses veya video yok.</string>
+    <string name="sn_media_load_error">Bazı medya içerikleri yüklenemedi. Lütfen tekrar deneyin.</string>
+    <string name="sn_media_views_exact">%1$s görüntüleme</string>
+    <string name="sn_media_views_approximate">Yaklaşık %1$s görüntüleme</string>
+    <string name="sn_media_no_video_app">Bu videoyu açabilecek bir uygulama yok.</string>
 </resources>

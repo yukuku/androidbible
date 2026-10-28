@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Privát énekeskönyv</string>
     <string name="sn_private_song_book_dialog_desc">Egy privát (rejtett) énekeskönyv letöltése</string>
     <string name="sn_private_song_book_name_hint">Az énekeskönyv neve</string>
-    <string name="sn_play_in_loop">Szeretné, hogy leállításig végtelenítve játssza le?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Előző nap</string>
     <string name="desc_next_day">Következő nap</string>
@@ -285,8 +284,6 @@
     <string name="menuBible">Biblia</string>
     <string name="menuProgress">Jelölők</string>
     <string name="sn_menu_copy">Dal másolása</string>
-    <string name="menuPlay">Lejátszás</string>
-    <string name="menuPause">Szünet</string>
     <string name="left_drawer_current_reading_title">Jelenlegi olvasás</string>
     <string name="book_filter_old_testament">Ótestamentum</string>
     <string name="book_filter_old_pentateuch">Mózes öt könyve</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">A kiválasztott fordítás nem érhető el. A használt fordítás: %1$s. Koppintson a módosításhoz.</string>
     <string name="dv_version_unset">A használt fordítás: %1$s. Koppintson egy bibliafordítás kiválasztásához.</string>
     <string name="text_appearance_text_color_contrast">Szövegszín kontrasztja</string>
+    <string name="sn_media_title">Hang és videó</string>
+    <string name="sn_media_audio">Hang</string>
+    <string name="sn_media_repeat">Hang ismétlése</string>
+    <string name="sn_media_seek">Lejátszási pozíció</string>
+    <string name="sn_media_empty">Ehhez az énekhez még nem érhető el hangfelvétel vagy videó.</string>
+    <string name="sn_media_load_error">Néhány médiatartalmat nem sikerült betölteni. Próbálja újra.</string>
+    <string name="sn_media_views_exact">%1$s megtekintés</string>
+    <string name="sn_media_views_approximate">Körülbelül %1$s megtekintés</string>
+    <string name="sn_media_no_video_app">Nincs elérhető alkalmazás a videó megnyitásához.</string>
 </resources>

@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">หนังสือเพลงส่วนตัว</string>
     <string name="sn_private_song_book_dialog_desc">ดาวน์โหลดหนังสือเพลงส่วนตัว (ซึ่งปิดบังอยู่)</string>
     <string name="sn_private_song_book_name_hint">ชื่อหนังสือเพลง</string>
-    <string name="sn_play_in_loop">ต้องการเปิดฟังอย่างวงต่อเนื่องจนกว่าจะกดหยุดหรือไม่?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">วันก่อน</string>
     <string name="desc_next_day">วันต่อไป</string>
@@ -291,8 +290,6 @@
     <string name="menuBible">พระคำภีร์</string>
     <string name="menuProgress">พิน</string>
     <string name="sn_menu_copy">ก๊อบเพลง</string>
-    <string name="menuPlay">ฟัง</string>
-    <string name="menuPause">หยุดฟัง</string>
     <string name="left_drawer_current_reading_title">การอ่าน ณ ที่ปัจจุบัน</string>
     <string name="book_filter_old_testament">พันธสัญญาเดิม</string>
     <string name="book_filter_old_pentateuch">พระบัญญัติ</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">ฉบับที่เลือกไม่พร้อมใช้งาน กำลังใช้ %1$s แตะเพื่อเปลี่ยน</string>
     <string name="dv_version_unset">กำลังใช้ %1$s แตะเพื่อเลือกฉบับพระคัมภีร์</string>
     <string name="text_appearance_text_color_contrast">ความต่างสีข้อความ</string>
+    <string name="sn_media_title">เสียงและวิดีโอ</string>
+    <string name="sn_media_audio">เสียง</string>
+    <string name="sn_media_repeat">เล่นเสียงซ้ำ</string>
+    <string name="sn_media_seek">ตำแหน่งการเล่น</string>
+    <string name="sn_media_empty">ยังไม่มีเสียงหรือวิดีโอสำหรับเพลงนี้</string>
+    <string name="sn_media_load_error">ไม่สามารถโหลดสื่อบางรายการได้ โปรดลองอีกครั้ง</string>
+    <string name="sn_media_views_exact">การดู %1$s ครั้ง</string>
+    <string name="sn_media_views_approximate">การดูประมาณ %1$s ครั้ง</string>
+    <string name="sn_media_no_video_app">ไม่มีแอปที่สามารถเปิดวิดีโอนี้ได้</string>
 </resources>

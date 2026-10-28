@@ -195,7 +195,6 @@
     <string name="sn_menu_private_song_book">Pribadong libro na kanta</string>
     <string name="sn_private_song_book_dialog_desc">I-download ang pribadong (nakatago) libro na kanta</string>
     <string name="sn_private_song_book_name_hint">Pangalan sa librong pangkanta</string>
-    <string name="sn_play_in_loop">Ginahan kang i-play sa loop hantud kini muhunong?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Kaniadtong adlawa</string>
     <string name="desc_next_day">Sunod adlaw</string>
@@ -289,8 +288,6 @@
     <string name="menuBible">Bibliya</string>
     <string name="menuProgress">Pin</string>
     <string name="sn_menu_copy">Kopyaha ang kanta</string>
-    <string name="menuPlay">Duwa</string>
-    <string name="menuPause">Hunong sa</string>
     <string name="left_drawer_current_reading_title">Kasamtangang gibasa</string>
     <string name="book_filter_old_testament">Karaan na testamento</string>
     <string name="book_filter_old_pentateuch">Pentatueuch</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">Dili magamit ang gipiling bersiyon. Gigamit ang %1$s. I-tap aron usbon.</string>
     <string name="dv_version_unset">Gigamit ang %1$s. I-tap aron mopili og bersiyon sa Bibliya.</string>
     <string name="text_appearance_text_color_contrast">Kontras sa kolor sa teksto</string>
+    <string name="sn_media_title">Audio ug video</string>
+    <string name="sn_media_audio">Audio</string>
+    <string name="sn_media_repeat">Usba ang audio</string>
+    <string name="sn_media_seek">Posisyon sa pagpatukar</string>
+    <string name="sn_media_empty">Wala pay audio o mga video alang niini nga awit.</string>
+    <string name="sn_media_load_error">Dili ma-load ang pipila ka media. Palihog sulayi pag-usab.</string>
+    <string name="sn_media_views_exact">%1$s ka pagtan-aw</string>
+    <string name="sn_media_views_approximate">Mga %1$s ka pagtan-aw</string>
+    <string name="sn_media_no_video_app">Walay app nga makaabli niini nga video.</string>
 </resources>

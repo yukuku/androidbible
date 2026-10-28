@@ -625,6 +625,7 @@ dependencies {
     // Misc
     implementation(libs.okhttp)
     implementation(libs.coil)
+    implementation(libs.coil.compose)
     implementation(libs.kotlinx.serialization.json)
 
     // UI

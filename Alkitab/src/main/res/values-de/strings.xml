@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Privates Liederbuch</string>
     <string name="sn_private_song_book_dialog_desc">Ein privates (verstecktes) Liederbuch herunterladen</string>
     <string name="sn_private_song_book_name_hint">Liederbuchname</string>
-    <string name="sn_play_in_loop">In einer Endlosschleife abspielen, bis Wiedergabe gestoppt wird?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Voriger Tag</string>
     <string name="desc_next_day">Nächster Tag</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Bibel</string>
     <string name="menuProgress">Lesefortschritt</string>
     <string name="sn_menu_copy">Lied kopieren</string>
-    <string name="menuPlay">Abspielen</string>
-    <string name="menuPause">Pause</string>
     <string name="left_drawer_current_reading_title">Aktueller Bibelabschnitt</string>
     <string name="book_filter_old_testament">Altes Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">Die gewählte Übersetzung ist nicht verfügbar. %1$s wird verwendet. Zum Ändern tippen.</string>
     <string name="dv_version_unset">%1$s wird verwendet. Tippen, um eine Bibelübersetzung auszuwählen.</string>
     <string name="text_appearance_text_color_contrast">Textfarbkontrast</string>
+    <string name="sn_media_title">Audio und Video</string>
+    <string name="sn_media_audio">Audio</string>
+    <string name="sn_media_repeat">Audio wiederholen</string>
+    <string name="sn_media_seek">Wiedergabeposition</string>
+    <string name="sn_media_empty">Für dieses Lied sind noch keine Audioaufnahmen oder Videos verfügbar.</string>
+    <string name="sn_media_load_error">Einige Medien konnten nicht geladen werden. Bitte versuche es erneut.</string>
+    <string name="sn_media_views_exact">%1$s Aufrufe</string>
+    <string name="sn_media_views_approximate">Etwa %1$s Aufrufe</string>
+    <string name="sn_media_no_video_app">Keine App zum Öffnen dieses Videos verfügbar.</string>
 </resources>

@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Hinário privado</string>
     <string name="sn_private_song_book_dialog_desc">Baixar um hinário privado (oculto)</string>
     <string name="sn_private_song_book_name_hint">Nome do hinário</string>
-    <string name="sn_play_in_loop">Você quer voltar para onde parou?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Dia anterior</string>
     <string name="desc_next_day">Dia seguinte</string>
@@ -294,8 +293,6 @@
     <string name="menuBible">Bíblia</string>
     <string name="menuProgress">Progresso</string>
     <string name="sn_menu_copy">Copiar música</string>
-    <string name="menuPlay">Reproduzir</string>
-    <string name="menuPause">Pausar</string>
     <string name="left_drawer_current_reading_title">Leitura atual</string>
     <string name="book_filter_old_testament">Antigo Testamento</string>
     <string name="book_filter_old_pentateuch">Pentateuco</string>
@@ -532,4 +529,13 @@
     <string name="data_transfer_import_done">Concluído. Toque em [%1$s] para fechar.</string>
     <string name="dv_version_unavailable">A versão escolhida não está disponível. Usando %1$s. Toque para alterar.</string>
     <string name="dv_version_unset">Usando %1$s. Toque para escolher uma versão da Bíblia.</string>
+    <string name="sn_media_title">Áudio e vídeo</string>
+    <string name="sn_media_audio">Áudio</string>
+    <string name="sn_media_repeat">Repetir áudio</string>
+    <string name="sn_media_seek">Posição de reprodução</string>
+    <string name="sn_media_empty">Ainda não há áudio ou vídeos disponíveis para este cântico.</string>
+    <string name="sn_media_load_error">Não foi possível carregar algumas mídias. Tente novamente.</string>
+    <string name="sn_media_views_exact">%1$s visualizações</string>
+    <string name="sn_media_views_approximate">Cerca de %1$s visualizações</string>
+    <string name="sn_media_no_video_app">Nenhum aplicativo disponível para abrir este vídeo.</string>
 </resources>

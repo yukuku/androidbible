@@ -194,7 +194,7 @@ private fun SongSearchSheetContent(
     // instead of a dialog). maxHeight here is the available sheet content height,
     // already excluding the status bar; leaving a fixed gap keeps the curve visible.
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        val sheetHeight = maxHeight - 48.dp
+        val sheetHeight = maxHeight - 64.dp
 
         Column(
             modifier = Modifier
@@ -211,6 +211,7 @@ private fun SongSearchSheetContent(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 16.dp)
                     .padding(horizontal = 16.dp)
                     .focusRequester(queryFocusRequester),
                 placeholder = { Text(stringResource(R.string.search)) },

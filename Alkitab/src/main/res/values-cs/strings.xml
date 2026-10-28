@@ -196,7 +196,6 @@
     <string name="sn_menu_private_song_book">Soukromý zpěvník</string>
     <string name="sn_private_song_book_dialog_desc">Stáhnout neveřejné zpěvníky</string>
     <string name="sn_private_song_book_name_hint">Název zpěvníku</string>
-    <string name="sn_play_in_loop">Chcete přehrát smyčku, dokud se neukončí?</string>
     <!-- Content descriptions, for blind users -->
     <string name="desc_previous_day">Předchozí den</string>
     <string name="desc_next_day">Následující den</string>
@@ -292,8 +291,6 @@
     <string name="menuBible">Bible</string>
     <string name="menuProgress">Přehled</string>
     <string name="sn_menu_copy">Kopírovat skladbu</string>
-    <string name="menuPlay">Přehrát</string>
-    <string name="menuPause">Pauza</string>
     <string name="left_drawer_current_reading_title">Nynější čtení</string>
     <string name="book_filter_old_testament">Starý zákon</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
@@ -533,4 +530,13 @@
     <string name="dv_version_unavailable">Vybraný překlad není dostupný. Používá se %1$s. Klepnutím jej změníte.</string>
     <string name="dv_version_unset">Používá se %1$s. Klepnutím vyberete překlad Bible.</string>
     <string name="text_appearance_text_color_contrast">Kontrast barvy textu</string>
+    <string name="sn_media_title">Zvuk a video</string>
+    <string name="sn_media_audio">Zvuk</string>
+    <string name="sn_media_repeat">Opakovat zvuk</string>
+    <string name="sn_media_seek">Pozice přehrávání</string>
+    <string name="sn_media_empty">Pro tuto píseň zatím není k dispozici zvuk ani video.</string>
+    <string name="sn_media_load_error">Některá média se nepodařilo načíst. Zkuste to znovu.</string>
+    <string name="sn_media_views_exact">Počet zhlédnutí: %1$s</string>
+    <string name="sn_media_views_approximate">Přibližný počet zhlédnutí: %1$s</string>
+    <string name="sn_media_no_video_app">Není k dispozici aplikace pro otevření tohoto videa.</string>
 </resources>

@@ -3,6 +3,7 @@ package yuku.alkitab.base.compose
 import android.app.Activity
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -29,17 +30,12 @@ import kotlinx.coroutines.launch
  */
 object ComposeBottomSheetHost {
     @OptIn(ExperimentalMaterial3Api::class)
-    @JvmStatic
-    fun show(activity: Activity, sheetGesturesEnabled: Boolean = true, dimBackground: Boolean = true, content: @Composable (dismiss: () -> Unit) -> Unit) {
-        show(activity, BottomSheetDefaults.SheetMaxWidth, sheetGesturesEnabled, dimBackground, content)
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
     fun show(
         activity: Activity,
-        sheetMaxWidth: Dp,
-        sheetGesturesEnabled: Boolean,
-        dimBackground: Boolean,
+        sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
+        sheetGesturesEnabled: Boolean = true,
+        dimBackground: Boolean = true,
+        contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
         content: @Composable (dismiss: () -> Unit) -> Unit,
     ) {
         val root = activity.findViewById<ViewGroup>(android.R.id.content) ?: return
@@ -54,6 +50,7 @@ object ComposeBottomSheetHost {
                     ModalBottomSheet(
                         sheetState = sheetState,
                         sheetMaxWidth = sheetMaxWidth,
+                        contentWindowInsets = contentWindowInsets,
                         scrimColor = if (dimBackground) BottomSheetDefaults.ScrimColor else Color.Transparent,
                         sheetGesturesEnabled = sheetGesturesEnabled,
                         dragHandle = if (sheetGesturesEnabled) {
