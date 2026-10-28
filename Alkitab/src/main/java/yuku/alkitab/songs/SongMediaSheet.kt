@@ -1,5 +1,6 @@
 package yuku.alkitab.songs
 
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,12 +10,16 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,11 +55,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowProvider
 import coil.compose.AsyncImage
 import java.text.NumberFormat
 import java.util.Locale
@@ -65,15 +73,29 @@ object SongMediaSheet {
     fun show(
         activity: ComponentActivity,
         title: String,
+        subtitle: String?,
         viewModel: SongMediaViewModel,
         controller: SongAudioController,
         onPlay: (SongAudioClip) -> Unit,
         onVideo: (SongYoutubeVideo) -> Unit,
     ) {
-        ComposeBottomSheetHost.show(activity, 360.dp, false, true) { dismiss ->
+        ComposeBottomSheetHost.show(
+            activity = activity,
+            sheetMaxWidth = 360.dp,
+            sheetGesturesEnabled = false,
+            dimBackground = true,
+            contentWindowInsets = { WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal) },
+        ) { dismiss ->
+            val window = (LocalView.current.parent as? DialogWindowProvider)?.window
+            SideEffect {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    window?.isNavigationBarContrastEnforced = false
+                }
+            }
             val state by viewModel.state.collectAsState()
             SongMediaSheetContent(
                 title = title,
+                subtitle = subtitle,
                 state = state,
                 controller = controller,
                 onPlay = onPlay,
@@ -92,6 +114,7 @@ object SongMediaSheet {
 @Composable
 internal fun SongMediaSheetContent(
     title: String,
+    subtitle: String?,
     state: SongMediaViewModel.UiState,
     controller: SongAudioController,
     onPlay: (SongAudioClip) -> Unit,
@@ -102,21 +125,28 @@ internal fun SongMediaSheetContent(
 ) {
     BoxWithConstraints(modifier.fillMaxWidth()) {
         Column(
-            Modifier.fillMaxWidth().heightIn(max = (maxHeight - 48.dp).coerceAtLeast(1.dp))
-                .navigationBarsPadding(),
+            Modifier.fillMaxWidth().heightIn(max = (maxHeight - 48.dp).coerceAtLeast(1.dp)),
         ) {
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                Column(Modifier.weight(1f)) {
+                    Text(title, style = MaterialTheme.typography.titleLarge)
+                    if (!subtitle.isNullOrBlank()) {
+                        Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
                 IconButton(onClick = onDismiss) {
                     Icon(Icons.Default.Close, stringResource(R.string.desc_close))
                 }
             }
             HorizontalDivider()
             val media = state.media
-            LazyColumn(Modifier.weight(1f, fill = false)) {
+            LazyColumn(
+                modifier = Modifier.weight(1f, fill = false),
+                contentPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom).asPaddingValues(),
+            ) {
                 if (state.isLoading) {
                     item {
                         Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {

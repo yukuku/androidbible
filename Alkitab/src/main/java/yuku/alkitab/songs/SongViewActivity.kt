@@ -457,12 +457,14 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             R.id.menuMediaControl -> {
                 val song = currentSong ?: return true
                 SongMediaSheet.show(
-                    this,
-                    "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
-                    mediaViewModel,
-                    songAudioController,
-                    ::playSongClip,
-                    ::openSongVideo,
+                    activity = this,
+                    title = song.meta.title?.takeIf { it.isNotBlank() }
+                        ?: "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
+                    subtitle = song.meta.title_original,
+                    viewModel = mediaViewModel,
+                    controller = songAudioController,
+                    onPlay = ::playSongClip,
+                    onVideo = ::openSongVideo,
                 )
                 return true
             }
