@@ -1,14 +1,10 @@
 package yuku.alkitab.songs
 
 import java.time.Instant
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.booleanOrNull
-import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.longOrNull
 
 data class SongMedia(
     val audioClips: List<SongAudioClip>,
@@ -16,37 +12,66 @@ data class SongMedia(
     val isIncomplete: Boolean,
 ) {
     companion object {
+        @OptIn(ExperimentalSerializationApi::class)
+        private val decoder = Json {
+            ignoreUnknownKeys = true
+            explicitNulls = false
+        }
+
         fun parse(json: String): SongMedia {
-            val root = Json.parseToJsonElement(json).jsonObject
-            val audio = root.getValue("audio_clips").jsonArray.mapNotNull { value ->
-                val url = value.jsonObject["url"]?.jsonPrimitive?.contentOrNull
-                url?.takeIf { it.startsWith("https://") }?.let(::SongAudioClip)
+            val response = decoder.decodeFromString(SongMediaResponse.serializer(), json)
+            val audio = response.audioClips.mapNotNull { clip ->
+                clip.url?.takeIf { it.startsWith("https://") }?.let(::SongAudioClip)
             }
-            val videos = root.getValue("youtube_videos").jsonArray.mapNotNull { value ->
-                val item = value.jsonObject
-                val id = item["videoId"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
+            val videos = response.youtubeVideos.mapNotNull { video ->
+                val id = video.videoId ?: return@mapNotNull null
                 if (!id.matches(Regex("[A-Za-z0-9_-]{11}"))) return@mapNotNull null
-                val views = item["views"]?.takeUnless { it is JsonNull }?.jsonObject
-                val count = views?.get("view_count")?.jsonPrimitive?.longOrNull?.takeIf { it >= 0 }
-                val precision = views?.get("precision")?.jsonPrimitive?.contentOrNull
-                val published = item["published_at"]?.jsonPrimitive?.contentOrNull?.let {
+                val views = video.views
+                val count = views?.viewCount?.takeIf { it >= 0 }
+                val precision = views?.precision
+                val published = video.publishedAt?.let {
                     runCatching { Instant.parse(it) }.getOrNull()
                 }
                 SongYoutubeVideo(
                     videoId = id,
-                    title = item["title"]?.jsonPrimitive?.contentOrNull.orEmpty(),
-                    channelName = item["channel_name"]?.jsonPrimitive?.contentOrNull.orEmpty(),
-                    thumbnailUrl = item["thumbnail_url"]?.jsonPrimitive?.contentOrNull
-                        ?.takeIf { it.startsWith("https://") },
+                    title = video.title.orEmpty(),
+                    channelName = video.channelName.orEmpty(),
+                    thumbnailUrl = video.thumbnailUrl?.takeIf { it.startsWith("https://") },
                     viewCount = count?.takeIf { precision == "exact" || precision == "approximate" },
                     isViewCountApproximate = precision == "approximate",
                     publishedAt = published,
                 )
             }
-            return SongMedia(audio, videos, root["is_incomplete"]?.jsonPrimitive?.booleanOrNull == true)
+            return SongMedia(audio, videos, response.isIncomplete == true)
         }
     }
 }
+
+@Serializable
+private data class SongMediaResponse(
+    @SerialName("audio_clips") val audioClips: List<SongAudioClipResponse>,
+    @SerialName("youtube_videos") val youtubeVideos: List<SongYoutubeVideoResponse>,
+    @SerialName("is_incomplete") val isIncomplete: Boolean?,
+)
+
+@Serializable
+private data class SongAudioClipResponse(val url: String?)
+
+@Serializable
+private data class SongYoutubeVideoResponse(
+    val videoId: String?,
+    val title: String?,
+    @SerialName("channel_name") val channelName: String?,
+    @SerialName("thumbnail_url") val thumbnailUrl: String?,
+    val views: SongVideoViewsResponse?,
+    @SerialName("published_at") val publishedAt: String?,
+)
+
+@Serializable
+private data class SongVideoViewsResponse(
+    @SerialName("view_count") val viewCount: Long?,
+    val precision: String?,
+)
 
 data class SongAudioClip(val url: String)
 

@@ -1,6 +1,7 @@
 package yuku.alkitab.songs
 
 import java.time.Instant
+import kotlinx.serialization.SerializationException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -73,7 +74,24 @@ class SongMediaTest {
     @Test
     fun `additional server fields are ignored`() {
         val json = response("null").replace("\"audio_clips\":", "\"future_field\":{\"nested\":[1,true,null]},\"audio_clips\":")
-        assertEquals(SongMedia.parse(response("null")), SongMedia.parse(json))
+        val nested = json.replace("\"videoId\":", "\"future_video_field\":{\"nested\":[true]},\"videoId\":")
+        assertEquals(SongMedia.parse(response("null")), SongMedia.parse(nested))
+    }
+
+    @Test
+    fun `missing optional video metadata keeps the video available`() {
+        val media = SongMedia.parse("""{"audio_clips":[],"youtube_videos":[{"videoId":"abcdefghijk","title":"A song","channel_name":"Choir"}]}""")
+        val video = media.youtubeVideos.single()
+        assertEquals("abcdefghijk", video.videoId)
+        assertNull(video.thumbnailUrl)
+        assertNull(video.viewCount)
+        assertNull(video.publishedAt)
+        assertFalse(media.isIncomplete)
+    }
+
+    @Test(expected = SerializationException::class)
+    fun `a missing required media array is rejected`() {
+        SongMedia.parse("""{"youtube_videos":[]}""")
     }
 
     @Test
