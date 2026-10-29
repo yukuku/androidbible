@@ -1,11 +1,7 @@
 package yuku.alkitab.songs
 
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.Path as AndroidPath
 import android.view.View
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.size
@@ -15,14 +11,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.asComposePath
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.compositionContext
 import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
@@ -32,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.PathParser
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import yuku.alkitab.base.compose.BibleAppTheme
@@ -110,20 +99,13 @@ internal fun SongMediaToolbarAction(
 @Composable
 private fun SongMediaToolbarCompositeIcon(state: SongMediaToolbarState, modifier: Modifier = Modifier) {
     val isMuted = state == SongMediaToolbarState.Loading || state == SongMediaToolbarState.Retry
+    val drawable = when (state) {
+        SongMediaToolbarState.AudioAndVideos -> R.drawable.ic_song_media_audio_video
+        SongMediaToolbarState.Retry -> R.drawable.ic_song_media_retry
+        else -> R.drawable.ic_song_media_loading
+    }
     Box(modifier.size(24.dp).alpha(if (isMuted) 0.38f else 1f)) {
-        Canvas(Modifier.size(24.dp)) {
-            scale(size.width / 24f, size.height / 24f, Offset.Zero) {
-                if (state == SongMediaToolbarState.AudioAndVideos) {
-                    drawPath(SongMediaToolbarPaths.frameWithNote, Color.White)
-                    drawPath(SongMediaToolbarPaths.note, Color.White)
-                } else {
-                    drawPath(SongMediaToolbarPaths.frameWithCornerGap, Color.White)
-                    if (state == SongMediaToolbarState.Retry) {
-                        drawPath(SongMediaToolbarPaths.retry, Color.White, style = Stroke(1.56f, join = StrokeJoin.Round))
-                    }
-                }
-            }
-        }
+        Icon(painterResource(drawable), null, Modifier.size(24.dp), tint = Color.White)
         if (state == SongMediaToolbarState.Loading) {
             CircularProgressIndicator(
                 modifier = Modifier.absoluteOffset(12.dp, 12.dp).size(12.dp),
@@ -135,30 +117,4 @@ private fun SongMediaToolbarCompositeIcon(state: SongMediaToolbarState, modifier
             )
         }
     }
-}
-
-private object SongMediaToolbarPaths {
-    private const val FRAME = "M21 3H3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 16H3V5h18Z"
-    private const val NOTE = "M12 3v10.55A4 4 0 1 0 16 17V7h4V3Z"
-
-    private val noteTransform = Matrix().apply { setScale(0.55f, 0.55f); postTranslate(4.8f, 10.8f) }
-    val note: Path = path(NOTE).apply { transform(noteTransform) }.asComposePath()
-    val frameWithNote: Path = path(FRAME).apply {
-        val gap = AndroidPath()
-        Paint().apply {
-            style = Paint.Style.FILL_AND_STROKE
-            strokeWidth = 5.5f
-            strokeJoin = Paint.Join.ROUND
-        }.getFillPath(path(NOTE), gap)
-        gap.transform(noteTransform)
-        op(gap, AndroidPath.Op.DIFFERENCE)
-    }.asComposePath()
-    val frameWithCornerGap: Path = path(FRAME).apply {
-        op(AndroidPath().apply { addCircle(18f, 18f, 7.5f, AndroidPath.Direction.CW) }, AndroidPath.Op.DIFFERENCE)
-    }.asComposePath()
-    val retry: Path = path("M21 3v6h-6M20.5 15a9 9 0 1 1-2.1-9.4L21 9").apply {
-        transform(Matrix().apply { setScale(0.52f, 0.52f); postTranslate(11.76f, 11.76f) })
-    }.asComposePath()
-
-    private fun path(data: String): AndroidPath = requireNotNull(PathParser.createPathFromPathData(data))
 }
