@@ -51,9 +51,10 @@ open the sheet when tapped. The toolbar retains its action composition across
 menu refreshes so an in-flight loading animation stays continuous. Results for
 a previous song cannot determine the current icon.
 
-The audio-only symbol is Google's [Material Symbols music_note](https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/music_note/wght200/24px.svg),
-using the Outlined design, weight 200 and optical size 24. Its geometry is
-preserved in the Android vector drawable. See the [Apache license](../licenses/material-symbols.txt).
+The audio-only symbol and the note within the combined audio-and-video icon use
+Google's [Material Symbols music_note](https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/music_note/wght200/24px.svg),
+using the Outlined design, weight 200 and optical size 24. The combined icon
+scales the same geometry to fit its rectangle cutout. See the [Apache license](../licenses/material-symbols.txt).
 
 The server supplies video titles, channels, thumbnails, view counts with exact
 or approximate precision, and ISO 8601 publication dates. Thumbnails use Coil
