@@ -531,6 +531,9 @@
     <string name="dv_version_unset">Bruger %1$s. Tryk for at vælge en bibeloversættelse.</string>
     <string name="text_appearance_text_color_contrast">Tekstfarvekontrast</string>
     <string name="sn_media_title">Lyd og video</string>
+    <string name="sn_media_videos">Videoer</string>
+    <string name="sn_media_checking">Søger efter lyd og videoer</string>
+    <string name="sn_media_retry_options">Kunne ikke indlæse lyd og videoer. Åbn muligheder for at prøve igen.</string>
     <string name="sn_media_audio">Lyd</string>
     <string name="sn_media_repeat">Gentag lyd</string>
     <string name="sn_media_seek">Afspilningsposition</string>

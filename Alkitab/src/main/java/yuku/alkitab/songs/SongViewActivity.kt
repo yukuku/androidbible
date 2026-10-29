@@ -22,6 +22,9 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebViewClient
 import androidx.annotation.Keep
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.ShareCompat
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
@@ -129,6 +132,15 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     private val mediaViewModel by lazy { ViewModelProvider(this)[SongMediaViewModel::class.java] }
+    private var mediaToolbarState by mutableStateOf(SongMediaToolbarState.Hidden)
+    private val mediaToolbarAction by lazy {
+        songMediaToolbarActionView(
+            activity = this,
+            toolbar = findViewById(R.id.toolbar),
+            state = { mediaToolbarState },
+            onClick = ::showSongMedia,
+        )
+    }
     private var mediaProgress: String? = null
         set(value) {
             field = value
@@ -241,7 +253,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                 if (isFinishing) return
 
                 obtainSongProgress()
-                invalidateOptionsMenu()
 
                 sendEmptyMessageDelayed(0, 1000)
             }
@@ -397,13 +408,15 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_song_view, menu)
+        menu.findItem(R.id.menuMediaControl).actionView = mediaToolbarAction
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val menuMediaControl = menu.findItem(R.id.menuMediaControl)
-        menuMediaControl.isEnabled = currentSong != null
-        menuMediaControl.isVisible = currentSong != null
+        mediaToolbarState = mediaViewModel.state.value.toolbarState(currentBookName, currentSong?.code)
+        menuMediaControl.isEnabled = mediaToolbarState.isEnabled
+        menuMediaControl.isVisible = mediaToolbarState.isVisible
 
         val songShown = currentBookName != null
 
@@ -455,17 +468,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
             }
 
             R.id.menuMediaControl -> {
-                val song = currentSong ?: return true
-                SongMediaSheet.show(
-                    activity = this,
-                    title = song.meta.title?.takeIf { it.isNotBlank() }
-                        ?: "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
-                    subtitle = song.meta.title_original,
-                    viewModel = mediaViewModel,
-                    controller = songAudioController,
-                    onPlay = ::playSongClip,
-                    onVideo = ::openSongVideo,
-                )
+                showSongMedia()
                 return true
             }
 
@@ -626,6 +629,20 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
         if (bookName != null) mediaViewModel.load(bookName, doc.code, false)
         invalidateOptionsMenu()
+    }
+
+    private fun showSongMedia() {
+        val song = currentSong ?: return
+        SongMediaSheet.show(
+            activity = this,
+            title = song.meta.title?.takeIf { it.isNotBlank() }
+                ?: "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
+            subtitle = song.meta.title_original,
+            viewModel = mediaViewModel,
+            controller = songAudioController,
+            onPlay = ::playSongClip,
+            onVideo = ::openSongVideo,
+        )
     }
 
     private fun updateActivityTitle() {

@@ -531,6 +531,9 @@
     <string name="dv_version_unset">Đang dùng %1$s. Nhấn để chọn bản dịch Kinh Thánh.</string>
     <string name="text_appearance_text_color_contrast">Độ tương phản màu chữ</string>
     <string name="sn_media_title">Âm thanh và video</string>
+    <string name="sn_media_videos">Video</string>
+    <string name="sn_media_checking">Đang kiểm tra âm thanh và video</string>
+    <string name="sn_media_retry_options">Không thể tải âm thanh và video. Mở tùy chọn thử lại.</string>
     <string name="sn_media_audio">Âm thanh</string>
     <string name="sn_media_repeat">Lặp lại âm thanh</string>
     <string name="sn_media_seek">Vị trí phát</string>

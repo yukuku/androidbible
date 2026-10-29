@@ -531,6 +531,9 @@
     <string name="dv_version_unset">Gebruik %1$s. Tik om ’n Bybelweergawe te kies.</string>
     <string name="text_appearance_text_color_contrast">Tekskleurkontras</string>
     <string name="sn_media_title">Oudio en video</string>
+    <string name="sn_media_videos">Video’s</string>
+    <string name="sn_media_checking">Soek tans na oudio en video’s</string>
+    <string name="sn_media_retry_options">Kon nie oudio en video’s laai nie. Maak herprobeeropsies oop.</string>
     <string name="sn_media_audio">Oudio</string>
     <string name="sn_media_repeat">Herhaal oudio</string>
     <string name="sn_media_seek">Terugspeelposisie</string>

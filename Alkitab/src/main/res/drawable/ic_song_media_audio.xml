@@ -1,0 +1,5 @@
+<!-- Copyright Google LLC. SPDX-License-Identifier: Apache-2.0 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="960" android:viewportHeight="960">
+    <path android:fillColor="#FFFFFFFF" android:pathData="M 317.38 757.23 q -35.07 -35.08 -35.07 -84.92 0 -49.85 35.07 -84.93 35.08 -35.07 84.93 -35.07 23 0 43.65 8.19 20.66 8.19 36.35 24.58 v -417.39 h 195.38 v 101.54 H 522.31 v 403.08 q 0 49.84 -35.08 84.92 t -84.92 35.08 q -49.85 0 -84.93 -35.08 Z" />
+</vector>

@@ -531,6 +531,9 @@
     <string name="dv_version_unset">%1$sを使用しています。タップして聖書の訳を選んでください。</string>
     <string name="text_appearance_text_color_contrast">文字色のコントラスト</string>
     <string name="sn_media_title">音声と動画</string>
+    <string name="sn_media_videos">動画</string>
+    <string name="sn_media_checking">音声と動画を確認中</string>
+    <string name="sn_media_retry_options">音声と動画を読み込めませんでした。再試行のオプションを開きます。</string>
     <string name="sn_media_audio">音声</string>
     <string name="sn_media_repeat">音声を繰り返す</string>
     <string name="sn_media_seek">再生位置</string>

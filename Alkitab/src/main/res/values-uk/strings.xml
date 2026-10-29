@@ -532,6 +532,9 @@
     <string name="dv_version_unset">Використовується %1$s. Натисніть, щоб вибрати переклад Біблії.</string>
     <string name="text_appearance_text_color_contrast">Контраст кольору тексту</string>
     <string name="sn_media_title">Аудіо та відео</string>
+    <string name="sn_media_videos">Відео</string>
+    <string name="sn_media_checking">Пошук аудіо та відео</string>
+    <string name="sn_media_retry_options">Не вдалося завантажити аудіо та відео. Відкрити параметри повторної спроби.</string>
     <string name="sn_media_audio">Аудіо</string>
     <string name="sn_media_repeat">Повторювати аудіо</string>
     <string name="sn_media_seek">Позиція відтворення</string>

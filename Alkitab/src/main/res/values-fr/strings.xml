@@ -531,6 +531,9 @@
     <string name="dv_version_unset">%1$s est utilisée. Appuyez pour choisir une version de la Bible.</string>
     <string name="text_appearance_text_color_contrast">Contraste de la couleur du texte</string>
     <string name="sn_media_title">Audio et vidéo</string>
+    <string name="sn_media_videos">Vidéos</string>
+    <string name="sn_media_checking">Recherche de contenu audio et vidéo</string>
+    <string name="sn_media_retry_options">Impossible de charger le contenu audio et vidéo. Ouvrir les options pour réessayer.</string>
     <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Répéter l’audio</string>
     <string name="sn_media_seek">Position de lecture</string>

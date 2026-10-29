@@ -531,6 +531,9 @@
     <string name="dv_version_unset">Използва се %1$s. Докоснете, за да изберете библейски превод.</string>
     <string name="text_appearance_text_color_contrast">Контраст на цвета на текста</string>
     <string name="sn_media_title">Аудио и видео</string>
+    <string name="sn_media_videos">Видеоклипове</string>
+    <string name="sn_media_checking">Проверка за аудио и видеоклипове</string>
+    <string name="sn_media_retry_options">Аудиото и видеоклиповете не могат да се заредят. Отворете опциите за повторен опит.</string>
     <string name="sn_media_audio">Аудио</string>
     <string name="sn_media_repeat">Повтаряне на аудиото</string>
     <string name="sn_media_seek">Позиция на възпроизвеждане</string>

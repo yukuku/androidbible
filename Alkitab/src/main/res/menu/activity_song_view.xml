@@ -8,7 +8,7 @@
 		android:enabled="false"
 		android:icon="@drawable/ic_song_media"
 		android:title="@string/sn_media_title"
-		app:showAsAction="always|withText"
+		app:showAsAction="always"
 		tools:ignore="AlwaysShowAction" />
 
 	<item
