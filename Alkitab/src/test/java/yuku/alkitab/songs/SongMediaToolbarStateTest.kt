@@ -10,8 +10,8 @@ class SongMediaToolbarStateTest {
     private val videos = listOf(SongYoutubeVideo("abcdefghijk", "Song", "Channel", null, null, false, null))
 
     @Test
-    fun `only a complete empty response hides the current song action`() {
-        assertEquals(SongMediaToolbarState.Hidden, state(SongMedia(emptyList(), emptyList(), false), false, false))
+    fun `a complete empty response shows unavailable while incomplete results allow retry`() {
+        assertEquals(SongMediaToolbarState.Unavailable, state(SongMedia(emptyList(), emptyList(), false), false, false))
         assertEquals(SongMediaToolbarState.Retry, state(SongMedia(emptyList(), emptyList(), true), false, false))
         assertEquals(SongMediaToolbarState.Retry, state(null, false, true))
     }
@@ -56,11 +56,11 @@ class SongMediaToolbarStateTest {
     }
 
     @Test
-    fun `loading is visible but disabled while failure remains actionable`() {
-        assertTrue(SongMediaToolbarState.Loading.isVisible)
-        assertFalse(SongMediaToolbarState.Loading.isEnabled)
-        assertTrue(SongMediaToolbarState.Retry.isVisible)
-        assertTrue(SongMediaToolbarState.Retry.isEnabled)
+    fun `every visible state including loading unavailable and retry is actionable`() {
+        for (state in SongMediaToolbarState.entries.filter { it != SongMediaToolbarState.Hidden }) {
+            assertTrue(state.name, state.isVisible)
+            assertTrue(state.name, state.isEnabled)
+        }
         assertFalse(SongMediaToolbarState.Hidden.isVisible)
         assertFalse(SongMediaToolbarState.Hidden.isEnabled)
     }

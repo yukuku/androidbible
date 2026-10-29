@@ -45,8 +45,11 @@ Video items open through an external YouTube URL intent, pausing song audio.
 The toolbar indicates audio, video, or both before the sheet is opened. Loading
 uses a faded screen outline with an animated Material 3 progress ring. Failed
 requests show a faded retry icon that opens the sheet's retry options. A complete
-empty response hides the action; an incomplete empty response keeps retry
-available. Results for a previous song cannot determine the current icon.
+empty response shows a faded screen with a carved diagonal slash; an incomplete
+empty response keeps retry available. Loading, unavailable and retry states all
+open the sheet when tapped. The toolbar retains its action composition across
+menu refreshes so an in-flight loading animation stays continuous. Results for
+a previous song cannot determine the current icon.
 
 The audio-only symbol is Google's [Material Symbols music_note](https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/music_note/wght200/24px.svg),
 using the Outlined design, weight 200 and optical size 24. Its geometry is

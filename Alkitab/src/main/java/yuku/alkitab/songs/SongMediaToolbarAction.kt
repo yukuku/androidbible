@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.platform.compositionContext
 import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
 import androidx.compose.ui.platform.findViewTreeCompositionContext
@@ -28,10 +29,10 @@ import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.debug.R
 
 internal enum class SongMediaToolbarState {
-    Hidden, Loading, Audio, Videos, AudioAndVideos, Retry;
+    Hidden, Loading, Audio, Videos, AudioAndVideos, Unavailable, Retry;
 
     val isVisible: Boolean get() = this != Hidden
-    val isEnabled: Boolean get() = isVisible && this != Loading
+    val isEnabled: Boolean get() = isVisible
 }
 
 internal fun SongMediaViewModel.UiState.toolbarState(bookName: String?, code: String?): SongMediaToolbarState {
@@ -47,7 +48,7 @@ internal fun SongMediaViewModel.UiState.toolbarState(bookName: String?, code: St
         isAudioAvailable -> SongMediaToolbarState.Audio
         isVideoAvailable -> SongMediaToolbarState.Videos
         media.isIncomplete -> SongMediaToolbarState.Retry
-        else -> SongMediaToolbarState.Hidden
+        else -> SongMediaToolbarState.Unavailable
     }
 }
 
@@ -57,9 +58,10 @@ internal fun songMediaToolbarActionView(
     state: () -> SongMediaToolbarState,
     onClick: () -> Unit,
 ): ComposeView = ComposeView(activity).apply {
-    // Toolbar measures action views before attaching them to the window.
+    // Toolbar measures before attachment and temporarily detaches actions during refreshes.
     setViewTreeLifecycleOwner(activity)
     setViewTreeSavedStateRegistryOwner(activity)
+    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
     val composition = toolbar.findViewTreeCompositionContext()
         ?: toolbar.createLifecycleAwareWindowRecomposer(lifecycle = activity.lifecycle).also { toolbar.compositionContext = it }
     setParentCompositionContext(composition)
@@ -79,6 +81,7 @@ internal fun SongMediaToolbarAction(
         SongMediaToolbarState.Videos -> R.string.sn_media_videos
         SongMediaToolbarState.Loading -> R.string.sn_media_checking
         SongMediaToolbarState.Retry -> R.string.sn_media_retry_options
+        SongMediaToolbarState.Unavailable -> R.string.sn_media_empty
         else -> R.string.sn_media_title
     })
     IconButton(
@@ -98,10 +101,11 @@ internal fun SongMediaToolbarAction(
 
 @Composable
 private fun SongMediaToolbarCompositeIcon(state: SongMediaToolbarState, modifier: Modifier = Modifier) {
-    val isMuted = state == SongMediaToolbarState.Loading || state == SongMediaToolbarState.Retry
+    val isMuted = state == SongMediaToolbarState.Loading || state == SongMediaToolbarState.Retry || state == SongMediaToolbarState.Unavailable
     val drawable = when (state) {
         SongMediaToolbarState.AudioAndVideos -> R.drawable.ic_song_media_audio_video
         SongMediaToolbarState.Retry -> R.drawable.ic_song_media_retry
+        SongMediaToolbarState.Unavailable -> R.drawable.ic_song_media_unavailable
         else -> R.drawable.ic_song_media_loading
     }
     Box(modifier.size(24.dp).alpha(if (isMuted) 0.38f else 1f)) {

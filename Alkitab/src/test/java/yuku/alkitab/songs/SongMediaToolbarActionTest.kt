@@ -12,11 +12,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.runtime.BroadcastFrameClock
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.platform.compositionContext
 import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
 import java.io.File
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -30,7 +36,7 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class SongMediaToolbarActionTest {
     @Test
-    fun `toolbar can measure its Compose action before attaching it`() {
+    fun `toolbar actions support detached measurement refreshes and clicks in every visible state`() {
         val controller = Robolectric.buildActivity(AppCompatActivity::class.java)
         controller.get().setTheme(androidx.appcompat.R.style.Theme_AppCompat)
         controller.setup().visible()
@@ -52,7 +58,8 @@ class SongMediaToolbarActionTest {
             for ((index, state) in SongMediaToolbarState.entries.withIndex()) {
                 toolbar.menu.clear()
                 toolbar.title = state.name
-                val action = songMediaToolbarActionView(activity, toolbar, { state }, {})
+                var isClicked = false
+                val action = songMediaToolbarActionView(activity, toolbar, { state }, { isClicked = true })
                 action.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
                 toolbar.menu.add("Media").apply {
                     actionView = action
@@ -75,10 +82,33 @@ class SongMediaToolbarActionTest {
                     assertEquals(state.name, 48, action.measuredWidth)
                     assertEquals(state.name, 48, action.measuredHeight)
                 }
+                if (state == SongMediaToolbarState.Loading) {
+                    assertTrue(action.hasComposition)
+                    toolbar.menu.clear()
+                    assertFalse(action.isAttachedToWindow)
+                    assertTrue("Loading composition must survive menu refreshes", action.hasComposition)
+                    toolbar.menu.add("Media").setActionView(action).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    Snapshot.sendApplyNotifications()
+                    shadowOf(Looper.getMainLooper()).idle()
+                    toolbar.measure(
+                        View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(56, View.MeasureSpec.EXACTLY),
+                    )
+                    toolbar.layout(0, 0, 360, 56)
+                    assertTrue(action.hasComposition)
+                }
                 canvas.save()
                 canvas.translate(0f, index * 56f)
                 toolbar.draw(canvas)
                 canvas.restore()
+
+                if (state.isVisible) {
+                    val owner = (action.getChildAt(0) as RootForTest).semanticsOwner
+                    val node = requireNotNull(clickableNode(owner.unmergedRootSemanticsNode))
+                    assertFalse(state.name, node.config.contains(SemanticsProperties.Disabled))
+                    assertTrue(state.name, requireNotNull(node.config[SemanticsActions.OnClick].action).invoke())
+                    assertTrue(state.name, isClicked)
+                }
             }
             val output = File("build/qa-sessions/song-media-toolbar/all-states.png")
             output.parentFile?.mkdirs()
@@ -88,4 +118,7 @@ class SongMediaToolbarActionTest {
             controller.pause().stop().destroy()
         }
     }
+
+    private fun clickableNode(node: SemanticsNode): SemanticsNode? =
+        if (node.config.contains(SemanticsActions.OnClick)) node else node.children.firstNotNullOfOrNull(::clickableNode)
 }
