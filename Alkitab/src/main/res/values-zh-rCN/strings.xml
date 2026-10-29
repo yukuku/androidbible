@@ -531,6 +531,9 @@
     <string name="dv_version_unset">正在使用%1$s。点按以选择圣经译本。</string>
     <string name="text_appearance_text_color_contrast">文字颜色对比度</string>
     <string name="sn_media_title">音频和视频</string>
+    <string name="sn_media_videos">视频</string>
+    <string name="sn_media_checking">正在检查音频和视频</string>
+    <string name="sn_media_retry_options">无法加载音频和视频。打开重试选项。</string>
     <string name="sn_media_audio">音频</string>
     <string name="sn_media_repeat">重复播放音频</string>
     <string name="sn_media_seek">播放位置</string>

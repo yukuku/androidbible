@@ -531,6 +531,9 @@
     <string name="dv_version_unset">กำลังใช้ %1$s แตะเพื่อเลือกฉบับพระคัมภีร์</string>
     <string name="text_appearance_text_color_contrast">ความต่างสีข้อความ</string>
     <string name="sn_media_title">เสียงและวิดีโอ</string>
+    <string name="sn_media_videos">วิดีโอ</string>
+    <string name="sn_media_checking">กำลังตรวจสอบเสียงและวิดีโอ</string>
+    <string name="sn_media_retry_options">ไม่สามารถโหลดเสียงและวิดีโอได้ เปิดตัวเลือกเพื่อลองอีกครั้ง</string>
     <string name="sn_media_audio">เสียง</string>
     <string name="sn_media_repeat">เล่นเสียงซ้ำ</string>
     <string name="sn_media_seek">ตำแหน่งการเล่น</string>

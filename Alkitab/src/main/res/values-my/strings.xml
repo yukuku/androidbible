@@ -531,6 +531,9 @@
     <string name="dv_version_unset">%1$s ကို အသုံးပြုထားသည်။ သမ္မာကျမ်းစာ ဘာသာပြန်မူကို ရွေးရန် နှိပ်ပါ။</string>
     <string name="text_appearance_text_color_contrast">စာသားအရောင် ကွာခြားမှု</string>
     <string name="sn_media_title">အသံနှင့် ဗီဒီယို</string>
+    <string name="sn_media_videos">ဗီဒီယိုများ</string>
+    <string name="sn_media_checking">အသံနှင့် ဗီဒီယိုများကို စစ်ဆေးနေသည်</string>
+    <string name="sn_media_retry_options">အသံနှင့် ဗီဒီယိုများကို မဖွင့်နိုင်ပါ။ ပြန်လည်ကြိုးစားရန် ရွေးချယ်စရာများကို ဖွင့်ပါ။</string>
     <string name="sn_media_audio">အသံ</string>
     <string name="sn_media_repeat">အသံကို ထပ်ကျော့ဖွင့်ရန်</string>
     <string name="sn_media_seek">ဖွင့်နေသည့်နေရာ</string>

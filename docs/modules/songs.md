@@ -42,6 +42,16 @@ bars, with safe bottom padding inside the scrolling content. Audio supports play
 playback continues through the existing song audio service after dismissal.
 Video items open through an external YouTube URL intent, pausing song audio.
 
+The toolbar indicates audio, video, or both before the sheet is opened. Loading
+uses a faded screen outline with an animated Material 3 progress ring. Failed
+requests show a faded retry icon that opens the sheet's retry options. A complete
+empty response hides the action; an incomplete empty response keeps retry
+available. Results for a previous song cannot determine the current icon.
+
+The audio-only symbol is Google's [Material Symbols music_note](https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/music_note/wght200/24px.svg),
+using the Outlined design, weight 200 and optical size 24. Its geometry is
+preserved in the Android vector drawable. See the [Apache license](../licenses/material-symbols.txt).
+
 The server supplies video titles, channels, thumbnails, view counts with exact
 or approximate precision, and ISO 8601 publication dates. Thumbnails use Coil
 Compose. Video rows show compact K/M view counts and a publication date on one

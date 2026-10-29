@@ -531,6 +531,9 @@
     <string name="dv_version_unset">Se folosește %1$s. Atingeți pentru a alege o traducere a Bibliei.</string>
     <string name="text_appearance_text_color_contrast">Contrastul culorii textului</string>
     <string name="sn_media_title">Audio și video</string>
+    <string name="sn_media_videos">Videoclipuri</string>
+    <string name="sn_media_checking">Se caută conținut audio și videoclipuri</string>
+    <string name="sn_media_retry_options">Conținutul audio și videoclipurile nu au putut fi încărcate. Deschide opțiunile de reîncercare.</string>
     <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Repetă înregistrarea audio</string>
     <string name="sn_media_seek">Poziția redării</string>

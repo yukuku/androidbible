@@ -531,6 +531,9 @@
     <string name="dv_version_unset">Ginagamit ang %1$s. I-tap para pumili ng salin ng Bibliya.</string>
     <string name="text_appearance_text_color_contrast">Contrast ng kulay ng teksto</string>
     <string name="sn_media_title">Audio at video</string>
+    <string name="sn_media_videos">Mga video</string>
+    <string name="sn_media_checking">Naghahanap ng audio at mga video</string>
+    <string name="sn_media_retry_options">Hindi ma-load ang audio at mga video. Buksan ang mga opsyon para subukang muli.</string>
     <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Ulitin ang audio</string>
     <string name="sn_media_seek">Posisyon ng pag-play</string>

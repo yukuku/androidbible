@@ -531,6 +531,9 @@
     <string name="dv_version_unset">Χρησιμοποιείται η %1$s. Πατήστε για να επιλέξετε μετάφραση της Βίβλου.</string>
     <string name="text_appearance_text_color_contrast">Αντίθεση χρώματος κειμένου</string>
     <string name="sn_media_title">Ήχος και βίντεο</string>
+    <string name="sn_media_videos">Βίντεο</string>
+    <string name="sn_media_checking">Έλεγχος ήχου και βίντεο</string>
+    <string name="sn_media_retry_options">Δεν ήταν δυνατή η φόρτωση ήχου και βίντεο. Άνοιγμα επιλογών επανάληψης.</string>
     <string name="sn_media_audio">Ήχος</string>
     <string name="sn_media_repeat">Επανάληψη ήχου</string>
     <string name="sn_media_seek">Θέση αναπαραγωγής</string>

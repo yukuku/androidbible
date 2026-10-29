@@ -531,6 +531,9 @@
     <string name="dv_version_unset">%1$s wordt gebruikt. Tik om een Bijbelvertaling te kiezen.</string>
     <string name="text_appearance_text_color_contrast">Tekstkleurcontrast</string>
     <string name="sn_media_title">Audio en video</string>
+    <string name="sn_media_videos">Video’s</string>
+    <string name="sn_media_checking">Zoeken naar audio en video’s</string>
+    <string name="sn_media_retry_options">Audio en video’s konden niet worden geladen. Opties voor opnieuw proberen openen.</string>
     <string name="sn_media_audio">Audio</string>
     <string name="sn_media_repeat">Audio herhalen</string>
     <string name="sn_media_seek">Afspeelpositie</string>

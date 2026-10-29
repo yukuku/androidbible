@@ -531,6 +531,9 @@
     <string name="dv_version_unset">Používá se %1$s. Klepnutím vyberete překlad Bible.</string>
     <string name="text_appearance_text_color_contrast">Kontrast barvy textu</string>
     <string name="sn_media_title">Zvuk a video</string>
+    <string name="sn_media_videos">Videa</string>
+    <string name="sn_media_checking">Kontrola zvuku a videí</string>
+    <string name="sn_media_retry_options">Zvuk a videa se nepodařilo načíst. Otevřít možnosti opakování.</string>
     <string name="sn_media_audio">Zvuk</string>
     <string name="sn_media_repeat">Opakovat zvuk</string>
     <string name="sn_media_seek">Pozice přehrávání</string>

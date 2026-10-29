@@ -22,6 +22,9 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebViewClient
 import androidx.annotation.Keep
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.ShareCompat
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
@@ -129,6 +132,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     }
 
     private val mediaViewModel by lazy { ViewModelProvider(this)[SongMediaViewModel::class.java] }
+    private var mediaToolbarState by mutableStateOf(SongMediaToolbarState.Hidden)
     private var mediaProgress: String? = null
         set(value) {
             field = value
@@ -397,13 +401,21 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_song_view, menu)
+        val mediaItem = menu.findItem(R.id.menuMediaControl)
+        mediaItem.actionView = songMediaToolbarActionView(
+            activity = this,
+            toolbar = findViewById(R.id.toolbar),
+            state = { mediaToolbarState },
+            onClick = { onOptionsItemSelected(mediaItem) },
+        )
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val menuMediaControl = menu.findItem(R.id.menuMediaControl)
-        menuMediaControl.isEnabled = currentSong != null
-        menuMediaControl.isVisible = currentSong != null
+        mediaToolbarState = mediaViewModel.state.value.toolbarState(currentBookName, currentSong?.code)
+        menuMediaControl.isEnabled = mediaToolbarState.isEnabled
+        menuMediaControl.isVisible = mediaToolbarState.isVisible
 
         val songShown = currentBookName != null
 
