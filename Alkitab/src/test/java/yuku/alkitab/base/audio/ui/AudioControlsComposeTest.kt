@@ -12,7 +12,6 @@ import androidx.compose.runtime.BroadcastFrameClock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.Snapshot
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
@@ -59,7 +58,7 @@ class AudioControlsComposeTest {
         val commands = mutableListOf<AudioBarCommand>()
         ComposeHost().use { host ->
             host.show {
-                AudioBar(readyBibleState(), commands::add, Modifier, transport.player)
+                AudioBar(readyBibleState(), commands::add, player = transport.player)
             }
             assertEquals(42_000f, host.slider().config[SemanticsProperties.ProgressBarRangeInfo].current)
 
@@ -96,7 +95,7 @@ class AudioControlsComposeTest {
         val state = mutableStateOf(readyBibleState())
         val commands = mutableListOf<AudioBarCommand>()
         ComposeHost().use { host ->
-            host.show { AudioBar(state.value, commands::add, Modifier, transport.player) }
+            host.show { AudioBar(state.value, commands::add, player = transport.player) }
             state.value = state.value.copy(preparing = true, positionMs = 0L, durationMs = 0L)
             host.settle()
             assertEquals(0f, host.slider().config[SemanticsProperties.ProgressBarRangeInfo].current)

@@ -203,7 +203,6 @@ class ComposeThemeSnapshotTest {
                     setGroups = null,
                 ),
                 onCommand = {},
-                modifier = Modifier,
             )
         },
     )

@@ -676,7 +676,6 @@ private fun AudioBarPreviewNarrow() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -703,7 +702,6 @@ private fun AudioBarPreviewWide() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -730,7 +728,6 @@ private fun AudioBarPreviewPreparing() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -763,7 +760,6 @@ private fun AudioBarPreviewSlowLoad() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -796,7 +792,6 @@ private fun AudioBarPreviewDarkError() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -826,6 +821,5 @@ private fun AudioBarPreviewWithPicker() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }

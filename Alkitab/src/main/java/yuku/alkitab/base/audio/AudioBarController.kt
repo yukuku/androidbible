@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.media3.common.Player
 import kotlinx.coroutines.CoroutineScope
@@ -251,7 +250,7 @@ class AudioBarController(
         if (composeContentInstalled) return
         cv.setContent {
             val state by uiState.collectAsState()
-            AudioBar(state = state, onCommand = ::onCommand, modifier = Modifier, player = playbackPlayer)
+            AudioBar(state = state, onCommand = ::onCommand, player = playbackPlayer)
         }
         composeContentInstalled = true
     }
