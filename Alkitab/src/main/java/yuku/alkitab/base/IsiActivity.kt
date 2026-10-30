@@ -515,6 +515,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         AppLog.d(TAG, "@@onCreate start")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT >= 29) {
+            window.isNavigationBarContrastEnforced = false
+        }
         if (Build.VERSION.SDK_INT >= 28) {
             window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
@@ -1592,12 +1595,15 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // stay inside the safe area. In a stacked split only the top pane
         // touches the window top and only the bottom pane the window bottom.
         val panelBackForwardList = nontoolbar.findViewById<View>(R.id.panelBackForwardList)
-        val panelBackForwardListBaseBottomMargin = (panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+        val panelBackForwardListBaseMargins = panelBackForwardList.layoutParams as ViewGroup.MarginLayoutParams
+        val panelBackForwardListBaseBottomMargin = panelBackForwardListBaseMargins.bottomMargin
+        val panelBackForwardListBaseEndMargin = panelBackForwardListBaseMargins.marginEnd
         val feedbackButtonContainer = nontoolbar.findViewById<View>(R.id.feedbackButtonContainer)
-        val feedbackButtonBaseBottomMargin = (feedbackButtonContainer.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
-        ViewCompat.setOnApplyWindowInsetsListener(nontoolbar) { v, windowInsets ->
+        val feedbackButtonBaseMargins = feedbackButtonContainer.layoutParams as ViewGroup.MarginLayoutParams
+        val feedbackButtonBaseBottomMargin = feedbackButtonBaseMargins.bottomMargin
+        val feedbackButtonBaseStartMargin = feedbackButtonBaseMargins.marginStart
+        ViewCompat.setOnApplyWindowInsetsListener(nontoolbar) { _, windowInsets ->
             val insets = windowInsets.getInsets(safeAreaTypes)
-            v.setPadding(insets.left, 0, insets.right, 0)
 
             val toolbarCoversTop = toolbarHost.isVisible && !isBottomToolbarOnText()
             val topEdgeCovered = toolbarCoversTop
@@ -1605,15 +1611,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
             val bottomEdgeCovered = (toolbarHost.isVisible && isBottomToolbarOnText()) || ViewCompat.requireViewById<View>(root, R.id.audio_bar).height > 0
             val bottomInset = if (bottomEdgeCovered) 0 else insets.bottom
             val stackedSplit = splitHandleButton.isVisible && splitRoot.orientation == LinearLayout.VERTICAL
-            lsSplit0.setViewVerticalInsets(topInset, if (stackedSplit) 0 else bottomInset)
-            lsSplit1.setViewVerticalInsets(if (stackedSplit) 0 else topInset, bottomInset)
-            splitHandleButton.setVerticalInsets(topInset, bottomInset)
+            val isSideBySideSplit = splitHandleButton.isVisible && !stackedSplit
+            lsSplit0.setViewInsets(insets.left, topInset, if (isSideBySideSplit) 0 else insets.right, if (stackedSplit) 0 else bottomInset)
+            lsSplit1.setViewInsets(if (isSideBySideSplit) 0 else insets.left, if (stackedSplit) 0 else topInset, insets.right, bottomInset)
+            splitHandleButton.setSafeAreaInsets(insets.left, topInset, insets.right, bottomInset)
 
             panelBackForwardList.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = panelBackForwardListBaseBottomMargin + bottomInset
+                marginEnd = panelBackForwardListBaseEndMargin + if (nontoolbar.layoutDirection == View.LAYOUT_DIRECTION_RTL) insets.left else insets.right
             }
             feedbackButtonContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = feedbackButtonBaseBottomMargin + bottomInset
+                marginStart = feedbackButtonBaseStartMargin + if (nontoolbar.layoutDirection == View.LAYOUT_DIRECTION_RTL) insets.right else insets.left
             }
             windowInsets
         }

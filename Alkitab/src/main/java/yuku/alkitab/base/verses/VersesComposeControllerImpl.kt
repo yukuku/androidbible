@@ -177,6 +177,8 @@ class VersesComposeControllerImpl(
     private var audioHighlightColorState by mutableIntStateOf(0)
 
     private val basePadding = Rect()
+    private var leftInset = 0
+    private var rightInset = 0
     private var topInset = 0
     private var bottomInset = 0
     private var paddingLeftPx by mutableIntStateOf(0)
@@ -567,8 +569,10 @@ class VersesComposeControllerImpl(
         applyPadding()
     }
 
-    override fun setViewVerticalInsets(topInset: Int, bottomInset: Int) {
-        if (this.topInset == topInset && this.bottomInset == bottomInset) return
+    override fun setViewInsets(leftInset: Int, topInset: Int, rightInset: Int, bottomInset: Int) {
+        if (this.leftInset == leftInset && this.topInset == topInset && this.rightInset == rightInset && this.bottomInset == bottomInset) return
+        this.leftInset = leftInset
+        this.rightInset = rightInset
         this.topInset = topInset
         this.bottomInset = bottomInset
         applyPadding()
@@ -578,9 +582,9 @@ class VersesComposeControllerImpl(
         val newTop = basePadding.top + topInset
         val deltaTop = newTop - paddingTopPx
 
-        paddingLeftPx = basePadding.left
+        paddingLeftPx = basePadding.left + leftInset
         paddingTopPx = newTop
-        paddingRightPx = basePadding.right
+        paddingRightPx = basePadding.right + rightInset
         paddingBottomPx = basePadding.bottom + bottomInset
 
         // A LazyColumn anchors its scroll position relative to the content
@@ -853,7 +857,12 @@ class VersesComposeControllerImpl(
         }
 
         CompositionLocalProvider(LocalDensity provides unscaledDensity) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            val sizeModifier = if (composeHost.layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier.fillMaxSize()
+            }
+            Box(modifier = sizeModifier) {
                 val contentPadding = with(unscaledDensity) {
                     PaddingValues.Absolute(
                         left = paddingLeftPx.toDp(),
@@ -866,8 +875,7 @@ class VersesComposeControllerImpl(
                 LazyColumn(
                     state = listState,
                     contentPadding = contentPadding,
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = sizeModifier
                         .verseListScrollbar(listState, scrollbarThumbState),
                 ) {
                     items(

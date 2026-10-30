@@ -32,6 +32,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
     boolean label2down = false;
     boolean rotatedown = false;
     float density;
+    int leftInset = 0;
+    int rightInset = 0;
     int topInset = 0;
     int bottomInset = 0;
 
@@ -94,13 +96,13 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
     }
 
     /**
-     * When the handle is a vertical bar (side-by-side split), the bar itself
-     * extends edge-to-edge behind the status/navigation bars and cutout;
-     * this shifts the two labels (and their touch targets) back into the
-     * safe area.
+     * The bar extends behind system bars and cutouts; its labels and touch
+     * targets stay inside the safe area.
      */
-    public void setVerticalInsets(int topInset, int bottomInset) {
-        if (this.topInset == topInset && this.bottomInset == bottomInset) return;
+    public void setSafeAreaInsets(int leftInset, int topInset, int rightInset, int bottomInset) {
+        if (this.leftInset == leftInset && this.topInset == topInset && this.rightInset == rightInset && this.bottomInset == bottomInset) return;
+        this.leftInset = leftInset;
+        this.rightInset = rightInset;
         this.topInset = topInset;
         this.bottomInset = bottomInset;
         invalidate();
@@ -127,8 +129,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
             if (orientation == Orientation.vertical) {
                 pos = event.getX();
                 length = getWidth();
-                startInset = 0;
-                endInset = 0;
+                startInset = leftInset;
+                endInset = rightInset;
             } else {
                 pos = event.getY();
                 length = getHeight();
@@ -207,10 +209,10 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
                 canvas.save();
 
                 if (label1down) {
-                    if (orientation == Orientation.vertical) canvas.clipRect(0, 0, label1length, thickness);
+                    if (orientation == Orientation.vertical) canvas.clipRect(0, 0, label1length + leftInset, thickness);
                     else canvas.clipRect(0, 0, thickness, label1length + topInset);
                 } else if (label2down) {
-                    if (orientation == Orientation.vertical) canvas.clipRect(length - label2length, 0, length, thickness);
+                    if (orientation == Orientation.vertical) canvas.clipRect(length - label2length - rightInset, 0, length, thickness);
                     else canvas.clipRect(0, length - label2length - bottomInset, thickness, length);
                 }
 
@@ -237,7 +239,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
                 canvas.restore();
             } else {
                 labelPaint.setTextAlign(Paint.Align.LEFT);
-                canvas.drawText(label1, pad, base, labelPaint);
+                canvas.drawText(label1, pad + leftInset, base, labelPaint);
             }
 
             label1length = 16 * density + labelPaint.measureText(label1);
@@ -254,7 +256,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
                 canvas.restore();
             } else {
                 labelPaint.setTextAlign(Paint.Align.RIGHT);
-                canvas.drawText(label2, length - pad, base, labelPaint);
+                canvas.drawText(label2, length - pad - rightInset, base, labelPaint);
             }
 
             label2length = 16.f * density + labelPaint.measureText(label2);
