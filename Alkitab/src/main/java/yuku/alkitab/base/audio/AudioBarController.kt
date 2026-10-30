@@ -7,8 +7,11 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.media3.common.Player
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -83,6 +86,7 @@ class AudioBarController(
     private var composeView: ComposeView? = null
 
     private var service: BibleAudioService? = null
+    private var playbackPlayer by mutableStateOf<Player?>(null)
 
     /**
      * Tracks whether [Context.bindService] returned successfully. This flag must
@@ -188,6 +192,7 @@ class AudioBarController(
             // rebind.
             val svc = localBinder.service ?: return
             service = svc
+            playbackPlayer = svc.playbackPlayer
             // `bound` is set in ensureBound when bindService returns true, NOT
             // here: onServiceConnected is fire-and-forget, and if the service
             // crashes before it runs we still need to unbind.
@@ -198,6 +203,7 @@ class AudioBarController(
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            playbackPlayer = null
             service = null
             // Do NOT clear `bound`: the ServiceConnection stays registered with
             // the OS until `unbindService` runs in detach. Disconnection means
@@ -245,7 +251,7 @@ class AudioBarController(
         if (composeContentInstalled) return
         cv.setContent {
             val state by uiState.collectAsState()
-            AudioBar(state = state, onCommand = ::onCommand, modifier = Modifier)
+            AudioBar(state = state, onCommand = ::onCommand, modifier = Modifier, player = playbackPlayer)
         }
         composeContentInstalled = true
     }
@@ -433,6 +439,7 @@ class AudioBarController(
     }
 
     fun hide() {
+        playbackPlayer = null
         requestedVisible = false
         reshowPending = false
         dragging = false
@@ -468,6 +475,8 @@ class AudioBarController(
      * keep playing while the activity is recreated.
      */
     fun detach() {
+        teardownComposeContent()
+        playbackPlayer = null
         reshowPending = false
         if (bound) {
             try {
