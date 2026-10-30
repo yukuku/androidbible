@@ -1,6 +1,7 @@
 package yuku.alkitab.base.dialog
 
 import android.content.DialogInterface
+import android.graphics.Rect
 import android.graphics.drawable.InsetDrawable
 import android.os.Build
 import android.os.Bundle
@@ -159,7 +160,9 @@ class VersesDialog : BaseDialog() {
         val window = dialog?.window ?: return
         val background = window.decorView.background
         if (background is InsetDrawable) {
-            window.setBackgroundDrawable(background.drawable)
+            val padding = Rect()
+            background.getPadding(padding)
+            window.setBackgroundDrawable(InsetDrawable(background.drawable, 0, padding.top, 0, padding.bottom))
         }
         val activity = requireActivity()
         val screenWidth = if (Build.VERSION.SDK_INT >= 30) {
