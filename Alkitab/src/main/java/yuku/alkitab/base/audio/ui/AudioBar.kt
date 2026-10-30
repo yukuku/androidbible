@@ -173,7 +173,7 @@ sealed interface AudioBarCommand {
 fun AudioBar(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     player: Player? = null,
 ) {
     AudioTheme {
@@ -543,7 +543,7 @@ private fun AudioBarSlider(
     onCommand: (AudioBarCommand) -> Unit,
     dragValue: Float?,
     onDragValueChange: (Float?) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
     // Accessibility can change and commit progress before the drag state recomposes.
@@ -573,7 +573,7 @@ private fun AudioBarWideRow(
     onCommand: (AudioBarCommand) -> Unit,
     dragValue: Float?,
     onDragValueChange: (Float?) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
