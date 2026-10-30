@@ -169,6 +169,38 @@ class BottomToolbarLayoutTest {
         }
     }
 
+    @Test
+    fun `landscape toolbar backgrounds span the window while controls and content avoid both unsafe edges`() {
+        val layouts = listOf(R.layout.activity_devotion_content, R.layout.activity_song_view_content, R.layout.activity_reading_plan_content)
+        for (layout in layouts) {
+            for (isBottom in listOf(false, true)) {
+                withLayout(layout, isBottom, false) { container, toolbar ->
+                    val content = container.children.first { it !== toolbar }
+                    val baseLeft = content.paddingLeft
+                    val baseRight = content.paddingRight
+                    val insets = WindowInsetsCompat.Builder()
+                        .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(0, 24, 48, 0))
+                        .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.of(32, 0, 0, 0))
+                        .build()
+                    repeat(2) {
+                        ViewCompat.dispatchApplyWindowInsets(container, insets)
+                        container.measure(
+                            View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
+                            View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
+                        )
+                        container.layout(0, 0, 640, 360)
+                        assertEquals(0, toolbar.left)
+                        assertEquals(640, toolbar.right)
+                        assertEquals(32, toolbar.paddingLeft)
+                        assertEquals(48, toolbar.paddingRight)
+                        assertEquals(baseLeft + 32, content.paddingLeft)
+                        assertEquals(baseRight + 48, content.paddingRight)
+                    }
+                }
+            }
+        }
+    }
+
     private fun withLayout(layout: Int, isBottom: Boolean, isScrollPastBottomEnabled: Boolean, check: (LinearLayout, Toolbar) -> Unit) {
         Preferences.setBoolean(App.context.getString(R.string.pref_bottomToolbarOnText_key), isBottom)
         val intent = Intent(ApplicationProvider.getApplicationContext(), ToolbarLayoutTestActivity::class.java)

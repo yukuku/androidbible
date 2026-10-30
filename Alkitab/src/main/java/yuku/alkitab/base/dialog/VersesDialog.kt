@@ -1,12 +1,15 @@
 package yuku.alkitab.base.dialog
 
 import android.content.DialogInterface
+import android.graphics.drawable.InsetDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates.notNull
 import yuku.alkitab.base.App
 import yuku.alkitab.base.dialog.VersesDialog.Companion.newCompareInstance
@@ -151,6 +154,24 @@ class VersesDialog : BaseDialog() {
         return res
     }
 
+    override fun onStart() {
+        super.onStart()
+        val window = dialog?.window ?: return
+        val background = window.decorView.background
+        if (background is InsetDrawable) {
+            window.setBackgroundDrawable(background.drawable)
+        }
+        val activity = requireActivity()
+        val screenWidth = if (Build.VERSION.SDK_INT >= 30) {
+            activity.windowManager.currentWindowMetrics.bounds.width()
+        } else {
+            resources.displayMetrics.widthPixels
+        }
+        val density = resources.displayMetrics.density
+        val width = versesDialogWidth(screenWidth / density)
+        window.setLayout((width * density).roundToInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         onDismissListener()
@@ -192,4 +213,10 @@ class VersesDialog : BaseDialog() {
             )
         }
     }
+}
+
+internal fun versesDialogWidth(screenWidthDp: Float): Float {
+    val maxWidth = minOf(screenWidthDp - 64f, 640f).coerceAtLeast(0f)
+    val minWidth = minOf(screenWidthDp * 0.8f, 360f, maxWidth)
+    return (screenWidthDp * 0.7f).coerceIn(minWidth, maxWidth)
 }
