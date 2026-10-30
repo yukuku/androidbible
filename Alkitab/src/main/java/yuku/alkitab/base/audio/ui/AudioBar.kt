@@ -1,5 +1,6 @@
 package yuku.alkitab.base.audio.ui
 
+import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -60,6 +61,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.compose.state.rememberProgressStateWithTickInterval
 import kotlin.math.roundToLong
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
@@ -165,10 +169,12 @@ sealed interface AudioBarCommand {
  * already commits when the host view appears.
  */
 @Composable
+@OptIn(UnstableApi::class)
 fun AudioBar(
     state: AudioBarUiState,
     onCommand: (AudioBarCommand) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    player: Player? = null,
 ) {
     AudioTheme {
         state.pickerOptions?.let { options ->
@@ -196,6 +202,15 @@ fun AudioBar(
         }
         if (!state.visible) return@AudioTheme
 
+        // A chapter can be resolving while the player still holds the outgoing chapter.
+        val progressPlayer = player.takeIf { state.durationMs > 0L && state.error == null }
+        val progress = rememberProgressStateWithTickInterval(progressPlayer, tickIntervalMs = 100)
+        val progressState = if (progressPlayer != null && progress.durationMs > 0L) {
+            state.copy(positionMs = progress.currentPositionMs.coerceAtLeast(0L), durationMs = progress.durationMs)
+        } else {
+            state
+        }
+
         Surface(
             tonalElevation = 6.dp,
             shadowElevation = 6.dp,
@@ -219,7 +234,7 @@ fun AudioBar(
                     AudioLoadStatusLine(state = state, onCommand = onCommand)
                     if (isWide) {
                         AudioBarWideRow(
-                            state = state,
+                            state = progressState,
                             onCommand = onCommand,
                             dragValue = dragValue,
                             onDragValueChange = { dragValue = it },
@@ -228,7 +243,7 @@ fun AudioBar(
                     } else {
                         AudioBarTopRow(state = state, onCommand = onCommand)
                         AudioBarSliderRow(
-                            state = state,
+                            state = progressState,
                             onCommand = onCommand,
                             dragValue = dragValue,
                             onDragValueChange = { dragValue = it },
@@ -528,18 +543,22 @@ private fun AudioBarSlider(
     onCommand: (AudioBarCommand) -> Unit,
     dragValue: Float?,
     onDragValueChange: (Float?) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     val effectivePosition = dragValue?.roundToLong() ?: state.positionMs
+    // Accessibility can change and commit progress before the drag state recomposes.
+    var pendingPosition = dragValue
     Slider(
         value = effectivePosition.toFloat(),
         valueRange = 0f..maxOf(state.durationMs.toFloat(), 1f),
         onValueChange = { v ->
+            pendingPosition = v
             onDragValueChange(v)
             onCommand(AudioBarCommand.SeekDrag(v.roundToLong()))
         },
         onValueChangeFinished = {
-            val v = dragValue ?: return@Slider
+            val v = pendingPosition ?: return@Slider
+            pendingPosition = null
             onCommand(AudioBarCommand.SeekCommit(v.roundToLong()))
             onDragValueChange(null)
         },
@@ -554,7 +573,7 @@ private fun AudioBarWideRow(
     onCommand: (AudioBarCommand) -> Unit,
     dragValue: Float?,
     onDragValueChange: (Float?) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
@@ -657,7 +676,6 @@ private fun AudioBarPreviewNarrow() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -684,7 +702,6 @@ private fun AudioBarPreviewWide() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -711,7 +728,6 @@ private fun AudioBarPreviewPreparing() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -744,7 +760,6 @@ private fun AudioBarPreviewSlowLoad() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -777,7 +792,6 @@ private fun AudioBarPreviewDarkError() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }
 
@@ -807,6 +821,5 @@ private fun AudioBarPreviewWithPicker() {
             setGroups = null,
         ),
         onCommand = {},
-        modifier = Modifier,
     )
 }

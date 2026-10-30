@@ -2,6 +2,7 @@ package yuku.alkitab.songs
 
 import android.os.Build
 import androidx.activity.ComponentActivity
+import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +44,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -62,11 +62,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.compose.state.rememberProgressStateWithTickInterval
 import coil.compose.AsyncImage
 import java.text.NumberFormat
 import java.util.Locale
-import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.coroutines.delay
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.debug.R
 
@@ -196,30 +196,25 @@ internal fun SongMediaSheetContent(
 }
 
 @Composable
-private fun SongAudioBar(
+@OptIn(UnstableApi::class)
+internal fun SongAudioBar(
     clip: SongAudioClip,
     controller: SongAudioController,
     onPlay: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var playbackState by remember { mutableStateOf(controller.state) }
-    var progress by remember { mutableStateOf(controller.getProgress().let { it[0] to it[1] }) }
-    var isLooping by remember { mutableStateOf(controller.isLooping) }
-    var isActive by remember { mutableStateOf(controller.isCurrentUrl(clip.url)) }
-    var seekPosition by remember { mutableStateOf<Float?>(null) }
-    LaunchedEffect(controller, clip.url) {
-        while (true) {
-            playbackState = controller.state
-            progress = controller.getProgress().let { it[0] to it[1] }
-            isActive = controller.isCurrentUrl(clip.url)
-            isLooping = controller.isLooping
-            delay(250.milliseconds)
-        }
+    val playbackState = controller.state
+    val isLooping = controller.isLooping
+    val isActive = controller.isCurrentUrl(clip.url)
+    val player = controller.playbackPlayer.takeIf {
+        isActive && playbackState != MediaController.State.error && playbackState != MediaController.State.reset_media_known_to_exist
     }
+    val progress = rememberProgressStateWithTickInterval(player, tickIntervalMs = 250)
+    var seekPosition by remember(controller, clip.url) { mutableStateOf<Float?>(null) }
     val isPlaying = isActive && playbackState == MediaController.State.playing
     val isPreparing = isActive && playbackState == MediaController.State.preparing
-    val position = if (isActive) progress.first.coerceAtLeast(0) else 0L
-    val duration = if (isActive) progress.second.coerceAtLeast(0) else 0L
+    val position = progress.currentPositionMs.coerceAtLeast(0L)
+    val duration = progress.durationMs.coerceAtLeast(0L)
     val seekDescription = stringResource(R.string.sn_media_seek)
     Column(modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -227,7 +222,7 @@ private fun SongAudioBar(
             Text(stringResource(R.string.sn_media_audio), Modifier
                 .weight(1f)
                 .padding(start = 8.dp), style = MaterialTheme.typography.titleSmall)
-            IconToggleButton(checked = isLooping, onCheckedChange = { controller.setLoop(it); isLooping = it }) {
+            IconToggleButton(checked = isLooping, onCheckedChange = controller::setLoop) {
                 Icon(Icons.Default.Repeat, stringResource(R.string.sn_media_repeat))
             }
             FilledIconButton(onClick = onPlay, enabled = !isPreparing) {
@@ -247,7 +242,6 @@ private fun SongAudioBar(
             onValueChangeFinished = {
                 seekPosition?.let { controller.seekTo(it.toLong()) }
                 seekPosition = null
-                progress = controller.getProgress().let { it[0] to it[1] }
             },
             valueRange = 0f..duration.coerceAtLeast(1).toFloat(),
             enabled = duration > 0,

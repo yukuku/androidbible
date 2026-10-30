@@ -5,6 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.media3.common.Player
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,7 +35,10 @@ class SongAudioController(private val appContext: Context) : MediaController() {
     private var service: SongAudioService? = null
     private var bound = false
 
-    var isLooping = false
+    var isLooping by mutableStateOf(false)
+        private set
+
+    internal var playbackPlayer by mutableStateOf<Player?>(null)
         private set
 
     private var displayTitle = ""
@@ -42,6 +49,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val svc = (binder as? SongAudioService.LocalBinder)?.service ?: return
             service = svc
+            playbackPlayer = svc.playbackPlayer
             collectJob?.cancel()
             collectJob = scope.launch {
                 svc.playbackState.collect { mapState(it) }
@@ -53,6 +61,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            playbackPlayer = null
             service = null
             collectJob?.cancel()
             collectJob = null
@@ -157,6 +166,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
     }
 
     private fun unbind() {
+        playbackPlayer = null
         if (bound) {
             try {
                 appContext.unbindService(connection)

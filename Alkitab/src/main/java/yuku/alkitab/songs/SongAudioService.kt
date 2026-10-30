@@ -77,6 +77,10 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
     private lateinit var player: ExoPlayer
     private var mediaSession: MediaSession? = null
 
+    /** UI observation only; transport commands go through the service's coordinated API. */
+    internal val playbackPlayer: Player
+        get() = player
+
     private val _playbackState = MutableStateFlow(SongPlaybackState.IDLE)
     val playbackState: StateFlow<SongPlaybackState> = _playbackState.asStateFlow()
 

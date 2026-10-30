@@ -35,6 +35,12 @@ owns recording discovery, chapter resolution, timing, and Bible playback. The
 Both use Media3 players in foreground media-session services and participate in
 `AudioPlaybackCoordinator`.
 
+The Compose controls observe the bound service's player through Media3 Compose
+UI progress state holders. Transport actions still go through the feature's
+controller and service so playback coordination, verse previews, retry logs,
+and song repeat behavior stay consistent. UI observation ends when the controls
+are dismissed; background playback remains owned by the service.
+
 The [backend contract](../features/audio-bible/backend-contract.md) specifies
 paths, indexing, and response shapes. Earlier PRDs and implementation plans are
 historical design records; consult the service and repository tests for current

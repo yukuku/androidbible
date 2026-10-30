@@ -2,20 +2,26 @@ package yuku.alkitab.songs
 
 import android.app.Activity
 import androidx.annotation.CallSuper
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import java.lang.ref.WeakReference
 import yuku.alkitab.base.util.AppLog
 
 private const val TAG = "MediaController"
 
 abstract class MediaController {
-    var state = State.reset
+    private var observableState by mutableStateOf(State.reset)
+
+    var state: State
+        get() = observableState
         set(value) {
             AppLog.d(TAG, "@@setState newState=$value")
-            field = value
+            observableState = value
             updateMediaState()
         }
 
-    protected var url: String? = null
+    protected var url by mutableStateOf<String?>(null)
     protected var activityRef: WeakReference<Activity>? = null
 
     private var mediaStateListenerRef: WeakReference<MediaStateListener>? = null

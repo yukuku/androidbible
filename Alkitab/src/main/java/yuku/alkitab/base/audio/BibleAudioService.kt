@@ -13,6 +13,7 @@ import androidx.core.graphics.createBitmap
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
@@ -158,6 +159,11 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
     private lateinit var player: BibleAudioPlayer
     private var mediaSession: MediaSession? = null
+
+    /** UI observation only; transport commands go through the service's coordinated API. */
+    internal val playbackPlayer: Player
+        get() = player.exoPlayer
+
     private val highlightTracker = HighlightTracker()
 
     /**
