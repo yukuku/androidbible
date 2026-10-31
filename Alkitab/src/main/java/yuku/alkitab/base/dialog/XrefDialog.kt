@@ -17,7 +17,6 @@ import java.util.Locale
 import kotlin.properties.Delegates.notNull
 import yuku.alkitab.base.App
 import yuku.alkitab.base.dialog.XrefDialog.Companion.newInstance
-import yuku.alkitab.base.dialog.base.BaseDialog
 import yuku.alkitab.base.util.Appearances.applyTextAppearance
 import yuku.alkitab.base.util.TargetDecoder
 import yuku.alkitab.base.verses.VersesController
@@ -36,7 +35,7 @@ import yuku.alkitab.util.IntArrayList
 
 private const val EXTRA_arif = "arif"
 
-class XrefDialog : BaseDialog() {
+class XrefDialog : VerseContentDialog() {
     /**
      * This dialog does not support fragment recreation,
      * it will just be closed when the dialog is recreated without calling [init].
