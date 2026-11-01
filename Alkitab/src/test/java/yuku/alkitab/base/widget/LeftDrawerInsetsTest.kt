@@ -39,6 +39,8 @@ class LeftDrawerInsetsTest {
                 val header = content.getChildAt(0)
                 val body = content.getChildAt(1)
                 val footer = drawer.findViewById<View>(R.id.bSettings).parent as ViewGroup
+                val dividers = listOf(R.id.dividerCurrentReading, R.id.dividerProgress, R.id.dividerDisplay).mapNotNull { drawer.findViewById<View>(it) }
+                dividers.forEach { it.visibility = View.VISIBLE }
                 val baseStartMargin = (body.layoutParams as ViewGroup.MarginLayoutParams).marginStart
                 val startInset = if (direction == View.LAYOUT_DIRECTION_RTL) 48 else 32
                 repeat(2) {
@@ -73,6 +75,15 @@ class LeftDrawerInsetsTest {
                         assertEquals(Color.rgb(55, 71, 79), footerBitmap.getPixel(unsafeX, button.top + button.height / 2))
                     }
                     footerBitmap.recycle()
+                    for (divider in dividers) {
+                        assertEquals(drawer.width, divider.width)
+                        assertEquals(0, divider.left)
+                        assertEquals(0, (divider.layoutParams as ViewGroup.MarginLayoutParams).marginStart)
+                        val dividerBitmap = Bitmap.createBitmap(divider.width, divider.height, Bitmap.Config.ARGB_8888)
+                        divider.draw(Canvas(dividerBitmap))
+                        assertEquals(Color.argb(51, 255, 255, 255), dividerBitmap.getPixel(unsafeX, 0))
+                        dividerBitmap.recycle()
+                    }
                 }
                 drawer.setSafeAreaInsets(0, 0, 0, 0)
                 assertEquals(280, drawer.layoutParams.width)
