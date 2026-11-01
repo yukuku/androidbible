@@ -38,6 +38,7 @@ class LeftDrawerInsetsTest {
                 val content = drawer.getChildAt(0) as ViewGroup
                 val header = content.getChildAt(0)
                 val body = content.getChildAt(1)
+                val footer = drawer.findViewById<View>(R.id.bSettings).parent as ViewGroup
                 val baseStartMargin = (body.layoutParams as ViewGroup.MarginLayoutParams).marginStart
                 val startInset = if (direction == View.LAYOUT_DIRECTION_RTL) 48 else 32
                 repeat(2) {
@@ -50,6 +51,13 @@ class LeftDrawerInsetsTest {
                     assertEquals(280 + startInset, drawer.width)
                     assertEquals(drawer.width, header.width)
                     assertEquals(280, drawer.findViewById<View>(R.id.bBible).width)
+                    assertEquals(drawer.width, footer.width)
+                    assertEquals(0, (footer.layoutParams as ViewGroup.MarginLayoutParams).marginStart)
+                    for (id in listOf(R.id.bSettings, R.id.bHelp)) {
+                        val button = drawer.findViewById<View>(id)
+                        assertEquals(280, button.width)
+                        assertEquals(if (direction == View.LAYOUT_DIRECTION_RTL) 0 else startInset, button.left)
+                    }
                     assertEquals(baseStartMargin + startInset, (body.layoutParams as ViewGroup.MarginLayoutParams).marginStart)
                     assertEquals(0, drawer.paddingLeft)
                     assertEquals(0, drawer.paddingRight)
@@ -58,10 +66,18 @@ class LeftDrawerInsetsTest {
                     val unsafeX = if (direction == View.LAYOUT_DIRECTION_RTL) drawer.width - 2 else 1
                     assertEquals(Color.rgb(55, 71, 79), bitmap.getPixel(unsafeX, 30))
                     bitmap.recycle()
+                    val footerBitmap = Bitmap.createBitmap(footer.width, footer.height, Bitmap.Config.ARGB_8888)
+                    footer.draw(Canvas(footerBitmap))
+                    for (id in listOf(R.id.bSettings, R.id.bHelp)) {
+                        val button = drawer.findViewById<View>(id)
+                        assertEquals(Color.rgb(55, 71, 79), footerBitmap.getPixel(unsafeX, button.top + button.height / 2))
+                    }
+                    footerBitmap.recycle()
                 }
                 drawer.setSafeAreaInsets(0, 0, 0, 0)
                 assertEquals(280, drawer.layoutParams.width)
                 assertEquals(baseStartMargin, (body.layoutParams as ViewGroup.MarginLayoutParams).marginStart)
+                assertEquals(0, footer.paddingStart)
                 activity.finish()
             }
         }

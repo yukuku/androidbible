@@ -144,11 +144,13 @@ public abstract class LeftDrawer extends NestedScrollView {
 		setPadding(0, 0, 0, bottom);
 		final View header = (View) bBible.getParent();
 		header.setPadding(isRtl ? 0 : startInset, top, isRtl ? startInset : 0, 0);
+		final View footer = (View) bSettings.getParent();
+		footer.setPadding(isRtl ? 0 : startInset, 0, isRtl ? startInset : 0, 0);
 
 		final ViewGroup content = (ViewGroup) getChildAt(0);
 		for (int i = 0; i < content.getChildCount(); i++) {
 			final View child = content.getChildAt(i);
-			if (child == header) continue;
+			if (child == header || child == footer) continue;
 			final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
 			final int startMargin = contentStartMargins[i] + startInset;
 			if (params.getMarginStart() != startMargin) {
