@@ -1,0 +1,16 @@
+{
+  "captures": 35,
+  "annotatedPngs": 38,
+  "comparisonPngs": 2,
+  "mobilePreviews": 1,
+  "uiPairs": 19,
+  "rawDimensions": "720x1280",
+  "sourcePathsExist": true,
+  "layoutFilesExist": true,
+  "priorityFilter": true,
+  "categoryFilter": true,
+  "resetFilter": true,
+  "desktopOverflow": false,
+  "mobileOverflow": false,
+  "browserErrors": []
+}
