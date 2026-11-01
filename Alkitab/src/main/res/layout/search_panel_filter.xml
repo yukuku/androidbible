@@ -34,6 +34,7 @@
 		android:src="@drawable/ic_search_book_filter" />
 
 	<TextView
+		android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 		android:id="@+id/tFilterAdvanced"
 		android:layout_width="wrap_content"
 		android:layout_height="32dp"
@@ -43,7 +44,6 @@
 		android:gravity="center_vertical"
 		android:maxLines="2"
 		android:textColor="?android:attr/textColorPrimaryDisableOnly"
-		android:textSize="14sp"
 		tools:text="@string/search_filter_multiple_books_selected" />
 
 	<CheckBox

@@ -612,7 +612,7 @@ class MarkerListActivity : BaseActivity() {
                     }
                 }
             }
-            Appearances.applyMarkerDateTextAppearance(lDate, textSizeMult)
+            Appearances.applyMarkerDateTextAppearance(lDate)
 
             val ari = marker.ari
             val rawVerseText = version.loadVerseText(ari)
@@ -642,7 +642,7 @@ class MarkerListActivity : BaseActivity() {
             when (filter_kind) {
                 Marker.Kind.bookmark -> {
                     lCaption.text = if (currentlyUsedFilter != null) SearchEngine.hilite(caption, rt, hiliteColor) else caption
-                    Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult)
+                    Appearances.applyMarkerTitleTextAppearance(lCaption)
 
                     snippet.setText(
                         textSizeMult = textSizeMult,
@@ -673,7 +673,7 @@ class MarkerListActivity : BaseActivity() {
 
                 Marker.Kind.note -> {
                     lCaption.text = reference
-                    Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult)
+                    Appearances.applyMarkerTitleTextAppearance(lCaption)
 
                     snippet.setText(
                         textSizeMult = textSizeMult,
@@ -689,7 +689,7 @@ class MarkerListActivity : BaseActivity() {
 
                 Marker.Kind.highlight -> {
                     lCaption.text = reference
-                    Appearances.applyMarkerTitleTextAppearance(lCaption, textSizeMult)
+                    Appearances.applyMarkerTitleTextAppearance(lCaption)
 
                     val info = Highlights.decode(caption)
                     snippet.setText(

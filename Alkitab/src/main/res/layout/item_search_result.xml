@@ -6,6 +6,7 @@
 	android:padding="16dip">
 
 	<TextView
+		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/lReference"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -13,10 +14,10 @@
 		android:layout_alignParentEnd="true"
 		android:layout_alignParentTop="true"
 		android:gravity="center_vertical"
-		android:textAppearance="?android:attr/textAppearanceMedium"
 		tools:text="reference" />
 
 	<TextView
+		android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 		android:id="@+id/lSnippet"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -25,7 +26,6 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@id/lReference"
 		android:gravity="top"
-		android:textSize="14sp"
 		tools:text="snippet" />
 
 </RelativeLayout>

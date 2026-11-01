@@ -1,0 +1,11 @@
+{
+  "screen": "reader",
+  "crop": {
+    "left": 0,
+    "top": 160,
+    "width": 720,
+    "height": 1072
+  },
+  "changedPixels": 0,
+  "totalPixels": 771840
+}

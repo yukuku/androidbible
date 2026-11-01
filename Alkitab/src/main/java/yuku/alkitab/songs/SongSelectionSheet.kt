@@ -1,7 +1,6 @@
 package yuku.alkitab.songs
 
 import android.app.Activity
-import android.widget.TextView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,16 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import yuku.alkitab.base.App
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
-import yuku.alkitab.base.compose.composeFontFamilyFor
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.debug.R
 
@@ -68,22 +63,7 @@ object SongSelectionSheet {
             val state = remember { KeypadState() }
             val books = remember { App.services.storage.songDb.listSongBookInfos() }
             var expanded by remember { mutableStateOf(false) }
-            val density = LocalDensity.current
-            val popupTextStyle = remember(activity, density) {
-                val attributes = activity.obtainStyledAttributes(intArrayOf(android.R.attr.textAppearanceLargePopupMenu))
-                val textView = try {
-                    TextView(activity).apply {
-                        setTextAppearance(attributes.getResourceId(0, android.R.style.TextAppearance_Material_Widget_PopupMenu_Large))
-                    }
-                } finally {
-                    attributes.recycle()
-                }
-                TextStyle(
-                    color = Color(textView.currentTextColor),
-                    fontSize = with(density) { textView.textSize.toSp() },
-                    fontFamily = composeFontFamilyFor(textView.typeface),
-                )
-            }
+            val popupTextStyle = MaterialTheme.typography.bodyLarge
             val escapeColor = colorResource(R.color.escape)
             DisposableEffect(Unit) {
                 onReady(state, dismiss)
@@ -113,7 +93,7 @@ object SongSelectionSheet {
                                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                         )
                         Box(Modifier.weight(1.5f), contentAlignment = Alignment.Center) {
-                            Text(state.enteredCode, fontSize = 20.sp, maxLines = 1)
+                            Text(state.enteredCode, style = MaterialTheme.typography.headlineMedium, maxLines = 1)
                         }
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                             IconButton(onClick = { onKey(R.id.bBackspace) }) {
@@ -135,7 +115,7 @@ object SongSelectionSheet {
                                         if (!title.isNullOrEmpty()) {
                                             Text(
                                                 text = HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
-                                                style = popupTextStyle.copy(fontSize = popupTextStyle.fontSize * 0.7f),
+                                                style = MaterialTheme.typography.bodyMedium,
                                                 color = Color(0xFFA0A0A0),
                                             )
                                         }
@@ -205,7 +185,7 @@ object SongSelectionSheet {
                 enabled = enabled,
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                 modifier = Modifier.fillMaxSize(),
-            ) { Text(label, fontSize = 28.sp) }
+            ) { Text(label, style = MaterialTheme.typography.displaySmall) }
         }
     }
 

@@ -359,7 +359,7 @@ private fun AudioLoadStatusLine(
         ?: stringResource(R.string.audio_bar_loading_status_fallback)
     Text(
         text = text,
-        style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+        style = MaterialTheme.typography.bodySmall,
         color = if (state.error != null) MaterialTheme.colorScheme.error else LocalContentColor.current.copy(alpha = 0.7f),
         textAlign = TextAlign.Center,
         maxLines = 1,

@@ -1,10 +1,12 @@
 # App typography audit (1 November 2026)
 
+**The proposed UI scale is now implemented.** [Open the before/after comparison report](comparison/index.html) for 75 screen/state pairs, or read the [implementation and coverage notes](comparison/README.md). This implementation deliberately excludes the 200% text-scale layout issues. The original audit below is retained as historical evidence.
+
 The app has avoidable variation in typography for controls and headings. The annotated sample contains **19 native UI size/weight pairs**. The proposed shared UI scale uses eight pairs, while retaining user-selected reading typography and semantic article/song formatting.
 
 [Open the complete HTML report](index.html). The HTML embeds every raw screenshot, so downloading this one file is enough to read the visual report offline. It includes 35 annotated screens, per-item suggestions, source definitions, an observed-style inventory, a proposed type scale, coverage limits, and reproducible commands. Local source links and supporting JSON require the accompanying folder.
 
-## Highest-priority findings
+## Original audit findings
 
 - At 200% system font size, Go To tab labels are cut off and the six-column book grid clips abbreviations.
 - At the same size, the reader reference loses its chapter number to truncation.
@@ -37,4 +39,4 @@ Run `python3 inventory.py` from this directory to refresh the bounded source inv
 
 Run `node build-report.cjs` to rebuild the standalone HTML from `evidence.json` and the raw PNGs. Run `node build-report.cjs --render` in an environment with Playwright and Chromium installed to regenerate all annotated PNGs and browser validation. If using an installed Chrome instead of Playwright's bundled Chromium, set `PLAYWRIGHT_CHROMIUM_CHANNEL=chrome`. Configure `NODE_PATH` if Playwright is supplied by an external runtime.
 
-The recommendations are ready for review. A follow-up implementation should first fix large-text layout, then introduce shared XML/Compose typography roles and align server catalog CSS.
+The shared XML/Compose typography and scoped Android catalog CSS are implemented in the [comparison report](comparison/index.html). The large-text layout findings remain outside the requested scope.

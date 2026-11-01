@@ -80,7 +80,7 @@ class ProgressMarkListDialog : DialogFragment() {
                 } else {
                     holder.tCaption.text = progressMark.caption
                 }
-                applyMarkerTitleTextAppearance(holder.tCaption, textSizeMult)
+                applyMarkerTitleTextAppearance(holder.tCaption)
 
                 val ari = progressMark.ari
                 val date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime)
@@ -102,7 +102,7 @@ class ProgressMarkListDialog : DialogFragment() {
                     )
                 }
                 holder.tDate.text = date
-                applyMarkerDateTextAppearance(holder.tDate, textSizeMult)
+                applyMarkerDateTextAppearance(holder.tDate)
             }
 
             holder.itemView.setOnClickListener {

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <dimen name="ui_type_title_size">20sp</dimen>
+    <dimen name="ui_type_title_line_height">26sp</dimen>
+    <dimen name="ui_type_primary_size">16sp</dimen>
+    <dimen name="ui_type_primary_line_height">24sp</dimen>
+    <dimen name="ui_type_supporting_size">14sp</dimen>
+    <dimen name="ui_type_supporting_line_height">20sp</dimen>
+    <dimen name="ui_type_caption_size">12sp</dimen>
+    <dimen name="ui_type_caption_line_height">16sp</dimen>
+    <dimen name="ui_type_number_size">24sp</dimen>
+    <dimen name="ui_type_number_line_height">32sp</dimen>
+    <dimen name="ui_type_keypad_size">28sp</dimen>
+    <dimen name="ui_type_keypad_line_height">36sp</dimen>
+
+    <style name="TextAppearance.Alkitab.Base" parent="">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Title" parent="TextAppearance.Alkitab.Base">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/ui_type_title_size</item>
+        <item name="lineHeight">@dimen/ui_type_title_line_height</item>
+        <item name="android:lineHeight" tools:targetApi="p">@dimen/ui_type_title_line_height</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Primary" parent="TextAppearance.Alkitab.Base">
+        <item name="android:textSize">@dimen/ui_type_primary_size</item>
+        <item name="lineHeight">@dimen/ui_type_primary_line_height</item>
+        <item name="android:lineHeight" tools:targetApi="p">@dimen/ui_type_primary_line_height</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Emphasis" parent="TextAppearance.Alkitab.Primary">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Supporting" parent="TextAppearance.Alkitab.Base">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textSize">@dimen/ui_type_supporting_size</item>
+        <item name="lineHeight">@dimen/ui_type_supporting_line_height</item>
+        <item name="android:lineHeight" tools:targetApi="p">@dimen/ui_type_supporting_line_height</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Label" parent="TextAppearance.Alkitab.Supporting">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Caption" parent="TextAppearance.Alkitab.Base">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textSize">@dimen/ui_type_caption_size</item>
+        <item name="lineHeight">@dimen/ui_type_caption_line_height</item>
+        <item name="android:lineHeight" tools:targetApi="p">@dimen/ui_type_caption_line_height</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Number" parent="TextAppearance.Alkitab.Emphasis">
+        <item name="android:textSize">@dimen/ui_type_number_size</item>
+        <item name="lineHeight">@dimen/ui_type_number_line_height</item>
+        <item name="android:lineHeight" tools:targetApi="p">@dimen/ui_type_number_line_height</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Keypad" parent="TextAppearance.Alkitab.Base">
+        <item name="android:textSize">@dimen/ui_type_keypad_size</item>
+        <item name="lineHeight">@dimen/ui_type_keypad_line_height</item>
+        <item name="android:lineHeight" tools:targetApi="p">@dimen/ui_type_keypad_line_height</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+    <style name="TextAppearance.Alkitab.Tab" parent="TextAppearance.Alkitab.Label">
+        <item name="android:textColor">@color/ui_tab_text_color</item>
+    </style>
+</resources>

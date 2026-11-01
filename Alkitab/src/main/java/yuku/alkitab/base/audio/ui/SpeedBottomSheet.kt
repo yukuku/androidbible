@@ -62,7 +62,7 @@ fun SpeedBottomSheet(
         ) {
             Text(
                 text = stringResource(R.string.audio_bar_speed_sheet_title),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
             )
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),

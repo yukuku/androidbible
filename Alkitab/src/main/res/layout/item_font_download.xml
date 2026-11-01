@@ -25,11 +25,11 @@
 			tools:ignore="ContentDescription" />
 
 		<TextView
+			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/lFontName"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:gravity="center_vertical"
-			android:textAppearance="?android:attr/textAppearanceMedium"
 			tools:text="FontName" />
 
 		<ProgressBar
@@ -40,10 +40,10 @@
 
 
 		<TextView
+			android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 			android:id="@+id/lErrorMsg"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="gone"
 			tools:text="error msg" />
 

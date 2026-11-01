@@ -64,6 +64,8 @@ import kotlinx.coroutines.launch
 import yuku.alkitab.base.ac.base.BaseActivity
 import yuku.alkitab.base.compose.BibleAppTheme
 import yuku.alkitab.base.compose.toolbar.ToolbarScaffold
+import yuku.alkitab.base.util.UiTextRole
+import yuku.alkitab.base.util.UiTypography
 import yuku.alkitab.debug.R
 
 /**
@@ -555,6 +557,7 @@ private fun LinkText(textResId: Int, modifier: Modifier = Modifier) {
             }
         },
         update = { tv ->
+            UiTypography.apply(tv, UiTextRole.SUPPORTING)
             tv.text = tv.context.getText(textResId)
             tv.setTextColor(textColor)
             tv.setLinkTextColor(linkColor)

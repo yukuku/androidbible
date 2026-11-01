@@ -7,6 +7,7 @@
 	android:orientation="horizontal">
 
 	<Button
+		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/bReference"
 		android:layout_width="0dp"
 		android:layout_height="match_parent"
@@ -15,7 +16,6 @@
 		android:gravity="center_vertical"
 		android:paddingEnd="0dp"
 		android:paddingStart="@dimen/padding_medium"
-		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="#fff"
 		tools:text="Some book name 123" />
 

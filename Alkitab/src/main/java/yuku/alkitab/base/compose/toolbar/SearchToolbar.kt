@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import yuku.alkitab.debug.R
 
 @Composable
@@ -35,7 +35,7 @@ fun SearchToolbar(
         Text(
             text = stringResource(R.string.search),
             color = Color.White,
-            fontSize = 20.sp,
+            style = MaterialTheme.typography.titleLarge,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f).padding(end = 8.dp),
@@ -43,7 +43,7 @@ fun SearchToolbar(
         Text(
             text = stringResource(R.string.search_version_select_label),
             color = Color.White,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodyMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.widthIn(max = 140.dp).padding(end = 8.dp),

@@ -59,6 +59,8 @@ import yuku.alkitab.base.util.QueryTokenizer
 import yuku.alkitab.base.util.SearchEngine
 import yuku.alkitab.base.util.SearchEngineQuery
 import yuku.alkitab.base.util.TextColorUtil
+import yuku.alkitab.base.util.UiTextRole
+import yuku.alkitab.base.util.UiTypography
 import yuku.alkitab.base.util.VersionDialogHelper
 import yuku.alkitab.base.util.searchReferenceAri
 import yuku.alkitab.base.verses.VerseTextSlot
@@ -341,8 +343,10 @@ class SearchActivity : BaseActivity() {
 
         val applied = App.services.uiDimensions.applied()
         tSearchTips.setBackgroundColor(applied.backgroundColor)
+        tSearchTips.setTextColor(applied.fontColor)
+        tSearchTips.setLinkTextColor(applied.fontColor)
         lsSearchResults.setBackgroundColor(applied.backgroundColor)
-        Appearances.applyTextAppearance(tSearchTips, textSizeMult)
+        UiTypography.apply(tSearchTips, UiTextRole.SUPPORTING)
         hiliteColor = TextColorUtil.getSearchKeywordByBrightness(applied.backgroundBrightness)
 
         bEditFilter.setOnClickListener { bEditFilter_click() }
@@ -368,6 +372,7 @@ class SearchActivity : BaseActivity() {
 
         displaySearchInVersion()
 
+        searchView.findAutoCompleteTextView()?.let { UiTypography.apply(it, UiTextRole.PRIMARY) }
         searchView.requestFocus()
     }
 
@@ -554,7 +559,7 @@ class SearchActivity : BaseActivity() {
             searchInVersionId = mv.versionId
             textSizeMult = App.services.storage.db.getPerVersionSettings(searchInVersionId).fontSizeMultiplier
 
-            Appearances.applyTextAppearance(tSearchTips, textSizeMult)
+            UiTypography.apply(tSearchTips, UiTextRole.SUPPORTING)
             displaySearchInVersion()
             configureFilterDisplayOldNewTest()
 
@@ -791,7 +796,7 @@ class SearchActivity : BaseActivity() {
 
             val ari = searchResults[bindPosition]
             val sb = SpannableStringBuilder(searchInVersion.reference(ari))
-            Appearances.applySearchResultReferenceAppearance(holder.lReference, sb, textSizeMult)
+            Appearances.applySearchResultReferenceAppearance(holder.lReference, sb)
             if (checked) {
                 holder.lReference.setTextColor(checkedTextColor)
             }

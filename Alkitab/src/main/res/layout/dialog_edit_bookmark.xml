@@ -16,6 +16,7 @@
 			android:layout_height="wrap_content">
 
 			<com.google.android.material.textfield.TextInputEditText
+				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 				android:id="@+id/tCaption"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -27,14 +28,13 @@
 		</com.google.android.material.textfield.TextInputLayout>
 
 		<TextView
+			android:textAppearance="@style/TextAppearance.Alkitab.Label"
 			android:id="@+id/lLabels"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginEnd="8dp"
 			android:paddingTop="8dp"
-			android:text="@string/labels_titikdua"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textStyle="bold" />
+			android:text="@string/labels_titikdua" />
 
 		<yuku.devoxx.flowlayout.FlowLayout
 			android:id="@+id/panelLabels"
@@ -45,6 +45,7 @@
 			app:verticalSpacing="6dp">
 
 			<Button
+				android:textAppearance="@style/TextAppearance.Alkitab.Label"
 				android:id="@+id/bAddLabel"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"

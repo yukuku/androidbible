@@ -8,6 +8,7 @@
     </style>
 
 	<style name="Theme.Base.Alkitab" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+        <item name="viewInflaterClass">yuku.alkitab.base.util.TypographyViewInflater</item>
 		<item name="android:colorPrimary">@color/primary</item>
 		<item name="colorPrimary">@color/primary</item>
 		<item name="android:colorPrimaryDark">@color/primary_dark</item>
@@ -22,18 +23,33 @@
 		<item name="actionModeStyle">@style/SmallerTitleActionModeStyle</item>
 		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 		<item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="tabStyle">@style/Widget.Alkitab.TabLayout</item>
 		<item name="windowActionModeOverlay">true</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearance.Alkitab.Supporting</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearance.Alkitab.Primary</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearance.Alkitab.Title</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Alkitab.Primary</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.Alkitab.Supporting</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Alkitab.Caption</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Alkitab.Label</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.Alkitab.Title</item>
+
 	</style>
+
+    <style name="Widget.Alkitab.TabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/TextAppearance.Alkitab.Tab</item>
+    </style>
 
 	<style name="SmallerTitleActionModeStyle" parent="Widget.AppCompat.ActionMode">
 		<item name="titleTextStyle">@style/SmallerActionModeTitleTextAppearance</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.Alkitab.Supporting</item>
 	</style>
 
-	<style name="SmallerActionModeTitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
-		<item name="android:textSize">16sp</item>
-	</style>
+	<style name="SmallerActionModeTitleTextAppearance" parent="TextAppearance.Alkitab.Emphasis" />
 
 	<style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.Alkitab.Title</item>
+        <item name="subtitleTextAppearance">@style/TextAppearance.Alkitab.Supporting</item>
 		<item name="contentInsetStart">?actionBarSize</item>
 		<item name="contentInsetStartWithNavigation">?actionBarSize</item>
 		<item name="titleMarginStart">0dp</item>

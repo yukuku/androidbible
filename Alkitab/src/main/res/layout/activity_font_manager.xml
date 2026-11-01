@@ -29,13 +29,13 @@
 			android:layout_gravity="center" />
 
 		<TextView
+			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/lEmptyError"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:layout_gravity="center"
 			android:gravity="center"
 			android:text="@string/fm_loading_ellipsis"
-			android:textAppearance="?android:textAppearanceMedium"
 			android:visibility="gone" />
 
 	</FrameLayout>

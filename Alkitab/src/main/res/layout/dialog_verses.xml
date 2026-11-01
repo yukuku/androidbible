@@ -7,13 +7,13 @@
 	android:orientation="vertical">
 
 	<TextView
+		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/tReference"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="0"
 		android:background="#30808080"
 		android:padding="@dimen/padding_small"
-		android:textAppearance="?android:attr/textAppearanceMedium"
 		tools:text="Genesis 2:3-4" />
 
 	<View

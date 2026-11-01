@@ -299,7 +299,7 @@ private fun SongVideoRow(
             )
         }
         Column(Modifier.weight(1f)) {
-            Text(video.title, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(video.title, style = MaterialTheme.typography.bodyLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
             Text(video.channelName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
 
             val metadata = formatSongVideoMetadata(video.viewCount, video.isViewCountApproximate, video.publishedAt, locale)

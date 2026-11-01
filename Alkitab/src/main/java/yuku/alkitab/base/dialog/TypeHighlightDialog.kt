@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +23,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -41,14 +41,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.gestures.detectTapGestures
 import yuku.alkitab.base.App
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.compose.colorpicker.ColorPickerDialog
@@ -251,8 +248,7 @@ private fun HighlightSheetContent(
             Spacer(Modifier.width(12.dp))
             Text(
                 text = title,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
@@ -338,9 +334,8 @@ private fun VerseTextSelectable(
         onValueChange = onValueChange,
         readOnly = true,
         visualTransformation = transformation,
-        textStyle = LocalTextStyle.current.copy(
+        textStyle = MaterialTheme.typography.bodyLarge.copy(
             color = Color(applied.fontColor),
-            fontSize = 16.sp,
         ),
         modifier = Modifier
             .fillMaxWidth()

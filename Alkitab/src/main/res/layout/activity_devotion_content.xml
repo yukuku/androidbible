@@ -53,13 +53,13 @@
 							app:indicatorColor="@color/accent" />
 
 						<TextView
+							android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 							android:id="@+id/lDownloadStatus"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
 							android:layout_marginTop="16dp"
 							android:gravity="center"
-							android:accessibilityLiveRegion="polite"
-							android:textAppearance="?android:textAppearanceMedium" />
+							android:accessibilityLiveRegion="polite" />
 
 						<com.google.android.material.button.MaterialButton
 							android:id="@+id/bRetry"

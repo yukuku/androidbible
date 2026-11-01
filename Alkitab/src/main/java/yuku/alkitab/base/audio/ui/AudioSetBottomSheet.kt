@@ -49,7 +49,7 @@ fun AudioSetBottomSheet(
         ) {
             Text(
                 text = stringResource(R.string.audio_bar_set_sheet_title),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 4.dp),
             )
             groups.forEach { group ->

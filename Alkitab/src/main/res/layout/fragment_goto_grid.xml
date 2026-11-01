@@ -20,6 +20,7 @@
 			android:layout_height="wrap_content">
 
 			<TextView
+				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 				android:id="@+id/lSelectedBook"
 				style="?actionButtonStyle"
 				android:layout_width="wrap_content"
@@ -27,10 +28,10 @@
 				android:drawablePadding="4dp"
 				android:drawableEnd="@drawable/ic_delete_x"
 				android:gravity="center"
-				android:textAppearance="?android:attr/textAppearanceMedium"
 				tools:text="Selected book" />
 
 			<TextView
+				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 				android:id="@+id/lSelectedChapter"
 				style="?actionButtonStyle"
 				android:layout_width="wrap_content"
@@ -38,7 +39,6 @@
 				android:drawablePadding="4dp"
 				android:drawableEnd="@drawable/ic_delete_x"
 				android:gravity="center"
-				android:textAppearance="?android:attr/textAppearanceMedium"
 				tools:text="chap" />
 		</LinearLayout>
 

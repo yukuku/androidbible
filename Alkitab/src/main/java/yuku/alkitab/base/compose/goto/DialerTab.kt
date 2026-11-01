@@ -52,7 +52,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
 import yuku.alkitab.base.compose.bookForegroundColor
@@ -173,7 +172,7 @@ fun DialerTab(
                                 book.shortName,
                                 color = bookForegroundColor(book.bookId),
                                 style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
                             )
                         },
                         trailingIcon = if (isSelected) {
@@ -274,7 +273,7 @@ private fun DialerField(text: String, isActive: Boolean, onClick: () -> Unit) {
         modifier = Modifier.size(width = 64.dp, height = 64.dp),
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-            Text(text, fontSize = 24.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+            Text(text, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
         }
     }
 }
@@ -289,7 +288,7 @@ private fun KeypadDigit(d: String, onDigit: (String) -> Unit, modifier: Modifier
             colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         ) {
-            Text(d, fontSize = 28.sp, fontWeight = FontWeight.Normal)
+            Text(d, style = MaterialTheme.typography.displaySmall)
         }
     }
 }

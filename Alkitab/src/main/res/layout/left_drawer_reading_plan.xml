@@ -27,11 +27,11 @@
 			android:layout_height="128dp">
 
 			<TextView
+				android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 				android:id="@+id/tDescription"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:padding="8dp"
-				android:textAppearance="?android:textAppearanceSmall"
 				tools:text="Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla." />
 
 		</androidx.core.widget.NestedScrollView>
