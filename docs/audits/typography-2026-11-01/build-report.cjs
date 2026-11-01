@@ -78,7 +78,14 @@ if (process.argv.includes('--render')) (async()=>{
   await page.addStyleTag({content:'.filter{position:static!important}'});
   await page.evaluate(()=>document.fonts.ready);
   await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth===720));
-  for (const item of evidence) await page.locator('[id="'+item.id+'"]').screenshot({path:path.join(root,'annotated',item.id+'.png')});
+  for (const item of evidence) {
+    const card=page.locator('[id="'+item.id+'"]');
+    const bounds=await card.boundingBox();
+    await page.setViewportSize({width:1360,height:Math.max(1100,Math.ceil(bounds.height)+120)});
+    await card.evaluate(element=>element.scrollIntoView({block:'start'}));
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    await card.screenshot({path:path.join(root,'annotated',item.id+'.png')});
+  }
   for (const name of ['sheet-comparison','large-text-comparison']) await page.locator('#'+name).screenshot({path:path.join(root,'annotated',name+'.png')});
   await page.locator('#priority').selectOption('P1');
   const priorityCount=await page.locator('article.card:visible').count();
