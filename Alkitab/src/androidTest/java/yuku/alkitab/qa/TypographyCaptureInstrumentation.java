@@ -59,7 +59,7 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
             output = new File(getTargetContext().getExternalFilesDir(null), "typography/" + folder);
             if (!output.mkdirs() && !output.isDirectory()) throw new IllegalStateException("Cannot create output directory");
             getTargetContext().getSharedPreferences("yuku.alkitab.debug_preferences", 0).edit()
-                .putString("prerelease_feedback_hidden_commit", BuildConfig.LAST_COMMIT_HASH)
+                .putString("prerelease_feedback_hidden_commit", (String) BuildConfig.class.getField("LAST_COMMIT_HASH").get(null))
                 .putString("lastVersionId", "preset/in-bimk")
                 .putBoolean("useLegacyVerseItem", false).putBoolean("useLegacyToolbar", false).apply();
             launch("yuku.alkitab.base.IsiActivity", new Bundle());
@@ -122,9 +122,11 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
                             if (text.length() > 0) {
                                 String id = view.getId() < 0x01000000 ? "" : view.getResources().getResourceName(view.getId());
                                 String sample = text.getText().toString();
+                                android.graphics.Typeface typeface = text.getTypeface();
+                                if (typeface == null) typeface = android.graphics.Typeface.DEFAULT;
                                 writer.beginObject().name("id").value(id).name("text").value(sample.substring(0, Math.min(100, sample.length())))
                                     .name("sizeSp").value(text.getTextSize() / text.getResources().getDisplayMetrics().scaledDensity)
-                                    .name("weight").value(text.getTypeface().getWeight()).name("italic").value(text.getTypeface().isItalic()).endObject();
+                                    .name("weight").value(typeface.getWeight()).name("italic").value(typeface.isItalic()).endObject();
                             }
                         }
                         if (view instanceof android.view.ViewGroup) {

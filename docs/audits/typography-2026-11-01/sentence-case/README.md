@@ -1,5 +1,7 @@
 # Sentence-case UI and selected number-field design
 
+This is a historical snapshot. [The controls revision and native rollback](../controls-revision/README.md) defines the current scope. Direct native overrides and the synthetic cursor visible here are superseded.
+
 The user selected Option A, the outlined number field. The [public sentence-case comparison](https://androidbible-typography-review.itikku.chatgpt.site/sentence-case/) shows the subsequent casing changes. [Earlier Medium-weight evidence and the selected design](../accessibility-revision/README.md) remain available as an identified snapshot.
 
 ## Implementation

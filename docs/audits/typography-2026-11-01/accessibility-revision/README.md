@@ -1,5 +1,7 @@
 # Medium controls and distinct number input
 
+This is a historical snapshot. [The controls revision and native rollback](../controls-revision/README.md) defines the current scope. Direct native overrides and the synthetic cursor visible here are superseded.
+
 The user selected Option A. See the [subsequent sentence-case revision](../sentence-case/README.md) for the latest UI casing changes.
 
 [Open the interactive review and annotated Android evidence](index.html). The [public review page](https://androidbible-typography-review.itikku.chatgpt.site/accessibility/) contains the same options and captures.

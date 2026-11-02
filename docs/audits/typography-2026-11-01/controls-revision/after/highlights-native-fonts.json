@@ -1,0 +1,23 @@
+[
+  {
+    "id": "",
+    "text": "Sorotan",
+    "sizeSp": 20.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/lDate",
+    "text": "Nov 1, 2026",
+    "sizeSp": 14.40000057220459,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/lCaption",
+    "text": "Kejadian 1:31",
+    "sizeSp": 21.600000381469727,
+    "weight": 400,
+    "italic": false
+  }
+]

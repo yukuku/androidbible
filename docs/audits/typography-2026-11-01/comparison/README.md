@@ -1,5 +1,7 @@
 # Shared UI scale: implementation and comparison
 
+This is a historical snapshot. [The controls revision and native rollback](../controls-revision/README.md) defines the current scope. Direct native overrides and the synthetic cursor visible here are superseded.
+
 This is the initial proposal snapshot. See the [sentence-case revision](../sentence-case/README.md) for the latest casing changes. See the [Medium-weight accessibility revision and number-field options](../accessibility-revision/README.md) for the subsequent feedback changes.
 
 [Open the complete before/after report](index.html). It embeds every screenshot, so the HTML can be downloaded and opened offline. The report contains 75 screen/state pairs, font annotations, and source evidence. [Annotated PNG exports](annotated/) provide the same comparisons as individual images.

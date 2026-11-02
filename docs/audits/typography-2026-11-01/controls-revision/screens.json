@@ -1,0 +1,272 @@
+[
+  {
+    "id": "color-sliders",
+    "title": "Hex color input",
+    "category": "Compose",
+    "note": "Warna Hex replaces the longer label. A separate # sits immediately before the centered editable value. Label, prefix and input: 14sp Regular (400)."
+  },
+  {
+    "id": "version-details",
+    "title": "Version details bottom sheet",
+    "category": "Compose migration",
+    "note": "Title: 20sp Medium (500). Version code: 16sp Medium. Version name and metadata values: 16sp Regular. Metadata labels and actions: 14sp Medium. Description: 14sp Regular. Remove is a text button with a trash icon at start; Share is the primary button with a share icon at end."
+  },
+  {
+    "id": "goto-dialer",
+    "title": "Bible keypad: prefilled chapter",
+    "category": "Compose",
+    "note": "Book: 16sp Medium (500). Number fields: 24sp Medium. Keypad: 28sp Medium. Active means a solid accent border, even when the next key will replace the value. Inactive fields are dashed. Replacement-ready values remain quieter."
+  },
+  {
+    "id": "goto-typed",
+    "title": "Bible keypad: entered chapter",
+    "category": "Compose",
+    "note": "Number fields: 24sp Medium (500). The synthetic cursor is removed. The active field stays solid; input replacement and appending behavior are preserved."
+  },
+  {
+    "id": "goto-verse-typed",
+    "title": "Bible keypad: entered verse",
+    "category": "Compose",
+    "note": "Number fields: 24sp Medium (500). The solid border follows the active verse field. The entered but inactive chapter is dashed. No synthetic cursor is drawn."
+  },
+  {
+    "id": "legacy-goto-dialer",
+    "title": "Native Bible keypad: initial",
+    "category": "Native rollback",
+    "note": "The custom number boxes and programmatic typography are removed. The original native layout and behavior are restored. Shared theme and keypad style inheritance remains. Actual native sizes and weights are listed below."
+  },
+  {
+    "id": "legacy-goto-typed",
+    "title": "Native Bible keypad: entered chapter",
+    "category": "Native rollback",
+    "note": "The native number display uses its original layout and focus behavior. The added box and cursor are removed. Shared typography styles continue to apply through existing style references."
+  },
+  {
+    "id": "song-selector",
+    "title": "Song keypad: prefilled number",
+    "category": "Compose",
+    "note": "Book: 16sp Medium (500). Value: 24sp Medium. Digits: 28sp Medium. The active value has a solid border while its replacement-ready digits remain quieter."
+  },
+  {
+    "id": "song-input",
+    "title": "Song keypad: entered number",
+    "category": "Compose",
+    "note": "Value: 24sp Medium (500). The solid active border remains; the synthetic cursor is removed. Entered digits retain the brighter foreground."
+  },
+  {
+    "id": "song-four-digits",
+    "title": "Song keypad: four-digit replacement state",
+    "category": "Compose",
+    "note": "Value: 24sp Medium (500). Four digits are replacement-ready because the next keypad digit starts a new code. The field remains solid because it is active; the foreground signals replacement."
+  },
+  {
+    "id": "song-drawer",
+    "title": "Native song drawer: initial",
+    "category": "Native rollback",
+    "note": "The custom number field is removed from the native drawer. Its original XML and View behavior are restored. Existing keypad controls still inherit the shared keypad style."
+  },
+  {
+    "id": "song-drawer-input",
+    "title": "Native song drawer: entered number",
+    "category": "Native rollback",
+    "note": "The native drawer retains its original number presentation. The added synthetic cursor, box and replacement styling are removed. Shared styles remain inherited."
+  },
+  {
+    "id": "versions",
+    "title": "Version manager",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "versions-downloaded",
+    "title": "Versions downloaded",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "legacy-goto-grid",
+    "title": "Legacy Go To book grid",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "legacy-goto-book-menu",
+    "title": "Legacy goto book menu",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "legacy-reader",
+    "title": "Legacy reader and toolbar",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings. The baseline contains a debug-only leak-analysis overlay. Reading content retains its own font settings; the native rollback is also verified by exact source comparison."
+  },
+  {
+    "id": "drawer",
+    "title": "Navigation drawer",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "bookmarks",
+    "title": "Bookmarks",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "notes",
+    "title": "Notes",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "highlights",
+    "title": "Highlights",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "note-editor",
+    "title": "New note editor (empty)",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings. This is an empty new-note editor. It verifies layout, not the appearance of entered note text."
+  },
+  {
+    "id": "search-results",
+    "title": "Bible search results",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "search-filter",
+    "title": "Bible search filters",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "plan",
+    "title": "Active reading plan",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "plan-list",
+    "title": "All reading-plan days",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "plan-drawer",
+    "title": "Reading-plan navigation drawer",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "about",
+    "title": "Help / About",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "fonts",
+    "title": "Font download manager",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "settings",
+    "title": "Settings categories",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "settings-display",
+    "title": "Display preferences",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings. A debug-only leak-analysis toast overlays part of the baseline. The current view is recaptured without that transient overlay."
+  },
+  {
+    "id": "settings-usage",
+    "title": "Usage preferences",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "settings-copy",
+    "title": "Copy and share preferences",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "settings-transfer",
+    "title": "Data transfer preferences",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "legacy-sign-in",
+    "title": "Legacy sign-in",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "bookmark-editor",
+    "title": "Bookmark editor",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "label-chooser",
+    "title": "Bookmark label chooser",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "progress",
+    "title": "Progress mark list",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "verse-dialog",
+    "title": "Verse popup",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings. This is the external floating verse activity. The baseline has an unrelated system permission prompt behind it. The foreground verse dialog is the component being compared; the current frame is recaptured without that prompt."
+  },
+  {
+    "id": "xref",
+    "title": "Cross-reference popup",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "report-verse",
+    "title": "Report a verse",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "pdb-options",
+    "title": "Legacy PDB conversion options",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "debug-sync",
+    "title": "Developer sync diagnostics",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "song-search",
+    "title": "Song search",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  },
+  {
+    "id": "devotion",
+    "title": "Devotion article",
+    "category": "Native rollback",
+    "note": "Direct XML/View typography changes are reverted to develop. Existing shared style and theme inheritance remains. Before/after native measurements below record the actual visible TextViews. Reading-content typography retains its own appearance settings."
+  }
+]

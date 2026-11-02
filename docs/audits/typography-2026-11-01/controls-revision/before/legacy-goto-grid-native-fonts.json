@@ -1,0 +1,485 @@
+[
+  {
+    "id": "",
+    "text": "Kej",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Kel",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Ima",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Bil",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Ula",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yos",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Hak",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Rut",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "1Sam",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "2Sam",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "1Raj",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "2Raj",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "1Taw",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "2Taw",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Ezr",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Neh",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Est",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Ayub",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Maz",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Ams",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Pkh",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Kid",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yes",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yer",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Rat",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yeh",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Dan",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Hos",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yoë",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Amos",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Oba",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yun",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Mik",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Nah",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Hab",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Zef",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Hag",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Zak",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Mal",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Mat",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Mar",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Luk",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yoh",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Kis",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Rom",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "1Kor",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "2Kor",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Gal",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Efe",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Fil",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Kol",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "1Tes",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "2Tes",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "1Tim",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "2Tim",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Tit",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Flm",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Ibr",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yak",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "1Pet",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "2Pet",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "1Yoh",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "2Yoh",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "3Yoh",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Yud",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Why",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Telusuri",
+    "sizeSp": 14.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Ketik",
+    "sizeSp": 14.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Pilih",
+    "sizeSp": 14.0,
+    "weight": 500,
+    "italic": false
+  }
+]

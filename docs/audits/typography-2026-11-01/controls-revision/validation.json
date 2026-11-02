@@ -1,0 +1,11 @@
+{
+  "pairs": 45,
+  "desktop": {
+    "images": 90,
+    "broken": 0,
+    "overflow": false
+  },
+  "mobileOverflow": false,
+  "errors": [],
+  "assetTransport": "Unchanged local PNG bytes supplied to browser image requests"
+}

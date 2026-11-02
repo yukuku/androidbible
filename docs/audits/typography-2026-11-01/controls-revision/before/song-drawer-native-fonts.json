@@ -1,0 +1,170 @@
+[
+  {
+    "id": "",
+    "text": "KJ 1 ▾",
+    "sizeSp": 20.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDisplay",
+    "text": "Tampilan",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bBible",
+    "text": "Alkitab",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDevotion",
+    "text": "Renungan",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bReadingPlan",
+    "text": "Jadwal baca",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bSongs",
+    "text": "Kidung",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bChangeBook",
+    "text": "KJ",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bChangeCode",
+    "text": "1",
+    "sizeSp": 24.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bSettings",
+    "text": "Pengaturan",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bHelp",
+    "text": "Bantuan",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit1",
+    "text": "1",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit2",
+    "text": "2",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit3",
+    "text": "3",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigitA",
+    "text": "A",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit4",
+    "text": "4",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit5",
+    "text": "5",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit6",
+    "text": "6",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigitB",
+    "text": "B",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit7",
+    "text": "7",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit8",
+    "text": "8",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit9",
+    "text": "9",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigitC",
+    "text": "C",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bDigit0",
+    "text": "0",
+    "sizeSp": 28.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/bOk",
+    "text": "Ok",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  }
+]
