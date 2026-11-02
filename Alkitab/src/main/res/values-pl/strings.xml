@@ -26,9 +26,9 @@
     <string name="search_bookname_only">Tylko %s</string>
     <string name="ayat_sebelumangka">Wers</string>
     <string name="pasal_sebelumangka">Rozdział</string>
-    <string name="jump_to_prompt"><b>SKOCZ DO</b> — Przykład: ^1</string>
+    <string name="jump_to_prompt"><b>Skocz do</b> — Przykład: ^1</string>
     <string name="belum_ada_pembatas_buku">Brak zakładek.\nWybierz wers, aby dodać do zakładek.</string>
-    <string name="judul_titikdua">TYTUŁ</string>
+    <string name="judul_titikdua">Tytuł</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Niedostępne. Prawdopodobnie materiały z żądanej daty nie są jeszcze gotowe lub są jakieś błędy w odczytaniu danych z podanej daty. Proszę spróbować jeszcze raz.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Rozważanie nie jest jeszcze dostępne. Pobieranie z internetu.&#8230;\n\n(Upewnij się, że istnieje połączenie internetowe, aby pobrać materiały.)</string>
     <string name="hari_sabtu">Sobota</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Skasować tę notatkę?</string>
     <string name="delete">Usuń</string>
     <string name="cancel">Anuluj</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Ustawienia</string>
     <string name="pengaturan_alkitab">Ustawienia Biblii</string>
     <string name="kelola_versi">Zarządzaj przekładami</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Wyczyść filtr</string>
     <string name="bl_no_items_match_the_filter_above">Nic nie pasuje do powyższego filtru.</string>
     <string name="bl_sync_suggest">Chroń swoje znaczniki poprzez synchronizację</string>
-    <string name="labels_titikdua">ETYKIETY</string>
+    <string name="labels_titikdua">Etykiety</string>
     <string name="tambah_titiktiga">Dodaj&#8230;</string>
     <string name="nama_label_titikdua">Nazwa etykiety:</string>
     <string name="change_label_color">Zmień kolor etykiety</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Pieśni</string>
     <string name="sn_deep_search_enabled">Słowa, itp.</string>
     <string name="sn_songs_activity_title">Pieśni</string>
-    <string name="sn_bookselector_all">WSZYSTKO</string>
+    <string name="sn_bookselector_all">Wszystko</string>
     <string name="sn_bookselector_more">Pobierz więcej&#8230;</string>
     <string name="sn_bookselector_all_desc">Przeszukaj wszystkie zainstalowane książki.</string>
     <string name="sn_downloading_ellipsis">Pobieranie&#8230;</string>
@@ -417,9 +417,9 @@
     <string name="bl_selection_edit">Edytuj</string>
     <string name="bl_selection_many_selected">Zaznaczono ^1</string>
     <string name="bl_selection_one_selected">Zaznaczono 1</string>
-    <string name="color_picker_channel_blue">NIEBIESKI</string>
-    <string name="color_picker_channel_green">ZIELONY</string>
-    <string name="color_picker_channel_red">CZERWONY</string>
+    <string name="color_picker_channel_blue">Niebieski</string>
+    <string name="color_picker_channel_green">Zielony</string>
+    <string name="color_picker_channel_red">Czerwony</string>
     <string name="color_picker_hex_label">Kolor sRGB Hex #</string>
     <string name="color_picker_tab_grid">Siatka</string>
     <string name="color_picker_tab_sliders">Suwaki</string>

@@ -26,7 +26,7 @@
     <string name="search_bookname_only">%s saja</string>
     <string name="ayat_sebelumangka">Ayat</string>
     <string name="pasal_sebelumangka">Pasal</string>
-    <string name="jump_to_prompt"><b>LONCAT KE</b> — Contoh: ^1</string>
+    <string name="jump_to_prompt"><b>Loncat ke</b> — Contoh: ^1</string>
     <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih satu ayat untuk menambah pembatas buku.</string>
     <string name="judul_titikdua">Judul</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Belum tersedia. Mungkin bahan untuk tanggal yang diminta belum siap, atau ada masalah dengan sumbernya. Harap coba lagi lain kali.</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Hapus catatan ini?</string>
     <string name="delete">Hapus</string>
     <string name="cancel">Batal</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Pengaturan</string>
     <string name="pengaturan_alkitab">Pengaturan Alkitab</string>
     <string name="kelola_versi">Kelola Versi</string>
@@ -136,7 +136,7 @@
     <string name="bl_selection_one_selected">1 dipilih</string>
     <string name="bl_selection_many_selected">^1 dipilih</string>
     <string name="bl_copied_toast">Marka yang dipilih sudah disalin.</string>
-    <string name="labels_titikdua">LABEL</string>
+    <string name="labels_titikdua">Label</string>
     <string name="tambah_titiktiga">Tambah&#8230;</string>
     <string name="nama_label_titikdua">Nama label:</string>
     <string name="change_label_color">Ganti warna label</string>
@@ -184,7 +184,7 @@
     <string name="menuSongs">Kidung</string>
     <string name="sn_deep_search_enabled">Juga lirik, dsb.</string>
     <string name="sn_songs_activity_title">Kidung</string>
-    <string name="sn_bookselector_all">SEMUA</string>
+    <string name="sn_bookselector_all">Semua</string>
     <string name="sn_bookselector_more">Buku lagu lainnya&#8230;</string>
     <string name="sn_bookselector_all_desc">Cari pada semua buku yang tersedia.</string>
     <string name="sn_downloading_ellipsis">Mengunduh&#8230;</string>
@@ -503,9 +503,9 @@
     <string name="audio_log_state_preparing">menyiapkan</string>
     <string name="audio_log_state_playing">memutar</string>
     <string name="audio_log_state_error">galat</string>
-    <string name="color_picker_channel_red">MERAH</string>
-    <string name="color_picker_channel_green">HIJAU</string>
-    <string name="color_picker_channel_blue">BIRU</string>
+    <string name="color_picker_channel_red">Merah</string>
+    <string name="color_picker_channel_green">Hijau</string>
+    <string name="color_picker_channel_blue">Biru</string>
     <string name="color_picker_hex_label">Warna Hex sRGB #</string>
     <string name="color_picker_tab_grid">Kisi</string>
     <string name="color_picker_tab_sliders">Penggeser</string>

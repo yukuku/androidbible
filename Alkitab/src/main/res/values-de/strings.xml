@@ -26,9 +26,9 @@
     <string name="search_bookname_only">Nur %s</string>
     <string name="ayat_sebelumangka">Vers</string>
     <string name="pasal_sebelumangka">Kapitel</string>
-    <string name="jump_to_prompt"><b>GEHE ZU</b> — Beispiel: ^1</string>
+    <string name="jump_to_prompt"><b>Gehe zu</b> — Beispiel: ^1</string>
     <string name="belum_ada_pembatas_buku">Keine Lesezeichen vorhanden.\nSelektiere einen Vers, um ein Lesezeichen hinzufügen.</string>
-    <string name="judul_titikdua">TITEL</string>
+    <string name="judul_titikdua">Titel</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Zurzeit nicht verfügbar. Wahrscheinlich wurden die Materialen für das gewünschte Datum noch nicht bereitgestellt oder es traten Fehler beim Erkennen der Datenquelle auf. Bitte versuchen Sie es später erneut.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Momentan nicht vorhanden. Lade herunter&#8230;\n\n(Stellen Sie sicher, dass eine Internetverbindung besteht, damit die Andacht heruntergeladen werden kann.)</string>
     <string name="hari_sabtu">Samstag</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Diese Notitz löschen?</string>
     <string name="delete">Löschen</string>
     <string name="cancel">Abbrechen</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Einstellungen</string>
     <string name="pengaturan_alkitab">Einstellungen</string>
     <string name="kelola_versi">Übersetzungen verwalten</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Filter zurückstellen</string>
     <string name="bl_no_items_match_the_filter_above">Kein Ergebnis</string>
     <string name="bl_sync_suggest">Sichern Sie Ihre Markierungen durch Synchronisation</string>
-    <string name="labels_titikdua">STICHWÖRTER</string>
+    <string name="labels_titikdua">Stichwörter</string>
     <string name="tambah_titiktiga">Hinzufügen&#8230;</string>
     <string name="nama_label_titikdua">Stichwort-Name:</string>
     <string name="change_label_color">Stichwortfarbe ändern</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Lieder</string>
     <string name="sn_deep_search_enabled">Auch Texte, usw. durchsuchen</string>
     <string name="sn_songs_activity_title">Lieder</string>
-    <string name="sn_bookselector_all">ALLE</string>
+    <string name="sn_bookselector_all">Alle</string>
     <string name="sn_bookselector_more">Weitere herunterladen&#8230;</string>
     <string name="sn_bookselector_all_desc">Alle installierten Bücher durchsuchen</string>
     <string name="sn_downloading_ellipsis">Lade herunter&#8230;</string>
@@ -417,9 +417,9 @@
     <string name="bl_selection_edit">Bearbeiten</string>
     <string name="bl_selection_many_selected">^1 ausgewählt</string>
     <string name="bl_selection_one_selected">1 ausgewählt</string>
-    <string name="color_picker_channel_blue">BLAU</string>
-    <string name="color_picker_channel_green">GRÜN</string>
-    <string name="color_picker_channel_red">ROT</string>
+    <string name="color_picker_channel_blue">Blau</string>
+    <string name="color_picker_channel_green">Grün</string>
+    <string name="color_picker_channel_red">Rot</string>
     <string name="color_picker_hex_label">sRGB-Hexfarbe #</string>
     <string name="color_picker_tab_grid">Raster</string>
     <string name="color_picker_tab_sliders">Schieberegler</string>

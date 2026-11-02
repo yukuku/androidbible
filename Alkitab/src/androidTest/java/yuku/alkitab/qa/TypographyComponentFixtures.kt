@@ -1,7 +1,10 @@
 package yuku.alkitab.qa
 
 import android.app.Activity
+import android.graphics.Color
+import android.graphics.Typeface
 import android.view.ViewGroup
+import androidx.compose.foundation.background
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import yuku.alkitab.base.audio.AudioLogEntry
@@ -9,8 +12,36 @@ import yuku.alkitab.base.audio.ui.AudioBar
 import yuku.alkitab.base.audio.ui.AudioBarUiState
 import yuku.alkitab.base.audio.ui.AudioSourceOption
 import yuku.alkitab.base.compose.BibleAppTheme
+import yuku.alkitab.songs.SongComposeStyle
+import yuku.alkitab.songs.SongDocumentComposable
+import yuku.alkitab.songs.newdoc.Line
+import yuku.alkitab.songs.newdoc.PBlock
+import yuku.alkitab.songs.newdoc.SongDocument
 
 object TypographyComponentFixtures {
+    @JvmStatic
+    fun showSongCasing(activity: Activity) {
+        val view = ComposeView(activity)
+        activity.setContentView(view)
+        view.setContent {
+            SongDocumentComposable(
+                doc = SongDocument("1", blocks = listOf(
+                    PBlock(role = "title", content = Line.Plain("Song typography sample")),
+                    PBlock(role = "tune", content = Line.Plain("Evening hymn")),
+                    PBlock(role = "copyright", content = Line.Plain("Written permission")),
+                    PBlock(content = Line.Plain("A source sentence keeps its casing.")),
+                )),
+                style = SongComposeStyle(Color.BLACK, Color.GRAY, Color.WHITE, 20f, 1.2f, Typeface.SERIF, 100, false),
+                copyright = "Copyright Sample Publisher",
+                patchTextLinkLabel = null,
+                onScriptureClick = {},
+                onYoutubeClick = {},
+                onPatchTextClick = {},
+                modifier = Modifier.background(androidx.compose.ui.graphics.Color.White),
+            )
+        }
+    }
+
     @JvmStatic
     fun showAudio(activity: Activity, isSourcePicker: Boolean) {
         val state = if (isSourcePicker) {

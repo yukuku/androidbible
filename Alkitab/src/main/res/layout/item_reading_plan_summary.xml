@@ -55,7 +55,7 @@
 		android:background="?selectableItemBackground"
 		android:gravity="center_vertical"
 		android:text="@string/rp_showDetails"
-		android:textAllCaps="true"
+		android:textAllCaps="false"
 		android:textColor="@color/accent" />
 
 

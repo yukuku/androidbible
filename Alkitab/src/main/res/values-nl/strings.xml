@@ -26,9 +26,9 @@
     <string name="search_bookname_only">Alleen in %s</string>
     <string name="ayat_sebelumangka">Vers</string>
     <string name="pasal_sebelumangka">Hoofdstuk</string>
-    <string name="jump_to_prompt"><b>GA NAAR</b> — Voorbeeld: ^1</string>
+    <string name="jump_to_prompt"><b>Ga naar</b> — Voorbeeld: ^1</string>
     <string name="belum_ada_pembatas_buku">Er zijn nog geen bladwijzers.\nSelecteer een vers om een bladwijzer toe te voegen.</string>
-    <string name="judul_titikdua">TITEL</string>
+    <string name="judul_titikdua">Titel</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nog niet beschikbaar. Waarschijnlijk is het materiaal nog niet voorbereid of er zijn fouten in het herkennen van de databron. Probeer het later nog eens.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nog niet beschikbaar. Ophalen van internet&#8230;\n\n(Zorg voor een internetverbinding om het materiaal te kunnen downloaden.)</string>
     <string name="hari_sabtu">Za</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Deze notitie verwijderen?</string>
     <string name="delete">Verwijderen</string>
     <string name="cancel">Annuleren</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Instellingen</string>
     <string name="pengaturan_alkitab">Bijbel instellingen</string>
     <string name="kelola_versi">Beheer versies</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Reset filter</string>
     <string name="bl_no_items_match_the_filter_above">Er zijn geen filterresultaten.</string>
     <string name="bl_sync_suggest">Beveilig je markeringen via sync</string>
-    <string name="labels_titikdua">LABELS</string>
+    <string name="labels_titikdua">Labels</string>
     <string name="tambah_titiktiga">Toevoegen&#8230;</string>
     <string name="nama_label_titikdua">Label naam:</string>
     <string name="change_label_color">Wijzig labelkleur</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Liederen</string>
     <string name="sn_deep_search_enabled">Ook liedteksten, etc.</string>
     <string name="sn_songs_activity_title">Liederen</string>
-    <string name="sn_bookselector_all">ALLE</string>
+    <string name="sn_bookselector_all">Alle</string>
     <string name="sn_bookselector_more">Download meer&#8230;</string>
     <string name="sn_bookselector_all_desc">Zoek alle geïnstalleerde boeken.</string>
     <string name="sn_downloading_ellipsis">Downloaden&#8230;</string>
@@ -417,9 +417,9 @@
     <string name="bl_selection_edit">Bewerken</string>
     <string name="bl_selection_many_selected">^1 geselecteerd</string>
     <string name="bl_selection_one_selected">1 geselecteerd</string>
-    <string name="color_picker_channel_blue">BLAUW</string>
-    <string name="color_picker_channel_green">GROEN</string>
-    <string name="color_picker_channel_red">ROOD</string>
+    <string name="color_picker_channel_blue">Blauw</string>
+    <string name="color_picker_channel_green">Groen</string>
+    <string name="color_picker_channel_red">Rood</string>
     <string name="color_picker_hex_label">sRGB Hex-kleur #</string>
     <string name="color_picker_tab_grid">Raster</string>
     <string name="color_picker_tab_sliders">Schuifregelaars</string>

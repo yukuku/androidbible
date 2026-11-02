@@ -27,7 +27,7 @@ class AlertDialogActivity : BaseActivity() {
         val title = intent.getStringExtra(EXTRA_TITLE)
         val message = intent.getStringExtra(EXTRA_MESSAGE)
         val negative = intent.getStringExtra(EXTRA_NEGATIVE)
-        val positive = intent.getStringExtra(EXTRA_POSITIVE) ?: getString(android.R.string.ok)
+        val positive = intent.getStringExtra(EXTRA_POSITIVE) ?: getString(R.string.ok)
         val inputType = intent.getIntExtra(EXTRA_INPUT_TYPE, InputType.TYPE_CLASS_TEXT)
         val inputHint = intent.getStringExtra(EXTRA_INPUT_HINT)
         val launch = intent.getParcelableExtra<Intent>(EXTRA_LAUNCH)

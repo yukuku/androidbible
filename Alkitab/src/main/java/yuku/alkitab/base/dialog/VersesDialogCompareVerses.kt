@@ -52,7 +52,7 @@ class VersesDialogCompareVerses(
         }
 
         if (version == null) {
-            return "ERROR" // could not load version
+            return "Error" // could not load version
         }
 
         return version.initials

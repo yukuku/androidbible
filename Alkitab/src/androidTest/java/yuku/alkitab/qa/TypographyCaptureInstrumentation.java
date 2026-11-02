@@ -151,9 +151,10 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
                 reader(); clickView(R.id.bDisplay); settle();
                 if (name.endsWith("menu")) click("Roboto");
                 break;
-            case "versions": case "versions-downloaded":
+            case "versions": case "versions-downloaded": case "version-details":
                 launch("yuku.alkitab.versionmanager.VersionsActivity", new Bundle());
                 if (name.equals("versions-downloaded")) click("Terunduh");
+                if (name.equals("version-details")) click("BIMK");
                 break;
             case "version-picker": reader(); click("BIMK"); break;
             case "goto-dialer": case "goto-direct": case "goto-grid": case "goto-book-menu":
@@ -230,7 +231,12 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
             case "plan-catalog": case "song-catalog":
                 String uri = BuildConfig.SERVER_HOST + (name.equals("plan-catalog") ? "/rp/downloads?" : "/songs/downloads?dataFormatVersion=5&") + App.getAppIdentifierParamsEncoded();
                 Bundle help = new Bundle(); help.putString("page", uri); help.putString("overrideTitle", name.equals("plan-catalog") ? "Unduh jadwal baca" : "Unduh buku lagu");
-                launch("yuku.alkitab.base.ac.HelpActivity", help); SystemClock.sleep(5000); break;
+                launch("yuku.alkitab.base.ac.HelpActivity", help);
+                String tabLabel = name.equals("plan-catalog") ? "Pilihan" : "Utama";
+                long deadline = SystemClock.uptimeMillis() + 45000;
+                while (!hasLabel(tabLabel) && SystemClock.uptimeMillis() < deadline) SystemClock.sleep(250);
+                if (!hasLabel(tabLabel)) throw new IllegalStateException("Catalog did not finish loading");
+                break;
             case "markers": launch("yuku.alkitab.base.ac.MarkersActivity", new Bundle()); break;
             case "bookmarks": case "notes": case "highlights":
                 Bundle marker = new Bundle(); marker.putInt("filter_kind", name.equals("bookmarks") ? 1 : name.equals("notes") ? 2 : 3);
@@ -261,6 +267,8 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
                 break;
             case "legacy-sign-in": launch("yuku.alkitab.base.sync.SyncLoginActivity", new Bundle()); break;
             case "legacy-song": launch("yuku.alkitab.songs.SongViewActivity", new Bundle()); break;
+            case "song-case-fixture":
+                reader(); runOnMainSync(() -> TypographyComponentFixtures.showSongCasing(activity)); break;
             case "bookmark-editor": case "label-chooser":
                 reader(); runOnMainSync(() -> TypeBookmarkDialog.NewBookmark(activity, 257, 1).show());
                 if (name.equals("label-chooser")) click(activity.getString(R.string.tambah_titiktiga));

@@ -18,6 +18,8 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="fontFamily">sans-serif</item>
         <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
         <item name="android:letterSpacing">0</item>
     </style>
     <style name="TextAppearance.Alkitab.Title" parent="TextAppearance.Alkitab.Base">
@@ -70,5 +72,18 @@
     </style>
     <style name="TextAppearance.Alkitab.Tab" parent="TextAppearance.Alkitab.Label">
         <item name="android:textColor">@color/ui_tab_text_color</item>
+    </style>
+    <style name="Widget.Alkitab.Button" parent="Widget.AppCompat.Button">
+        <item name="android:textAppearance">@style/TextAppearance.Alkitab.Label</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
+    </style>
+    <style name="Widget.Alkitab.Button.Colored" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
+    </style>
+    <style name="Widget.Alkitab.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
     </style>
 </resources>

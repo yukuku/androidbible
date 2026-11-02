@@ -1,5 +1,7 @@
 # Medium controls and distinct number input
 
+The user selected Option A. See the [subsequent sentence-case revision](../sentence-case/README.md) for the latest UI casing changes.
+
 [Open the interactive review and annotated Android evidence](index.html). The [public review page](https://androidbible-typography-review.itikku.chatgpt.site/accessibility/) contains the same options and captures.
 
 This revision follows the shared typography proposal. It applies Medium (500) to book selectors and dropdown items, book/chapter/verse grid buttons, Bible and song keypad digits and suffixes, and version short names or primary titles in both the selector and version manager. Version descriptions remain 14sp Regular to preserve the hierarchy.
@@ -8,7 +10,7 @@ Book and version names use 16sp Medium, grid cells use 16sp Medium, keypad digit
 
 ## Number entry
 
-Option A is implemented as the review candidate. It uses a rounded rectangular field, a blue outline for the active target, and a darker blue-gray fill that separates the value from the plain keypad buttons.
+Option A is the selected and implemented design. It uses a rounded rectangular field, a blue outline for the active target, and a darker blue-gray fill that separates the value from the plain keypad buttons.
 
 - A value which the next digit replaces uses a quieter foreground and a dashed border.
 - A value which the next digit continues uses brighter digits and a solid border. The active field also shows a caret.
@@ -18,7 +20,7 @@ Option A is implemented as the review candidate. It uses a rounded rectangular f
 
 The quieter digits have 6.01:1 contrast against their field, while entered digits have 10.69:1 contrast. Border style and the caret provide cues in addition to color. Screen readers receive localized descriptions of whether the next digit replaces or continues the value.
 
-Options B (filled capsule) and C (light value tile) are interactive browser prototypes for review. They use the browser's system font and are labeled as prototypes. They are not Android screenshots or alternative implementations in the APK. The final shape and color choice remains open for review.
+Options B (filled capsule) and C (light value tile) are interactive browser prototypes for review. They use the browser's system font and are labeled as prototypes. They are not Android screenshots or alternative implementations in the APK. Option A was selected by the user. B and C remain available for comparison.
 
 ## Evidence
 

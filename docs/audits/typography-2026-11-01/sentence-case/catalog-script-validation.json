@@ -1,0 +1,12 @@
+{
+  "tabs": [
+    "Pilihan",
+    "Cari ID"
+  ],
+  "button": "Upload JSON\u2191",
+  "book": "BIMK",
+  "transform": "none",
+  "iconPreserved": true,
+  "clickHandlerInvocations": 1,
+  "result": "passed"
+}

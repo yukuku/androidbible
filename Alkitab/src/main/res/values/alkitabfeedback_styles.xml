@@ -21,12 +21,15 @@
 
     <style name="AlkitabFeedback.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorAccent">@color/alkitabfeedback_accent</item>
+        <item name="buttonStyle">@style/Widget.Alkitab.Button</item>
+        <item name="android:textAppearanceButton">@style/TextAppearance.Alkitab.Label</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Alkitab.Label</item>
     </style>
 
     <style name="alkitabfeedback_TextAppearanceFinish" parent="android:TextAppearance.Holo.Medium">
         <item name="android:textColor">#fff</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textAllCaps">true</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="alkitabfeedback_WizardPageContainer">

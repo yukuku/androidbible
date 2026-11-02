@@ -8,6 +8,8 @@
         <item name="android:textAppearanceLarge">@style/TextAppearance.Alkitab.Title</item>
         <item name="textAppearanceBody1">@style/TextAppearance.Alkitab.Primary</item>
         <item name="textAppearanceBody2">@style/TextAppearance.Alkitab.Supporting</item>
+        <item name="buttonStyle">@style/Widget.Alkitab.Button</item>
+        <item name="android:textAppearanceButton">@style/TextAppearance.Alkitab.Label</item>
         <item name="textAppearanceButton">@style/TextAppearance.Alkitab.Label</item>
         <item name="textAppearanceHeadline6">@style/TextAppearance.Alkitab.Title</item>
         <item name="colorAccent">@color/accent</item>

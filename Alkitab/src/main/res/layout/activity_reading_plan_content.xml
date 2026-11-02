@@ -49,7 +49,7 @@
 					android:layout_weight="1"
 					android:contentDescription="@string/rp_navigationGoToDate"
 					android:gravity="center"
-					android:textAllCaps="true"
+					android:textAllCaps="false"
 					tools:text="Dayname, 13 February 2015" />
 
 				<ImageButton

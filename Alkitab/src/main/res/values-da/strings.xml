@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Slet denne note?</string>
     <string name="delete">Slet</string>
     <string name="cancel">Annuller</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Indstillinger</string>
     <string name="pengaturan_alkitab">Bibel indstillinger</string>
     <string name="kelola_versi">Administrer versioner</string>
@@ -412,9 +412,9 @@
     <string name="bl_selection_edit">Rediger</string>
     <string name="bl_selection_many_selected">^1 valgt</string>
     <string name="bl_selection_one_selected">1 valgt</string>
-    <string name="color_picker_channel_blue">BLÅ</string>
-    <string name="color_picker_channel_green">GRØN</string>
-    <string name="color_picker_channel_red">RØD</string>
+    <string name="color_picker_channel_blue">Blå</string>
+    <string name="color_picker_channel_green">Grøn</string>
+    <string name="color_picker_channel_red">Rød</string>
     <string name="color_picker_hex_label">sRGB hex-farve #</string>
     <string name="color_picker_tab_grid">Tabel</string>
     <string name="color_picker_tab_sliders">Skydere</string>

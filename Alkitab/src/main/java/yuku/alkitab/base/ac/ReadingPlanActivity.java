@@ -44,6 +44,7 @@ import yuku.alkitab.base.connection.Connections;
 import yuku.alkitab.base.events.AppEvents;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AppDatePickerDialog;
 import yuku.alkitab.base.util.AppLog;
 import yuku.alkitab.base.util.Background;
 import yuku.alkitab.base.util.CurrentReading;
@@ -179,7 +180,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity {
                     changeDay(0);
                 };
 
-                new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+                new AppDatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
 
             private void showSetStartDateDialog() {
@@ -200,7 +201,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity {
                     updateButtonStatus();
                 };
 
-                new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)).show();
+                new AppDatePickerDialog(ReadingPlanActivity.this, dateSetListener, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)).show();
             }
 
             private void catchMeUp() {

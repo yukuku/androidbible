@@ -5,16 +5,22 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.ViewCompat
 import androidx.test.core.app.ApplicationProvider
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
+import java.util.Locale
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -24,6 +30,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import yuku.afw.App
+import yuku.alkitab.base.util.AppDatePickerDialog
 import yuku.alkitab.base.util.NumericEntryAppearance
 import yuku.alkitab.base.util.UiTextRole
 import yuku.alkitab.base.util.UiTypography
@@ -33,6 +40,52 @@ import yuku.alkitab.debug.R
 @Config(application = App::class, sdk = [26, 34])
 class BibleAppTypographyTest {
     private val context: Context = ContextThemeWrapper(ApplicationProvider.getApplicationContext(), R.style.Theme_Alkitab)
+
+    @Test
+    fun `localized UI labels avoid capitals used only for styling`() {
+        val languages = listOf("en", "af", "bg", "ceb", "cs", "da", "de", "el", "es", "fr", "hu", "id", "it", "ja", "ko", "lv", "ms", "my", "nl", "pl", "pt", "pt-BR", "ro", "ru", "th", "tl", "tr", "uk", "vi", "zh-CN", "zh-TW")
+        val labels = listOf(R.string.ok, R.string.labels_titikdua, R.string.judul_titikdua, R.string.sn_bookselector_all, R.string.color_picker_channel_red, R.string.color_picker_channel_green, R.string.color_picker_channel_blue, R.string.jump_to_prompt)
+        for (language in languages) {
+            val configuration = Configuration(context.resources.configuration).apply { setLocale(Locale.forLanguageTag(language)) }
+            val resources = context.createConfigurationContext(configuration).resources
+            for (label in labels) {
+                val value = resources.getText(label).toString()
+                val sample = if (label == R.string.jump_to_prompt) value.substringBefore('—') else value
+                val letters = sample.filter { it.lowercaseChar() != it.uppercaseChar() }
+                assertFalse("$language: $value", letters.length > 1 && letters.none { it.isLowerCase() })
+            }
+        }
+    }
+
+    @Test
+    fun `native buttons and dialog actions preserve sentence case in every app theme`() {
+        for (theme in listOf(R.style.Theme_Alkitab, R.style.Ribka_Theme, R.style.AlkitabFeedback_Theme)) {
+            val controller = Robolectric.buildActivity(AppCompatActivity::class.java)
+            controller.get().setTheme(theme)
+            val activity = controller.setup().get()
+            val views = mutableListOf<TextView>(Button(activity), AppCompatButton(activity))
+            if (theme != R.style.AlkitabFeedback_Theme) {
+                val picker = AppDatePickerDialog(activity, { _, _, _, _ -> }, 2026, 10, 2)
+                picker.show()
+                val confirmDate = picker.getButton(android.content.DialogInterface.BUTTON_POSITIVE)
+                assertEquals(activity.getString(R.string.ok), confirmDate.text.toString())
+                views.add(confirmDate)
+                views.add(MaterialButton(activity))
+                views.add(activity.layoutInflater.inflate(R.layout.ribka_activity_report, null).findViewById(R.id.bRibkaSend))
+                views.add(activity.layoutInflater.inflate(R.layout.activity_devotion_content, null).findViewById(R.id.bRetry))
+                val dialog = MaterialAlertDialogBuilder(activity).setMessage("Example").setPositiveButton("Open file", null).setNegativeButton("Cancel", null).show()
+                views.add(dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE))
+                views.add(dialog.getButton(android.content.DialogInterface.BUTTON_NEGATIVE))
+            }
+            val login = activity.layoutInflater.inflate(R.layout.activity_sync_login, null)
+            views.add(login.findViewById(R.id.bLogin))
+            views.forEach { view ->
+                view.text = "Open file"
+                assertEquals("${view.javaClass.simpleName} in theme $theme", "Open file", view.transformationMethod?.getTransformation(view.text, view)?.toString() ?: view.text.toString())
+            }
+            controller.pause().stop().destroy()
+        }
+    }
 
     @Test
     fun `number input keeps replacement values readable and clears the cursor when the next digit replaces`() {

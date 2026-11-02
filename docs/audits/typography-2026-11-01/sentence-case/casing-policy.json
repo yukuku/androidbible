@@ -1,0 +1,38 @@
+{
+  "normalizedUiLabels": 175,
+  "changedLocaleFiles": 26,
+  "checkedUiLocales": 31,
+  "retainedUppercaseReasons": {
+    "versionAndSongbookNames": [
+      "BIMK",
+      "KJ"
+    ],
+    "songSuffixes": [
+      "A",
+      "B",
+      "C"
+    ],
+    "testamentAbbreviations": [
+      "NT",
+      "ST",
+      "AT.",
+      "НЗ",
+      "ВЗ",
+      "СЗ"
+    ],
+    "technicalFormatting": [
+      "hexadecimal color values",
+      "catalog lookup identifiers",
+      "diagnostic codes"
+    ]
+  },
+  "removedTransformations": [
+    "native textAllCaps",
+    "reading-plan headers/actions",
+    "version metadata labels",
+    "Compose song tune/copyright",
+    "legacy song CSS",
+    "plain-text tune export",
+    "owned catalog CSS"
+  ]
+}

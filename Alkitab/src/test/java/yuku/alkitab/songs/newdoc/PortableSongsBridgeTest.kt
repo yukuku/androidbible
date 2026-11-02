@@ -414,6 +414,14 @@ class PortableSongsBridgeTest {
     }
 
     @Test
+    fun `plain text export preserves the source casing of tune names`() {
+        val doc = SongDocument("1", blocks = listOf(PBlock(role = "tune", content = Line.Plain("Evening hymn"))))
+        val text = SongDocumentText.render(doc, "KJ", null, { "Version $it" }, "Ref.:")
+        assertTrue(text.contains("Evening hymn"))
+        assertFalse(text.contains("EVENING HYMN"))
+    }
+
+    @Test
     fun `SongDocumentText reproduces the header and lyric body shape of the legacy plain-text export`() {
         for (song in songs()) {
             val doc = LegacySongConverter.convert(song)

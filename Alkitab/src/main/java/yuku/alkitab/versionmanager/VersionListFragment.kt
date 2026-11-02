@@ -156,7 +156,7 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
 
         fun addDetail(key: String, value: String?) {
             val sb_len = details.length
-            details.append(key.uppercase(Locale.getDefault())).append(": ")
+            details.append(key).append(": ")
             details.setSpan(ForegroundColorSpan(-0x555556), sb_len, details.length, 0)
             details.setSpan(RelativeSizeSpan(0.7f), sb_len, details.length, 0)
             details.setSpan(StyleSpan(Typeface.BOLD), sb_len, details.length, 0)

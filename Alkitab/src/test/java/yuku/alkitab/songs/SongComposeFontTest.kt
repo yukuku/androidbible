@@ -14,8 +14,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.BroadcastFrameClock
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getAllSemanticsNodes
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.createFontFamilyResolver
@@ -55,6 +59,40 @@ class SongComposeFontTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         AfwApp.initWithAppContext(context)
+    }
+
+    @Test
+    fun `tune names and copyright text keep their source casing and inline styles`() {
+        val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val activity = controller.get()
+        val frame = FrameLayout(activity)
+        activity.setContentView(frame)
+        val recomposer = frame.createLifecycleAwareWindowRecomposer(Handler(Looper.getMainLooper()).asCoroutineDispatcher() + frameClock)
+        val view = ComposeView(activity)
+        view.setParentCompositionContext(recomposer)
+        frame.addView(view)
+        view.setContent {
+            SongDocumentComposable(
+                SongDocument("1", blocks = listOf(
+                    PBlock(role = "tune", content = Line.Styled(listOf(Span("Evening hymn", listOf("i"))))),
+                    PBlock(role = "copyright", content = Line.Plain("Written permission")),
+                )),
+                songStyle(Typeface.SERIF, false), "Copyright Sample Publisher", null, {}, {}, {},
+            )
+        }
+        repeat(3) {
+            idle()
+            view.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY))
+            view.layout(0, 0, 400, 800)
+            idle()
+        }
+        val text = (view.getChildAt(0) as RootForTest).semanticsOwner.getAllSemanticsNodes(mergingEnabled = true)
+            .flatMap { it.config.getOrNull(SemanticsProperties.Text).orEmpty() }
+        assertTrue(text.any { it.text == "Evening hymn" && it.spanStyles.any { span -> span.item.fontStyle == FontStyle.Italic } })
+        assertTrue(text.any { it.text == "Written permission" })
+        assertTrue(text.any { it.text == "Copyright Sample Publisher" })
+        controller.pause().stop().destroy()
+        idle()
     }
 
     @Test
