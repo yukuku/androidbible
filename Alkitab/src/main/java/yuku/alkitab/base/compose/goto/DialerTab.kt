@@ -1,7 +1,9 @@
 package yuku.alkitab.base.compose.goto
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -42,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,6 +71,7 @@ fun DialerTab(
     onGotoFinished: OnGotoFinished,
 ) {
     val inInspection = LocalInspectionMode.current
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val books: Array<Book> = remember(inInspection) {
         if (inInspection) {
             previewBooks()
@@ -127,6 +133,8 @@ fun DialerTab(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .widthIn(max = 480.dp)
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
@@ -223,38 +231,42 @@ fun DialerTab(
         Spacer(Modifier.size(16.dp))
 
         val onDigit: (String) -> Unit = { d -> press(d) }
-        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                KeypadDigit("1", onDigit, Modifier.weight(1f))
-                KeypadDigit("2", onDigit, Modifier.weight(1f))
-                KeypadDigit("3", onDigit, Modifier.weight(1f))
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                KeypadDigit("4", onDigit, Modifier.weight(1f))
-                KeypadDigit("5", onDigit, Modifier.weight(1f))
-                KeypadDigit("6", onDigit, Modifier.weight(1f))
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                KeypadDigit("7", onDigit, Modifier.weight(1f))
-                KeypadDigit("8", onDigit, Modifier.weight(1f))
-                KeypadDigit("9", onDigit, Modifier.weight(1f))
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Box(modifier = Modifier.weight(1f).height(56.dp), contentAlignment = Alignment.Center) {
-                    IconButton(onClick = { press("backspace") }) {
-                        Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = stringResource(R.string.desc_backspace))
-                    }
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
+            val buttonHeight = if (isLandscape) 52.dp else ((maxWidth / 3 - 4.dp) * 5 / 8).coerceAtLeast(52.dp)
+            val cellHeight = buttonHeight + 4.dp
+            Column {
+                Row(modifier = Modifier.fillMaxWidth().height(cellHeight)) {
+                    KeypadDigit("1", onDigit, Modifier.weight(1f))
+                    KeypadDigit("2", onDigit, Modifier.weight(1f))
+                    KeypadDigit("3", onDigit, Modifier.weight(1f))
                 }
-                KeypadDigit("0", onDigit, Modifier.weight(1f))
-                Box(modifier = Modifier.weight(1f).height(56.dp), contentAlignment = Alignment.Center) {
-                    Button(
-                        onClick = {
-                            val ch = chapterText.toIntOrNull() ?: 0
-                            val v = if (askForVerse) verseText.toIntOrNull() ?: 0 else 0
-                            onGotoFinished(GotoTab.DIALER, selectedBook.bookId, ch, v)
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResource(R.string.ok)) }
+                Row(modifier = Modifier.fillMaxWidth().height(cellHeight)) {
+                    KeypadDigit("4", onDigit, Modifier.weight(1f))
+                    KeypadDigit("5", onDigit, Modifier.weight(1f))
+                    KeypadDigit("6", onDigit, Modifier.weight(1f))
+                }
+                Row(modifier = Modifier.fillMaxWidth().height(cellHeight)) {
+                    KeypadDigit("7", onDigit, Modifier.weight(1f))
+                    KeypadDigit("8", onDigit, Modifier.weight(1f))
+                    KeypadDigit("9", onDigit, Modifier.weight(1f))
+                }
+                Row(modifier = Modifier.fillMaxWidth().height(cellHeight)) {
+                    Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                        IconButton(onClick = { press("backspace") }) {
+                            Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = stringResource(R.string.desc_backspace))
+                        }
+                    }
+                    KeypadDigit("0", onDigit, Modifier.weight(1f))
+                    Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                        Button(
+                            onClick = {
+                                val ch = chapterText.toIntOrNull() ?: 0
+                                val v = if (askForVerse) verseText.toIntOrNull() ?: 0 else 0
+                                onGotoFinished(GotoTab.DIALER, selectedBook.bookId, ch, v)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.ok)) }
+                    }
                 }
             }
         }
@@ -263,7 +275,7 @@ fun DialerTab(
 
 @Composable
 private fun KeypadDigit(d: String, onDigit: (String) -> Unit, modifier: Modifier) {
-    Box(modifier = modifier.height(56.dp).padding(2.dp), contentAlignment = Alignment.Center) {
+    Box(modifier = modifier.fillMaxHeight().padding(2.dp), contentAlignment = Alignment.Center) {
         TextButton(
             onClick = { onDigit(d) },
             // Plain keypad digits like the legacy dialer's white keypad text —

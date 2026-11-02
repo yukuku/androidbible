@@ -12,14 +12,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.BroadcastFrameClock
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.createLifecycleAwareWindowRecomposer
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getAllSemanticsNodes
 import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.text.AnnotatedString
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -147,6 +150,66 @@ class GotoScreenNavigationTest {
         }
     }
 
+    @Test
+    fun `digit touch targets keep their minimum height and grow with their width`() {
+        withScreen(GotoTab.DIALER) { screen ->
+            for (width in listOf(320, 360, 600, 840)) {
+                screen.resize(width, 1200)
+                for (bounds in screen.digitBounds()) {
+                    assertTrue("digit height at $width must be at least 52dp", bounds.height >= 52f)
+                    assertTrue("digit height at $width must be at least five eighths of its width", bounds.height + 1f >= bounds.width * 5f / 8f)
+                    assertTrue("digit width at $width must respect the centered content cap", bounds.width <= 130f)
+                    if (width == 320) assertEquals(52f, bounds.height, 1f)
+                }
+                assertEquals(width / 2f, screen.digitBounds().first().center.x, 1f)
+            }
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w840dp-h640dp-land-mdpi")
+    fun `landscape buttons keep their compact height and centered width cap`() {
+        withScreen(GotoTab.DIALER) { screen ->
+            screen.resize(840, 640)
+            for (bounds in screen.digitBounds()) {
+                assertEquals(52f, bounds.height, 1f)
+                assertTrue(bounds.width <= 130f)
+            }
+            assertEquals(420f, screen.digitBounds().first().center.x, 1f)
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w640dp-h360dp-land-mdpi")
+    fun `the direct reference field can scroll into view and accept text above a landscape keyboard`() {
+        withScreen(GotoTab.DIRECT) { screen ->
+            screen.resize(640, 360)
+            screen.setKeyboardHeight(220)
+            screen.advanceFrames(10)
+            screen.scrollToBottom()
+            screen.enterReference("Gen 1:2")
+            screen.advanceFrames(5)
+            assertTrue(screen.isInputFocused())
+            assertEquals("Gen 1:2", screen.inputText())
+        }
+    }
+
+    @Test
+    fun `returning to Direct restores focus after scrolling its input out of view`() {
+        withScreen(GotoTab.DIRECT) { screen ->
+            screen.resize(360, 120)
+            screen.enterReference("G")
+            screen.advanceFrames(5)
+            screen.scrollToBottom()
+            screen.tapTab(GotoTab.DIALER)
+            screen.advanceFrames(5)
+            screen.tapTab(GotoTab.DIRECT)
+            screen.advanceFrames(90)
+            assertTrue(screen.isInputFocused())
+            assertEquals("G", screen.inputText())
+        }
+    }
+
     private fun withScreen(initialTab: GotoTab, block: (Screen) -> Unit) {
         Preferences.setInt(Prefkey.goto_last_tab, initialTab.ordinal1Based)
         val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
@@ -197,6 +260,14 @@ class GotoScreenNavigationTest {
         vararg val titles: String,
     ) {
         private var frameNumber = 0L
+        private var viewportWidth = 360
+        private var viewportHeight = 640
+
+        fun resize(width: Int, height: Int) {
+            viewportWidth = width
+            viewportHeight = height
+            advanceFrames(5)
+        }
 
         fun advanceFrames(count: Int, onFrame: () -> Unit = {}) {
             repeat(count) {
@@ -205,10 +276,10 @@ class GotoScreenNavigationTest {
                 clock.sendFrame(++frameNumber * 16_000_000L)
                 Shadows.shadowOf(Looper.getMainLooper()).idle()
                 view.measure(
-                    View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(viewportWidth, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(viewportHeight, View.MeasureSpec.EXACTLY),
                 )
-                view.layout(0, 0, 360, 640)
+                view.layout(0, 0, viewportWidth, viewportHeight)
                 onFrame()
             }
         }
@@ -230,8 +301,31 @@ class GotoScreenNavigationTest {
         fun tapValue(index: Int) { tap(valueNodes()[index]); advanceFrames(5) }
 
         fun tapKey(text: String) {
-            tap(nodes().single { !it.config.contains(SemanticsProperties.StateDescription) && it.config.getOrNull(SemanticsProperties.Text)?.any { value -> value.text == text } == true })
+            tap(key(text))
         }
+
+        private fun key(text: String): SemanticsNode = nodes().single {
+            !it.config.contains(SemanticsProperties.StateDescription) &&
+                it.config.getOrNull(SemanticsProperties.Text)?.any { value -> value.text == text } == true
+        }
+
+        fun digitBounds(): List<Rect> = (0..9).map { key(it.toString()).boundsInRoot }
+
+        fun scrollToBottom() {
+            val scrollable = nodes().single { it.config.contains(SemanticsProperties.VerticalScrollAxisRange) }
+            assertTrue(scrollable.config[SemanticsActions.ScrollBy].action?.invoke(0f, 1000f) == true)
+            advanceFrames(90)
+        }
+
+        private fun input(): SemanticsNode = nodes().single { it.config.contains(SemanticsProperties.EditableText) }
+
+        fun enterReference(text: String) {
+            val node = input()
+            assertTrue(node.boundsInRoot.height > 0f)
+            assertTrue(node.config[SemanticsActions.SetText].action?.invoke(AnnotatedString(text)) == true)
+        }
+
+        fun inputText(): String = input().config[SemanticsProperties.EditableText].text
 
         fun tapTab(tab: GotoTab) { tap(tab(tab)) }
 
