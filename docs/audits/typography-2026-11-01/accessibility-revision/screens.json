@@ -286,16 +286,16 @@
     "annotations": [
       {
         "label": "Songbook names",
-        "font": "System sans-medium (500); native popup size",
+        "font": "System sans · 16sp Medium (500), Android 15 platform menu",
         "box": null
       },
       {
         "label": "Secondary songbook name",
-        "font": "System sans-medium (500); retained 0.7× native popup size",
+        "font": "System sans · 11.2sp Medium (500), retained 0.7× 16sp platform menu",
         "box": null
       }
     ],
-    "note": "The native popup keeps its existing relative text sizing and colors while applying Medium throughout. Additional state capture.",
+    "note": "The native popup keeps its existing relative text sizing and colors while applying Medium throughout. Additional state capture. Nominal sizes follow the stock Android 15 menu appearance and the existing relative-size span.",
     "before": null
   },
   {

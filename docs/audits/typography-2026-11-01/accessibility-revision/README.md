@@ -4,7 +4,7 @@
 
 This revision follows the shared typography proposal. It applies Medium (500) to book selectors and dropdown items, book/chapter/verse grid buttons, Bible and song keypad digits and suffixes, and version short names or primary titles in both the selector and version manager. Version descriptions remain 14sp Regular to preserve the hierarchy.
 
-Book and version names use 16sp Medium, grid cells use 16sp Medium, keypad digits use 28sp Medium, and numeric entry uses 24sp Medium. The native song drawer previously inherited a 22sp button size; it now shares the 28sp keypad role. Secondary songbook names use 14sp Medium in Compose. The native popup retains its relative secondary sizing while applying Medium.
+Book and version names use 16sp Medium, grid cells use 16sp Medium, keypad digits use 28sp Medium, and numeric entry uses 24sp Medium. The native song drawer previously inherited a 22sp button size; it now shares the 28sp keypad role. Secondary songbook names use 14sp Medium in Compose. On the stock Android 15 capture device, the native popup uses a nominal 16sp menu size and retains its 0.7× secondary span (11.2sp), while applying Medium to both.
 
 ## Number entry
 
