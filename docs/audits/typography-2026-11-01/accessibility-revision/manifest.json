@@ -1,0 +1,232 @@
+{
+  "capturedDate": "2026-11-02",
+  "device": "Typography_Audit_API35 / emulator-5558",
+  "resolution": [
+    720,
+    1280
+  ],
+  "densityDpi": 320,
+  "fontScale": 1.0,
+  "language": "Indonesian",
+  "content": [
+    "BIMK",
+    "KJ"
+  ],
+  "before": "Retained comparison/after initial proposal snapshots. Legacy Bible snapshots use DDD names.",
+  "initialRevisionApk": {
+    "versionCode": 24393400
+  },
+  "finalRevisionApk": {
+    "versionCode": 24393490,
+    "apk": "Alkitab-24393490-5.0.0-dev.223-6762180cd-yuku.alkitab.debug-dev.apk",
+    "sha256": "40252ec0e292c3db1594c18f293a4f85d6f1d7fc68c37ba33bb6ebeac481e1b7"
+  },
+  "finalBuildCases": [
+    "song-four-digits",
+    "song-drawer-input",
+    "song-drawer",
+    "song-drawer-book-menu",
+    "legacy-goto-dialer",
+    "legacy-goto-typed",
+    "legacy-goto-book-menu",
+    "versions-downloaded",
+    "goto-direct-candidates",
+    "goto-typed",
+    "goto-verse-typed"
+  ],
+  "sourceBaseCommit": "6762180cd675d7c18d1736f3d43477978025e88e",
+  "productionSourceFilesSha256": {
+    "Alkitab/src/main/java/yuku/alkitab/base/compose/NumericEntryValue.kt": "50524e338b24939eda62f2478428adaf18bea12dd86062aa804db9da937f8d63",
+    "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt": "631422038b49e2d81f997805ddeda1ae7499a8282cf26dc8c1174253151fc91d",
+    "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DirectTab.kt": "2c0ca4a5922928dc9f679203e6a6ff8ea19d96e7df82252dc31aad102a022e3a",
+    "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/GridTab.kt": "d8c11dce62f0d84d69ad175298630f45da45f32a68db866e7aed07688c81a3f2",
+    "Alkitab/src/main/java/yuku/alkitab/base/fr/GotoDialerFragment.java": "c3742bb9ed0e6509f70feb52adb277d06787a496996c727202ec5f9573f6240f",
+    "Alkitab/src/main/java/yuku/alkitab/base/util/NumericEntryAppearance.kt": "172cdd55c8f96f548465052dca486b1290391a8b5d079ebb5bbfdfb8fbe936ee",
+    "Alkitab/src/main/java/yuku/alkitab/base/util/UiTypography.kt": "d372c8df2d7c3e0bb24d707f0111f6eced32c1cfe539f653b89d93a560fc371d",
+    "Alkitab/src/main/java/yuku/alkitab/base/util/VersionDialogHelper.kt": "692043b24f4368df4e43dbd1689485dddd6a90adf72761ebd2a6b2d637effdf7",
+    "Alkitab/src/main/java/yuku/alkitab/base/widget/LeftDrawer.java": "b25bce0edf4c7f1e6a81f20ce53f0349bf5feb8dcb5f9b1dad72084219a1624d",
+    "Alkitab/src/main/java/yuku/alkitab/songs/SongBookUtil.kt": "35ef021b7bb5b3c954e7f591e5d5e2b1e74424ba1761fb64ea0eefdecaf531af",
+    "Alkitab/src/main/java/yuku/alkitab/songs/SongSelectionControls.kt": "8009019c8a12e795fb9effd53d147418c065d4a63ef524415b362dd34b7cecbc",
+    "Alkitab/src/main/java/yuku/alkitab/songs/SongSelectionSheet.kt": "a61503ef1735cdbb36439727cc6c0807f16732ae4758748ea1a1651cf8f7e5bc",
+    "Alkitab/src/main/java/yuku/alkitab/songs/SongViewActivity.kt": "05804e37c59fe2a16ae37cfb75a1e9d3653b84622ef67136f70b3f26314984d6",
+    "Alkitab/src/main/res/layout/fragment_goto_grid.xml": "4d3f7b6e7409851f8852d8a68a8647e12a22d7d39b6f98fb9ea33e1d63257baf",
+    "Alkitab/src/main/res/layout/item_goto_dialer_book.xml": "c32a7bee8b861158af7ab50f753a1cba1114e49d3cba9b0e8ed6f045c26df3be",
+    "Alkitab/src/main/res/layout/item_goto_dialer_book_dropdown.xml": "dc8b2964f0559b15144d3df22ca3fb58c9fbec6df76ae15e87a6a2efc4983c8e",
+    "Alkitab/src/main/res/layout/item_goto_grid_cell.xml": "0400f0356ba813078be28e10b5b4b55d1ff5940fe13552de5b708b62bc96607c",
+    "Alkitab/src/main/res/layout/item_version.xml": "400cc1a8dd9a7d1a2acb2979959e85129c9ac3a87ff2463c064c7504d16c05a8",
+    "Alkitab/src/main/res/layout/left_drawer_songs.xml": "232967ac7998dbd6ffc798cb78c5729fe239897117daa91a90ccccfd9edce075",
+    "Alkitab/src/main/res/values-af/keypad_strings.xml": "22b6efac3bed8f16d4a660006ee9ac454b8b861d3fec85d39c58a11e57646fa3",
+    "Alkitab/src/main/res/values-bg/keypad_strings.xml": "6ce2e451ba8b578ac8acd4dbf8bb5c0e9af68e2fd890988e47b7d947a0b3f4b8",
+    "Alkitab/src/main/res/values-ceb/keypad_strings.xml": "078c694d0d1c25a8b46a8f5cb51945b3eaf654be1c900303cd5cd1f38ecdd44f",
+    "Alkitab/src/main/res/values-cs/keypad_strings.xml": "a65a17e53ba629ca021413535a598ea5e4881bc38020f62291bb8d6f00cf60b1",
+    "Alkitab/src/main/res/values-da/keypad_strings.xml": "536b4be1c831329dc41bddf3037c3ea27d2b4b47f8a4f192315abf8c74f534d6",
+    "Alkitab/src/main/res/values-de/keypad_strings.xml": "117ef2358e303ebdd745434a25d7683815a88c23e27ced414f34109ad75a8609",
+    "Alkitab/src/main/res/values-el/keypad_strings.xml": "40cecf0ec0f2ee01c6296bffdaa165cdd78fcac51bf00e6293a04899dc43de71",
+    "Alkitab/src/main/res/values-es/keypad_strings.xml": "03732985970969b8cb031d233c40fc2b4fcdb4691384f739d3027e13a739d2ee",
+    "Alkitab/src/main/res/values-fr/keypad_strings.xml": "82e623e05947235379b467c06268d77bead4ab3a09af462de5973762e2f71fcc",
+    "Alkitab/src/main/res/values-hu/keypad_strings.xml": "b54656301dd408d6e6108b284208f89e4c56535a7bebc7be40de90b755fc4d34",
+    "Alkitab/src/main/res/values-in/keypad_strings.xml": "4aeeeadb659f06ee48cb56dbf4b6df38a066886f52ae6f893c4c313838bdeb71",
+    "Alkitab/src/main/res/values-it/keypad_strings.xml": "92c843fbbdb7b5c633fb392c477e120e4d05e4aca7415a7f6f64d055714f11a7",
+    "Alkitab/src/main/res/values-ja/keypad_strings.xml": "c901ffce5900565c4c4210295c88212ea32517edc429b55ac8d9c28efeaad7db",
+    "Alkitab/src/main/res/values-ko/keypad_strings.xml": "f7cdcf2c62895e7d1403a98a2e9030509d3f307f2e975a8829f3cd208f57e3e8",
+    "Alkitab/src/main/res/values-lv/keypad_strings.xml": "ea9d1ae20df702148886c41dbbe1a424db139d89e2bdd1ff1aaadc9d14bfd3cb",
+    "Alkitab/src/main/res/values-ms/keypad_strings.xml": "87baa9f9f48669205b87393e77bcf40eb4a196b0b134e0f8f7e155aee6943d54",
+    "Alkitab/src/main/res/values-my/keypad_strings.xml": "8063ec26d7c7ff28eb65dc1e06e9264e47bed07c4741e39222f6460cacdcb1ea",
+    "Alkitab/src/main/res/values-nl/keypad_strings.xml": "aa19e5f9d093a753b959a9844d25f03d1c7e85ea913e01e2764e879dcb85e2bf",
+    "Alkitab/src/main/res/values-pl/keypad_strings.xml": "9dc12ab1372e0e38b0a7c19bc07ad8744bf4b41d7d9cfd8b2b11e219e6a8d5a2",
+    "Alkitab/src/main/res/values-pt-rBR/keypad_strings.xml": "531a0e27bf6d7deb3c228b12533004b4732213308b364bdaf39bc371811887e1",
+    "Alkitab/src/main/res/values-pt/keypad_strings.xml": "531a0e27bf6d7deb3c228b12533004b4732213308b364bdaf39bc371811887e1",
+    "Alkitab/src/main/res/values-ro/keypad_strings.xml": "a6336f2778d354e50d0262c7d0d566d4d0eebb273ecf8b97c82986f498698359",
+    "Alkitab/src/main/res/values-ru/keypad_strings.xml": "7249e41e0f27a4ac68e55477fed4a124516df4bc1e4b7a779926bbd70f5a83b7",
+    "Alkitab/src/main/res/values-th/keypad_strings.xml": "da2170c8f0669245a1acf1c2efc57a4abf9ca1deb7ec4f64034996ff6daecce2",
+    "Alkitab/src/main/res/values-tl/keypad_strings.xml": "29483f55b5a4ed60a4698b2f834562c80d311c3bd7677707308f0ac5040c1ca5",
+    "Alkitab/src/main/res/values-tr/keypad_strings.xml": "2db9f134afb5623f5f5dc22f828569c998c9e77434ed7602562e4bfe861b6ae2",
+    "Alkitab/src/main/res/values-uk/keypad_strings.xml": "a10f01fb91185134b40bbf5fba1d2a3a423e5c022fc88ce8889d0fb6f7da06e4",
+    "Alkitab/src/main/res/values-vi/keypad_strings.xml": "7ab115a585ab7c42f15e6be776807b9a597235dc2f909a5a054034ba77ec51b5",
+    "Alkitab/src/main/res/values-zh-rCN/keypad_strings.xml": "3ef3739367923f0efe4f2f60121cd93a1442a317aaaacce827937d7a3844f4f0",
+    "Alkitab/src/main/res/values-zh-rTW/keypad_strings.xml": "c44a120a33afe0a7edee43076170307f66bdca3cf3578dbcf99a4594e227a69a",
+    "Alkitab/src/main/res/values/keypad_strings.xml": "9a1ed947804d1ebd51e1d25044dd213fe0791d21738cdf07eca20199377251b3",
+    "Alkitab/src/main/res/values/styles_song_code_keypad.xml": "5d45127035e5aa96f1b87937776a5009fd0501a24dbedeb202f8130194edaaf0",
+    "Alkitab/src/main/res/values/typography.xml": "31b7333ee3b33d8d4dd74745ecec21916bd58c02574309470b3ea3b353d3dc0a"
+  },
+  "screens": [
+    {
+      "id": "goto-dialer",
+      "beforeSha256": "9c09c28d5dab8d6cd6b88f08d0114374260c77b394ea6174c37085cb2ed9a15f",
+      "afterSha256": "ae38697afe56c54e7ae2b5c619581996759748c7e7fe6feaef0ce9b3cf470466",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "goto-book-menu",
+      "beforeSha256": "a69b3c0e97eb3cd70c6f0c54db6a525183ddb39b3f4c3b0b5d8f57976dee4b33",
+      "afterSha256": "3c351c8029ce946fe08b0009661c87684970ee7d89d6722e7093c698a8b1714f",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "goto-grid",
+      "beforeSha256": "4c407ffe9b9960edfe7a75519acb61e47dc758ca4ac391775a6cd319f8791054",
+      "afterSha256": "91aa403c826af48c715c5b7e38d0f2b7e038595395dbf9a6acb90a0426be4581",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "goto-grid-chapter",
+      "beforeSha256": null,
+      "afterSha256": "0b5c2984f0901e392e5cd8bb640d5ad3e41d9a26412541e00478ab6fea5bee30",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "goto-grid-verse",
+      "beforeSha256": null,
+      "afterSha256": "6711bb849a814528cc7d555d0b3bc90645859405456acf912e38fbd26a6e1f45",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "goto-direct-candidates",
+      "beforeSha256": null,
+      "afterSha256": "e418895e92a61f65bea86a9dfbdf4386b217baab647e68f4209043f26f5390c6",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "version-picker",
+      "beforeSha256": "7ca1cdcbfa4b47990b56ff47b5ebcdaf380303942f2a7daa3cbef95ec3dd0b13",
+      "afterSha256": "6ebad07cb7eec18868f149ca0a651f83fdfa61b80a69f2e0156979e37674fbf2",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "versions",
+      "beforeSha256": "53ad94eae13e40583a963df6769d5eca93511f3a44e5b0bd00a7e9200801ae7b",
+      "afterSha256": "a49c6f9d524222ff8fd8985121d6e8a2efd52a6a7387cbda38dbe679550be0d0",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "versions-downloaded",
+      "beforeSha256": null,
+      "afterSha256": "0111f6c234eab2f17ef09c5e6b6b3fb17d9f691d456a712c7133d364d85c9ba8",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "song-selector",
+      "beforeSha256": "7596aeb218c5eeb873ca0242869a6e0da455be1b09f1fa23f49faad040168b35",
+      "afterSha256": "42f6cd90cbfa8bb6247a80abbd65783acfb736c13c2678064071cf9d2a331b28",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "song-book-menu",
+      "beforeSha256": "9477cdfe1c937862202ac4484c66b4ed2fe538bca6c9e960d3427b29b4add9ef",
+      "afterSha256": "364603fbec17e7b52ffa4ca006226b9bf465df1d7589a668110b350dabf614f9",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "song-drawer",
+      "beforeSha256": "15b480b1ac81c27f193b6e91a5de9f40dfd50883465649a9110d541a0a970268",
+      "afterSha256": "b0ee7c152c0b4d66a903725345098f2b959da2a866becc6780569681ba961cf6",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "song-drawer-book-menu",
+      "beforeSha256": null,
+      "afterSha256": "cea3a73910572daad61670ca0f93020d4816e8e69757b9433286b146ee5715d2",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "legacy-goto-dialer",
+      "beforeSha256": "e8243557ec292bfb07727962af37390d7b66911d4685e73cb762094d811efef9",
+      "afterSha256": "9f9c477ce8c7430fdcc9b59b858ede81dcf708f3c036fcae2d9656b2c38df1d9",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "legacy-goto-grid",
+      "beforeSha256": "be1914f75823fafc28ff983d7b7c70a5b5eb099c8c1d62310e972ff82e421081",
+      "afterSha256": "373744d270a3d02a22d2bb6a59a769d5eef40dc886a3b99575a12f1a6393cded",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "legacy-goto-book-menu",
+      "beforeSha256": null,
+      "afterSha256": "9a9d5bf619166e072ed592828095216f2387d8bef693a4446ecdf3be05d4593f",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "goto-typed",
+      "beforeSha256": null,
+      "afterSha256": "1a030e56fbc06b58e41ebf874ff79e9356e0a32b9d80ea5612e357e42f73af19",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "goto-verse-typed",
+      "beforeSha256": null,
+      "afterSha256": "d8b2d6cd9451d4589c1dbc499092efbb6db0d8a11ace2b829fc219e02d13a012",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "song-input",
+      "beforeSha256": null,
+      "afterSha256": "a073b893b45f8ea4af833e13e347fd06be6626e248ff85fc102a83845780b374",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "song-appended",
+      "beforeSha256": null,
+      "afterSha256": "ec4485d2a3eae73fc57e46e76b130aea27427de91dd3a4d9e78a4ec00101a7bc",
+      "apkVersionCode": 24393400
+    },
+    {
+      "id": "song-four-digits",
+      "beforeSha256": null,
+      "afterSha256": "dbec4f823da3eb8cc613f410ef4c10b2ddd0885340a8b125b54b795bb4e97c66",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "song-drawer-input",
+      "beforeSha256": null,
+      "afterSha256": "cf76a4ee9bb4af1a4bc002a64e9a4fff7f69c5f687d29579d837e07b8ee0c8f6",
+      "apkVersionCode": 24393490
+    },
+    {
+      "id": "legacy-goto-typed",
+      "beforeSha256": null,
+      "afterSha256": "1da7243d88ef17e483f71337d0bf9b032bc8bef5ba98f8e6f8b8e07297d6da82",
+      "apkVersionCode": 24393490
+    }
+  ]
+}

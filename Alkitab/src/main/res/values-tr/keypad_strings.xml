@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keypad_value_replace">Sonraki rakam bu değeri değiştirir</string>
+    <string name="keypad_value_append">Sonraki rakam bu değere eklenir</string>
+</resources>

@@ -62,7 +62,7 @@
 				android:orientation="vertical">
 
 				<TextView
-					android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+					android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 					android:id="@+id/tShortName"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"

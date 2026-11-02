@@ -20,7 +20,7 @@
 			android:layout_height="wrap_content">
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+				android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 				android:id="@+id/lSelectedBook"
 				style="?actionButtonStyle"
 				android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
 				tools:text="Selected book" />
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+				android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 				android:id="@+id/lSelectedChapter"
 				style="?actionButtonStyle"
 				android:layout_width="wrap_content"

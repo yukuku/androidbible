@@ -118,6 +118,35 @@ class GotoScreenNavigationTest {
         }
     }
 
+    @Test
+    fun `prefilled values are replacement ready and typed values keep independent append state`() {
+        Preferences.setBoolean(Prefkey.gotoAskForVerse, true)
+        withScreen(GotoTab.DIALER) { screen ->
+            val replace = screen.view.context.getString(R.string.keypad_value_replace)
+            val append = screen.view.context.getString(R.string.keypad_value_append)
+            assertEquals(listOf(replace, replace), screen.valueModes())
+            screen.tapKey("3")
+            screen.advanceFrames(5)
+            assertEquals(listOf("3", "1"), screen.values())
+            assertEquals(listOf(append, replace), screen.valueModes())
+            screen.tapKey("4")
+            screen.advanceFrames(5)
+            assertEquals("34", screen.values()[0])
+            screen.tapValue(1)
+            screen.tapKey("2")
+            screen.advanceFrames(5)
+            assertEquals("2", screen.values()[1])
+            screen.tapKey("1")
+            screen.advanceFrames(5)
+            assertEquals("21", screen.values()[1])
+            screen.tapValue(0)
+            screen.tapKey("5")
+            screen.advanceFrames(5)
+            assertEquals("5", screen.values()[0])
+            assertEquals(listOf(append, append), screen.valueModes())
+        }
+    }
+
     private fun withScreen(initialTab: GotoTab, block: (Screen) -> Unit) {
         Preferences.setInt(Prefkey.goto_last_tab, initialTab.ordinal1Based)
         val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
@@ -192,8 +221,22 @@ class GotoScreenNavigationTest {
                 it.config.getOrNull(SemanticsProperties.Text)?.any { text -> text.text == titles[tab.ordinal1Based - 1] } == true
         }
 
-        fun tapTab(tab: GotoTab) {
-            val center = tab(tab).boundsInRoot.center
+        private fun valueNodes(): List<SemanticsNode> = nodes().filter { it.config.contains(SemanticsProperties.StateDescription) }
+
+        fun valueModes(): List<String> = valueNodes().map { it.config[SemanticsProperties.StateDescription] }
+
+        fun values(): List<String> = valueNodes().map { it.config[SemanticsProperties.Text].joinToString("") { text -> text.text } }
+
+        fun tapValue(index: Int) { tap(valueNodes()[index]); advanceFrames(5) }
+
+        fun tapKey(text: String) {
+            tap(nodes().single { !it.config.contains(SemanticsProperties.StateDescription) && it.config.getOrNull(SemanticsProperties.Text)?.any { value -> value.text == text } == true })
+        }
+
+        fun tapTab(tab: GotoTab) { tap(tab(tab)) }
+
+        private fun tap(node: SemanticsNode) {
+            val center = node.boundsInRoot.center
             val downTime = SystemClock.uptimeMillis()
             for (action in listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP)) {
                 val event = MotionEvent.obtain(downTime, downTime + 16, action, center.x, center.y, 0)

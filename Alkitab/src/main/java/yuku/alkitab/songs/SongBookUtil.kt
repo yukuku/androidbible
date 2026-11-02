@@ -8,11 +8,15 @@ import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import android.text.style.TypefaceSpan
 import android.view.Menu
 import android.view.View
 import android.widget.PopupMenu
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
+import java.io.IOException
+import java.io.InputStream
+import java.util.concurrent.atomic.AtomicBoolean
 import okhttp3.Response
 import yuku.alkitab.base.App
 import yuku.alkitab.base.connection.Connections
@@ -25,9 +29,6 @@ import yuku.alkitab.debug.R
 import yuku.alkitab.io.OptionalGzipInputStream
 import yuku.alkitab.songs.newdoc.SongDocument
 import yuku.alkitab.songs.newdoc.SongDocumentJson
-import java.io.IOException
-import java.io.InputStream
-import java.util.concurrent.atomic.AtomicBoolean
 
 object SongBookUtil {
     private const val POPUP_ID_ALL = -1
@@ -94,6 +95,7 @@ object SongBookUtil {
             sb.append(context.getString(R.string.sn_bookselector_all_desc))
             sb.setSpan(RelativeSizeSpan(0.7f), sbLen, sb.length, 0)
             sb.setSpan(ForegroundColorSpan(0xffa0a0a0.toInt()), sbLen, sb.length, 0)
+            sb.setSpan(TypefaceSpan("sans-serif-medium"), 0, sb.length, 0)
             menu.add(0, POPUP_ID_ALL, 0, sb)
         }
 
@@ -108,12 +110,14 @@ object SongBookUtil {
             }
             sb.setSpan(RelativeSizeSpan(0.7f), sbLen, sb.length, 0)
             sb.setSpan(ForegroundColorSpan(0xffa0a0a0.toInt()), sbLen, sb.length, 0)
+            sb.setSpan(TypefaceSpan("sans-serif-medium"), 0, sb.length, 0)
             menu.add(0, i + 1, 0, sb)
         }
 
         if (withMore) {
             val sb = SpannableStringBuilder(context.getText(R.string.sn_bookselector_more))
             sb.setSpan(ForegroundColorSpan(ResourcesCompat.getColor(context.resources, R.color.escape, context.theme)), 0, sb.length, 0)
+            sb.setSpan(TypefaceSpan("sans-serif-medium"), 0, sb.length, 0)
             menu.add(0, POPUP_ID_MORE, 0, sb)
         }
 

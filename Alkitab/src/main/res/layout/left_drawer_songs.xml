@@ -28,7 +28,7 @@
 			android:orientation="horizontal">
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+				android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 				android:id="@+id/bChangeBook"
 				style="@style/FakeSpinner"
 				android:layout_width="0dp"
@@ -39,7 +39,7 @@
 				tools:ignore="HardcodedText" />
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+				android:textAppearance="@style/TextAppearance.Alkitab.Number"
 				android:id="@+id/bChangeCode"
 				android:layout_width="0dp"
 				android:layout_height="match_parent"
@@ -159,7 +159,7 @@
 					android:text="0" />
 
 				<Button
-					android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+					android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 					android:id="@+id/bOk"
 					style="?buttonBarButtonStyle"
 					android:layout_width="0dp"

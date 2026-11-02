@@ -1,5 +1,7 @@
 # Shared UI scale: implementation and comparison
 
+This is the initial proposal snapshot. See the [Medium-weight accessibility revision and number-field options](../accessibility-revision/README.md) for the subsequent feedback changes.
+
 [Open the complete before/after report](index.html). It embeds every screenshot, so the HTML can be downloaded and opened offline. The report contains 75 screen/state pairs, font annotations, and source evidence. [Annotated PNG exports](annotated/) provide the same comparisons as individual images.
 
 The original app and updated app were captured on the same dedicated Android 15 emulator, at 720 × 1280 pixels, 320dpi, and 100% system font size. App language is Indonesian. The selected-verse before image is reused from the original audit on the same emulator and font settings; application source was unchanged between that audit and the comparison baseline. The other 74 before images were recaptured from the retained original APK. Both passes use the same installed BIMK and KJ content and local bookmark, note, highlight, label, and progress-mark fixtures. The audio and cross-reference cases use the bundled DDD debug version. No account was signed in and no report, feedback, or exported file was sent.

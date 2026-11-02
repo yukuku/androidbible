@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
@@ -27,10 +26,8 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -43,17 +40,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.compose.NumericEntryValue
 import yuku.alkitab.base.compose.bookForegroundColor
 import yuku.alkitab.base.util.BookNameSorter
 import yuku.alkitab.debug.R
@@ -153,7 +148,7 @@ fun DialerTab(
                 onValueChange = {},
                 readOnly = true,
                 // Same per-book color the legacy dialer paints its book spinner with.
-                textStyle = LocalTextStyle.current.copy(color = bookForegroundColor(selectedBook.bookId)),
+                textStyle = MaterialTheme.typography.titleMedium.copy(color = bookForegroundColor(selectedBook.bookId)),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = bookMenuOpen) },
                 modifier = Modifier
                     .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
@@ -171,8 +166,7 @@ fun DialerTab(
                             Text(
                                 book.shortName,
                                 color = bookForegroundColor(book.bookId),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+                                style = MaterialTheme.typography.titleMedium,
                             )
                         },
                         trailingIcon = if (isSelected) {
@@ -201,19 +195,23 @@ fun DialerTab(
         ) {
             Text(stringResource(R.string.pasal_sebelumangka))
             Spacer(Modifier.width(8.dp))
-            DialerField(
+            NumericEntryValue(
                 text = chapterText,
                 isActive = active == ActiveField.CHAPTER,
+                isReplaceOnNextInput = chapterFirstTime || chapterText.isEmpty(),
                 onClick = { active = ActiveField.CHAPTER },
+                modifier = Modifier.size(width = 64.dp, height = 64.dp),
             )
             if (askForVerse) {
                 Spacer(Modifier.width(16.dp))
                 Text(stringResource(R.string.ayat_sebelumangka))
                 Spacer(Modifier.width(8.dp))
-                DialerField(
+                NumericEntryValue(
                     text = verseText,
                     isActive = active == ActiveField.VERSE,
+                    isReplaceOnNextInput = verseFirstTime || verseText.isEmpty(),
                     onClick = { active = ActiveField.VERSE },
+                    modifier = Modifier.size(width = 64.dp, height = 64.dp),
                 )
             }
         }
@@ -259,21 +257,6 @@ fun DialerTab(
                     ) { Text(stringResource(R.string.ok)) }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun DialerField(text: String, isActive: Boolean, onClick: () -> Unit) {
-    val bg = if (isActive) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
-    Surface(
-        onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
-        color = bg,
-        modifier = Modifier.size(width = 64.dp, height = 64.dp),
-    ) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-            Text(text, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
         }
     }
 }

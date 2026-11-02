@@ -182,7 +182,7 @@ private fun VersionRowItem(
     ) {
         RadioButton(selected = selected, onClick = onClick)
         Column(modifier = Modifier.padding(start = 8.dp)) {
-            Text(text = primary, style = if (selected) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
+            Text(text = primary, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
             if (secondary != null) {
                 Text(
                     text = secondary,

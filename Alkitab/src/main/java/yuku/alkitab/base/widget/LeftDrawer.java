@@ -668,7 +668,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 
 			void setBookName(CharSequence bookName);
 
-			void setCode(String code);
+			void setCode(String code, boolean isReplaceOnNextInput);
 		}
 
 		Listener listener;

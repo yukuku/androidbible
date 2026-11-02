@@ -21,7 +21,7 @@ enum class UiTextRole(
     LABEL(R.style.TextAppearance_Alkitab_Label, R.dimen.ui_type_supporting_size, R.dimen.ui_type_supporting_line_height, 500),
     CAPTION(R.style.TextAppearance_Alkitab_Caption, R.dimen.ui_type_caption_size, R.dimen.ui_type_caption_line_height, 400),
     NUMBER(R.style.TextAppearance_Alkitab_Number, R.dimen.ui_type_number_size, R.dimen.ui_type_number_line_height, 500),
-    KEYPAD(R.style.TextAppearance_Alkitab_Keypad, R.dimen.ui_type_keypad_size, R.dimen.ui_type_keypad_line_height, 400),
+    KEYPAD(R.style.TextAppearance_Alkitab_Keypad, R.dimen.ui_type_keypad_size, R.dimen.ui_type_keypad_line_height, 500),
 }
 
 object UiTypography {

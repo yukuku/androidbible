@@ -10,15 +10,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.ColorUtils
+import androidx.core.view.ViewCompat
 import androidx.test.core.app.ApplicationProvider
 import com.google.android.material.tabs.TabLayout
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import yuku.afw.App
+import yuku.alkitab.base.util.NumericEntryAppearance
 import yuku.alkitab.base.util.UiTextRole
 import yuku.alkitab.base.util.UiTypography
 import yuku.alkitab.debug.R
@@ -27,6 +33,26 @@ import yuku.alkitab.debug.R
 @Config(application = App::class, sdk = [26, 34])
 class BibleAppTypographyTest {
     private val context: Context = ContextThemeWrapper(ApplicationProvider.getApplicationContext(), R.style.Theme_Alkitab)
+
+    @Test
+    fun `number input keeps replacement values readable and clears the cursor when the next digit replaces`() {
+        val view = TextView(context)
+        NumericEntryAppearance.apply(view, true, false)
+        assertEquals(0xfff4f7f9.toInt(), view.currentTextColor)
+        assertNotNull(view.compoundDrawablesRelative[2])
+        assertEquals(context.getString(R.string.keypad_value_append), ViewCompat.getStateDescription(view))
+
+        NumericEntryAppearance.apply(view, true, true)
+        assertEquals(0xffb2bdc4.toInt(), view.currentTextColor)
+        assertNull(view.compoundDrawablesRelative[2])
+        assertEquals(context.getString(R.string.keypad_value_replace), ViewCompat.getStateDescription(view))
+        assertTrue(ColorUtils.calculateContrast(view.currentTextColor, 0xff293c45.toInt()) >= 4.5)
+
+        NumericEntryAppearance.apply(view, false, false)
+        assertEquals(0xfff4f7f9.toInt(), view.currentTextColor)
+        assertNull(view.compoundDrawablesRelative[2])
+        assertEquals(context.getString(R.string.keypad_value_append), ViewCompat.getStateDescription(view))
+    }
 
     @Test
     fun `Compose roles use the eight agreed size weight and line height combinations`() {
@@ -46,7 +72,7 @@ class BibleAppTypographyTest {
             assertEquals(lineHeight.sp, style.lineHeight)
             assertEquals(0.sp, style.letterSpacing)
         }
-        assertEquals(listOf(500, 400, 500, 400, 500, 400, 500, 400), expected.map { it.first.fontWeight?.weight })
+        assertEquals(listOf(500, 400, 500, 400, 500, 400, 500, 500), expected.map { it.first.fontWeight?.weight })
     }
 
     @Test
@@ -76,7 +102,7 @@ class BibleAppTypographyTest {
             controller.get().setTheme(theme)
             val activity = controller.create().get()
             val row = activity.layoutInflater.inflate(R.layout.item_version, null)
-            listOf(R.id.tShortName to UiTextRole.PRIMARY, R.id.tLongName to UiTextRole.SUPPORTING, R.id.tLanguage to UiTextRole.CAPTION).forEach { (id, role) ->
+            listOf(R.id.tShortName to UiTextRole.EMPHASIS, R.id.tLongName to UiTextRole.SUPPORTING, R.id.tLanguage to UiTextRole.CAPTION).forEach { (id, role) ->
                 val view = row.findViewById<TextView>(id)
                 assertEquals(context.resources.getDimensionPixelSize(role.size).toFloat(), view.textSize, 0.01f)
                 assertEquals(context.resources.getDimensionPixelSize(role.lineHeight), view.lineHeight)

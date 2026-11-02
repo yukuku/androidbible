@@ -61,6 +61,8 @@
         <item name="android:lineHeight" tools:targetApi="p">@dimen/ui_type_number_line_height</item>
     </style>
     <style name="TextAppearance.Alkitab.Keypad" parent="TextAppearance.Alkitab.Base">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textSize">@dimen/ui_type_keypad_size</item>
         <item name="lineHeight">@dimen/ui_type_keypad_line_height</item>
         <item name="android:lineHeight" tools:targetApi="p">@dimen/ui_type_keypad_line_height</item>

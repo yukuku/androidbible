@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+	android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 	android:id="@android:id/text1"
 	style="?android:spinnerItemStyle"
 	android:layout_width="match_parent"

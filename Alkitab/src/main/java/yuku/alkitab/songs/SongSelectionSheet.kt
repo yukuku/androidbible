@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat
 import yuku.alkitab.base.App
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
+import yuku.alkitab.base.compose.NumericEntryValue
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.debug.R
 
@@ -63,7 +64,7 @@ object SongSelectionSheet {
             val state = remember { KeypadState() }
             val books = remember { App.services.storage.songDb.listSongBookInfos() }
             var expanded by remember { mutableStateOf(false) }
-            val popupTextStyle = MaterialTheme.typography.bodyLarge
+            val popupTextStyle = MaterialTheme.typography.titleMedium
             val escapeColor = colorResource(R.color.escape)
             DisposableEffect(Unit) {
                 onReady(state, dismiss)
@@ -86,14 +87,20 @@ object SongSelectionSheet {
                             onValueChange = {},
                             readOnly = true,
                             singleLine = true,
-                            textStyle = MaterialTheme.typography.bodyLarge,
+                            textStyle = MaterialTheme.typography.titleMedium,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                             modifier = Modifier
                                 .weight(1.5f)
                                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                         )
                         Box(Modifier.weight(1.5f), contentAlignment = Alignment.Center) {
-                            Text(state.enteredCode, style = MaterialTheme.typography.headlineMedium, maxLines = 1)
+                            NumericEntryValue(
+                                text = state.enteredCode,
+                                isActive = true,
+                                isReplaceOnNextInput = state.isReplaceOnNextInput,
+                                onClick = null,
+                                modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 8.dp),
+                            )
                         }
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                             IconButton(onClick = { onKey(R.id.bBackspace) }) {
@@ -115,7 +122,7 @@ object SongSelectionSheet {
                                         if (!title.isNullOrEmpty()) {
                                             Text(
                                                 text = HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
-                                                style = MaterialTheme.typography.bodyMedium,
+                                                style = MaterialTheme.typography.titleSmall,
                                                 color = Color(0xFFA0A0A0),
                                             )
                                         }
@@ -192,13 +199,17 @@ object SongSelectionSheet {
     private class KeypadState : LeftDrawer.Songs.Handle {
         var bookName by mutableStateOf("")
         var enteredCode by mutableStateOf("––––")
+        var isReplaceOnNextInput by mutableStateOf(true)
         var okEnabled by mutableStateOf(false)
         var aEnabled by mutableStateOf(false)
         var bEnabled by mutableStateOf(false)
         var cEnabled by mutableStateOf(false)
 
         override fun setBookName(bookName: CharSequence?) { this.bookName = bookName?.toString().orEmpty() }
-        override fun setCode(code: String?) { enteredCode = code.orEmpty() }
+        override fun setCode(code: String?, isReplaceOnNextInput: Boolean) {
+            enteredCode = code.orEmpty()
+            this.isReplaceOnNextInput = isReplaceOnNextInput
+        }
         override fun setOkButtonEnabled(enabled: Boolean) { okEnabled = enabled }
         override fun setAButtonEnabled(enabled: Boolean) { aEnabled = enabled }
         override fun setBButtonEnabled(enabled: Boolean) { bEnabled = enabled }

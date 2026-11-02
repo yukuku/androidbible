@@ -54,7 +54,9 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
         try {
             String phase = arguments.getString("phase");
             if (!"before".equals(phase) && !"after".equals(phase)) throw new IllegalArgumentException("phase must be before or after");
-            output = new File(getTargetContext().getExternalFilesDir(null), "typography/" + phase);
+            String folder = arguments.getString("folder", phase);
+            if (!folder.matches("[a-z0-9-]+")) throw new IllegalArgumentException("Invalid output folder");
+            output = new File(getTargetContext().getExternalFilesDir(null), "typography/" + folder);
             if (!output.mkdirs() && !output.isDirectory()) throw new IllegalStateException("Cannot create output directory");
             getTargetContext().getSharedPreferences("yuku.alkitab.debug_preferences", 0).edit()
                 .putString("prerelease_feedback_hidden_commit", BuildConfig.LAST_COMMIT_HASH)
@@ -112,7 +114,7 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
         intent.putExtras(extras);
         ActivityMonitor monitor = addMonitor(className, null, false);
         runOnMainSync(() -> getTargetContext().startActivity(intent));
-        activity = monitor.waitForActivityWithTimeout(10000);
+        activity = monitor.waitForActivityWithTimeout(60000);
         removeMonitor(monitor);
         if (activity == null) throw new IllegalStateException("Activity did not start: " + className);
         settle();
@@ -149,13 +151,36 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
                 reader(); clickView(R.id.bDisplay); settle();
                 if (name.endsWith("menu")) click("Roboto");
                 break;
-            case "versions": launch("yuku.alkitab.versionmanager.VersionsActivity", new Bundle()); break;
+            case "versions": case "versions-downloaded":
+                launch("yuku.alkitab.versionmanager.VersionsActivity", new Bundle());
+                if (name.equals("versions-downloaded")) click("Terunduh");
+                break;
             case "version-picker": reader(); click("BIMK"); break;
             case "goto-dialer": case "goto-direct": case "goto-grid": case "goto-book-menu":
+            case "goto-typed": case "goto-verse-typed": case "goto-grid-chapter": case "goto-grid-verse": case "goto-direct-candidates":
                 Bundle go = new Bundle(); go.putInt("bookId", 0); go.putInt("chapter", 1); go.putInt("verse", 1);
                 launch("yuku.alkitab.base.ac.GotoActivity", go);
-                click(name.equals("goto-direct") ? "Ketik" : name.equals("goto-grid") ? "Pilih" : "Telusuri");
+                click(name.startsWith("goto-direct") ? "Ketik" : name.startsWith("goto-grid") ? "Pilih" : "Telusuri");
                 if (name.equals("goto-book-menu")) { settle(); click("Kejadian"); }
+                if (name.startsWith("goto-grid-")) click("Kej");
+                if (name.equals("goto-grid-verse")) click("1");
+                if (name.equals("goto-typed") || name.equals("goto-verse-typed")) { clickKey("3"); clickKey("4"); }
+                if (name.equals("goto-verse-typed")) { clickValue(1); clickKey("2"); }
+                if (name.equals("goto-direct-candidates")) {
+                    ArrayDeque<AccessibilityNodeInfo> nodes = new ArrayDeque<>();
+                    nodes.add(getUiAutomation().getRootInActiveWindow());
+                    while (!nodes.isEmpty()) {
+                        AccessibilityNodeInfo node = nodes.remove();
+                        if (node.isEditable()) {
+                            Bundle text = new Bundle();
+                            text.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, "Ke");
+                            if (!node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, text)) throw new IllegalStateException("Cannot enter book query");
+                            break;
+                        }
+                        for (int i = 0; i < node.getChildCount(); i++) { AccessibilityNodeInfo child = node.getChild(i); if (child != null) nodes.add(child); }
+                    }
+                    hideKeyboard();
+                }
                 break;
             case "search": case "search-results": case "search-filter":
                 Bundle search = new Bundle(); search.putInt("openedBookId", 0);
@@ -183,12 +208,17 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
                 if (name.equals("devotion-selector")) click("Santapan Harian ▾");
                 break;
             case "song": case "song-selector": case "song-book-menu": case "song-search": case "song-media": case "song-drawer":
+            case "song-input": case "song-appended": case "song-four-digits": case "song-drawer-input": case "song-drawer-book-menu":
                 launch("yuku.alkitab.songs.SongViewActivity", new Bundle());
-                if (name.equals("song-selector") || name.equals("song-book-menu")) clickView(R.id.toolbar);
+                if (name.equals("song-selector") || name.equals("song-book-menu") || name.equals("song-input") || name.equals("song-appended") || name.equals("song-four-digits")) clickView(R.id.toolbar);
                 if (name.equals("song-book-menu")) click("KJ");
                 if (name.equals("song-search")) click("Cari");
                 if (name.equals("song-media")) click(activity.getString(R.string.sn_media_title));
-                if (name.equals("song-drawer")) drawer();
+                if (name.startsWith("song-drawer")) drawer();
+                if (name.equals("song-drawer-book-menu")) clickView(R.id.bChangeBook);
+                if (name.equals("song-input") || name.equals("song-appended") || name.equals("song-drawer-input")) clickKey("2");
+                if (name.equals("song-appended")) clickKey("1");
+                if (name.equals("song-four-digits")) { clickKey("1"); clickKey("2"); clickKey("3"); clickKey("4"); }
                 hideKeyboard();
                 break;
             case "plan": case "plan-drawer": case "plan-date": case "plan-list":
@@ -223,9 +253,12 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
                 Bundle transfer = new Bundle(); transfer.putInt("mode", 0);
                 launch("yuku.alkitab.datatransfer.ui.DataTransferActivity", transfer); break;
             case "legacy-reader": reader(); break;
-            case "legacy-goto-dialer": case "legacy-goto-grid":
+            case "legacy-goto-dialer": case "legacy-goto-grid": case "legacy-goto-typed": case "legacy-goto-book-menu":
                 Bundle legacyGo = new Bundle(); legacyGo.putInt("bookId", 0); legacyGo.putInt("chapter", 1); legacyGo.putInt("verse", 1);
-                launch("yuku.alkitab.base.ac.GotoActivity", legacyGo); click(name.endsWith("grid") ? "PILIH" : "TELUSURI"); break;
+                launch("yuku.alkitab.base.ac.GotoActivity", legacyGo); click(name.endsWith("grid") ? "PILIH" : "TELUSURI");
+                if (name.equals("legacy-goto-typed")) { clickKey("3"); clickKey("4"); }
+                if (name.equals("legacy-goto-book-menu")) clickView(R.id.cbBook);
+                break;
             case "legacy-sign-in": launch("yuku.alkitab.base.sync.SyncLoginActivity", new Bundle()); break;
             case "legacy-song": launch("yuku.alkitab.songs.SongViewActivity", new Bundle()); break;
             case "bookmark-editor": case "label-chooser":
@@ -360,6 +393,46 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
         down.recycle(); up.recycle();
     }
 
+    private void clickValue(int index) {
+        ArrayDeque<AccessibilityNodeInfo> nodes = new ArrayDeque<>();
+        nodes.add(getUiAutomation().getRootInActiveWindow());
+        while (!nodes.isEmpty()) {
+            AccessibilityNodeInfo node = nodes.remove();
+            if (node.getStateDescription() != null && index-- == 0) {
+                Rect bounds = new Rect(); node.getBoundsInScreen(bounds);
+                tap(bounds.centerX(), bounds.centerY());
+                settle();
+                return;
+            }
+            for (int i = 0; i < node.getChildCount(); i++) { AccessibilityNodeInfo child = node.getChild(i); if (child != null) nodes.add(child); }
+        }
+        throw new IllegalStateException("Missing number value");
+    }
+
+    private void clickKey(String label) {
+        ArrayDeque<AccessibilityNodeInfo> nodes = new ArrayDeque<>();
+        nodes.add(getUiAutomation().getRootInActiveWindow());
+        while (!nodes.isEmpty()) {
+            AccessibilityNodeInfo node = nodes.remove();
+            if (label.contentEquals(node.getText() == null ? "" : node.getText())) {
+                boolean isValue = false;
+                AccessibilityNodeInfo ancestor = node;
+                while (ancestor != null) {
+                    if (ancestor.getStateDescription() != null) { isValue = true; break; }
+                    ancestor = ancestor.getParent();
+                }
+                if (!isValue) {
+                    Rect bounds = new Rect(); node.getBoundsInScreen(bounds);
+                    tap(bounds.centerX(), bounds.centerY());
+                    settle();
+                    return;
+                }
+            }
+            for (int i = 0; i < node.getChildCount(); i++) { AccessibilityNodeInfo child = node.getChild(i); if (child != null) nodes.add(child); }
+        }
+        throw new IllegalStateException("Missing keypad key " + label);
+    }
+
     private void hideKeyboard() {
         runOnMainSync(() -> ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0));
         settle();
@@ -375,5 +448,22 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
         if (bitmap == null) throw new IllegalStateException("Screenshot unavailable");
         try (FileOutputStream stream = new FileOutputStream(new File(output, name + ".png"))) { bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream); }
         bitmap.recycle();
+        if (!arguments.containsKey("folder")) return;
+        try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(new File(output, name + "-input-state.json")), "UTF-8"))) {
+            writer.setIndent("  ");
+            writer.beginArray();
+            ArrayDeque<AccessibilityNodeInfo> nodes = new ArrayDeque<>();
+            AccessibilityNodeInfo root = getUiAutomation().getRootInActiveWindow();
+            if (root != null) nodes.add(root);
+            while (!nodes.isEmpty()) {
+                AccessibilityNodeInfo node = nodes.remove();
+                if (node.getStateDescription() != null) {
+                    writer.beginObject().name("text").value(node.getText() == null ? null : node.getText().toString())
+                        .name("stateDescription").value(node.getStateDescription().toString()).endObject();
+                }
+                for (int i = 0; i < node.getChildCount(); i++) { AccessibilityNodeInfo child = node.getChild(i); if (child != null) nodes.add(child); }
+            }
+            writer.endArray();
+        }
     }
 }

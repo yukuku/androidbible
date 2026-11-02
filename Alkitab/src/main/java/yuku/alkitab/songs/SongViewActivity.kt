@@ -599,9 +599,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         }
 
         selectionControls?.setBookName(SongBookUtil.escapeSongBookName(bookName))
-        selectionControls?.setCode(doc.code)
+        selectionControls?.setCode(doc.code, true)
         leftDrawer.handle.setBookName(SongBookUtil.escapeSongBookName(bookName))
-        leftDrawer.handle.setCode(doc.code)
+        leftDrawer.handle.setCode(doc.code, true)
 
         val copyright = SongBookUtil.getCopyright(bookName)
         val patchTextLinkLabel = if (bookName?.startsWith("_") == true) null else getString(R.string.patch_text_open_link)
@@ -694,7 +694,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         handle.setCButtonEnabled(false)
 
         val originalCode = currentSong?.code ?: "––––"
-        handle.setCode(originalCode)
+        handle.setCode(originalCode, true)
 
         state_originalCode = originalCode
         state_tempCode = ""
@@ -878,7 +878,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val handle = keypadHandle
 
         fun updateHandle() {
-            handle.setCode(state_tempCode)
+            handle.setCode(state_tempCode, state_tempCode.isEmpty() || state_tempCode.length >= 4)
 
             handle.setOkButtonEnabled(App.services.storage.songDb.songExists(currentBookName, state_tempCode))
             handle.setAButtonEnabled(state_tempCode.length <= 3 && App.services.storage.songDb.songExists(currentBookName, state_tempCode + "A"))
@@ -922,10 +922,10 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
                     if (song != null) {
                         displaySong(currentBookName, song)
                     } else {
-                        handle.setCode(state_originalCode) // revert
+                        handle.setCode(state_originalCode, true) // revert
                     }
                 } else {
-                    handle.setCode(state_originalCode) // revert
+                    handle.setCode(state_originalCode, true) // revert
                 }
                 leftDrawer.closeDrawer()
                 dismissSelection?.invoke()

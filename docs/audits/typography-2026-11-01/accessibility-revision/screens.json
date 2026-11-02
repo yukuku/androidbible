@@ -1,0 +1,520 @@
+[
+  {
+    "id": "goto-dialer",
+    "title": "Bible keypad: prefilled values",
+    "annotations": [
+      {
+        "label": "Book selector",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          95,
+          330,
+          420,
+          65
+        ],
+        "beforeFont": "16sp Regular (400)"
+      },
+      {
+        "label": "Numeric value",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          220,
+          445,
+          375,
+          134
+        ],
+        "beforeFont": "24sp Medium (500)"
+      },
+      {
+        "label": "Keypad digits",
+        "font": "System sans · 28sp Medium (500) · line 36sp",
+        "box": [
+          140,
+          655,
+          450,
+          420
+        ],
+        "beforeFont": "28sp Regular (400)"
+      }
+    ],
+    "note": "Both values are replacement-ready. The selected chapter has a blue dashed outline; the verse keeps a quieter dashed outline. The first digit replaces the selected value.",
+    "before": "goto-dialer"
+  },
+  {
+    "id": "goto-book-menu",
+    "title": "Bible book dropdown",
+    "annotations": [
+      {
+        "label": "All book names",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          90,
+          440,
+          530,
+          645
+        ],
+        "beforeFont": "16sp: selected row Medium (500), other rows Regular (400)"
+      }
+    ],
+    "note": "Every book row uses Medium, including unselected books. Existing book colors and the selected checkmark remain.",
+    "before": "goto-book-menu"
+  },
+  {
+    "id": "goto-grid",
+    "title": "Book selection grid",
+    "annotations": [
+      {
+        "label": "Book cells",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          30,
+          190,
+          660,
+          960
+        ],
+        "beforeFont": "16sp Regular (400)"
+      }
+    ],
+    "note": "Every book cell uses the same Medium weight.",
+    "before": "goto-grid"
+  },
+  {
+    "id": "goto-grid-chapter",
+    "title": "Chapter selection grid",
+    "annotations": [
+      {
+        "label": "Chapter buttons",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          30,
+          285,
+          660,
+          880
+        ]
+      }
+    ],
+    "note": "Chapter buttons use Medium. This is an additional state capture; no matching baseline frame was retained.",
+    "before": null
+  },
+  {
+    "id": "goto-grid-verse",
+    "title": "Verse selection grid",
+    "annotations": [
+      {
+        "label": "Verse buttons",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          30,
+          285,
+          660,
+          880
+        ]
+      }
+    ],
+    "note": "Verse buttons use Medium. This is an additional state capture; no matching baseline frame was retained.",
+    "before": null
+  },
+  {
+    "id": "goto-direct-candidates",
+    "title": "Book suggestions when typing",
+    "annotations": [
+      {
+        "label": "Book suggestions",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": null
+      }
+    ],
+    "note": "Book suggestion rows also use Medium. Query: Ke. Additional state capture.",
+    "before": null
+  },
+  {
+    "id": "version-picker",
+    "title": "Version selector",
+    "annotations": [
+      {
+        "label": "All version short names",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          138,
+          870,
+          520,
+          195
+        ],
+        "beforeFont": "16sp: selected version Medium (500), other versions Regular (400)"
+      }
+    ],
+    "note": "Both selected and unselected versions use Medium. Descriptions retain 14sp Regular so short names stand out.",
+    "before": "version-picker"
+  },
+  {
+    "id": "versions",
+    "title": "Versions: all and downloadable",
+    "annotations": [
+      {
+        "label": "Version short names / primary titles",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          35,
+          385,
+          185,
+          60
+        ],
+        "beforeFont": "16sp Regular (400)"
+      }
+    ],
+    "note": "Downloaded and downloadable entries share the same emphasized primary name. Descriptions remain 14sp Regular and group captions remain 12sp Regular.",
+    "before": "versions"
+  },
+  {
+    "id": "versions-downloaded",
+    "title": "Versions: downloaded tab",
+    "annotations": [
+      {
+        "label": "Version short names / primary titles",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": null
+      }
+    ],
+    "note": "The downloaded tab uses the same version-row appearance. Additional state capture.",
+    "before": null
+  },
+  {
+    "id": "song-selector",
+    "title": "Song keypad: prefilled value",
+    "annotations": [
+      {
+        "label": "Songbook selector",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          92,
+          680,
+          190,
+          65
+        ],
+        "beforeFont": "16sp Regular (400)"
+      },
+      {
+        "label": "Song number",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          296,
+          648,
+          200,
+          128
+        ],
+        "beforeFont": "24sp Medium (500)"
+      },
+      {
+        "label": "Keypad digits and suffix letters",
+        "font": "System sans · 28sp Medium (500) · line 36sp",
+        "box": [
+          105,
+          795,
+          520,
+          285
+        ],
+        "beforeFont": "28sp Regular (400)"
+      }
+    ],
+    "note": "The existing song number is quieter and dashed because the next keypad press replaces it.",
+    "before": "song-selector"
+  },
+  {
+    "id": "song-book-menu",
+    "title": "Songbook dropdown",
+    "annotations": [
+      {
+        "label": "Songbook name",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": null,
+        "beforeFont": "16sp Regular (400)"
+      },
+      {
+        "label": "Secondary songbook name",
+        "font": "System sans · 14sp Medium (500) · line 20sp",
+        "box": null,
+        "beforeFont": "14sp Regular (400)"
+      }
+    ],
+    "note": "Both the short songbook name and its secondary name use Medium.",
+    "before": "song-book-menu"
+  },
+  {
+    "id": "song-drawer",
+    "title": "Song drawer keypad",
+    "annotations": [
+      {
+        "label": "Songbook selector",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          60,
+          485,
+          130,
+          65
+        ],
+        "beforeFont": "16sp Regular (400)"
+      },
+      {
+        "label": "Song number",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          204,
+          458,
+          224,
+          124
+        ],
+        "beforeFont": "16sp Regular (400)"
+      },
+      {
+        "label": "Keypad digits and suffix letters",
+        "font": "System sans · 28sp Medium (500) · line 36sp",
+        "box": [
+          30,
+          600,
+          500,
+          300
+        ],
+        "beforeFont": "22sp with inherited button Medium (500)"
+      }
+    ],
+    "note": "The native drawer uses the same Medium keypad and replacement-ready field treatment.",
+    "before": "song-drawer"
+  },
+  {
+    "id": "song-drawer-book-menu",
+    "title": "Native songbook dropdown",
+    "annotations": [
+      {
+        "label": "Songbook names",
+        "font": "System sans-medium (500); native popup size",
+        "box": null
+      },
+      {
+        "label": "Secondary songbook name",
+        "font": "System sans-medium (500); retained 0.7× native popup size",
+        "box": null
+      }
+    ],
+    "note": "The native popup keeps its existing relative text sizing and colors while applying Medium throughout. Additional state capture.",
+    "before": null
+  },
+  {
+    "id": "legacy-goto-dialer",
+    "title": "Legacy Bible keypad: prefilled",
+    "annotations": [
+      {
+        "label": "Book selector",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          65,
+          242,
+          560,
+          70
+        ],
+        "beforeFont": "16sp Regular (400)"
+      },
+      {
+        "label": "Numeric values",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          220,
+          330,
+          365,
+          140
+        ],
+        "beforeFont": "24sp Medium (500)"
+      },
+      {
+        "label": "Keypad digits",
+        "font": "System sans · 28sp Medium (500) · line 36sp",
+        "box": [
+          85,
+          545,
+          550,
+          610
+        ],
+        "beforeFont": "28sp Regular (400)"
+      }
+    ],
+    "note": "The native navigation implementation also distinguishes values from keypad buttons. The retained baseline uses bundled DDD book names; the revised capture uses BIMK. The font resources and control structure are compared, not the displayed book text.",
+    "before": "legacy-goto-dialer"
+  },
+  {
+    "id": "legacy-goto-grid",
+    "title": "Legacy book grid",
+    "annotations": [
+      {
+        "label": "Book, chapter and verse cells",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": [
+          20,
+          190,
+          680,
+          990
+        ],
+        "beforeFont": "16sp Regular (400)"
+      }
+    ],
+    "note": "The shared native cell layout applies Medium to all three grid stages. The retained baseline uses bundled DDD book names; the revised capture uses BIMK. The font resources and control structure are compared, not the displayed book text.",
+    "before": "legacy-goto-grid"
+  },
+  {
+    "id": "legacy-goto-book-menu",
+    "title": "Legacy Bible book dropdown",
+    "annotations": [
+      {
+        "label": "All book names",
+        "font": "System sans · 16sp Medium (500) · line 24sp",
+        "box": null
+      }
+    ],
+    "note": "All native book-dropdown entries use Medium. Additional state capture.",
+    "before": null
+  },
+  {
+    "id": "goto-typed",
+    "title": "Bible input: chapter is ongoing",
+    "annotations": [
+      {
+        "label": "Numeric value",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          220,
+          445,
+          375,
+          134
+        ]
+      },
+      {
+        "label": "Keypad digits",
+        "font": "System sans · 28sp Medium (500) · line 36sp",
+        "box": [
+          140,
+          655,
+          450,
+          420
+        ]
+      }
+    ],
+    "note": "After pressing 3 then 4, chapter 34 is bright with a solid blue border and caret. Verse 1 is still quieter and replacement-ready.",
+    "before": null
+  },
+  {
+    "id": "goto-verse-typed",
+    "title": "Bible input: switch to verse",
+    "annotations": [
+      {
+        "label": "Numeric value",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          220,
+          445,
+          375,
+          134
+        ]
+      },
+      {
+        "label": "Keypad digits",
+        "font": "System sans · 28sp Medium (500) · line 36sp",
+        "box": [
+          140,
+          655,
+          450,
+          420
+        ]
+      }
+    ],
+    "note": "Chapter 34 keeps its entered state after switching fields. Verse 2 is now active and continues on the next keypress.",
+    "before": null
+  },
+  {
+    "id": "song-input",
+    "title": "Song input: first digit",
+    "annotations": [
+      {
+        "label": "Entered song number",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          296,
+          648,
+          200,
+          128
+        ]
+      }
+    ],
+    "note": "Pressing 2 replaces the prefilled song number. The solid border, brighter digit, and caret indicate ongoing input.",
+    "before": null
+  },
+  {
+    "id": "song-appended",
+    "title": "Song input: second digit",
+    "annotations": [
+      {
+        "label": "Entered song number",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          296,
+          648,
+          200,
+          128
+        ]
+      }
+    ],
+    "note": "The next press, 1, appends to produce 21. Input treatment stays solid and bright.",
+    "before": null
+  },
+  {
+    "id": "song-four-digits",
+    "title": "Song input: four-character limit",
+    "annotations": [
+      {
+        "label": "Replacement-ready song number",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          296,
+          648,
+          200,
+          128
+        ]
+      }
+    ],
+    "note": "At 1234, the next digit begins a new code. The field therefore becomes quieter and dashed again, with no caret.",
+    "before": null
+  },
+  {
+    "id": "song-drawer-input",
+    "title": "Song drawer: ongoing input",
+    "annotations": [
+      {
+        "label": "Entered song number",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          204,
+          458,
+          224,
+          124
+        ]
+      }
+    ],
+    "note": "The native drawer also shows a solid outline, bright number, and visible caret after the first digit.",
+    "before": null
+  },
+  {
+    "id": "legacy-goto-typed",
+    "title": "Legacy Bible input: chapter ongoing",
+    "annotations": [
+      {
+        "label": "Entered chapter and prefilled verse",
+        "font": "System sans · 24sp Medium (500) · line 32sp",
+        "box": [
+          220,
+          330,
+          365,
+          140
+        ]
+      }
+    ],
+    "note": "The native chapter field shows ongoing input, while the unedited verse remains replacement-ready.",
+    "before": null
+  }
+]

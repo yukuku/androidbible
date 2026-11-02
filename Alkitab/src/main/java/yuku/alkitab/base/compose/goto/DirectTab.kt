@@ -23,6 +23,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -153,7 +154,7 @@ fun DirectTab(
             LazyColumn(modifier = Modifier.fillMaxWidth(), state = candidatesListState) {
                 items(candidates, key = { it.title }) { c ->
                     ListItem(
-                        headlineContent = { Text(c.title) },
+                        headlineContent = { Text(c.title, style = MaterialTheme.typography.titleMedium) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
