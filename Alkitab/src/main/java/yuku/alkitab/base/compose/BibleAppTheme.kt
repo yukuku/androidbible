@@ -59,11 +59,11 @@ val BibleAppDarkColorScheme: ColorScheme = darkColorScheme(
 
     surfaceDim = Color(0xFF2A2A2A),
     surfaceBright = Color(0xFF4A4A4A),
-    surfaceContainerLowest = Color(0xFF252525),
-    surfaceContainerLow = Color(0xFF333333),
-    surfaceContainer = Color(0xFF363636),
+    surfaceContainerLowest = Color(0xFF1B1B1B),
+    surfaceContainerLow = Color(0xFF292929),
+    surfaceContainer = Color(0xFF2C2C2C),
     surfaceContainerHigh = BrandColors.WindowGray,
-    surfaceContainerHighest = Color(0xFF424242),
+    surfaceContainerHighest = Color(0xFF383838),
 
     outline = Color(0xFF8C8C8C),
     outlineVariant = Color(0xFF515151),
