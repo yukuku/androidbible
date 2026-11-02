@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -416,6 +417,12 @@ private fun HexInputRow(rgb: Int, onRgbChange: (Int) -> Unit) {
             color = MaterialTheme.colorScheme.primary,
         )
         Spacer(Modifier.weight(1f))
+        Text(
+            text = "#",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(end = 4.dp),
+        )
         Box(
             modifier = Modifier
                 .width(110.dp)
@@ -438,7 +445,9 @@ private fun HexInputRow(rgb: Int, onRgbChange: (Int) -> Unit) {
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
                 ),
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
                 cursorBrush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary),
             )

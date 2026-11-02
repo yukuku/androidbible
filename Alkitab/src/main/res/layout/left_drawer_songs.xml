@@ -28,7 +28,6 @@
 			android:orientation="horizontal">
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 				android:id="@+id/bChangeBook"
 				style="@style/FakeSpinner"
 				android:layout_width="0dp"
@@ -36,16 +35,18 @@
 				android:layout_weight="1.5"
 				android:gravity="center"
 				android:text="––––"
+				android:textSize="18sp"
 				tools:ignore="HardcodedText" />
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Number"
 				android:id="@+id/bChangeCode"
 				android:layout_width="0dp"
 				android:layout_height="match_parent"
 				android:layout_weight="1.5"
 				android:gravity="center"
 				android:text="––––"
+				android:textAppearance="?android:textAppearanceLarge"
+				android:textSize="18sp"
 				tools:ignore="HardcodedText" />
 
 			<ImageButton
@@ -159,14 +160,14 @@
 					android:text="0" />
 
 				<Button
-					android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 					android:id="@+id/bOk"
 					style="?buttonBarButtonStyle"
 					android:layout_width="0dp"
 					android:layout_height="56dp"
 					android:layout_weight="2"
 					android:enabled="false"
-					android:text="@string/ok" />
+					android:text="@string/ok"
+					android:textSize="16sp" />
 			</LinearLayout>
 		</LinearLayout>
 

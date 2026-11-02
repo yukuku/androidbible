@@ -57,25 +57,27 @@ object Appearances {
     }
 
     @JvmStatic
-    fun applySearchResultReferenceAppearance(t: TextView, sb: SpannableStringBuilder) {
-        applyMarkerTitleTextAppearance(t)
+    fun applySearchResultReferenceAppearance(t: TextView, sb: SpannableStringBuilder, textSizeMult: Float) {
+        applyMarkerTitleTextAppearance(t, textSizeMult)
         sb.setSpan(UnderlineSpan(), 0, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         t.text = sb
+        t.setLineSpacing(0f, App.services.uiDimensions.applied().lineSpacingMult)
     }
 
     @JvmStatic
-    fun applyMarkerTitleTextAppearance(t: TextView) {
+    fun applyMarkerTitleTextAppearance(t: TextView, textSizeMult: Float) {
         val applied = App.services.uiDimensions.applied()
 
-        UiTypography.apply(t, UiTextRole.EMPHASIS)
+        t.setTypeface(applied.fontFace, applied.fontBold)
+        t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * 1.2f * textSizeMult)
         t.setTextColor(applied.fontColor)
     }
 
     @JvmStatic
-    fun applyMarkerDateTextAppearance(t: TextView) {
+    fun applyMarkerDateTextAppearance(t: TextView, textSizeMult: Float) {
         val applied = App.services.uiDimensions.applied()
 
-        UiTypography.apply(t, UiTextRole.CAPTION)
+        t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * 0.8f * textSizeMult)
         t.setTextColor(applied.fontColor)
     }
 

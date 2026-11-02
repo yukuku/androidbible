@@ -29,18 +29,18 @@
 			android:orientation="vertical">
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 				android:id="@+id/tRibkaReference"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
 				tools:text="Reference" />
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 				android:id="@+id/tRibkaVerseText"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="8dp"
+				android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
 				tools:text="Contents of the verse" />
 
 			<RadioGroup
@@ -140,7 +140,7 @@
 
 			<androidx.appcompat.widget.AppCompatButton
 				android:id="@+id/bRibkaSend"
-				style="@style/Widget.Alkitab.Button.Colored"
+				style="@style/Widget.AppCompat.Button.Colored"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/ribka_submit_button"

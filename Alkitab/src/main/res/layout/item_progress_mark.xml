@@ -22,7 +22,6 @@
 			tools:text="2099-12-32" />
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/lCaption"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -31,6 +30,7 @@
 			android:layout_marginStart="4dp"
 			android:layout_toStartOf="@+id/lDate"
 			android:layout_toEndOf="@+id/imgIcon"
+			android:textAppearance="?android:textAppearanceMedium"
 			tools:text="Description or reference" />
 
 		<ImageView
@@ -44,11 +44,11 @@
 	</RelativeLayout>
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 		android:id="@+id/lSnippet"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="8dp"
+		android:textSize="14sp"
 		tools:text="Verse snippet if can be displayed Verse snippet if can be displayed Verse snippet if can be displayed" />
 
 </LinearLayout>

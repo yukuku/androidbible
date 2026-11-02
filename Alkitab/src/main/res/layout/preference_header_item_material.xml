@@ -28,13 +28,13 @@
 		android:layout_weight="1">
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@android:id/title"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:ellipsize="marquee"
 			android:fadingEdge="horizontal"
 			android:singleLine="true"
+			android:textAppearance="?textAppearanceListItem"
 			android:textColor="?android:textColorPrimary"
 			tools:text="Title" />
 

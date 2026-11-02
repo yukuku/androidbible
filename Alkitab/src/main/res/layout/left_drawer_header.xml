@@ -10,7 +10,6 @@
 	tools:ignore="Overdraw">
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/bBible"
 		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
@@ -20,10 +19,11 @@
 		android:focusable="false"
 		android:gravity="start|center_vertical"
 		android:text="@string/menuBible"
-		android:textColor="?android:textColorPrimary" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/bDevotion"
 		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
@@ -32,10 +32,11 @@
 		android:drawableStart="@drawable/ic_drawer_devotion"
 		android:gravity="start|center_vertical"
 		android:text="@string/menuDevotion"
-		android:textColor="?android:textColorPrimary" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/bReadingPlan"
 		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
@@ -44,10 +45,11 @@
 		android:drawableStart="@drawable/ic_drawer_reading_plan"
 		android:gravity="start|center_vertical"
 		android:text="@string/rp_menuReadingPlan"
-		android:textColor="?android:textColorPrimary" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/bSongs"
 		style="?buttonBarButtonStyle"
 		android:layout_width="match_parent"
@@ -56,6 +58,8 @@
 		android:drawableStart="@drawable/ic_drawer_songs"
 		android:gravity="start|center_vertical"
 		android:text="@string/menuSongs"
-		android:textColor="?android:textColorPrimary" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="?android:textColorPrimary"
+		android:textSize="16sp" />
 
 </LinearLayout>

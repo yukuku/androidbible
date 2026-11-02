@@ -415,7 +415,7 @@
     <string name="color_picker_channel_blue">Biru</string>
     <string name="color_picker_channel_green">Hijau</string>
     <string name="color_picker_channel_red">Merah</string>
-    <string name="color_picker_hex_label">Warna Heks sRGB #</string>
+    <string name="color_picker_hex_label">Warna Heks</string>
     <string name="color_picker_tab_grid">Grid</string>
     <string name="color_picker_tab_sliders">Peluncur</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

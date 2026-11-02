@@ -1,15 +1,8 @@
 package yuku.alkitab.versionmanager
 
 import android.app.DownloadManager
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.style.DynamicDrawableSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.ImageSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -152,64 +145,19 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
     }
 
     fun itemNameClick(item: Item) {
-        val details = SpannableStringBuilder()
-
-        fun addDetail(key: String, value: String?) {
-            val sb_len = details.length
-            details.append(key).append(": ")
-            details.setSpan(ForegroundColorSpan(-0x555556), sb_len, details.length, 0)
-            details.setSpan(RelativeSizeSpan(0.7f), sb_len, details.length, 0)
-            details.setSpan(StyleSpan(Typeface.BOLD), sb_len, details.length, 0)
-            details.append(value)
-            details.append("\n")
-        }
-
         val mv = item.mv
-        when (mv) {
-            is MVersionInternal -> addDetail(getString(R.string.ed_type_key), getString(R.string.ed_type_internal))
-            is MVersionPreset -> addDetail(getString(R.string.ed_type_key), getString(R.string.ed_type_preset))
-            is MVersionDb -> addDetail(getString(R.string.ed_type_key), getString(R.string.ed_type_db))
-        }
-
-        if (mv.locale != null) addDetail(getString(R.string.ed_locale_locale), mv.locale)
-        if (mv.shortName != null) addDetail(getString(R.string.ed_shortName_shortName), mv.shortName)
-        addDetail(getString(R.string.ed_title_title), mv.longName)
-
-        if (mv is MVersionPreset) {
-            addDetail(getString(R.string.ed_default_filename_file), mv.preset_name)
-        }
-
-        if (mv is MVersionDb) {
-            addDetail(getString(R.string.ed_stored_in_file), mv.filename)
-        }
-
-        if (mv.description != null) details.append('\n').append(mv.description).append('\n')
-
-        val b = MaterialAlertDialogBuilder(requireActivity())
-            .setTitle(R.string.ed_version_details)
-            .setMessage(details)
-
-        var button_count = 0
-
-        // can we update?
-        if (mv is MVersionDb && hasUpdateAvailable(mv)) {
-            button_count++
-            b.setPositiveButton(R.string.ed_update_button) { _, _ -> startDownload(VersionConfig.get().getPreset(mv.preset_name)) }
-            details.append("\n")
-            val details_len = details.length
-            details.append("  ")
-            details.setSpan(ImageSpan(App.context, R.drawable.ic_version_update, DynamicDrawableSpan.ALIGN_BASELINE), details_len, details_len + 1, 0)
-            details.append(getString(R.string.ed_details_update_available))
-        }
-
-        // can we share?
-        if (mv is MVersionDb && mv.hasDataFile()) {
-            button_count++
-            b.setNegativeButton(R.string.version_menu_share) { _, _ ->
+        val onRemove: (() -> Unit)? = if (mv is MVersionDb) {
+            {
+                App.services.storage.db.deleteVersion(mv)
+                AppEvents.emitVersionListReload()
+                File(mv.filename).delete()
+            }
+        } else null
+        val onShare: (() -> Unit)? = if (mv is MVersionDb && mv.hasDataFile()) {
+            {
                 val file = File(mv.filename)
                 try {
                     val uri = FileProvider.getUriForFile(requireActivity(), App.context.packageName + ".file_provider", file)
-
                     ShareCompat.IntentBuilder(requireActivity())
                         .setType("application/octet-stream")
                         .addStream(uri)
@@ -222,30 +170,14 @@ class VersionListFragment : Fragment(), QueryTextReceiver {
                         .show()
                 }
             }
-        }
-
-        // can we delete?
-        if (mv is MVersionDb) {
-            button_count++
-            b.setNeutralButton(R.string.buang_dari_daftar) { _, _ ->
-                val filename = mv.filename
-                App.services.storage.db.deleteVersion(mv)
-                AppEvents.emitVersionListReload()
-                File(filename).delete()
-            }
-        }
-
-        // can we download?
-        if (mv is MVersionPreset) {
-            button_count++
-            b.setPositiveButton(R.string.ed_download_button) { _, _ -> startDownload(mv) }
-        }
-
-        // if we have no buttons at all, add a no-op OK
-        if (button_count == 0) {
-            b.setPositiveButton(R.string.ok, null)
-        }
-        b.show()
+        } else null
+        val onDownload: (() -> Unit)? = if (mv is MVersionPreset) {
+            { startDownload(mv) }
+        } else null
+        val onUpdate: (() -> Unit)? = if (mv is MVersionDb && hasUpdateAvailable(mv)) {
+            { startDownload(VersionConfig.get().getPreset(mv.preset_name)) }
+        } else null
+        showVersionDetailsSheet(requireActivity(), mv, onRemove, onShare, onDownload, onUpdate)
     }
 
     private fun clickOnPresetVersion(cActive: CheckBox, mv: MVersionPreset) {

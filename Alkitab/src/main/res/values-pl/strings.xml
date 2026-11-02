@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">Niebieski</string>
     <string name="color_picker_channel_green">Zielony</string>
     <string name="color_picker_channel_red">Czerwony</string>
-    <string name="color_picker_hex_label">Kolor sRGB Hex #</string>
+    <string name="color_picker_hex_label">Kolor  Hex</string>
     <string name="color_picker_tab_grid">Siatka</string>
     <string name="color_picker_tab_sliders">Suwaki</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

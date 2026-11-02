@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">Blauw</string>
     <string name="color_picker_channel_green">Groen</string>
     <string name="color_picker_channel_red">Rood</string>
-    <string name="color_picker_hex_label">sRGB Hex-kleur #</string>
+    <string name="color_picker_hex_label">Hex-kleur</string>
     <string name="color_picker_tab_grid">Raster</string>
     <string name="color_picker_tab_sliders">Schuifregelaars</string>
     <string name="color_picker_tab_spectrum">Spectrum</string>

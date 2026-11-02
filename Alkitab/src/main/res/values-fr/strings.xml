@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">Bleu</string>
     <string name="color_picker_channel_green">Vert</string>
     <string name="color_picker_channel_red">Rouge</string>
-    <string name="color_picker_hex_label">Couleur hexa sRGB #</string>
+    <string name="color_picker_hex_label">Couleur hexa</string>
     <string name="color_picker_tab_grid">Grille</string>
     <string name="color_picker_tab_sliders">Curseurs</string>
     <string name="color_picker_tab_spectrum">Spectre</string>

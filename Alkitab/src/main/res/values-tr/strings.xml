@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">Mavi</string>
     <string name="color_picker_channel_green">Yeşil</string>
     <string name="color_picker_channel_red">Kırmızı</string>
-    <string name="color_picker_hex_label">sRGB Onaltılık Renk #</string>
+    <string name="color_picker_hex_label">Onaltılık Renk</string>
     <string name="color_picker_tab_grid">Izgara</string>
     <string name="color_picker_tab_sliders">Kaydırıcılar</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

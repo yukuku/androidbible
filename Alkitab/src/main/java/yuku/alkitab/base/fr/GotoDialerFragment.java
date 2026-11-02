@@ -19,7 +19,6 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.PrefkeyKt;
 import yuku.alkitab.base.util.BookColorUtil;
 import yuku.alkitab.base.util.BookNameSorter;
-import yuku.alkitab.base.util.NumericEntryAppearance;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 
@@ -149,7 +148,6 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 				fixChapterOverflow();
 				fixVerseOverflow();
-				colorize();
 			}
 		});
 
@@ -256,7 +254,6 @@ public class GotoDialerFragment extends BaseGotoFragment {
 					final CharSequence txt = active.getText();
 					active.setText(TextUtils.substring(txt, 0, txt.length() - 1));
 				}
-				colorize();
 				return;
 			}
 
@@ -290,7 +287,6 @@ public class GotoDialerFragment extends BaseGotoFragment {
 				}
 			}
 		}
-		colorize();
 	}
 
 	void activate(TextView active, TextView passive) {
@@ -300,9 +296,8 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	}
 
 	private void colorize() {
-		if (active == null) return;
-		NumericEntryAppearance.apply(tChapter, active == tChapter, tChapter_firstTime || tChapter.length() == 0);
-		NumericEntryAppearance.apply(tVerse, active == tVerse, tVerse_firstTime || tVerse.length() == 0);
+		if (active != null) active.setBackgroundResource(R.drawable.goto_dialer_active);
+		if (passive != null) passive.setBackgroundColor(0x0);
 	}
 
 	private class BookAdapter extends BaseAdapter {

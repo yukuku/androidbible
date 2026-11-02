@@ -22,17 +22,18 @@
 			android:layout_height="wrap_content" />
 
 		<Button
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/bMarkers"
 			style="?buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawablePadding="16dp"
 			android:drawableStart="@drawable/ic_drawer_markers"
+			android:fontFamily="sans-serif-regular"
 			android:gravity="start|center_vertical"
 			android:text="@string/menu_markers"
 			android:textAllCaps="false"
-			android:textColor="#fff" />
+			android:textColor="#fff"
+			android:textSize="16sp" />
 
 		<View
 			android:id="@+id/dividerCurrentReading"
@@ -47,13 +48,13 @@
 			android:layout_marginTop="8dp">
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="start|center_vertical"
 				android:layout_marginStart="16dp"
 				android:text="@string/left_drawer_current_reading_title"
-				android:textColor="#bebebe" />
+				android:textColor="#bebebe"
+				android:textSize="14sp" />
 
 			<ImageButton
 				android:id="@+id/bCurrentReadingClose"
@@ -86,13 +87,13 @@
 			android:layout_marginTop="8dp">
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="start|center_vertical"
 				android:layout_marginStart="16dp"
 				android:text="@string/menuProgress"
-				android:textColor="#bebebe" />
+				android:textColor="#bebebe"
+				android:textSize="14sp" />
 
 			<ImageButton
 				android:id="@+id/bProgressMarkList"
@@ -168,37 +169,40 @@
 		<include layout="@layout/left_drawer_display" />
 
 		<androidx.appcompat.widget.SwitchCompat
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/cFullScreen"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:layout_marginEnd="8dp"
 			android:layout_marginStart="16dp"
+			android:fontFamily="sans-serif-regular"
 			android:gravity="start|center_vertical"
 			android:text="@string/menuFullScreen"
-			android:textColor="#fff" />
+			android:textColor="#fff"
+			android:textSize="16sp" />
 
 		<androidx.appcompat.widget.SwitchCompat
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/cNightMode"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:layout_marginEnd="8dp"
 			android:layout_marginStart="16dp"
+			android:fontFamily="sans-serif-regular"
 			android:gravity="start|center_vertical"
 			android:text="@string/menuNightMode"
-			android:textColor="#fff" />
+			android:textColor="#fff"
+			android:textSize="16sp" />
 
 		<androidx.appcompat.widget.SwitchCompat
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/cSplitVersion"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:layout_marginEnd="8dp"
 			android:layout_marginStart="16dp"
+			android:fontFamily="sans-serif-regular"
 			android:gravity="start|center_vertical"
 			android:text="@string/menuSplitVersion"
-			android:textColor="#fff" />
+			android:textColor="#fff"
+			android:textSize="16sp" />
 
 		<include
 			layout="@layout/left_drawer_footer"

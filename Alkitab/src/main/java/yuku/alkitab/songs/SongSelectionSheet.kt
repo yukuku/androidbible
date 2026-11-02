@@ -196,7 +196,11 @@ object SongSelectionSheet {
         }
     }
 
-    private class KeypadState : LeftDrawer.Songs.Handle {
+    internal interface EntryHandle : LeftDrawer.Songs.Handle {
+        fun setEntryCode(code: String?, isReplaceOnNextInput: Boolean)
+    }
+
+    private class KeypadState : EntryHandle {
         var bookName by mutableStateOf("")
         var enteredCode by mutableStateOf("––––")
         var isReplaceOnNextInput by mutableStateOf(true)
@@ -206,7 +210,11 @@ object SongSelectionSheet {
         var cEnabled by mutableStateOf(false)
 
         override fun setBookName(bookName: CharSequence?) { this.bookName = bookName?.toString().orEmpty() }
-        override fun setCode(code: String?, isReplaceOnNextInput: Boolean) {
+        override fun setCode(code: String?) {
+            enteredCode = code.orEmpty()
+        }
+
+        override fun setEntryCode(code: String?, isReplaceOnNextInput: Boolean) {
             enteredCode = code.orEmpty()
             this.isReplaceOnNextInput = isReplaceOnNextInput
         }

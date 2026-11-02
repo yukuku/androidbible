@@ -40,7 +40,6 @@
 				tools:ignore="ContentDescription" />
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 				android:id="@+id/tIntro"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -48,10 +47,10 @@
 				android:layout_marginTop="@dimen/padding_medium"
 				android:gravity="center_horizontal"
 				android:text="@string/sync_login_form_intro_text"
+				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="#fff" />
 
 			<EditText
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 				android:id="@+id/tEmail"
 				android:layout_width="match_parent"
 				android:layout_height="48dp"
@@ -64,7 +63,6 @@
 				android:layout_height="48dp">
 
 				<EditText
-					android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 					android:id="@+id/tPassword"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
@@ -73,7 +71,6 @@
 					android:inputType="textPassword" />
 
 				<Button
-					android:textAppearance="@style/TextAppearance.Alkitab.Label"
 					android:id="@+id/bForgot"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
@@ -82,12 +79,12 @@
 					android:focusable="false"
 					android:paddingStart="@dimen/padding_medium"
 					android:paddingEnd="@dimen/padding_medium"
-					android:text="@string/sync_login_form_forgot_button" />
+					android:text="@string/sync_login_form_forgot_button"
+					android:textAppearance="?android:textAppearanceSmall" />
 
 			</FrameLayout>
 
 			<EditText
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 				android:id="@+id/tPasswordNew"
 				android:layout_width="match_parent"
 				android:layout_height="48dp"
@@ -97,12 +94,12 @@
 				android:visibility="gone" />
 
 			<TextView
-				android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 				android:id="@+id/tPrivacy"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="8dp"
-				android:text="@string/sync_login_form_privacy_text" />
+				android:text="@string/sync_login_form_privacy_text"
+				android:textAppearance="?android:attr/textAppearanceSmall" />
 
 			<LinearLayout
 				android:layout_width="match_parent"

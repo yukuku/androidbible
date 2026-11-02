@@ -12,13 +12,13 @@
 		android:layout_height="48dp">
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Caption"
 			android:id="@+id/tLanguage"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
 			android:layout_marginBottom="4dp"
 			android:textColor="#898989"
+			android:textSize="12sp"
 			tools:text="Language Name" />
 
 	</FrameLayout>
@@ -62,19 +62,20 @@
 				android:orientation="vertical">
 
 				<TextView
-					android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 					android:id="@+id/tShortName"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textStyle="bold"
 					tools:text="ESV" />
 
 				<TextView
-					android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 					android:id="@+id/tLongName"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="2dp"
 					android:textColor="?android:attr/textColorSecondary"
+					android:textSize="13sp"
 					tools:text="English Standard Version" />
 
 			</LinearLayout>

@@ -316,7 +316,7 @@
     <string name="color_picker_channel_red">Red</string>
     <string name="color_picker_channel_green">Green</string>
     <string name="color_picker_channel_blue">Blue</string>
-    <string name="color_picker_hex_label">sRGB Hex Color #</string>
+    <string name="color_picker_hex_label">Hex Color</string>
     <string name="menu_compare">Compare</string>
 
     <string name="search_in_version_short_name_placeholder">Find in %s</string>

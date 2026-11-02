@@ -1,6 +1,7 @@
 package yuku.alkitab.base.ac
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,6 @@ import java.util.Calendar
 import java.util.Date
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.base.config.AppConfig
-import yuku.alkitab.base.util.AppDatePickerDialog
 import yuku.alkitab.debug.R
 
 object DevotionSelectionSheet {
@@ -108,7 +108,7 @@ object DevotionSelectionSheet {
                         colors = ButtonDefaults.textButtonColors(contentColor = Color.White),
                         onClick = {
                             val calendar = Calendar.getInstance().apply { timeInMillis = date }
-                            AppDatePickerDialog(activity, { _, year, month, day ->
+                            DatePickerDialog(activity, { _, year, month, day ->
                                 selectDate(Calendar.getInstance().apply {
                                     clear()
                                     set(year, month, day, 12, 0)

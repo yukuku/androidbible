@@ -13,29 +13,29 @@
 		tools:ignore="UselessParent">
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/lTitle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentStart="true"
-			android:layout_toStartOf="@+id/lBookName" />
+			android:layout_toStartOf="@+id/lBookName"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 			android:id="@+id/lBookName"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentEnd="true"
-			android:layout_centerVertical="true" />
+			android:layout_centerVertical="true"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 			android:id="@+id/lTitleOriginal"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignStart="@+id/lTitle"
 			android:layout_below="@+id/lTitle"
-			android:layout_toStartOf="@+id/lBookName" />
+			android:layout_toStartOf="@+id/lBookName"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
 
 	</RelativeLayout>
 

@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">Xanh dương</string>
     <string name="color_picker_channel_green">Xanh lá</string>
     <string name="color_picker_channel_red">Đỏ</string>
-    <string name="color_picker_hex_label">Màu Hex sRGB #</string>
+    <string name="color_picker_hex_label">Màu Hex</string>
     <string name="color_picker_tab_grid">Lưới</string>
     <string name="color_picker_tab_sliders">Thanh trượt</string>
     <string name="color_picker_tab_spectrum">Quang phổ</string>

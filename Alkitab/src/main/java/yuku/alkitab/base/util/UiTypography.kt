@@ -2,10 +2,8 @@ package yuku.alkitab.base.util
 
 import android.content.res.Resources
 import android.util.TypedValue
-import android.widget.TextView
 import androidx.annotation.DimenRes
 import androidx.annotation.StyleRes
-import androidx.core.widget.TextViewCompat
 import yuku.alkitab.debug.R
 
 enum class UiTextRole(
@@ -25,14 +23,6 @@ enum class UiTextRole(
 }
 
 object UiTypography {
-    @JvmStatic
-    fun apply(view: TextView, role: UiTextRole) {
-        val colors = view.textColors
-        TextViewCompat.setTextAppearance(view, role.appearance)
-        view.setTextColor(colors)
-        TextViewCompat.setLineHeight(view, view.resources.getDimensionPixelSize(role.lineHeight))
-    }
-
     fun nominalSp(resources: Resources, @DimenRes dimension: Int): Float {
         val value = TypedValue()
         resources.getValue(dimension, value, true)

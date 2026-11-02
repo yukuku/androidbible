@@ -2,7 +2,6 @@ package yuku.alkitab.base.compose
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Color
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.widget.Button
@@ -12,17 +11,14 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.ColorUtils
-import androidx.core.view.ViewCompat
 import androidx.test.core.app.ApplicationProvider
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 import com.google.android.material.tabs.TabLayout
 import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,10 +26,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import yuku.afw.App
-import yuku.alkitab.base.util.AppDatePickerDialog
-import yuku.alkitab.base.util.NumericEntryAppearance
 import yuku.alkitab.base.util.UiTextRole
-import yuku.alkitab.base.util.UiTypography
 import yuku.alkitab.debug.R
 
 @RunWith(RobolectricTestRunner::class)
@@ -65,14 +58,7 @@ class BibleAppTypographyTest {
             val activity = controller.setup().get()
             val views = mutableListOf<TextView>(Button(activity), AppCompatButton(activity))
             if (theme != R.style.AlkitabFeedback_Theme) {
-                val picker = AppDatePickerDialog(activity, { _, _, _, _ -> }, 2026, 10, 2)
-                picker.show()
-                val confirmDate = picker.getButton(android.content.DialogInterface.BUTTON_POSITIVE)
-                assertEquals(activity.getString(R.string.ok), confirmDate.text.toString())
-                views.add(confirmDate)
                 views.add(MaterialButton(activity))
-                views.add(activity.layoutInflater.inflate(R.layout.ribka_activity_report, null).findViewById(R.id.bRibkaSend))
-                views.add(activity.layoutInflater.inflate(R.layout.activity_devotion_content, null).findViewById(R.id.bRetry))
                 val dialog = MaterialAlertDialogBuilder(activity).setMessage("Example").setPositiveButton("Open file", null).setNegativeButton("Cancel", null).show()
                 views.add(dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE))
                 views.add(dialog.getButton(android.content.DialogInterface.BUTTON_NEGATIVE))
@@ -85,26 +71,6 @@ class BibleAppTypographyTest {
             }
             controller.pause().stop().destroy()
         }
-    }
-
-    @Test
-    fun `number input keeps replacement values readable and clears the cursor when the next digit replaces`() {
-        val view = TextView(context)
-        NumericEntryAppearance.apply(view, true, false)
-        assertEquals(0xfff4f7f9.toInt(), view.currentTextColor)
-        assertNotNull(view.compoundDrawablesRelative[2])
-        assertEquals(context.getString(R.string.keypad_value_append), ViewCompat.getStateDescription(view))
-
-        NumericEntryAppearance.apply(view, true, true)
-        assertEquals(0xffb2bdc4.toInt(), view.currentTextColor)
-        assertNull(view.compoundDrawablesRelative[2])
-        assertEquals(context.getString(R.string.keypad_value_replace), ViewCompat.getStateDescription(view))
-        assertTrue(ColorUtils.calculateContrast(view.currentTextColor, 0xff293c45.toInt()) >= 4.5)
-
-        NumericEntryAppearance.apply(view, false, false)
-        assertEquals(0xfff4f7f9.toInt(), view.currentTextColor)
-        assertNull(view.compoundDrawablesRelative[2])
-        assertEquals(context.getString(R.string.keypad_value_append), ViewCompat.getStateDescription(view))
     }
 
     @Test
@@ -129,17 +95,15 @@ class BibleAppTypographyTest {
     }
 
     @Test
-    fun `XML and Compose agree on every role without changing explicit text colors`() {
+    fun `shared text appearances and Compose agree on every typography role`() {
         val typography = bibleAppTypography(context.resources)
         val styles: List<TextStyle> = listOf(typography.titleLarge, typography.bodyLarge, typography.titleMedium, typography.bodyMedium, typography.labelLarge, typography.bodySmall, typography.headlineMedium, typography.displaySmall)
         UiTextRole.entries.zip(styles).forEach { (role, style) ->
-            val view = TextView(context)
-            view.setTextColor(Color.MAGENTA)
-            UiTypography.apply(view, role)
+            val view = MaterialTextView(context)
+            view.setTextAppearance(context, role.appearance)
             val expectedSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, style.fontSize.value, context.resources.displayMetrics)
             assertEquals(role.name, expectedSize, view.textSize, 0.01f)
             assertEquals(role.name, context.resources.getDimensionPixelSize(role.lineHeight), view.lineHeight)
-            assertEquals(Color.MAGENTA, view.currentTextColor)
             assertEquals(0f, view.letterSpacing)
             context.obtainStyledAttributes(role.appearance, intArrayOf(android.R.attr.fontFamily)).let { attributes ->
                 assertEquals(role.name, if (role.weight == 500) "sans-serif-medium" else "sans-serif", attributes.getString(0))
@@ -155,11 +119,11 @@ class BibleAppTypographyTest {
             controller.get().setTheme(theme)
             val activity = controller.create().get()
             val row = activity.layoutInflater.inflate(R.layout.item_version, null)
-            listOf(R.id.tShortName to UiTextRole.EMPHASIS, R.id.tLongName to UiTextRole.SUPPORTING, R.id.tLanguage to UiTextRole.CAPTION).forEach { (id, role) ->
-                val view = row.findViewById<TextView>(id)
-                assertEquals(context.resources.getDimensionPixelSize(role.size).toFloat(), view.textSize, 0.01f)
-                assertEquals(context.resources.getDimensionPixelSize(role.lineHeight), view.lineHeight)
-            }
+            val shortName = row.findViewById<TextView>(R.id.tShortName)
+            assertEquals(context.resources.getDimensionPixelSize(UiTextRole.PRIMARY.size).toFloat(), shortName.textSize, 0.01f)
+            assertEquals(context.resources.getDimensionPixelSize(UiTextRole.PRIMARY.lineHeight), shortName.lineHeight)
+            assertEquals(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 13f, context.resources.displayMetrics), row.findViewById<TextView>(R.id.tLongName).textSize, 0.01f)
+            assertEquals(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12f, context.resources.displayMetrics), row.findViewById<TextView>(R.id.tLanguage).textSize, 0.01f)
             val attributes = activity.obtainStyledAttributes(intArrayOf(android.R.attr.textColorPrimary, android.R.attr.textColorSecondary))
             val primary = requireNotNull(attributes.getColorStateList(0))
             val secondary = requireNotNull(attributes.getColorStateList(1))
@@ -179,10 +143,6 @@ class BibleAppTypographyTest {
             val selected = intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected)
             assertEquals(primary.getColorForState(enabled, primary.defaultColor), tabColors.getColorForState(selected, tabColors.defaultColor))
             assertEquals(secondary.getColorForState(enabled, secondary.defaultColor), tabColors.getColorForState(enabled, tabColors.defaultColor))
-            val login = activity.layoutInflater.inflate(R.layout.activity_sync_login, null)
-            listOf(R.id.tEmail, R.id.tPassword, R.id.tPasswordNew).forEach { id ->
-                assertEquals(context.resources.getDimensionPixelSize(UiTextRole.PRIMARY.size).toFloat(), login.findViewById<TextView>(id).textSize, 0.01f)
-            }
             controller.destroy()
         }
     }

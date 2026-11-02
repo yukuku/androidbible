@@ -28,11 +28,11 @@
 			tools:text="devotion name" />
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/tCurrentDate"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:gravity="center"
+			android:textSize="16sp"
 			tools:text="current date" />
 
 		<LinearLayout

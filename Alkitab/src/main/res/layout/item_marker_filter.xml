@@ -24,7 +24,6 @@
 			tools:ignore="ContentDescription" />
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Label"
 			android:id="@+id/lFilterLabel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -34,15 +33,16 @@
 			android:paddingEnd="16dp"
 			android:paddingBottom="4dp"
 			android:textColor="#fff"
+			android:textSize="14sp"
 			tools:text="label" />
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/lFilterCaption"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:paddingStart="0dp"
 			android:paddingEnd="24dp"
+			android:textAppearance="?android:textAppearanceMedium"
 			android:textColor="#fff"
 			tools:text="nonlabel" />
 	</LinearLayout>

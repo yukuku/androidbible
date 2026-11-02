@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">Albastru</string>
     <string name="color_picker_channel_green">Verde</string>
     <string name="color_picker_channel_red">Roșu</string>
-    <string name="color_picker_hex_label">Culoare Hex sRGB #</string>
+    <string name="color_picker_hex_label">Culoare Hex</string>
     <string name="color_picker_tab_grid">Grilă</string>
     <string name="color_picker_tab_sliders">Glisoare</string>
     <string name="color_picker_tab_spectrum">Spectru</string>

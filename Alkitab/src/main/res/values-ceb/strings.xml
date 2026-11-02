@@ -414,7 +414,7 @@
     <string name="color_picker_channel_blue">Asul</string>
     <string name="color_picker_channel_green">Berde</string>
     <string name="color_picker_channel_red">Pula</string>
-    <string name="color_picker_hex_label">sRGB Hex nga Kolor #</string>
+    <string name="color_picker_hex_label">Hex nga Kolor</string>
     <string name="color_picker_tab_grid">Grid</string>
     <string name="color_picker_tab_sliders">Sliders</string>
     <string name="color_picker_tab_spectrum">Spectrum</string>

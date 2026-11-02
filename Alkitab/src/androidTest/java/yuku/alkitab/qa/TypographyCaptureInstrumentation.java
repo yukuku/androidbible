@@ -107,6 +107,39 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
         }
     }
 
+    private void captureNativeFonts(String name) {
+        if (android.os.Build.VERSION.SDK_INT >= 29) {
+            runOnMainSync(() -> {
+                try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(new File(output, name + "-native-fonts.json")), "UTF-8"))) {
+                    writer.setIndent("  ");
+                    writer.beginArray();
+                    ArrayDeque<View> views = new ArrayDeque<>(android.view.inspector.WindowInspector.getGlobalWindowViews());
+                    while (!views.isEmpty()) {
+                        View view = views.remove();
+                        Rect bounds = new Rect();
+                        if (view instanceof TextView && view.isShown() && view.getGlobalVisibleRect(bounds)) {
+                            TextView text = (TextView) view;
+                            if (text.length() > 0) {
+                                String id = view.getId() < 0x01000000 ? "" : view.getResources().getResourceName(view.getId());
+                                String sample = text.getText().toString();
+                                writer.beginObject().name("id").value(id).name("text").value(sample.substring(0, Math.min(100, sample.length())))
+                                    .name("sizeSp").value(text.getTextSize() / text.getResources().getDisplayMetrics().scaledDensity)
+                                    .name("weight").value(text.getTypeface().getWeight()).name("italic").value(text.getTypeface().isItalic()).endObject();
+                            }
+                        }
+                        if (view instanceof android.view.ViewGroup) {
+                            android.view.ViewGroup group = (android.view.ViewGroup) view;
+                            for (int i = 0; i < group.getChildCount(); i++) views.add(group.getChildAt(i));
+                        }
+                    }
+                    writer.endArray();
+                } catch (Exception error) {
+                    throw new IllegalStateException("Cannot record native typography", error);
+                }
+            });
+        }
+    }
+
     private void launch(String className, Bundle extras) throws Exception {
         Intent intent = new Intent();
         intent.setClassName(getTargetContext(), className);
@@ -457,6 +490,7 @@ public class TypographyCaptureInstrumentation extends Instrumentation {
         try (FileOutputStream stream = new FileOutputStream(new File(output, name + ".png"))) { bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream); }
         bitmap.recycle();
         if (!arguments.containsKey("folder")) return;
+        captureNativeFonts(name);
         try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(new File(output, name + "-input-state.json")), "UTF-8"))) {
             writer.setIndent("  ");
             writer.beginArray();

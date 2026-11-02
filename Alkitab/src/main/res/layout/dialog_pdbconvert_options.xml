@@ -22,11 +22,11 @@
 		android:text="@string/sample_text" />
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/lSample"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:padding="6dp"
+		android:textAppearance="?android:attr/textAppearanceMedium"
 		tools:text="In the beginning God created heaven and earth" />
 
 	<CheckBox

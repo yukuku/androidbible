@@ -3,7 +3,6 @@ package yuku.alkitab.songs
 import android.app.Activity
 import android.view.View
 import android.widget.TextView
-import yuku.alkitab.base.util.NumericEntryAppearance
 import yuku.alkitab.base.widget.LeftDrawer
 import yuku.alkitab.debug.R
 
@@ -37,8 +36,5 @@ class SongSelectionControls(activity: Activity, root: View, listener: LeftDrawer
     override fun setBButtonEnabled(enabled: Boolean) { b.isEnabled = enabled }
     override fun setCButtonEnabled(enabled: Boolean) { c.isEnabled = enabled }
     override fun setBookName(bookName: CharSequence?) { book.text = bookName }
-    override fun setCode(code: String?, isReplaceOnNextInput: Boolean) {
-        this.code.text = code
-        NumericEntryAppearance.apply(this.code, true, isReplaceOnNextInput)
-    }
+    override fun setCode(code: String?) { this.code.text = code }
 }

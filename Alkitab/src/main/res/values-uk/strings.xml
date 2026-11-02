@@ -417,7 +417,7 @@
     <string name="color_picker_channel_blue">Синій</string>
     <string name="color_picker_channel_green">Зелений</string>
     <string name="color_picker_channel_red">Червоний</string>
-    <string name="color_picker_hex_label">Шістнадцятковий колір sRGB #</string>
+    <string name="color_picker_hex_label">Шістнадцятковий колір</string>
     <string name="color_picker_tab_grid">Сітка</string>
     <string name="color_picker_tab_sliders">Повзунки</string>
     <string name="color_picker_tab_spectrum">Спектр</string>

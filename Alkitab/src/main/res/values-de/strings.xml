@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">Blau</string>
     <string name="color_picker_channel_green">Grün</string>
     <string name="color_picker_channel_red">Rot</string>
-    <string name="color_picker_hex_label">sRGB-Hexfarbe #</string>
+    <string name="color_picker_hex_label">Hexfarbe</string>
     <string name="color_picker_tab_grid">Raster</string>
     <string name="color_picker_tab_sliders">Schieberegler</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

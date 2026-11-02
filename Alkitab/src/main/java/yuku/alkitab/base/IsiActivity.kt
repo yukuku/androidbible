@@ -2076,7 +2076,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                             holder.lDate.text = getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime))
                         }
 
-                        Appearances.applyMarkerDateTextAppearance(holder.lDate)
+                        Appearances.applyMarkerDateTextAppearance(holder.lDate, textSizeMult)
                     }
 
                     val ari = marker.ari
@@ -2085,7 +2085,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
 
                     if (kind == Marker.Kind.bookmark) {
                         holder.lCaption.text = caption
-                        Appearances.applyMarkerTitleTextAppearance(holder.lCaption)
+                        Appearances.applyMarkerTitleTextAppearance(holder.lCaption, textSizeMult)
 
                         holder.lSnippet.visibility = View.GONE
 
@@ -2101,7 +2101,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                         }
                     } else if (kind == Marker.Kind.note) {
                         holder.lCaption.text = reference
-                        Appearances.applyMarkerTitleTextAppearance(holder.lCaption)
+                        Appearances.applyMarkerTitleTextAppearance(holder.lCaption, textSizeMult)
                         holder.lSnippet.text = caption
                         Appearances.applyTextAppearance(holder.lSnippet, textSizeMult)
                     }

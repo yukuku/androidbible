@@ -31,7 +31,7 @@
 				android:paddingStart="16dp"
 				android:paddingEnd="16dp"
 				android:paddingTop="16dp"
-				android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+				android:textAppearance="?android:textAppearanceMedium"
 				android:textIsSelectable="true" />
 
 		</androidx.core.widget.NestedScrollView>
@@ -46,7 +46,7 @@
 			android:paddingStart="16dp"
 			android:paddingEnd="16dp"
 			android:paddingTop="16dp"
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
+			android:textAppearance="?android:textAppearanceMedium"
 			tools:ignore="LabelFor" />
 	</ViewFlipper>
 

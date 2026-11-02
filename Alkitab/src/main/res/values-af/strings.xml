@@ -415,7 +415,7 @@
     <string name="color_picker_channel_blue">Blou</string>
     <string name="color_picker_channel_green">Groen</string>
     <string name="color_picker_channel_red">Rooi</string>
-    <string name="color_picker_hex_label">sRGB Hex Kleur #</string>
+    <string name="color_picker_hex_label">Hex Kleur</string>
     <string name="color_picker_tab_grid">Ruit</string>
     <string name="color_picker_tab_sliders">Skuiwers</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

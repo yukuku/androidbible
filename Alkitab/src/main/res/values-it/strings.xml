@@ -421,7 +421,7 @@
     <string name="color_picker_channel_blue">Blu</string>
     <string name="color_picker_channel_green">Verde</string>
     <string name="color_picker_channel_red">Rosso</string>
-    <string name="color_picker_hex_label">Colore esadecimale sRGB #</string>
+    <string name="color_picker_hex_label">Colore esadecimale</string>
     <string name="color_picker_tab_grid">Griglia</string>
     <string name="color_picker_tab_sliders">Cursori</string>
     <string name="color_picker_tab_spectrum">Spettro</string>

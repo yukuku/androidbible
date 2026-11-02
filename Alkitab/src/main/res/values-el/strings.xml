@@ -415,7 +415,7 @@
     <string name="color_picker_channel_blue">Μπλε</string>
     <string name="color_picker_channel_green">Πρασινο</string>
     <string name="color_picker_channel_red">Κοκκινο</string>
-    <string name="color_picker_hex_label">Δεκαεξαδικό χρώμα sRGB #</string>
+    <string name="color_picker_hex_label">Δεκαεξαδικό χρώμα</string>
     <string name="color_picker_tab_grid">Πλέγμα</string>
     <string name="color_picker_tab_sliders">Ρυθμιστικά</string>
     <string name="color_picker_tab_spectrum">Φάσμα</string>

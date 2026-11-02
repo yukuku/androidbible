@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">Синий</string>
     <string name="color_picker_channel_green">Зелёный</string>
     <string name="color_picker_channel_red">Красный</string>
-    <string name="color_picker_hex_label">sRGB Hex-цвет #</string>
+    <string name="color_picker_hex_label">Hex-цвет</string>
     <string name="color_picker_tab_grid">Сетка</string>
     <string name="color_picker_tab_sliders">Ползунки</string>
     <string name="color_picker_tab_spectrum">Спектр</string>

@@ -415,7 +415,7 @@
     <string name="color_picker_channel_blue">Blå</string>
     <string name="color_picker_channel_green">Grøn</string>
     <string name="color_picker_channel_red">Rød</string>
-    <string name="color_picker_hex_label">sRGB hex-farve #</string>
+    <string name="color_picker_hex_label">hex-farve</string>
     <string name="color_picker_tab_grid">Tabel</string>
     <string name="color_picker_tab_sliders">Skydere</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

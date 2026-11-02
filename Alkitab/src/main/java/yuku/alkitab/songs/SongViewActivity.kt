@@ -75,6 +75,14 @@ private const val REQCODE_downloadSongBook = 3
 private const val FRAGMENT_TAG_SONG = "song"
 
 class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUrlLoadingHandler, SongComposeFragment.Host, LeftDrawer.Songs.Listener, MediaStateListener {
+    private fun LeftDrawer.Songs.Handle.setCode(code: String?, isReplaceOnNextInput: Boolean) {
+        if (this is SongSelectionSheet.EntryHandle) {
+            setEntryCode(code, isReplaceOnNextInput)
+        } else {
+            setCode(code)
+        }
+    }
+
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var leftDrawer: LeftDrawer.Songs
 

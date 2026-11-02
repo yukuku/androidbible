@@ -386,7 +386,7 @@
     <string name="color_picker_channel_blue">Kék</string>
     <string name="color_picker_channel_green">Zöld</string>
     <string name="color_picker_channel_red">Piros</string>
-    <string name="color_picker_hex_label">sRGB hexadecimális szín #</string>
+    <string name="color_picker_hex_label">hexadecimális szín</string>
     <string name="color_picker_tab_grid">Rács</string>
     <string name="color_picker_tab_sliders">Csúszkák</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

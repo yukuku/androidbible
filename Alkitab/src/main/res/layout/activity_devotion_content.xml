@@ -53,17 +53,17 @@
 							app:indicatorColor="@color/accent" />
 
 						<TextView
-							android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 							android:id="@+id/lDownloadStatus"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
 							android:layout_marginTop="16dp"
 							android:gravity="center"
-							android:accessibilityLiveRegion="polite" />
+							android:accessibilityLiveRegion="polite"
+							android:textAppearance="?android:textAppearanceMedium" />
 
 						<com.google.android.material.button.MaterialButton
 							android:id="@+id/bRetry"
-							style="@style/Widget.Alkitab.Button.Outlined"
+							style="@style/Widget.MaterialComponents.Button.OutlinedButton"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
 							android:layout_marginTop="16dp"

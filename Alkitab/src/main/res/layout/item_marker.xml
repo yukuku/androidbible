@@ -13,7 +13,6 @@
 		android:orientation="vertical">
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Caption"
 			android:id="@+id/lDate"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -21,10 +20,10 @@
 			android:layout_alignParentTop="true"
 			android:alpha="0.6"
 			android:gravity="top|end"
+			android:textSize="12sp"
 			tools:text="2099-12-32" />
 
 		<TextView
-			android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 			android:id="@+id/lCaption"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -34,18 +33,19 @@
 			android:layout_toStartOf="@+id/lDate"
 			android:ellipsize="end"
 			android:maxLines="3"
+			android:textSize="16sp"
 			tools:text="Caption or verse reference, etc." />
 
 	</RelativeLayout>
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 		android:id="@+id/lSnippet"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="8dp"
 		android:ellipsize="end"
 		android:maxLines="4"
+		android:textSize="14sp"
 		tools:text="Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. " />
 
 	<yuku.devoxx.flowlayout.FlowLayout

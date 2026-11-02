@@ -42,16 +42,17 @@
 					android:layout_height="match_parent">
 
 					<yuku.alkitab.base.widget.GotoButton
-						android:textAppearance="@style/TextAppearance.Alkitab.Emphasis"
 						android:id="@+id/bGoto"
 						style="?actionButtonStyle"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
 						android:layout_marginStart="@dimen/nav_goto_side_margin"
 						android:layout_marginEnd="@dimen/nav_goto_side_margin"
+						android:fontFamily="sans-serif-medium"
 						android:includeFontPadding="false"
 						android:paddingStart="0dp"
 						android:paddingEnd="0dp"
+						android:textSize="16sp"
 						tools:text="Long Name Of Book 123" />
 
 					<ImageButton
@@ -167,7 +168,6 @@
 				android:layout_marginBottom="8dp">
 
 				<androidx.appcompat.widget.AppCompatButton
-					android:textAppearance="@style/TextAppearance.Alkitab.Supporting"
 					android:id="@+id/bPrereleaseFeedback"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
@@ -186,6 +186,7 @@
 					android:stateListAnimator="@null"
 					android:textAllCaps="false"
 					android:textColor="@android:color/white"
+					android:textSize="14sp"
 					android:visibility="gone"
 					tools:text="Dev 123 feedback"
 					tools:visibility="visible" />

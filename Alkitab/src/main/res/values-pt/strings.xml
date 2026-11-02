@@ -416,7 +416,7 @@
     <string name="color_picker_channel_blue">Azul</string>
     <string name="color_picker_channel_green">Verde</string>
     <string name="color_picker_channel_red">Vermelho</string>
-    <string name="color_picker_hex_label">Cor Hex sRGB #</string>
+    <string name="color_picker_hex_label">Cor Hex</string>
     <string name="color_picker_tab_grid">Grelha</string>
     <string name="color_picker_tab_sliders">Cursores</string>
     <string name="color_picker_tab_spectrum">Espetro</string>

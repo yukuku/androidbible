@@ -416,7 +416,7 @@
     <string name="color_picker_channel_blue">Синьо</string>
     <string name="color_picker_channel_green">Зелено</string>
     <string name="color_picker_channel_red">Червено</string>
-    <string name="color_picker_hex_label">sRGB Hex цвят #</string>
+    <string name="color_picker_hex_label">Hex цвят</string>
     <string name="color_picker_tab_grid">Мрежа</string>
     <string name="color_picker_tab_sliders">Плъзгачи</string>
     <string name="color_picker_tab_spectrum">Спектър</string>

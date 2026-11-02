@@ -415,7 +415,7 @@
     <string name="color_picker_channel_blue">Zils</string>
     <string name="color_picker_channel_green">Zaļs</string>
     <string name="color_picker_channel_red">Sarkans</string>
-    <string name="color_picker_hex_label">sRGB heksadecimālā krāsa #</string>
+    <string name="color_picker_hex_label">heksadecimālā krāsa</string>
     <string name="color_picker_tab_grid">Režģis</string>
     <string name="color_picker_tab_sliders">Slīdņi</string>
     <string name="color_picker_tab_spectrum">Spektrs</string>

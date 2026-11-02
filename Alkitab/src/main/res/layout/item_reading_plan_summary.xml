@@ -8,13 +8,13 @@
 	android:paddingTop="@dimen/padding_medium">
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Label"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center_horizontal"
 		android:paddingBottom="4dp"
 		android:text="@string/rp_headingProgress"
-		android:textColor="#898989" />
+		android:textColor="#898989"
+		android:textSize="12sp" />
 
 	<ProgressBar
 		android:id="@+id/pbReadingProgress"
@@ -26,36 +26,36 @@
 		android:progressDrawable="@drawable/progressbar_reading_plan" />
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/tActual"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingTop="4dp" />
+		android:paddingTop="4dp"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/tTarget"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingTop="4dp" />
+		android:paddingTop="4dp"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Primary"
 		android:id="@+id/tComment"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:paddingBottom="4dp"
-		android:paddingTop="4dp" />
+		android:paddingTop="4dp"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	<TextView
-		android:textAppearance="@style/TextAppearance.Alkitab.Label"
 		android:id="@+id/tDetail"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
 		android:background="?selectableItemBackground"
+		android:fontFamily="sans-serif-medium"
 		android:gravity="center_vertical"
 		android:text="@string/rp_showDetails"
-		android:textAllCaps="false"
+		android:textAllCaps="true"
 		android:textColor="@color/accent" />
 
 

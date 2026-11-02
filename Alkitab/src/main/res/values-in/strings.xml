@@ -506,7 +506,7 @@
     <string name="color_picker_channel_red">Merah</string>
     <string name="color_picker_channel_green">Hijau</string>
     <string name="color_picker_channel_blue">Biru</string>
-    <string name="color_picker_hex_label">Warna Hex sRGB #</string>
+    <string name="color_picker_hex_label">Warna Hex</string>
     <string name="color_picker_tab_grid">Kisi</string>
     <string name="color_picker_tab_sliders">Penggeser</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>
