@@ -11,7 +11,6 @@ import kotlin.properties.Delegates.notNull
 import yuku.alkitab.base.App
 import yuku.alkitab.base.dialog.VersesDialog.Companion.newCompareInstance
 import yuku.alkitab.base.dialog.VersesDialog.Companion.newInstance
-import yuku.alkitab.base.dialog.base.BaseDialog
 import yuku.alkitab.base.model.MVersion
 import yuku.alkitab.base.util.Appearances.applyTextAppearance
 import yuku.alkitab.base.verses.VersesController
@@ -36,7 +35,7 @@ private const val EXTRA_compareMode = "compareMode"
  * "compare mode" that is created via [newCompareInstance] to show a list of different version of a verse.
  * -- field ari is used, compareMode==true.
  */
-class VersesDialog : BaseDialog() {
+class VersesDialog : VerseContentDialog() {
     abstract class VersesDialogListener {
         open fun onVerseSelected(ari: Int) {}
         open fun onComparedVerseSelected(ari: Int, mversion: MVersion) {}

@@ -13,9 +13,15 @@ import android.text.Selection
 import android.text.Spannable
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import io.mockk.every
 import io.mockk.mockk
@@ -135,6 +141,60 @@ class DevotionActivityTest {
         testDownloader.shutdown()
         App.services = originalServices
         helper.close()
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "en-rUS-w640dp-h360dp-mdpi")
+    fun `reading background covers unsafe edges while text stays safe with either toolbar position`() {
+        foreground.runNext()
+        idle()
+        val key = activity.getString(R.string.pref_bottomToolbarOnText_key)
+        val isOriginallyBottom = Preferences.getBoolean(key, false)
+        val color = Color.rgb(211, 235, 219)
+        App.services.uiDimensions.applied().backgroundColor = color
+        val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
+        val container = toolbar.parent as ViewGroup
+        val insets = WindowInsetsCompat.Builder()
+            .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(0, 24, 48, 16))
+            .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.of(32, 0, 0, 0))
+            .build()
+        try {
+            for (isBottom in listOf(false, true)) {
+                Preferences.setBoolean(key, isBottom)
+                activity.refreshToolbarPlacement()
+                controller.pause().stop().start().resume().visible()
+                idle()
+                ViewCompat.dispatchApplyWindowInsets(container, insets)
+                val decor = activity.window.decorView
+                decor.measure(
+                    View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
+                )
+                decor.layout(0, 0, 640, 360)
+                val bounds = android.graphics.Rect()
+                activity.lContent.getGlobalVisibleRect(bounds)
+                assertTrue("text must be visible", activity.lContent.isShown)
+                assertTrue("left safe area: $bounds", bounds.left >= 32)
+                assertTrue("right safe area: $bounds", bounds.right <= 592)
+                val bitmap = Bitmap.createBitmap(640, 360, Bitmap.Config.ARGB_8888)
+                decor.draw(Canvas(bitmap))
+                assertEquals(color, bitmap.getPixel(1, 180))
+                assertEquals(color, bitmap.getPixel(638, 180))
+                assertEquals(color, bitmap.getPixel(320, if (isBottom) 1 else 358))
+                bitmap.recycle()
+                val controller = WindowCompat.getInsetsController(activity.window, decor)
+                assertEquals(isBottom, controller.isAppearanceLightStatusBars)
+                assertEquals(!isBottom, controller.isAppearanceLightNavigationBars)
+                val sideNavigationInsets = WindowInsetsCompat.Builder(insets)
+                    .setInsets(WindowInsetsCompat.Type.navigationBars(), Insets.of(0, 0, 48, 0))
+                    .build()
+                ViewCompat.dispatchApplyWindowInsets(container, sideNavigationInsets)
+                assertTrue(controller.isAppearanceLightNavigationBars)
+            }
+        } finally {
+            Preferences.setBoolean(key, isOriginallyBottom)
+        }
     }
 
     @Test fun `display drawer item opens an inline panel and back dismisses it without leaving the article`() {

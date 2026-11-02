@@ -22,7 +22,7 @@ import kotlin.Unit;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.ac.base.BaseTextAppearanceActivity;
+import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.settings.SettingsActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -34,7 +34,7 @@ import yuku.alkitabconverter.util.DesktopVerseFinder;
 import yuku.alkitabconverter.util.DesktopVerseParser;
 import yuku.alkitabintegration.display.Launcher;
 
-public class NoteActivity extends BaseTextAppearanceActivity {
+public class NoteActivity extends BaseActivity {
 	//region static constructors
 	private static final String EXTRA_marker_id = "marker_id";
 	private static final String EXTRA_reference = "reference";
@@ -101,7 +101,6 @@ public class NoteActivity extends BaseTextAppearanceActivity {
 		viewFlipper = findViewById(R.id.viewFlipper);
 		tCaptionReadOnly = findViewById(R.id.tCaptionReadOnly);
 		tCaption = findViewById(R.id.tCaption);
-		setupTextAppearancePanel(findViewById(R.id.textAppearanceOverlay), this::applyTextAppearance);
 
 		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -256,10 +255,7 @@ public class NoteActivity extends BaseTextAppearanceActivity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuDisplay) {
-			toggleTextAppearancePanel();
-			return true;
-		} else if (itemId == R.id.menuEdit) {
+		if (itemId == R.id.menuEdit) {
 			setEditingMode(true);
 			return true;
 		} else if (itemId == R.id.menuDelete) {// if it's indeed not exist, check if we have some text, if we do, prompt first

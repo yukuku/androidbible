@@ -54,6 +54,8 @@ class VersesControllerImpl(
     private val audioHighlight = AudioHighlight()
 
     private val basePadding = Rect()
+    private var leftInset = 0
+    private var rightInset = 0
     private var topInset = 0
     private var bottomInset = 0
 
@@ -492,13 +494,15 @@ class VersesControllerImpl(
         applyPadding()
     }
 
-    override fun setViewVerticalInsets(topInset: Int, bottomInset: Int) {
-        if (this.topInset == topInset && this.bottomInset == bottomInset) return
+    override fun setViewInsets(leftInset: Int, topInset: Int, rightInset: Int, bottomInset: Int) {
+        if (this.leftInset == leftInset && this.topInset == topInset && this.rightInset == rightInset && this.bottomInset == bottomInset) return
         // RecyclerView keeps the first visible item's pixel position when
         // padding changes, which would leave a list resting at the very top
         // with its first verse inside the freshly-unsafe area (e.g. the
         // cutout band after entering fullscreen), so re-anchor it.
         val atTop = !rv.canScrollVertically(-1)
+        this.leftInset = leftInset
+        this.rightInset = rightInset
         this.topInset = topInset
         this.bottomInset = bottomInset
         applyPadding()
@@ -506,7 +510,7 @@ class VersesControllerImpl(
     }
 
     private fun applyPadding() {
-        rv.setPadding(basePadding.left, basePadding.top + topInset, basePadding.right, basePadding.bottom + bottomInset)
+        rv.setPadding(basePadding.left + leftInset, basePadding.top + topInset, basePadding.right + rightInset, basePadding.bottom + bottomInset)
     }
 
     override fun setViewScrollbarThumb(thumb: Drawable) {

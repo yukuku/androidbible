@@ -76,6 +76,7 @@
 			android:orientation="vertical" />
 
 		<View
+			android:id="@+id/dividerProgress"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
 			android:background="#33ffffff" />
@@ -160,6 +161,7 @@
 		</LinearLayout>
 
 		<View
+			android:id="@+id/dividerDisplay"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
 			android:background="#33ffffff" />
