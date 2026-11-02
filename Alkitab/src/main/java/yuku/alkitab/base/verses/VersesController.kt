@@ -119,12 +119,12 @@ interface VersesController {
     fun setViewPadding(padding: Rect)
 
     /**
-     * Extra vertical padding from window insets, kept separate from (and
+     * Extra padding from window insets, kept separate from (and
      * added to) [setViewPadding]'s preference-derived padding, so the list
      * draws edge-to-edge behind the system bars and display cutout while the
      * scrolled-to-edge verses stay inside the safe area.
      */
-    fun setViewVerticalInsets(topInset: Int, bottomInset: Int)
+    fun setViewInsets(leftInset: Int, topInset: Int, rightInset: Int, bottomInset: Int)
     fun setViewScrollbarThumb(thumb: Drawable)
 
     fun setViewLayoutSize(width: Int, height: Int)

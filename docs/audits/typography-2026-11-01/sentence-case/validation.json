@@ -6,5 +6,6 @@
     "overflow": false
   },
   "mobileOverflow": false,
-  "errors": []
+  "errors": [],
+  "assetTransport": "Local PNG bytes supplied to browser requests; unchanged report URLs"
 }

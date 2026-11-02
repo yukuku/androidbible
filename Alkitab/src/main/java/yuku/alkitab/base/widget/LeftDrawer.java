@@ -58,6 +58,7 @@ public abstract class LeftDrawer extends NestedScrollView {
 	final Activity activity;
 	// for closing drawer
 	DrawerLayout drawerLayout;
+	private int[] contentStartMargins;
 
 	public LeftDrawer(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
@@ -72,6 +73,13 @@ public abstract class LeftDrawer extends NestedScrollView {
 		setClickable(true);
 		for (int i = 0, len = getChildCount(); i < len; i++) {
 			getChildAt(i).setDuplicateParentStateEnabled(false);
+		}
+
+		final ViewGroup content = (ViewGroup) getChildAt(0);
+		contentStartMargins = new int[content.getChildCount()];
+		for (int i = 0; i < content.getChildCount(); i++) {
+			final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) content.getChildAt(i).getLayoutParams();
+			contentStartMargins[i] = params.getMarginStart();
 		}
 
 		bBible = findViewById(R.id.bBible);
@@ -124,9 +132,34 @@ public abstract class LeftDrawer extends NestedScrollView {
 	}
 
 	public void setSafeAreaInsets(final int left, final int top, final int right, final int bottom) {
-		setPadding(left, 0, right, bottom);
+		final boolean isRtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
+		final int startInset = isRtl ? right : left;
+		final ViewGroup.LayoutParams drawerParams = getLayoutParams();
+		final int width = getResources().getDimensionPixelSize(R.dimen.left_drawer_width) + startInset;
+		if (drawerParams != null && drawerParams.width != width) {
+			drawerParams.width = width;
+			setLayoutParams(drawerParams);
+		}
+
+		setPadding(0, 0, 0, bottom);
 		final View header = (View) bBible.getParent();
-		header.setPadding(0, top, 0, 0);
+		header.setPadding(isRtl ? 0 : startInset, top, isRtl ? startInset : 0, 0);
+		final View footer = (View) bSettings.getParent();
+		footer.setPadding(isRtl ? 0 : startInset, 0, isRtl ? startInset : 0, 0);
+
+		final ViewGroup content = (ViewGroup) getChildAt(0);
+		for (int i = 0; i < content.getChildCount(); i++) {
+			final View child = content.getChildAt(i);
+			final int id = child.getId();
+			final boolean isDivider = id == R.id.dividerCurrentReading || id == R.id.dividerProgress || id == R.id.dividerDisplay;
+			if (child == header || child == footer || isDivider) continue;
+			final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
+			final int startMargin = contentStartMargins[i] + startInset;
+			if (params.getMarginStart() != startMargin) {
+				params.setMarginStart(startMargin);
+				child.setLayoutParams(params);
+			}
+		}
 	}
 
 	void setDrawerItemSelected(@NonNull TextView drawerItem) {

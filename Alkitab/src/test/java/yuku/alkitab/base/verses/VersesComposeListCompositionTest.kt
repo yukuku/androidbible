@@ -213,6 +213,46 @@ class VersesComposeListCompositionTest {
     }
 
     @Test
+    fun `a wrapping verse list hugs short content and bounds long content to the viewport`() {
+        for (count in listOf(1, 30)) {
+            val harness = composeList(count)
+            harness.view.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            harness.controller.versesDataModel = dataModel(count).copy()
+            repeat(3) {
+                Snapshot.sendApplyNotifications()
+                idleLoopers()
+                harness.automaticFrameClock?.sendFrame(System.nanoTime())
+                idleLoopers()
+                harness.view.measure(
+                    View.MeasureSpec.makeMeasureSpec(VIEWPORT_WIDTH_PX, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(VIEWPORT_HEIGHT_PX, View.MeasureSpec.AT_MOST),
+                )
+                harness.view.layout(0, 0, VIEWPORT_WIDTH_PX, harness.view.measuredHeight)
+                harness.view.draw(Canvas())
+            }
+            if (count == 1) {
+                assertTrue(harness.view.height in 1 until VIEWPORT_HEIGHT_PX)
+            } else {
+                assertEquals(VIEWPORT_HEIGHT_PX, harness.view.height)
+                assertTrue(harness.controller.listState.canScrollForward)
+            }
+        }
+    }
+
+    @Test
+    fun `safe area insets add to configured content padding without accumulating`() {
+        val harness = composeList(30)
+        harness.controller.setViewPadding(Rect(10, 20, 12, 24))
+        repeat(2) {
+            harness.controller.setViewInsets(32, 16, 48, 28)
+            pumpLayout(harness)
+            val info = harness.controller.listState.layoutInfo
+            assertEquals(36, info.beforeContentPadding)
+            assertEquals(52, info.afterContentPadding)
+        }
+    }
+
+    @Test
     fun `composing a chapter with verses and a pericope header lays out items and reports verse 1 at the top`() {
         val harness = composeList(30)
 
@@ -318,7 +358,7 @@ class VersesComposeListCompositionTest {
         )
         val harness = composeList(25, initialData = chapter)
         harness.controller.setViewPadding(Rect(8, 16, 8, 24))
-        harness.controller.setViewVerticalInsets(20, 30)
+        harness.controller.setViewInsets(0, 20, 0, 30)
 
         for (height in listOf(320, 480, 160)) {
             harness.viewportHeight = height

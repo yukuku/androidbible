@@ -333,8 +333,10 @@ class LeftDrawerCurrentReadingTest {
         assertEquals(drawer.height - 32, topInDrawer(help) + help.height)
         drawer.scrollBy(0, -16)
         assertEquals(Color.rgb(55, 71, 79), pixel(drawer.height - 24))
-        assertEquals(13, drawer.getChildAt(0).left)
-        assertEquals(drawer.width - 17, drawer.getChildAt(0).right)
+        assertEquals(0, drawer.getChildAt(0).left)
+        assertEquals(drawer.width, drawer.getChildAt(0).right)
+        assertEquals(13, bible.left)
+        assertEquals(drawer.width, bible.right)
     }
 
 }

@@ -9,7 +9,6 @@ import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.compose.ui.text.AnnotatedString
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import yuku.alkitab.base.App
 import yuku.alkitab.base.util.Appearances.applyMarkerDateTextAppearance
@@ -24,7 +23,7 @@ import yuku.alkitab.base.widget.AttributeView
 import yuku.alkitab.debug.R
 import yuku.alkitab.model.ProgressMark
 
-class ProgressMarkListDialog : DialogFragment() {
+class ProgressMarkListDialog : VerseContentDialog() {
     var progressMarkSelectedListener: (preset_id: Int) -> Unit = {}
 
     private val version = App.services.versions.activeVersion()

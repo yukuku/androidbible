@@ -188,11 +188,14 @@ abstract class BaseActivity : AppCompatActivity() {
             val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
             val top = if (isToolbarAtBottom) 0 else insets.top
             val bottom = if (isToolbarAtBottom && !windowInsets.isVisible(WindowInsetsCompat.Type.ime())) insets.bottom else 0
-            v.updatePadding(top = top, bottom = bottom)
+            v.updatePadding(left = insets.left, top = top, right = insets.right, bottom = bottom)
             v.updateLayoutParams { height = actionBarSize + top + bottom }
             windowInsets
         }
         val basePadding = Rect(container.paddingLeft, container.paddingTop, container.paddingRight, container.paddingBottom)
+        val contentPadding = container.children.filter { it !== toolbar }.associateWith {
+            Rect(it.paddingLeft, it.paddingTop, it.paddingRight, it.paddingBottom)
+        }
         ViewCompat.setOnApplyWindowInsetsListener(container) { v, windowInsets ->
             val insets = windowInsets.getInsets(SAFE_AREA_TYPES)
             val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
@@ -202,11 +205,14 @@ abstract class BaseActivity : AppCompatActivity() {
                 else -> maxOf(insets.bottom, ime.bottom)
             }
             v.setPadding(
-                basePadding.left + insets.left,
+                basePadding.left,
                 basePadding.top + if (isToolbarAtBottom) insets.top else 0,
-                basePadding.right + insets.right,
+                basePadding.right,
                 basePadding.bottom + bottom,
             )
+            contentPadding.forEach { (child, padding) ->
+                child.updatePadding(left = padding.left + insets.left, right = padding.right + insets.right)
+            }
             windowInsets
         }
     }
@@ -251,6 +257,9 @@ abstract class BaseActivity : AppCompatActivity() {
         edgeToEdge = true
         edgeToEdgeHasToolbar = hasToolbar
         enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT >= 29) {
+            window.isNavigationBarContrastEnforced = false
+        }
         if (Build.VERSION.SDK_INT >= 28) {
             window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }

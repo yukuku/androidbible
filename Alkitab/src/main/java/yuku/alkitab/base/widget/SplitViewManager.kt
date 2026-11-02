@@ -132,9 +132,9 @@ class SplitViewManager(
         override fun onHandleDragMoveX(dxSinceLast: Float, dxSinceStart: Float) {
             val newW = (first + dxSinceStart).toInt()
             val maxW = root - handle
-            val width = if (newW < 0) 0 else if (newW > maxW) maxW else newW
+            val width = newW.coerceIn(masterWidthRange(root, handle))
             host.lsSplit0.setViewLayoutSize(width, ViewGroup.LayoutParams.MATCH_PARENT)
-            prop = width.toFloat() / maxW
+            prop = if (maxW > 0) width.toFloat() / maxW else 0f
         }
 
         override fun onHandleDragMoveY(dySinceLast: Float, dySinceStart: Float) {
@@ -369,7 +369,8 @@ class SplitViewManager(
             splitRoot.orientation = LinearLayout.HORIZONTAL
 
             val totalWidth = splitRoot.width
-            val masterWidth = ((totalWidth - splitHandleThickness) * prop).toInt().coerceAtLeast(0)
+            val masterWidth = ((totalWidth - splitHandleThickness) * prop).toInt()
+                .coerceIn(masterWidthRange(totalWidth, splitHandleThickness))
 
             run {
                 // divide the screen space
@@ -384,6 +385,13 @@ class SplitViewManager(
                 height = ViewGroup.LayoutParams.MATCH_PARENT
             }
         }
+    }
+
+    private fun masterWidthRange(rootWidth: Int, handleThickness: Int): IntRange {
+        val insets = ViewCompat.getRootWindowInsets(host.splitRoot)
+            ?.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()) ?: Insets.NONE
+        val max = (rootWidth - handleThickness - insets.right).coerceAtLeast(0)
+        return insets.left.coerceAtMost(max)..max
     }
 
     private fun masterHeightRange(rootHeight: Int, handleThickness: Int): IntRange {

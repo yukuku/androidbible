@@ -16,6 +16,11 @@ import android.widget.TextView
 import androidx.annotation.Keep
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ShareCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.NestedScrollView
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.button.MaterialButton
@@ -185,6 +190,10 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         }
 
         root = findViewById(R.id.root)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            updateSystemBarAppearance(insets)
+            insets
+        }
         lContent = findViewById(R.id.lContent)
         scrollContent = findViewById(R.id.scrollContent)
         downloadStatus = findViewById(R.id.downloadStatus)
@@ -214,10 +223,8 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         App.services.uiDimensions.recalculate()
         val applied = App.services.uiDimensions.applied()
 
-        // apply background color, and clear window background to prevent overdraw
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent)
-        root.setBackgroundColor(applied.backgroundColor)
-        scrollContent.setBackgroundColor(applied.backgroundColor)
+        window.setBackgroundDrawable(applied.backgroundColor.toDrawable())
+        updateSystemBarAppearance(ViewCompat.getRootWindowInsets(root))
         lDownloadStatus.setTextColor(applied.fontColor)
         bRetry.setTextColor(applied.fontColor)
         bRetry.strokeColor = ColorStateList.valueOf(applied.fontColor)
@@ -232,6 +239,14 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
         lContent.setPadding(padding.left, padding.top, padding.right, padding.bottom)
         display()
         getWindow().decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
+    }
+
+    private fun updateSystemBarAppearance(insets: WindowInsetsCompat?) {
+        val isLightContentBackground = ColorUtils.calculateLuminance(App.services.uiDimensions.applied().backgroundColor) > 0.5
+        val isNavigationBarBehindToolbar = isToolbarAtBottom && (insets == null || insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom > 0)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        controller.isAppearanceLightStatusBars = isToolbarAtBottom && isLightContentBackground
+        controller.isAppearanceLightNavigationBars = !isNavigationBarBehindToolbar && isLightContentBackground
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

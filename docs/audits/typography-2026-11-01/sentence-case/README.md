@@ -28,6 +28,10 @@ The mixed-case song sample is a production-component fixture with fixed source t
 - [Lint results](lint.json)
 - [Browser validation](validation.json)
 
+## Integration with develop
+
+The PR also integrates the current develop branch, retaining its darker Compose container palette and dialog/Note layout fixes. The Note layout uses the current develop hierarchy with the shared typography appearance on its two text fields. Screenshots in this report predate that integration and therefore do not illustrate those inherited changes. [Post-integration checks](integration-validation.json) passed: app/test APK builds, lint, and 46 focused test executions, including two Note checks.
+
 ## Regression checks
 
 The shared typography tests check platform, AppCompat, Material, colored, outlined, and dialog action casing on API 26 and API 34 across the app's dark, light, and legacy feedback themes. Resource checks cover all 31 UI locales. Song tests verify that tune/copyright casing and inline italic spans survive rendering, and that copy/share tune text keeps its original case. Existing navigation and song parser/render/export tests remain included in the focused run.

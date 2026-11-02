@@ -4,14 +4,11 @@ import android.app.Application
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Looper
-import android.widget.FrameLayout
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.compose.ui.platform.ComposeView
 import io.mockk.mockk
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -72,24 +69,19 @@ class NoteActivityTest {
     }
 
     @Test
-    fun `display panel is available while viewing and editing and back preserves the draft`() {
+    fun `viewing and editing menus exclude appearance controls and preserve the draft`() {
         activity.tCaption.setText("Unsaved note")
         activity.tCaption.setSelection(4)
         val menu = MenuBuilder(activity)
         activity.onCreateOptionsMenu(menu)
-        val display = menu.findItem(R.id.menuDisplay)
-        val overlay = activity.findViewById<FrameLayout>(R.id.textAppearanceOverlay)
-        val initialChildCount = overlay.childCount
 
         for (isEditing in listOf(true, false)) {
             activity.setEditingMode(isEditing)
             activity.onPrepareOptionsMenu(menu)
-            assertTrue(display.isVisible)
-            activity.onOptionsItemSelected(display)
-            assertEquals(initialChildCount + 1, overlay.childCount)
-            assertTrue(overlay.getChildAt(initialChildCount) is ComposeView)
-            activity.onBackPressedDispatcher.onBackPressed()
-            assertEquals(initialChildCount, overlay.childCount)
+            assertEquals(setOf(R.id.menuEdit, R.id.menuDelete, R.id.menuOk), (0 until menu.size()).map { menu.getItem(it).itemId }.toSet())
+            assertEquals(!isEditing, menu.findItem(R.id.menuEdit).isVisible)
+            assertEquals(isEditing, menu.findItem(R.id.menuDelete).isVisible)
+            assertEquals(isEditing, menu.findItem(R.id.menuOk).isVisible)
             assertFalse(activity.isFinishing)
             assertEquals("Unsaved note", activity.tCaption.text.toString())
             assertEquals(4, activity.tCaption.selectionStart)
@@ -97,7 +89,7 @@ class NoteActivityTest {
     }
 
     @Test
-    fun `returning from appearance settings applies every font and bold setting to both modes without changing the draft or selection`() {
+    fun `returning to a note applies shared font and bold settings to both modes without changing the draft or selection`() {
         activity.tCaption.setText("Keep this draft")
         activity.tCaption.setSelection(5)
         for (fontName in listOf("DEFAULT", "SERIF", "MONOSPACE")) {
