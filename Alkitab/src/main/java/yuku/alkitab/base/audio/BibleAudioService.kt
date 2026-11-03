@@ -69,6 +69,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         private const val MEDIA_SESSION_ID = "bible_audio"
 
         private const val POSITION_POLL_INTERVAL_MS = 100L
+        private const val DIAGNOSTIC_DELAY_MS = 5_000L
         private const val ARTWORK_SIZE_PX = 256
 
         /**
@@ -155,6 +156,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     private var positionJob: Job? = null
     private var loadJob: Job? = null
     private var timingJob: Job? = null
+    private var diagnosticJob: Job? = null
 
     private lateinit var player: BibleAudioPlayer
     private var mediaSession: MediaSession? = null
@@ -204,18 +206,23 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             } else {
                 positionJob?.cancel()
             }
+            updateDiagnosticTimer()
+        }
+
+        override fun onPlayWhenReadyChanged() {
+            updateDiagnosticTimer()
         }
 
         override fun onBuffering() {
             // `preparing` doubles as the buffering flag rather than having a
             // separate field: to the user both states are "we asked to play but
             // no audio is coming out yet", which is what the spinner says.
-            _playbackState.update { it.copy(preparing = true) }
+            _playbackState.update { it.copy(preparing = true, isPlaying = false) }
+            updateDiagnosticTimer()
         }
 
         override fun onReady() {
             playerReadyForSeek = true
-            tryInitialSeek()
             _playbackState.update {
                 it.copy(
                     preparing = false,
@@ -225,10 +232,14 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                     error = null,
                 )
             }
+            // A deferred seek can synchronously report buffering, so publish READY before seeking.
+            tryInitialSeek()
+            updateDiagnosticTimer()
         }
 
         override fun onEnded() {
             positionJob?.cancel()
+            updateDiagnosticTimer()
             _playbackState.update {
                 it.copy(isPlaying = false, positionMs = player.durationMs)
             }
@@ -250,6 +261,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                     error = stripErrorCodePrefix(error.errorCodeName),
                 )
             }
+            updateDiagnosticTimer()
         }
     }
 
@@ -356,6 +368,8 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         AudioPlaybackCoordinator.acquire(this)
         loadJob?.cancel()
         timingJob?.cancel()
+        diagnosticJob?.cancel()
+        diagnosticJob = null
         // The player still holds the outgoing chapter until the load job below
         // swaps the media item, so a poll tick would overwrite the
         // position/duration reset below with the old chapter's values. Polling
@@ -393,6 +407,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                         localizedContext().getString(R.string.audio_log_loading, request.displayTitle),
                     )
                 ),
+                isDiagnosticVisible = false,
             )
         }
 
@@ -427,6 +442,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             player.exoPlayer.setMediaItem(mediaItem)
             player.exoPlayer.playWhenReady = true
             player.exoPlayer.prepare()
+            updateDiagnosticTimer()
         }
 
         // Stay on Dispatchers.Main.immediate (the scope's default) so setTiming
@@ -481,16 +497,19 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     fun play() {
         AudioPlaybackCoordinator.acquire(this)
         player.play()
+        updateDiagnosticTimer()
     }
 
     fun pause() {
         player.pause()
+        updateDiagnosticTimer()
     }
 
     fun seekTo(positionMs: Long) {
         player.seekTo(positionMs)
         highlightTracker.update(positionMs)
         _playbackState.update { it.copy(positionMs = positionMs) }
+        updateDiagnosticTimer()
     }
 
     /**
@@ -536,6 +555,8 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         loadJob?.cancel()
         timingJob?.cancel()
         positionJob?.cancel()
+        diagnosticJob?.cancel()
+        diagnosticJob = null
         currentRequest = null
         hasActiveSession = false
         // Same reason as in [loadChapter]: the in-flight calls being torn down
@@ -700,6 +721,24 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
                     )
                 }
                 delay(POSITION_POLL_INTERVAL_MS)
+            }
+        }
+    }
+
+    private fun updateDiagnosticTimer() {
+        val state = _playbackState.value
+        if (!state.isActive || state.error != null || !player.isWaitingForPlayback) {
+            diagnosticJob?.cancel()
+            diagnosticJob = null
+            _playbackState.update { it.copy(isDiagnosticVisible = false) }
+            return
+        }
+        if (state.isDiagnosticVisible || diagnosticJob?.isActive == true) return
+
+        diagnosticJob = scope.launch {
+            delay(DIAGNOSTIC_DELAY_MS)
+            if (player.isWaitingForPlayback) {
+                _playbackState.update { it.copy(isDiagnosticVisible = true) }
             }
         }
     }

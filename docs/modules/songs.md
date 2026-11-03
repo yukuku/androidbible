@@ -40,6 +40,11 @@ and the original title when available. The sheet is at most 360dp wide and
 leaves a gap below the status bar. Its background extends behind the system
 bars, with safe bottom padding inside the scrolling content. Audio supports play/pause, seeking and repeat;
 playback continues through the existing song audio service after dismissal.
+If requested audio has not started after five seconds, a diagnostic status line
+appears above its controls. Tapping it opens the HTTP and player log. Once shown,
+the line stays visible for that song's active media session, including after
+playback starts, retries, switching audio clips, and reopening the song activity.
+Selecting another song or ending the session clears the diagnostics.
 Video items open through an external YouTube URL intent, pausing song audio.
 
 The toolbar indicates audio, video, or both before the sheet is opened. Loading

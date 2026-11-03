@@ -6,7 +6,7 @@ package yuku.alkitab.base.audio
  *
  *  - [isPlaying]: true while audio is actually coming out, not merely requested
  *    but still buffering (that is [preparing]).
- *  - [preparing]: true between `loadChapter` and the player firing READY. Drives
+ *  - [preparing]: true during initial loading or buffering after a seek. Drives
  *    the bar's play-button progress ring.
  *  - [versionId]: versionId of the loaded source, or `""` when nothing is
  *    loaded. Scopes the verse highlight to panes whose version matches.
@@ -29,6 +29,8 @@ package yuku.alkitab.base.audio
  *    currently loading, oldest first. Reset at the start of every `loadChapter`
  *    so a retry starts a fresh log. Drives the audio bar's slow-load status line
  *    and its log bottom sheet.
+ *  - [isDiagnosticVisible]: true after requested playback has been waiting for
+ *    five seconds, including seeks that stall without a buffering callback.
  */
 data class PlaybackState(
     val isPlaying: Boolean,
@@ -43,6 +45,7 @@ data class PlaybackState(
     val speed: Float,
     val error: String?,
     val logs: List<AudioLogEntry>,
+    val isDiagnosticVisible: Boolean,
 ) {
     /**
      * True while a chapter is loaded into the service (playing, paused, or
@@ -68,6 +71,7 @@ data class PlaybackState(
             speed = 1.0f,
             error = null,
             logs = emptyList(),
+            isDiagnosticVisible = false,
         )
     }
 }

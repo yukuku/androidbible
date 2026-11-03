@@ -88,6 +88,7 @@ data class AudioBarUiState(
     /** When true, the playback-speed bottom sheet is shown over the bar. */
     val showSpeedSheet: Boolean,
     val setGroups: List<AudioSetGroup>?,
+    val isDiagnosticVisible: Boolean,
 ) {
     companion object {
         val HIDDEN = AudioBarUiState(
@@ -107,6 +108,7 @@ data class AudioBarUiState(
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         )
     }
 }
@@ -352,21 +354,31 @@ private fun AudioLoadStatusLine(
     onCommand: (AudioBarCommand) -> Unit,
 ) {
     val slowLoad = slowLoadStatusVisible(state.preparing)
-    if (state.error == null && !slowLoad) return
+    if (state.error == null && !slowLoad && !state.isDiagnosticVisible) return
+    AudioDiagnosticStatusLine(state.logs, state.error, { onCommand(AudioBarCommand.OpenLogSheet) })
+}
+
+@Composable
+internal fun AudioDiagnosticStatusLine(
+    logs: List<AudioLogEntry>,
+    error: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     // The error is the message; a trailing log entry would bury it.
-    val text = state.error
-        ?: state.logs.lastOrNull()?.message
+    val text = error
+        ?: logs.lastOrNull()?.message
         ?: stringResource(R.string.audio_bar_loading_status_fallback)
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
-        color = if (state.error != null) MaterialTheme.colorScheme.error else LocalContentColor.current.copy(alpha = 0.7f),
+        color = if (error != null) MaterialTheme.colorScheme.error else LocalContentColor.current.copy(alpha = 0.7f),
         textAlign = TextAlign.Center,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable { onCommand(AudioBarCommand.OpenLogSheet) },
+            .clickable(onClick = onClick),
     )
 }
 
@@ -655,6 +667,7 @@ private fun AudioBarPreviewNarrow() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -682,6 +695,7 @@ private fun AudioBarPreviewWide() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -709,6 +723,7 @@ private fun AudioBarPreviewPreparing() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -742,6 +757,7 @@ private fun AudioBarPreviewSlowLoad() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -775,6 +791,7 @@ private fun AudioBarPreviewDarkError() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -805,6 +822,7 @@ private fun AudioBarPreviewWithPicker() {
             ),
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,

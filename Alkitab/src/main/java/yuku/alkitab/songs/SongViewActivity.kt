@@ -300,9 +300,9 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         val code = Preferences.getString(Prefkey.song_last_code, null)
 
         if (bookName == null || code == null) {
-            displaySong(null, null, true)
+            displaySong(null, null)
         } else {
-            displaySong(bookName, App.services.storage.songDb.getSong(bookName, code), true)
+            displaySong(bookName, App.services.storage.songDb.getSong(bookName, code))
         }
 
         window.decorView.keepScreenOn = Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), resources.getBoolean(R.bool.pref_keepScreenOn_default))
@@ -379,9 +379,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
     private fun playSongClip(clip: SongAudioClip) {
         val song = currentSong ?: return
         if (!songAudioController.isCurrentUrl(clip.url)) {
-            val isLooping = songAudioController.isLooping
-            songAudioController.reset()
-            songAudioController.setLoop(isLooping)
             songAudioController.setDisplayInfo(
                 "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
                 song.meta.title.orEmpty(),
@@ -576,14 +573,11 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
         )
     }
 
-    @JvmOverloads
-    fun displaySong(bookName: String?, doc: SongDocument?, onCreate: Boolean = false) {
+    fun displaySong(bookName: String?, doc: SongDocument?) {
         root.visibility = if (doc != null) VISIBLE else GONE
         no_song_data_container.visibility = if (doc != null) GONE else VISIBLE
 
-        if (!onCreate) {
-            songAudioController.reset()
-        }
+        songAudioController.selectSong(bookName, doc?.code)
 
         if (doc == null) {
             currentBookName = null

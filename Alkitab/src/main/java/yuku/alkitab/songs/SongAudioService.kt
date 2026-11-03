@@ -1,6 +1,7 @@
 package yuku.alkitab.songs
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
@@ -24,13 +25,25 @@ import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import java.lang.ref.WeakReference
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import yuku.alkitab.base.audio.AudioHttpEventLogger
+import yuku.alkitab.base.audio.AudioLogEntry
+import yuku.alkitab.base.audio.AudioLogMessage
 import yuku.alkitab.base.audio.AudioPlaybackCoordinator
+import yuku.alkitab.base.audio.stripErrorCodePrefix
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.AppLog
+import yuku.alkitab.base.widget.ConfigurationWrapper
 import yuku.alkitab.debug.R
 
 /**
@@ -52,6 +65,8 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
         const val NOTIFICATION_CHANNEL_ID = "audio_song"
         private const val MEDIA_SESSION_ID = "song_audio"
         private const val TAG = "SongAudioService"
+        private const val DIAGNOSTIC_DELAY_MS = 5_000L
+        private const val MAX_LOG_ENTRIES = 500
     }
 
     data class SongRequest(
@@ -77,18 +92,34 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
     private lateinit var player: ExoPlayer
     private var mediaSession: MediaSession? = null
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var diagnosticJob: Job? = null
+    @Volatile
+    private var loadGeneration = 0
+    private var localizedContext: Context? = null
+    private var localizedContextSerial = -1
+
     private val _playbackState = MutableStateFlow(SongPlaybackState.IDLE)
     val playbackState: StateFlow<SongPlaybackState> = _playbackState.asStateFlow()
 
     private val playerListener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
-                Player.STATE_BUFFERING -> _playbackState.update { it.copy(preparing = true, error = null) }
-                Player.STATE_READY -> _playbackState.update {
-                    it.copy(preparing = false, ended = false, isPlaying = player.isPlaying, error = null)
+                Player.STATE_BUFFERING -> {
+                    appendLog(AudioLogMessage(R.string.audio_log_player_buffering))
+                    _playbackState.update { it.copy(preparing = true, error = null) }
+                    updateDiagnosticTimer()
                 }
-                Player.STATE_ENDED -> _playbackState.update {
-                    it.copy(preparing = false, isPlaying = false, ended = true)
+                Player.STATE_READY -> {
+                    appendLog(AudioLogMessage(R.string.audio_log_player_ready))
+                    _playbackState.update {
+                        it.copy(preparing = false, ended = false, isPlaying = player.isPlaying, error = null)
+                    }
+                    updateDiagnosticTimer()
+                }
+                Player.STATE_ENDED -> {
+                    _playbackState.update { it.copy(preparing = false, isPlaying = false, ended = true) }
+                    updateDiagnosticTimer()
                 }
                 else -> Unit
             }
@@ -96,11 +127,23 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             _playbackState.update { it.copy(isPlaying = isPlaying) }
+            updateDiagnosticTimer()
+        }
+
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            updateDiagnosticTimer()
         }
 
         override fun onPlayerError(error: PlaybackException) {
             AppLog.w(TAG, "player error: ${error.errorCodeName} ${error.message}")
-            _playbackState.update { it.copy(preparing = false, isPlaying = false, error = error.errorCodeName) }
+            val code = stripErrorCodePrefix(error.errorCodeName)
+            val detail = error.message
+            appendLog(
+                if (detail != null) AudioLogMessage(R.string.audio_log_player_error_detail, listOf(code, detail))
+                else AudioLogMessage(R.string.audio_log_player_error, listOf(code))
+            )
+            _playbackState.update { it.copy(preparing = false, isPlaying = false, error = code) }
+            updateDiagnosticTimer()
         }
     }
 
@@ -131,7 +174,18 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
     }
 
     private fun buildPlayer(): ExoPlayer {
-        val okHttpDataSourceFactory = OkHttpDataSource.Factory(Connections.okHttp)
+        val loggingClient = Connections.okHttp.newBuilder()
+            .eventListenerFactory {
+                // HTTP cancellation callbacks can arrive after another load has started.
+                val generation = loadGeneration
+                AudioHttpEventLogger { message ->
+                    scope.launch {
+                        if (generation == loadGeneration) appendLog(message)
+                    }
+                }
+            }
+            .build()
+        val okHttpDataSourceFactory = OkHttpDataSource.Factory(loggingClient)
             .setUserAgent(Connections.httpUserAgent)
         val extractorsFactory = ExtractorsFactory {
             arrayOf<Extractor>(Mp3Extractor(), MidiExtractor())
@@ -171,6 +225,8 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
     }
 
     override fun onDestroy() {
+        scope.cancel()
+        _playbackState.value = SongPlaybackState.IDLE
         mediaSession?.release()
         mediaSession = null
         player.release()
@@ -186,6 +242,15 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
 
     fun load(request: SongRequest) {
         AudioPlaybackCoordinator.acquire(this)
+        diagnosticJob?.cancel()
+        diagnosticJob = null
+        loadGeneration++
+        _playbackState.value = SongPlaybackState.IDLE.copy(
+            hasMedia = true,
+            preparing = true,
+            isDiagnosticVisible = _playbackState.value.isDiagnosticVisible,
+        )
+        appendLog(AudioLogMessage(R.string.audio_log_loading, listOf(request.displayTitle)))
         val metadata = MediaMetadata.Builder()
             .setTitle(request.displayTitle)
             .setArtist(request.displaySubtitle)
@@ -198,9 +263,7 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
         player.setMediaItem(mediaItem)
         player.playWhenReady = true
         player.prepare()
-        _playbackState.update {
-            it.copy(hasMedia = true, preparing = true, isPlaying = false, ended = false, error = null)
-        }
+        updateDiagnosticTimer()
     }
 
     fun play() {
@@ -209,15 +272,20 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
             player.seekTo(0L)
         }
         player.playWhenReady = true
+        updateDiagnosticTimer()
     }
 
     fun pause() {
         player.playWhenReady = false
+        updateDiagnosticTimer()
     }
 
     fun seekTo(positionMs: Long) {
         val duration = durationMs
-        if (duration > 0) player.seekTo(positionMs.coerceIn(0L, duration))
+        if (duration > 0) {
+            player.seekTo(positionMs.coerceIn(0L, duration))
+            updateDiagnosticTimer()
+        }
     }
 
     fun setLoop(loop: Boolean) {
@@ -231,10 +299,40 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
         get() = player.duration.let { if (it < 0L) -1L else it }
 
     fun stop() {
+        diagnosticJob?.cancel()
+        diagnosticJob = null
+        loadGeneration++
+        _playbackState.value = SongPlaybackState.IDLE
         player.stop()
         player.clearMediaItems()
-        _playbackState.value = SongPlaybackState.IDLE
         stopSelf()
         AudioPlaybackCoordinator.release(this)
+    }
+
+    private fun updateDiagnosticTimer() {
+        val state = _playbackState.value
+        if (state.isDiagnosticVisible || !state.hasMedia || player.isPlaying || player.playbackState == Player.STATE_ENDED || !player.playWhenReady) {
+            diagnosticJob?.cancel()
+            diagnosticJob = null
+            return
+        }
+        if (diagnosticJob?.isActive == true) return
+
+        diagnosticJob = scope.launch {
+            delay(DIAGNOSTIC_DELAY_MS)
+            if (player.playWhenReady && !player.isPlaying && player.playbackState != Player.STATE_ENDED) {
+                _playbackState.update { it.copy(isDiagnosticVisible = true) }
+            }
+        }
+    }
+
+    private fun appendLog(message: AudioLogMessage) {
+        val serial = ConfigurationWrapper.getSerialCounter()
+        if (serial != localizedContextSerial || localizedContext == null) {
+            localizedContext = ConfigurationWrapper.localizedContext(this)
+            localizedContextSerial = serial
+        }
+        val entry = AudioLogEntry(System.currentTimeMillis(), message.resolve(localizedContext ?: this))
+        _playbackState.update { it.copy(logs = (it.logs + entry).takeLast(MAX_LOG_ENTRIES)) }
     }
 }
