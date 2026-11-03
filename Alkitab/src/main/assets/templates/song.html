@@ -17,6 +17,14 @@
 				color: {{$verse_number_color}};
 				font-weight: {{$verse_number_weight}};
 			}
+
+			.song > :not(.code):not(.break):not(#test_tobehidden):not(:last-child) {
+				padding-bottom: clamp(0rem, calc({{$line_spacing_mult}}rem - 1rem), 0.3rem);
+			}
+
+			.song > .musical {
+				display: block;
+			}
 		</style>
 
 		<script>

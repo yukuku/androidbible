@@ -378,28 +378,14 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     private fun playSongClip(clip: SongAudioClip) {
         val song = currentSong ?: return
-        val proceed = {
-            if (!songAudioController.isCurrentUrl(clip.url)) {
-                songAudioController.setDisplayInfo(
-                    "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
-                    song.meta.title.orEmpty(),
-                )
-                songAudioController.mediaKnownToExist(clip.url)
-            }
-            songAudioController.playOrPause(songAudioController.isLooping)
+        if (!songAudioController.isCurrentUrl(clip.url)) {
+            songAudioController.setDisplayInfo(
+                "${SongBookUtil.escapeSongBookName(currentBookName)} ${song.code}",
+                song.meta.title.orEmpty(),
+            )
+            songAudioController.mediaKnownToExist(clip.url)
         }
-        if (audioDisclaimerAcknowledged) {
-            proceed()
-        } else {
-            MaterialAlertDialogBuilder(this)
-                .setMessage(R.string.sn_audio_disclaimer_message)
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    audioDisclaimerAcknowledged = true
-                    proceed()
-                }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
-        }
+        songAudioController.playOrPause(songAudioController.isLooping)
     }
 
     private fun openSongVideo(video: SongYoutubeVideo) {
@@ -961,8 +947,6 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
          * in the background.
          */
         val songAudioController = SongAudioController(App.context)
-
-        var audioDisclaimerAcknowledged = false
 
         @JvmStatic
         fun createIntent(): Intent {
