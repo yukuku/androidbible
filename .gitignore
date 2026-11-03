@@ -29,3 +29,5 @@ local.properties
 
 # Do not expose this so others do not use the same project
 google-services.json
+
+/docs/audits/
