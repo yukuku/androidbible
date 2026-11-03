@@ -36,9 +36,8 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
 
     companion object {
         /**
-         * Must match the channel `App.staticInit()` creates. Channel attributes
-         * are immutable once created, so creating it there is what gets
-         * IMPORTANCE_LOW and no sound instead of media3's defaults.
+         * Reuse the notification channel created in App.staticInit() so playback
+         * notifications stay silent and low priority.
          */
         const val NOTIFICATION_CHANNEL_ID = "audio_bible"
 
