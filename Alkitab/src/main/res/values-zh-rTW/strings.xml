@@ -429,7 +429,6 @@
     <string name="pref_verseNumberIsShown_summary">在每節經文開頭顯示節號</string>
     <string name="pref_verseNumberIsShown_title">顯示節號</string>
     <string name="rp_menuDownload">下載閱讀計劃</string>
-    <string name="sn_audio_disclaimer_message">請注意，本應用程式提供的所有音訊未必來自歌曲或詩歌本的出版者。</string>
     <string name="sn_error_rendering_lyrics">顯示歌詞時發生錯誤。請按選單按鈕並選擇\"更新歌書\"。</string>
     <string name="dv_section_version">聖經譯本</string>
     <string name="dv_section_appearance">外觀</string>

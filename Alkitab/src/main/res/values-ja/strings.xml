@@ -429,7 +429,6 @@
     <string name="menu_audio">オーディオ</string>
     <string name="pref_verseNumberIsShown_summary">各節の先頭に節番号を表示する</string>
     <string name="pref_verseNumberIsShown_title">節番号を表示</string>
-    <string name="sn_audio_disclaimer_message">このアプリで提供されるすべてのオーディオは、必ずしも聖歌や聖歌集の発行元によるものとは限りませんのでご注意ください。</string>
     <string name="sn_error_rendering_lyrics">歌詞の表示中にエラーが発生しました。メニューボタンをタップして「聖歌集をアップデートする」を選択してください。</string>
     <string name="dv_section_version">聖書の訳</string>
     <string name="dv_section_appearance">表示設定</string>

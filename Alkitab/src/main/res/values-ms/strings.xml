@@ -429,7 +429,6 @@
     <string name="pref_verseNumberIsShown_summary">Tunjukkan nombor ayat di permulaan setiap ayat</string>
     <string name="pref_verseNumberIsShown_title">Tunjukkan nombor ayat</string>
     <string name="rp_menuDownload">Muat turun pelan bacaan</string>
-    <string name="sn_audio_disclaimer_message">Harap maklum bahawa semua audio yang disediakan dalam aplikasi ini tidak semestinya berasal daripada penerbit lagu atau buku lagu.</string>
     <string name="sn_error_rendering_lyrics">Ralat semasa memaparkan lirik. Sila ketik butang menu dan pilih \"Kemaskini buku lagu\".</string>
     <string name="dv_section_version">Versi Bible</string>
     <string name="dv_section_appearance">Rupa</string>

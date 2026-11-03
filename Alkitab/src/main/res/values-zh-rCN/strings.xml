@@ -429,7 +429,6 @@
     <string name="data_transfer_title">数据传输</string>
     <string name="fcm_registration_skipped_debug">调试版本中跳过 FCM 注册。</string>
     <string name="menu_audio">音频</string>
-    <string name="sn_audio_disclaimer_message">请注意，本应用中提供的所有音频不一定来自歌曲或歌本的出版方。</string>
     <string name="sn_error_rendering_lyrics">显示歌词时出错。请点击菜单按钮并选择\"更新歌书\"。</string>
     <string name="dv_section_version">圣经译本</string>
     <string name="dv_section_appearance">外观</string>
