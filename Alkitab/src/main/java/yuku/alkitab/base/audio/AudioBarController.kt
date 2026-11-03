@@ -851,6 +851,7 @@ class AudioBarController(
                 speed = state.speed,
                 error = state.error,
                 logs = state.logs,
+                isDiagnosticVisible = state.isDiagnosticVisible,
                 timingAvailable = computeTimingAvailable(
                     setHasTiming = selectedSet?.hasTiming,
                     stateVerse1 = state.verse_1,

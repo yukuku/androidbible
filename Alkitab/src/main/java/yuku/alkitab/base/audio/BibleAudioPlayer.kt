@@ -75,6 +75,8 @@ class BibleAudioPlayer(
     interface Listener {
         fun onIsPlayingChanged(isPlaying: Boolean)
 
+        fun onPlayWhenReadyChanged() {}
+
         /**
          * Player is loading data: initial buffering after [prepare], or
          * re-buffering after a [seekTo] target that wasn't already cached. The
@@ -98,6 +100,10 @@ class BibleAudioPlayer(
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             listener?.onIsPlayingChanged(isPlaying)
+        }
+
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            listener?.onPlayWhenReadyChanged()
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
@@ -266,6 +272,10 @@ class BibleAudioPlayer(
     val isPlaying: Boolean
         @MainThread
         get() = exoPlayer.isPlaying
+
+    val isWaitingForPlayback: Boolean
+        @MainThread
+        get() = exoPlayer.playWhenReady && !exoPlayer.isPlaying && exoPlayer.playbackState != Player.STATE_ENDED
 
     val currentPositionMs: Long
         @MainThread

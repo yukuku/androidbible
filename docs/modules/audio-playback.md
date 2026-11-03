@@ -20,6 +20,8 @@ merely on the presence of audio for that version.
 The reader's audio bar provides playback controls, recording selection, speed,
 and load diagnostics. Its log helps investigate slow or failed loads. User-visible
 service messages must follow the app's selected language.
+Diagnostics also appear after five seconds when playback stalls after seeking
+to audio that has not loaded, including while offline.
 
 ## Song accompaniments
 

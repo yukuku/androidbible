@@ -88,6 +88,7 @@ data class AudioBarUiState(
     /** When true, the playback-speed bottom sheet is shown over the bar. */
     val showSpeedSheet: Boolean,
     val setGroups: List<AudioSetGroup>?,
+    val isDiagnosticVisible: Boolean = false,
 ) {
     companion object {
         val HIDDEN = AudioBarUiState(
@@ -352,7 +353,7 @@ private fun AudioLoadStatusLine(
     onCommand: (AudioBarCommand) -> Unit,
 ) {
     val slowLoad = slowLoadStatusVisible(state.preparing)
-    if (state.error == null && !slowLoad) return
+    if (state.error == null && !slowLoad && !state.isDiagnosticVisible) return
     AudioDiagnosticStatusLine(state.logs, state.error, { onCommand(AudioBarCommand.OpenLogSheet) })
 }
 

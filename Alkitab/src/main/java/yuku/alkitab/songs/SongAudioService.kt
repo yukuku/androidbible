@@ -142,7 +142,7 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
                 if (detail != null) AudioLogMessage(R.string.audio_log_player_error_detail, listOf(code, detail))
                 else AudioLogMessage(R.string.audio_log_player_error, listOf(code))
             )
-            _playbackState.update { it.copy(preparing = false, isPlaying = false, error = error.errorCodeName) }
+            _playbackState.update { it.copy(preparing = false, isPlaying = false, error = code) }
             updateDiagnosticTimer()
         }
     }
@@ -282,7 +282,10 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
 
     fun seekTo(positionMs: Long) {
         val duration = durationMs
-        if (duration > 0) player.seekTo(positionMs.coerceIn(0L, duration))
+        if (duration > 0) {
+            player.seekTo(positionMs.coerceIn(0L, duration))
+            updateDiagnosticTimer()
+        }
     }
 
     fun setLoop(loop: Boolean) {
@@ -308,7 +311,7 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
 
     private fun updateDiagnosticTimer() {
         val state = _playbackState.value
-        if (state.isDiagnosticVisible || !state.hasMedia || state.isPlaying || state.ended || !player.playWhenReady) {
+        if (state.isDiagnosticVisible || !state.hasMedia || player.isPlaying || player.playbackState == Player.STATE_ENDED || !player.playWhenReady) {
             diagnosticJob?.cancel()
             diagnosticJob = null
             return
@@ -317,7 +320,9 @@ class SongAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session
 
         diagnosticJob = scope.launch {
             delay(DIAGNOSTIC_DELAY_MS)
-            _playbackState.update { it.copy(isDiagnosticVisible = true) }
+            if (player.playWhenReady && !player.isPlaying && player.playbackState != Player.STATE_ENDED) {
+                _playbackState.update { it.copy(isDiagnosticVisible = true) }
+            }
         }
     }
 

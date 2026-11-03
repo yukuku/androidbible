@@ -79,7 +79,9 @@ class SongAudioDiagnosticsTest {
         assertFalse(service.playbackState.value.isDiagnosticVisible)
         advance(1)
         assertTrue(service.playbackState.value.isDiagnosticVisible)
+        assertEquals("IO_NETWORK_CONNECTION_FAILED", service.playbackState.value.error)
         assertTrue(service.playbackState.value.logs.last().message.contains("Failed to fetch"))
+        assertFalse(service.playbackState.value.logs.last().message.contains("ERROR_CODE_"))
     }
 
     @Test
@@ -123,6 +125,34 @@ class SongAudioDiagnosticsTest {
         assertFalse(service.playbackState.value.isDiagnosticVisible)
         advance(1)
         assertTrue(service.playbackState.value.isDiagnosticVisible)
+    }
+
+    @Test
+    fun `a stalled seek starts diagnostics even before the playing state callback arrives`() {
+        service.load(request)
+        setPlaying(true)
+        every { player.duration } returns 120_000L
+        every { player.seekTo(90_000L) } answers { isPlaying = false }
+
+        service.seekTo(90_000L)
+        assertTrue(service.playbackState.value.isPlaying)
+        advance(4_999)
+        assertFalse(service.playbackState.value.isDiagnosticVisible)
+        advance(1)
+        assertTrue(service.playbackState.value.isDiagnosticVisible)
+    }
+
+    @Test
+    fun `a seek that resumes playback before the deadline leaves diagnostics hidden`() {
+        service.load(request)
+        setPlaying(true)
+        every { player.duration } returns 120_000L
+        every { player.seekTo(90_000L) } answers { isPlaying = false }
+        service.seekTo(90_000L)
+        advance(4_000)
+        isPlaying = true
+        advance(1_000)
+        assertFalse(service.playbackState.value.isDiagnosticVisible)
     }
 
     @Test
