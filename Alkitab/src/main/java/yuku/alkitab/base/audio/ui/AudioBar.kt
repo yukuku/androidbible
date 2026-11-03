@@ -88,7 +88,7 @@ data class AudioBarUiState(
     /** When true, the playback-speed bottom sheet is shown over the bar. */
     val showSpeedSheet: Boolean,
     val setGroups: List<AudioSetGroup>?,
-    val isDiagnosticVisible: Boolean = false,
+    val isDiagnosticVisible: Boolean,
 ) {
     companion object {
         val HIDDEN = AudioBarUiState(
@@ -108,6 +108,7 @@ data class AudioBarUiState(
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         )
     }
 }
@@ -666,6 +667,7 @@ private fun AudioBarPreviewNarrow() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -693,6 +695,7 @@ private fun AudioBarPreviewWide() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -720,6 +723,7 @@ private fun AudioBarPreviewPreparing() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -753,6 +757,7 @@ private fun AudioBarPreviewSlowLoad() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -786,6 +791,7 @@ private fun AudioBarPreviewDarkError() {
             pickerOptions = null,
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,
@@ -816,6 +822,7 @@ private fun AudioBarPreviewWithPicker() {
             ),
             showSpeedSheet = false,
             setGroups = null,
+            isDiagnosticVisible = false,
         ),
         onCommand = {},
         modifier = Modifier,

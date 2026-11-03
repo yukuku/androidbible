@@ -45,7 +45,7 @@ data class PlaybackState(
     val speed: Float,
     val error: String?,
     val logs: List<AudioLogEntry>,
-    val isDiagnosticVisible: Boolean = false,
+    val isDiagnosticVisible: Boolean,
 ) {
     /**
      * True while a chapter is loaded into the service (playing, paused, or
@@ -71,6 +71,7 @@ data class PlaybackState(
             speed = 1.0f,
             error = null,
             logs = emptyList(),
+            isDiagnosticVisible = false,
         )
     }
 }
