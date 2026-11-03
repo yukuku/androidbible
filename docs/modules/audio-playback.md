@@ -41,3 +41,9 @@ The [backend contract](../features/audio-bible/backend-contract.md) specifies
 paths, indexing, and response shapes. Earlier PRDs and implementation plans are
 historical design records; consult the service and repository tests for current
 state transitions and failure behavior.
+
+`BaseAudioService` owns shared media-session and notification setup, local binding,
+task-removal and destruction handling, coroutine lifetime, diagnostic scheduling,
+and localized log entry creation. Feature services supply their player, binder,
+stop behavior, and diagnostic visibility policy. Bible chapter navigation and
+song format/repeat behavior remain feature responsibilities.

@@ -1,7 +1,6 @@
 package yuku.alkitab.base.audio
 
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -14,15 +13,11 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import java.io.ByteArrayOutputStream
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,11 +26,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import yuku.afw.storage.Preferences
-import yuku.alkitab.base.IsiActivity
 import yuku.alkitab.base.App
+import yuku.alkitab.base.IsiActivity
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
-import yuku.alkitab.base.widget.ConfigurationWrapper
 import yuku.alkitab.debug.R
 
 /**
@@ -53,7 +47,7 @@ import yuku.alkitab.debug.R
  * restriction.
  */
 @OptIn(UnstableApi::class)
-class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Session {
+class BibleAudioService : BaseAudioService() {
 
     companion object {
         /** Action on the binding [Intent] that asks for the in-app [LocalBinder]. */
@@ -69,16 +63,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         private const val MEDIA_SESSION_ID = "bible_audio"
 
         private const val POSITION_POLL_INTERVAL_MS = 100L
-        private const val DIAGNOSTIC_DELAY_MS = 5_000L
         private const val ARTWORK_SIZE_PX = 256
-
-        /**
-         * Cap on [PlaybackState.logs] length. A single chapter load can emit
-         * dozens of HTTP events per byte-range fetch as the player buffers
-         * ahead, so this bounds memory for a chapter that keeps re-buffering
-         * without reaching a steady state.
-         */
-        private const val MAX_LOG_ENTRIES = 500
 
         /**
          * The log after recording [entry]. Returns [logs] untouched when
@@ -92,7 +77,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             entry: AudioLogEntry,
             eventGeneration: Int,
             currentGeneration: Int,
-            maxEntries: Int = MAX_LOG_ENTRIES,
+            maxEntries: Int = AUDIO_LOG_LIMIT,
         ): List<AudioLogEntry> {
             if (eventGeneration != currentGeneration) return logs
             return (logs + entry).takeLast(maxEntries)
@@ -152,14 +137,11 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
 
     private val localBinder = LocalBinder(this)
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var positionJob: Job? = null
     private var loadJob: Job? = null
     private var timingJob: Job? = null
-    private var diagnosticJob: Job? = null
 
     private lateinit var player: BibleAudioPlayer
-    private var mediaSession: MediaSession? = null
     private val highlightTracker = HighlightTracker()
 
     /**
@@ -186,9 +168,6 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
     private var persistedSpeed: Float = DEFAULT_PLAYBACK_SPEED
-
-    private var localizedContext: Context? = null
-    private var localizedContextSerial = -1
 
     /**
      * Which chapter load the log is currently accumulating. Bumped on every
@@ -296,19 +275,9 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
             onSeekToPrevChapter = { skipChapter(-1) },
         )
 
-        mediaSession = MediaSession.Builder(this, mediaSessionPlayer)
-            .setId(MEDIA_SESSION_ID)
-            .setSessionActivity(sessionActivity)
-            .build()
-            .also { addSession(it) }
-
-        // Use our pre-created low-importance channel so the notification doesn't
-        // make sound or vibrate.
-        setMediaNotificationProvider(
-            DefaultMediaNotificationProvider.Builder(this)
-                .setChannelId(NOTIFICATION_CHANNEL_ID)
-                .setChannelName(R.string.audio_bible_notification_channel_name)
-                .build()
+        createMediaSession(
+            mediaSessionPlayer, MEDIA_SESSION_ID, sessionActivity,
+            NOTIFICATION_CHANNEL_ID, R.string.audio_bible_notification_channel_name,
         )
 
         scope.launch {
@@ -318,42 +287,17 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         }
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        if (intent?.action == ACTION_LOCAL_BIND) {
-            return localBinder
-        }
-        return super.onBind(intent)
-    }
-
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
-        return mediaSession
-    }
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        // Match Spotify / YouTube Music: swiping the app from recents while
-        // audio is playing should keep playback alive. If we're paused,
-        // releasing is a reasonable cleanup.
-        if (player.isPlaying) {
-            return
-        }
-        stopSelf()
-    }
+    override val localBindAction: String get() = ACTION_LOCAL_BIND
+    override val serviceBinder: IBinder get() = localBinder
+    override val isAudioPlaying: Boolean get() = player.isPlaying
+    override fun releasePlayer() = player.release()
 
     override fun onDestroy() {
         hasActiveSession = false
         positionJob?.cancel()
         loadJob?.cancel()
         timingJob?.cancel()
-        scope.cancel()
-        mediaSession?.release()
-        mediaSession = null
-        player.release()
-        AudioPlaybackCoordinator.release(this)
         super.onDestroy()
-    }
-
-    override fun stopPlayback() {
-        stop()
     }
 
     // -- public API surfaced via [LocalBinder] -------------------------------
@@ -368,8 +312,7 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
         AudioPlaybackCoordinator.acquire(this)
         loadJob?.cancel()
         timingJob?.cancel()
-        diagnosticJob?.cancel()
-        diagnosticJob = null
+        cancelDiagnosticTimer()
         // The player still holds the outgoing chapter until the load job below
         // swaps the media item, so a poll tick would overwrite the
         // position/duration reset below with the old chapter's values. Polling
@@ -551,12 +494,11 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
      * notification). Safe to call after `loadChapter` even if the player never
      * reached READY.
      */
-    fun stop() {
+    override fun stop() {
         loadJob?.cancel()
         timingJob?.cancel()
         positionJob?.cancel()
-        diagnosticJob?.cancel()
-        diagnosticJob = null
+        cancelDiagnosticTimer()
         currentRequest = null
         hasActiveSession = false
         // Same reason as in [loadChapter]: the in-flight calls being torn down
@@ -679,32 +621,10 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
      */
     private fun appendLog(generation: Int, message: AudioLogMessage) {
         if (generation != loadGeneration) return
-        val entry = AudioLogEntry(System.currentTimeMillis(), message.resolve(localizedContext()))
+        val entry = logEntry(message)
         _playbackState.update {
             it.copy(logs = appendLogEntry(it.logs, entry, generation, loadGeneration))
         }
-    }
-
-    /**
-     * Context for resolving every user-visible string this service produces.
-     *
-     * A Service never goes through `BaseActivity.attachBaseContext`, so its own
-     * resources follow the device locale: resolving against `this` would print
-     * the log in the device language even when the user has picked a different
-     * one in the app's settings.
-     *
-     * Cached, and rebuilt when the language preference changes, which is what
-     * [ConfigurationWrapper.getSerialCounter] tracks. Rebuilding per call would
-     * mean a `createConfigurationContext` for each of the dozens of HTTP events
-     * a single chapter load emits.
-     */
-    private fun localizedContext(): Context {
-        val serial = ConfigurationWrapper.getSerialCounter()
-        if (serial != localizedContextSerial || localizedContext == null) {
-            localizedContext = ConfigurationWrapper.localizedContext(this)
-            localizedContextSerial = serial
-        }
-        return localizedContext ?: this
     }
 
     private fun startPositionPolling() {
@@ -728,18 +648,14 @@ class BibleAudioService : MediaSessionService(), AudioPlaybackCoordinator.Sessio
     private fun updateDiagnosticTimer() {
         val state = _playbackState.value
         if (!state.isActive || state.error != null || !player.isWaitingForPlayback) {
-            diagnosticJob?.cancel()
-            diagnosticJob = null
+            cancelDiagnosticTimer()
             _playbackState.update { it.copy(isDiagnosticVisible = false) }
             return
         }
-        if (state.isDiagnosticVisible || diagnosticJob?.isActive == true) return
-
-        diagnosticJob = scope.launch {
-            delay(DIAGNOSTIC_DELAY_MS)
-            if (player.isWaitingForPlayback) {
-                _playbackState.update { it.copy(isDiagnosticVisible = true) }
-            }
-        }
+        if (state.isDiagnosticVisible) return
+        scheduleDiagnostic(
+            isWaiting = { player.isWaitingForPlayback },
+            onTimeout = { _playbackState.update { it.copy(isDiagnosticVisible = true) } },
+        )
     }
 }
