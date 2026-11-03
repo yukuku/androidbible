@@ -4,6 +4,22 @@ A user-facing history of Bible for Android (Alkitab / Quick Bible).
 Internal refactors, dependency bumps, CI tweaks, and pure
 translation-only updates are generally omitted.
 
+## 5.0.0-beta.6 (2026-11-04)
+
+- Songs have an Audio & video sheet with playback controls and links to
+  available YouTube videos. The toolbar indicates which media are available.
+- Highlight colors use their original appearance, with a text contrast
+  slider in Appearance to keep highlighted and selected verses readable.
+- Opening a bookmark, note, or highlight keeps the selected verse visible
+  in split-view panes.
+- Improved dialog sizing and spacing around screen edges, including
+  landscape layouts, the reading drawer, and devotions.
+- More consistent text, controls, and dark backgrounds across screens.
+  Song spacing, devotion links, and labels follow reading appearance settings.
+- Bookmark and note selectors show the edit time for entries changed today.
+- Bible and song audio share playback controls, and song audio shows
+  diagnostic information when playback takes too long to start.
+
 ## 5.0.0-beta.5 (2026-10-21)
 
 - Fixed startup crashes on Android 8.
