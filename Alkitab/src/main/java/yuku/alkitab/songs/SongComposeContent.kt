@@ -196,7 +196,6 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean) {
     val sizeMult = block.size?.takeIf { it.isFinite() } ?: roleSizeMult(role)
     val bold = role == "title" || role == "copyright"
     val italic = role == "note"
-    val uppercase = role == "tune" || role == "copyright"
     val opacity = if (role == "copyright") 0.54f else 1f
 
     val align = block.align?.takeIf { it in ALLOWED_ALIGNS }
@@ -210,8 +209,7 @@ private fun PBlockView(block: PBlock, style: SongComposeStyle, inRow: Boolean) {
         else -> null
     }
 
-    var content = lineToAnnotated(block.content, style)
-    if (uppercase) content = AnnotatedString(content.text.uppercase())
+    val content = lineToAnnotated(block.content, style)
 
     val textStyle = roleTextStyle(style, sizeMult, sansSerif).copy(
         fontWeight = if (bold || style.isBold) FontWeight.Bold else FontWeight.Normal,
@@ -493,7 +491,7 @@ private fun FooterView(
     Spacer(Modifier.height(0.8f.em.toDp(style)))
     if (!copyright.isNullOrEmpty()) {
         BasicText(
-            text = AnnotatedString(copyright.uppercase()),
+            text = AnnotatedString(copyright),
             style = roleTextStyle(style, sizeMult = 0.75f, sansSerif = false).copy(
                 fontWeight = FontWeight.Bold,
                 color = style.bodyColor.copy(alpha = 0.54f),

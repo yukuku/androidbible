@@ -26,9 +26,9 @@
     <string name="search_bookname_only">%s csak</string>
     <string name="ayat_sebelumangka">Versszak</string>
     <string name="pasal_sebelumangka">Fejezet</string>
-    <string name="jump_to_prompt"><b>UGRÁS IDE</b> — Példa: ^1</string>
+    <string name="jump_to_prompt"><b>Ugrás ide</b> — Példa: ^1</string>
     <string name="belum_ada_pembatas_buku">Még nincsenek könyvjelzők.\nVálasszon egy versszakot, hogy könyvjelzőt adjon hozzá.</string>
-    <string name="judul_titikdua">CÍM</string>
+    <string name="judul_titikdua">Cím</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Még nem elérhető. Valószínű hogy a kért anyag dátuma még nincs előkészítve, vagy valami hiba merült fel az adat forrásának felismerése közben. Kérem próbálkozzon újra később.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Még nem elérhető az internetről való letöltés&#8230;\n\n(Győződj meg róla, hogy az internetkapcsolatod megfelelő.)</string>
     <string name="hari_sabtu">Szo</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Szűrő törlése</string>
     <string name="bl_no_items_match_the_filter_above">Egyik elem sem felel meg a fenti szűrőnek.</string>
     <string name="bl_sync_suggest">Védje meg a lejölőpontjait szinkronizálással</string>
-    <string name="labels_titikdua">CÍMKÉK</string>
+    <string name="labels_titikdua">Címkék</string>
     <string name="tambah_titiktiga">Hozzáadás&#8230;</string>
     <string name="nama_label_titikdua">Címke név:</string>
     <string name="change_label_color">Címke színének módosítása</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Dalok</string>
     <string name="sn_deep_search_enabled">Dalszöveg, stb.</string>
     <string name="sn_songs_activity_title">Dalok</string>
-    <string name="sn_bookselector_all">ÖSZZES</string>
+    <string name="sn_bookselector_all">Öszzes</string>
     <string name="sn_bookselector_more">További letöltés&#8230;</string>
     <string name="sn_bookselector_all_desc">Összes telepített könyv keresése.</string>
     <string name="sn_downloading_ellipsis">Letöltés&#8230;</string>
@@ -383,10 +383,10 @@
     <string name="book_filter_old_major_prophets">Nagypróféták</string>
     <string name="book_filter_old_minor_prophets">Kispróféták</string>
     <string name="book_filter_old_wisdom">Bölcsességi és költői könyvek</string>
-    <string name="color_picker_channel_blue">KÉK</string>
-    <string name="color_picker_channel_green">ZÖLD</string>
-    <string name="color_picker_channel_red">PIROS</string>
-    <string name="color_picker_hex_label">sRGB hexadecimális szín #</string>
+    <string name="color_picker_channel_blue">Kék</string>
+    <string name="color_picker_channel_green">Zöld</string>
+    <string name="color_picker_channel_red">Piros</string>
+    <string name="color_picker_hex_label">hexadecimális szín</string>
     <string name="color_picker_tab_grid">Rács</string>
     <string name="color_picker_tab_sliders">Csúszkák</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

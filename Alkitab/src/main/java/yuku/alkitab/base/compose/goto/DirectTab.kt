@@ -5,12 +5,11 @@ import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.StyleSpan
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,6 +22,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -81,17 +81,14 @@ fun DirectTab(
     var errorRef by remember { mutableStateOf<String?>(null) }
     val focusRequester = remember { FocusRequester() }
     val kbd = LocalSoftwareKeyboardController.current
-    val candidatesListState = rememberLazyListState()
+    val listState = rememberLazyListState()
 
     LaunchedEffect(isActive) {
         if (isActive) {
+            if (listState.firstVisibleItemIndex > 1) listState.scrollToItem(1)
             focusRequester.requestFocus()
             kbd?.show()
         }
-    }
-
-    LaunchedEffect(candidates) {
-        candidatesListState.scrollToItem(0)
     }
 
     val sample = remember(initialBookId, initialChapter_1, initialVerse_1, inInspection) {
@@ -125,48 +122,52 @@ fun DirectTab(
         onGotoFinished(GotoTab.DIRECT, jumper.getBookId(books), jumper.chapter, jumper.verse)
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp).imePadding()) {
-        Text(text = prompt)
-        Spacer(Modifier.size(16.dp))
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().imePadding(),
+        state = listState,
+        contentPadding = PaddingValues(16.dp),
+    ) {
+        item(key = "prompt") {
+            Text(text = prompt)
+            Spacer(Modifier.size(16.dp))
+        }
 
-        OutlinedTextField(
-            value = query,
-            onValueChange = { query = it },
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusProperties { canFocus = isActive }
-                .focusRequester(focusRequester),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
-            keyboardActions = KeyboardActions(onGo = { submit() }),
-            trailingIcon = {
-                IconButton(onClick = ::submit) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.Send,
-                        contentDescription = stringResource(R.string.ok),
-                    )
-                }
-            },
-        )
+        item(key = "input") {
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusProperties { canFocus = isActive }
+                    .focusRequester(focusRequester),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
+                keyboardActions = KeyboardActions(onGo = { submit() }),
+                trailingIcon = {
+                    IconButton(onClick = ::submit) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Send,
+                            contentDescription = stringResource(R.string.ok),
+                        )
+                    }
+                },
+            )
+        }
 
-        if (candidates.isNotEmpty()) {
-            LazyColumn(modifier = Modifier.fillMaxWidth(), state = candidatesListState) {
-                items(candidates, key = { it.title }) { c ->
-                    ListItem(
-                        headlineContent = { Text(c.title) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                val newText = if (c.bookOnly) c.title + " " else c.title
-                                query = TextFieldValue(
-                                    text = newText,
-                                    selection = TextRange(newText.length),
-                                )
-                                if (c.hasVerse) submit()
-                            },
-                    )
-                }
-            }
+        items(candidates, key = { it.title }) { c ->
+            ListItem(
+                headlineContent = { Text(c.title, style = MaterialTheme.typography.titleMedium) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        val newText = if (c.bookOnly) c.title + " " else c.title
+                        query = TextFieldValue(
+                            text = newText,
+                            selection = TextRange(newText.length),
+                        )
+                        if (c.hasVerse) submit()
+                    },
+            )
         }
     }
 

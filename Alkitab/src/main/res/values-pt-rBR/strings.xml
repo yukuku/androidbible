@@ -26,9 +26,9 @@
     <string name="search_bookname_only">%s apenas</string>
     <string name="ayat_sebelumangka">Versículo</string>
     <string name="pasal_sebelumangka">Capítulo</string>
-    <string name="jump_to_prompt"><b>IR PARA</b> — Exemplo: ^1</string>
+    <string name="jump_to_prompt"><b>Ir para</b> — Exemplo: ^1</string>
     <string name="belum_ada_pembatas_buku">Nenhum marcador ainda.\nSelecione um versículo para adicionar um marcador.</string>
-    <string name="judul_titikdua">TÍTULO</string>
+    <string name="judul_titikdua">Título</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Ainda não disponível. Provavelmente, o material da data requisitada ainda não foi preparado, ou existem erros no reconhecimento da origem dos dados. Por favor, tente novamente mais tarde.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Ainda não disponível. Baixando da Internet&#8230;\n\n(Verifique que há conexão ativa à Internet para baixar os devocionais.)</string>
     <string name="hari_sabtu">Sáb</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Remover esta anotação?</string>
     <string name="delete">Remover</string>
     <string name="cancel">Cancelar</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Configurações</string>
     <string name="pengaturan_alkitab">Configurações da Bíblia</string>
     <string name="kelola_versi">Gerenciar Versões</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Limpar filtros</string>
     <string name="bl_no_items_match_the_filter_above">Nenhum item corresponde ao filtro acima.</string>
     <string name="bl_sync_suggest">Proteja seus marcadores com sincronização</string>
-    <string name="labels_titikdua">ETIQUETAS</string>
+    <string name="labels_titikdua">Etiquetas</string>
     <string name="tambah_titiktiga">Adicionar&#8230;</string>
     <string name="nama_label_titikdua">Nome da etiqueta:</string>
     <string name="change_label_color">Mudar a cor da etiqueta</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Canções</string>
     <string name="sn_deep_search_enabled">Também letras, e outros</string>
     <string name="sn_songs_activity_title">Canções</string>
-    <string name="sn_bookselector_all">TODOS</string>
+    <string name="sn_bookselector_all">Todos</string>
     <string name="sn_bookselector_more">Baixar mais&#8230;</string>
     <string name="sn_bookselector_all_desc">Pesquisar em todos os livros instalados.</string>
     <string name="sn_downloading_ellipsis">Baixando&#8230;</string>
@@ -417,10 +417,10 @@
     <string name="bl_selection_edit">Editar</string>
     <string name="bl_selection_many_selected">^1 selecionados</string>
     <string name="bl_selection_one_selected">1 selecionado</string>
-    <string name="color_picker_channel_blue">AZUL</string>
-    <string name="color_picker_channel_green">VERDE</string>
-    <string name="color_picker_channel_red">VERMELHO</string>
-    <string name="color_picker_hex_label">Cor Hex sRGB #</string>
+    <string name="color_picker_channel_blue">Azul</string>
+    <string name="color_picker_channel_green">Verde</string>
+    <string name="color_picker_channel_red">Vermelho</string>
+    <string name="color_picker_hex_label">Cor Hex</string>
     <string name="color_picker_tab_grid">Grade</string>
     <string name="color_picker_tab_sliders">Deslizadores</string>
     <string name="color_picker_tab_spectrum">Espectro</string>

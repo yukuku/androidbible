@@ -26,9 +26,9 @@
     <string name="search_bookname_only">Только %s</string>
     <string name="ayat_sebelumangka">Стих</string>
     <string name="pasal_sebelumangka">Глава</string>
-    <string name="jump_to_prompt"><b>ПЕРЕХОД К</b> — Пример: ^1</string>
+    <string name="jump_to_prompt"><b>Переход к</b> — Пример: ^1</string>
     <string name="belum_ada_pembatas_buku">Закладок пока нет.\nЧтобы добавить закладку, выберите стих.</string>
-    <string name="judul_titikdua">ЗАГОЛОВОК</string>
+    <string name="judul_titikdua">Заголовок</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Пока недоступно. Вероятно, материал для запрошенной даты еще не подготовлен или не удалось распознать источник данных. Пожалуйста, повторите попытку позже.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Пока недоступно. Загрузка из интернета&#8230;\n\n(Убедитесь, что соединение с интернетом установлено)</string>
     <string name="hari_sabtu">Сб</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Удалить эту заметку?</string>
     <string name="delete">Удалить</string>
     <string name="cancel">Отменить</string>
-    <string name="ok">ОК</string>
+    <string name="ok">Ок</string>
     <string name="menuPengaturan">Настройки</string>
     <string name="pengaturan_alkitab">Настройки Библии</string>
     <string name="kelola_versi">Управление версиями</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Удалить фильтр</string>
     <string name="bl_no_items_match_the_filter_above">Результат фильтрации пуст.</string>
     <string name="bl_sync_suggest">Сохраните свои маркеры, синхронизовав их</string>
-    <string name="labels_titikdua">МЕТКИ</string>
+    <string name="labels_titikdua">Метки</string>
     <string name="tambah_titiktiga">Добавить&#8230;</string>
     <string name="nama_label_titikdua">Имя метки:</string>
     <string name="change_label_color">Изменить цвет метки</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Песни</string>
     <string name="sn_deep_search_enabled">А также стихи и пр.</string>
     <string name="sn_songs_activity_title">Песни</string>
-    <string name="sn_bookselector_all">ВСЕ</string>
+    <string name="sn_bookselector_all">Все</string>
     <string name="sn_bookselector_more">Загрузить еще&#8230;</string>
     <string name="sn_bookselector_all_desc">Искать во всех загруженных книгах.</string>
     <string name="sn_downloading_ellipsis">Загрузка&#8230;</string>
@@ -417,10 +417,10 @@
     <string name="bl_selection_edit">Изменить</string>
     <string name="bl_selection_many_selected">Выбрано: ^1</string>
     <string name="bl_selection_one_selected">Выбран 1</string>
-    <string name="color_picker_channel_blue">СИНИЙ</string>
-    <string name="color_picker_channel_green">ЗЕЛЁНЫЙ</string>
-    <string name="color_picker_channel_red">КРАСНЫЙ</string>
-    <string name="color_picker_hex_label">sRGB Hex-цвет #</string>
+    <string name="color_picker_channel_blue">Синий</string>
+    <string name="color_picker_channel_green">Зелёный</string>
+    <string name="color_picker_channel_red">Красный</string>
+    <string name="color_picker_hex_label">Hex-цвет</string>
     <string name="color_picker_tab_grid">Сетка</string>
     <string name="color_picker_tab_sliders">Ползунки</string>
     <string name="color_picker_tab_spectrum">Спектр</string>

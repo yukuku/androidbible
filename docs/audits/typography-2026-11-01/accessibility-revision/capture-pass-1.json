@@ -1,0 +1,6 @@
+{
+  "phase": "after",
+  "failures": [
+    "song-drawer-input: java.lang.IllegalStateException: Activity did not start: yuku.alkitab.songs.SongViewActivity"
+  ]
+}

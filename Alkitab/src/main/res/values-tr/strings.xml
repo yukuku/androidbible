@@ -26,9 +26,9 @@
     <string name="search_bookname_only">Sadece %s</string>
     <string name="ayat_sebelumangka">Ayet</string>
     <string name="pasal_sebelumangka">Bölüm</string>
-    <string name="jump_to_prompt"><b>ATLA</b> — Örnek: ^1</string>
+    <string name="jump_to_prompt"><b>Atla</b> — Örnek: ^1</string>
     <string name="belum_ada_pembatas_buku">Henüz bir yer imi yok.\nYer imlerine eklemek için bir ayet seçin.</string>
-    <string name="judul_titikdua">BAŞLIK</string>
+    <string name="judul_titikdua">Başlık</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Henüz uygun değil. Muhtemelen talep edilen tarihin malzemesi henüz hazırlanmamıştır veya veri kaynağını tanımada bazı hatalar vardır. Lütfen daha sonra tekrar deneyiniz.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Henüz hazır değil. İnternet\'ten getiriliyor&#8230;\n\n(Bağımlı materyalleri getirmek için internete bağlı olduğunuzdan emin olun.)</string>
     <string name="hari_sabtu">Cmrts</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Bu not silinsin mi?</string>
     <string name="delete">Sil</string>
     <string name="cancel">Vazgeç</string>
-    <string name="ok">TAMAM</string>
+    <string name="ok">Tamam</string>
     <string name="menuPengaturan">Ayarlar</string>
     <string name="pengaturan_alkitab">Bible Ayarları</string>
     <string name="kelola_versi">Sürümleri yönet</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Süzgeci kaldır</string>
     <string name="bl_no_items_match_the_filter_above">Yukarıdaki filtreyle eşleşen ögeler yok.</string>
     <string name="bl_sync_suggest">Senkronize ederek işaretçilerinizi koruyun</string>
-    <string name="labels_titikdua">ETİKETLER</string>
+    <string name="labels_titikdua">Etiketler</string>
     <string name="tambah_titiktiga">Ekle&#8230;</string>
     <string name="nama_label_titikdua">Etiket adı:</string>
     <string name="change_label_color">Etiket rengini değiştir</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Şarkılar</string>
     <string name="sn_deep_search_enabled">Şarkı sözleri vs.</string>
     <string name="sn_songs_activity_title">Şarkılar</string>
-    <string name="sn_bookselector_all">HEPSİ</string>
+    <string name="sn_bookselector_all">Hepsi</string>
     <string name="sn_bookselector_more">Daha fazla indir&#8230;</string>
     <string name="sn_bookselector_all_desc">Yüklü olan tüm kitapları ara.</string>
     <string name="sn_downloading_ellipsis">İndiriliyor&#8230;</string>
@@ -417,10 +417,10 @@
     <string name="bl_selection_edit">Düzenle</string>
     <string name="bl_selection_many_selected">^1 seçildi</string>
     <string name="bl_selection_one_selected">1 seçildi</string>
-    <string name="color_picker_channel_blue">MAVİ</string>
-    <string name="color_picker_channel_green">YEŞİL</string>
-    <string name="color_picker_channel_red">KIRMIZI</string>
-    <string name="color_picker_hex_label">sRGB Onaltılık Renk #</string>
+    <string name="color_picker_channel_blue">Mavi</string>
+    <string name="color_picker_channel_green">Yeşil</string>
+    <string name="color_picker_channel_red">Kırmızı</string>
+    <string name="color_picker_hex_label">Onaltılık Renk</string>
     <string name="color_picker_tab_grid">Izgara</string>
     <string name="color_picker_tab_sliders">Kaydırıcılar</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

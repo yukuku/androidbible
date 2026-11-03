@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keypad_value_replace">Nākamais cipars aizstāj šo vērtību</string>
+    <string name="keypad_value_append">Nākamais cipars turpina šo vērtību</string>
+</resources>

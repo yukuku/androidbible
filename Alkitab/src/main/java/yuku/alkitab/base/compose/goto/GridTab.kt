@@ -175,7 +175,7 @@ private fun GridCell(text: String, color: Color, onClick: () -> Unit) {
         modifier = Modifier.fillMaxWidth().height(48.dp).padding(2.dp),
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-            Text(text, color = color)
+            Text(text, color = color, style = MaterialTheme.typography.titleMedium)
         }
     }
 }

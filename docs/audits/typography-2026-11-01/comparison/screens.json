@@ -1,0 +1,3180 @@
+[
+  {
+    "id": "reader",
+    "title": "Bible reader",
+    "category": "Reading",
+    "rows": [
+      {
+        "label": "Reference",
+        "before": "System sans / Roboto · normal · 16sp · 500",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/toolbar/ReaderToolbar.kt · ReaderToolbarDimens",
+        "box": [
+          215,
+          76,
+          190,
+          55
+        ]
+      },
+      {
+        "label": "Version chip",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/toolbar/ReaderToolbar.kt · VersionChip",
+        "box": [
+          530,
+          78,
+          85,
+          50
+        ]
+      },
+      {
+        "label": "Section heading",
+        "before": "System sans / Roboto · normal · 18dp · 700",
+        "role": null,
+        "after": "Preserved: 18dp · 700 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/verses/VersesComposeControllerImpl.kt · PericopeHeader",
+        "box": [
+          76,
+          177,
+          575,
+          40
+        ]
+      },
+      {
+        "label": "Verse body",
+        "before": "System sans / Roboto · normal · 18dp · 400",
+        "role": null,
+        "after": "Preserved: 18dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/verses/VerseItemCompose.kt · VerseText",
+        "box": [
+          81,
+          235,
+          584,
+          90
+        ]
+      },
+      {
+        "label": "Verse numbers",
+        "before": "System sans / Roboto · normal · 12.6dp · 400",
+        "role": null,
+        "after": "Preserved: 12.6dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/verses/VerseItemCompose.kt · VerseNumber",
+        "box": [
+          12,
+          235,
+          24,
+          32
+        ]
+      }
+    ],
+    "note": "Reader/article/song content keeps its existing font, size, weight, and spacing."
+  },
+  {
+    "id": "versions",
+    "title": "Version manager",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Screen title",
+        "before": "System sans / Roboto · normal · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/res/values/themes.xml · ToolbarStyle (AppCompat title default)",
+        "box": [
+          104,
+          80,
+          250,
+          48
+        ]
+      },
+      {
+        "label": "Tabs",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/versionmanager/VersionsActivity.kt · TabLayout",
+        "box": [
+          21,
+          194,
+          300,
+          42
+        ]
+      },
+      {
+        "label": "Language group",
+        "before": "System sans / Roboto · normal · 12sp · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "Alkitab/src/main/res/layout/item_version.xml · tLanguage",
+        "box": [
+          30,
+          326,
+          350,
+          36
+        ]
+      },
+      {
+        "label": "Version name",
+        "before": "System sans / Roboto · normal · 18sp · 700",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/item_version.xml · tShortName",
+        "box": [
+          32,
+          389,
+          180,
+          42
+        ]
+      },
+      {
+        "label": "Version description",
+        "before": "System sans / Roboto · normal · 13sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/item_version.xml · tLongName",
+        "box": [
+          32,
+          435,
+          440,
+          40
+        ]
+      }
+    ],
+    "note": "Version names use Primary and descriptions use Supporting. Tabs use sentence case with the shared Label role, consistent with Compose navigation."
+  },
+  {
+    "id": "version-picker",
+    "title": "Version selection sheet",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Version name",
+        "before": "System sans / Roboto · normal · 18sp · 700",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/util/VersionDialogHelper.kt · VersionRowItem",
+        "box": [
+          137,
+          864,
+          150,
+          47
+        ]
+      },
+      {
+        "label": "Version description",
+        "before": "System sans / Roboto · normal · 13sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/util/VersionDialogHelper.kt · VersionRowItem",
+        "box": [
+          137,
+          916,
+          430,
+          42
+        ]
+      },
+      {
+        "label": "Footer action",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/util/VersionDialogHelper.kt · VersionSelectionSheet",
+        "box": [
+          507,
+          1144,
+          184,
+          43
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "drawer",
+    "title": "Navigation drawer",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Navigation item",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_header.xml",
+        "box": [
+          111,
+          181,
+          230,
+          47
+        ]
+      },
+      {
+        "label": "Section label",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_text.xml · progress heading",
+        "box": [
+          24,
+          599,
+          120,
+          38
+        ]
+      },
+      {
+        "label": "Switch label",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_text.xml · cFullScreen",
+        "box": [
+          24,
+          877,
+          330,
+          49
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "appearance",
+    "title": "Reading appearance panel",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Section label",
+        "before": "System sans / Roboto · normal · 12sp · 700",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/widget/TextAppearancePanel.kt · SectionLabel / HeaderRow",
+        "box": [
+          65,
+          487,
+          230,
+          34
+        ]
+      },
+      {
+        "label": "Font selector",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/widget/TextAppearancePanel.kt · FontRow",
+        "box": [
+          95,
+          563,
+          230,
+          47
+        ]
+      },
+      {
+        "label": "Slider value",
+        "before": "System sans / Roboto · normal · 16sp · 500",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/widget/TextAppearancePanel.kt · SliderRow",
+        "box": [
+          578,
+          716,
+          79,
+          42
+        ]
+      },
+      {
+        "label": "Contrast label",
+        "before": "System sans / Roboto · normal · 12sp · 700",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/widget/TextAppearancePanel.kt · SectionLabel",
+        "box": [
+          65,
+          1122,
+          435,
+          32
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "goto-dialer",
+    "title": "Go To dialer",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Tabs",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/GotoScreen.kt · Tab",
+        "box": [
+          128,
+          84,
+          449,
+          44
+        ]
+      },
+      {
+        "label": "Book selector",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · OutlinedTextField",
+        "box": [
+          105,
+          332,
+          300,
+          50
+        ]
+      },
+      {
+        "label": "Chapter / verse value",
+        "before": "System sans / Roboto · normal · 24sp · 500",
+        "role": "Number",
+        "after": "System sans · 24sp · 500 · line 32sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · value cell",
+        "box": [
+          268,
+          482,
+          56,
+          57
+        ]
+      },
+      {
+        "label": "Keypad digit",
+        "before": "System sans / Roboto · normal · 28sp · 400",
+        "role": "Keypad",
+        "after": "System sans · 28sp · 400 · line 36sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · KeypadDigit",
+        "box": [
+          145,
+          664,
+          56,
+          60
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "goto-grid",
+    "title": "Go To book grid",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Book abbreviation",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/GridTab.kt · GridCell",
+        "box": [
+          30,
+          200,
+          190,
+          50
+        ]
+      },
+      {
+        "label": "Tabs",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/GotoScreen.kt · Tab",
+        "box": [
+          124,
+          84,
+          460,
+          45
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "settings",
+    "title": "Settings categories",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Screen title",
+        "before": "System sans / Roboto · normal · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/res/values/themes.xml · AppCompat toolbar title",
+        "box": [
+          106,
+          80,
+          355,
+          50
+        ]
+      },
+      {
+        "label": "Category row",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/xml/app_config.xml · PreferenceScreen (AndroidX preference default)",
+        "box": [
+          57,
+          192,
+          330,
+          44
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "feedback",
+    "title": "Development feedback sheet",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Sheet title",
+        "before": "System sans / Roboto · normal · 22sp · 400",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/feedback/PrereleaseFeedback.kt · FeedbackSheet",
+        "box": [
+          40,
+          646,
+          565,
+          57
+        ]
+      },
+      {
+        "label": "Explanation",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/feedback/PrereleaseFeedback.kt · FeedbackSheet",
+        "box": [
+          40,
+          740,
+          635,
+          185
+        ]
+      },
+      {
+        "label": "Primary action",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/feedback/PrereleaseFeedback.kt · Button",
+        "box": [
+          280,
+          992,
+          173,
+          48
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "settings-display",
+    "title": "Display preferences",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Preference title",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference title",
+        "box": [
+          137,
+          195,
+          425,
+          47
+        ]
+      },
+      {
+        "label": "Preference summary",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference summary",
+        "box": [
+          137,
+          242,
+          425,
+          40
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "sign-in",
+    "title": "Sync sign-in",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Screen title",
+        "before": "System sans / Roboto · normal · 22sp · 400",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · TopAppBar",
+        "box": [
+          103,
+          80,
+          162,
+          55
+        ]
+      },
+      {
+        "label": "Informational link",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · LinkText",
+        "box": [
+          99,
+          377,
+          525,
+          72
+        ]
+      },
+      {
+        "label": "Field label / value",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · OutlinedTextField",
+        "box": [
+          56,
+          648,
+          255,
+          49
+        ]
+      },
+      {
+        "label": "Button label",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · Button",
+        "box": [
+          312,
+          1130,
+          100,
+          43
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "search",
+    "title": "Bible search input",
+    "category": "Search",
+    "rows": [
+      {
+        "label": "Search title",
+        "before": "System sans / Roboto · normal · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/toolbar/SearchToolbar.kt · SearchToolbar",
+        "box": [
+          89,
+          79,
+          175,
+          50
+        ]
+      },
+      {
+        "label": "Search input",
+        "before": "System sans / Roboto · normal · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/activity_search.xml · SearchView (AppCompat default)",
+        "box": [
+          26,
+          187,
+          490,
+          51
+        ]
+      },
+      {
+        "label": "Filter labels",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/search_panel_filter.xml",
+        "box": [
+          78,
+          268,
+          372,
+          42
+        ]
+      },
+      {
+        "label": "Search tips",
+        "before": "System sans / Roboto · italic · 18dp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/SearchActivity.kt · search tips appearance",
+        "box": [
+          236,
+          417,
+          253,
+          45
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "search-results",
+    "title": "Bible search results",
+    "category": "Search",
+    "rows": [
+      {
+        "label": "Result reference",
+        "before": "System sans / Roboto · normal · 21.6dp · 400",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/util/Appearances.kt · applySearchResultReferenceAppearance",
+        "box": [
+          24,
+          425,
+          290,
+          49
+        ]
+      },
+      {
+        "label": "Verse excerpt",
+        "before": "System sans / Roboto · normal · 18dp · 400",
+        "role": null,
+        "after": "Preserved: 18dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/util/Appearances.kt · applyTextAppearance",
+        "box": [
+          33,
+          480,
+          648,
+          93
+        ]
+      },
+      {
+        "label": "Matched word",
+        "before": "System sans / Roboto · normal · 18dp · 700",
+        "role": null,
+        "after": "Preserved: 18dp · 700 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/SearchActivity.kt · search match spans",
+        "box": [
+          405,
+          478,
+          140,
+          48
+        ]
+      }
+    ],
+    "note": "Reader/article/song content keeps its existing font, size, weight, and spacing."
+  },
+  {
+    "id": "about",
+    "title": "Help / About",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Brand heading",
+        "before": "System sans / Roboto · normal · 24sp · 500",
+        "role": "Number",
+        "after": "System sans · 24sp · 500 · line 32sp",
+        "source": "Alkitab/src/main/res/layout/activity_about.xml · app name",
+        "box": [
+          195,
+          470,
+          330,
+          57
+        ]
+      },
+      {
+        "label": "Build metadata",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/activity_about.xml · tVersion / tBuild",
+        "box": [
+          218,
+          532,
+          290,
+          69
+        ]
+      },
+      {
+        "label": "Description",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/activity_about.xml · tAboutTextDesc",
+        "box": [
+          150,
+          640,
+          425,
+          49
+        ]
+      },
+      {
+        "label": "Action row",
+        "before": "System sans / Roboto · normal · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/activity_about.xml · textAppearanceMedium",
+        "box": [
+          70,
+          784,
+          440,
+          53
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "devotion",
+    "title": "Devotion article",
+    "category": "Reading",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans / Roboto · normal · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/DevotionActivity.kt · updateTitle",
+        "box": [
+          104,
+          60,
+          400,
+          50
+        ]
+      },
+      {
+        "label": "Toolbar date",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/DevotionActivity.kt · subtitle (AppCompat default)",
+        "box": [
+          104,
+          114,
+          445,
+          43
+        ]
+      },
+      {
+        "label": "Article heading",
+        "before": "System sans / Roboto · normal · 22.5dp · 700",
+        "role": null,
+        "after": "Preserved: 22.5dp · 700 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/devotion/ArticleSantapanHarian.java · Html.fromHtml big/b spans",
+        "box": [
+          10,
+          181,
+          695,
+          54
+        ]
+      },
+      {
+        "label": "Article body",
+        "before": "System sans / Roboto · normal · 18dp · 400",
+        "role": null,
+        "after": "Preserved: 18dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/DevotionActivity.kt · applyTextAppearance",
+        "box": [
+          9,
+          335,
+          697,
+          285
+        ]
+      }
+    ],
+    "note": "Reader/article/song content keeps its existing font, size, weight, and spacing."
+  },
+  {
+    "id": "devotion-selector",
+    "title": "Devotion selection sheet",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Devotion selector",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/DevotionSelectionSheet.kt · OutlinedTextField",
+        "box": [
+          96,
+          1031,
+          460,
+          44
+        ]
+      },
+      {
+        "label": "Date action",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/DevotionSelectionSheet.kt · TextButton",
+        "box": [
+          239,
+          1147,
+          258,
+          42
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "song-catalog",
+    "title": "Songbook download catalog",
+    "category": "Web content",
+    "rows": [
+      {
+        "label": "Native screen title",
+        "before": "System sans / Roboto · normal · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/HelpActivity.java · Toolbar",
+        "box": [
+          104,
+          80,
+          440,
+          48
+        ]
+      },
+      {
+        "label": "Web tabs",
+        "before": "System sans / Roboto · normal · 14CSS px · 400",
+        "role": "Label",
+        "after": "System sans · 14 CSS px · 500 · line 20 CSS px",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/HelpActivity.java · /songs/downloads CSS .tab",
+        "box": [
+          61,
+          193,
+          592,
+          43
+        ]
+      },
+      {
+        "label": "Songbook identifier",
+        "before": "System sans / Roboto · normal · 16CSS px · 400",
+        "role": "Primary",
+        "after": "System sans · 16 CSS px · 400 · line 24 CSS px",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/HelpActivity.java · /songs/downloads CSS .book_name",
+        "box": [
+          25,
+          619,
+          58,
+          39
+        ]
+      },
+      {
+        "label": "Book title / copyright",
+        "before": "System sans / Roboto · normal · 14CSS px · 400",
+        "role": "Supporting",
+        "after": "System sans · 14 CSS px · 400 · line 20 CSS px",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/HelpActivity.java · /songs/downloads CSS .book_title / .book_copyright",
+        "box": [
+          81,
+          620,
+          331,
+          39
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "song",
+    "title": "Song content",
+    "category": "Reading",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Song title",
+        "before": "System sans / Roboto · normal · 22.5dp · 700",
+        "role": null,
+        "after": "Preserved: 22.5dp · 700 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · roleSizeMult(title)",
+        "box": [
+          209,
+          206,
+          355,
+          53
+        ]
+      },
+      {
+        "label": "Musical metadata",
+        "before": "System sans / Roboto · normal · 15.75dp · 400",
+        "role": null,
+        "after": "Preserved: 15.75dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · roleSizeMult(musical)",
+        "box": [
+          25,
+          275,
+          150,
+          41
+        ]
+      },
+      {
+        "label": "Refrain",
+        "before": "System sans / Roboto · italic · 18dp · 400",
+        "role": null,
+        "after": "Preserved: 18dp · 400 (italic)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · VerseLine / lyric spans",
+        "box": [
+          122,
+          377,
+          569,
+          186
+        ]
+      },
+      {
+        "label": "Stanza number",
+        "before": "System sans / Roboto · normal · 21.6dp · 300",
+        "role": null,
+        "after": "Preserved: 21.6dp · 300 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · LyricBlockView",
+        "box": [
+          50,
+          632,
+          34,
+          54
+        ]
+      },
+      {
+        "label": "Lyric body",
+        "before": "System sans / Roboto · normal · 18dp · 400",
+        "role": null,
+        "after": "Preserved: 18dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · lineTextStyle",
+        "box": [
+          84,
+          636,
+          600,
+          183
+        ]
+      },
+      {
+        "label": "Copyright",
+        "before": "System sans / Roboto · normal · 13.5dp · 700",
+        "role": null,
+        "after": "Preserved: 13.5dp · 700 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · roleSizeMult(copyright)",
+        "box": [
+          25,
+          1148,
+          651,
+          65
+        ]
+      }
+    ],
+    "note": "Reader/article/song content keeps its existing font, size, weight, and spacing."
+  },
+  {
+    "id": "song-selector",
+    "title": "Song keypad",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Songbook field",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongSelectionSheet.kt · OutlinedTextField",
+        "box": [
+          97,
+          688,
+          80,
+          46
+        ]
+      },
+      {
+        "label": "Entered code",
+        "before": "System sans / Roboto · normal · 20sp · 400",
+        "role": "Number",
+        "after": "System sans · 24sp · 500 · line 32sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongSelectionSheet.kt · enteredCode",
+        "box": [
+          383,
+          686,
+          36,
+          51
+        ]
+      },
+      {
+        "label": "Keypad digit",
+        "before": "System sans / Roboto · normal · 28sp · 500",
+        "role": "Keypad",
+        "after": "System sans · 28sp · 400 · line 36sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongSelectionSheet.kt · Key",
+        "box": [
+          126,
+          792,
+          42,
+          59
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "song-media",
+    "title": "Song media sheet",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Sheet heading",
+        "before": "System sans / Roboto · normal · 22sp · 400",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongMediaSheet.kt · titleLarge",
+        "box": [
+          24,
+          164,
+          480,
+          57
+        ]
+      },
+      {
+        "label": "Audio section",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongMediaSheet.kt · AudioSection",
+        "box": [
+          88,
+          300,
+          134,
+          42
+        ]
+      },
+      {
+        "label": "Playback time",
+        "before": "System sans / Roboto · normal · 12sp · 500",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongMediaSheet.kt · labelMedium",
+        "box": [
+          25,
+          465,
+          73,
+          31
+        ]
+      },
+      {
+        "label": "Video title",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongMediaSheet.kt · VideoItem",
+        "box": [
+          248,
+          531,
+          449,
+          80
+        ]
+      },
+      {
+        "label": "Channel / statistics",
+        "before": "System sans / Roboto · normal · 12sp · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongMediaSheet.kt · VideoItem",
+        "box": [
+          250,
+          609,
+          390,
+          70
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "song-search",
+    "title": "Song search",
+    "category": "Search",
+    "rows": [
+      {
+        "label": "Search field",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongSearchSheet.kt · OutlinedTextField",
+        "box": [
+          128,
+          190,
+          165,
+          51
+        ]
+      },
+      {
+        "label": "Filter chips",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongSearchSheet.kt · FilterChip",
+        "box": [
+          55,
+          299,
+          411,
+          44
+        ]
+      },
+      {
+        "label": "Result title",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongSearchSheet.kt · SongResultItem",
+        "box": [
+          25,
+          397,
+          505,
+          45
+        ]
+      },
+      {
+        "label": "Book metadata",
+        "before": "System sans / Roboto · normal · 12sp · 500",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongSearchSheet.kt · SongResultItem",
+        "box": [
+          25,
+          450,
+          58,
+          31
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "plan-catalog",
+    "title": "Reading-plan download catalog",
+    "category": "Web content",
+    "rows": [
+      {
+        "label": "Plan title",
+        "before": "System sans / Roboto · normal · 16CSS px · 700",
+        "role": "Emphasis",
+        "after": "System sans · 16 CSS px · 500 · line 24 CSS px",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/HelpActivity.java · /rp/downloads <b> inside 1em body",
+        "box": [
+          24,
+          294,
+          450,
+          41
+        ]
+      },
+      {
+        "label": "Plan description / counts",
+        "before": "System sans / Roboto · normal · 13.333CSS px · 400",
+        "role": "Supporting",
+        "after": "System sans · 14 CSS px · 400 · line 20 CSS px",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/HelpActivity.java · /rp/downloads <small>",
+        "box": [
+          24,
+          337,
+          659,
+          72
+        ]
+      },
+      {
+        "label": "Web tabs",
+        "before": "System sans / Roboto · normal · 12.8CSS px · 400",
+        "role": "Label",
+        "after": "System sans · 14 CSS px · 500 · line 20 CSS px",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/HelpActivity.java · /rp/downloads li {font-size:0.8em}",
+        "box": [
+          62,
+          194,
+          581,
+          43
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "plan",
+    "title": "Active reading plan",
+    "category": "Reading plans",
+    "rows": [
+      {
+        "label": "Plan selector",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 (platform spinner; inherited line height)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/ReadingPlanActivity.java · simple_spinner_dropdown_item",
+        "box": [
+          119,
+          82,
+          290,
+          47
+        ]
+      },
+      {
+        "label": "Day heading",
+        "before": "System sans / Roboto · normal · 14sp · 700",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/activity_reading_plan_content.xml · bToday / FakeSpinner",
+        "box": [
+          207,
+          195,
+          354,
+          43
+        ]
+      },
+      {
+        "label": "Reading reference",
+        "before": "System sans / Roboto · normal · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/item_reading_plan_one_reading.xml · textAppearanceMedium",
+        "box": [
+          24,
+          302,
+          200,
+          49
+        ]
+      },
+      {
+        "label": "Progress label",
+        "before": "System sans / Roboto · normal · 12sp · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "Alkitab/src/main/res/layout/item_reading_plan_summary.xml · progress heading",
+        "box": [
+          301,
+          603,
+          143,
+          35
+        ]
+      },
+      {
+        "label": "Progress statistics",
+        "before": "System sans / Roboto · normal · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/item_reading_plan_summary.xml · textAppearanceMedium",
+        "box": [
+          24,
+          700,
+          333,
+          153
+        ]
+      },
+      {
+        "label": "Detail action",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/item_reading_plan_summary.xml · tDetail",
+        "box": [
+          25,
+          895,
+          452,
+          42
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "highlight",
+    "title": "Highlight sheet",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Reference heading",
+        "before": "System sans / Roboto · normal · 18sp · 700",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/dialog/TypeHighlightDialog.kt · heading",
+        "box": [
+          95,
+          556,
+          271,
+          49
+        ]
+      },
+      {
+        "label": "Verse preview",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/dialog/TypeHighlightDialog.kt · PreviewText",
+        "box": [
+          39,
+          648,
+          607,
+          88
+        ]
+      },
+      {
+        "label": "Dialog actions",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/dialog/TypeHighlightDialog.kt · action buttons",
+        "box": [
+          439,
+          1147,
+          218,
+          42
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "color-grid",
+    "title": "Color grid",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Hex value",
+        "before": "System sans / Roboto · normal · 16sp · 500",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · titleMedium",
+        "box": [
+          129,
+          323,
+          201,
+          43
+        ]
+      },
+      {
+        "label": "Picker tabs",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · Tab",
+        "box": [
+          110,
+          436,
+          524,
+          43
+        ]
+      },
+      {
+        "label": "Dialog actions",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · TextButton / Button",
+        "box": [
+          438,
+          1145,
+          216,
+          45
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "color-sliders",
+    "title": "Color sliders",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Channel label",
+        "before": "System sans / Roboto · normal · 11sp · 600",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · ChannelSlider",
+        "box": [
+          25,
+          455,
+          122,
+          35
+        ]
+      },
+      {
+        "label": "Channel value",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · ValueBox",
+        "box": [
+          613,
+          529,
+          33,
+          43
+        ]
+      },
+      {
+        "label": "Hex field label",
+        "before": "System sans / Roboto · normal · 13sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · HexInputRow",
+        "box": [
+          24,
+          1038,
+          300,
+          41
+        ]
+      },
+      {
+        "label": "Hex input",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · BasicTextField",
+        "box": [
+          468,
+          1034,
+          191,
+          47
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "markers",
+    "title": "Bookmark categories",
+    "category": "Bookmarks",
+    "rows": [
+      {
+        "label": "Screen title",
+        "before": "System sans / Roboto · normal · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/res/values/themes.xml · AppCompat toolbar title",
+        "box": [
+          104,
+          81,
+          183,
+          50
+        ]
+      },
+      {
+        "label": "Category label",
+        "before": "System sans / Roboto · normal · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/item_marker_filter.xml · textAppearanceMedium",
+        "box": [
+          111,
+          188,
+          454,
+          48
+        ]
+      },
+      {
+        "label": "Sync action",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/MarkersActivity.java · bGotoSync",
+        "box": [
+          274,
+          1162,
+          420,
+          38
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "bookmarks",
+    "title": "Empty bookmark list",
+    "category": "Bookmarks",
+    "rows": [
+      {
+        "label": "Truncated screen title",
+        "before": "System sans / Roboto · normal · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/MarkerListActivity.kt · toolbar title",
+        "box": [
+          103,
+          80,
+          388,
+          51
+        ]
+      },
+      {
+        "label": "Empty state",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/activity_marker_list.xml · tEmpty",
+        "box": [
+          50,
+          660,
+          620,
+          122
+        ]
+      },
+      {
+        "label": "Bookmark title",
+        "before": "Reader font · 21.6dp at default settings · 400",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "base/util/Appearances.kt"
+      },
+      {
+        "label": "Bookmark date",
+        "before": "Reader-controlled · 14.4dp at default settings · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "base/util/Appearances.kt"
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "audio",
+    "title": "Bible audio bar",
+    "category": "Audio",
+    "rows": [
+      {
+        "label": "Speed action",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/audio/ui/AudioBar.kt · SpeedButton",
+        "box": [
+          48,
+          1060,
+          49,
+          39
+        ]
+      },
+      {
+        "label": "Time label",
+        "before": "System sans / Roboto · normal · 11sp · 500",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/audio/ui/AudioBar.kt · labelSmall",
+        "box": [
+          24,
+          1157,
+          72,
+          33
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "audio-selector",
+    "title": "Bible audio selection",
+    "category": "Audio",
+    "rows": [
+      {
+        "label": "Sheet title",
+        "before": "System sans / Roboto · normal · 16sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/audio/ui/AudioSetBottomSheet.kt · titleMedium",
+        "box": [
+          25,
+          920,
+          234,
+          47
+        ]
+      },
+      {
+        "label": "Recording choice",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/audio/ui/AudioSetBottomSheet.kt · AudioSetRow",
+        "box": [
+          87,
+          995,
+          402,
+          46
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "audio-speed",
+    "title": "Audio speed sheet",
+    "category": "Audio",
+    "rows": [
+      {
+        "label": "Sheet title",
+        "before": "System sans / Roboto · normal · 16sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/audio/ui/SpeedBottomSheet.kt · titleMedium",
+        "box": [
+          24,
+          945,
+          383,
+          48
+        ]
+      },
+      {
+        "label": "Speed choices",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/audio/ui/SpeedBottomSheet.kt · FilterChip",
+        "box": [
+          57,
+          1041,
+          572,
+          47
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "appearance-font-menu",
+    "title": "Reading appearance: font menu",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Section label",
+        "before": "System sans / Roboto · normal · 12sp · 700",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/widget/TextAppearancePanel.kt · SectionLabel / HeaderRow",
+        "box": [
+          65,
+          487,
+          230,
+          34
+        ]
+      },
+      {
+        "label": "Font selector",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/widget/TextAppearancePanel.kt · FontRow",
+        "box": [
+          95,
+          563,
+          230,
+          47
+        ]
+      },
+      {
+        "label": "Slider value",
+        "before": "System sans / Roboto · normal · 16sp · 500",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/widget/TextAppearancePanel.kt · SliderRow",
+        "box": [
+          578,
+          716,
+          79,
+          42
+        ]
+      },
+      {
+        "label": "Contrast label",
+        "before": "System sans / Roboto · normal · 12sp · 700",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/widget/TextAppearancePanel.kt · SectionLabel",
+        "box": [
+          65,
+          1122,
+          435,
+          32
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "goto-book-menu",
+    "title": "Go To: book menu",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Tabs",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/GotoScreen.kt · Tab",
+        "box": [
+          128,
+          84,
+          449,
+          44
+        ]
+      },
+      {
+        "label": "Book selector",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · OutlinedTextField",
+        "box": [
+          105,
+          332,
+          300,
+          50
+        ]
+      },
+      {
+        "label": "Chapter / verse value",
+        "before": "System sans / Roboto · normal · 24sp · 500",
+        "role": "Number",
+        "after": "System sans · 24sp · 500 · line 32sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · value cell",
+        "box": [
+          268,
+          482,
+          56,
+          57
+        ]
+      },
+      {
+        "label": "Keypad digit",
+        "before": "System sans / Roboto · normal · 28sp · 400",
+        "role": "Keypad",
+        "after": "System sans · 28sp · 400 · line 36sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · KeypadDigit",
+        "box": [
+          145,
+          664,
+          56,
+          60
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "goto-direct",
+    "title": "Go To: typed reference",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Tabs",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "base/compose/goto/GotoScreen.kt"
+      },
+      {
+        "label": "Input",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "base/compose/goto/DirectTab.kt"
+      },
+      {
+        "label": "Hint",
+        "before": "System sans · 12sp · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "base/compose/goto/DirectTab.kt"
+      }
+    ],
+    "note": "Uses the same shared roles as the related screens."
+  },
+  {
+    "id": "settings-usage",
+    "title": "Usage preferences",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Preference title",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference title",
+        "box": [
+          137,
+          195,
+          425,
+          47
+        ]
+      },
+      {
+        "label": "Preference summary",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference summary",
+        "box": [
+          137,
+          242,
+          425,
+          40
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "settings-copy",
+    "title": "Copy and share preferences",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Preference title",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference title",
+        "box": [
+          137,
+          195,
+          425,
+          47
+        ]
+      },
+      {
+        "label": "Preference summary",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference summary",
+        "box": [
+          137,
+          242,
+          425,
+          40
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "settings-transfer",
+    "title": "Data transfer preferences",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Preference title",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference title",
+        "box": [
+          137,
+          195,
+          425,
+          47
+        ]
+      },
+      {
+        "label": "Preference summary",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference summary",
+        "box": [
+          137,
+          242,
+          425,
+          40
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "settings-experimental",
+    "title": "Experimental features preferences",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Preference title",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference title",
+        "box": [
+          137,
+          195,
+          425,
+          47
+        ]
+      },
+      {
+        "label": "Preference summary",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/xml/settings_display.xml · AndroidX preference summary",
+        "box": [
+          137,
+          242,
+          425,
+          40
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "create-account",
+    "title": "Create account",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Screen title",
+        "before": "System sans / Roboto · normal · 22sp · 400",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · TopAppBar",
+        "box": [
+          103,
+          80,
+          162,
+          55
+        ]
+      },
+      {
+        "label": "Informational link",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · LinkText",
+        "box": [
+          99,
+          377,
+          525,
+          72
+        ]
+      },
+      {
+        "label": "Field label / value",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · OutlinedTextField",
+        "box": [
+          56,
+          648,
+          255,
+          49
+        ]
+      },
+      {
+        "label": "Button label",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · Button",
+        "box": [
+          312,
+          1130,
+          100,
+          43
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "reset-password",
+    "title": "Reset password",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Screen title",
+        "before": "System sans / Roboto · normal · 22sp · 400",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · TopAppBar",
+        "box": [
+          103,
+          80,
+          162,
+          55
+        ]
+      },
+      {
+        "label": "Informational link",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · LinkText",
+        "box": [
+          99,
+          377,
+          525,
+          72
+        ]
+      },
+      {
+        "label": "Field label / value",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · OutlinedTextField",
+        "box": [
+          56,
+          648,
+          255,
+          49
+        ]
+      },
+      {
+        "label": "Button label",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · Button",
+        "box": [
+          312,
+          1130,
+          100,
+          43
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "song-drawer",
+    "title": "Song navigation drawer",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Navigation item",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_header.xml",
+        "box": [
+          111,
+          181,
+          230,
+          47
+        ]
+      },
+      {
+        "label": "Section label",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_text.xml · progress heading",
+        "box": [
+          24,
+          599,
+          120,
+          38
+        ]
+      },
+      {
+        "label": "Switch label",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_text.xml · cFullScreen",
+        "box": [
+          24,
+          877,
+          330,
+          49
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "plan-drawer",
+    "title": "Reading-plan navigation drawer",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Navigation item",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_header.xml",
+        "box": [
+          111,
+          181,
+          230,
+          47
+        ]
+      },
+      {
+        "label": "Section label",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_text.xml · progress heading",
+        "box": [
+          24,
+          599,
+          120,
+          38
+        ]
+      },
+      {
+        "label": "Switch label",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/left_drawer_text.xml · cFullScreen",
+        "box": [
+          24,
+          877,
+          330,
+          49
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "plan-date",
+    "title": "Reading-plan date and progress",
+    "category": "Reading plan",
+    "rows": [
+      {
+        "label": "Day heading",
+        "before": "System sans · 14sp · 700",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/layout/item_reading_plan_summary.xml"
+      },
+      {
+        "label": "Progress statistics",
+        "before": "System sans · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/layout/item_reading_plan_summary.xml"
+      },
+      {
+        "label": "Detail action",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/layout/item_reading_plan_summary.xml"
+      }
+    ],
+    "note": "Uses the same shared roles as the related screens."
+  },
+  {
+    "id": "plan-list",
+    "title": "All reading-plan days",
+    "category": "Reading plans",
+    "rows": [
+      {
+        "label": "Plan selector",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 (platform spinner; inherited line height)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/ac/ReadingPlanActivity.java · simple_spinner_dropdown_item",
+        "box": [
+          119,
+          82,
+          290,
+          47
+        ]
+      },
+      {
+        "label": "Day heading",
+        "before": "System sans / Roboto · normal · 14sp · 700",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/activity_reading_plan_content.xml · bToday / FakeSpinner",
+        "box": [
+          207,
+          195,
+          354,
+          43
+        ]
+      },
+      {
+        "label": "Reading reference",
+        "before": "System sans / Roboto · normal · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/item_reading_plan_one_reading.xml · textAppearanceMedium",
+        "box": [
+          24,
+          302,
+          200,
+          49
+        ]
+      },
+      {
+        "label": "Progress label",
+        "before": "System sans / Roboto · normal · 12sp · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "Alkitab/src/main/res/layout/item_reading_plan_summary.xml · progress heading",
+        "box": [
+          301,
+          603,
+          143,
+          35
+        ]
+      },
+      {
+        "label": "Progress statistics",
+        "before": "System sans / Roboto · normal · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/res/layout/item_reading_plan_summary.xml · textAppearanceMedium",
+        "box": [
+          24,
+          700,
+          333,
+          153
+        ]
+      },
+      {
+        "label": "Detail action",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/res/layout/item_reading_plan_summary.xml · tDetail",
+        "box": [
+          25,
+          895,
+          452,
+          42
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "notes",
+    "title": "Notes",
+    "category": "Bookmarks",
+    "rows": [
+      {
+        "label": "List title/reference",
+        "before": "Reader font · 21.6dp at default settings · 400",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "base/util/Appearances.kt"
+      },
+      {
+        "label": "Date",
+        "before": "Reader-controlled · 14.4dp at default settings · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "base/util/Appearances.kt"
+      }
+    ],
+    "note": "Reading excerpts remain reader-controlled. Populated rows use fixed local fixtures."
+  },
+  {
+    "id": "highlights",
+    "title": "Highlights",
+    "category": "Bookmarks",
+    "rows": [
+      {
+        "label": "List title/reference",
+        "before": "Reader font · 21.6dp at default settings · 400",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "base/util/Appearances.kt"
+      },
+      {
+        "label": "Date",
+        "before": "Reader-controlled · 14.4dp at default settings · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "base/util/Appearances.kt"
+      }
+    ],
+    "note": "Reading excerpts remain reader-controlled. Populated rows use fixed local fixtures."
+  },
+  {
+    "id": "note-editor",
+    "title": "Note editor",
+    "category": "Bookmarks",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Editor text",
+        "before": "Reader-controlled · default 18dp · 400",
+        "role": null,
+        "after": "Preserved: reader font, size, and line spacing",
+        "source": "base/ac/NoteActivity.java · applyTextAppearance"
+      }
+    ],
+    "note": "The note editor reapplies the reader font and spacing after XML inflation. Only toolbar typography is standardized here."
+  },
+  {
+    "id": "bookmark-editor",
+    "title": "Bookmark editor",
+    "category": "Bookmarks",
+    "rows": [
+      {
+        "label": "Caption field",
+        "before": "System sans · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/layout/dialog_edit_bookmark.xml"
+      },
+      {
+        "label": "Label heading",
+        "before": "System sans · 14sp · 400",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/layout/dialog_edit_bookmark.xml"
+      },
+      {
+        "label": "Actions",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/values/themes.xml"
+      }
+    ],
+    "note": "Uses the same shared roles as the related screens."
+  },
+  {
+    "id": "label-chooser",
+    "title": "Bookmark label chooser",
+    "category": "Bookmarks",
+    "rows": [
+      {
+        "label": "Dialog title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Label row",
+        "before": "System sans · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/layout/item_label_chooser.xml"
+      }
+    ],
+    "note": "Uses the same shared roles as the related screens."
+  },
+  {
+    "id": "progress",
+    "title": "Progress mark list",
+    "category": "Bookmarks",
+    "rows": [
+      {
+        "label": "Progress title",
+        "before": "Reader font · 21.6dp at default settings · 400",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "base/util/Appearances.kt"
+      },
+      {
+        "label": "Modification date",
+        "before": "Reader-controlled · 14.4dp at default settings · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "base/util/Appearances.kt"
+      }
+    ],
+    "note": "A local progress-mark fixture provides a populated row. Its verse excerpt retains the reader font."
+  },
+  {
+    "id": "correction",
+    "title": "Correction instructions",
+    "category": "Forms",
+    "rows": [
+      {
+        "label": "Instructions",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Action",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/values/themes.xml"
+      }
+    ],
+    "note": "Uses the same shared roles as the related screens."
+  },
+  {
+    "id": "correction-form",
+    "title": "Correction editor",
+    "category": "Forms",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Send action",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/values/themes.xml"
+      }
+    ],
+    "note": "Local fixture text only. Nothing was submitted. The correction body keeps its existing editor behavior."
+  },
+  {
+    "id": "report-verse",
+    "title": "Report a verse",
+    "category": "Forms",
+    "rows": [
+      {
+        "label": "Verse reference",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/layout/ribka_activity_report.xml"
+      }
+    ],
+    "note": "Intent-provided verse fixture; no report was submitted. The verse rendering remains reader-controlled."
+  },
+  {
+    "id": "verse-dialog",
+    "title": "Verse popup",
+    "category": "Reading",
+    "rows": [
+      {
+        "label": "Reference",
+        "before": "System sans · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/layout/dialog_verses.xml"
+      }
+    ],
+    "note": "Real BIMK Genesis 1:1 loaded through the production verse popup. Verse body remains reader-controlled."
+  },
+  {
+    "id": "xref",
+    "title": "Cross-reference popup",
+    "category": "Reading",
+    "rows": [
+      {
+        "label": "Cross-reference text and linked verse",
+        "before": "Reader-controlled · default 18dp · 400, with semantic bold/underline",
+        "role": null,
+        "after": "Preserved: reader font, size, line spacing, and semantic emphasis",
+        "source": "base/dialog/XrefDialog.kt · renderXrefText / base/util/Appearances.kt"
+      }
+    ],
+    "note": "Real cross-reference from the bundled DDD typography gallery. The production renderer overrides the XML fallback with reader typography; this pair checks content remains preserved."
+  },
+  {
+    "id": "alert",
+    "title": "Generic alert",
+    "category": "Forms",
+    "rows": [
+      {
+        "label": "Dialog title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Message",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Action",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/values/themes.xml"
+      }
+    ],
+    "note": "The production alert activity receives a local title/message fixture. The translucent activity can reveal the launcher behind it."
+  },
+  {
+    "id": "pdb-options",
+    "title": "Legacy PDB conversion options",
+    "category": "Legacy",
+    "rows": [
+      {
+        "label": "Sample text",
+        "before": "System sans · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/layout/dialog_pdbconvert_options.xml"
+      },
+      {
+        "label": "Dialog title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      }
+    ],
+    "note": "Component fixture: the production XML and dialog builder are inflated with local sample text and two encodings. No PDB import was performed."
+  },
+  {
+    "id": "debug-sync",
+    "title": "Developer sync diagnostics",
+    "category": "Legacy",
+    "rows": [
+      {
+        "label": "Explanatory text",
+        "before": "System sans · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "res/layout/activity_secret_sync_debug.xml"
+      }
+    ],
+    "note": "Developer-only screen. No sync, reset, or account action was triggered."
+  },
+  {
+    "id": "sync-log",
+    "title": "Sync log",
+    "category": "Account",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Copy action",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/values/themes.xml"
+      }
+    ],
+    "note": "The diagnostic log body remains monospace. Timestamps and generated entries may differ."
+  },
+  {
+    "id": "legacy-reader",
+    "title": "Legacy reader and toolbar",
+    "category": "Reading",
+    "rows": [
+      {
+        "label": "Reference",
+        "before": "System sans / Roboto · normal · 16sp · 500",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/toolbar/ReaderToolbar.kt · ReaderToolbarDimens",
+        "box": [
+          215,
+          76,
+          190,
+          55
+        ]
+      },
+      {
+        "label": "Version chip",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/toolbar/ReaderToolbar.kt · VersionChip",
+        "box": [
+          530,
+          78,
+          85,
+          50
+        ]
+      },
+      {
+        "label": "Section heading",
+        "before": "System sans / Roboto · normal · 18dp · 700",
+        "role": null,
+        "after": "Preserved: 18dp · 700 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/verses/VersesComposeControllerImpl.kt · PericopeHeader",
+        "box": [
+          76,
+          177,
+          575,
+          40
+        ]
+      },
+      {
+        "label": "Verse body",
+        "before": "System sans / Roboto · normal · 18dp · 400",
+        "role": null,
+        "after": "Preserved: 18dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/verses/VerseItemCompose.kt · VerseText",
+        "box": [
+          81,
+          235,
+          584,
+          90
+        ]
+      },
+      {
+        "label": "Verse numbers",
+        "before": "System sans / Roboto · normal · 12.6dp · 400",
+        "role": null,
+        "after": "Preserved: 12.6dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/verses/VerseItemCompose.kt · VerseNumber",
+        "box": [
+          12,
+          235,
+          24,
+          32
+        ]
+      }
+    ],
+    "note": "Reader/article/song content keeps its existing font, size, weight, and spacing."
+  },
+  {
+    "id": "legacy-goto-dialer",
+    "title": "Legacy Go To dialer",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Tabs",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/GotoScreen.kt · Tab",
+        "box": [
+          128,
+          84,
+          449,
+          44
+        ]
+      },
+      {
+        "label": "Book selector",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · OutlinedTextField",
+        "box": [
+          105,
+          332,
+          300,
+          50
+        ]
+      },
+      {
+        "label": "Chapter / verse value",
+        "before": "System sans · 24sp · 400",
+        "role": "Number",
+        "after": "System sans · 24sp · 500 · line 32sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · value cell",
+        "box": [
+          268,
+          482,
+          56,
+          57
+        ]
+      },
+      {
+        "label": "Keypad digit",
+        "before": "System sans / Roboto · normal · 28sp · 400",
+        "role": "Keypad",
+        "after": "System sans · 28sp · 400 · line 36sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/DialerTab.kt · KeypadDigit",
+        "box": [
+          145,
+          664,
+          56,
+          60
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "legacy-goto-grid",
+    "title": "Legacy Go To book grid",
+    "category": "Navigation",
+    "rows": [
+      {
+        "label": "Book abbreviation",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/GridTab.kt · GridCell",
+        "box": [
+          30,
+          200,
+          190,
+          50
+        ]
+      },
+      {
+        "label": "Tabs",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/goto/GotoScreen.kt · Tab",
+        "box": [
+          124,
+          84,
+          460,
+          45
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "legacy-sign-in",
+    "title": "Legacy sign-in",
+    "category": "Settings",
+    "rows": [
+      {
+        "label": "Screen title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · TopAppBar",
+        "box": [
+          103,
+          80,
+          162,
+          55
+        ]
+      },
+      {
+        "label": "Informational link",
+        "before": "System sans / Roboto · normal · 14sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · LinkText",
+        "box": [
+          99,
+          377,
+          525,
+          72
+        ]
+      },
+      {
+        "label": "Field label / value",
+        "before": "System sans / Roboto · normal · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · OutlinedTextField",
+        "box": [
+          56,
+          648,
+          255,
+          49
+        ]
+      },
+      {
+        "label": "Button label",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/sync/SyncLoginScreen.kt · Button",
+        "box": [
+          312,
+          1130,
+          100,
+          43
+        ]
+      }
+    ],
+    "note": "Legacy XML fields explicitly use Primary. Supporting links and action labels use the same roles as modern sign-in."
+  },
+  {
+    "id": "legacy-song",
+    "title": "Legacy song content",
+    "category": "Reading",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Song title",
+        "before": "System sans / Roboto · normal · 22.5dp · 700",
+        "role": null,
+        "after": "Preserved: 22.5dp · 700 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · roleSizeMult(title)",
+        "box": [
+          209,
+          206,
+          355,
+          53
+        ]
+      },
+      {
+        "label": "Musical metadata",
+        "before": "System sans / Roboto · normal · 15.75dp · 400",
+        "role": null,
+        "after": "Preserved: 15.75dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · roleSizeMult(musical)",
+        "box": [
+          25,
+          275,
+          150,
+          41
+        ]
+      },
+      {
+        "label": "Refrain",
+        "before": "System sans / Roboto · italic · 18dp · 400",
+        "role": null,
+        "after": "Preserved: 18dp · 400 (italic)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · VerseLine / lyric spans",
+        "box": [
+          122,
+          377,
+          569,
+          186
+        ]
+      },
+      {
+        "label": "Stanza number",
+        "before": "System sans / Roboto · normal · 21.6dp · 300",
+        "role": null,
+        "after": "Preserved: 21.6dp · 300 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · LyricBlockView",
+        "box": [
+          50,
+          632,
+          34,
+          54
+        ]
+      },
+      {
+        "label": "Lyric body",
+        "before": "System sans / Roboto · normal · 18dp · 400",
+        "role": null,
+        "after": "Preserved: 18dp · 400 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · lineTextStyle",
+        "box": [
+          84,
+          636,
+          600,
+          183
+        ]
+      },
+      {
+        "label": "Copyright",
+        "before": "System sans / Roboto · normal · 13.5dp · 700",
+        "role": null,
+        "after": "Preserved: 13.5dp · 700 (normal)",
+        "source": "Alkitab/src/main/java/yuku/alkitab/songs/SongComposeContent.kt · roleSizeMult(copyright)",
+        "box": [
+          25,
+          1148,
+          651,
+          65
+        ]
+      }
+    ],
+    "note": "Reader/article/song content keeps its existing font, size, weight, and spacing."
+  },
+  {
+    "id": "color-spectrum",
+    "title": "Color spectrum",
+    "category": "Sheets",
+    "rows": [
+      {
+        "label": "Hex value",
+        "before": "System sans / Roboto · normal · 16sp · 500",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · titleMedium",
+        "box": [
+          129,
+          323,
+          201,
+          43
+        ]
+      },
+      {
+        "label": "Picker tabs",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · Tab",
+        "box": [
+          110,
+          436,
+          524,
+          43
+        ]
+      },
+      {
+        "label": "Dialog actions",
+        "before": "System sans / Roboto · normal · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "Alkitab/src/main/java/yuku/alkitab/base/compose/colorpicker/IosColorPicker.kt · TextButton / Button",
+        "box": [
+          438,
+          1145,
+          216,
+          45
+        ]
+      }
+    ],
+    "note": "Uses the shared UI scale; layout structure is retained."
+  },
+  {
+    "id": "colors-day",
+    "title": "Day color settings",
+    "category": "Appearance",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Setting label",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "base/ac/ColorSettingsActivity.kt"
+      }
+    ],
+    "note": "Uses the same shared roles as the related screens."
+  },
+  {
+    "id": "colors-night",
+    "title": "Night color settings",
+    "category": "Appearance",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Setting label",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "base/ac/ColorSettingsActivity.kt"
+      }
+    ],
+    "note": "Uses the same shared roles as the related screens."
+  },
+  {
+    "id": "fonts",
+    "title": "Font download manager",
+    "category": "Appearance",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Font name",
+        "before": "System sans · 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/layout/item_font_download.xml"
+      },
+      {
+        "label": "Font preview",
+        "before": "Raster preview of the downloadable font",
+        "role": "Content preview",
+        "after": "Preserved image preview; outside the UI type scale",
+        "source": "res/layout/item_font_download.xml · imgPreview"
+      }
+    ],
+    "note": "Uses the same shared roles as the related screens."
+  },
+  {
+    "id": "widget",
+    "title": "Daily verse widget configuration",
+    "category": "Configuration",
+    "rows": [
+      {
+        "label": "Screen heading",
+        "before": "System sans · 22sp · 400",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "base/appwidget/DailyVerseConfigurationScreen.kt"
+      },
+      {
+        "label": "Section label",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "base/appwidget/DailyVerseConfigurationScreen.kt"
+      },
+      {
+        "label": "Choice/slider label",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "base/appwidget/DailyVerseConfigurationScreen.kt"
+      }
+    ],
+    "note": "Configuration screen is affected by the shared Compose theme. Launcher RemoteViews typography remains unchanged."
+  },
+  {
+    "id": "transfer-export",
+    "title": "Export progress",
+    "category": "Configuration",
+    "rows": [
+      {
+        "label": "Toolbar title",
+        "before": "System sans · 20sp · 500",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "res/values/themes.xml"
+      },
+      {
+        "label": "Actions",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/values/themes.xml"
+      }
+    ],
+    "note": "Local QA export only; no file was shared. The monospace transfer log remains unchanged."
+  },
+  {
+    "id": "search-filter",
+    "title": "Bible search filters",
+    "category": "Search",
+    "note": "Book grid uses the shared Primary role; checkbox labels retain supporting text. No grid-layout or large-text changes are included.",
+    "rows": [
+      {
+        "label": "Book abbreviation",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "res/layout/item_goto_grid_cell.xml"
+      },
+      {
+        "label": "Filter action",
+        "before": "System sans · 14sp · 500",
+        "role": "Label",
+        "after": "System sans · 14sp · 500 · line 20sp",
+        "source": "res/values/themes.xml"
+      }
+    ]
+  },
+  {
+    "id": "verse-selection",
+    "title": "Selected verse and action toolbar",
+    "category": "Reading",
+    "rows": [
+      {
+        "label": "Selection title",
+        "before": "System sans · 16sp · 500",
+        "role": "Emphasis",
+        "after": "System sans · 16sp · 500 · line 24sp",
+        "source": "res/values/themes.xml · SmallerActionModeTitleTextAppearance"
+      },
+      {
+        "label": "Selection summary",
+        "before": "System sans · 16sp · 400",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "res/values/themes.xml · actionMode subtitleTextStyle"
+      }
+    ],
+    "note": "Selected BIMK Genesis 1:1. The before image reuses the original audit capture on the same emulator and font settings; application source was unchanged between that audit and this baseline. The after image includes the local marker fixtures. Verse typography and selection highlight behavior are preserved."
+  },
+  {
+    "id": "song-book-menu",
+    "title": "Songbook menu",
+    "category": "Songs",
+    "rows": [
+      {
+        "label": "Songbook name",
+        "before": "Platform popup font · approximately 18sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "songs/SongSelectionSheet.kt · popupTextStyle"
+      },
+      {
+        "label": "Songbook description",
+        "before": "0.7 × platform popup size (approximately 12.6sp)",
+        "role": "Supporting",
+        "after": "System sans · 14sp · 400 · line 20sp",
+        "source": "songs/SongSelectionSheet.kt · DropdownMenuItem"
+      }
+    ],
+    "note": "Production songbook dropdown. The old font depended on the platform popup appearance; the new roles are explicit."
+  },
+  {
+    "id": "audio-source",
+    "title": "Audio source picker",
+    "category": "Audio",
+    "rows": [
+      {
+        "label": "Dialog title",
+        "before": "System sans · 24sp · 400",
+        "role": "Title",
+        "after": "System sans · 20sp · 500 · line 26sp",
+        "source": "base/audio/ui/AudioBar.kt · SourcePickerDialog"
+      },
+      {
+        "label": "Version choices",
+        "before": "System sans · 16sp · 400",
+        "role": "Primary",
+        "after": "System sans · 16sp · 400 · line 24sp",
+        "source": "base/audio/ui/AudioBar.kt · SourcePickerDialog"
+      }
+    ],
+    "note": "Component fixture: the real audio bar displays its production source picker with fixed left/right pane choices. No audio request or account action is triggered."
+  },
+  {
+    "id": "audio-log",
+    "title": "Audio load log",
+    "category": "Audio",
+    "rows": [
+      {
+        "label": "Timestamp",
+        "before": "Monospace · 12sp · 400",
+        "role": "Caption",
+        "after": "Monospace · 12sp · 400 · line 16sp",
+        "source": "base/audio/ui/AudioLogBottomSheet.kt"
+      },
+      {
+        "label": "Log message",
+        "before": "System sans · 12sp · 400",
+        "role": "Caption",
+        "after": "System sans · 12sp · 400 · line 16sp",
+        "source": "base/audio/ui/AudioLogBottomSheet.kt"
+      }
+    ],
+    "note": "Component fixture: the production audio log sheet receives two fixed messages. Monospace timestamps remain a diagnostic exception; the shared caption line height and tracking apply."
+  }
+]

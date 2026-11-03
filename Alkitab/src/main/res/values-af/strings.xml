@@ -26,7 +26,7 @@
     <string name="search_bookname_only">%s alleenlik</string>
     <string name="ayat_sebelumangka">Vers</string>
     <string name="pasal_sebelumangka">Hoofstuk</string>
-    <string name="jump_to_prompt"><b>SPRING NA</b> - Voorbeeld: ^1</string>
+    <string name="jump_to_prompt"><b>Spring na</b> - Voorbeeld: ^1</string>
     <string name="belum_ada_pembatas_buku">Tans geen boekmerke.\nKies \'n vers om by boekmerk te voeg.</string>
     <string name="judul_titikdua">Titel</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nog nie beskikbaar. Moontlik is die datum se materiaal nog nie voorberei,of daar is moontlik foute in die data bron. Probeer asb weer later.</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Vee die nota uit?</string>
     <string name="delete">Vee uit</string>
     <string name="cancel">Kanselleer</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Instellings</string>
     <string name="pengaturan_alkitab">Bybel instellings</string>
     <string name="kelola_versi">Bestuur weergawes</string>
@@ -412,10 +412,10 @@
     <string name="bl_selection_edit">Redigeer</string>
     <string name="bl_selection_many_selected">^1 geselekteer</string>
     <string name="bl_selection_one_selected">1 geselekteer</string>
-    <string name="color_picker_channel_blue">BLOU</string>
-    <string name="color_picker_channel_green">GROEN</string>
-    <string name="color_picker_channel_red">ROOI</string>
-    <string name="color_picker_hex_label">sRGB Hex Kleur #</string>
+    <string name="color_picker_channel_blue">Blou</string>
+    <string name="color_picker_channel_green">Groen</string>
+    <string name="color_picker_channel_red">Rooi</string>
+    <string name="color_picker_hex_label">Hex Kleur</string>
     <string name="color_picker_tab_grid">Ruit</string>
     <string name="color_picker_tab_sliders">Skuiwers</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

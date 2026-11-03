@@ -1,0 +1,34 @@
+[
+  {
+    "id": "goto-dialer",
+    "title": "360 dp phone: prefilled chapter"
+  },
+  {
+    "id": "goto-typed",
+    "title": "360 dp phone: entered chapter"
+  },
+  {
+    "id": "goto-verse-typed",
+    "title": "360 dp phone: entered verse"
+  },
+  {
+    "id": "goto-wide",
+    "title": "600 dp portrait window: capped dialer"
+  },
+  {
+    "id": "goto-dialer-landscape",
+    "title": "640 \u00d7 360 dp landscape: capped dialer"
+  },
+  {
+    "id": "goto-direct",
+    "title": "360 dp phone: Direct tab"
+  },
+  {
+    "id": "goto-direct-candidates",
+    "title": "360 dp phone: Direct suggestions"
+  },
+  {
+    "id": "goto-direct-landscape",
+    "title": "640 \u00d7 360 dp landscape: Direct tab and keyboard"
+  }
+]

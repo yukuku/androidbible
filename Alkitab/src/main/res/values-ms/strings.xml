@@ -26,9 +26,9 @@
     <string name="search_bookname_only">%s hanya</string>
     <string name="ayat_sebelumangka">Ayat</string>
     <string name="pasal_sebelumangka">Bab</string>
-    <string name="jump_to_prompt"><b>LOMPAT KE</b> — Contoh: ^1</string>
+    <string name="jump_to_prompt"><b>Lompat ke</b> — Contoh: ^1</string>
     <string name="belum_ada_pembatas_buku">Tiada penanda halaman lagi.\nPilih ayat untuk menambah penanda buku.</string>
-    <string name="judul_titikdua">TAJUK</string>
+    <string name="judul_titikdua">Tajuk</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Tidak wujud. Mungkin bahan tarikh yang diminta adalah tidak bersedia lagi, atau terdapat beberapa ralat dalam mengiktiraf sumber data. Sila cuba lagi kemudian.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Tidak Wujud. Semasa mengambil dari Internet...\n\n(Pastikan terdapat sambungan Internet untuk mengambil bahan-bahan ketaatan.)</string>
     <string name="hari_sabtu">Sab</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Memadam nota ini?</string>
     <string name="delete">Padam</string>
     <string name="cancel">Batal</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Tetapan</string>
     <string name="pengaturan_alkitab">Tetapan Alkitab</string>
     <string name="kelola_versi">Mrnguruskan versi</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Penapis jelas</string>
     <string name="bl_no_items_match_the_filter_above">Tiada perkara sepadan dengan penapis di atas.</string>
     <string name="bl_sync_suggest">Lindungi penanda anda dengan penyegerakan</string>
-    <string name="labels_titikdua">LABEL</string>
+    <string name="labels_titikdua">Label</string>
     <string name="tambah_titiktiga">Tambah...</string>
     <string name="nama_label_titikdua">Nama label:</string>
     <string name="change_label_color">Perubahan warna label</string>
@@ -176,7 +176,7 @@
     <string name="menuSongs">Lagu</string>
     <string name="sn_deep_search_enabled">Lirik, dan lain-lain. juga</string>
     <string name="sn_songs_activity_title">Lagu</string>
-    <string name="sn_bookselector_all">SEMUA</string>
+    <string name="sn_bookselector_all">Semua</string>
     <string name="sn_bookselector_more">Muat turun lebih banyak&#8230;</string>
     <string name="sn_bookselector_all_desc">Mencari semua buku yang dipasang.</string>
     <string name="sn_downloading_ellipsis">Memuat turun...</string>
@@ -412,10 +412,10 @@
     <string name="bl_selection_edit">Sunting</string>
     <string name="bl_selection_many_selected">^1 dipilih</string>
     <string name="bl_selection_one_selected">1 dipilih</string>
-    <string name="color_picker_channel_blue">BIRU</string>
-    <string name="color_picker_channel_green">HIJAU</string>
-    <string name="color_picker_channel_red">MERAH</string>
-    <string name="color_picker_hex_label">Warna Heks sRGB #</string>
+    <string name="color_picker_channel_blue">Biru</string>
+    <string name="color_picker_channel_green">Hijau</string>
+    <string name="color_picker_channel_red">Merah</string>
+    <string name="color_picker_hex_label">Warna Heks</string>
     <string name="color_picker_tab_grid">Grid</string>
     <string name="color_picker_tab_sliders">Peluncur</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

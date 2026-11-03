@@ -1,0 +1,50 @@
+{
+  "develop": "7e7bba261",
+  "builds": [
+    "assemblePlainDebug",
+    "assemblePlainDebugAndroidTest"
+  ],
+  "result": "passed",
+  "tests": [
+    {
+      "name": "yuku.alkitab.base.compose.BibleAppTypographyTest",
+      "tests": "14",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "yuku.alkitab.base.compose.goto.GotoScreenNavigationTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "yuku.alkitab.songs.newdoc.PortableSongsBridgeTest",
+      "tests": "21",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "yuku.alkitab.songs.SongComposeFontTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "yuku.alkitab.base.ac.NoteActivityTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "lint": {
+    "Warning": 387,
+    "Hint": 14
+  },
+  "screenshots": "Pre-integration snapshots, as stated in index.html and README.md"
+}

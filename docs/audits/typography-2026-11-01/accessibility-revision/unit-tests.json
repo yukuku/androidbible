@@ -1,0 +1,16 @@
+[
+  {
+    "name": "yuku.alkitab.base.compose.BibleAppTypographyTest",
+    "tests": "10",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0"
+  },
+  {
+    "name": "yuku.alkitab.base.compose.goto.GotoScreenNavigationTest",
+    "tests": "5",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0"
+  }
+]

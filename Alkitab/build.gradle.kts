@@ -210,6 +210,7 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
         applicationId = "yuku.alkitab.debug"
+        testInstrumentationRunner = "yuku.alkitab.qa.TypographyCaptureInstrumentation"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = buildVersionCode

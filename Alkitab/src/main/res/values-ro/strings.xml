@@ -26,9 +26,9 @@
     <string name="search_bookname_only">Numai %s</string>
     <string name="ayat_sebelumangka">Verset</string>
     <string name="pasal_sebelumangka">Capitol</string>
-    <string name="jump_to_prompt"><b>MERGI LA</b> — Exemplu: ^1</string>
+    <string name="jump_to_prompt"><b>Mergi la</b> — Exemplu: ^1</string>
     <string name="belum_ada_pembatas_buku">Nu sunt marcaje.\nSelectează un verset pentru adăugare în marcaje.</string>
-    <string name="judul_titikdua">TITLU</string>
+    <string name="judul_titikdua">Titlu</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nu sunt disponibile. Probabil că datele solicitate nu sunt pregătite sau sunt unele erori în recunoașterea sursei cu date. Vă rog să încercați din nou mai târziu.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nu este disponibilă. Preluarea de pe Internet&#8230;\n\n(Asiguraţi-vă că există conexiune la Internet pentru a descărca materiale devoţionale.)</string>
     <string name="hari_sabtu">Sam</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Şterge filtrare</string>
     <string name="bl_no_items_match_the_filter_above">Nu sunt elemente să se potrivească cu filtrul de mai sus.</string>
     <string name="bl_sync_suggest">Protejați-vă marcajele cu sincronizare</string>
-    <string name="labels_titikdua">ETICHETE</string>
+    <string name="labels_titikdua">Etichete</string>
     <string name="tambah_titiktiga">Adaugă&#8230;</string>
     <string name="nama_label_titikdua">Nume etichetă</string>
     <string name="change_label_color">Schimba culoarea etichetei</string>
@@ -417,10 +417,10 @@
     <string name="bl_selection_edit">Editează</string>
     <string name="bl_selection_many_selected">^1 selectate</string>
     <string name="bl_selection_one_selected">1 selectat</string>
-    <string name="color_picker_channel_blue">ALBASTRU</string>
-    <string name="color_picker_channel_green">VERDE</string>
-    <string name="color_picker_channel_red">ROȘU</string>
-    <string name="color_picker_hex_label">Culoare Hex sRGB #</string>
+    <string name="color_picker_channel_blue">Albastru</string>
+    <string name="color_picker_channel_green">Verde</string>
+    <string name="color_picker_channel_red">Roșu</string>
+    <string name="color_picker_hex_label">Culoare Hex</string>
     <string name="color_picker_tab_grid">Grilă</string>
     <string name="color_picker_tab_sliders">Glisoare</string>
     <string name="color_picker_tab_spectrum">Spectru</string>

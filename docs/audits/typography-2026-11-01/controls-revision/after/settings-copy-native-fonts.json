@@ -1,0 +1,51 @@
+[
+  {
+    "id": "",
+    "text": "Pengaturan Alkitab",
+    "sizeSp": 20.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Nomor ayat",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Awali tiap ayat dengan nomornya",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Nama versi",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Sebutkan singkatan dari nama versi Alkitab",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "URL Bagi Ayat",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Bubuhkan link ke halaman bagi ayat",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  }
+]

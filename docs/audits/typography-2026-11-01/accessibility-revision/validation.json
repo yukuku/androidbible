@@ -1,0 +1,13 @@
+{
+  "screens": 23,
+  "pairs": 10,
+  "images": {
+    "count": 33,
+    "broken": 0,
+    "overflow": false
+  },
+  "mobileOverflow": false,
+  "brokenAnchors": [],
+  "interactiveOptions": 3,
+  "errors": []
+}

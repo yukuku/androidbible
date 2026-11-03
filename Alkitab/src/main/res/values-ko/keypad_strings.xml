@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keypad_value_replace">다음 숫자가 이 값을 대체합니다</string>
+    <string name="keypad_value_append">다음 숫자가 이 값 뒤에 추가됩니다</string>
+</resources>

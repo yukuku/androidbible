@@ -26,9 +26,9 @@
     <string name="search_bookname_only">Само %s</string>
     <string name="ayat_sebelumangka">Стих</string>
     <string name="pasal_sebelumangka">Глава</string>
-    <string name="jump_to_prompt"><b>ПРЕХОД КЪМ</b> — Пример: ^1</string>
+    <string name="jump_to_prompt"><b>Преход към</b> — Пример: ^1</string>
     <string name="belum_ada_pembatas_buku">Все още няма отбелязки.\nЗа да добавите отбелязка, изберете стих.</string>
-    <string name="judul_titikdua">ЗАГЛАВИЕ</string>
+    <string name="judul_titikdua">Заглавие</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Няма достъпност. Вероятно, материалите на поисканата заявка още не са подготвни или не е разпознат източника на данни. Моля, повторете опита по-късно.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Все още е недостъпно. Зареждане от интернет&#8230;\n\n(Убедете се, че имате интернет връзка за да свалите материалите за Посвещение)</string>
     <string name="hari_sabtu">Сб</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Да изтрия ли тази бележка?</string>
     <string name="delete">Изтрий</string>
     <string name="cancel">Отмени</string>
-    <string name="ok">ОК</string>
+    <string name="ok">Ок</string>
     <string name="menuPengaturan">Настройки</string>
     <string name="pengaturan_alkitab">Настройки на Библията</string>
     <string name="kelola_versi">Управление на версиите</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Изчисти филтъра</string>
     <string name="bl_no_items_match_the_filter_above">Няма съвпадения от филтрирането.</string>
     <string name="bl_sync_suggest">Съхранете своите маркери, като ги синхронизирате</string>
-    <string name="labels_titikdua">ЕТИКЕТИ</string>
+    <string name="labels_titikdua">Етикети</string>
     <string name="tambah_titiktiga">Добави&#8230;</string>
     <string name="nama_label_titikdua">Име на етикета:</string>
     <string name="change_label_color">Измени цвета на етикета</string>
@@ -176,7 +176,7 @@
     <string name="menuSongs">Песни</string>
     <string name="sn_deep_search_enabled">А също куплети и т.н.</string>
     <string name="sn_songs_activity_title">Песни</string>
-    <string name="sn_bookselector_all">ВСИЧКИ</string>
+    <string name="sn_bookselector_all">Всички</string>
     <string name="sn_bookselector_more">Зареди още&#8230;</string>
     <string name="sn_bookselector_all_desc">Търси във всички заредени сборници с духовни химни.</string>
     <string name="sn_downloading_ellipsis">Зареждане&#8230;</string>
@@ -413,10 +413,10 @@
     <string name="bl_selection_edit">Редактирай</string>
     <string name="bl_selection_many_selected">^1 избрани</string>
     <string name="bl_selection_one_selected">1 избран</string>
-    <string name="color_picker_channel_blue">СИНЬО</string>
-    <string name="color_picker_channel_green">ЗЕЛЕНО</string>
-    <string name="color_picker_channel_red">ЧЕРВЕНО</string>
-    <string name="color_picker_hex_label">sRGB Hex цвят #</string>
+    <string name="color_picker_channel_blue">Синьо</string>
+    <string name="color_picker_channel_green">Зелено</string>
+    <string name="color_picker_channel_red">Червено</string>
+    <string name="color_picker_hex_label">Hex цвят</string>
     <string name="color_picker_tab_grid">Мрежа</string>
     <string name="color_picker_tab_sliders">Плъзгачи</string>
     <string name="color_picker_tab_spectrum">Спектър</string>

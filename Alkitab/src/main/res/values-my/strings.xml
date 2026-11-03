@@ -416,7 +416,7 @@
     <string name="color_picker_channel_blue">အပြာရောင်</string>
     <string name="color_picker_channel_green">အစိမ်းရောင်</string>
     <string name="color_picker_channel_red">အနီရောင်</string>
-    <string name="color_picker_hex_label">sRGB Hex အရောင် #</string>
+    <string name="color_picker_hex_label">Hex အရောင်</string>
     <string name="color_picker_tab_grid">ဇယားကွက်</string>
     <string name="color_picker_tab_sliders">ရွေ့လျားခလုတ်များ</string>
     <string name="color_picker_tab_spectrum">ရောင်စဉ်တန်း</string>

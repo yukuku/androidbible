@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -45,16 +46,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import yuku.alkitab.base.widget.GotoButton
 import yuku.alkitab.debug.R
 
@@ -84,9 +81,6 @@ object ReaderToolbarDimens {
      * centred chevron already stands half its own box clear.
      */
     val versionGap = 8.dp
-
-    val referenceTextSize = 16.sp
-    val versionTextSize = 14.sp
 
     const val VERSION_MAX_CHARS = 6
     const val VERSION_TRUNCATED_CHARS = 5
@@ -353,11 +347,8 @@ private fun ReferenceLabel(
     contentColor: Color,
     modifier: Modifier = Modifier,
 ) {
-    val style = TextStyle(
+    val style = MaterialTheme.typography.titleMedium.copy(
         color = contentColor,
-        fontSize = ReaderToolbarDimens.referenceTextSize,
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
         textAlign = TextAlign.Center,
     )
     val measurer = rememberTextMeasurer()
@@ -432,10 +423,8 @@ internal fun VersionAudioControl(
 
     val outline = contentColor.copy(alpha = 0.6f)
     val label = versionLabelFor(state.versionInitials)
-    val labelStyle = TextStyle(
+    val labelStyle = MaterialTheme.typography.labelLarge.copy(
         color = contentColor,
-        fontSize = ReaderToolbarDimens.versionTextSize,
-        fontWeight = FontWeight.Bold,
     )
     val measurer = rememberTextMeasurer()
     val labelWidth = with(LocalDensity.current) {

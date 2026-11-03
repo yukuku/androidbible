@@ -1,0 +1,94 @@
+{
+  "song-four-digits": {
+    "expected": [
+      "replace"
+    ],
+    "actual": [
+      {
+        "text": null,
+        "stateDescription": "Digit berikutnya mengganti nilai ini"
+      }
+    ],
+    "passed": true
+  },
+  "song-drawer-input": {
+    "expected": [
+      "append"
+    ],
+    "actual": [
+      {
+        "text": "2",
+        "stateDescription": "Digit berikutnya melanjutkan nilai ini"
+      }
+    ],
+    "passed": true
+  },
+  "goto-typed": {
+    "expected": [
+      "append",
+      "replace"
+    ],
+    "actual": [
+      {
+        "text": null,
+        "stateDescription": "Digit berikutnya melanjutkan nilai ini"
+      },
+      {
+        "text": null,
+        "stateDescription": "Digit berikutnya mengganti nilai ini"
+      }
+    ],
+    "passed": true
+  },
+  "goto-verse-typed": {
+    "expected": [
+      "append",
+      "append"
+    ],
+    "actual": [
+      {
+        "text": null,
+        "stateDescription": "Digit berikutnya melanjutkan nilai ini"
+      },
+      {
+        "text": null,
+        "stateDescription": "Digit berikutnya melanjutkan nilai ini"
+      }
+    ],
+    "passed": true
+  },
+  "legacy-goto-dialer": {
+    "expected": [
+      "replace",
+      "replace"
+    ],
+    "actual": [
+      {
+        "text": "1",
+        "stateDescription": "Digit berikutnya mengganti nilai ini"
+      },
+      {
+        "text": "1",
+        "stateDescription": "Digit berikutnya mengganti nilai ini"
+      }
+    ],
+    "passed": true
+  },
+  "legacy-goto-typed": {
+    "expected": [
+      "append",
+      "replace"
+    ],
+    "actual": [
+      {
+        "text": "34",
+        "stateDescription": "Digit berikutnya melanjutkan nilai ini"
+      },
+      {
+        "text": "1",
+        "stateDescription": "Digit berikutnya mengganti nilai ini"
+      }
+    ],
+    "passed": true
+  }
+}

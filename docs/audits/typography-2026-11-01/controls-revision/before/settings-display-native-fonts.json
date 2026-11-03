@@ -1,0 +1,100 @@
+[
+  {
+    "id": "",
+    "text": "Pengaturan Alkitab",
+    "sizeSp": 20.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Bahasa (Language)",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Bahasa Indonesia",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Layar selalu menyala",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Layar tidak akan padam ketika membaca Alkitab",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Beri jarak sekitar teks",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Lebih sedikit teks per barisnya agar mudah dibaca",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Bilah alat di bawah",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Letakkan bilah alat di bagian bawah",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Nomor ayat",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Bubuhkan nomor ayat di depan tiap ayat",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Warna latar ayat terpilih",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Tampilan bacaan saat ini",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Garis tipis di samping teks",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  }
+]

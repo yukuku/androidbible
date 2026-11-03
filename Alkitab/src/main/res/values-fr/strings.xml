@@ -26,9 +26,9 @@
     <string name="search_bookname_only">%s seulement</string>
     <string name="ayat_sebelumangka">Verset</string>
     <string name="pasal_sebelumangka">Chapitre</string>
-    <string name="jump_to_prompt"><b>ALLER A</b> — Exemple : ^1</string>
+    <string name="jump_to_prompt"><b>Aller a</b> — Exemple : ^1</string>
     <string name="belum_ada_pembatas_buku">Il n\'y a aucun marque-page.\nChoisissez un verset pour ajouter un marque-page.</string>
-    <string name="judul_titikdua">TITRE</string>
+    <string name="judul_titikdua">Titre</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Pas encore disponible. Le document prévu à la date demandée n\'est pas encore prêt, ou la source des données n\'est pas reconnue. Merci d\'essayer plus tard.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Pas encore disponible. Accès à Internet...\n\n (Vérifier qu\'il y a une connexion internet active pour télécharger les textes de méditations.)</string>
     <string name="hari_sabtu">Sam.</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Supprimer cette note ?</string>
     <string name="delete">Détruire</string>
     <string name="cancel">Annuler</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Paramètres</string>
     <string name="pengaturan_alkitab">Paramètres de la Bible</string>
     <string name="kelola_versi">Gérer les versions</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Effacer le filtre</string>
     <string name="bl_no_items_match_the_filter_above">Aucun article ne correspond au filtre ci-dessus.</string>
     <string name="bl_sync_suggest">Protégez vos marque-pages avec la synchronisation</string>
-    <string name="labels_titikdua">LIBELLES</string>
+    <string name="labels_titikdua">Libelles</string>
     <string name="tambah_titiktiga">Ajout&#8230;</string>
     <string name="nama_label_titikdua">Nom du libellé :</string>
     <string name="change_label_color">Changer la couleur du libellé</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Chants</string>
     <string name="sn_deep_search_enabled">Partitions, etc...</string>
     <string name="sn_songs_activity_title">Chants</string>
-    <string name="sn_bookselector_all">TOUT</string>
+    <string name="sn_bookselector_all">Tout</string>
     <string name="sn_bookselector_more">Télécharger plus&#8230;</string>
     <string name="sn_bookselector_all_desc">Rechercher tous les livres installés.</string>
     <string name="sn_downloading_ellipsis">En cours de téléchargement&#8230;</string>
@@ -417,10 +417,10 @@
     <string name="bl_selection_edit">Modifier</string>
     <string name="bl_selection_many_selected">^1 sélectionnés</string>
     <string name="bl_selection_one_selected">1 sélectionné</string>
-    <string name="color_picker_channel_blue">BLEU</string>
-    <string name="color_picker_channel_green">VERT</string>
-    <string name="color_picker_channel_red">ROUGE</string>
-    <string name="color_picker_hex_label">Couleur hexa sRGB #</string>
+    <string name="color_picker_channel_blue">Bleu</string>
+    <string name="color_picker_channel_green">Vert</string>
+    <string name="color_picker_channel_red">Rouge</string>
+    <string name="color_picker_hex_label">Couleur hexa</string>
     <string name="color_picker_tab_grid">Grille</string>
     <string name="color_picker_tab_sliders">Curseurs</string>
     <string name="color_picker_tab_spectrum">Spectre</string>

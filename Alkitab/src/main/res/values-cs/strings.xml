@@ -413,10 +413,10 @@
     <string name="bl_selection_edit">Upravit</string>
     <string name="bl_selection_many_selected">^1 vybráno</string>
     <string name="bl_selection_one_selected">1 vybráno</string>
-    <string name="color_picker_channel_blue">MODRÁ</string>
-    <string name="color_picker_channel_green">ZELENÁ</string>
-    <string name="color_picker_channel_red">ČERVENÁ</string>
-    <string name="color_picker_hex_label">sRGB hex barva #</string>
+    <string name="color_picker_channel_blue">Modrá</string>
+    <string name="color_picker_channel_green">Zelená</string>
+    <string name="color_picker_channel_red">Červená</string>
+    <string name="color_picker_hex_label">hex barva</string>
     <string name="color_picker_tab_grid">Mřížka</string>
     <string name="color_picker_tab_sliders">Posuvníky</string>
     <string name="color_picker_tab_spectrum">Spektrum</string>

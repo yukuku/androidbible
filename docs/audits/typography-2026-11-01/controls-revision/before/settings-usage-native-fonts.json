@@ -1,0 +1,65 @@
+[
+  {
+    "id": "",
+    "text": "Pengaturan Alkitab",
+    "sizeSp": 20.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Kitab menurut abjad",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Tampilkan kitab dalam urutan abjad, bukan urutan aslinya",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Pindah dengan volume",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Jangan gunakan",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Otomatis cek kamus",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Cari kata-kata yang ada di kamus pada ayat yang dipilih",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Ketuk untuk edit catatan",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/summary",
+    "text": "Buang centang untuk mencegah edit catatan dengan tidak sengaja",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  }
+]

@@ -4,6 +4,8 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
 import yuku.alkitab.base.util.BookColorUtil
 
@@ -76,7 +78,9 @@ val BibleAppDarkColorScheme: ColorScheme = darkColorScheme(
  */
 @Composable
 fun BibleAppTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = BibleAppDarkColorScheme, content = content)
+    val resources = LocalContext.current.resources
+    val typography = remember(resources) { bibleAppTypography(resources) }
+    MaterialTheme(colorScheme = BibleAppDarkColorScheme, typography = typography, content = content)
 }
 
 /** Book name color legible on the dark surfaces Compose draws. */

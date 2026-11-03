@@ -26,9 +26,9 @@
     <string name="search_bookname_only">%s tikai</string>
     <string name="ayat_sebelumangka">Pants</string>
     <string name="pasal_sebelumangka">Nodaļa</string>
-    <string name="jump_to_prompt"><b>LĒKT UZ</b> — Piemēram: ^1</string>
+    <string name="jump_to_prompt"><b>Lēkt uz</b> — Piemēram: ^1</string>
     <string name="belum_ada_pembatas_buku">Pagaidām nav grāmatzīmju.\nIzvēlies pantu lai pievienotu grāmatzīmi.</string>
-    <string name="judul_titikdua">VIRSRAKSTS</string>
+    <string name="judul_titikdua">Virsraksts</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Pagaidām nav pieejams. Iespējams pieprasītais materiāls vēl nav sagatavots vai datu avots pašlaik nav pieejams. Lūdzu pamēģiniet vēlāk.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Pašlaik nav pieejams. Iegūst no interneta &#8230;\n\n(Pārliecinieties, vai internets ir pieejams)</string>
     <string name="hari_sabtu">Se</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Noņemt atlases nosacījumus</string>
     <string name="bl_no_items_match_the_filter_above">Augstāk uzdotajiem atlases nosacījumiem neatbilst neviens vienums.</string>
     <string name="bl_sync_suggest">Saglabā savas iezīmes, lietojot sinhronizāciju</string>
-    <string name="labels_titikdua">IEZĪMES</string>
+    <string name="labels_titikdua">Iezīmes</string>
     <string name="tambah_titiktiga">Pievienot&#8230;</string>
     <string name="nama_label_titikdua">Iezīmes nosaukums:</string>
     <string name="change_label_color">Nomainīt iezīmes krāsu</string>
@@ -176,7 +176,7 @@
     <string name="menuSongs">Dziesmas</string>
     <string name="sn_deep_search_enabled">Arī lirika (dziesmu vārdi) utt.</string>
     <string name="sn_songs_activity_title">Dziesmas</string>
-    <string name="sn_bookselector_all">VISI</string>
+    <string name="sn_bookselector_all">Visi</string>
     <string name="sn_bookselector_more">Lejupielādēt vairāk&#8230;</string>
     <string name="sn_bookselector_all_desc">Meklēt visas instalētās grāmatas.</string>
     <string name="sn_downloading_ellipsis">Lejuplādēšana&#8230;</string>
@@ -412,10 +412,10 @@
     <string name="bl_selection_edit">Labot</string>
     <string name="bl_selection_many_selected">Izvēlēti: ^1</string>
     <string name="bl_selection_one_selected">Izvēlēts 1</string>
-    <string name="color_picker_channel_blue">ZILS</string>
-    <string name="color_picker_channel_green">ZAĻS</string>
-    <string name="color_picker_channel_red">SARKANS</string>
-    <string name="color_picker_hex_label">sRGB heksadecimālā krāsa #</string>
+    <string name="color_picker_channel_blue">Zils</string>
+    <string name="color_picker_channel_green">Zaļs</string>
+    <string name="color_picker_channel_red">Sarkans</string>
+    <string name="color_picker_hex_label">heksadecimālā krāsa</string>
     <string name="color_picker_tab_grid">Režģis</string>
     <string name="color_picker_tab_sliders">Slīdņi</string>
     <string name="color_picker_tab_spectrum">Spektrs</string>

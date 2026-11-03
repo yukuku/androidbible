@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keypad_value_replace">La cifra successiva sostituisce questo valore</string>
+    <string name="keypad_value_append">La cifra successiva continua questo valore</string>
+</resources>

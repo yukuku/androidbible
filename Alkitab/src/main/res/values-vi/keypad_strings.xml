@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keypad_value_replace">Chữ số tiếp theo thay thế giá trị này</string>
+    <string name="keypad_value_append">Chữ số tiếp theo nối vào giá trị này</string>
+</resources>

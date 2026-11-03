@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import yuku.alkitab.base.util.CatalogTypography;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
@@ -154,6 +155,7 @@ public class HelpActivity extends BaseActivity {
             @Override
             public void onPageFinished(final WebView view, final String url) {
                 super.onPageFinished(view, url);
+                CatalogTypography.apply(view, url);
 
                 webview.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);

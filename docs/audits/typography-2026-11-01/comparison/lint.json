@@ -1,0 +1,8 @@
+{
+  "task": "lintPlainDebug",
+  "result": "passed",
+  "issuesBySeverity": {
+    "Warning": 383,
+    "Hint": 14
+  }
+}

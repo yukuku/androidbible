@@ -1,0 +1,23 @@
+[
+  {
+    "id": "",
+    "text": "Semua pembatas buku",
+    "sizeSp": 20.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/lDate",
+    "text": "Nov 1, 2026",
+    "sizeSp": 12.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/lCaption",
+    "text": "Audit tipografi",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  }
+]

@@ -26,7 +26,7 @@
     <string name="search_bookname_only">%s Chỉ</string>
     <string name="ayat_sebelumangka">Câu</string>
     <string name="pasal_sebelumangka">Chương</string>
-    <string name="jump_to_prompt"><b>ĐI ĐẾN</b></string>
+    <string name="jump_to_prompt"><b>Đi đến</b></string>
     <string name="belum_ada_pembatas_buku">Chưa có đánh dấu trang nào.\nLựa chon câu để thêm vào.</string>
     <string name="judul_titikdua">Tựa đề</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Yêu cầu không thực hiện được. Có thể ngày yêu cầu không có hoặc lỗi quá trình tìm kiếm. Làm ơn thử lại sau.</string>
@@ -417,10 +417,10 @@
     <string name="bl_selection_edit">Chỉnh sửa</string>
     <string name="bl_selection_many_selected">^1 được chọn</string>
     <string name="bl_selection_one_selected">1 được chọn</string>
-    <string name="color_picker_channel_blue">XANH DƯƠNG</string>
-    <string name="color_picker_channel_green">XANH LÁ</string>
-    <string name="color_picker_channel_red">ĐỎ</string>
-    <string name="color_picker_hex_label">Màu Hex sRGB #</string>
+    <string name="color_picker_channel_blue">Xanh dương</string>
+    <string name="color_picker_channel_green">Xanh lá</string>
+    <string name="color_picker_channel_red">Đỏ</string>
+    <string name="color_picker_hex_label">Màu Hex</string>
     <string name="color_picker_tab_grid">Lưới</string>
     <string name="color_picker_tab_sliders">Thanh trượt</string>
     <string name="color_picker_tab_spectrum">Quang phổ</string>

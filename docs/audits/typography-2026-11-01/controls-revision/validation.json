@@ -1,0 +1,92 @@
+{
+  "pairs": 45,
+  "desktop": {
+    "images": 90,
+    "broken": 0,
+    "distorted": 0,
+    "overflow": false
+  },
+  "mobileOverflow": false,
+  "errors": [],
+  "assetTransport": "Local HTTP server serving unchanged Android PNG files",
+  "responsiveImageChecks": [
+    {
+      "page": "controls",
+      "broken": 0,
+      "distorted": 0,
+      "images": 90,
+      "loading": 0,
+      "overflow": false,
+      "viewport": 1440
+    },
+    {
+      "page": "controls",
+      "broken": 0,
+      "distorted": 0,
+      "images": 90,
+      "loading": 0,
+      "overflow": false,
+      "viewport": 768
+    },
+    {
+      "page": "controls",
+      "broken": 0,
+      "distorted": 0,
+      "images": 90,
+      "loading": 0,
+      "overflow": false,
+      "viewport": 390
+    },
+    {
+      "page": "controls",
+      "broken": 0,
+      "distorted": 0,
+      "images": 90,
+      "loading": 0,
+      "overflow": false,
+      "viewport": 320
+    },
+    {
+      "page": "sentence-case",
+      "broken": 0,
+      "distorted": 0,
+      "images": 36,
+      "loading": 0,
+      "overflow": false,
+      "viewport": 1440
+    },
+    {
+      "page": "sentence-case",
+      "broken": 0,
+      "distorted": 0,
+      "images": 36,
+      "loading": 0,
+      "overflow": false,
+      "viewport": 390
+    },
+    {
+      "page": "accessibility",
+      "broken": 0,
+      "distorted": 0,
+      "images": 33,
+      "loading": 0,
+      "overflow": false,
+      "viewport": 1440
+    },
+    {
+      "page": "accessibility",
+      "broken": 0,
+      "distorted": 0,
+      "images": 33,
+      "loading": 0,
+      "overflow": false,
+      "viewport": 390
+    }
+  ],
+  "aspectRatioTolerance": 0.005,
+  "annotatedCards": {
+    "count": 45,
+    "renderer": "In-app browser full-page screenshots, converted from JPEG to PNG",
+    "rawAndroidImagesModified": false
+  }
+}

@@ -26,7 +26,7 @@
     <string name="search_bookname_only">%s only</string>
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>
-    <string name="jump_to_prompt"><b>JUMP TO</b> — Example: ^1</string>
+    <string name="jump_to_prompt"><b>Jump to</b> — Example: ^1</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse to add a bookmark.</string>
     <string name="judul_titikdua">Title</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source. Please try again later.</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Delete this note?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">Settings</string>
     <string name="pengaturan_alkitab">Bible Settings</string>
     <string name="kelola_versi">Manage Versions</string>
@@ -140,7 +140,7 @@
 	<string name="bl_selection_many_selected">^1 selected</string>
 	<string name="bl_copied_toast">The selected items have been copied.</string>
 
-	<string name="labels_titikdua">LABELS</string>
+	<string name="labels_titikdua">Labels</string>
     <string name="tambah_titiktiga">Add…</string>
     <string name="nama_label_titikdua">Label name:</string>
     <string name="change_label_color">Change label color</string>
@@ -191,7 +191,7 @@
     <string name="menuSongs">Songs</string>
     <string name="sn_deep_search_enabled">Lyrics, etc. too</string>
     <string name="sn_songs_activity_title">Songs</string>
-    <string name="sn_bookselector_all">ALL</string>
+    <string name="sn_bookselector_all">All</string>
     <string name="sn_bookselector_more">Download more…</string>
     <string name="sn_bookselector_all_desc">Search all books that are installed.</string>
     <string name="sn_downloading_ellipsis">Downloading…</string>
@@ -313,10 +313,10 @@
     <string name="color_picker_tab_grid">Grid</string>
     <string name="color_picker_tab_spectrum">Spectrum</string>
     <string name="color_picker_tab_sliders">Sliders</string>
-    <string name="color_picker_channel_red">RED</string>
-    <string name="color_picker_channel_green">GREEN</string>
-    <string name="color_picker_channel_blue">BLUE</string>
-    <string name="color_picker_hex_label">sRGB Hex Color #</string>
+    <string name="color_picker_channel_red">Red</string>
+    <string name="color_picker_channel_green">Green</string>
+    <string name="color_picker_channel_blue">Blue</string>
+    <string name="color_picker_hex_label">Hex Color</string>
     <string name="menu_compare">Compare</string>
 
     <string name="search_in_version_short_name_placeholder">Find in %s</string>

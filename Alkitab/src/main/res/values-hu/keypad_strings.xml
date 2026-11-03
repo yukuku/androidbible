@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keypad_value_replace">A következő számjegy lecseréli ezt az értéket</string>
+    <string name="keypad_value_append">A következő számjegy folytatja ezt az értéket</string>
+</resources>

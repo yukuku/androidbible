@@ -34,7 +34,7 @@ object SongDocumentText {
         rowItems.firstOrNull { it.role == "authors_lyric" }?.let { sb.append(it.content.plainText()).append('\n') }
         rowItems.firstOrNull { it.role == "authors_music" }?.let { sb.append(it.content.plainText()).append('\n') }
         doc.blocks.filterIsInstance<PBlock>().firstOrNull { it.role == "tune" }?.let {
-            sb.append(it.content.plainText().uppercase(Locale.ROOT)).append('\n')
+            sb.append(it.content.plainText()).append('\n')
         }
         sb.append('\n')
 

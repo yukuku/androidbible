@@ -26,9 +26,9 @@
     <string name="search_bookname_only">%s μόνο</string>
     <string name="ayat_sebelumangka">Στίχος</string>
     <string name="pasal_sebelumangka">Κεφάλαιο</string>
-    <string name="jump_to_prompt"><b>ΜΕΤΑΒΑΣΗ ΣΕ</b> — Παράδειγμα: ^1</string>
+    <string name="jump_to_prompt"><b>Μεταβαση σε</b> — Παράδειγμα: ^1</string>
     <string name="belum_ada_pembatas_buku">Δεν υπάρχουν σελιδοδείκτες ακόμη..\nΕπιλέξετε έναν στίχο για να προσθέσετε έναν σελιδοδείκτη.</string>
-    <string name="judul_titikdua">ΤΊΤΛΟΣ</string>
+    <string name="judul_titikdua">Τίτλος</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Δεν είναι διαθέσιμο ακόμα. Μάλλον το υλικό που ζητήθηκε αυτήν την ημερομηνία δεν έχει προετοιμαστεί ακόμη, ή υπάρχουν σφάλματα στην αναγνώριση της πηγής δεδομένων. Παρακαλούμε προσπαθήστε αργότερα.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Δεν έχουμε γίνει. Ψάχνοντας στο ίντερνετ... \n\n( Φίλε, δεν ξέρω, αρκεί να έχεις ίντερνετ δικό σου και όχι του γείτονα.)</string>
     <string name="hari_sabtu">Σάββατο</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Αγάπη σε όλους; Ναι αυτής της σημείωσης;</string>
     <string name="delete">Διαγραφή</string>
     <string name="cancel">Ακύρωση</string>
-    <string name="ok">ΟΚ</string>
+    <string name="ok">Οκ</string>
     <string name="menuPengaturan">Ρυθμίσεις</string>
     <string name="pengaturan_alkitab">Ρυθμίσεις Bible</string>
     <string name="kelola_versi">Διαχείριση Εκδόσεων</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Εκκαθάριση φίλτρων</string>
     <string name="bl_no_items_match_the_filter_above">Δεν υπάρχουν θέματα που να αντιστοιχούν στο πιο πάνω φίλτρο.</string>
     <string name="bl_sync_suggest">Προστατέψετε τους δείκτες σημείωσης με ενημέρωση</string>
-    <string name="labels_titikdua">ΕΤΙΚΈΤΕΣ</string>
+    <string name="labels_titikdua">Ετικέτες</string>
     <string name="tambah_titiktiga">Προσθήκη&#8230;</string>
     <string name="nama_label_titikdua">Όνομα ετικέτας:</string>
     <string name="change_label_color">Αλλαγή χρώματος ετικέτας</string>
@@ -176,7 +176,7 @@
     <string name="menuSongs">Τραγούδια</string>
     <string name="sn_deep_search_enabled">Στίχοι, κλπ. επίσης</string>
     <string name="sn_songs_activity_title">Τραγούδια</string>
-    <string name="sn_bookselector_all">ΌΛΑ</string>
+    <string name="sn_bookselector_all">Όλα</string>
     <string name="sn_bookselector_more">Κατεβάστε πιο πολύ&#8230;</string>
     <string name="sn_bookselector_all_desc">Αναζήτηση όλων των εγκατεστημένων βιβλίων.</string>
     <string name="sn_downloading_ellipsis">Λήψη&#8230;</string>
@@ -412,10 +412,10 @@
     <string name="bl_selection_edit">Επεξεργασία</string>
     <string name="bl_selection_many_selected">Επιλέχθηκαν ^1</string>
     <string name="bl_selection_one_selected">Επιλέχθηκε 1</string>
-    <string name="color_picker_channel_blue">ΜΠΛΕ</string>
-    <string name="color_picker_channel_green">ΠΡΑΣΙΝΟ</string>
-    <string name="color_picker_channel_red">ΚΟΚΚΙΝΟ</string>
-    <string name="color_picker_hex_label">Δεκαεξαδικό χρώμα sRGB #</string>
+    <string name="color_picker_channel_blue">Μπλε</string>
+    <string name="color_picker_channel_green">Πρασινο</string>
+    <string name="color_picker_channel_red">Κοκκινο</string>
+    <string name="color_picker_hex_label">Δεκαεξαδικό χρώμα</string>
     <string name="color_picker_tab_grid">Πλέγμα</string>
     <string name="color_picker_tab_sliders">Ρυθμιστικά</string>
     <string name="color_picker_tab_spectrum">Φάσμα</string>

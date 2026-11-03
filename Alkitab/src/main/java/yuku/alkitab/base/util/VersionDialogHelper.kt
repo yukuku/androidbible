@@ -25,9 +25,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import yuku.alkitab.base.S
@@ -84,12 +82,6 @@ object VersionDialogHelper {
         }
     }
 
-    /**
-     * Builds a row for a version: shortName (bold) as the primary line, with longName as a
-     * smaller, muted secondary line. Falls back to bold longName alone when the version has no
-     * shortName, to stay consistent with the version manager row, where longName is promoted
-     * into the bold primary slot in the same situation.
-     */
     private fun MVersion.toRow(onClick: () -> Unit): VersionRow {
         val shortName = shortName?.takeIf { it.isNotBlank() }
         return VersionRow(
@@ -190,13 +182,11 @@ private fun VersionRowItem(
     ) {
         RadioButton(selected = selected, onClick = onClick)
         Column(modifier = Modifier.padding(start = 8.dp)) {
-            // Matches shortName/longName sizing in the version manager's item_version.xml
-            // (?android:textAppearanceMedium resolves to 18sp; longName is a plain 13sp).
-            Text(text = primary, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            Text(text = primary, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
             if (secondary != null) {
                 Text(
                     text = secondary,
-                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

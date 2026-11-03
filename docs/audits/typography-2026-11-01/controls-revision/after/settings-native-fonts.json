@@ -1,0 +1,51 @@
+[
+  {
+    "id": "",
+    "text": "Pengaturan Alkitab",
+    "sizeSp": 20.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Sync",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Tampilan",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Penggunaan",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Salin dan bagikan",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Transfer data",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "android:id/title",
+    "text": "Fitur eksperimental",
+    "sizeSp": 16.0,
+    "weight": 400,
+    "italic": false
+  }
+]

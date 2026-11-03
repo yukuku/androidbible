@@ -420,7 +420,7 @@
     <string name="color_picker_channel_blue">蓝</string>
     <string name="color_picker_channel_green">绿</string>
     <string name="color_picker_channel_red">红</string>
-    <string name="color_picker_hex_label">sRGB 十六进制颜色 #</string>
+    <string name="color_picker_hex_label">十六进制颜色</string>
     <string name="color_picker_tab_grid">网格</string>
     <string name="color_picker_tab_sliders">滑块</string>
     <string name="color_picker_tab_spectrum">光谱</string>

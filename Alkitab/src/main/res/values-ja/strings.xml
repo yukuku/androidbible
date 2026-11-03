@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">このノートを削除しますか?</string>
     <string name="delete">削除</string>
     <string name="cancel">キャンセル</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="menuPengaturan">設定</string>
     <string name="pengaturan_alkitab">聖書の設定</string>
     <string name="kelola_versi">聖書版の管理</string>
@@ -416,7 +416,7 @@
     <string name="color_picker_channel_blue">青</string>
     <string name="color_picker_channel_green">緑</string>
     <string name="color_picker_channel_red">赤</string>
-    <string name="color_picker_hex_label">sRGB 16進カラー #</string>
+    <string name="color_picker_hex_label">16進カラー</string>
     <string name="color_picker_tab_grid">グリッド</string>
     <string name="color_picker_tab_sliders">スライダー</string>
     <string name="color_picker_tab_spectrum">スペクトル</string>

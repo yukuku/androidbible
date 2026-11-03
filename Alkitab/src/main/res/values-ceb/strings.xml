@@ -26,7 +26,7 @@
     <string name="search_bookname_only">%s kani ra</string>
     <string name="ayat_sebelumangka">Bersikulo</string>
     <string name="pasal_sebelumangka">Chapter</string>
-    <string name="jump_to_prompt"><b>AMBAK SA</b> -- Example: ^1</string>
+    <string name="jump_to_prompt"><b>Ambak sa</b> -- Example: ^1</string>
     <string name="belum_ada_pembatas_buku">Walay markanglibro pa\nPilia ang bersikulo sa pag puno sa markanglibro.</string>
     <string name="judul_titikdua">Taytol</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Dili pa abilabol. Basin ang gi request na adlaw sa materyalis kay dle pa pwede, o naay mga error sa pagsabot sa data source. Pwede balikon unya.</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Hawani ang filter</string>
     <string name="bl_no_items_match_the_filter_above">Walai butang nga nihaom sa pagsala sa ibabaw.</string>
     <string name="bl_sync_suggest">Ampingi ang imong mga marker na naay sync</string>
-    <string name="labels_titikdua">MGA LABEL</string>
+    <string name="labels_titikdua">Mga label</string>
     <string name="tambah_titiktiga">Pun-an&#8230;</string>
     <string name="nama_label_titikdua">I-label ang name:</string>
     <string name="change_label_color">Ilisdan ang kolor sa label</string>
@@ -176,7 +176,7 @@
     <string name="menuSongs">Mga kanta</string>
     <string name="sn_deep_search_enabled">Lyrics, etc. usab</string>
     <string name="sn_songs_activity_title">Mga kanta</string>
-    <string name="sn_bookselector_all">TANAN</string>
+    <string name="sn_bookselector_all">Tanan</string>
     <string name="sn_bookselector_more">Pagdownload og daghan pang font&#8230;</string>
     <string name="sn_bookselector_all_desc">Pangitaa ang tanang mga libro na naka install.</string>
     <string name="sn_downloading_ellipsis">Nag download&#8230;</string>
@@ -411,10 +411,10 @@
     <string name="bl_selection_edit">Edit</string>
     <string name="bl_selection_many_selected">^1 ang napilian</string>
     <string name="bl_selection_one_selected">1 ang napilian</string>
-    <string name="color_picker_channel_blue">ASUL</string>
-    <string name="color_picker_channel_green">BERDE</string>
-    <string name="color_picker_channel_red">PULA</string>
-    <string name="color_picker_hex_label">sRGB Hex nga Kolor #</string>
+    <string name="color_picker_channel_blue">Asul</string>
+    <string name="color_picker_channel_green">Berde</string>
+    <string name="color_picker_channel_red">Pula</string>
+    <string name="color_picker_hex_label">Hex nga Kolor</string>
     <string name="color_picker_tab_grid">Grid</string>
     <string name="color_picker_tab_sliders">Sliders</string>
     <string name="color_picker_tab_spectrum">Spectrum</string>

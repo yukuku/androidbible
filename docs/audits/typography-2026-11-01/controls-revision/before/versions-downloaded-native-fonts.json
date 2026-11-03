@@ -1,0 +1,58 @@
+[
+  {
+    "id": "",
+    "text": "Kelola Versi",
+    "sizeSp": 20.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Semua",
+    "sizeSp": 14.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "",
+    "text": "Terunduh",
+    "sizeSp": 14.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/tLanguage",
+    "text": "Indonesian",
+    "sizeSp": 12.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/tShortName",
+    "text": "DDD",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/tLongName",
+    "text": "Dummy Debug Data",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/tShortName",
+    "text": "BIMK",
+    "sizeSp": 16.0,
+    "weight": 500,
+    "italic": false
+  },
+  {
+    "id": "yuku.alkitab.debug:id/tLongName",
+    "text": "Bahasa Indonesia Masa Kini",
+    "sizeSp": 14.0,
+    "weight": 400,
+    "italic": false
+  }
+]

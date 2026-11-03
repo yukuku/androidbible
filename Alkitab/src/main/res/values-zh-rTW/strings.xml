@@ -414,7 +414,7 @@
     <string name="color_picker_channel_blue">藍</string>
     <string name="color_picker_channel_green">綠</string>
     <string name="color_picker_channel_red">紅</string>
-    <string name="color_picker_hex_label">sRGB 十六進位色碼 #</string>
+    <string name="color_picker_hex_label">十六進位色碼</string>
     <string name="color_picker_tab_grid">格狀</string>
     <string name="color_picker_tab_sliders">滑桿</string>
     <string name="color_picker_tab_spectrum">色譜</string>

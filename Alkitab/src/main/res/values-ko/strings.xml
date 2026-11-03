@@ -416,7 +416,7 @@
     <string name="color_picker_channel_blue">파랑</string>
     <string name="color_picker_channel_green">초록</string>
     <string name="color_picker_channel_red">빨강</string>
-    <string name="color_picker_hex_label">sRGB 16진수 색상 #</string>
+    <string name="color_picker_hex_label">16진수 색상</string>
     <string name="color_picker_tab_grid">격자</string>
     <string name="color_picker_tab_sliders">슬라이더</string>
     <string name="color_picker_tab_spectrum">스펙트럼</string>

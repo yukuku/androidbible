@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="keypad_value_replace">Het volgende cijfer vervangt deze waarde</string>
+    <string name="keypad_value_append">Het volgende cijfer vult deze waarde aan</string>
+</resources>

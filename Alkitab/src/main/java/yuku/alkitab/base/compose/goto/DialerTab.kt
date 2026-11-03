@@ -1,7 +1,9 @@
 package yuku.alkitab.base.compose.goto
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
@@ -27,10 +30,8 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -43,18 +44,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.App
+import yuku.alkitab.base.compose.NumericEntryValue
 import yuku.alkitab.base.compose.bookForegroundColor
 import yuku.alkitab.base.util.BookNameSorter
 import yuku.alkitab.debug.R
@@ -72,6 +71,7 @@ fun DialerTab(
     onGotoFinished: OnGotoFinished,
 ) {
     val inInspection = LocalInspectionMode.current
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val books: Array<Book> = remember(inInspection) {
         if (inInspection) {
             previewBooks()
@@ -133,6 +133,8 @@ fun DialerTab(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .widthIn(max = 480.dp)
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
@@ -154,7 +156,7 @@ fun DialerTab(
                 onValueChange = {},
                 readOnly = true,
                 // Same per-book color the legacy dialer paints its book spinner with.
-                textStyle = LocalTextStyle.current.copy(color = bookForegroundColor(selectedBook.bookId)),
+                textStyle = MaterialTheme.typography.titleMedium.copy(color = bookForegroundColor(selectedBook.bookId)),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = bookMenuOpen) },
                 modifier = Modifier
                     .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
@@ -172,8 +174,7 @@ fun DialerTab(
                             Text(
                                 book.shortName,
                                 color = bookForegroundColor(book.bookId),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                style = MaterialTheme.typography.titleMedium,
                             )
                         },
                         trailingIcon = if (isSelected) {
@@ -202,19 +203,23 @@ fun DialerTab(
         ) {
             Text(stringResource(R.string.pasal_sebelumangka))
             Spacer(Modifier.width(8.dp))
-            DialerField(
+            NumericEntryValue(
                 text = chapterText,
                 isActive = active == ActiveField.CHAPTER,
+                isReplaceOnNextInput = chapterFirstTime || chapterText.isEmpty(),
                 onClick = { active = ActiveField.CHAPTER },
+                modifier = Modifier.size(width = 64.dp, height = 64.dp),
             )
             if (askForVerse) {
                 Spacer(Modifier.width(16.dp))
                 Text(stringResource(R.string.ayat_sebelumangka))
                 Spacer(Modifier.width(8.dp))
-                DialerField(
+                NumericEntryValue(
                     text = verseText,
                     isActive = active == ActiveField.VERSE,
+                    isReplaceOnNextInput = verseFirstTime || verseText.isEmpty(),
                     onClick = { active = ActiveField.VERSE },
+                    modifier = Modifier.size(width = 64.dp, height = 64.dp),
                 )
             }
         }
@@ -226,62 +231,51 @@ fun DialerTab(
         Spacer(Modifier.size(16.dp))
 
         val onDigit: (String) -> Unit = { d -> press(d) }
-        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                KeypadDigit("1", onDigit, Modifier.weight(1f))
-                KeypadDigit("2", onDigit, Modifier.weight(1f))
-                KeypadDigit("3", onDigit, Modifier.weight(1f))
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                KeypadDigit("4", onDigit, Modifier.weight(1f))
-                KeypadDigit("5", onDigit, Modifier.weight(1f))
-                KeypadDigit("6", onDigit, Modifier.weight(1f))
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                KeypadDigit("7", onDigit, Modifier.weight(1f))
-                KeypadDigit("8", onDigit, Modifier.weight(1f))
-                KeypadDigit("9", onDigit, Modifier.weight(1f))
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Box(modifier = Modifier.weight(1f).height(56.dp), contentAlignment = Alignment.Center) {
-                    IconButton(onClick = { press("backspace") }) {
-                        Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = stringResource(R.string.desc_backspace))
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
+            val buttonHeight = if (isLandscape) 52.dp else ((maxWidth / 3 - 4.dp) * 5 / 8).coerceAtLeast(52.dp)
+            val cellHeight = buttonHeight + 4.dp
+            Column {
+                Row(modifier = Modifier.fillMaxWidth().height(cellHeight)) {
+                    KeypadDigit("1", onDigit, Modifier.weight(1f))
+                    KeypadDigit("2", onDigit, Modifier.weight(1f))
+                    KeypadDigit("3", onDigit, Modifier.weight(1f))
+                }
+                Row(modifier = Modifier.fillMaxWidth().height(cellHeight)) {
+                    KeypadDigit("4", onDigit, Modifier.weight(1f))
+                    KeypadDigit("5", onDigit, Modifier.weight(1f))
+                    KeypadDigit("6", onDigit, Modifier.weight(1f))
+                }
+                Row(modifier = Modifier.fillMaxWidth().height(cellHeight)) {
+                    KeypadDigit("7", onDigit, Modifier.weight(1f))
+                    KeypadDigit("8", onDigit, Modifier.weight(1f))
+                    KeypadDigit("9", onDigit, Modifier.weight(1f))
+                }
+                Row(modifier = Modifier.fillMaxWidth().height(cellHeight)) {
+                    Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                        IconButton(onClick = { press("backspace") }) {
+                            Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = stringResource(R.string.desc_backspace))
+                        }
+                    }
+                    KeypadDigit("0", onDigit, Modifier.weight(1f))
+                    Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                        Button(
+                            onClick = {
+                                val ch = chapterText.toIntOrNull() ?: 0
+                                val v = if (askForVerse) verseText.toIntOrNull() ?: 0 else 0
+                                onGotoFinished(GotoTab.DIALER, selectedBook.bookId, ch, v)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.ok)) }
                     }
                 }
-                KeypadDigit("0", onDigit, Modifier.weight(1f))
-                Box(modifier = Modifier.weight(1f).height(56.dp), contentAlignment = Alignment.Center) {
-                    Button(
-                        onClick = {
-                            val ch = chapterText.toIntOrNull() ?: 0
-                            val v = if (askForVerse) verseText.toIntOrNull() ?: 0 else 0
-                            onGotoFinished(GotoTab.DIALER, selectedBook.bookId, ch, v)
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResource(R.string.ok)) }
-                }
             }
-        }
-    }
-}
-
-@Composable
-private fun DialerField(text: String, isActive: Boolean, onClick: () -> Unit) {
-    val bg = if (isActive) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
-    Surface(
-        onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
-        color = bg,
-        modifier = Modifier.size(width = 64.dp, height = 64.dp),
-    ) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-            Text(text, fontSize = 24.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
         }
     }
 }
 
 @Composable
 private fun KeypadDigit(d: String, onDigit: (String) -> Unit, modifier: Modifier) {
-    Box(modifier = modifier.height(56.dp).padding(2.dp), contentAlignment = Alignment.Center) {
+    Box(modifier = modifier.fillMaxHeight().padding(2.dp), contentAlignment = Alignment.Center) {
         TextButton(
             onClick = { onDigit(d) },
             // Plain keypad digits like the legacy dialer's white keypad text —
@@ -289,7 +283,7 @@ private fun KeypadDigit(d: String, onDigit: (String) -> Unit, modifier: Modifier
             colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         ) {
-            Text(d, fontSize = 28.sp, fontWeight = FontWeight.Normal)
+            Text(d, style = MaterialTheme.typography.displaySmall)
         }
     }
 }

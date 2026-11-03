@@ -392,8 +392,7 @@ class TextAppearancePanel(
             Text(
                 text = stringResource(R.string.text_appearance_font),
                 modifier = Modifier.weight(1f).align(Alignment.Bottom),
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleSmall,
             )
             IconButton(onClick = onClose) {
                 Icon(
@@ -409,8 +408,7 @@ class TextAppearancePanel(
         Text(
             text = text,
             modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleSmall,
         )
     }
 
@@ -629,7 +627,7 @@ class TextAppearancePanel(
                         Text(
                             text = stringResource(R.string.text_appearance_theme_custom),
                             style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = if (selectedIndex == -1) FontWeight.Bold else FontWeight.Normal,
+                            fontWeight = if (selectedIndex == -1) FontWeight.Medium else FontWeight.Normal,
                         )
                     }
                 }
@@ -666,17 +664,16 @@ class TextAppearancePanel(
                     text = number,
                     color = verseNumberColor,
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = label,
                     color = textColor,
                     modifier = Modifier.weight(1f),
-                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                    fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
                 )
                 if (selected) {
-                    Text(text = "✓", color = textColor, fontWeight = FontWeight.Bold)
+                    Text(text = "✓", color = textColor, fontWeight = FontWeight.Medium)
                 }
             }
         }

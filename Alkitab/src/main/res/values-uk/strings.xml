@@ -26,9 +26,9 @@
     <string name="search_bookname_only">Тільки %s</string>
     <string name="ayat_sebelumangka">Вірш</string>
     <string name="pasal_sebelumangka">Розділ</string>
-    <string name="jump_to_prompt"><b>ШВИДКИЙ ПЕРЕХІД</b> — Приклад: ^1</string>
+    <string name="jump_to_prompt"><b>Швидкий перехід</b> — Приклад: ^1</string>
     <string name="belum_ada_pembatas_buku">Ще немає закладок.\nВиберіть вірш щоб додати закладку.</string>
-    <string name="judul_titikdua">НАЗВА</string>
+    <string name="judul_titikdua">Назва</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Тепер недоступно. Мабуть запитані дані та матеріали ще не готові, або виникли помилки в розпізнаванні джерела даних. Будь ласка спробуйте ще раз пізніше.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Поки що недоступно. Отримати або пошукати в інтернеті...\n\n(Переконайтеся в наявності підключення до інтернету для отримання матеріалів для вивчення.)</string>
     <string name="hari_sabtu">Сб</string>
@@ -50,7 +50,7 @@
     <string name="anda_yakin_mau_menghapus_catatan_ini">Видалити цю нотатку?</string>
     <string name="delete">Видалити</string>
     <string name="cancel">Скасувати</string>
-    <string name="ok">ТАК</string>
+    <string name="ok">Так</string>
     <string name="menuPengaturan">Налаштування</string>
     <string name="pengaturan_alkitab">Налаштування Біблії</string>
     <string name="kelola_versi">Змінити версії</string>
@@ -130,7 +130,7 @@
     <string name="bl_clear_filter">Очистити фільтр</string>
     <string name="bl_no_items_match_the_filter_above">Нічого не знайдено за обраним фільтром.</string>
     <string name="bl_sync_suggest">Захистіть свої позначки синхронізувавши їх</string>
-    <string name="labels_titikdua">ПОЗНАЧКИ</string>
+    <string name="labels_titikdua">Позначки</string>
     <string name="tambah_titiktiga">Додати...</string>
     <string name="nama_label_titikdua">Назва позначки:</string>
     <string name="change_label_color">Змінити колір позначки</string>
@@ -177,7 +177,7 @@
     <string name="menuSongs">Псалми, пісні</string>
     <string name="sn_deep_search_enabled">Тексти пісень а також т.і.</string>
     <string name="sn_songs_activity_title">Псалми, пісні</string>
-    <string name="sn_bookselector_all">ВСЕ</string>
+    <string name="sn_bookselector_all">Все</string>
     <string name="sn_bookselector_more">Завантажити ще&#8230;</string>
     <string name="sn_bookselector_all_desc">Пошук всіх інстальованх книг.</string>
     <string name="sn_downloading_ellipsis">Завантаження ...</string>
@@ -414,10 +414,10 @@
     <string name="bl_selection_edit">Редагувати</string>
     <string name="bl_selection_many_selected">^1 вибрано</string>
     <string name="bl_selection_one_selected">1 вибрано</string>
-    <string name="color_picker_channel_blue">СИНІЙ</string>
-    <string name="color_picker_channel_green">ЗЕЛЕНИЙ</string>
-    <string name="color_picker_channel_red">ЧЕРВОНИЙ</string>
-    <string name="color_picker_hex_label">Шістнадцятковий колір sRGB #</string>
+    <string name="color_picker_channel_blue">Синій</string>
+    <string name="color_picker_channel_green">Зелений</string>
+    <string name="color_picker_channel_red">Червоний</string>
+    <string name="color_picker_hex_label">Шістнадцятковий колір</string>
     <string name="color_picker_tab_grid">Сітка</string>
     <string name="color_picker_tab_sliders">Повзунки</string>
     <string name="color_picker_tab_spectrum">Спектр</string>
