@@ -6,8 +6,8 @@ import androidx.annotation.StringRes
 /**
  * A log event before it is turned into display text: the string resource for
  * the event plus its format arguments. Producers (the HTTP event listener,
- * the player, the audio bar) emit these; [BibleAudioService] resolves them
- * when appending to [PlaybackState.logs], against a [Context] carrying the
+ * the player, the audio bar) emit these; the audio services resolve them
+ * when appending to their logs, against a [Context] carrying the
  * app's configured language rather than the device's, so the log reads in the
  * language the user picked in settings.
  *

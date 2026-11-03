@@ -18,7 +18,7 @@ import yuku.alkitab.debug.R
  * [onEvent].
  *
  * One instance is created per HTTP call, and media3's `OkHttpDataSource`
- * issues a call per byte-range fetch, so a single chapter load produces
+ * issues a call per byte-range fetch, so a single audio load produces
  * several full DNS-to-body sequences as the player buffers ahead.
  */
 internal class AudioHttpEventLogger(private val onEvent: (AudioLogMessage) -> Unit) : EventListener() {

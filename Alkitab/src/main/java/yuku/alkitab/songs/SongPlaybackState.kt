@@ -1,5 +1,7 @@
 package yuku.alkitab.songs
 
+import yuku.alkitab.base.audio.AudioLogEntry
+
 /**
  * UI-facing snapshot of [SongAudioService]'s playback, emitted via a `StateFlow`
  * and mapped by [SongAudioController] onto the legacy [MediaController.State]
@@ -20,6 +22,8 @@ data class SongPlaybackState(
     val error: String?,
     val positionMs: Long,
     val durationMs: Long,
+    val logs: List<AudioLogEntry> = emptyList(),
+    val isDiagnosticVisible: Boolean = false,
 ) {
     companion object {
         val IDLE = SongPlaybackState(

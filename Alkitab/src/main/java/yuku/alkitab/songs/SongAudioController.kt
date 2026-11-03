@@ -9,6 +9,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import yuku.alkitab.base.util.AppLog
 
@@ -31,12 +33,16 @@ class SongAudioController(private val appContext: Context) : MediaController() {
     private var service: SongAudioService? = null
     private var bound = false
 
+    private val _playbackState = MutableStateFlow(SongPlaybackState.IDLE)
+    val playbackState = _playbackState.asStateFlow()
+
     var isLooping = false
         private set
 
     private var displayTitle = ""
     private var displaySubtitle = ""
     private var pendingRequest: SongAudioService.SongRequest? = null
+    private var selectedSong: Pair<String?, String?>? = null
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -59,6 +65,13 @@ class SongAudioController(private val appContext: Context) : MediaController() {
         }
     }
 
+    fun selectSong(bookName: String?, code: String?) {
+        val selection = bookName to code
+        if (selectedSong == selection) return
+        selectedSong = selection
+        reset()
+    }
+
     /** Title / subtitle shown on the media notification for the next [load]. */
     fun setDisplayInfo(title: String, subtitle: String) {
         displayTitle = title
@@ -67,6 +80,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
 
     override fun reset() {
         super.reset()
+        _playbackState.value = SongPlaybackState.IDLE
         isLooping = false
         service?.stop()
         unbind()
@@ -129,6 +143,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
     }
 
     private fun mapState(s: SongPlaybackState) {
+        _playbackState.value = s
         state = when {
             s.error != null -> State.error
             s.preparing -> State.preparing

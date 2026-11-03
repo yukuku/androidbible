@@ -67,6 +67,8 @@ import java.text.NumberFormat
 import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
+import yuku.alkitab.base.audio.ui.AudioDiagnosticStatusLine
+import yuku.alkitab.base.audio.ui.AudioLogBottomSheet
 import yuku.alkitab.base.compose.ComposeBottomSheetHost
 import yuku.alkitab.debug.R
 
@@ -202,6 +204,8 @@ private fun SongAudioBar(
     onPlay: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val audioState by controller.playbackState.collectAsState()
+    var isLogSheetVisible by remember(clip.url) { mutableStateOf(false) }
     var playbackState by remember { mutableStateOf(controller.state) }
     var progress by remember { mutableStateOf(controller.getProgress().let { it[0] to it[1] }) }
     var isLooping by remember { mutableStateOf(controller.isLooping) }
@@ -221,7 +225,17 @@ private fun SongAudioBar(
     val position = if (isActive) progress.first.coerceAtLeast(0) else 0L
     val duration = if (isActive) progress.second.coerceAtLeast(0) else 0L
     val seekDescription = stringResource(R.string.sn_media_seek)
+    if (isActive && isLogSheetVisible) {
+        AudioLogBottomSheet(logs = audioState.logs, onDismiss = { isLogSheetVisible = false })
+    }
     Column(modifier) {
+        if (isActive && audioState.isDiagnosticVisible) {
+            AudioDiagnosticStatusLine(
+                logs = audioState.logs,
+                error = audioState.error,
+                onClick = { isLogSheetVisible = true },
+            )
+        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.MusicNote, null, tint = MaterialTheme.colorScheme.primary)
             Text(stringResource(R.string.sn_media_audio), Modifier
