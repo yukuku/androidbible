@@ -41,7 +41,7 @@ class SongAudioDiagnosticsTest {
         every { player.playWhenReady = any() } answers { isPlayWhenReady = firstArg() }
         every { player.isPlaying } answers { isPlaying }
         every { player.stop() } answers { setPlaying(false) }
-        field("player").set(service, player)
+        field("playerInstance").set(service, player)
         listener = field("playerListener").get(service) as Player.Listener
     }
 

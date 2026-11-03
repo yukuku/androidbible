@@ -66,6 +66,25 @@ class AudioServiceTest {
     }
 
     @Test
+    fun `player cleanup is safe before creation and releases each player only once`() {
+        val controller = Robolectric.buildService(AudioService::class.java).create()
+        val service = controller.get()
+        val bible = mockk<BibleAudioPlayer>(relaxed = true)
+        val song = mockk<androidx.media3.exoplayer.ExoPlayer>(relaxed = true)
+        for ((playback, player) in listOf(service.bible to bible, service.song to song)) {
+            assertFalse(playback.isPlaybackOngoing)
+            playback.onDestroy()
+            playback.javaClass.getDeclaredField("playerInstance").apply { isAccessible = true }.set(playback, player)
+            playback.onDestroy()
+            assertFalse(playback.isPlaybackOngoing)
+            playback.onDestroy()
+        }
+        verify(exactly = 1) { bible.release() }
+        verify(exactly = 1) { song.release() }
+        controller.destroy()
+    }
+
+    @Test
     fun `both screens bind to the same service with stable feature endpoints`() {
         val controller = Robolectric.buildService(AudioService::class.java).create()
         val service = controller.get()

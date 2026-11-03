@@ -31,7 +31,7 @@ class BibleAudioDiagnosticsTest {
         player = mockk(relaxed = true)
         every { player.isWaitingForPlayback } answers { isWaitingForPlayback }
         every { player.pause() } answers { isWaitingForPlayback = false }
-        field("player").set(service, player)
+        field("playerInstance").set(service, player)
         listener = field("playerListener").get(service) as BibleAudioPlayer.Listener
         @Suppress("UNCHECKED_CAST")
         val state = field("_playbackState").get(service) as MutableStateFlow<PlaybackState>

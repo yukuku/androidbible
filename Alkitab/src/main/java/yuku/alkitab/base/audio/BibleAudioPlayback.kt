@@ -96,7 +96,8 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
     private var loadJob: Job? = null
     private var timingJob: Job? = null
 
-    private lateinit var player: BibleAudioPlayer
+    private var playerInstance: BibleAudioPlayer? = null
+    private val player: BibleAudioPlayer get() = checkNotNull(playerInstance)
     private val highlightTracker = HighlightTracker()
 
     /**
@@ -206,7 +207,7 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
 
     override fun onCreate() {
         super.onCreate()
-        player = BibleAudioPlayer(applicationContext) { generation, message ->
+        playerInstance = BibleAudioPlayer(applicationContext) { generation, message ->
             scope.launch { appendLog(generation, message) }
         }
         player.setListener(playerListener)
@@ -250,11 +251,17 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
     }
 
     override val isPlaybackOngoing: Boolean
-        get() = ::player.isInitialized && player.exoPlayer.playWhenReady &&
-            (player.exoPlayer.playbackState == androidx.media3.common.Player.STATE_READY ||
-                player.exoPlayer.playbackState == androidx.media3.common.Player.STATE_BUFFERING)
+        get() {
+            val current = playerInstance?.exoPlayer ?: return false
+            return current.playWhenReady &&
+                (current.playbackState == androidx.media3.common.Player.STATE_READY ||
+                    current.playbackState == androidx.media3.common.Player.STATE_BUFFERING)
+        }
+
     override fun releasePlayer() {
-        if (::player.isInitialized) player.release()
+        val current = playerInstance
+        playerInstance = null
+        current?.release()
     }
 
     override fun onDestroy() {

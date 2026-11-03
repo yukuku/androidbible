@@ -22,7 +22,7 @@ class SongAudioControlsTest {
         val service = testSongPlayback()
         val player = mockk<ExoPlayer>(relaxed = true)
         every { player.duration } returns 10000L
-        SongAudioPlayback::class.java.getDeclaredField("player").apply { isAccessible = true }.set(service, player)
+        SongAudioPlayback::class.java.getDeclaredField("playerInstance").apply { isAccessible = true }.set(service, player)
         service.seekTo(-50)
         service.seekTo(1234)
         service.seekTo(20000)

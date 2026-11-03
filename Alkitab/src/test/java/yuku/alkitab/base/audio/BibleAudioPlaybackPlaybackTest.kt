@@ -24,7 +24,7 @@ class BibleAudioPlaybackPlaybackTest {
         every { player.isPlaying } returns true
         every { player.currentPositionMs } returns 1200L
         every { player.durationMs } returns 10000L
-        field("player").set(service, player)
+        field("playerInstance").set(service, player)
         val listener = field("playerListener").get(service) as BibleAudioPlayer.Listener
         try {
             listener.onIsPlayingChanged(true)
@@ -54,7 +54,7 @@ class BibleAudioPlaybackPlaybackTest {
     fun `ready while paused does not start position polling`() {
         val service = testBiblePlayback()
         val player = mockk<BibleAudioPlayer>(relaxed = true)
-        field("player").set(service, player)
+        field("playerInstance").set(service, player)
         val listener = field("playerListener").get(service) as BibleAudioPlayer.Listener
         listener.onReady()
         assertNull(field("positionJob").get(service))

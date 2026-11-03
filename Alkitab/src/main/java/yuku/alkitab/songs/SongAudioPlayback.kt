@@ -50,7 +50,8 @@ class SongAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(c
         val loop: Boolean,
     )
 
-    private lateinit var player: ExoPlayer
+    private var playerInstance: ExoPlayer? = null
+    private val player: ExoPlayer get() = checkNotNull(playerInstance)
 
     @Volatile
     private var loadGeneration = 0
@@ -109,7 +110,7 @@ class SongAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(c
 
     override fun onCreate() {
         super.onCreate()
-        player = buildPlayer()
+        playerInstance = buildPlayer()
         player.addListener(playerListener)
 
         val sessionActivity = PendingIntent.getActivity(
@@ -161,11 +162,17 @@ class SongAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(c
     }
 
     override val isPlaybackOngoing: Boolean
-        get() = ::player.isInitialized && player.playWhenReady &&
-            (player.playbackState == androidx.media3.common.Player.STATE_READY ||
-                player.playbackState == androidx.media3.common.Player.STATE_BUFFERING)
+        get() {
+            val current = playerInstance ?: return false
+            return current.playWhenReady &&
+                (current.playbackState == androidx.media3.common.Player.STATE_READY ||
+                    current.playbackState == androidx.media3.common.Player.STATE_BUFFERING)
+        }
+
     override fun releasePlayer() {
-        if (::player.isInitialized) player.release()
+        val current = playerInstance
+        playerInstance = null
+        current?.release()
     }
 
     override fun onDestroy() {
