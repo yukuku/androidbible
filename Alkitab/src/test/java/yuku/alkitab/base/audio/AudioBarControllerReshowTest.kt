@@ -7,7 +7,7 @@ import org.junit.Test
 /**
  * Pure-logic tests for the audio-bar auto-reshow decision used after the
  * activity is recreated (rotation) or returns from the background while the
- * [BibleAudioService] keeps playing. See [AudioBarController.reshowIfSessionActive].
+ * [BibleAudioPlayback] keeps playing. See [AudioBarController.reshowIfSessionActive].
  */
 class AudioBarControllerReshowTest {
 

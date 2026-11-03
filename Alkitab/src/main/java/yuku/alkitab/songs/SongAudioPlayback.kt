@@ -1,9 +1,8 @@
 package yuku.alkitab.songs
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
-import android.os.Binder
-import android.os.IBinder
 import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -20,8 +19,6 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.extractor.Extractor
 import androidx.media3.extractor.ExtractorsFactory
 import androidx.media3.extractor.mp3.Mp3Extractor
-import androidx.media3.session.MediaSessionService
-import java.lang.ref.WeakReference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,32 +27,20 @@ import kotlinx.coroutines.launch
 import yuku.alkitab.base.audio.AUDIO_LOG_LIMIT
 import yuku.alkitab.base.audio.AudioHttpEventLogger
 import yuku.alkitab.base.audio.AudioLogMessage
-import yuku.alkitab.base.audio.AudioPlaybackCoordinator
-import yuku.alkitab.base.audio.BaseAudioService
+import yuku.alkitab.base.audio.AudioPlayback
+import yuku.alkitab.base.audio.AudioService
 import yuku.alkitab.base.audio.stripErrorCodePrefix
 import yuku.alkitab.base.connection.Connections
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
 
-/**
- * Foreground [MediaSessionService] for kidung (hymn) audio. Owns a single media3
- * [ExoPlayer] that decodes both MP3 (over OkHttp) and MIDI (via the experimental
- * `media3-exoplayer-midi` JSyn synth), so one code path covers both formats and
- * both get a lock-screen / background media notification.
- *
- * Registers with [AudioPlaybackCoordinator] so starting a hymn stops Bible audio
- * and vice-versa. Mirrors [yuku.alkitab.base.audio.BibleAudioService]'s
- * lifecycle: clients `startService` then `bindService` with [ACTION_LOCAL_BIND];
- * media3 promotes us to foreground once the player becomes user-engaged.
- */
+/** Song playback state and controls owned by [AudioService]. */
 @OptIn(UnstableApi::class)
-class SongAudioService : BaseAudioService() {
+class SongAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(context, owner) {
 
     companion object {
-        const val ACTION_LOCAL_BIND = "yuku.alkitab.songs.ACTION_LOCAL_BIND"
         const val NOTIFICATION_CHANNEL_ID = "audio_song"
-        private const val MEDIA_SESSION_ID = "song_audio"
-        private const val TAG = "SongAudioService"
+        private const val TAG = "SongAudioPlayback"
     }
 
     data class SongRequest(
@@ -64,19 +49,6 @@ class SongAudioService : BaseAudioService() {
         val displaySubtitle: String,
         val loop: Boolean,
     )
-
-    /**
-     * Local IPC binder for the in-process [SongAudioController]. Static + a
-     * [WeakReference] so the Binder framework's JNI globals can't pin the whole
-     * service alive after `unbindService`; see the equivalent rationale on
-     * [yuku.alkitab.base.audio.BibleAudioService.LocalBinder].
-     */
-    class LocalBinder internal constructor(service: SongAudioService) : Binder() {
-        private val ref = WeakReference(service)
-        val service: SongAudioService? get() = ref.get()
-    }
-
-    private val localBinder = LocalBinder(this)
 
     private lateinit var player: ExoPlayer
 
@@ -88,6 +60,7 @@ class SongAudioService : BaseAudioService() {
 
     private val playerListener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
+            if (!isActive) return
             when (playbackState) {
                 Player.STATE_BUFFERING -> {
                     appendLog(AudioLogMessage(R.string.audio_log_player_buffering))
@@ -110,15 +83,18 @@ class SongAudioService : BaseAudioService() {
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
+            if (!isActive) return
             _playbackState.update { it.copy(isPlaying = isPlaying) }
             updateDiagnosticTimer()
         }
 
         override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            if (!isActive) return
             updateDiagnosticTimer()
         }
 
         override fun onPlayerError(error: PlaybackException) {
+            if (!isActive) return
             AppLog.w(TAG, "player error: ${error.errorCodeName} ${error.message}")
             val code = stripErrorCodePrefix(error.errorCodeName)
             val detail = error.message
@@ -144,10 +120,9 @@ class SongAudioService : BaseAudioService() {
         )
 
         createMediaSession(
-            player, MEDIA_SESSION_ID, sessionActivity,
+            player, sessionActivity,
             NOTIFICATION_CHANNEL_ID, R.string.audio_song_notification_channel_name,
         )
-
     }
 
     private fun buildPlayer(): ExoPlayer {
@@ -157,7 +132,7 @@ class SongAudioService : BaseAudioService() {
                 val generation = loadGeneration
                 AudioHttpEventLogger { message ->
                     scope.launch {
-                        if (generation == loadGeneration) appendLog(message)
+                        if (isActive && generation == loadGeneration) appendLog(message)
                     }
                 }
             }
@@ -185,20 +160,21 @@ class SongAudioService : BaseAudioService() {
             .build()
     }
 
-    override val localBindAction: String get() = ACTION_LOCAL_BIND
-    override val serviceBinder: IBinder get() = localBinder
-    override val isAudioPlaying: Boolean get() = player.isPlaying
-    override fun releasePlayer() = player.release()
+    override val isPlaybackOngoing: Boolean
+        get() = ::player.isInitialized && player.playWhenReady &&
+            (player.playbackState == androidx.media3.common.Player.STATE_READY ||
+                player.playbackState == androidx.media3.common.Player.STATE_BUFFERING)
+    override fun releasePlayer() {
+        if (::player.isInitialized) player.release()
+    }
 
     override fun onDestroy() {
         _playbackState.value = SongPlaybackState.IDLE
         super.onDestroy()
     }
 
-    // -- public API surfaced via LocalBinder ---------------------------------
-
     fun load(request: SongRequest) {
-        AudioPlaybackCoordinator.acquire(this)
+        owner.activate(this)
         cancelDiagnosticTimer()
         loadGeneration++
         _playbackState.value = SongPlaybackState.IDLE.copy(
@@ -223,7 +199,7 @@ class SongAudioService : BaseAudioService() {
     }
 
     fun play() {
-        AudioPlaybackCoordinator.acquire(this)
+        if (!isActive) return
         if (player.playbackState == Player.STATE_ENDED) {
             player.seekTo(0L)
         }
@@ -232,11 +208,13 @@ class SongAudioService : BaseAudioService() {
     }
 
     fun pause() {
+        if (!isActive) return
         player.playWhenReady = false
         updateDiagnosticTimer()
     }
 
     fun seekTo(positionMs: Long) {
+        if (!isActive) return
         val duration = durationMs
         if (duration > 0) {
             player.seekTo(positionMs.coerceIn(0L, duration))
@@ -245,23 +223,22 @@ class SongAudioService : BaseAudioService() {
     }
 
     fun setLoop(loop: Boolean) {
+        if (!isActive) return
         player.repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
     }
 
     val currentPositionMs: Long
-        get() = player.currentPosition.coerceAtLeast(0L)
+        get() = if (isActive) player.currentPosition.coerceAtLeast(0L) else -1L
 
     val durationMs: Long
-        get() = player.duration.let { if (it < 0L) -1L else it }
+        get() = if (isActive) player.duration.let { if (it < 0L) -1L else it } else -1L
 
-    override fun stop() {
+    override fun resetPlayback() {
         cancelDiagnosticTimer()
         loadGeneration++
         _playbackState.value = SongPlaybackState.IDLE
         player.stop()
         player.clearMediaItems()
-        stopSelf()
-        AudioPlaybackCoordinator.release(this)
     }
 
     private fun updateDiagnosticTimer() {

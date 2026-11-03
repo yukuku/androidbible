@@ -942,7 +942,7 @@ class SongViewActivity : BaseLeftDrawerActivity(), SongFragment.ShouldOverrideUr
 
     companion object {
         /**
-         * Single hymn-audio controller, backed by the background [SongAudioService]
+         * Single hymn-audio controller, backed by the background [yuku.alkitab.base.audio.AudioService]
          * (MP3 + MIDI). Static so it survives activity recreation while audio plays
          * in the background.
          */

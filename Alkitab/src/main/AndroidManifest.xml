@@ -5,7 +5,7 @@
 
 	<uses-permission android:name="android.permission.INTERNET" />
 
-	<!-- Foreground service for Bible audio playback (yuku.alkitab.base.audio.BibleAudioService) -->
+	<!-- Foreground service for Bible and song audio playback (yuku.alkitab.base.audio.AudioService) -->
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
@@ -401,29 +401,16 @@
 			android:name="yuku.alkitab.base.sv.VersionConfigUpdaterService"
 			android:exported="false" />
 
-		<!-- Bible audio: media3 MediaSessionService. exported=true is required so
+		<!-- Shared Bible and song audio: media3 MediaSessionService. exported=true is required so
 			 the OS (notification, lock-screen, Bluetooth, Android Auto) can bind. -->
 		<service
-			android:name="yuku.alkitab.base.audio.BibleAudioService"
+			android:name="yuku.alkitab.base.audio.AudioService"
 			android:exported="true"
 			android:foregroundServiceType="mediaPlayback">
 			<intent-filter>
 				<action android:name="androidx.media3.session.MediaSessionService" />
 			</intent-filter>
 		</service>
-
-		<!-- Kidung (hymn) audio: media3 MediaSessionService for MP3 + MIDI.
-			 Deliberately NOT exported and WITHOUT the MediaSessionService
-			 intent-filter: only one service per app may advertise that action,
-			 otherwise media3's MediaButtonReceiver throws when resolving hardware
-			 media-button events (it expects exactly one match). BibleAudioService
-			 owns that role. Notification / lock-screen controls still work here —
-			 media3 builds those PendingIntents with an explicit service component,
-			 not via action resolution. -->
-		<service
-			android:name="yuku.alkitab.songs.SongAudioService"
-			android:exported="false"
-			android:foregroundServiceType="mediaPlayback" />
 
 		<!--
 			File provider, for sharing app files.

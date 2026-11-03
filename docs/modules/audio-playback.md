@@ -2,7 +2,7 @@
 
 The app supports Bible chapter recordings and song accompaniments. Both support
 background playback with Android media controls. Starting one stops the other;
-the shared playback coordinator enforces a single active audio session.
+one `AudioService` owns the active playback mode and media session.
 
 ## Bible recordings
 
@@ -25,7 +25,7 @@ to audio that has not loaded, including while offline.
 
 ## Song accompaniments
 
-Song audio supports MP3 and MIDI through the song media service. Playback state
+Song audio supports MP3 and MIDI through the shared audio service. Playback state
 is shared with the viewer and can outlive the visible activity. Audio attachment
 availability comes from the song's metadata; see [Songs](songs.md).
 
@@ -34,16 +34,19 @@ availability comes from the song's metadata; see [Songs](songs.md).
 The [Bible audio package](../../Alkitab/src/main/java/yuku/alkitab/base/audio)
 owns recording discovery, chapter resolution, timing, and Bible playback. The
 [songs package](../../Alkitab/src/main/java/yuku/alkitab/songs) owns song playback.
-Both use Media3 players in foreground media-session services and participate in
-`AudioPlaybackCoordinator`.
+Both screens bind to `AudioService`, which exposes Bible and song playback
+components. A mode switch stops outgoing playback, cancels its work, installs the
+new player in the existing session, then releases the outgoing player. Commands
+and callbacks from an inactive component cannot affect the active mode.
 
 The [backend contract](../features/audio-bible/backend-contract.md) specifies
 paths, indexing, and response shapes. Earlier PRDs and implementation plans are
 historical design records; consult the service and repository tests for current
 state transitions and failure behavior.
 
-`BaseAudioService` owns shared media-session and notification setup, local binding,
-task-removal and destruction handling, coroutine lifetime, diagnostic scheduling,
-and localized log entry creation. Feature services supply their player, binder,
-stop behavior, and diagnostic visibility policy. Bible chapter navigation and
-song format/repeat behavior remain feature responsibilities.
+`AudioService` owns binding, session and notification routing, mode switching,
+and Android lifecycle handling. `BibleAudioPlayback` and `SongAudioPlayback`
+retain their feature-specific state and player configuration. `AudioPlayback`
+provides component coroutine lifetime, diagnostic scheduling and localized logs.
+Requested playback that is buffering survives task removal; paused playback
+allows the service to stop.

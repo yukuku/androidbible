@@ -39,7 +39,7 @@ audio controls and approved YouTube videos. Its heading shows the song title
 and the original title when available. The sheet is at most 360dp wide and
 leaves a gap below the status bar. Its background extends behind the system
 bars, with safe bottom padding inside the scrolling content. Audio supports play/pause, seeking and repeat;
-playback continues through the existing song audio service after dismissal.
+playback continues through the shared audio service after dismissal.
 If requested audio has not started after five seconds, a diagnostic status line
 appears above its controls. Tapping it opens the HTTP and player log. Once shown,
 the line stays visible for that song's active media session, including after

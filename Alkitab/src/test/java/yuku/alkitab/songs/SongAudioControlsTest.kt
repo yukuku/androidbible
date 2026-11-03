@@ -12,16 +12,17 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import yuku.alkitab.base.audio.testSongPlayback
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
 class SongAudioControlsTest {
     @Test
     fun `seeking clamps both ends to the loaded song duration`() {
-        val service = Robolectric.buildService(SongAudioService::class.java).get()
+        val service = testSongPlayback()
         val player = mockk<ExoPlayer>(relaxed = true)
         every { player.duration } returns 10000L
-        SongAudioService::class.java.getDeclaredField("player").apply { isAccessible = true }.set(service, player)
+        SongAudioPlayback::class.java.getDeclaredField("player").apply { isAccessible = true }.set(service, player)
         service.seekTo(-50)
         service.seekTo(1234)
         service.seekTo(20000)
@@ -33,7 +34,7 @@ class SongAudioControlsTest {
     @Test
     fun `buffering during a seek preserves the player position and duration`() {
         val controller = SongAudioController(mockk(relaxed = true))
-        val service = mockk<SongAudioService>(relaxed = true)
+        val service = mockk<SongAudioPlayback>(relaxed = true)
         every { service.currentPositionMs } returns 60000L
         every { service.durationMs } returns 120000L
         SongAudioController::class.java.getDeclaredField("service").apply { isAccessible = true }.set(controller, service)
@@ -45,7 +46,7 @@ class SongAudioControlsTest {
     @Test
     fun `rapid seeks retain the latest target while playback is buffering`() {
         val controller = SongAudioController(mockk(relaxed = true))
-        val service = mockk<SongAudioService>(relaxed = true)
+        val service = mockk<SongAudioPlayback>(relaxed = true)
         var position = 1000L
         every { service.currentPositionMs } answers { position }
         every { service.durationMs } returns 120000L
@@ -62,7 +63,7 @@ class SongAudioControlsTest {
     @Test
     fun `playing a repeating song can still be paused`() {
         val controller = SongAudioController(mockk(relaxed = true))
-        val service = mockk<SongAudioService>(relaxed = true)
+        val service = mockk<SongAudioPlayback>(relaxed = true)
         SongAudioController::class.java.getDeclaredField("service").apply { isAccessible = true }.set(controller, service)
         controller.state = MediaController.State.playing
         controller.playOrPause(true)
@@ -73,7 +74,7 @@ class SongAudioControlsTest {
     @Test
     fun `changing repeat updates the service and reset clears it`() {
         val controller = SongAudioController(mockk(relaxed = true))
-        val service = mockk<SongAudioService>(relaxed = true)
+        val service = mockk<SongAudioPlayback>(relaxed = true)
         SongAudioController::class.java.getDeclaredField("service").apply { isAccessible = true }.set(controller, service)
         controller.setLoop(true)
         verify { service.setLoop(true) }

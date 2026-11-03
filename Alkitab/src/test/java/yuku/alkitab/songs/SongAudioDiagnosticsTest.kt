@@ -21,21 +21,21 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
-import yuku.alkitab.base.audio.AudioPlaybackCoordinator
+import yuku.alkitab.base.audio.testSongPlayback
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
 class SongAudioDiagnosticsTest {
-    private lateinit var service: SongAudioService
+    private lateinit var service: SongAudioPlayback
     private lateinit var player: ExoPlayer
     private lateinit var listener: Player.Listener
     private var isPlayWhenReady = false
     private var isPlaying = false
-    private val request = SongAudioService.SongRequest("https://example.com/song.mid", "KJ 1", "Song", false)
+    private val request = SongAudioPlayback.SongRequest("https://example.com/song.mid", "KJ 1", "Song", false)
 
     @Before
     fun setUp() {
-        service = Robolectric.buildService(SongAudioService::class.java).get()
+        service = testSongPlayback()
         player = mockk(relaxed = true)
         every { player.playWhenReady } answers { isPlayWhenReady }
         every { player.playWhenReady = any() } answers { isPlayWhenReady = firstArg() }
@@ -48,7 +48,6 @@ class SongAudioDiagnosticsTest {
     @After
     fun tearDown() {
         service.stop()
-        AudioPlaybackCoordinator.resetForTest()
     }
 
     @Test
@@ -178,7 +177,9 @@ class SongAudioDiagnosticsTest {
         controller.mediaKnownToExist(request.url)
         val connection = SongAudioController::class.java.getDeclaredField("connection").apply { isAccessible = true }
             .get(controller) as ServiceConnection
-        connection.onServiceConnected(null, SongAudioService.LocalBinder(service))
+        val owner = mockk<yuku.alkitab.base.audio.AudioService>(relaxed = true)
+        every { owner.song } returns service
+        connection.onServiceConnected(null, yuku.alkitab.base.audio.AudioService.LocalBinder(owner))
         val firstActivity = Robolectric.buildActivity(Activity::class.java).create()
         controller.setUI(firstActivity.get(), mockk(relaxed = true))
         service.load(request)
@@ -209,5 +210,5 @@ class SongAudioDiagnosticsTest {
 
     private fun advance(millis: Long) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(millis))
 
-    private fun field(name: String) = SongAudioService::class.java.getDeclaredField(name).apply { isAccessible = true }
+    private fun field(name: String) = SongAudioPlayback::class.java.getDeclaredField(name).apply { isAccessible = true }
 }

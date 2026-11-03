@@ -135,7 +135,7 @@ data class AudioSetOption(
     val coversCurrentBook: Boolean,
 )
 
-/** Commands raised by the bar's UI; the controller maps these onto [yuku.alkitab.base.audio.BibleAudioService] calls. */
+/** Commands raised by the bar's UI; the controller maps these onto [yuku.alkitab.base.audio.BibleAudioPlayback] calls. */
 sealed interface AudioBarCommand {
     data object PlayPause : AudioBarCommand
     data object Retry : AudioBarCommand

@@ -1,11 +1,10 @@
 package yuku.alkitab.base.audio
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.os.Binder
-import android.os.IBinder
 import androidx.annotation.OptIn
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
@@ -14,7 +13,6 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSessionService
 import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,35 +30,17 @@ import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.AppLog
 import yuku.alkitab.debug.R
 
-/**
- * Foreground [MediaSessionService] owning a [BibleAudioPlayer]. The system binds
- * it through the media3 stub, while the audio bar binds with [ACTION_LOCAL_BIND]
- * for a [LocalBinder] and drives playback directly. Audio focus, becoming-noisy
- * and media-button handling come with `MediaSession` and the ExoPlayer audio
- * attributes.
- *
- * media3 handles the foreground transitions. [AudioBarController] starts the
- * service with `startService`, not `startForegroundService`, which keeps it alive
- * across activity teardown without arming the 5-second `startForeground`
- * deadline; media3 then promotes it once the player becomes user-engaged, under
- * the `mediaPlayback` exemption from the Android 12+ background-start
- * restriction.
- */
+/** Bible playback state and controls owned by [AudioService]. */
 @OptIn(UnstableApi::class)
-class BibleAudioService : BaseAudioService() {
+class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(context, owner) {
 
     companion object {
-        /** Action on the binding [Intent] that asks for the in-app [LocalBinder]. */
-        const val ACTION_LOCAL_BIND = "yuku.alkitab.audio.ACTION_LOCAL_BIND"
-
         /**
          * Must match the channel `App.staticInit()` creates. Channel attributes
          * are immutable once created, so creating it there is what gets
          * IMPORTANCE_LOW and no sound instead of media3's defaults.
          */
         const val NOTIFICATION_CHANNEL_ID = "audio_bible"
-
-        private const val MEDIA_SESSION_ID = "bible_audio"
 
         private const val POSITION_POLL_INTERVAL_MS = 100L
         private const val ARTWORK_SIZE_PX = 256
@@ -85,7 +65,7 @@ class BibleAudioService : BaseAudioService() {
 
         private const val DEFAULT_PLAYBACK_SPEED = 1.0f
 
-        private const val TAG = "BibleAudioService"
+        private const val TAG = "BibleAudioPlayback"
 
         /**
          * Process-wide flag (the service is local and single-instance) that lets
@@ -115,27 +95,6 @@ class BibleAudioService : BaseAudioService() {
          */
         val startVerse_1: Int,
     )
-
-    /**
-     * Local IPC binder for in-process clients (the audio bar). Must NOT be an
-     * `inner class`: the Binder framework can hold a JNI global reference to a
-     * returned Binder for an indeterminate time after `unbindService`, and an
-     * inner class's implicit `this$0` field would keep the entire service
-     * (ExoPlayer, MediaSession, foreground notification context) alive with it.
-     * A static class plus a weak reference lets the service be garbage-collected
-     * as soon as `onDestroy` releases its strong references, even while the
-     * system still has the binder pinned.
-     *
-     * `service` is null once the service is destroyed. Clients cache the strong
-     * reference at `onServiceConnected`, so it is only consulted inside a
-     * still-bound lifetime.
-     */
-    class LocalBinder internal constructor(service: BibleAudioService) : Binder() {
-        private val ref = java.lang.ref.WeakReference(service)
-        val service: BibleAudioService? get() = ref.get()
-    }
-
-    private val localBinder = LocalBinder(this)
 
     private var positionJob: Job? = null
     private var loadJob: Job? = null
@@ -178,9 +137,9 @@ class BibleAudioService : BaseAudioService() {
 
     private val playerListener = object : BibleAudioPlayer.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
+            if (!isActive) return
             _playbackState.update { it.copy(isPlaying = isPlaying) }
             if (isPlaying) {
-                AudioPlaybackCoordinator.acquire(this@BibleAudioService)
                 startPositionPolling()
             } else {
                 positionJob?.cancel()
@@ -189,10 +148,12 @@ class BibleAudioService : BaseAudioService() {
         }
 
         override fun onPlayWhenReadyChanged() {
+            if (!isActive) return
             updateDiagnosticTimer()
         }
 
         override fun onBuffering() {
+            if (!isActive) return
             // `preparing` doubles as the buffering flag rather than having a
             // separate field: to the user both states are "we asked to play but
             // no audio is coming out yet", which is what the spinner says.
@@ -201,6 +162,7 @@ class BibleAudioService : BaseAudioService() {
         }
 
         override fun onReady() {
+            if (!isActive) return
             playerReadyForSeek = true
             _playbackState.update {
                 it.copy(
@@ -217,6 +179,7 @@ class BibleAudioService : BaseAudioService() {
         }
 
         override fun onEnded() {
+            if (!isActive) return
             positionJob?.cancel()
             updateDiagnosticTimer()
             _playbackState.update {
@@ -231,6 +194,7 @@ class BibleAudioService : BaseAudioService() {
         }
 
         override fun onError(error: PlaybackException) {
+            if (!isActive) return
             AppLog.w(TAG, "player error: ${error.errorCodeName} ${error.message}")
             positionJob?.cancel()
             _playbackState.update {
@@ -246,7 +210,9 @@ class BibleAudioService : BaseAudioService() {
 
     override fun onCreate() {
         super.onCreate()
-        player = BibleAudioPlayer(applicationContext) { generation, message -> appendLog(generation, message) }
+        player = BibleAudioPlayer(applicationContext) { generation, message ->
+            scope.launch { appendLog(generation, message) }
+        }
         player.setListener(playerListener)
 
         // Apply the persisted speed to the player up front so the first chapter
@@ -276,7 +242,7 @@ class BibleAudioService : BaseAudioService() {
         )
 
         createMediaSession(
-            mediaSessionPlayer, MEDIA_SESSION_ID, sessionActivity,
+            mediaSessionPlayer, sessionActivity,
             NOTIFICATION_CHANNEL_ID, R.string.audio_bible_notification_channel_name,
         )
 
@@ -287,20 +253,22 @@ class BibleAudioService : BaseAudioService() {
         }
     }
 
-    override val localBindAction: String get() = ACTION_LOCAL_BIND
-    override val serviceBinder: IBinder get() = localBinder
-    override val isAudioPlaying: Boolean get() = player.isPlaying
-    override fun releasePlayer() = player.release()
+    override val isPlaybackOngoing: Boolean
+        get() = ::player.isInitialized && player.exoPlayer.playWhenReady &&
+            (player.exoPlayer.playbackState == androidx.media3.common.Player.STATE_READY ||
+                player.exoPlayer.playbackState == androidx.media3.common.Player.STATE_BUFFERING)
+    override fun releasePlayer() {
+        if (::player.isInitialized) player.release()
+    }
 
     override fun onDestroy() {
         hasActiveSession = false
         positionJob?.cancel()
         loadJob?.cancel()
         timingJob?.cancel()
+        _playbackState.value = PlaybackState.IDLE
         super.onDestroy()
     }
-
-    // -- public API surfaced via [LocalBinder] -------------------------------
 
     /**
      * Starts loading [request]'s chapter. Cancels any in-flight load. Updates
@@ -309,7 +277,7 @@ class BibleAudioService : BaseAudioService() {
      * flips to false. Timing data is fetched in parallel with audio buffering.
      */
     fun loadChapter(request: AudioRequest) {
-        AudioPlaybackCoordinator.acquire(this)
+        owner.activate(this)
         loadJob?.cancel()
         timingJob?.cancel()
         cancelDiagnosticTimer()
@@ -433,22 +401,25 @@ class BibleAudioService : BaseAudioService() {
      * Used when the user picks a verse while this chapter is already playing.
      */
     fun seekToVerse(verse_1: Int) {
+        if (!isActive) return
         pendingStartVerse1 = verse_1
         tryInitialSeek()
     }
 
     fun play() {
-        AudioPlaybackCoordinator.acquire(this)
+        if (!isActive) return
         player.play()
         updateDiagnosticTimer()
     }
 
     fun pause() {
+        if (!isActive) return
         player.pause()
         updateDiagnosticTimer()
     }
 
     fun seekTo(positionMs: Long) {
+        if (!isActive) return
         player.seekTo(positionMs)
         highlightTracker.update(positionMs)
         _playbackState.update { it.copy(positionMs = positionMs) }
@@ -461,6 +432,7 @@ class BibleAudioService : BaseAudioService() {
      * the player isn't in a seekable state.
      */
     fun seekToNextVerse() {
+        if (!isActive) return
         val target = highlightTracker.getNextVerseStartMs(player.currentPositionMs) ?: return
         seekTo(target)
     }
@@ -471,6 +443,7 @@ class BibleAudioService : BaseAudioService() {
      * it restarts the current verse. See [HighlightTracker.getPrevVerseStartMs].
      */
     fun seekToPrevVerse() {
+        if (!isActive) return
         val target = highlightTracker.getPrevVerseStartMs(player.currentPositionMs) ?: return
         seekTo(target)
     }
@@ -483,6 +456,7 @@ class BibleAudioService : BaseAudioService() {
     fun peekVerseAt(positionMs: Long): Int = highlightTracker.peekVerseAt(positionMs)
 
     fun setSpeed(speed: Float) {
+        if (!isActive) return
         player.setSpeed(speed)
         persistedSpeed = speed
         Preferences.setFloat(Prefkey.audioPlaybackSpeed, speed)
@@ -490,11 +464,9 @@ class BibleAudioService : BaseAudioService() {
     }
 
     /**
-     * Stops playback and tears the service down (clears the foreground
-     * notification). Safe to call after `loadChapter` even if the player never
-     * reached READY.
+     * Clears playback and pending work, including loads that never reached READY.
      */
-    override fun stop() {
+    override fun resetPlayback() {
         loadJob?.cancel()
         timingJob?.cancel()
         positionJob?.cancel()
@@ -507,9 +479,9 @@ class BibleAudioService : BaseAudioService() {
         loadGeneration++
         player.logGeneration = loadGeneration
         player.pause()
+        player.exoPlayer.stop()
+        player.exoPlayer.clearMediaItems()
         _playbackState.value = PlaybackState.IDLE
-        stopSelf()
-        AudioPlaybackCoordinator.release(this)
     }
 
     /**
@@ -531,6 +503,7 @@ class BibleAudioService : BaseAudioService() {
      * change and navigates `IsiActivity` to keep both surfaces in sync.
      */
     fun skipChapter(direction: Int) {
+        if (!isActive) return
         val current = currentRequest ?: return
         val resolvedVersion = App.services.versions.getVersionFromVersionId(current.versionId)?.version
         val version = resolvedVersion ?: App.services.versions.activeVersion()
@@ -620,7 +593,7 @@ class BibleAudioService : BaseAudioService() {
      * See [BibleAudioPlayer.logGeneration].
      */
     private fun appendLog(generation: Int, message: AudioLogMessage) {
-        if (generation != loadGeneration) return
+        if (!isActive || generation != loadGeneration) return
         val entry = logEntry(message)
         _playbackState.update {
             it.copy(logs = appendLogEntry(it.logs, entry, generation, loadGeneration))

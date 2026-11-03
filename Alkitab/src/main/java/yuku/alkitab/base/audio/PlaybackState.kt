@@ -1,7 +1,7 @@
 package yuku.alkitab.base.audio
 
 /**
- * UI-facing snapshot of [BibleAudioService]'s state. Emitted via the service's
+ * UI-facing snapshot of [BibleAudioPlayback]'s state. Emitted via the service's
  * `StateFlow<PlaybackState>` and consumed by the audio bar.
  *
  *  - [isPlaying]: true while audio is actually coming out, not merely requested

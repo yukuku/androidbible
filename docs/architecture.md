@@ -66,8 +66,8 @@ network responsibilities. WorkManager handles persistent sync and version
 downloads; other feature operations use their own lifecycle and cancellation
 policies. Do not infer successful synchronization from worker completion alone.
 
-Bible and song playback run in foreground media services and share an
-exclusive-playback coordinator; see [Audio playback](modules/audio-playback.md).
+Bible and song playback share one foreground media service with exclusive
+playback modes; see [Audio playback](modules/audio-playback.md).
 
 ## Language and appearance
 
