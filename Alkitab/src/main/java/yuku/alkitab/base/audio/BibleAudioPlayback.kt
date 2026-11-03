@@ -45,18 +45,15 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
         private const val ARTWORK_SIZE_PX = 256
 
         /**
-         * The log after recording [entry]. Returns [logs] untouched when
-         * [eventGeneration] is not [currentGeneration], which is how a
-         * superseded chapter load's trailing cancellation events are kept out
-         * of the new chapter's log. Otherwise appends, keeping at most
-         * [maxEntries] newest. Pure for unit testing.
+         * Ignore events from other chapter loads, including delayed cancellation
+         * messages. Keep only the newest [maxEntries] entries.
          */
         internal fun appendLogEntry(
             logs: List<AudioLogEntry>,
             entry: AudioLogEntry,
             eventGeneration: Int,
             currentGeneration: Int,
-            maxEntries: Int = AUDIO_LOG_LIMIT,
+            maxEntries: Int,
         ): List<AudioLogEntry> {
             if (eventGeneration != currentGeneration) return logs
             return (logs + entry).takeLast(maxEntries)
@@ -595,7 +592,7 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
         if (!isActive || generation != loadGeneration) return
         val entry = logEntry(message)
         _playbackState.update {
-            it.copy(logs = appendLogEntry(it.logs, entry, generation, loadGeneration))
+            it.copy(logs = appendLogEntry(it.logs, entry, generation, loadGeneration, AUDIO_LOG_LIMIT))
         }
     }
 

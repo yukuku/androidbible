@@ -20,6 +20,7 @@ class BibleAudioPlaybackLogTest {
             entry = entry("Connecting"),
             eventGeneration = 3,
             currentGeneration = 3,
+            maxEntries = AUDIO_LOG_LIMIT,
         )
         assertEquals(listOf("Loading Genesis 1", "Connecting"), result.map { it.message })
     }
@@ -35,6 +36,7 @@ class BibleAudioPlaybackLogTest {
             entry = entry("Response failed: stream was reset: CANCEL"),
             eventGeneration = 2,
             currentGeneration = 3,
+            maxEntries = AUDIO_LOG_LIMIT,
         )
         assertSame("the list should not be rebuilt when nothing is recorded", logs, result)
     }
@@ -49,6 +51,7 @@ class BibleAudioPlaybackLogTest {
             entry = entry("Connecting"),
             eventGeneration = 9,
             currentGeneration = 3,
+            maxEntries = AUDIO_LOG_LIMIT,
         )
         assertSame(logs, result)
     }
