@@ -35,16 +35,10 @@ object LabelColorUtil {
 
     @JvmStatic
     fun getForegroundBasedOnBackground(colorRgb: Int): Int {
-        val hsl = floatArrayOf(0f, 0f, 0f)
-        ColorUtils.RGBToHSL(Color.red(colorRgb), Color.green(colorRgb), Color.blue(colorRgb), hsl)
-
-        if (hsl[2] > 0.5f) {
-            hsl[2] -= 0.44f
-        } else {
-            hsl[2] += 0.44f
-        }
-
-        return ColorUtils.HSLToColor(hsl) and 0xffffff
+        val background = colorRgb or Color.BLACK
+        val blackContrast = ColorUtils.calculateContrast(Color.BLACK, background)
+        val whiteContrast = ColorUtils.calculateContrast(Color.WHITE, background)
+        return (if (blackContrast >= whiteContrast) Color.BLACK else Color.WHITE) and 0xffffff
     }
 
     @JvmStatic

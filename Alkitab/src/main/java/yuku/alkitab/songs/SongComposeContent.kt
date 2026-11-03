@@ -2,6 +2,7 @@ package yuku.alkitab.songs
 
 import android.graphics.Paint
 import android.graphics.Typeface
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -75,6 +76,7 @@ class SongComposeStyle(
     val isBold: Boolean = false,
 ) {
     val baseSizeSp = baseFontSizeDp * zoomPercent / 100f
+    val blockSpacingEm = (lineSpacingMult - 1f).coerceIn(0f, 0.3f)
 
     val bodyColor = Color(fontColor)
     val verseNumberColorC = Color(verseNumberColor)
@@ -126,7 +128,10 @@ fun SongDocumentComposable(
                     .verticalScroll(rememberScrollState())
                     .padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 24.dp + bottomInset),
             ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(style.blockSpacingEm.em.toDp(style)),
+                ) {
                     val titleBlock = (doc.blocks.firstOrNull() as? PBlock)?.takeIf { it.role == "title" }
                     val bodyBlocks = if (titleBlock != null) doc.blocks.drop(1) else doc.blocks
 
@@ -146,7 +151,9 @@ fun SongDocumentComposable(
                         }
                     }
 
-                    FooterView(copyright, patchTextLinkLabel, style, onPatchTextClick)
+                    Column {
+                        FooterView(copyright, patchTextLinkLabel, style, onPatchTextClick)
+                    }
                 }
             }
         }

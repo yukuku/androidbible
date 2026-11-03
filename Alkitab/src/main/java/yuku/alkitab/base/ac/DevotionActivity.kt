@@ -232,6 +232,7 @@ open class DevotionActivity : BaseLeftDrawerActivity(), LeftDrawer.Devotion.List
 
         // text formats
         lContent.setTextColor(applied.fontColor)
+        lContent.setLinkTextColor(applied.fontColor)
         lContent.setTypeface(applied.fontFace, applied.fontBold)
         lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, applied.fontSize2dp * textScale)
         lContent.setLineSpacing(0f, applied.lineSpacingMult)
