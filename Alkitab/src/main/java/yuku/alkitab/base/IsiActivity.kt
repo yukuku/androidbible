@@ -2069,11 +2069,18 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                     run {
                         val addTime = marker.createTime
                         val modifyTime = marker.modifyTime
+                        val createTimeDisplay = Sqlitil.toLocaleDateMedium(addTime)
 
-                        if (addTime == modifyTime) {
-                            holder.lDate.text = Sqlitil.toLocaleDateMedium(addTime)
+                        holder.lDate.text = if (addTime == modifyTime) {
+                            createTimeDisplay
                         } else {
-                            holder.lDate.text = getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime))
+                            val modifyTimeDisplay = Sqlitil.toLocaleDateMedium(modifyTime)
+                            val editedDisplay = if (createTimeDisplay == modifyTimeDisplay) {
+                                Sqlitil.toLocaleTime(modifyTime)
+                            } else {
+                                modifyTimeDisplay
+                            }
+                            getString(R.string.create_edited_modified_time, createTimeDisplay, editedDisplay)
                         }
 
                         Appearances.applyMarkerDateTextAppearance(holder.lDate, textSizeMult)
