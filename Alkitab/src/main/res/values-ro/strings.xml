@@ -429,7 +429,6 @@
     <string name="data_transfer_title">Transfer de date</string>
     <string name="fcm_registration_skipped_debug">Înregistrarea FCM este omisă în versiunile de depanare.</string>
     <string name="menu_audio">Audio</string>
-    <string name="sn_audio_disclaimer_message">Vă rugăm să rețineți că tot conținutul audio oferit în această aplicație nu provine neapărat de la editorul cântecului sau al cărții de cântece.</string>
     <string name="sn_error_rendering_lyrics">Eroare la afișarea versurilor. Vă rugăm să apăsați butonul de meniu și să selectați \"Actualizare cântece\".</string>
     <string name="dv_section_version">Versiunea Bibliei</string>
     <string name="dv_section_appearance">Aspect</string>
