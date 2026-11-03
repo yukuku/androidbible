@@ -8,7 +8,7 @@ import yuku.alkitab.model.Version
  * Pure-function helper that walks a [Version]'s book list to resolve the
  * chapter immediately before or after the given (book, chapter_1) pair.
  *
- * Used by [BibleAudioService.skipChapter] for chapter skips issued through
+ * Used by [BibleAudioPlayback.skipChapter] for chapter skips issued through
  * the system transport controls (lock-screen notification, Bluetooth media
  * buttons, Android Auto) and for end-of-chapter auto-advance. None of those
  * can rely on a [yuku.alkitab.base.IsiActivity] being alive.

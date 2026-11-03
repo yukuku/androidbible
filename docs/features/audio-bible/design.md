@@ -8,15 +8,13 @@ and ownership and the [HTTP contract](backend-contract.md) for wire details.
 
 ## Playback ownership
 
-A foreground media-session service owns each player so playback survives reader
-navigation and backgrounding and participates in lock-screen and Bluetooth
-controls. Activities observe playback and send commands; they do not own the
-player's lifetime.
-
-Bible and song services share `AudioPlaybackCoordinator`. Acquiring playback
-stops the previously active logical session. Explicit coordination is necessary
-because Android audio focus alone does not enforce the app's one-session rule.
-Song MP3 and MIDI use the same service/player path.
+One foreground `AudioService` owns the active playback mode and media session,
+so playback survives reader navigation and backgrounding and participates in
+lock-screen and Bluetooth controls. Activities observe playback and send commands.
+Bible and song playback components retain their feature-specific state and
+player configuration. Switching modes stops and releases the outgoing player;
+late callbacks and inactive controls cannot affect the new mode. Song MP3 and
+MIDI use the same player configuration.
 
 ## Recording identity and availability
 

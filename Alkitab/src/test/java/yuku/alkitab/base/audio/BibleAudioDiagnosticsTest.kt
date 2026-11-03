@@ -20,18 +20,18 @@ import yuku.alkitab.base.audio.model.VerseTiming
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
 class BibleAudioDiagnosticsTest {
-    private lateinit var service: BibleAudioService
+    private lateinit var service: BibleAudioPlayback
     private lateinit var player: BibleAudioPlayer
     private lateinit var listener: BibleAudioPlayer.Listener
     private var isWaitingForPlayback = false
 
     @Before
     fun setUp() {
-        service = Robolectric.buildService(BibleAudioService::class.java).get()
+        service = testBiblePlayback()
         player = mockk(relaxed = true)
         every { player.isWaitingForPlayback } answers { isWaitingForPlayback }
         every { player.pause() } answers { isWaitingForPlayback = false }
-        field("player").set(service, player)
+        field("playerInstance").set(service, player)
         listener = field("playerListener").get(service) as BibleAudioPlayer.Listener
         @Suppress("UNCHECKED_CAST")
         val state = field("_playbackState").get(service) as MutableStateFlow<PlaybackState>
@@ -41,7 +41,6 @@ class BibleAudioDiagnosticsTest {
     @After
     fun tearDown() {
         service.stop()
-        AudioPlaybackCoordinator.resetForTest()
     }
 
     @Test
@@ -129,5 +128,5 @@ class BibleAudioDiagnosticsTest {
 
     private fun advance(millis: Long) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(millis))
 
-    private fun field(name: String) = BibleAudioService::class.java.getDeclaredField(name).apply { isAccessible = true }
+    private fun field(name: String) = BibleAudioPlayback::class.java.getDeclaredField(name).apply { isAccessible = true }
 }

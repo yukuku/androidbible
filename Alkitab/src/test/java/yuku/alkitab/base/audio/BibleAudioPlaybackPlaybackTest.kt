@@ -16,15 +16,15 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
-class BibleAudioServicePlaybackTest {
+class BibleAudioPlaybackPlaybackTest {
     @Test
     fun `external resume restarts position polling and external pause stops it`() {
-        val service = Robolectric.buildService(BibleAudioService::class.java).get()
+        val service = testBiblePlayback()
         val player = mockk<BibleAudioPlayer>(relaxed = true)
         every { player.isPlaying } returns true
         every { player.currentPositionMs } returns 1200L
         every { player.durationMs } returns 10000L
-        field("player").set(service, player)
+        field("playerInstance").set(service, player)
         val listener = field("playerListener").get(service) as BibleAudioPlayer.Listener
         try {
             listener.onIsPlayingChanged(true)
@@ -45,18 +45,16 @@ class BibleAudioServicePlaybackTest {
             listener.onIsPlayingChanged(true)
             shadowOf(Looper.getMainLooper()).idle()
             assertEquals(2400L, service.playbackState.value.positionMs)
-            assertSame(service, AudioPlaybackCoordinator.activeForTest())
         } finally {
             listener.onIsPlayingChanged(false)
-            AudioPlaybackCoordinator.resetForTest()
-        }
+            }
     }
 
     @Test
     fun `ready while paused does not start position polling`() {
-        val service = Robolectric.buildService(BibleAudioService::class.java).get()
+        val service = testBiblePlayback()
         val player = mockk<BibleAudioPlayer>(relaxed = true)
-        field("player").set(service, player)
+        field("playerInstance").set(service, player)
         val listener = field("playerListener").get(service) as BibleAudioPlayer.Listener
         listener.onReady()
         assertNull(field("positionJob").get(service))
@@ -64,5 +62,5 @@ class BibleAudioServicePlaybackTest {
         verify(exactly = 0) { player.currentPositionMs }
     }
 
-    private fun field(name: String) = BibleAudioService::class.java.getDeclaredField(name).apply { isAccessible = true }
+    private fun field(name: String) = BibleAudioPlayback::class.java.getDeclaredField(name).apply { isAccessible = true }
 }

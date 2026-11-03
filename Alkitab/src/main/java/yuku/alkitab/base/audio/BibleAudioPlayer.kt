@@ -30,7 +30,7 @@ import yuku.alkitab.debug.R
  * user-agent and disk cache) and forwards state transitions to a [Listener].
  *
  * Out of scope:
- *  - Foreground-service / MediaSession lifecycle, owned by [BibleAudioService].
+ *  - Foreground-service / MediaSession lifecycle, owned by [AudioService].
  *  - Highlight / verse tracking, owned by [HighlightTracker].
  *  - Audio focus and becoming-noisy, which media3 handles from the
  *    [ExoPlayer.Builder.setAudioAttributes] and
@@ -46,7 +46,7 @@ import yuku.alkitab.debug.R
  * [onLogEvent] receives a trace of what the load is actually doing: every
  * OkHttp connection-state transition for the chapter fetch (via
  * [AudioHttpEventLogger]) plus this player's own buffering/ready/error
- * transitions. [BibleAudioService] feeds this into [PlaybackState.logs] for the
+ * transitions. [BibleAudioPlayback] feeds this into [PlaybackState.logs] for the
  * audio bar's status line and log bottom sheet. Each event carries the
  * [logGeneration] it belongs to so the service can drop stale ones.
  */

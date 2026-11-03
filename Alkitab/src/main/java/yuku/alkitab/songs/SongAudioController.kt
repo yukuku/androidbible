@@ -12,13 +12,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import yuku.alkitab.base.audio.AudioService
 import yuku.alkitab.base.util.AppLog
 
 private const val TAG = "SongAudioController"
 
 /**
- * Activity-facing [MediaController] that drives playback through the background
- * [SongAudioService]. Binds with `startService` + [SongAudioService.ACTION_LOCAL_BIND]
+ * Activity-facing [MediaController] that drives [SongAudioPlayback] in [AudioService].
+ * Binds with `startService` + [AudioService.ACTION_LOCAL_BIND]
  * using the application context, so the service outlives the activity and keeps
  * playing in the background with its media notification.
  *
@@ -30,7 +31,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
 
     private val scope = CoroutineScope(Dispatchers.Main.immediate)
     private var collectJob: Job? = null
-    private var service: SongAudioService? = null
+    private var service: SongAudioPlayback? = null
     private var bound = false
 
     private val _playbackState = MutableStateFlow(SongPlaybackState.IDLE)
@@ -41,12 +42,12 @@ class SongAudioController(private val appContext: Context) : MediaController() {
 
     private var displayTitle = ""
     private var displaySubtitle = ""
-    private var pendingRequest: SongAudioService.SongRequest? = null
+    private var pendingRequest: SongAudioPlayback.SongRequest? = null
     private var selectedSong: Pair<String?, String?>? = null
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val svc = (binder as? SongAudioService.LocalBinder)?.service ?: return
+            val svc = (binder as? AudioService.LocalBinder)?.service?.song ?: return
             service = svc
             collectJob?.cancel()
             collectJob = scope.launch {
@@ -95,7 +96,7 @@ class SongAudioController(private val appContext: Context) : MediaController() {
                 val url = url ?: return
                 state = State.preparing
                 ensureBound()
-                val request = SongAudioService.SongRequest(
+                val request = SongAudioPlayback.SongRequest(
                     url = url,
                     displayTitle = displayTitle,
                     displaySubtitle = displaySubtitle,
@@ -156,10 +157,10 @@ class SongAudioController(private val appContext: Context) : MediaController() {
 
     private fun ensureBound() {
         if (bound) return
-        val startIntent = Intent(appContext, SongAudioService::class.java)
+        val startIntent = Intent(appContext, AudioService::class.java)
         appContext.startService(startIntent)
-        val bindIntent = Intent(appContext, SongAudioService::class.java)
-            .setAction(SongAudioService.ACTION_LOCAL_BIND)
+        val bindIntent = Intent(appContext, AudioService::class.java)
+            .setAction(AudioService.ACTION_LOCAL_BIND)
         try {
             if (appContext.bindService(bindIntent, connection, Context.BIND_AUTO_CREATE)) {
                 bound = true

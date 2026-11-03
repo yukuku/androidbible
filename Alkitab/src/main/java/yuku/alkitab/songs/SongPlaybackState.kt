@@ -3,7 +3,7 @@ package yuku.alkitab.songs
 import yuku.alkitab.base.audio.AudioLogEntry
 
 /**
- * UI-facing snapshot of [SongAudioService]'s playback, emitted via a `StateFlow`
+ * UI-facing snapshot of [SongAudioPlayback]'s playback, emitted via a `StateFlow`
  * and mapped by [SongAudioController] onto the legacy [MediaController.State]
  * machine that drives [SongViewActivity]'s toolbar.
  *

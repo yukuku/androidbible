@@ -32,7 +32,7 @@ import yuku.alkitab.model.Book
 
 /**
  * Glue layer between the View-based [yuku.alkitab.base.IsiActivity], the Compose
- * [AudioBar] surface and the Service-side [BibleAudioService].
+ * [AudioBar] surface and the Service-side [BibleAudioPlayback].
  *
  * The activity calls [attach] in `onCreate` (after `setContentView`) and
  * [detach] in `onDestroy`. Binding to the service is idempotent and happens only
@@ -82,7 +82,7 @@ class AudioBarController(
     private var host: Host? = null
     private var composeView: ComposeView? = null
 
-    private var service: BibleAudioService? = null
+    private var service: BibleAudioPlayback? = null
 
     /**
      * Tracks whether [Context.bindService] returned successfully. This flag must
@@ -179,14 +179,14 @@ class AudioBarController(
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val localBinder = binder as? BibleAudioService.LocalBinder ?: return
+            val localBinder = binder as? AudioService.LocalBinder ?: return
             // LocalBinder holds the service via WeakReference (to avoid a
             // service leak through the Binder framework's JNI globals); the
             // strong reference held in `service` keeps it alive for the lifetime
             // of this binding, so a null here means the service was destroyed
             // before the connection arrived. Bail out and let the next show()
             // rebind.
-            val svc = localBinder.service ?: return
+            val svc = localBinder.service?.bible ?: return
             service = svc
             // `bound` is set in ensureBound when bindService returns true, NOT
             // here: onServiceConnected is fire-and-forget, and if the service
@@ -227,13 +227,13 @@ class AudioBarController(
      * is still mid-session. Call from `IsiActivity.onStart`: it covers both a
      * fresh activity (after [attach]) and a returning one on the same instance.
      *
-     * Binds only when [BibleAudioService.hasActiveSession] is already true, so
+     * Binds only when [BibleAudioPlayback.hasActiveSession] is already true, so
      * the service is never spun up for users who haven't started audio. The
      * actual reshow happens in [projectToUi] once the first [PlaybackState]
      * arrives, avoiding a show-then-hide flicker if the session just ended.
      */
     fun reshowIfSessionActive() {
-        if (!shouldBindForReshow(requestedVisible, BibleAudioService.hasActiveSession)) return
+        if (!shouldBindForReshow(requestedVisible, BibleAudioPlayback.hasActiveSession)) return
         reshowPending = true
         ensureBound()
     }
@@ -306,7 +306,7 @@ class AudioBarController(
 
         // Chapter browsing supersedes any not-yet-delivered play-from-verse target.
         startVerse1 = 0
-        val request = BibleAudioService.AudioRequest(
+        val request = BibleAudioPlayback.AudioRequest(
             versionId = source.versionId,
             audioId = source.audioId,
             bookId = sourceBook.bookId,
@@ -444,7 +444,7 @@ class AudioBarController(
         _uiState.update { AudioBarUiState.HIDDEN }
         host?.audioBarVisibilityChanged(false)
         teardownComposeContent()
-        // Unbind so BibleAudioService can destroy, releasing ExoPlayer, the
+        // Unbind so AudioService can destroy when idle, releasing the player, the
         // MediaSession and the foreground notification. Holding the binding
         // between shows would avoid bind/unbind churn, but leaves enough
         // audio-stack overhead resident to make the verses-list scroll
@@ -505,10 +505,10 @@ class AudioBarController(
         // foreground-service rules without us posting anything. The
         // `mediaPlayback` foreground-service-type exemption covers the
         // background-start restriction on Android 12+.
-        val startIntent = Intent(context, BibleAudioService::class.java)
+        val startIntent = Intent(context, AudioService::class.java)
         context.startService(startIntent)
-        val bindIntent = Intent(context, BibleAudioService::class.java)
-            .setAction(BibleAudioService.ACTION_LOCAL_BIND)
+        val bindIntent = Intent(context, AudioService::class.java)
+            .setAction(AudioService.ACTION_LOCAL_BIND)
         try {
             // bindService can return false if the service can't be found or the
             // system refuses to deliver. Only flip `bound` on success so detach
@@ -525,14 +525,14 @@ class AudioBarController(
     }
 
     /** Returns null when the selected version doesn't include the reader's current book. */
-    private fun buildRequest(host: Host): BibleAudioService.AudioRequest? {
+    private fun buildRequest(host: Host): BibleAudioPlayback.AudioRequest? {
         val source = selectedSource ?: return null
         val readerBook = host.audioCurrentBook()
         val chapter1 = host.audioCurrentChapter1()
         val sourceBook = host.audioBookInVersion(source.versionId, readerBook.bookId)
             ?: return null
         val availableChapter = chapter1.coerceIn(1, sourceBook.chapter_count)
-        return BibleAudioService.AudioRequest(
+        return BibleAudioPlayback.AudioRequest(
             versionId = source.versionId,
             audioId = source.audioId,
             bookId = sourceBook.bookId,
@@ -551,7 +551,7 @@ class AudioBarController(
      * "play audio from this verse" survives the initial service binding instead
      * of degrading to a chapter-top start.
      */
-    private fun dispatchLoad(host: Host, request: BibleAudioService.AudioRequest) {
+    private fun dispatchLoad(host: Host, request: BibleAudioPlayback.AudioRequest) {
         val svc = service
         if (svc == null) {
             pendingLoad = host
