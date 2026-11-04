@@ -90,6 +90,7 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
          * 0 when the chapter has no timing or no entry for this verse.
          */
         val startVerse_1: Int,
+        val isAutoPlay: Boolean = true,
     )
 
     private var positionJob: Job? = null
@@ -289,6 +290,11 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
         // position/duration reset below with the old chapter's values. Polling
         // resumes when the player reaches READY (or on an explicit play()).
         positionJob?.cancel()
+
+        // Stop the outgoing chapter before changing playback intent. App and
+        // media-session Play/Pause commands during URL resolution then remain authoritative.
+        player.exoPlayer.stop()
+        player.exoPlayer.playWhenReady = request.isAutoPlay
         currentRequest = request
         hasActiveSession = true
         pendingStartVerse1 = request.startVerse_1
@@ -354,7 +360,6 @@ class BibleAudioPlayback(context: Context, owner: AudioService) : AudioPlayback(
                 .setMediaMetadata(metadataBuilder.build())
                 .build()
             player.exoPlayer.setMediaItem(mediaItem)
-            player.exoPlayer.playWhenReady = true
             player.exoPlayer.prepare()
             updateDiagnosticTimer()
         }

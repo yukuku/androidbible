@@ -53,10 +53,16 @@ class BibleAudioDiagnosticsTest {
         advance(1)
         assertTrue(service.playbackState.value.isDiagnosticVisible)
 
-        val controller = AudioBarController(mockk(relaxed = true))
-        AudioBarController::class.java.getDeclaredMethod("projectToUi", PlaybackState::class.java)
-            .apply { isAccessible = true }.invoke(controller, service.playbackState.value)
-        assertTrue(controller.uiState.value.isDiagnosticVisible)
+        val fixture = AudioBarControllerFixture()
+        try {
+            fixture.controller.show()
+            fixture.connect(PlaybackState.IDLE)
+            fixture.state.value = fixture.activeState().copy(isDiagnosticVisible = true)
+            shadowOf(Looper.getMainLooper()).idle()
+            assertTrue(fixture.controller.uiState.value.isDiagnosticVisible)
+        } finally {
+            fixture.controller.detach()
+        }
     }
 
     @Test

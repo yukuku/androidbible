@@ -17,6 +17,10 @@ and start at a requested verse. Recordings without timing still support chapter
 playback. Verse-based actions depend on timing and book coverage, rather than
 merely on the presence of audio for that version.
 
+Opening a targeted passage while Bible audio is active pauses playback and
+prepares the destination chapter until Play is pressed. Ordinary chapter browsing
+retains autoplay. Opening a Bible passage does not interrupt song playback.
+
 The reader's audio bar provides playback controls, recording selection, speed,
 and load diagnostics. Its log helps investigate slow or failed loads. User-visible
 service messages must follow the app's selected language.

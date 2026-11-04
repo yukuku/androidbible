@@ -749,8 +749,17 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         // first display of active version
         displayActiveVersion()
 
+        val audioBarView: ComposeView = findViewById(R.id.audio_bar)
+        audioBinder.attach(audioBarHost, audioBarView)
+
         // load chapter and verse
-        display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
+        if (savedInstanceState == null && intentResult != null) {
+            audioBinder.navigateToPassage {
+                display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
+            }
+        } else {
+            display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
+        }
 
         if (savedInstanceState == null && intentResult != null) {
             history.add(openingAri)
@@ -775,8 +784,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         AppEvents.observe(this, AppEvents.currentReadingChanged, ::updateCurrentReading)
         AppEvents.observe(this, AppEvents.activeVersionChanged, ::updateCurrentReading)
 
-        val audioBarView: ComposeView = findViewById(R.id.audio_bar)
-        audioBinder.attach(audioBarHost, audioBarView)
         lifecycleScope.launch {
             audioBinder.uiState.collect {
                 refreshAudioHighlights()
@@ -912,7 +919,9 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         super.onNewIntent(intent)
         setIntent(intent)
         val destination = extractIntent(intent) ?: return
-        jumpToAri(destination.ari, callAttention = false)
+        audioBinder.navigateToPassage {
+            jumpToAri(destination.ari, callAttention = false)
+        }
         if (destination.selectVerse && activeSplit0.book.bookId == Ari.toBook(destination.ari) && chapter_1 == Ari.toChapter(destination.ari)) {
             for (i in 0 until destination.selectVerseCount) {
                 callAttentionForVerseToBothSplits(Ari.toVerse(destination.ari) + i)
