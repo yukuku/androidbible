@@ -586,6 +586,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.drawerlayout)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.percentlayout)
     implementation(libs.androidx.preference.ktx)
