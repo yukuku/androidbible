@@ -192,7 +192,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     override fun uncheckAllVersesSplit0() { lsSplit0.uncheckAllVerses(true) }
     override fun onActionModeDestroyed() {
         actionMode = null
-        selectionBackCallback.isEnabled = false
         updateToolbarLocation()
         updateSystemBarAppearance()
     }
@@ -290,11 +289,29 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
     val history get() = History
 
     override var actionMode: ActionMode? = null
-    private val selectionBackCallback = object : OnBackPressedCallback(false) {
-        override fun handleOnBackPressed() { actionMode?.finish() }
+        set(value) {
+            field = value
+            updateReaderBackCallback()
+        }
+    private val readerBackCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            when {
+                actionMode != null -> actionMode?.finish()
+                textAppearancePanel != null -> setShowTextAppearancePanel(false)
+                fullScreen -> setFullScreenWithDrawerHandle(false)
+            }
+        }
     }
     private var dictionaryMode = false
     override var textAppearancePanel: TextAppearancePanel? = null
+        set(value) {
+            field = value
+            updateReaderBackCallback()
+        }
+
+    private fun updateReaderBackCallback() {
+        readerBackCallback.isEnabled = actionMode != null || textAppearancePanel != null || fullScreen
+    }
 
     /**
      * The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
@@ -441,7 +458,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
                 val mode = ReaderSelectionActionMode(findViewById(R.id.selectionToolbar), menuInflater, actionModeController)
                 if (mode.start()) {
                     actionMode = mode
-                    selectionBackCallback.isEnabled = true
                     updateToolbarLocation()
                     updateSystemBarAppearance()
                 }
@@ -533,7 +549,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         composeToolbar = findViewById(R.id.composeToolbar)
         composeReferenceAnchor = findViewById(R.id.composeReferenceAnchor)
         setSupportActionBar(toolbar)
-        onBackPressedDispatcher.addCallback(this, selectionBackCallback)
+        onBackPressedDispatcher.addCallback(this, readerBackCallback)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(!useComposeToolbar)
             setDisplayShowTitleEnabled(false)
@@ -1266,26 +1282,6 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
-        when {
-            actionMode != null -> actionMode?.finish()
-
-            textAppearancePanel != null -> {
-                textAppearancePanel?.hide()
-                textAppearancePanel = null
-            }
-
-            fullScreen -> {
-                setFullScreen(false)
-                leftDrawer.handle.setFullScreen(false)
-            }
-
-            else -> {
-                super.onBackPressed()
-            }
-        }
-    }
-
     private fun bGoto_click() {
         val r = {
             startActivityForResult(GotoActivity.createIntent(activeSplit0.book.bookId, this.chapter_1, getVerse_1BasedOnScrolls()), RequestCodes.FromActivity.Goto)
@@ -1534,6 +1530,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         if (fullScreen == yes) return // no change
 
         fullScreen = yes
+        updateReaderBackCallback()
 
         val controller = WindowCompat.getInsetsController(window, window.decorView)
         if (yes) {

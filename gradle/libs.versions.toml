@@ -7,7 +7,7 @@ firebaseCrashlyticsGradle = "3.0.6"
 foojayResolver = "1.0.0"
 compileSdk = "36"
 minSdk = "26"
-targetSdk = "35"
+targetSdk = "36"
 ndk = "28.2.13676358"
 room = "2.7.0"
 
@@ -19,6 +19,7 @@ androidxAppcompat = "1.7.1"
 androidxConstraintlayout = "2.2.1"
 androidxCore = "1.17.0"
 androidxCoreSplashscreen = "1.2.0"
+androidxDrawerlayout = "1.2.0"
 androidxFragment = "1.8.9"
 androidxLifecycle = "2.9.0"
 androidxMedia3 = "1.10.1"
@@ -66,6 +67,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidxConstraintlayout" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
+androidx-drawerlayout = { group = "androidx.drawerlayout", name = "drawerlayout", version.ref = "androidxDrawerlayout" }
 androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "androidxFragment" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
