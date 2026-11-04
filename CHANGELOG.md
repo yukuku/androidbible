@@ -4,6 +4,16 @@ A user-facing history of Bible for Android (Alkitab / Quick Bible).
 Internal refactors, dependency bumps, CI tweaks, and pure
 translation-only updates are generally omitted.
 
+## 5.0.0-beta.7 (2026-11-04)
+
+- Improved Android 16 support, including Back navigation for verse
+  selection, appearance controls, fullscreen reading, and the drawer.
+- Opening a specific Bible passage while Bible audio is active keeps
+  the selected verse visible and pauses playback until you press Play.
+  Opening a passage while song audio is playing keeps the song playing.
+- More reliable Bible audio controls when changing chapters or recordings
+  and switching between Bible and song playback.
+
 ## 5.0.0-beta.6 (2026-11-04)
 
 - Songs have an Audio & video sheet with playback controls and links to
