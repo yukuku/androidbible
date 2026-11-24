@@ -56,6 +56,29 @@ class ReadingPassageTest {
     }
 
     @Test
+    fun `display ranges start at the next available chapter without including earlier verses`() {
+        val matthew = Book().apply {
+            bookId = 39
+            chapter_count = 2
+            verse_counts = intArrayOf(5, 10)
+        }
+        val aris = intArrayOf(ari(39, 1, 6), ari(39, 1, 8), ari(39, 1, 6), ari(39, 2, 3))
+        assertEquals(listOf(ReadingRange(ari(39, 2, 1), ari(39, 2, 3))), ReadingPassage.resolveAvailable(aris) { matthew })
+    }
+
+    @Test
+    fun `display ranges keep the available book in a passage spanning unavailable books`() {
+        val exodus = Book().apply {
+            bookId = 1
+            chapter_count = 2
+            verse_counts = intArrayOf(5, 10)
+        }
+        val aris = intArrayOf(ari(0, 50, 1), ari(2, 1, 10))
+        val ranges = ReadingPassage.resolveAvailable(aris) { bookId -> exodus.takeIf { it.bookId == bookId } }
+        assertEquals(listOf(ReadingRange(ari(1, 1, 1), ari(1, 2, 10))), ranges)
+    }
+
+    @Test
     fun `a single chapter book with chapter one covers the chapter`() {
         assertEquals(listOf(ReadingRange(ari(30, 1, 1), ari(30, 1, 50))), ReadingPassage.resolve(parse("Obaja 1")!!, ::book))
     }
