@@ -1243,10 +1243,12 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         leftDrawer.displayCurrentReading()
         val mode = ReadingGuideMode.selected()
         val aris = CurrentReading.getRanges()
-        val ranges = aris?.let { ReadingPassage.resolve(it, activeSplit0.version::getBook) }.orEmpty()
-        val guide = ReadingGuide(mode, ranges)
-        uiSplit0 = uiSplit0.copy(readingGuide = guide)
-        uiSplit1 = uiSplit1.copy(readingGuide = guide)
+        fun guideFor(version: Version?): ReadingGuide {
+            if (mode == ReadingGuideMode.OFF || aris == null || version == null) return ReadingGuide.NONE
+            return ReadingGuide(mode, ReadingPassage.resolveAvailable(aris, version::getBook))
+        }
+        uiSplit0 = uiSplit0.copy(readingGuide = guideFor(activeSplit0.version))
+        uiSplit1 = uiSplit1.copy(readingGuide = guideFor(activeSplit1?.version))
 
         ViewCompat.requestApplyInsets(drawerLayout)
     }
@@ -2422,7 +2424,7 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         val aris = CurrentReading.getRanges() ?: return
         if (rangeIndex !in 0 until aris.size / 2) return
         val range = intArrayOf(aris[rangeIndex * 2], aris[rangeIndex * 2 + 1])
-        val ari_start = ReadingPassage.resolve(range, activeSplit0.version::getBook)?.firstOrNull()?.start ?: range[0]
+        val ari_start = ReadingPassage.resolveAvailable(range, activeSplit0.version::getBook).firstOrNull()?.start ?: range[0]
         jumpToAri(ari_start)
 
         leftDrawer.closeDrawer()
