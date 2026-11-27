@@ -1,8 +1,13 @@
 package yuku.alkitab.base.audio
 
+import android.app.ForegroundServiceStartNotAllowedException
+import android.app.Notification
+import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Looper
+import android.view.KeyEvent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -17,6 +22,10 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.Implementation
+import org.robolectric.annotation.Implements
+import org.robolectric.shadow.api.Shadow
+import org.robolectric.shadows.ShadowService
 import yuku.alkitab.songs.SongAudioPlayback
 
 @RunWith(RobolectricTestRunner::class)
@@ -35,6 +44,38 @@ class AudioServiceTest {
         override fun resetPlayback() { events.add("stop $name") }
         override fun releasePlayer() { events.add("release $name") }
         fun schedule() = scheduleDiagnostic({ true }, { timeouts++ })
+    }
+
+    @Implements(Service::class)
+    class ForegroundStartDeniedShadow : ShadowService() {
+        var foregroundStartAttempts = 0
+            private set
+
+        @Implementation
+        override fun startForeground(id: Int, notification: Notification, foregroundServiceType: Int) {
+            foregroundStartAttempts++
+            throw ForegroundServiceStartNotAllowedException("Service.startForeground() not allowed")
+        }
+    }
+
+    @Test
+    @Config(shadows = [ForegroundStartDeniedShadow::class])
+    fun `a media button delivered without a session stops the service when foreground start is denied`() {
+        val controller = Robolectric.buildService(AudioService::class.java).create()
+        val service = controller.get()
+        val intent = Intent(service, AudioService::class.java)
+            .setAction(Intent.ACTION_MEDIA_BUTTON)
+            .setData(Uri.parse("androidx://media3.session/stale"))
+            .putExtra(Intent.EXTRA_KEY_EVENT, KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY))
+        val shadow = Shadow.extract<ForegroundStartDeniedShadow>(service)
+
+        try {
+            service.onStartCommand(intent, 0, 1)
+            assertEquals(1, shadow.foregroundStartAttempts)
+            assertTrue(shadow.isStoppedBySelf)
+        } finally {
+            controller.destroy()
+        }
     }
 
     @Test
