@@ -126,6 +126,7 @@ data class VersesDataModel(
      * @return position on this adapter, or -1 if not found
      */
     fun getPositionOfPericopeBeginningFromVerse(verse_1: Int): Int {
+        if (verse_1 !in 1..verses_.verseCount) return -1
         val verse_0 = verse_1 - 1
 
         var i = 0
@@ -157,6 +158,7 @@ data class VersesDataModel(
      * @return position or -1 if not found
      */
     fun getPositionIgnoringPericopeFromVerse(verse_1: Int): Int {
+        if (verse_1 !in 1..verses_.verseCount) return -1
         val verse_0 = verse_1 - 1
 
         var i = 0

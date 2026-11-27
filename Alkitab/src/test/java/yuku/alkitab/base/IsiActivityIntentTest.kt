@@ -2,10 +2,12 @@ package yuku.alkitab.base
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.widget.FrameLayout
 import io.mockk.clearMocks
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Duration
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -17,12 +19,17 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import yuku.afw.storage.Preferences
 import yuku.alkitab.base.audio.AudioBarController
 import yuku.alkitab.base.audio.ui.AudioBarUiState
 import yuku.alkitab.base.audio.ui.AudioHighlightColor
+import yuku.alkitab.base.model.MVersionInternal
 import yuku.alkitab.base.storage.Prefkey
 import yuku.alkitab.base.util.History
+import yuku.alkitab.base.verses.VersesComposeControllerImpl
+import yuku.alkitab.base.verses.VersesDataModel
+import yuku.alkitab.util.Ari
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = yuku.afw.App::class, sdk = [34])
@@ -56,6 +63,39 @@ class IsiActivityIntentTest {
             controller.destroy()
         } finally {
             History.replaceAllEntries(original)
+        }
+    }
+
+    @Test
+    @Config(application = App::class, qualifiers = "w360dp-h640dp-mdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun `opening a chapter-only reference with the split pane enabled shows verse one in both panes`() {
+        val originalSplitVersion = Preferences.getString(Prefkey.lastSplitVersionId)
+        val originalHistory = History.listAllEntries()
+        val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
+        val uncaught = mutableListOf<Throwable>()
+        val chapterAri = Ari.encode(0, 1, 0)
+        val controller = Robolectric.buildActivity(IsiActivity::class.java, IsiActivity.createIntent(chapterAri))
+        Preferences.setString(Prefkey.lastSplitVersionId, MVersionInternal.getVersionInternalId())
+        Thread.setDefaultUncaughtExceptionHandler { _, error -> uncaught += error }
+        try {
+            val activity = controller.setup().get()
+            repeat(10) {
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(20))
+            }
+
+            assertTrue(uncaught.joinToString("\n") { it.stackTraceToString() }, uncaught.isEmpty())
+            assertTrue(activity.splitHandleButton.isShown)
+            assertTrue(activity.lsSplit1 is VersesComposeControllerImpl)
+            assertEquals(chapterAri, activity.dataSplit1.ari_bc_)
+            assertEquals(VersesDataModel.ItemType.pericope, activity.dataSplit1.getItemViewType(0))
+            assertEquals(1, activity.lsSplit0.getVerse_1BasedOnScroll())
+            assertEquals(1, activity.lsSplit1.getVerse_1BasedOnScroll())
+        } finally {
+            Thread.setDefaultUncaughtExceptionHandler(previousHandler)
+            controller.pause().stop().destroy()
+            Preferences.setString(Prefkey.lastSplitVersionId, originalSplitVersion)
+            History.replaceAllEntries(originalHistory)
         }
     }
 
