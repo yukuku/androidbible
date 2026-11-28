@@ -753,12 +753,14 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         audioBinder.attach(audioBarHost, audioBarView)
 
         // load chapter and verse
+        var displayedAri = 0
+        val displayOpeningPassage = {
+            displayedAri = display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
+        }
         if (savedInstanceState == null && intentResult != null) {
-            audioBinder.navigateToPassage {
-                display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
-            }
+            audioBinder.navigateToPassage(displayOpeningPassage)
         } else {
-            display(Ari.toChapter(openingAri), Ari.toVerse(openingAri))
+            displayOpeningPassage()
         }
 
         if (savedInstanceState == null && intentResult != null) {
@@ -768,7 +770,8 @@ class IsiActivity : BaseLeftDrawerActivity(), LeftDrawer.Text.Listener, VerseAct
         backForwardListController.newEntry(openingAri)
 
         // load last split version. This must be after load book, chapter, and verse.
-        splitViewManager.restoreFromPreferences(Ari.toVerse(openingAri))
+        val splitOpeningAri = if (displayedAri != 0) displayedAri else openingAri
+        splitViewManager.restoreFromPreferences(Ari.toVerse(splitOpeningAri).coerceAtLeast(1))
 
         if (selectVerse) {
             for (i in 0 until selectVerseCount) {
